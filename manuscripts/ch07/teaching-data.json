@@ -1,0 +1,104 @@
+{
+  "kind": "derived teaching models, not measurements",
+  "primary": {
+    "participants": 8,
+    "per_rank_bytes": 201326592,
+    "nics_per_server": 2,
+    "nic_Bps": 25000000000.0,
+    "shared_per_direction_Bps": 40000000000.0,
+    "local_Bps": 200000000000.0,
+    "round_startup_s": 2e-06,
+    "flat_s": 0.008836038400000001,
+    "hier_s": 0.0065591142399999995,
+    "saved_s": {
+      "gradient-fp32-flat-contiguous-nic2": 0.0088360384,
+      "gradient-fp32-hierarchical-nic2": 0.00655911424
+    },
+    "flat_local_50GBs_s": 0.008836038400000001,
+    "hier_local_50GBs_s": 0.011088962559999999,
+    "local_crossover_Bps": 79746492726.87634,
+    "flat_one_nic_s": 0.01412086144
+  },
+  "scaling": {
+    "compute_s": 0.02,
+    "cut_volume_bytes": 352321536,
+    "cut_s": 0.0088080384,
+    "crossover_device_multiplier": 2.270653134300595
+  },
+  "small_messages": {
+    "bandwidth_Bps": 25000000000.0,
+    "startup_s": 5e-06,
+    "single_message_crossover_bytes": 125000.00000000001,
+    "ring_crossover_bytes": 1000000.0000000001,
+    "serial_72_bandwidth_saving_s": 2.752512e-05,
+    "serial_72_startup_saving_s": 0.0030240000000000006
+  },
+  "pipeline": {
+    "stages": 4,
+    "microbatches": 8,
+    "stage_s": 0.001,
+    "finish_s": 0.011,
+    "utilization": 0.7272727272727273,
+    "microbatches_for_90pct": 27
+  },
+  "snapshot": {
+    "payload_bytes": 150994944,
+    "remote_per_read_s": 0.0037798736,
+    "local_per_read_s": 0.000151994944,
+    "setup_s": 0.006200792704,
+    "full_reuse_boundary": 1.7092062033951336,
+    "full_first_winning_integer": 2,
+    "ten_pct_reuse_boundary": 17.092062033951333,
+    "ten_pct_first_winning_integer": 18
+  },
+  "window": {
+    "transaction_bytes": 256,
+    "lifetime_s": 2e-06,
+    "active_128_Bps": 16384000000.0,
+    "required_active_256": 313,
+    "required_active_4096": 20,
+    "required_start_interval_s": 6.4e-09,
+    "rate_4096_at_100ns_Bps": 40960000000.0
+  },
+  "isolation": {
+    "fixed_bytes": 540672,
+    "per_class_bytes": 131072,
+    "budget_bytes": 1048576,
+    "max_classes": 3
+  },
+  "reclaim": {
+    "operation_bytes": 8192,
+    "consumed_per_poll": 4,
+    "poll_s": 2e-05,
+    "sustainable_Bps": 1638399999.9999998,
+    "required_rate_ops_per_s": 4882812.5,
+    "required_interval_s": 2.048e-07
+  },
+  "queue": {
+    "buffer_bytes": 524288,
+    "excess_Bps": 30000000000.0,
+    "max_overlap_s": 1.7476266666666667e-05,
+    "feedback_max_s": 8.738133333333334e-06
+  },
+  "multipath": {
+    "packet_bytes": 1024,
+    "rate_Bps": 1000000000.0,
+    "single_s": 9.192000000000001e-06,
+    "balanced_s": 5.096e-06,
+    "delay_difference_boundary_s": 4.096e-06
+  },
+  "step": {
+    "compute_s": 0.02,
+    "update_s": 0.002,
+    "flat_serial_s": 0.0308360384,
+    "hier_serial_s": 0.028559114240000003,
+    "hier_window_limited_comm_s": 0.01381394944,
+    "hier_window_limited_serial_s": 0.035813949440000006,
+    "flat_ready_17ms_s": 0.027836038400000006,
+    "hier_ready_17ms_s": 0.02555911424,
+    "hier_ready_12ms_s": 0.022,
+    "hier_last_ready_fully_hidden_s": 0.01344088576,
+    "hier_slow_comm_s": 0.01159227904,
+    "hier_slow_ready_17ms_s": 0.030592279040000003
+  }
+}

@@ -1,0 +1,2780 @@
+{
+  "7-1": {
+    "kind": "conceptual",
+    "ranks": 8,
+    "servers": 2
+  },
+  "7-2": {
+    "kind": "teaching",
+    "volume_per_direction_bytes": 352321536,
+    "cut_bandwidth_Bps": 40000000000.0,
+    "compute_base_ms": 20,
+    "cut_ms": 8.808038400000001,
+    "device_multipliers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "compute_ms": [
+      20.0,
+      10.0,
+      6.666666666666667,
+      5.0,
+      4.0,
+      3.3333333333333335,
+      2.857142857142857,
+      2.5
+    ]
+  },
+  "7-3": {
+    "kind": "saved_calculation",
+    "sources": [
+      "gradient-fp32-flat-contiguous-nic2",
+      "gradient-fp32-flat-interleaved-nic2",
+      "gradient-fp32-hierarchical-nic2"
+    ],
+    "local_MiB": [
+      2016.0,
+      0.0,
+      2304.0
+    ],
+    "remote_MiB": [
+      672.0,
+      2688.0,
+      384.0
+    ],
+    "lower_ms": [
+      8.8360384,
+      35.260153599999995,
+      6.55911424
+    ],
+    "ring_orders": [
+      [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      [
+        0,
+        4,
+        1,
+        5,
+        2,
+        6,
+        3,
+        7
+      ]
+    ],
+    "hierarchy_pairs": [
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        7
+      ]
+    ],
+    "plotted": "logical paths and local/remote bytes; lower_ms supports prose"
+  },
+  "7-7": {
+    "kind": "conceptual",
+    "timing": null,
+    "paths": [
+      "主机处理的 RPC",
+      "CPU 提交的 GPUDirect RDMA",
+      "GPU 经 NVLink 访问",
+      "设备发起的 URMA 异步读写"
+    ]
+  },
+  "7-11": {
+    "kind": "saved_calculation",
+    "state_MiB": [
+      [
+        0.015625,
+        0.5,
+        8.0
+      ],
+      [
+        0.015625,
+        0.5,
+        0.125
+      ],
+      [
+        0.015625,
+        0.5,
+        1.0
+      ]
+    ],
+    "budget_MiB": 1
+  },
+  "7-12": {
+    "kind": "saved_calculation",
+    "schedules": {
+      "strict": {
+        "tasks": [
+          {
+            "id": "write_data",
+            "resource": "publication",
+            "start_ns": 0,
+            "end_ns": 20000,
+            "duration_ns": 20000,
+            "critical_predecessor": null,
+            "scheduled_predecessors": []
+          },
+          {
+            "id": "recover_and_make_visible",
+            "resource": "publication",
+            "start_ns": 20000,
+            "end_ns": 100000,
+            "duration_ns": 80000,
+            "critical_predecessor": "write_data",
+            "scheduled_predecessors": [
+              "write_data"
+            ]
+          },
+          {
+            "id": "publish_notification",
+            "resource": "publication",
+            "start_ns": 100000,
+            "end_ns": 102000,
+            "duration_ns": 2000,
+            "critical_predecessor": "recover_and_make_visible",
+            "scheduled_predecessors": [
+              "recover_and_make_visible"
+            ]
+          },
+          {
+            "id": "independent_transfer",
+            "resource": "independent",
+            "start_ns": 102000,
+            "end_ns": 112000,
+            "duration_ns": 10000,
+            "critical_predecessor": "publish_notification",
+            "scheduled_predecessors": [
+              "publish_notification"
+            ]
+          }
+        ],
+        "finish_ns": 112000,
+        "critical_path": [
+          "write_data",
+          "recover_and_make_visible",
+          "publish_notification",
+          "independent_transfer"
+        ],
+        "serial_work_ns": 112000
+      },
+      "necessary_dependencies": {
+        "tasks": [
+          {
+            "id": "write_data",
+            "resource": "publication",
+            "start_ns": 0,
+            "end_ns": 20000,
+            "duration_ns": 20000,
+            "critical_predecessor": null,
+            "scheduled_predecessors": []
+          },
+          {
+            "id": "independent_transfer",
+            "resource": "independent",
+            "start_ns": 0,
+            "end_ns": 10000,
+            "duration_ns": 10000,
+            "critical_predecessor": null,
+            "scheduled_predecessors": []
+          },
+          {
+            "id": "recover_and_make_visible",
+            "resource": "publication",
+            "start_ns": 20000,
+            "end_ns": 100000,
+            "duration_ns": 80000,
+            "critical_predecessor": "write_data",
+            "scheduled_predecessors": [
+              "write_data"
+            ]
+          },
+          {
+            "id": "publish_notification",
+            "resource": "publication",
+            "start_ns": 100000,
+            "end_ns": 102000,
+            "duration_ns": 2000,
+            "critical_predecessor": "recover_and_make_visible",
+            "scheduled_predecessors": [
+              "recover_and_make_visible"
+            ]
+          }
+        ],
+        "finish_ns": 102000,
+        "critical_path": [
+          "write_data",
+          "recover_and_make_visible",
+          "publish_notification"
+        ],
+        "serial_work_ns": 112000
+      }
+    },
+    "stale_read_example": {
+      "inputs": {
+        "speculative_read_ns": 1000,
+        "data_visible_ns": 2000,
+        "flag_visible_ns": 3000,
+        "flag_read_ns": 4000,
+        "response_ns": 5000,
+        "reread_latency_ns": 2000
+      },
+      "initial_data": 0,
+      "published_data": 1,
+      "flag_observed": 1,
+      "speculative_data": 0,
+      "response_order_only_data": 0,
+      "response_order_only_valid": false,
+      "conflict_requires_reread": true,
+      "repaired_data": 1,
+      "repaired_delivery_ns": 6000,
+      "source_ordered_delivery_ns": 6000,
+      "response_order_only_read_bytes": 8,
+      "repaired_read_bytes": 12,
+      "events": [
+        {
+          "time_ns": 1000,
+          "event": "sample_data",
+          "value": 0
+        },
+        {
+          "time_ns": 2000,
+          "event": "data_visible",
+          "value": 1
+        },
+        {
+          "time_ns": 3000,
+          "event": "flag_visible",
+          "value": 1
+        },
+        {
+          "time_ns": 4000,
+          "event": "sample_flag",
+          "value": 1
+        },
+        {
+          "time_ns": 5000,
+          "event": "deliver_flag_then_saved_data",
+          "value": 0
+        },
+        {
+          "time_ns": 4000,
+          "event": "detect_conflict_and_start_reread",
+          "value": 0
+        },
+        {
+          "time_ns": 6000,
+          "event": "reread_complete",
+          "value": 1
+        },
+        {
+          "time_ns": 6000,
+          "event": "deliver_validated_data",
+          "value": 1
+        }
+      ]
+    },
+    "necessary_edges": [
+      [
+        "write_data",
+        "recover_and_make_visible"
+      ],
+      [
+        "recover_and_make_visible",
+        "publish_notification"
+      ]
+    ],
+    "extra_edge": [
+      "publish_notification",
+      "independent_transfer"
+    ],
+    "plotted": "dependency graph and schedules; stale_read_example supports prose"
+  },
+  "7-15": {
+    "kind": "saved_calculation",
+    "periodic_segments": {
+      "periodic-queue-aligned": [
+        {
+          "start_exact_ns": "0",
+          "end_exact_ns": "20000000",
+          "start_ns": 0.0,
+          "end_ns": 20000000.0,
+          "arrival_bytes_per_second": 80000000000,
+          "queue_start_exact_bytes": "0",
+          "queue_end_exact_bytes": "600000000",
+          "queue_start_bytes": 0.0,
+          "queue_end_bytes": 600000000.0,
+          "arrived_exact_bytes": "1600000000",
+          "served_exact_bytes": "1000000000",
+          "dropped_exact_bytes": "0"
+        },
+        {
+          "start_exact_ns": "20000000",
+          "end_exact_ns": "32000000",
+          "start_ns": 20000000.0,
+          "end_ns": 32000000.0,
+          "arrival_bytes_per_second": 0,
+          "queue_start_exact_bytes": "600000000",
+          "queue_end_exact_bytes": "0",
+          "queue_start_bytes": 600000000.0,
+          "queue_end_bytes": 0.0,
+          "arrived_exact_bytes": "0",
+          "served_exact_bytes": "600000000",
+          "dropped_exact_bytes": "0"
+        },
+        {
+          "start_exact_ns": "32000000",
+          "end_exact_ns": "100000000",
+          "start_ns": 32000000.0,
+          "end_ns": 100000000.0,
+          "arrival_bytes_per_second": 0,
+          "queue_start_exact_bytes": "0",
+          "queue_end_exact_bytes": "0",
+          "queue_start_bytes": 0.0,
+          "queue_end_bytes": 0.0,
+          "arrived_exact_bytes": "0",
+          "served_exact_bytes": "0",
+          "dropped_exact_bytes": "0"
+        }
+      ],
+      "periodic-queue-drift": [
+        {
+          "start_exact_ns": "0",
+          "end_exact_ns": "15000000",
+          "start_ns": 0.0,
+          "end_ns": 15000000.0,
+          "arrival_bytes_per_second": 40000000000,
+          "queue_start_exact_bytes": "0",
+          "queue_end_exact_bytes": "0",
+          "queue_start_bytes": 0.0,
+          "queue_end_bytes": 0.0,
+          "arrived_exact_bytes": "600000000",
+          "served_exact_bytes": "600000000",
+          "dropped_exact_bytes": "0"
+        },
+        {
+          "start_exact_ns": "15000000",
+          "end_exact_ns": "20000000",
+          "start_ns": 15000000.0,
+          "end_ns": 20000000.0,
+          "arrival_bytes_per_second": 80000000000,
+          "queue_start_exact_bytes": "0",
+          "queue_end_exact_bytes": "150000000",
+          "queue_start_bytes": 0.0,
+          "queue_end_bytes": 150000000.0,
+          "arrived_exact_bytes": "400000000",
+          "served_exact_bytes": "250000000",
+          "dropped_exact_bytes": "0"
+        },
+        {
+          "start_exact_ns": "20000000",
+          "end_exact_ns": "35000000",
+          "start_ns": 20000000.0,
+          "end_ns": 35000000.0,
+          "arrival_bytes_per_second": 40000000000,
+          "queue_start_exact_bytes": "150000000",
+          "queue_end_exact_bytes": "0",
+          "queue_start_bytes": 150000000.0,
+          "queue_end_bytes": 0.0,
+          "arrived_exact_bytes": "600000000",
+          "served_exact_bytes": "750000000",
+          "dropped_exact_bytes": "0"
+        },
+        {
+          "start_exact_ns": "35000000",
+          "end_exact_ns": "100000000",
+          "start_ns": 35000000.0,
+          "end_ns": 100000000.0,
+          "arrival_bytes_per_second": 0,
+          "queue_start_exact_bytes": "0",
+          "queue_end_exact_bytes": "0",
+          "queue_start_bytes": 0.0,
+          "queue_end_bytes": 0.0,
+          "arrived_exact_bytes": "0",
+          "served_exact_bytes": "0",
+          "dropped_exact_bytes": "0"
+        }
+      ],
+      "periodic-queue-staggered": [
+        {
+          "start_exact_ns": "0",
+          "end_exact_ns": "20000000",
+          "start_ns": 0.0,
+          "end_ns": 20000000.0,
+          "arrival_bytes_per_second": 40000000000,
+          "queue_start_exact_bytes": "0",
+          "queue_end_exact_bytes": "0",
+          "queue_start_bytes": 0.0,
+          "queue_end_bytes": 0.0,
+          "arrived_exact_bytes": "800000000",
+          "served_exact_bytes": "800000000",
+          "dropped_exact_bytes": "0"
+        },
+        {
+          "start_exact_ns": "20000000",
+          "end_exact_ns": "40000000",
+          "start_ns": 20000000.0,
+          "end_ns": 40000000.0,
+          "arrival_bytes_per_second": 40000000000,
+          "queue_start_exact_bytes": "0",
+          "queue_end_exact_bytes": "0",
+          "queue_start_bytes": 0.0,
+          "queue_end_bytes": 0.0,
+          "arrived_exact_bytes": "800000000",
+          "served_exact_bytes": "800000000",
+          "dropped_exact_bytes": "0"
+        },
+        {
+          "start_exact_ns": "40000000",
+          "end_exact_ns": "100000000",
+          "start_ns": 40000000.0,
+          "end_ns": 100000000.0,
+          "arrival_bytes_per_second": 0,
+          "queue_start_exact_bytes": "0",
+          "queue_end_exact_bytes": "0",
+          "queue_start_bytes": 0.0,
+          "queue_end_bytes": 0.0,
+          "arrived_exact_bytes": "0",
+          "served_exact_bytes": "0",
+          "dropped_exact_bytes": "0"
+        }
+      ]
+    },
+    "feedback": {
+      "schema_version": 1,
+      "calculation": "feedback-fluid-queue",
+      "scenario": {
+        "offered_bytes_per_second": 80000000000,
+        "capacity_bytes_per_second": 50000000000,
+        "reduced_bytes_per_second": 40000000000,
+        "feedback_ns": 20000,
+        "after_feedback_ns": 100000,
+        "initial_queue_bytes": 262144,
+        "buffer_bytes": 524288
+      },
+      "sources": [],
+      "queue_segments": [
+        {
+          "start_exact_ns": "0",
+          "end_exact_ns": "131072/15",
+          "start_ns": 0.0,
+          "end_ns": 8738.133333333333,
+          "arrival_bytes_per_second": 80000000000,
+          "queue_start_exact_bytes": "262144",
+          "queue_end_exact_bytes": "524288",
+          "queue_start_bytes": 262144.0,
+          "queue_end_bytes": 524288.0,
+          "arrived_exact_bytes": "2097152/3",
+          "served_exact_bytes": "1310720/3",
+          "dropped_exact_bytes": "0"
+        },
+        {
+          "start_exact_ns": "131072/15",
+          "end_exact_ns": "20000",
+          "start_ns": 8738.133333333333,
+          "end_ns": 20000.0,
+          "arrival_bytes_per_second": 80000000000,
+          "queue_start_exact_bytes": "524288",
+          "queue_end_exact_bytes": "524288",
+          "queue_start_bytes": 524288.0,
+          "queue_end_bytes": 524288.0,
+          "arrived_exact_bytes": "2702848/3",
+          "served_exact_bytes": "1689280/3",
+          "dropped_exact_bytes": "337856"
+        },
+        {
+          "start_exact_ns": "20000",
+          "end_exact_ns": "362144/5",
+          "start_ns": 20000.0,
+          "end_ns": 72428.8,
+          "arrival_bytes_per_second": 40000000000,
+          "queue_start_exact_bytes": "524288",
+          "queue_end_exact_bytes": "0",
+          "queue_start_bytes": 524288.0,
+          "queue_end_bytes": 0.0,
+          "arrived_exact_bytes": "2097152",
+          "served_exact_bytes": "2621440",
+          "dropped_exact_bytes": "0"
+        },
+        {
+          "start_exact_ns": "362144/5",
+          "end_exact_ns": "120000",
+          "start_ns": 72428.8,
+          "end_ns": 120000.0,
+          "arrival_bytes_per_second": 40000000000,
+          "queue_start_exact_bytes": "0",
+          "queue_end_exact_bytes": "0",
+          "queue_start_bytes": 0.0,
+          "queue_end_bytes": 0.0,
+          "arrived_exact_bytes": "1902848",
+          "served_exact_bytes": "1902848",
+          "dropped_exact_bytes": "0"
+        }
+      ],
+      "summary": {
+        "average_offered_bytes_per_second": 46666666666.666664,
+        "peak_offered_bytes_per_second": 80000000000,
+        "arrived_exact_bytes": "5600000",
+        "served_exact_bytes": "5524288",
+        "excess_demand_exact_bytes": "600000",
+        "dropped_exact_bytes": "337856",
+        "dropped_bytes": 337856.0,
+        "peak_queue_exact_bytes": "524288",
+        "peak_queue_bytes": 524288.0,
+        "final_queue_exact_bytes": "0",
+        "final_queue_bytes": 0.0,
+        "queue_area_exact_byte_ns": "346264961024/15",
+        "mean_queue_bytes": 192369.4227911111,
+        "compatibility_exact": "9/10",
+        "compatibility": 0.9,
+        "last_drain_exact_ns": "362144/5",
+        "stop_arrivals_final_drain_exact_ns": "0",
+        "peak_queue_virtual_wait_exact_ns": "262144/25",
+        "actual_switch_queue_bytes": null,
+        "actual_job_completion_ns": null,
+        "feedback_applied_ns": 20000,
+        "unbounded_queue_at_feedback_exact_bytes": "862144",
+        "bounded_queue_at_feedback_exact_bytes": "524288",
+        "after_feedback_rate_below_capacity": true
+      },
+      "assumptions": [
+        "反馈教学例：到达80GB/s、出口50GB/s，20us后明确降低到40GB/s，再观察100us；默认初始256KiB、缓冲1MiB。反馈时间与速率是输入，不是DCQCN/PFC算法生成或硬件实测。",
+        "观察起点积压明确给定；反馈时刻切换到给定速率，观察窗口结束后不自动重复反馈周期。",
+        "流体队列q=max(0,q+(arrival-capacity)*dt)，有积压时满速服务，无积压时不凭空发送。有限buffer_bytes将队列截断，多余流体字节记为丢弃；精确有理数在区间内部插入排空／填满时刻，再积分队列面积。该丢弃是流体近似，不是包级队列或拥塞控制实现。",
+        "excess_demand是正超额速率积分，peak_queue是带排空过程的实际分析积压，二者一般不同。compatibility=1-excess/(capacity*window)，可为负，不是概率。",
+        "末尾排空时间假设观察结束后停止所有新输入；周期流继续时不能直接使用。peak_queue/capacity只是流体FIFO虚拟等待上界口径，不是实际请求或训练步耗时。",
+        "不模拟DCQCN/PFC、通信依赖或GPU反馈改变发送时刻，不将600MB教学积压写成真实交换机队列；稳定错峰还需实际漂移与反馈校准。",
+        "只观察一次反馈和指定后续窗口，不模拟多轮控制、ECN阈值、PFC暂停、丢弃数据重传或任务完成。减到出口速率只停止增长，不自动清空已有积压；减到出口以下才有余量排空。"
+      ]
+    },
+    "packets": {
+      "packet-reorder-balanced": [
+        {
+          "time_exact_ns": "2024",
+          "arrived": [
+            0,
+            1
+          ],
+          "released": [
+            0,
+            1
+          ],
+          "retained_sequences": [],
+          "retained_bytes": 0
+        },
+        {
+          "time_exact_ns": "3048",
+          "arrived": [
+            2,
+            3
+          ],
+          "released": [
+            2,
+            3
+          ],
+          "retained_sequences": [],
+          "retained_bytes": 0
+        },
+        {
+          "time_exact_ns": "4072",
+          "arrived": [
+            4,
+            5
+          ],
+          "released": [
+            4,
+            5
+          ],
+          "retained_sequences": [],
+          "retained_bytes": 0
+        },
+        {
+          "time_exact_ns": "5096",
+          "arrived": [
+            6,
+            7
+          ],
+          "released": [
+            6,
+            7
+          ],
+          "retained_sequences": [],
+          "retained_bytes": 0
+        }
+      ],
+      "packet-reorder-skewed": [
+        {
+          "time_exact_ns": "2024",
+          "arrived": [
+            0
+          ],
+          "released": [
+            0
+          ],
+          "retained_sequences": [],
+          "retained_bytes": 0
+        },
+        {
+          "time_exact_ns": "3048",
+          "arrived": [
+            2
+          ],
+          "released": [],
+          "retained_sequences": [
+            2
+          ],
+          "retained_bytes": 1024
+        },
+        {
+          "time_exact_ns": "4072",
+          "arrived": [
+            4
+          ],
+          "released": [],
+          "retained_sequences": [
+            2,
+            4
+          ],
+          "retained_bytes": 2048
+        },
+        {
+          "time_exact_ns": "5096",
+          "arrived": [
+            6
+          ],
+          "released": [],
+          "retained_sequences": [
+            2,
+            4,
+            6
+          ],
+          "retained_bytes": 3072
+        },
+        {
+          "time_exact_ns": "10024",
+          "arrived": [
+            1
+          ],
+          "released": [
+            1,
+            2
+          ],
+          "retained_sequences": [
+            4,
+            6
+          ],
+          "retained_bytes": 2048
+        },
+        {
+          "time_exact_ns": "11048",
+          "arrived": [
+            3
+          ],
+          "released": [
+            3,
+            4
+          ],
+          "retained_sequences": [
+            6
+          ],
+          "retained_bytes": 1024
+        },
+        {
+          "time_exact_ns": "12072",
+          "arrived": [
+            5
+          ],
+          "released": [
+            5,
+            6
+          ],
+          "retained_sequences": [],
+          "retained_bytes": 0
+        },
+        {
+          "time_exact_ns": "13096",
+          "arrived": [
+            7
+          ],
+          "released": [
+            7
+          ],
+          "retained_sequences": [],
+          "retained_bytes": 0
+        }
+      ],
+      "packet-reorder-loss": [
+        {
+          "time_exact_ns": "3048",
+          "arrived": [
+            2
+          ],
+          "released": [],
+          "retained_sequences": [
+            2
+          ],
+          "retained_bytes": 1024
+        },
+        {
+          "time_exact_ns": "4072",
+          "arrived": [
+            4
+          ],
+          "released": [],
+          "retained_sequences": [
+            2,
+            4
+          ],
+          "retained_bytes": 2048
+        },
+        {
+          "time_exact_ns": "5096",
+          "arrived": [
+            6
+          ],
+          "released": [],
+          "retained_sequences": [
+            2,
+            4,
+            6
+          ],
+          "retained_bytes": 3072
+        },
+        {
+          "time_exact_ns": "10024",
+          "arrived": [
+            1
+          ],
+          "released": [],
+          "retained_sequences": [
+            1,
+            2,
+            4,
+            6
+          ],
+          "retained_bytes": 4096
+        },
+        {
+          "time_exact_ns": "11048",
+          "arrived": [
+            3
+          ],
+          "released": [],
+          "retained_sequences": [
+            1,
+            2,
+            3,
+            4,
+            6
+          ],
+          "retained_bytes": 5120
+        },
+        {
+          "time_exact_ns": "12072",
+          "arrived": [
+            5
+          ],
+          "released": [],
+          "retained_sequences": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "retained_bytes": 6144
+        },
+        {
+          "time_exact_ns": "13096",
+          "arrived": [
+            7
+          ],
+          "released": [],
+          "retained_sequences": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "retained_bytes": 7168
+        },
+        {
+          "time_exact_ns": "23048",
+          "arrived": [
+            0
+          ],
+          "released": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "retained_sequences": [],
+          "retained_bytes": 0
+        }
+      ]
+    },
+    "plotted": "periodic_segments only; feedback and packets support prose"
+  },
+  "7-18": {
+    "kind": "conceptual_resource_graph",
+    "cycle": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "A"
+    ],
+    "acyclic": [
+      "request",
+      "execution",
+      "response"
+    ]
+  },
+  "7-19": {
+    "kind": "teaching",
+    "ready_ms": [
+      0,
+      0,
+      0,
+      2
+    ],
+    "exchange_ms": 0.4,
+    "ring_us": [
+      [
+        70.57344,
+        657.20256
+      ],
+      [
+        70.19114666666668,
+        265.7341866666667
+      ]
+    ],
+    "measured": [
+      {
+        "bytes": 4096,
+        "delay_s": 0,
+        "count": 20,
+        "completion_ms": {
+          "median": 1.6237504999999999,
+          "minimum": 1.48975,
+          "maximum": 1.74925
+        },
+        "arrival_spread_ms": {
+          "median": 0.0405205,
+          "minimum": 0.019,
+          "maximum": 0.080208
+        },
+        "post_last_arrival_ms": {
+          "median": 1.575875,
+          "minimum": 1.407208,
+          "maximum": 1.713666
+        },
+        "first_arriver_api_ms": {
+          "median": 1.539979,
+          "minimum": 1.444958,
+          "maximum": 1.6765
+        },
+        "last_arriver_api_ms": {
+          "median": 1.5612915,
+          "minimum": 1.407208,
+          "maximum": 1.686833
+        }
+      },
+      {
+        "bytes": 4096,
+        "delay_s": 0.002,
+        "count": 20,
+        "completion_ms": {
+          "median": 3.9532920000000003,
+          "minimum": 3.473833,
+          "maximum": 4.120667
+        },
+        "arrival_spread_ms": {
+          "median": 2.5420835,
+          "minimum": 2.081625,
+          "maximum": 2.592
+        },
+        "post_last_arrival_ms": {
+          "median": 1.406563,
+          "minimum": 1.31475,
+          "maximum": 1.568708
+        },
+        "first_arriver_api_ms": {
+          "median": 3.905583,
+          "minimum": 3.420875,
+          "maximum": 4.077083
+        },
+        "last_arriver_api_ms": {
+          "median": 1.3982915,
+          "minimum": 1.31475,
+          "maximum": 1.568708
+        }
+      },
+      {
+        "bytes": 4096,
+        "delay_s": 0.02,
+        "count": 20,
+        "completion_ms": {
+          "median": 26.604875,
+          "minimum": 24.971292,
+          "maximum": 27.611625
+        },
+        "arrival_spread_ms": {
+          "median": 25.055062,
+          "minimum": 23.337333,
+          "maximum": 25.075084
+        },
+        "post_last_arrival_ms": {
+          "median": 1.588417,
+          "minimum": 1.414792,
+          "maximum": 2.535708
+        },
+        "first_arriver_api_ms": {
+          "median": 26.562,
+          "minimum": 24.894292,
+          "maximum": 27.5035
+        },
+        "last_arriver_api_ms": {
+          "median": 1.579521,
+          "minimum": 1.414792,
+          "maximum": 2.535708
+        }
+      }
+    ],
+    "plotted": "ready_ms and exchange_ms only; ring and CPU observations support prose"
+  },
+  "7-4": {
+    "kind": "derived teaching",
+    "stages": 4,
+    "microbatches": 8,
+    "stage_ms": 1,
+    "start_ms": [
+      [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    ],
+    "finish_ms": 11
+  },
+  "7-5": {
+    "kind": "derived teaching",
+    "payload_bytes": 33554432,
+    "receiver_count": [
+      1,
+      4,
+      4
+    ],
+    "effective_Bps": [
+      25000000000.0,
+      100000000000.0,
+      40000000000.0
+    ],
+    "lower_ms": [
+      1.34217728,
+      0.33554432,
+      0.8388608000000001
+    ]
+  },
+  "7-6": {
+    "kind": "derived teaching",
+    "direct_GBs": 40,
+    "local_remaining_GBs": 60,
+    "relay_nics_GBs": 80,
+    "pre_downstream_GBs": 100
+  },
+  "7-8": {
+    "kind": "derived from saved snapshot costs",
+    "cases": {
+      "每次读取全部快照": {
+        "fraction": 1,
+        "crossover": 1.7092062033951336,
+        "remote_per_read_ms": 3.7798736,
+        "local_per_read_ms": 0.151994944,
+        "setup_ms": 6.2007927039999995
+      },
+      "每次只读取 10%": {
+        "fraction": 0.1,
+        "crossover": 17.092062033951333,
+        "remote_per_read_ms": 0.37798736000000005,
+        "local_per_read_ms": 0.0151994944,
+        "setup_ms": 6.2007927039999995
+      }
+    }
+  },
+  "7-9": {
+    "kind": "derived teaching",
+    "transaction_bytes": 256,
+    "lifetime_us": 2,
+    "bandwidth_GBs": 40,
+    "submission_cap_GBs": 2.56,
+    "periods": {
+      "128": {
+        "send_batch_us": 0.8192,
+        "cycle_us": 2,
+        "segments_us": [
+          [
+            0,
+            0.8192
+          ],
+          [
+            2,
+            0.8192
+          ]
+        ]
+      },
+      "313": {
+        "send_batch_us": 2.0032,
+        "cycle_us": 2.0032,
+        "segments_us": [
+          [
+            0,
+            2.0032
+          ],
+          [
+            2.0032,
+            1.9968
+          ]
+        ]
+      }
+    }
+  },
+  "7-10": {
+    "kind": "teaching ownership timeline",
+    "source_reusable_us": 5,
+    "consumer_start_us": 8,
+    "destination_reusable_us": 12,
+    "incorrect_overwrite_us": 6
+  },
+  "7-13": {
+    "kind": "saved example events",
+    "sample_us": 1,
+    "update_us": 2,
+    "flag_visible_us": 3,
+    "flag_read_us": 4,
+    "stale_delivery_us": 5,
+    "repaired_delivery_us": 6
+  },
+  "7-14": {
+    "kind": "saved events",
+    "operations": {
+      "completion-reclaim-book": [
+        {
+          "operation": 0,
+          "slot": 0,
+          "offered_ns": 0,
+          "submit_ns": 0,
+          "transfer_complete_ns": 5000,
+          "completion_consumed_ns": 20000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 15000
+        },
+        {
+          "operation": 1,
+          "slot": 1,
+          "offered_ns": 1000,
+          "submit_ns": 1000,
+          "transfer_complete_ns": 6000,
+          "completion_consumed_ns": 20000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 14000
+        },
+        {
+          "operation": 2,
+          "slot": 2,
+          "offered_ns": 2000,
+          "submit_ns": 2000,
+          "transfer_complete_ns": 7000,
+          "completion_consumed_ns": 20000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 13000
+        },
+        {
+          "operation": 3,
+          "slot": 3,
+          "offered_ns": 3000,
+          "submit_ns": 3000,
+          "transfer_complete_ns": 8000,
+          "completion_consumed_ns": 20000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 12000
+        },
+        {
+          "operation": 4,
+          "slot": 4,
+          "offered_ns": 4000,
+          "submit_ns": 4000,
+          "transfer_complete_ns": 9000,
+          "completion_consumed_ns": 40000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 31000
+        },
+        {
+          "operation": 5,
+          "slot": 5,
+          "offered_ns": 5000,
+          "submit_ns": 5000,
+          "transfer_complete_ns": 10000,
+          "completion_consumed_ns": 40000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 30000
+        },
+        {
+          "operation": 6,
+          "slot": 6,
+          "offered_ns": 6000,
+          "submit_ns": 6000,
+          "transfer_complete_ns": 11000,
+          "completion_consumed_ns": 40000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 29000
+        },
+        {
+          "operation": 7,
+          "slot": 7,
+          "offered_ns": 7000,
+          "submit_ns": 7000,
+          "transfer_complete_ns": 12000,
+          "completion_consumed_ns": 40000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 28000
+        },
+        {
+          "operation": 8,
+          "slot": 0,
+          "offered_ns": 8000,
+          "submit_ns": 20000,
+          "transfer_complete_ns": 25000,
+          "completion_consumed_ns": 60000,
+          "submission_delay_ns": 12000,
+          "reclaim_wait_ns": 35000
+        },
+        {
+          "operation": 9,
+          "slot": 1,
+          "offered_ns": 9000,
+          "submit_ns": 21000,
+          "transfer_complete_ns": 26000,
+          "completion_consumed_ns": 60000,
+          "submission_delay_ns": 12000,
+          "reclaim_wait_ns": 34000
+        },
+        {
+          "operation": 10,
+          "slot": 2,
+          "offered_ns": 10000,
+          "submit_ns": 22000,
+          "transfer_complete_ns": 27000,
+          "completion_consumed_ns": 60000,
+          "submission_delay_ns": 12000,
+          "reclaim_wait_ns": 33000
+        },
+        {
+          "operation": 11,
+          "slot": 3,
+          "offered_ns": 11000,
+          "submit_ns": 23000,
+          "transfer_complete_ns": 28000,
+          "completion_consumed_ns": 60000,
+          "submission_delay_ns": 12000,
+          "reclaim_wait_ns": 32000
+        },
+        {
+          "operation": 12,
+          "slot": 4,
+          "offered_ns": 12000,
+          "submit_ns": 40000,
+          "transfer_complete_ns": 45000,
+          "completion_consumed_ns": 80000,
+          "submission_delay_ns": 28000,
+          "reclaim_wait_ns": 35000
+        },
+        {
+          "operation": 13,
+          "slot": 5,
+          "offered_ns": 13000,
+          "submit_ns": 41000,
+          "transfer_complete_ns": 46000,
+          "completion_consumed_ns": 80000,
+          "submission_delay_ns": 28000,
+          "reclaim_wait_ns": 34000
+        },
+        {
+          "operation": 14,
+          "slot": 6,
+          "offered_ns": 14000,
+          "submit_ns": 42000,
+          "transfer_complete_ns": 47000,
+          "completion_consumed_ns": 80000,
+          "submission_delay_ns": 28000,
+          "reclaim_wait_ns": 33000
+        },
+        {
+          "operation": 15,
+          "slot": 7,
+          "offered_ns": 15000,
+          "submit_ns": 43000,
+          "transfer_complete_ns": 48000,
+          "completion_consumed_ns": 80000,
+          "submission_delay_ns": 28000,
+          "reclaim_wait_ns": 32000
+        }
+      ],
+      "completion-reclaim-more-slots": [
+        {
+          "operation": 0,
+          "slot": 0,
+          "offered_ns": 0,
+          "submit_ns": 0,
+          "transfer_complete_ns": 5000,
+          "completion_consumed_ns": 20000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 15000
+        },
+        {
+          "operation": 1,
+          "slot": 1,
+          "offered_ns": 1000,
+          "submit_ns": 1000,
+          "transfer_complete_ns": 6000,
+          "completion_consumed_ns": 20000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 14000
+        },
+        {
+          "operation": 2,
+          "slot": 2,
+          "offered_ns": 2000,
+          "submit_ns": 2000,
+          "transfer_complete_ns": 7000,
+          "completion_consumed_ns": 20000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 13000
+        },
+        {
+          "operation": 3,
+          "slot": 3,
+          "offered_ns": 3000,
+          "submit_ns": 3000,
+          "transfer_complete_ns": 8000,
+          "completion_consumed_ns": 20000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 12000
+        },
+        {
+          "operation": 4,
+          "slot": 4,
+          "offered_ns": 4000,
+          "submit_ns": 4000,
+          "transfer_complete_ns": 9000,
+          "completion_consumed_ns": 40000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 31000
+        },
+        {
+          "operation": 5,
+          "slot": 5,
+          "offered_ns": 5000,
+          "submit_ns": 5000,
+          "transfer_complete_ns": 10000,
+          "completion_consumed_ns": 40000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 30000
+        },
+        {
+          "operation": 6,
+          "slot": 6,
+          "offered_ns": 6000,
+          "submit_ns": 6000,
+          "transfer_complete_ns": 11000,
+          "completion_consumed_ns": 40000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 29000
+        },
+        {
+          "operation": 7,
+          "slot": 7,
+          "offered_ns": 7000,
+          "submit_ns": 7000,
+          "transfer_complete_ns": 12000,
+          "completion_consumed_ns": 40000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 28000
+        },
+        {
+          "operation": 8,
+          "slot": 8,
+          "offered_ns": 8000,
+          "submit_ns": 8000,
+          "transfer_complete_ns": 13000,
+          "completion_consumed_ns": 60000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 47000
+        },
+        {
+          "operation": 9,
+          "slot": 9,
+          "offered_ns": 9000,
+          "submit_ns": 9000,
+          "transfer_complete_ns": 14000,
+          "completion_consumed_ns": 60000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 46000
+        },
+        {
+          "operation": 10,
+          "slot": 10,
+          "offered_ns": 10000,
+          "submit_ns": 10000,
+          "transfer_complete_ns": 15000,
+          "completion_consumed_ns": 60000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 45000
+        },
+        {
+          "operation": 11,
+          "slot": 11,
+          "offered_ns": 11000,
+          "submit_ns": 11000,
+          "transfer_complete_ns": 16000,
+          "completion_consumed_ns": 60000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 44000
+        },
+        {
+          "operation": 12,
+          "slot": 12,
+          "offered_ns": 12000,
+          "submit_ns": 12000,
+          "transfer_complete_ns": 17000,
+          "completion_consumed_ns": 80000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 63000
+        },
+        {
+          "operation": 13,
+          "slot": 13,
+          "offered_ns": 13000,
+          "submit_ns": 13000,
+          "transfer_complete_ns": 18000,
+          "completion_consumed_ns": 80000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 62000
+        },
+        {
+          "operation": 14,
+          "slot": 14,
+          "offered_ns": 14000,
+          "submit_ns": 14000,
+          "transfer_complete_ns": 19000,
+          "completion_consumed_ns": 80000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 61000
+        },
+        {
+          "operation": 15,
+          "slot": 15,
+          "offered_ns": 15000,
+          "submit_ns": 15000,
+          "transfer_complete_ns": 20000,
+          "completion_consumed_ns": 80000,
+          "submission_delay_ns": 0,
+          "reclaim_wait_ns": 60000
+        }
+      ]
+    }
+  },
+  "7-16": {
+    "kind": "saved segments",
+    "queue_segments": [
+      {
+        "start_exact_ns": "0",
+        "end_exact_ns": "131072/15",
+        "start_ns": 0.0,
+        "end_ns": 8738.133333333333,
+        "arrival_bytes_per_second": 80000000000,
+        "queue_start_exact_bytes": "262144",
+        "queue_end_exact_bytes": "524288",
+        "queue_start_bytes": 262144.0,
+        "queue_end_bytes": 524288.0,
+        "arrived_exact_bytes": "2097152/3",
+        "served_exact_bytes": "1310720/3",
+        "dropped_exact_bytes": "0"
+      },
+      {
+        "start_exact_ns": "131072/15",
+        "end_exact_ns": "20000",
+        "start_ns": 8738.133333333333,
+        "end_ns": 20000.0,
+        "arrival_bytes_per_second": 80000000000,
+        "queue_start_exact_bytes": "524288",
+        "queue_end_exact_bytes": "524288",
+        "queue_start_bytes": 524288.0,
+        "queue_end_bytes": 524288.0,
+        "arrived_exact_bytes": "2702848/3",
+        "served_exact_bytes": "1689280/3",
+        "dropped_exact_bytes": "337856"
+      },
+      {
+        "start_exact_ns": "20000",
+        "end_exact_ns": "362144/5",
+        "start_ns": 20000.0,
+        "end_ns": 72428.8,
+        "arrival_bytes_per_second": 40000000000,
+        "queue_start_exact_bytes": "524288",
+        "queue_end_exact_bytes": "0",
+        "queue_start_bytes": 524288.0,
+        "queue_end_bytes": 0.0,
+        "arrived_exact_bytes": "2097152",
+        "served_exact_bytes": "2621440",
+        "dropped_exact_bytes": "0"
+      },
+      {
+        "start_exact_ns": "362144/5",
+        "end_exact_ns": "120000",
+        "start_ns": 72428.8,
+        "end_ns": 120000.0,
+        "arrival_bytes_per_second": 40000000000,
+        "queue_start_exact_bytes": "0",
+        "queue_end_exact_bytes": "0",
+        "queue_start_bytes": 0.0,
+        "queue_end_bytes": 0.0,
+        "arrived_exact_bytes": "1902848",
+        "served_exact_bytes": "1902848",
+        "dropped_exact_bytes": "0"
+      }
+    ],
+    "feedback_us": 20
+  },
+  "7-17": {
+    "kind": "saved packet events",
+    "cases": {
+      "packet-reorder-balanced": {
+        "transmissions": [
+          {
+            "sequence": 0,
+            "bytes": 1024,
+            "path": 0,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "0",
+            "end_exact_ns": "1024",
+            "arrival_exact_ns": "2024"
+          },
+          {
+            "sequence": 1,
+            "bytes": 1024,
+            "path": 1,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "0",
+            "end_exact_ns": "1024",
+            "arrival_exact_ns": "2024"
+          },
+          {
+            "sequence": 2,
+            "bytes": 1024,
+            "path": 0,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "1024",
+            "end_exact_ns": "2048",
+            "arrival_exact_ns": "3048"
+          },
+          {
+            "sequence": 3,
+            "bytes": 1024,
+            "path": 1,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "1024",
+            "end_exact_ns": "2048",
+            "arrival_exact_ns": "3048"
+          },
+          {
+            "sequence": 4,
+            "bytes": 1024,
+            "path": 0,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "2048",
+            "end_exact_ns": "3072",
+            "arrival_exact_ns": "4072"
+          },
+          {
+            "sequence": 5,
+            "bytes": 1024,
+            "path": 1,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "2048",
+            "end_exact_ns": "3072",
+            "arrival_exact_ns": "4072"
+          },
+          {
+            "sequence": 6,
+            "bytes": 1024,
+            "path": 0,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "3072",
+            "end_exact_ns": "4096",
+            "arrival_exact_ns": "5096"
+          },
+          {
+            "sequence": 7,
+            "bytes": 1024,
+            "path": 1,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "3072",
+            "end_exact_ns": "4096",
+            "arrival_exact_ns": "5096"
+          }
+        ],
+        "delivery": [
+          {
+            "sequence": 0,
+            "delivery_exact_ns": "2024"
+          },
+          {
+            "sequence": 1,
+            "delivery_exact_ns": "2024"
+          },
+          {
+            "sequence": 2,
+            "delivery_exact_ns": "3048"
+          },
+          {
+            "sequence": 3,
+            "delivery_exact_ns": "3048"
+          },
+          {
+            "sequence": 4,
+            "delivery_exact_ns": "4072"
+          },
+          {
+            "sequence": 5,
+            "delivery_exact_ns": "4072"
+          },
+          {
+            "sequence": 6,
+            "delivery_exact_ns": "5096"
+          },
+          {
+            "sequence": 7,
+            "delivery_exact_ns": "5096"
+          }
+        ]
+      },
+      "packet-reorder-skewed": {
+        "transmissions": [
+          {
+            "sequence": 0,
+            "bytes": 1024,
+            "path": 0,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "0",
+            "end_exact_ns": "1024",
+            "arrival_exact_ns": "2024"
+          },
+          {
+            "sequence": 1,
+            "bytes": 1024,
+            "path": 1,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "0",
+            "end_exact_ns": "1024",
+            "arrival_exact_ns": "10024"
+          },
+          {
+            "sequence": 2,
+            "bytes": 1024,
+            "path": 0,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "1024",
+            "end_exact_ns": "2048",
+            "arrival_exact_ns": "3048"
+          },
+          {
+            "sequence": 3,
+            "bytes": 1024,
+            "path": 1,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "1024",
+            "end_exact_ns": "2048",
+            "arrival_exact_ns": "11048"
+          },
+          {
+            "sequence": 4,
+            "bytes": 1024,
+            "path": 0,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "2048",
+            "end_exact_ns": "3072",
+            "arrival_exact_ns": "4072"
+          },
+          {
+            "sequence": 5,
+            "bytes": 1024,
+            "path": 1,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "2048",
+            "end_exact_ns": "3072",
+            "arrival_exact_ns": "12072"
+          },
+          {
+            "sequence": 6,
+            "bytes": 1024,
+            "path": 0,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "3072",
+            "end_exact_ns": "4096",
+            "arrival_exact_ns": "5096"
+          },
+          {
+            "sequence": 7,
+            "bytes": 1024,
+            "path": 1,
+            "retry": false,
+            "lost": false,
+            "start_exact_ns": "3072",
+            "end_exact_ns": "4096",
+            "arrival_exact_ns": "13096"
+          }
+        ],
+        "delivery": [
+          {
+            "sequence": 0,
+            "delivery_exact_ns": "2024"
+          },
+          {
+            "sequence": 1,
+            "delivery_exact_ns": "10024"
+          },
+          {
+            "sequence": 2,
+            "delivery_exact_ns": "10024"
+          },
+          {
+            "sequence": 3,
+            "delivery_exact_ns": "11048"
+          },
+          {
+            "sequence": 4,
+            "delivery_exact_ns": "11048"
+          },
+          {
+            "sequence": 5,
+            "delivery_exact_ns": "12072"
+          },
+          {
+            "sequence": 6,
+            "delivery_exact_ns": "12072"
+          },
+          {
+            "sequence": 7,
+            "delivery_exact_ns": "13096"
+          }
+        ]
+      }
+    }
+  },
+  "7-20": {
+    "kind": "derived teaching schedules",
+    "compute_ms": 20,
+    "update_ms": 2,
+    "cases": [
+      {
+        "label": "连续环，串行",
+        "ready_ms": 20,
+        "comm_ms": 8.836038400000001,
+        "update_start_ms": 28.8360384,
+        "finish_ms": 30.8360384
+      },
+      {
+        "label": "分层归约，串行",
+        "ready_ms": 20,
+        "comm_ms": 6.5591142399999995,
+        "update_start_ms": 26.55911424,
+        "finish_ms": 28.55911424
+      },
+      {
+        "label": "分层，只有 128 项在途",
+        "ready_ms": 20,
+        "comm_ms": 13.81394944,
+        "update_start_ms": 33.81394944,
+        "finish_ms": 35.81394944
+      },
+      {
+        "label": "分层，17 ms 就绪",
+        "ready_ms": 17,
+        "comm_ms": 6.5591142399999995,
+        "update_start_ms": 23.55911424,
+        "finish_ms": 25.55911424
+      },
+      {
+        "label": "分层，12 ms 就绪",
+        "ready_ms": 12,
+        "comm_ms": 6.5591142399999995,
+        "update_start_ms": 20,
+        "finish_ms": 22
+      },
+      {
+        "label": "分层，出口降至 20 GB/s",
+        "ready_ms": 17,
+        "comm_ms": 11.592279040000001,
+        "update_start_ms": 28.59227904,
+        "finish_ms": 30.59227904
+      }
+    ]
+  },
+  "7-21": {
+    "kind": "derived teaching",
+    "input_bytes": [
+      1024.0,
+      1066.4328461054617,
+      1110.6240383326135,
+      1156.646439601748,
+      1204.5759321506257,
+      1254.4915426499338,
+      1306.47557250332,
+      1360.6137335468532,
+      1416.9952893716309,
+      1475.7132025025585,
+      1536.864287675985,
+      1600.5493714688914,
+      1666.8734585428488,
+      1735.9459047768594,
+      1807.88059757452,
+      1882.79614364281,
+      1960.8160645521375,
+      2042.0690004000471,
+      2126.688921914411,
+      2214.8153513458406,
+      2306.5935925134904,
+      2402.1749703835767,
+      2501.7170805756446,
+      2605.3840492079426,
+      2713.346803510349,
+      2825.783353651075,
+      2942.879086241749,
+      3064.82707000491,
+      3191.8283741078144,
+      3324.0923996874644,
+      3461.8372251135115,
+      3605.2899655582405,
+      3754.6871474665386,
+      3910.2750985432976,
+      4072.3103539012172,
+      4241.060079038685,
+      4416.802510345198,
+      4599.827413860523,
+      4790.4365630441425,
+      4988.9442363426115,
+      5195.677735375282,
+      5410.977924592813,
+      5635.199793298185,
+      5868.7130409569245,
+      6111.902686761651,
+      6365.169704455909,
+      6628.931683464036,
+      6903.623517417206,
+      7189.698121210776,
+      7487.627177775289,
+      7797.901915792485,
+      8121.033919638495,
+      8457.555972889717,
+      8808.02293678225,
+      9173.012665073134,
+      9553.1269568119,
+      9948.992548593476,
+      10361.2621479283,
+      10790.615509433546,
+      11237.76055562008,
+      11703.43454412268,
+      12188.40528329857,
+      12693.472398198166,
+      13219.468648995704,
+      13767.261304053118,
+      14337.753569881803,
+      14931.886080359185,
+      15550.638447656234,
+      16195.030877432651,
+      16866.125850963228,
+      17565.029876968354,
+      18292.89531603793,
+      19050.922280655876,
+      19840.3606139588,
+      20662.511950490978,
+      21518.731862353736,
+      22410.43209428725,
+      23339.082891371047,
+      24306.215423179816,
+      25313.424308392714,
+      26362.37024401795,
+      27454.78274356838,
+      28592.462988701856,
+      29777.286799029705,
+      31011.20772498815,
+      32296.260268873844,
+      33634.56323935335,
+      35028.32324497828,
+      36479.83833246507,
+      37991.501775740115,
+      39565.80602199537,
+      41205.34680126286,
+      42912.82740628249,
+      44691.06314972103,
+      46542.98600608979,
+      48471.64944601655,
+      50480.2334708415,
+      52572.04985583762,
+      54750.54761070221,
+      57019.31866632206,
+      59382.10379718765,
+      61842.79878922333,
+      64405.46086320203,
+      67074.31536433448,
+      69853.76272906501,
+      72748.38574055892,
+      75762.95708484598,
+      78902.44722007631,
+      82172.03257186721,
+      85577.10406824913,
+      89123.27602828736,
+      92816.39541903227,
+      96662.55149606307,
+      100668.08584351774,
+      104839.60283016761,
+      109183.98049877143,
+      113708.38190666809,
+      118420.2669363034,
+      123327.40459516662,
+      128437.88582541324,
+      133760.13684430066,
+      139302.93303742548,
+      145075.41342767607,
+      151087.09574375284,
+      157347.89211310432,
+      163868.12540514919,
+      170658.54625173836,
+      177730.35077291215,
+      185095.1990371864,
+      192765.23428680014,
+      200753.1029596275,
+      209071.9755407598,
+      217735.56827814854,
+      226758.16579810175,
+      236154.6446579336,
+      245940.49787459348,
+      256131.86046972382,
+      266745.53607325605,
+      277799.02462942357,
+      289310.55125085707,
+      301299.09626835136,
+      313784.4265258408,
+      326787.1279721902,
+      340328.63960352744,
+      354431.28881209955,
+      369118.3281999165,
+      384413.97391789756,
+      400343.44559372513,
+      416933.007914241,
+      434210.0139309516,
+      452202.95016003633,
+      470941.4835512247,
+      490456.51040298963,
+      510780.2073047008,
+      531946.0841897355,
+      553989.0395870258,
+      576945.4181621324,
+      600853.0706427236,
+      625751.4162272717,
+      651681.5075798567,
+      678686.0985182457,
+      706809.714506859,
+      736098.7260708389,
+      766601.4252522753,
+      798368.1052346561,
+      831451.143266816,
+      865905.0870231147,
+      901786.7445422426,
+      939155.277892933,
+      978072.3007210225,
+      1018601.9798387088,
+      1060811.1410234894,
+      1104769.379201231,
+      1150549.17319505,
+      1198226.0052291835,
+      1247878.4853848992,
+      1299588.481213664,
+      1353441.2527212529,
+      1409525.5929453762,
+      1467933.9743586201,
+      1528762.70133805,
+      1592112.068952941,
+      1658086.5283323645,
+      1726794.8588853602,
+      1798350.3476576088,
+      1872870.976120363,
+      1950479.6146995607,
+      2031304.2253659554,
+      2115478.072620183,
+      2203139.943220742,
+      2294434.3750171075,
+      2389511.8952653343,
+      2488529.2688190066,
+      2591649.7566048815,
+      2699043.384809251,
+      2810887.2252189945,
+      2927365.687179465,
+      3048670.821650654,
+      3175002.63786287,
+      3306569.433094191,
+      3443588.1361132455,
+      3586284.664853763,
+      3734894.2989105126,
+      3889662.067470902,
+      4050843.1533217216,
+      4218703.313597373,
+      4393519.317963078,
+      4575579.404955757,
+      4765183.7572348695,
+      4962644.9965268485,
+      5168288.699079247,
+      5382453.932474393,
+      5605493.814687702,
+      5837776.096312472,
+      6079683.76691108,
+      6331615.686492332,
+      6593987.243156246,
+      6867231.037990456,
+      7151797.598347589,
+      7448156.1206797175,
+      7756795.244154582,
+      8078223.856329169,
+      8412971.932209123,
+      8761591.408077292,
+      9124657.091532258,
+      9502767.60923744,
+      9896546.393943246,
+      10306642.712409811,
+      10733732.735925071,
+      11178520.65518354,
+      11641739.841363363,
+      12124154.05531688,
+      12626558.706867836,
+      13149782.166291771,
+      13694687.130141925,
+      14262172.04367295,
+      14853172.582206937,
+      15468663.193885317,
+      16109658.706349542,
+      16777216.0
+    ],
+    "baseline_us": [
+      70.07168,
+      70.07465029922739,
+      70.07774368268328,
+      70.08096525077212,
+      70.08432031525054,
+      70.08781440798549,
+      70.09145329007524,
+      70.09524296134828,
+      70.09918967025601,
+      70.10329992417518,
+      70.10758050013732,
+      70.11203845600282,
+      70.116681142098,
+      70.12151621333437,
+      70.12655164183022,
+      70.131795730055,
+      70.13725712451865,
+      70.142944830028,
+      70.14886822453401,
+      70.1550370745942,
+      70.16146155147594,
+      70.16815224792686,
+      70.17512019564029,
+      70.18237688344456,
+      70.18993427624572,
+      70.19780483475557,
+      70.20600153603692,
+      70.21453789490035,
+      70.22342798618755,
+      70.23268646797813,
+      70.24232860575795,
+      70.25237029758908,
+      70.26282810032266,
+      70.27371925689803,
+      70.28506172477309,
+      70.2968742055327,
+      70.30917617572416,
+      70.32198791897024,
+      70.3353305594131,
+      70.34922609654399,
+      70.36369744147628,
+      70.3787684547215,
+      70.39446398553088,
+      70.41080991286698,
+      70.42783318807332,
+      70.44556187931191,
+      70.46402521784248,
+      70.48325364621921,
+      70.50327886848476,
+      70.52413390244428,
+      70.54585313410547,
+      70.56847237437469,
+      70.59202891810229,
+      70.61656160557476,
+      70.64211088655512,
+      70.66871888697683,
+      70.69642947840154,
+      70.72528835035499,
+      70.75534308566034,
+      70.7866432388934,
+      70.81924041808858,
+      70.8531883698309,
+      70.88854306787387,
+      70.9253628054297,
+      70.96370829128372,
+      71.00364274989172,
+      71.04523202562514,
+      71.08854469133594,
+      71.13365216142029,
+      71.18062880956742,
+      71.22955209138779,
+      71.28050267212265,
+      71.33356455964591,
+      71.38882524297712,
+      71.44637583653437,
+      71.50631123036476,
+      71.56873024660011,
+      71.63373580239598,
+      71.70143507962258,
+      71.77193970158748,
+      71.84536591708125,
+      71.9218347920498,
+      72.00147240920913,
+      72.08441007593208,
+      72.17078454074917,
+      72.26073821882117,
+      72.35441942675473,
+      72.45198262714848,
+      72.55358868327255,
+      72.65940512430181,
+      72.76960642153968,
+      72.8843742760884,
+      73.00389791843978,
+      73.12837442048047,
+      73.25800902042629,
+      73.39301546122115,
+      73.53361634295891,
+      73.68004348990863,
+      73.83253833274915,
+      73.99135230664254,
+      74.15674726580313,
+      74.32899591524563,
+      74.50838226042414,
+      74.69520207550342,
+      74.88976339103455,
+      75.09238700183913,
+      75.30340699593921,
+      75.52317130540534,
+      75.75204228003071,
+      75.99039728477744,
+      76.23862932198011,
+      76.49714767933226,
+      76.76637860472441,
+      77.04676600904624,
+      77.33877219811173,
+      77.642878634914,
+      77.95958673346676,
+      78.28941868554124,
+      78.63291832166166,
+      78.99065200777892,
+      79.36320957910105,
+      79.75120531261979,
+      80.15527893993732,
+      80.5760967020627,
+      81.0143524479173,
+      81.47076877836045,
+      81.94609823762168,
+      82.44112455410385,
+      82.95666393260305,
+      83.49356640007602,
+      84.05271720717393,
+      84.63503828785319,
+      85.2414897794704,
+      85.87307160586712,
+      86.53082512605535,
+      87.21583485122154,
+      87.92923023288067,
+      88.67218752512792,
+      89.44593172405965,
+      90.25173858756,
+      91.09093673878459,
+      91.96490985680886,
+      92.87509895805331,
+      93.82300477224692,
+      94.81019021684696,
+      95.83828297399415,
+      96.90897817425282,
+      98.02404119156076,
+      99.18531055399687,
+      100.39470097516661,
+      101.65420651120255,
+      102.96590384858573,
+      104.33195572820927,
+      105.75461451132905,
+      107.23622589328149,
+      108.77923277109181,
+      110.38617927134926,
+      112.05971494499065,
+      113.80259913590902,
+      115.61770553058997,
+      117.5080268962772,
+      119.47668001548013,
+      121.52691082495872,
+      123.66209976765927,
+      125.88576736642592,
+      128.20158002867714,
+      130.61335609161802,
+      133.125072117957,
+      135.7408694525053,
+      138.46506105047158,
+      141.30213858870962,
+      144.25677987164426,
+      147.3338565440862,
+      150.5384421236535,
+      153.87582036604283,
+      157.35149397694295,
+      160.97119368495646,
+      164.74088769048768,
+      168.66679150617634,
+      172.7553782051034,
+      177.0133890936635,
+      181.44784482670588,
+      186.06605698326553,
+      190.8756401219752,
+      195.8845243360326,
+      201.1009683284254,
+      206.53357302896924,
+      212.19129577561688,
+      218.08346508341285,
+      224.21979602545196,
+      230.61040625119753,
+      237.2658326685734,
+      244.19704881733045,
+      251.4154829623417,
+      258.93303693664757,
+      266.7621057653296,
+      274.9155981025625,
+      283.4069575155458,
+      292.2501846504009,
+      301.45986031659334,
+      311.0511695279272,
+      321.0399265397634,
+      331.4426009237359,
+      342.2763447229632,
+      353.55902073252054,
+      365.3092319518161,
+      377.54635225741544,
+      390.29055834690297,
+      403.56286300644086,
+      417.38514975687934,
+      431.7802089355473,
+      446.7717752732076,
+      462.38456702813914,
+      478.64432674187304,
+      495.5778636837756,
+      513.2130980544632,
+      531.5791070209373,
+      550.706172659332,
+      570.6258318843313,
+      591.3709284475801,
+      612.9756670908207,
+      635.4756699430418,
+      658.9080352546387,
+      683.3113985654104,
+      708.7259964072581,
+      735.1937326466208,
+      762.7582475760272,
+      791.4649898686868,
+      821.361291514755,
+      852.4964458628478,
+      884.9217888954354,
+      918.6907838721816,
+      953.8591094807484,
+      990.484751640424,
+      1028.6280991099347,
+      1068.3520430571064,
+      1109.7220807544857,
+      1152.8064235719721,
+      1197.676109444468,
+      1244.4051200000001
+    ],
+    "bandwidth_upgrade_us": [
+      70.02389333333333,
+      70.0248834330758,
+      70.02591456089442,
+      70.02698841692404,
+      70.02810677175017,
+      70.02927146932849,
+      70.03048443002508,
+      70.03174765378276,
+      70.03306322341867,
+      70.0344333080584,
+      70.03586016671244,
+      70.03734615200094,
+      70.03889371403267,
+      70.04050540444479,
+      70.04218388061007,
+      70.04393191001833,
+      70.04575237483955,
+      70.047648276676,
+      70.04962274151134,
+      70.05167902486474,
+      70.05382051715864,
+      70.05605074930895,
+      70.05837339854676,
+      70.06079229448152,
+      70.06331142541524,
+      70.06593494491852,
+      70.06866717867898,
+      70.07151263163345,
+      70.07447599539584,
+      70.07756215599271,
+      70.08077620191932,
+      70.0841234325297,
+      70.08760936677422,
+      70.09123975229934,
+      70.09502057492436,
+      70.0989580685109,
+      70.10305872524138,
+      70.10732930632341,
+      70.1117768531377,
+      70.11640869884799,
+      70.1212324804921,
+      70.12625615157383,
+      70.13148799517695,
+      70.13693663762233,
+      70.1426110626911,
+      70.1485206264373,
+      70.15467507261415,
+      70.16108454873974,
+      70.16775962282826,
+      70.17471130081476,
+      70.18195104470182,
+      70.18949079145823,
+      70.19734297270077,
+      70.20552053519158,
+      70.21403696218503,
+      70.22290629565894,
+      70.23214315946719,
+      70.24176278345166,
+      70.25178102855345,
+      70.26221441296447,
+      70.27308013936286,
+      70.28439612327696,
+      70.29618102262462,
+      70.30845426847657,
+      70.32123609709457,
+      70.33454758329724,
+      70.34841067520838,
+      70.36284823044531,
+      70.37788405380677,
+      70.39354293652248,
+      70.40985069712926,
+      70.42683422404089,
+      70.44452151988197,
+      70.46294174765904,
+      70.48212527884479,
+      70.50210374345492,
+      70.52291008220004,
+      70.54457860079866,
+      70.56714502654086,
+      70.59064656719583,
+      70.61512197236041,
+      70.64061159734993,
+      70.66715746973638,
+      70.69480335864402,
+      70.72359484691638,
+      70.75357940627373,
+      70.78480647558492,
+      70.81732754238283,
+      70.85119622775751,
+      70.88646837476728,
+      70.92320214051323,
+      70.96145809202946,
+      71.00129930614659,
+      71.0427914734935,
+      71.08600300680877,
+      71.13100515374039,
+      71.17787211431964,
+      71.22668116330287,
+      71.27751277758306,
+      71.33045076888085,
+      71.38558242193437,
+      71.4429986384152,
+      71.50279408680805,
+      71.56506735850114,
+      71.62992113034485,
+      71.69746233394638,
+      71.76780233197974,
+      71.84105710180178,
+      71.9173474266769,
+      71.99679909492582,
+      72.0795431073267,
+      72.16571589311076,
+      72.25545953490814,
+      72.34892200301542,
+      72.44625739937058,
+      72.547626211638,
+      72.65319557782226,
+      72.76313956184708,
+      72.87763944055389,
+      72.99688400259298,
+      73.12106985970036,
+      73.25040177087327,
+      73.3850929799791,
+      73.52536556735423,
+      73.67145081597243,
+      73.82358959278682,
+      73.9820327458739,
+      74.14704151803461,
+      74.31888797753435,
+      74.497855466692,
+      74.68423906905798,
+      74.87834609595106,
+      75.0804965931568,
+      75.29102386862237,
+      75.51027504201845,
+      75.73861161707384,
+      75.9764100776269,
+      76.22406250837598,
+      76.48197724135322,
+      76.75057952918667,
+      77.03031224626153,
+      77.32163661893628,
+      77.62503298601777,
+      77.94100159074898,
+      78.27006340561566,
+      78.61276099133138,
+      78.96965939141761,
+      79.34134706385359,
+      79.72843685133229,
+      80.13156699172221,
+      80.55140217040085,
+      80.98863461619524,
+      81.44398524273643,
+      81.91820483710968,
+      82.4120752977605,
+      82.92641092369726,
+      83.46205975711642,
+      84.01990498166356,
+      84.60086637863634,
+      85.20590184352999,
+      85.83600896542573,
+      86.49222667182671,
+      87.17563694165291,
+      87.88736658921975,
+      88.62858912214197,
+      89.40052667622571,
+      90.20445203053934,
+      91.04169070598566,
+      91.91362315083511,
+      92.82168701682386,
+      93.76737952956987,
+      94.75225995721475,
+      95.77795218136205,
+      96.84614737455117,
+      97.95860678868095,
+      99.11716465898098,
+      100.32373122831882,
+      101.58029589682923,
+      102.88893050205877,
+      104.25179273503447,
+      105.67112969788784,
+      107.14928160890196,
+      108.6886856610885,
+      110.29188004065841,
+      111.96150811201088,
+      113.7003227761418,
+      115.51119100965641,
+      117.3970985918723,
+      119.36115502780427,
+      121.40659867515066,
+      123.53680208373251,
+      125.75527755619115,
+      128.06568293911016,
+      130.4718276541139,
+      132.97767897888252,
+      135.5873685884432,
+      138.30519936752086,
+      141.13565250518195,
+      144.08339488346695,
+      147.1532867721978,
+      150.35038984264241,
+      153.67997551325448,
+      157.14753364124527,
+      160.75878157432106,
+      164.51967357750686,
+      168.43641065060535,
+      172.5154507524718,
+      176.76351944896766,
+      181.18762100214695,
+      185.79504991895976,
+      190.59340297851577,
+      195.59059175773587,
+      200.79485567604638,
+      206.21477558062435,
+      211.85928789459186,
+      217.73769935148775,
+      223.8597023403124,
+      230.23539088644398,
+      236.87527729477708,
+      243.7903094825267,
+      250.99188903027357,
+      258.49188998101397,
+      266.30267841821285,
+      274.43713285513684,
+      282.90866546908603,
+      291.7312442155403,
+      300.91941585867573,
+      310.4883299562289,
+      320.4537638382517,
+      330.8321486209493,
+      341.64059629847844,
+      352.89692795739387,
+      364.61970316024946,
+      376.82825054680796,
+      389.54269970331154,
+      402.7840143523688,
+      416.5740269181619,
+      430.9354745239907,
+      445.89203648148936,
+      461.4683733333334
+    ],
+    "startup_upgrade_us": [
+      28.07168,
+      28.074650299227383,
+      28.077743682683284,
+      28.080965250772124,
+      28.084320315250544,
+      28.087814407985494,
+      28.091453290075233,
+      28.09524296134828,
+      28.099189670256013,
+      28.10329992417518,
+      28.10758050013732,
+      28.11203845600282,
+      28.116681142098,
+      28.12151621333438,
+      28.126551641830215,
+      28.131795730054996,
+      28.13725712451865,
+      28.142944830028004,
+      28.14886822453401,
+      28.15503707459421,
+      28.161461551475945,
+      28.16815224792685,
+      28.175120195640297,
+      28.182376883444554,
+      28.189934276245726,
+      28.197804834755576,
+      28.206001536036922,
+      28.214537894900342,
+      28.22342798618755,
+      28.232686467978123,
+      28.242328605757947,
+      28.252370297589078,
+      28.262828100322658,
+      28.27371925689803,
+      28.285061724773087,
+      28.296874205532706,
+      28.309176175724165,
+      28.321987918970237,
+      28.33533055941309,
+      28.349226096543983,
+      28.36369744147627,
+      28.378768454721495,
+      28.394463985530873,
+      28.410809912866984,
+      28.427833188073315,
+      28.445561879311914,
+      28.464025217842483,
+      28.483253646219204,
+      28.503278868484756,
+      28.52413390244427,
+      28.545853134105474,
+      28.568472374374693,
+      28.59202891810228,
+      28.61656160557476,
+      28.64211088655512,
+      28.668718886976833,
+      28.696429478401544,
+      28.72528835035498,
+      28.75534308566035,
+      28.786643238893404,
+      28.819240418088587,
+      28.8531883698309,
+      28.888543067873872,
+      28.9253628054297,
+      28.96370829128372,
+      29.003642749891725,
+      29.045232025625143,
+      29.088544691335937,
+      29.133652161420287,
+      29.180628809567427,
+      29.229552091387784,
+      29.280502672122655,
+      29.33356455964591,
+      29.388825242977116,
+      29.44637583653437,
+      29.506311230364762,
+      29.568730246600108,
+      29.633735802395975,
+      29.701435079622588,
+      29.771939701587492,
+      29.845365917081256,
+      29.921834792049786,
+      30.00147240920913,
+      30.08441007593208,
+      30.17078454074917,
+      30.260738218821167,
+      30.354419426754735,
+      30.45198262714848,
+      30.553588683272555,
+      30.65940512430181,
+      30.769606421539677,
+      30.8843742760884,
+      31.003897918439776,
+      31.128374420480473,
+      31.258009020426286,
+      31.393015461221157,
+      31.533616342958904,
+      31.680043489908634,
+      31.832538332749156,
+      31.991352306642543,
+      32.15674726580313,
+      32.328995915245635,
+      32.50838226042414,
+      32.69520207550342,
+      32.88976339103455,
+      33.09238700183913,
+      33.30340699593922,
+      33.52317130540534,
+      33.75204228003071,
+      33.99039728477744,
+      34.23862932198011,
+      34.49714767933226,
+      34.766378604724416,
+      35.046766009046245,
+      35.338772198111734,
+      35.642878634914,
+      35.959586733466764,
+      36.289418685541236,
+      36.63291832166166,
+      36.99065200777893,
+      37.363209579101046,
+      37.75120531261978,
+      38.155278939937325,
+      38.5760967020627,
+      39.014352447917304,
+      39.470768778360444,
+      39.94609823762168,
+      40.44112455410385,
+      40.95666393260305,
+      41.49356640007601,
+      42.05271720717393,
+      42.635038287853185,
+      43.2414897794704,
+      43.873071605867125,
+      44.53082512605535,
+      45.215834851221544,
+      45.92923023288067,
+      46.672187525127924,
+      47.44593172405965,
+      48.25173858756,
+      49.09093673878459,
+      49.96490985680886,
+      50.875098958053314,
+      51.823004772246925,
+      52.81019021684697,
+      53.838282973994154,
+      54.90897817425282,
+      56.024041191560755,
+      57.18531055399687,
+      58.394700975166614,
+      59.65420651120254,
+      60.96590384858573,
+      62.33195572820927,
+      63.75461451132905,
+      65.23622589328149,
+      66.77923277109181,
+      68.38617927134926,
+      70.05971494499065,
+      71.80259913590902,
+      73.61770553058997,
+      75.5080268962772,
+      77.47668001548013,
+      79.52691082495872,
+      81.66209976765927,
+      83.88576736642592,
+      86.20158002867713,
+      88.61335609161803,
+      91.12507211795699,
+      93.74086945250531,
+      96.46506105047158,
+      99.30213858870961,
+      102.25677987164426,
+      105.33385654408617,
+      108.53844212365351,
+      111.87582036604284,
+      115.35149397694293,
+      118.97119368495646,
+      122.7408876904877,
+      126.66679150617634,
+      130.7553782051034,
+      135.0133890936635,
+      139.44784482670588,
+      144.06605698326553,
+      148.8756401219752,
+      153.8845243360326,
+      159.1009683284254,
+      164.53357302896924,
+      170.19129577561688,
+      176.08346508341285,
+      182.21979602545196,
+      188.61040625119753,
+      195.2658326685734,
+      202.19704881733045,
+      209.4154829623417,
+      216.93303693664754,
+      224.7621057653296,
+      232.91559810256254,
+      241.4069575155458,
+      250.2501846504009,
+      259.45986031659334,
+      269.0511695279272,
+      279.0399265397634,
+      289.4426009237359,
+      300.2763447229632,
+      311.55902073252054,
+      323.3092319518161,
+      335.54635225741544,
+      348.29055834690297,
+      361.56286300644086,
+      375.38514975687934,
+      389.7802089355473,
+      404.7717752732076,
+      420.38456702813914,
+      436.64432674187304,
+      453.5778636837756,
+      471.2130980544633,
+      489.5791070209372,
+      508.70617265933197,
+      528.6258318843313,
+      549.3709284475801,
+      570.9756670908207,
+      593.4756699430418,
+      616.9080352546387,
+      641.3113985654104,
+      666.7259964072581,
+      693.1937326466208,
+      720.7582475760272,
+      749.4649898686868,
+      779.361291514755,
+      810.4964458628478,
+      842.9217888954354,
+      876.6907838721816,
+      911.8591094807484,
+      948.484751640424,
+      986.6280991099346,
+      1026.3520430571064,
+      1067.7220807544857,
+      1110.8064235719721,
+      1155.676109444468,
+      1202.4051200000001
+    ],
+    "crossover_bytes": 1000000.0
+  }
+}

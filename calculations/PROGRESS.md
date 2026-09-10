@@ -2018,3 +2018,11 @@ F04 此前是全项目唯一一条既无模块、也无结果、也无验收文�
 当前结论：结果可再生**通过**（1,171 个场景 id 与 2,388 份产物互相对上，两侧都不多不少）；读者入口**通过**（73 个子命令全部有文档，210 个专题模块全部可达）；原文审查**未通过**（覆盖清单最新、129 处结果引用全部解析成功，但 1,268 块仍全为 pending——机械映射不是审查）；正文与网页同步**未通过**（转交 verify_outline，当前 failed、71 条错误，根因是第 5 章缺 `## 本章的设计决定` 导致 render 无法跑完，属仓库既有状态）。
 
 F04 因此保持未勾选。可以关闭它的两件事很具体：逐块审查 1,268 个文本块，以及让第 5 章与 render 脚本对齐。
+
+## 2026-09-10 环境变化导致配图暂时无法重算
+
+会话进行中机器上的 miniconda 安装被移除，`python3` 由 `/Users/boj/miniconda3/bin/python3`（3.11，带 matplotlib）变为 `/opt/homebrew/bin/python3`（3.14，无 matplotlib），系统上现存的 3.11/3.12/3.13/3.14 与 /usr/bin/python3 均无 matplotlib。这不是本轮改动造成的。
+
+后果有三：12 条 `plot-*` 命令报"Plotting requires the optional plot dependency"；全 suite 由 0 跳过变为 22 跳过（都是依赖该可选依赖的图相关用例，其余 1,129 项全部通过）；`calc.py verify-results` 在图这一半失败，因为最后一次 reproduce 改变了输入哈希、而配图无法重新生成以对齐。
+
+数据产物本身不受影响：`verify_results(include_figures=False)` 校验 2,388 份产物全部一致。盘上的配图仍是本会话早些时候生成的版本，当时与彼时输入一致。恢复办法是装回该可选依赖（`python -m pip install -e calculations[plot]` 或等价方式），再依次跑那 12 条 `plot-*` 命令，`verify-results` 即可整体通过。

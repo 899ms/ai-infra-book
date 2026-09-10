@@ -1,0 +1,2659 @@
+{
+  "one-ack": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "100",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "484/5",
+        "w_est": "484/5",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "2",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        }
+      ]
+    },
+    "initial": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "2",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "cubic",
+          "target": "502/5",
+          "target_bounds": [
+            "502/5",
+            "502/5"
+          ],
+          "increment": "1/250"
+        },
+        "state": {
+          "cwnd": "25001/250",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "164569/1700",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "2",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "100",
+            "100"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "25001/250",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "164569/1700",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "2",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "100",
+        "100"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "curve": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "100",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "484/5",
+        "w_est": "484/5",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "0",
+          "type": "observe"
+        },
+        {
+          "at": "2",
+          "type": "observe"
+        },
+        {
+          "at": "3",
+          "type": "observe"
+        }
+      ]
+    },
+    "initial": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "0",
+          "type": "observe"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "100",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "0",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "484/5",
+            "484/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "2",
+          "type": "observe"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "100",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "2",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "100",
+            "100"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "3",
+          "type": "observe"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "100",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "3",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "502/5",
+            "502/5"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "3",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "502/5",
+        "502/5"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "reno-friendly": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "484/5",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "484/5",
+        "w_est": "484/5",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "0",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        }
+      ]
+    },
+    "initial": {
+      "cwnd": "484/5",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "0",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "reno-friendly"
+        },
+        "state": {
+          "cwnd": "3982577/41140",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "3982577/41140",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "0",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "484/5",
+            "484/5"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "3982577/41140",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "3982577/41140",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "target-clamp": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "100",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "484/5",
+        "w_est": "484/5",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "100",
+          "type": "ack",
+          "segments_acked": "8",
+          "smoothed_rtt": "1"
+        }
+      ]
+    },
+    "initial": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "100",
+          "type": "ack",
+          "segments_acked": "8",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "cubic",
+          "target": "150",
+          "target_bounds": [
+            "150",
+            "150"
+          ],
+          "increment": "1/2"
+        },
+        "state": {
+          "cwnd": "201/2",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "41158/425",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "100",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "1882884/5",
+            "1882884/5"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "201/2",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "41158/425",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "100",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "1882884/5",
+        "1882884/5"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "loss-recovery": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "100",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "484/5",
+        "w_est": "484/5",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "1",
+          "type": "congestion",
+          "event_id": "a",
+          "flight_size": "50"
+        },
+        {
+          "at": "2",
+          "type": "congestion",
+          "event_id": "b",
+          "flight_size": "40"
+        },
+        {
+          "at": "3",
+          "type": "recovery_exit"
+        },
+        {
+          "at": "4",
+          "type": "ack",
+          "segments_acked": "2",
+          "smoothed_rtt": "1"
+        }
+      ]
+    },
+    "initial": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "1",
+          "type": "congestion",
+          "event_id": "a",
+          "flight_size": "50"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "35",
+          "ssthresh": "35",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "recovery",
+          "limited": null,
+          "curve_bounds": [
+            "498/5",
+            "498/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "2",
+          "type": "congestion",
+          "event_id": "b",
+          "flight_size": "40"
+        },
+        "detail": {
+          "ignored_recovery_event": true
+        },
+        "state": {
+          "cwnd": "35",
+          "ssthresh": "35",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "recovery",
+          "limited": null,
+          "curve_bounds": [
+            "498/5",
+            "498/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "3",
+          "type": "recovery_exit"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "35",
+          "ssthresh": "35",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "slow_start",
+          "limited": null,
+          "curve_bounds": [
+            "498/5",
+            "498/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "4",
+          "type": "ack",
+          "segments_acked": "2",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "slow-start"
+        },
+        "state": {
+          "cwnd": "36",
+          "ssthresh": "35",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "36",
+          "w_est": "36",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2714417616594906571518089469679/500000000000000000000000000000",
+            "5428835233189813143036178939359/1000000000000000000000000000000"
+          ],
+          "epoch_elapsed": "0",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "89999999999999999999999999999998091047775186927238757969648239053013358863785655165924954721/2500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "11250000000000000000000000000010813475467819525722184214706767355387210756283150935498266161/312500000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "36",
+      "ssthresh": "35",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "36",
+      "w_est": "36",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2714417616594906571518089469679/500000000000000000000000000000",
+        "5428835233189813143036178939359/1000000000000000000000000000000"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "89999999999999999999999999999998091047775186927238757969648239053013358863785655165924954721/2500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "11250000000000000000000000000010813475467819525722184214706767355387210756283150935498266161/312500000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "limited": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "100",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "484/5",
+        "w_est": "484/5",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "1",
+          "type": "limited_start",
+          "reason": "application"
+        },
+        {
+          "at": "20",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        },
+        {
+          "at": "30",
+          "type": "limited_end"
+        },
+        {
+          "at": "31",
+          "type": "observe"
+        }
+      ]
+    },
+    "initial": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "1",
+          "type": "limited_start",
+          "reason": "application"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "100",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "avoidance",
+          "limited": "application",
+          "curve_bounds": [
+            "498/5",
+            "498/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "20",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "no-growth"
+        },
+        "state": {
+          "cwnd": "100",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "avoidance",
+          "limited": "application",
+          "curve_bounds": [
+            "498/5",
+            "498/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "30",
+          "type": "limited_end"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "100",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "498/5",
+            "498/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "31",
+          "type": "observe"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "100",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "2",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "100",
+            "100"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "2",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "100",
+        "100"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "timeout": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "100",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "484/5",
+        "w_est": "484/5",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "1",
+          "type": "timeout",
+          "event_id": "rto",
+          "flight_size": "4"
+        },
+        {
+          "at": "2",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        },
+        {
+          "at": "3",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        },
+        {
+          "at": "4",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        },
+        {
+          "at": "5",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        }
+      ]
+    },
+    "initial": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "1",
+          "type": "timeout",
+          "event_id": "rto",
+          "flight_size": "4"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "1",
+          "ssthresh": "14/5",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "slow_start",
+          "limited": null,
+          "curve_bounds": [
+            "498/5",
+            "498/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "2",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "slow-start"
+        },
+        "state": {
+          "cwnd": "2",
+          "ssthresh": "14/5",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "slow_start",
+          "limited": null,
+          "curve_bounds": [
+            "498/5",
+            "498/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "3",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "slow-start"
+        },
+        "state": {
+          "cwnd": "3",
+          "ssthresh": "14/5",
+          "cwnd_prior": "100",
+          "w_max": "3",
+          "cwnd_epoch": "3",
+          "w_est": "3",
+          "alpha": "9/17",
+          "k_bounds": [
+            "0",
+            "0"
+          ],
+          "epoch_elapsed": "0",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "3",
+            "3"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "4",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "cubic",
+          "target": "9/2",
+          "target_bounds": [
+            "9/2",
+            "9/2"
+          ],
+          "increment": "1/2"
+        },
+        "state": {
+          "cwnd": "7/2",
+          "ssthresh": "14/5",
+          "cwnd_prior": "100",
+          "w_max": "3",
+          "cwnd_epoch": "3",
+          "w_est": "54/17",
+          "alpha": "9/17",
+          "k_bounds": [
+            "0",
+            "0"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "17/5",
+            "17/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "5",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "cubic",
+          "target": "21/4",
+          "target_bounds": [
+            "21/4",
+            "21/4"
+          ],
+          "increment": "1/2"
+        },
+        "state": {
+          "cwnd": "4",
+          "ssthresh": "14/5",
+          "cwnd_prior": "100",
+          "w_max": "3",
+          "cwnd_epoch": "3",
+          "w_est": "396/119",
+          "alpha": "9/17",
+          "k_bounds": [
+            "0",
+            "0"
+          ],
+          "epoch_elapsed": "2",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "31/5",
+            "31/5"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "4",
+      "ssthresh": "14/5",
+      "cwnd_prior": "100",
+      "w_max": "3",
+      "cwnd_epoch": "3",
+      "w_est": "396/119",
+      "alpha": "9/17",
+      "k_bounds": [
+        "0",
+        "0"
+      ],
+      "epoch_elapsed": "2",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "31/5",
+        "31/5"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "idle-restart": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "100",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "484/5",
+        "w_est": "484/5",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "1",
+          "type": "limited_start",
+          "reason": "application"
+        },
+        {
+          "at": "10",
+          "type": "idle_restart",
+          "idle_duration": "9",
+          "rto": "1"
+        }
+      ],
+      "initial_window": "10"
+    },
+    "initial": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "1",
+          "type": "limited_start",
+          "reason": "application"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "100",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "avoidance",
+          "limited": "application",
+          "curve_bounds": [
+            "498/5",
+            "498/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "10",
+          "type": "idle_restart",
+          "idle_duration": "9",
+          "rto": "1"
+        },
+        "detail": {
+          "restart_applied": true
+        },
+        "state": {
+          "cwnd": "10",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "10",
+          "w_est": "10",
+          "alpha": "9/17",
+          "k_bounds": [
+            "6082201995573400184898444997737/1000000000000000000000000000000",
+            "3041100997786700092449222498869/500000000000000000000000000000"
+          ],
+          "epoch_elapsed": "0",
+          "phase": "slow_start",
+          "limited": "application",
+          "curve_bounds": [
+            "3124999999999999999999999999997259081031233958996943690301054481443274597842386544479231091/312500000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "25000000000000000000000000000089052191594742826542672031950381322196592765483170964974205447/2500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "10",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "10",
+      "w_est": "10",
+      "alpha": "9/17",
+      "k_bounds": [
+        "6082201995573400184898444997737/1000000000000000000000000000000",
+        "3041100997786700092449222498869/500000000000000000000000000000"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "slow_start",
+      "limited": "application",
+      "curve_bounds": [
+        "3124999999999999999999999999997259081031233958996943690301054481443274597842386544479231091/312500000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "25000000000000000000000000000089052191594742826542672031950381322196592765483170964974205447/2500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "slow-start": {
+    "inputs": {
+      "initial": {
+        "cwnd": "2",
+        "ssthresh": "3"
+      },
+      "events": [
+        {
+          "at": "0",
+          "type": "ack",
+          "segments_acked": "2",
+          "smoothed_rtt": "1"
+        },
+        {
+          "at": "1",
+          "type": "ack",
+          "segments_acked": "2",
+          "smoothed_rtt": "1"
+        },
+        {
+          "at": "2",
+          "type": "ack",
+          "segments_acked": "2",
+          "smoothed_rtt": "1"
+        },
+        {
+          "at": "3",
+          "type": "ack",
+          "segments_acked": "2",
+          "smoothed_rtt": "1"
+        }
+      ]
+    },
+    "initial": {
+      "cwnd": "2",
+      "ssthresh": "3",
+      "cwnd_prior": "2",
+      "w_max": "2",
+      "cwnd_epoch": "2",
+      "w_est": "2",
+      "alpha": "1",
+      "k_bounds": [
+        "0",
+        "0"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "slow_start",
+      "limited": null,
+      "curve_bounds": [
+        "2",
+        "2"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "0",
+          "type": "ack",
+          "segments_acked": "2",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "slow-start"
+        },
+        "state": {
+          "cwnd": "3",
+          "ssthresh": "3",
+          "cwnd_prior": "2",
+          "w_max": "2",
+          "cwnd_epoch": "2",
+          "w_est": "2",
+          "alpha": "1",
+          "k_bounds": [
+            "0",
+            "0"
+          ],
+          "epoch_elapsed": "0",
+          "phase": "slow_start",
+          "limited": null,
+          "curve_bounds": [
+            "2",
+            "2"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "1",
+          "type": "ack",
+          "segments_acked": "2",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "slow-start"
+        },
+        "state": {
+          "cwnd": "4",
+          "ssthresh": "3",
+          "cwnd_prior": "2",
+          "w_max": "4",
+          "cwnd_epoch": "4",
+          "w_est": "4",
+          "alpha": "1",
+          "k_bounds": [
+            "0",
+            "0"
+          ],
+          "epoch_elapsed": "0",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "4",
+            "4"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "2",
+          "type": "ack",
+          "segments_acked": "2",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "reno-friendly"
+        },
+        "state": {
+          "cwnd": "9/2",
+          "ssthresh": "3",
+          "cwnd_prior": "2",
+          "w_max": "4",
+          "cwnd_epoch": "4",
+          "w_est": "9/2",
+          "alpha": "1",
+          "k_bounds": [
+            "0",
+            "0"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "22/5",
+            "22/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "3",
+          "type": "ack",
+          "segments_acked": "2",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "cubic",
+          "target": "27/4",
+          "target_bounds": [
+            "27/4",
+            "27/4"
+          ],
+          "increment": "1/2"
+        },
+        "state": {
+          "cwnd": "5",
+          "ssthresh": "3",
+          "cwnd_prior": "2",
+          "w_max": "4",
+          "cwnd_epoch": "4",
+          "w_est": "89/18",
+          "alpha": "1",
+          "k_bounds": [
+            "0",
+            "0"
+          ],
+          "epoch_elapsed": "2",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "36/5",
+            "36/5"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "5",
+      "ssthresh": "3",
+      "cwnd_prior": "2",
+      "w_max": "4",
+      "cwnd_epoch": "4",
+      "w_est": "89/18",
+      "alpha": "1",
+      "k_bounds": [
+        "0",
+        "0"
+      ],
+      "epoch_elapsed": "2",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "36/5",
+        "36/5"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "fast-convergence": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "80",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "484/5",
+        "w_est": "484/5",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "1",
+          "type": "congestion",
+          "event_id": "a",
+          "flight_size": "50"
+        },
+        {
+          "at": "2",
+          "type": "congestion",
+          "event_id": "b",
+          "flight_size": "40"
+        },
+        {
+          "at": "3",
+          "type": "recovery_exit"
+        },
+        {
+          "at": "4",
+          "type": "ack",
+          "segments_acked": "2",
+          "smoothed_rtt": "1"
+        }
+      ],
+      "fast_convergence": true
+    },
+    "initial": {
+      "cwnd": "80",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "1",
+          "type": "congestion",
+          "event_id": "a",
+          "flight_size": "50"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "35",
+          "ssthresh": "35",
+          "cwnd_prior": "80",
+          "w_max": "68",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "recovery",
+          "limited": null,
+          "curve_bounds": [
+            "338/5",
+            "338/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "2",
+          "type": "congestion",
+          "event_id": "b",
+          "flight_size": "40"
+        },
+        "detail": {
+          "ignored_recovery_event": true
+        },
+        "state": {
+          "cwnd": "35",
+          "ssthresh": "35",
+          "cwnd_prior": "80",
+          "w_max": "68",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "recovery",
+          "limited": null,
+          "curve_bounds": [
+            "338/5",
+            "338/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "3",
+          "type": "recovery_exit"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "35",
+          "ssthresh": "35",
+          "cwnd_prior": "80",
+          "w_max": "68",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "slow_start",
+          "limited": null,
+          "curve_bounds": [
+            "338/5",
+            "338/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "4",
+          "type": "ack",
+          "segments_acked": "2",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "slow-start"
+        },
+        "state": {
+          "cwnd": "36",
+          "ssthresh": "35",
+          "cwnd_prior": "80",
+          "w_max": "68",
+          "cwnd_epoch": "36",
+          "w_est": "36",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2154434690031883721759293566519/500000000000000000000000000000",
+            "4308869380063767443518587133039/1000000000000000000000000000000"
+          ],
+          "epoch_elapsed": "0",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "89999999999999999999999999999983345451164879421388793804062868435055192603321503366299061681/2500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "11250000000000000000000000000004880564646029096012214340034237074715307349619811954874223641/312500000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "36",
+      "ssthresh": "35",
+      "cwnd_prior": "80",
+      "w_max": "68",
+      "cwnd_epoch": "36",
+      "w_est": "36",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2154434690031883721759293566519/500000000000000000000000000000",
+        "4308869380063767443518587133039/1000000000000000000000000000000"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "89999999999999999999999999999983345451164879421388793804062868435055192603321503366299061681/2500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "11250000000000000000000000000004880564646029096012214340034237074715307349619811954874223641/312500000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "fractional-ack": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "100",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "484/5",
+        "w_est": "484/5",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "2",
+          "type": "ack",
+          "segments_acked": "1/2",
+          "smoothed_rtt": "1"
+        }
+      ]
+    },
+    "initial": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "2",
+          "type": "ack",
+          "segments_acked": "1/2",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "cubic",
+          "target": "502/5",
+          "target_bounds": [
+            "502/5",
+            "502/5"
+          ],
+          "increment": "1/250"
+        },
+        "state": {
+          "cwnd": "25001/250",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "329129/3400",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "2",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "100",
+            "100"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "25001/250",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "329129/3400",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "2",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "100",
+        "100"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "duplicate-ack": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "100",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "484/5",
+        "w_est": "484/5",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "2",
+          "type": "ack",
+          "segments_acked": "0",
+          "smoothed_rtt": "1"
+        }
+      ]
+    },
+    "initial": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "2",
+          "type": "ack",
+          "segments_acked": "0",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "no-growth"
+        },
+        "state": {
+          "cwnd": "100",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "2",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "100",
+            "100"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "2",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "100",
+        "100"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "alpha-threshold": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "100",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "484/5",
+        "w_est": "1691/17",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "2",
+          "type": "ack",
+          "segments_acked": "100",
+          "smoothed_rtt": "1"
+        }
+      ]
+    },
+    "initial": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "1691/17",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "2",
+          "type": "ack",
+          "segments_acked": "100",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "cubic",
+          "target": "502/5",
+          "target_bounds": [
+            "502/5",
+            "502/5"
+          ],
+          "increment": "1/250"
+        },
+        "state": {
+          "cwnd": "25001/250",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "100",
+          "alpha": "1",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "2",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "100",
+            "100"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "25001/250",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "100",
+      "alpha": "1",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "2",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "100",
+        "100"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "irrational-root": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "100",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "97",
+        "w_est": "97",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "2",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        }
+      ]
+    },
+    "initial": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "97",
+      "w_est": "97",
+      "alpha": "9/17",
+      "k_bounds": [
+        "391486764116886359542493606041/200000000000000000000000000000",
+        "978716910292215898856234015103/500000000000000000000000000000"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "30312499999999999999999999999999763946711780054445801799872052322799141001420256015478502273/312500000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "1940000000000000000000000000000076849721441149857323150255223272218791193178479550716873079/20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "2",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "cubic",
+          "target": "2009065690415441850069612095711413550094004799420424411470317900183571032141278754128556793469/20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "target_bounds": [
+            "31391651412741278907337688995490632918174113520679121744324792822799141001420256015478502273/312500000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "2009065690415441850069612095711426593424866333517385031303849072218791193178479550716873079/20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "increment": "9065690415441850069612095711413550094004799420424411470317900183571032141278754128556793469/2000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "state": {
+          "cwnd": "200009065690415441850069612095711413550094004799420424411470317900183571032141278754128556793469/2000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "97",
+          "w_est": "164909/1700",
+          "alpha": "9/17",
+          "k_bounds": [
+            "391486764116886359542493606041/200000000000000000000000000000",
+            "978716910292215898856234015103/500000000000000000000000000000"
+          ],
+          "epoch_elapsed": "2",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "31250009640599176453176143686314843261020002365268015096173879322799141001420256015478502273/312500000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "2000000616998347293003273195924150012190391272297364404287640472218791193178479550716873079/20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "200009065690415441850069612095711413550094004799420424411470317900183571032141278754128556793469/2000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "97",
+      "w_est": "164909/1700",
+      "alpha": "9/17",
+      "k_bounds": [
+        "391486764116886359542493606041/200000000000000000000000000000",
+        "978716910292215898856234015103/500000000000000000000000000000"
+      ],
+      "epoch_elapsed": "2",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "31250009640599176453176143686314843261020002365268015096173879322799141001420256015478502273/312500000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "2000000616998347293003273195924150012190391272297364404287640472218791193178479550716873079/20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "receiver-limited": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "100",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "484/5",
+        "w_est": "484/5",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "1",
+          "type": "limited_start",
+          "reason": "receiver_window"
+        },
+        {
+          "at": "20",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        },
+        {
+          "at": "30",
+          "type": "limited_end"
+        },
+        {
+          "at": "31",
+          "type": "observe"
+        }
+      ]
+    },
+    "initial": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "1",
+          "type": "limited_start",
+          "reason": "receiver_window"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "100",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "avoidance",
+          "limited": "receiver_window",
+          "curve_bounds": [
+            "498/5",
+            "498/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "20",
+          "type": "ack",
+          "segments_acked": "1",
+          "smoothed_rtt": "1"
+        },
+        "detail": {
+          "region": "no-growth"
+        },
+        "state": {
+          "cwnd": "100",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "avoidance",
+          "limited": "receiver_window",
+          "curve_bounds": [
+            "498/5",
+            "498/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "30",
+          "type": "limited_end"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "100",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "498/5",
+            "498/5"
+          ]
+        }
+      },
+      {
+        "event": {
+          "at": "31",
+          "type": "observe"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "100",
+          "ssthresh": "70",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "2",
+          "phase": "avoidance",
+          "limited": null,
+          "curve_bounds": [
+            "100",
+            "100"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "2",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "100",
+        "100"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  },
+  "loss-floor": {
+    "inputs": {
+      "initial": {
+        "phase": "avoidance",
+        "cwnd": "100",
+        "ssthresh": "70",
+        "w_max": "100",
+        "cwnd_epoch": "484/5",
+        "w_est": "484/5",
+        "cwnd_prior": "100"
+      },
+      "events": [
+        {
+          "at": "1",
+          "type": "congestion",
+          "event_id": "small",
+          "flight_size": "1"
+        }
+      ]
+    },
+    "initial": {
+      "cwnd": "100",
+      "ssthresh": "70",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "0",
+      "phase": "avoidance",
+      "limited": null,
+      "curve_bounds": [
+        "484/5",
+        "484/5"
+      ]
+    },
+    "events": [
+      {
+        "event": {
+          "at": "1",
+          "type": "congestion",
+          "event_id": "small",
+          "flight_size": "1"
+        },
+        "detail": {},
+        "state": {
+          "cwnd": "2",
+          "ssthresh": "2",
+          "cwnd_prior": "100",
+          "w_max": "100",
+          "cwnd_epoch": "484/5",
+          "w_est": "484/5",
+          "alpha": "9/17",
+          "k_bounds": [
+            "2",
+            "2"
+          ],
+          "epoch_elapsed": "1",
+          "phase": "recovery",
+          "limited": null,
+          "curve_bounds": [
+            "498/5",
+            "498/5"
+          ]
+        }
+      }
+    ],
+    "final": {
+      "cwnd": "2",
+      "ssthresh": "2",
+      "cwnd_prior": "100",
+      "w_max": "100",
+      "cwnd_epoch": "484/5",
+      "w_est": "484/5",
+      "alpha": "9/17",
+      "k_bounds": [
+        "2",
+        "2"
+      ],
+      "epoch_elapsed": "1",
+      "phase": "recovery",
+      "limited": null,
+      "curve_bounds": [
+        "498/5",
+        "498/5"
+      ]
+    },
+    "quantizations": [],
+    "reference_sources": [
+      {
+        "file": "sources/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+        "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+      },
+      {
+        "file": "sources/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+        "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+        "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+      }
+    ],
+    "numerical_contract": "rational states; root bracket <=1e-30 s; local quantization errors only",
+    "scope": "pure CUBIC state replay; explicit Reno startup; no feedback detector or network"
+  }
+}

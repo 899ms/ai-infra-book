@@ -1,0 +1,128 @@
+{
+  "scope": "local byte-debt arithmetic and failure atomicity; network ACK bypass and serializer order require separate checks",
+  "pacer_sha256": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+  "checker_sha256": "9d8160029756b80120fb94995360dd5cd072898813df7296d65c0d7c74c992c8",
+  "passed": 24,
+  "checks": [
+    {
+      "case": "initial packet debt deadline",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "old rate settles elapsed time",
+      "actual": "900",
+      "expected": "900"
+    },
+    {
+      "case": "increase affects future service only",
+      "actual": "5/8",
+      "expected": "5/8"
+    },
+    {
+      "case": "second rate change remaining debt",
+      "actual": "600",
+      "expected": "600"
+    },
+    {
+      "case": "decrease extends future deadline",
+      "actual": "11/8",
+      "expected": "11/8"
+    },
+    {
+      "case": "exact deadline permits next packet",
+      "actual": "1200",
+      "expected": "1200"
+    },
+    {
+      "case": "idle has no negative debt or burst credit",
+      "actual": "0",
+      "expected": "0"
+    },
+    {
+      "case": "one packet after idle restores full debt",
+      "actual": "12",
+      "expected": "12"
+    },
+    {
+      "case": "event deadline rounds upward",
+      "actual": "2/5",
+      "expected": "2/5"
+    },
+    {
+      "case": "event rounding records added wait",
+      "actual": "1/15",
+      "expected": "1/15"
+    },
+    {
+      "case": "remaining two thirds byte rounds upward",
+      "actual": "67/100",
+      "expected": "67/100"
+    },
+    {
+      "case": "debt rounding records conservative error",
+      "actual": "1/300",
+      "expected": "1/300"
+    },
+    {
+      "case": "repeated observation has no extra debt",
+      "actual": "2/5",
+      "expected": "2/5"
+    },
+    {
+      "case": "observation preserves settled debt",
+      "actual": "67/100",
+      "expected": "67/100"
+    },
+    {
+      "case": "atomic rejection: zero rate",
+      "actual": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}",
+      "expected": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}"
+    },
+    {
+      "case": "atomic rejection: negative rate",
+      "actual": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}",
+      "expected": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}"
+    },
+    {
+      "case": "atomic rejection: boolean rate",
+      "actual": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}",
+      "expected": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}"
+    },
+    {
+      "case": "atomic rejection: early packet",
+      "actual": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}",
+      "expected": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}"
+    },
+    {
+      "case": "atomic rejection: zero packet",
+      "actual": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}",
+      "expected": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}"
+    },
+    {
+      "case": "atomic rejection: negative packet",
+      "actual": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}",
+      "expected": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}"
+    },
+    {
+      "case": "atomic rejection: fractional packet",
+      "actual": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}",
+      "expected": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}"
+    },
+    {
+      "case": "atomic rejection: boolean packet",
+      "actual": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}",
+      "expected": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}"
+    },
+    {
+      "case": "atomic rejection: time reversal",
+      "actual": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}",
+      "expected": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}"
+    },
+    {
+      "case": "atomic rejection: boolean time",
+      "actual": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}",
+      "expected": "{'rate': Fraction(1200, 1), 'time_quantum': Fraction(1, 1000000000), 'debt_quantum': Fraction(1, 1000000000000), 'now': Fraction(0, 1), 'debt': Fraction(1200, 1), 'errors': []}"
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "status": "PREWRITTEN_INPUT_ARITHMETIC_NOT_NETWORK_EXECUTION",
+  "cases": [
+    {
+      "id": "shared-nonpreemptive",
+      "units": "seconds",
+      "given": {
+        "two_directions_ready": 0,
+        "whole_exchange_seconds": 1,
+        "tie_order": [
+          "client",
+          "AP"
+        ]
+      },
+      "expected": {
+        "shared_intervals": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "independent_serializers_intervals": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "shared_finish": 2
+      },
+      "scope": "One second already includes all declared service stages; no extra MAC ACK added."
+    },
+    {
+      "id": "two-layer-static-account",
+      "given": {
+        "data_frames": 2,
+        "data_service_seconds": 1,
+        "per_data_mac_confirmation_seconds": "1/4",
+        "transport_ack_exchange_seconds": "1/2"
+      },
+      "expected": {
+        "mac_ack_for_data_count": 2,
+        "transport_ack_count_immediate": 2,
+        "transport_ack_count_every2": 1,
+        "immediate_total_seconds": "7/2",
+        "every2_total_seconds": 3
+      },
+      "scope": "Static same-packet service account. Each transport ACK exchange already includes its own MAC ACK; not closed-loop completion."
+    },
+    {
+      "id": "busy-channel-ACK-snapshot",
+      "given": {
+        "initial_receiver_pn0_at": 0,
+        "max_delay_seconds": 1,
+        "down_frame_exchange": [
+          0,
+          3
+        ],
+        "down_data_pn1_arrival": "11/4",
+        "down_MAC_success": 3,
+        "up_transport_ack_actual_start": 3,
+        "ack_delay_exponent": 3
+      },
+      "expected": {
+        "deadline": 1,
+        "ack_snapshot_ranges": [
+          [
+            0,
+            1
+          ]
+        ],
+        "largest_pn": 1,
+        "raw_delay_seconds": "1/4",
+        "encoded_delay": 31250,
+        "decoded_delay_seconds": "1/4",
+        "exceeds_max_delay": false,
+        "deadline_lateness_seconds": 2
+      },
+      "variant_no_new_PN": {
+        "long_frame": "belongs to another declared connection; does not enter ACK ranges",
+        "ranges": [
+          [
+            0,
+            0
+          ]
+        ],
+        "raw_delay_seconds": 3,
+        "encoded_delay": 375000,
+        "exceeds_max_delay": true
+      },
+      "scope": "PN0 already received at initial boundary; service is nonpreemptive. Deadline lateness is distinct from largest-PN raw delay."
+    },
+    {
+      "id": "MAC-ACK-loss-versus-end-to-end-recovery",
+      "given": {
+        "original_quic_pn": 7,
+        "first_data_interval": [
+          0,
+          1
+        ],
+        "first_MAC_ACK_lost": true,
+        "first_failure_known": "3/2",
+        "retry_wait": "1/2",
+        "retry_data_interval": [
+          2,
+          3
+        ],
+        "retry_MAC_success": "13/4"
+      },
+      "expected": {
+        "mac_attempt_pns": [
+          7,
+          7
+        ],
+        "first_receiver_delivery": 1,
+        "second_receive_duplicate_at": 3,
+        "unique_application_contributions": 1,
+        "sender_MAC_success_known": "13/4",
+        "end_to_end_loss_not_implied_by_first_MAC_failure": true
+      },
+      "retry_exhaustion_variant": {
+        "second_failure_known": "7/2",
+        "separately_seeded_end_to_end_PTO": 4,
+        "probe_new_quic_pn": 8,
+        "PTO_alone_is_not_loss_or_cwnd_decrease": true
+      },
+      "scope": "Declared full-ACK timeout abstraction, not ns-3 RXSTART timer; no future MAC success is exposed early."
+    },
+    {
+      "id": "fewer-ACKs-later-tail",
+      "given": {
+        "data_frames": 3,
+        "all_ready": 0,
+        "sender_window_packets": 2,
+        "credit_released_only_by_transport_ACK_arrival": true,
+        "data_PPDU_seconds": 1,
+        "per_data_MAC_confirmation_seconds": "1/4",
+        "transport_ACK_whole_exchange_seconds": "1/2",
+        "max_transport_ACK_delay_seconds": 4,
+        "ACKs_priority_over_unsent_data": true,
+        "transport_ACK_count_thresholds": [
+          1,
+          4
+        ],
+        "tail_playback_slot_start": 5,
+        "tail_audio_duration_seconds": "1/4",
+        "horizon": 12,
+        "transport_ACK_PPDU_seconds": "1/4",
+        "transport_ACK_post_MAC_confirmation_seconds": "1/4"
+      },
+      "expected": {
+        "immediate_data_arrivals": [
+          1,
+          "11/4",
+          "9/2"
+        ],
+        "immediate_ACK_intervals": [
+          [
+            "5/4",
+            "7/4"
+          ],
+          [
+            3,
+            "7/2"
+          ],
+          [
+            "19/4",
+            "21/4"
+          ]
+        ],
+        "immediate_total_airtime": "21/4",
+        "immediate_tail_complete": "9/2",
+        "immediate_tail_slot_usable": true,
+        "every4_data_arrivals": [
+          1,
+          "9/4",
+          "13/2"
+        ],
+        "every4_ACK_intervals": [
+          [
+            5,
+            "11/2"
+          ],
+          [
+            "21/2",
+            11
+          ]
+        ],
+        "every4_total_airtime": "19/4",
+        "every4_tail_complete": "13/2",
+        "every4_tail_slot_usable": false,
+        "every4_missing_audio_seconds": "1/4",
+        "airtime_saved_seconds": "1/2",
+        "immediate_transport_ACK_receiver_arrivals": [
+          "3/2",
+          "13/4",
+          5
+        ],
+        "every4_transport_ACK_receiver_arrivals": [
+          "21/4",
+          "43/4"
+        ]
+      },
+      "scope": "Same bytes, ready time, PHY teaching service, zero model work and playback slot. Timer-induced window idle causes worse tail despite one fewer transport ACK; not a Wi-Fi performance prediction. Transport ACK reaches its receiver at PPDU end, before its own MAC confirmation completes; newly available cwnd cannot preempt the still-busy medium."
+    }
+  ]
+}

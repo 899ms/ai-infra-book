@@ -1,0 +1,756 @@
+{
+  "scenario_evidence": {
+    "hol-connection": {
+      "directions": {
+        "c2s": {
+          "data_payload": 4,
+          "data_wire": 4,
+          "ack_wire": 0,
+          "recovery_payload": 1
+        },
+        "s2c": {
+          "data_payload": 0,
+          "data_wire": 0,
+          "ack_wire": 3,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [
+        {
+          "id": "image",
+          "kind": "image",
+          "complete": "7",
+          "usable": true,
+          "business_status": "complete"
+        },
+        {
+          "id": "audio",
+          "kind": "asr",
+          "complete": "7",
+          "usable": true,
+          "business_status": "complete"
+        }
+      ],
+      "unfinished": []
+    },
+    "hol-per_stream": {
+      "directions": {
+        "c2s": {
+          "data_payload": 4,
+          "data_wire": 4,
+          "ack_wire": 0,
+          "recovery_payload": 1
+        },
+        "s2c": {
+          "data_payload": 0,
+          "data_wire": 0,
+          "ack_wire": 3,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [
+        {
+          "id": "image",
+          "kind": "image",
+          "complete": "7",
+          "usable": true,
+          "business_status": "complete"
+        },
+        {
+          "id": "audio",
+          "kind": "asr",
+          "complete": "3",
+          "usable": true,
+          "business_status": "complete"
+        }
+      ],
+      "unfinished": []
+    },
+    "schedule-fifo": {
+      "directions": {
+        "c2s": {
+          "data_payload": 5,
+          "data_wire": 5,
+          "ack_wire": 0,
+          "recovery_payload": 0
+        },
+        "s2c": {
+          "data_payload": 0,
+          "data_wire": 0,
+          "ack_wire": 5,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [
+        {
+          "id": "image",
+          "kind": "image",
+          "complete": "5",
+          "usable": true,
+          "business_status": "complete"
+        },
+        {
+          "id": "audio",
+          "kind": "asr",
+          "complete": "6",
+          "usable": true,
+          "business_status": "complete"
+        }
+      ],
+      "unfinished": []
+    },
+    "schedule-priority": {
+      "directions": {
+        "c2s": {
+          "data_payload": 5,
+          "data_wire": 5,
+          "ack_wire": 0,
+          "recovery_payload": 0
+        },
+        "s2c": {
+          "data_payload": 0,
+          "data_wire": 0,
+          "ack_wire": 5,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [
+        {
+          "id": "image",
+          "kind": "image",
+          "complete": "6",
+          "usable": true,
+          "business_status": "complete"
+        },
+        {
+          "id": "audio",
+          "kind": "asr",
+          "complete": "3",
+          "usable": true,
+          "business_status": "complete"
+        }
+      ],
+      "unfinished": []
+    },
+    "credit-1-streams": {
+      "directions": {
+        "c2s": {
+          "data_payload": 3,
+          "data_wire": 3,
+          "ack_wire": 0,
+          "recovery_payload": 0
+        },
+        "s2c": {
+          "data_payload": 0,
+          "data_wire": 0,
+          "ack_wire": 3,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [],
+      "unfinished": []
+    },
+    "credit-3-streams": {
+      "directions": {
+        "c2s": {
+          "data_payload": 3,
+          "data_wire": 3,
+          "ack_wire": 0,
+          "recovery_payload": 0
+        },
+        "s2c": {
+          "data_payload": 0,
+          "data_wire": 0,
+          "ack_wire": 3,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [],
+      "unfinished": []
+    },
+    "playback-reliable": {
+      "directions": {
+        "c2s": {
+          "data_payload": 3,
+          "data_wire": 3,
+          "ack_wire": 0,
+          "recovery_payload": 0
+        },
+        "s2c": {
+          "data_payload": 0,
+          "data_wire": 0,
+          "ack_wire": 3,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [
+        {
+          "id": "tts",
+          "kind": "tts",
+          "business_status": "complete",
+          "played_blocks": 3,
+          "missing_blocks": 0,
+          "unresolved_blocks": 0,
+          "all_required_delivered": true,
+          "complete_playback": true,
+          "first_play": "3",
+          "playback_end": "10",
+          "stall_seconds": "1",
+          "missing_seconds": "0",
+          "blocks": [
+            {
+              "arrival": "3",
+              "start": "3",
+              "end": "5",
+              "played": true
+            },
+            {
+              "arrival": "6",
+              "start": "6",
+              "end": "8",
+              "played": true
+            },
+            {
+              "arrival": "7",
+              "start": "8",
+              "end": "10",
+              "played": true
+            }
+          ]
+        }
+      ],
+      "unfinished": []
+    },
+    "playback-slots": {
+      "directions": {
+        "c2s": {
+          "data_payload": 3,
+          "data_wire": 3,
+          "ack_wire": 0,
+          "recovery_payload": 0
+        },
+        "s2c": {
+          "data_payload": 0,
+          "data_wire": 0,
+          "ack_wire": 3,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [
+        {
+          "id": "tts",
+          "kind": "tts",
+          "business_status": "timeline_complete_with_missing",
+          "played_blocks": 2,
+          "missing_blocks": 1,
+          "unresolved_blocks": 0,
+          "all_required_delivered": true,
+          "complete_playback": false,
+          "first_play": "3",
+          "playback_end": "9",
+          "stall_seconds": "0",
+          "missing_seconds": "2",
+          "blocks": [
+            {
+              "arrival": "3",
+              "start": "3",
+              "end": "5",
+              "played": true
+            },
+            {
+              "arrival": "6",
+              "start": "5",
+              "end": "7",
+              "played": false
+            },
+            {
+              "arrival": "7",
+              "start": "7",
+              "end": "9",
+              "played": true
+            }
+          ]
+        }
+      ],
+      "unfinished": []
+    },
+    "cancel-running-work": {
+      "directions": {
+        "c2s": {
+          "data_payload": 2,
+          "data_wire": 2,
+          "ack_wire": 0,
+          "recovery_payload": 0
+        },
+        "s2c": {
+          "data_payload": 0,
+          "data_wire": 0,
+          "ack_wire": 2,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [
+        {
+          "id": "screen",
+          "kind": "screenshot",
+          "complete": null,
+          "usable": false,
+          "business_status": "incomplete"
+        }
+      ],
+      "unfinished": []
+    },
+    "mixed-fifo": {
+      "directions": {
+        "c2s": {
+          "data_payload": 30008595,
+          "data_wire": 30056995,
+          "ack_wire": 8040,
+          "recovery_payload": 0
+        },
+        "s2c": {
+          "data_payload": 5000064,
+          "data_wire": 5008104,
+          "ack_wire": 48400,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [
+        {
+          "id": "image",
+          "kind": "image",
+          "complete": "1008391/78125",
+          "usable": true,
+          "business_status": "complete"
+        },
+        {
+          "id": "asr",
+          "kind": "asr",
+          "complete": "10101019/781250",
+          "usable": true,
+          "business_status": "complete"
+        },
+        {
+          "id": "tts",
+          "kind": "tts",
+          "business_status": "timeline_complete_with_missing",
+          "played_blocks": 0,
+          "missing_blocks": 8,
+          "unresolved_blocks": 0,
+          "all_required_delivered": false,
+          "complete_playback": false,
+          "first_play": null,
+          "playback_end": "14/25",
+          "stall_seconds": "0",
+          "missing_seconds": "4/25",
+          "blocks": [
+            {
+              "arrival": null,
+              "start": "2/5",
+              "end": "21/50",
+              "played": false
+            },
+            {
+              "arrival": null,
+              "start": "21/50",
+              "end": "11/25",
+              "played": false
+            },
+            {
+              "arrival": null,
+              "start": "11/25",
+              "end": "23/50",
+              "played": false
+            },
+            {
+              "arrival": null,
+              "start": "23/50",
+              "end": "12/25",
+              "played": false
+            },
+            {
+              "arrival": null,
+              "start": "12/25",
+              "end": "1/2",
+              "played": false
+            },
+            {
+              "arrival": null,
+              "start": "1/2",
+              "end": "13/25",
+              "played": false
+            },
+            {
+              "arrival": null,
+              "start": "13/25",
+              "end": "27/50",
+              "played": false
+            },
+            {
+              "arrival": null,
+              "start": "27/50",
+              "end": "14/25",
+              "played": false
+            }
+          ]
+        },
+        {
+          "id": "computer-use",
+          "kind": "screenshot",
+          "complete": null,
+          "usable": false,
+          "business_status": "incomplete"
+        }
+      ],
+      "unfinished": []
+    },
+    "mixed-priority": {
+      "directions": {
+        "c2s": {
+          "data_payload": 30008595,
+          "data_wire": 30056995,
+          "ack_wire": 8400,
+          "recovery_payload": 0
+        },
+        "s2c": {
+          "data_payload": 5007808,
+          "data_wire": 5016208,
+          "ack_wire": 48400,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [
+        {
+          "id": "image",
+          "kind": "image",
+          "complete": "32277907/2500000",
+          "usable": true,
+          "business_status": "complete"
+        },
+        {
+          "id": "asr",
+          "kind": "asr",
+          "complete": "3923279/12500000",
+          "usable": true,
+          "business_status": "complete"
+        },
+        {
+          "id": "tts",
+          "kind": "tts",
+          "business_status": "complete",
+          "played_blocks": 8,
+          "missing_blocks": 0,
+          "unresolved_blocks": 0,
+          "all_required_delivered": true,
+          "complete_playback": true,
+          "first_play": "2/5",
+          "playback_end": "14/25",
+          "stall_seconds": "0",
+          "missing_seconds": "0",
+          "blocks": [
+            {
+              "arrival": "162967/500000",
+              "start": "2/5",
+              "end": "21/50",
+              "played": true
+            },
+            {
+              "arrival": "168967/500000",
+              "start": "21/50",
+              "end": "11/25",
+              "played": true
+            },
+            {
+              "arrival": "174967/500000",
+              "start": "11/25",
+              "end": "23/50",
+              "played": true
+            },
+            {
+              "arrival": "180967/500000",
+              "start": "23/50",
+              "end": "12/25",
+              "played": true
+            },
+            {
+              "arrival": "186967/500000",
+              "start": "12/25",
+              "end": "1/2",
+              "played": true
+            },
+            {
+              "arrival": "192967/500000",
+              "start": "1/2",
+              "end": "13/25",
+              "played": true
+            },
+            {
+              "arrival": "198967/500000",
+              "start": "13/25",
+              "end": "27/50",
+              "played": true
+            },
+            {
+              "arrival": "204967/500000",
+              "start": "27/50",
+              "end": "14/25",
+              "played": true
+            }
+          ]
+        },
+        {
+          "id": "computer-use",
+          "kind": "screenshot",
+          "complete": "2400119/12500000",
+          "usable": false,
+          "business_status": "stale_version"
+        }
+      ],
+      "unfinished": []
+    },
+    "image-30mb-5mb": {
+      "directions": {
+        "c2s": {
+          "data_payload": 30000000,
+          "data_wire": 30048000,
+          "ack_wire": 8000,
+          "recovery_payload": 0
+        },
+        "s2c": {
+          "data_payload": 5000000,
+          "data_wire": 5008000,
+          "ack_wire": 48000,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [
+        {
+          "id": "image",
+          "kind": "image",
+          "complete": "1008391/78125",
+          "usable": true,
+          "business_status": "complete"
+        }
+      ],
+      "unfinished": []
+    },
+    "screenshot-complete": {
+      "directions": {
+        "c2s": {
+          "data_payload": 3443,
+          "data_wire": 3483,
+          "ack_wire": 40,
+          "recovery_payload": 0
+        },
+        "s2c": {
+          "data_payload": 64,
+          "data_wire": 104,
+          "ack_wire": 40,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [
+        {
+          "id": "computer-use",
+          "kind": "screenshot",
+          "complete": "2392519/12500000",
+          "usable": true,
+          "business_status": "complete"
+        }
+      ],
+      "unfinished": []
+    },
+    "screenshot-stale": {
+      "directions": {
+        "c2s": {
+          "data_payload": 3443,
+          "data_wire": 3483,
+          "ack_wire": 40,
+          "recovery_payload": 0
+        },
+        "s2c": {
+          "data_payload": 64,
+          "data_wire": 104,
+          "ack_wire": 40,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [
+        {
+          "id": "computer-use",
+          "kind": "screenshot",
+          "complete": "2392519/12500000",
+          "usable": false,
+          "business_status": "stale_version"
+        }
+      ],
+      "unfinished": []
+    },
+    "mixed-preview-priority": {
+      "directions": {
+        "c2s": {
+          "data_payload": 30008595,
+          "data_wire": 30056995,
+          "ack_wire": 9200,
+          "recovery_payload": 0
+        },
+        "s2c": {
+          "data_payload": 5507808,
+          "data_wire": 5517008,
+          "ack_wire": 48400,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [
+        {
+          "id": "image",
+          "kind": "image",
+          "complete": "32402907/2500000",
+          "usable": true,
+          "business_status": "complete",
+          "preview_complete": "6106511/500000",
+          "preview_quality": "declared 500kB preview; no equivalence to final image quality"
+        },
+        {
+          "id": "asr",
+          "kind": "asr",
+          "complete": "3923279/12500000",
+          "usable": true,
+          "business_status": "complete"
+        },
+        {
+          "id": "tts",
+          "kind": "tts",
+          "business_status": "complete",
+          "played_blocks": 8,
+          "missing_blocks": 0,
+          "unresolved_blocks": 0,
+          "all_required_delivered": true,
+          "complete_playback": true,
+          "first_play": "2/5",
+          "playback_end": "14/25",
+          "stall_seconds": "0",
+          "missing_seconds": "0",
+          "blocks": [
+            {
+              "arrival": "162967/500000",
+              "start": "2/5",
+              "end": "21/50",
+              "played": true
+            },
+            {
+              "arrival": "168967/500000",
+              "start": "21/50",
+              "end": "11/25",
+              "played": true
+            },
+            {
+              "arrival": "174967/500000",
+              "start": "11/25",
+              "end": "23/50",
+              "played": true
+            },
+            {
+              "arrival": "180967/500000",
+              "start": "23/50",
+              "end": "12/25",
+              "played": true
+            },
+            {
+              "arrival": "186967/500000",
+              "start": "12/25",
+              "end": "1/2",
+              "played": true
+            },
+            {
+              "arrival": "192967/500000",
+              "start": "1/2",
+              "end": "13/25",
+              "played": true
+            },
+            {
+              "arrival": "198967/500000",
+              "start": "13/25",
+              "end": "27/50",
+              "played": true
+            },
+            {
+              "arrival": "204967/500000",
+              "start": "27/50",
+              "end": "14/25",
+              "played": true
+            }
+          ]
+        },
+        {
+          "id": "computer-use",
+          "kind": "screenshot",
+          "complete": "2400119/12500000",
+          "usable": false,
+          "business_status": "stale_version"
+        }
+      ],
+      "unfinished": []
+    },
+    "unreliable-loss-credit": {
+      "directions": {
+        "c2s": {
+          "data_payload": 1,
+          "data_wire": 1,
+          "ack_wire": 0,
+          "recovery_payload": 0
+        },
+        "s2c": {
+          "data_payload": 0,
+          "data_wire": 0,
+          "ack_wire": 0,
+          "recovery_payload": 0
+        }
+      },
+      "businesses": [],
+      "unfinished": [
+        "lost-unit",
+        "next-unit"
+      ]
+    }
+  },
+  "status": "PASS",
+  "candidate_sha256": "9d60611e797bb06dafd178f08ea437f2ea22c66c94224069c563a4064de4a594",
+  "passed": [
+    "sources",
+    "A_HOL",
+    "B_priority",
+    "C_credit",
+    "D_playback",
+    "E_image",
+    "E_cancel",
+    "datagram_credit",
+    "deadline_ties",
+    "unreliable_HOL",
+    "invalid_inputs",
+    "cancel_endpoints",
+    "screenshot_version",
+    "invalid_business",
+    "business_receivers",
+    "scheduling_isolation",
+    "cancel_requires_delivery",
+    "unfinished_business",
+    "scenario_hol-connection",
+    "scenario_hol-per_stream",
+    "scenario_schedule-fifo",
+    "scenario_schedule-priority",
+    "scenario_credit-1-streams",
+    "scenario_credit-3-streams",
+    "scenario_playback-reliable",
+    "scenario_playback-slots",
+    "scenario_cancel-running-work",
+    "scenario_mixed-fifo",
+    "scenario_mixed-priority",
+    "scenario_image-30mb-5mb",
+    "scenario_screenshot-complete",
+    "scenario_screenshot-stale",
+    "scenario_mixed-preview-priority",
+    "scenario_unreliable-loss-credit"
+  ],
+  "failures": []
+}

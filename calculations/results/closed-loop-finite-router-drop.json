@@ -1,0 +1,538 @@
+{
+  "inputs": {
+    "upload_bytes": 3504,
+    "response_bytes": 0,
+    "model_seconds": 0,
+    "until": 60,
+    "links": {
+      "up": {
+        "rate_bps": 98240,
+        "propagation": 1
+      },
+      "down": {
+        "rate_bps": 736,
+        "propagation": 1
+      }
+    },
+    "sender": {
+      "initial_cwnd": 12000,
+      "rtt_seed": {
+        "latest_rtt": 4,
+        "smoothed_rtt": 4,
+        "rttvar": 2,
+        "min_rtt": 4
+      }
+    },
+    "routers": {
+      "up": {
+        "rate_bps": 9824,
+        "queue_bytes": 0,
+        "propagation": 0
+      }
+    }
+  },
+  "reference_sources": [
+    {
+      "file": "sources/protocol-rfc/rfc9000.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+      "revision": "RFC9000",
+      "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9002.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+      "revision": "RFC9002",
+      "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9002-errata7539.html",
+      "url": "https://www.rfc-editor.org/errata/eid7539",
+      "revision": "RFC9002 Verified Errata7539",
+      "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a"
+    }
+  ],
+  "reference_source_root": "/Users/boj/book/ai-infra-book/calculations",
+  "transmissions": [
+    {
+      "direction": "up",
+      "pn": 0,
+      "kind": "data",
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "business",
+          "offset": 0,
+          "length": 1168
+        }
+      ],
+      "send_start": "0",
+      "send_end": "1/10",
+      "arrival": "21/10",
+      "quic_bytes": 1200,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "received_at": "21/10",
+      "recovery_of": null,
+      "probe_of": null,
+      "router_admission": "11/10",
+      "router_start": "11/10",
+      "router_end": "21/10"
+    },
+    {
+      "direction": "up",
+      "pn": 1,
+      "kind": "data",
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "business",
+          "offset": 1168,
+          "length": 1168
+        }
+      ],
+      "send_start": "1/10",
+      "send_end": "1/5",
+      "arrival": null,
+      "quic_bytes": 1200,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 1228,
+      "dropped": true,
+      "probe": false,
+      "received_at": null,
+      "recovery_of": null,
+      "probe_of": null,
+      "router_admission": "6/5",
+      "drop_reason": "router_waiting_queue_capacity"
+    },
+    {
+      "direction": "up",
+      "pn": 2,
+      "kind": "data",
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "business",
+          "offset": 2336,
+          "length": 1168
+        }
+      ],
+      "send_start": "1/5",
+      "send_end": "3/10",
+      "arrival": null,
+      "quic_bytes": 1200,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 1228,
+      "dropped": true,
+      "probe": false,
+      "received_at": null,
+      "recovery_of": null,
+      "probe_of": null,
+      "router_admission": "13/10",
+      "drop_reason": "router_waiting_queue_capacity"
+    },
+    {
+      "direction": "down",
+      "pn": 0,
+      "kind": "ack",
+      "frames": [],
+      "send_start": "21/10",
+      "send_end": "31/10",
+      "arrival": "41/10",
+      "quic_bytes": 64,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "received_at": "41/10",
+      "recovery_of": null,
+      "probe_of": null
+    },
+    {
+      "direction": "up",
+      "pn": 3,
+      "kind": "data",
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "business",
+          "offset": 1168,
+          "length": 1168
+        }
+      ],
+      "send_start": "165/16",
+      "send_end": "833/80",
+      "arrival": "993/80",
+      "quic_bytes": 1200,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": true,
+      "received_at": "993/80",
+      "recovery_of": null,
+      "probe_of": 1,
+      "router_admission": "913/80",
+      "router_start": "913/80",
+      "router_end": "993/80"
+    },
+    {
+      "direction": "down",
+      "pn": 1,
+      "kind": "ack",
+      "frames": [],
+      "send_start": "993/80",
+      "send_end": "1073/80",
+      "arrival": "1153/80",
+      "quic_bytes": 64,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "received_at": "1153/80",
+      "recovery_of": null,
+      "probe_of": null
+    },
+    {
+      "direction": "up",
+      "pn": 4,
+      "kind": "data",
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "business",
+          "offset": 2336,
+          "length": 1168
+        }
+      ],
+      "send_start": "1153/80",
+      "send_end": "1161/80",
+      "arrival": "1321/80",
+      "quic_bytes": 1200,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "received_at": "1321/80",
+      "recovery_of": 2,
+      "probe_of": null,
+      "router_admission": "1241/80",
+      "router_start": "1241/80",
+      "router_end": "1321/80"
+    },
+    {
+      "direction": "down",
+      "pn": 2,
+      "kind": "ack",
+      "frames": [],
+      "send_start": "1321/80",
+      "send_end": "1401/80",
+      "arrival": "1481/80",
+      "quic_bytes": 64,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "received_at": "1481/80",
+      "recovery_of": null,
+      "probe_of": null
+    }
+  ],
+  "business": {
+    "upload": "1321/80",
+    "model_start": "1321/80",
+    "model_end": "1321/80",
+    "response": "1321/80"
+  },
+  "application_events": [
+    {
+      "at": "6/5",
+      "type": "network_queue_drop",
+      "direction": "up",
+      "pn": 1
+    },
+    {
+      "at": "13/10",
+      "type": "network_queue_drop",
+      "direction": "up",
+      "pn": 2
+    },
+    {
+      "at": "21/10",
+      "type": "application_prefix",
+      "direction": "up",
+      "prefix": 1168
+    },
+    {
+      "at": "993/80",
+      "type": "application_prefix",
+      "direction": "up",
+      "prefix": 2336
+    },
+    {
+      "at": "1321/80",
+      "type": "application_prefix",
+      "direction": "up",
+      "prefix": 3504
+    }
+  ],
+  "waits": [],
+  "sender_events": {
+    "up": [
+      {
+        "type": "sent",
+        "at": "0",
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "business",
+            "offset": 0,
+            "length": 1168
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "1/10",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "business",
+            "offset": 1168,
+            "length": 1168
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "1/5",
+        "pn": 2,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "business",
+            "offset": 2336,
+            "length": 1168
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "41/10",
+        "ranges": [
+          [
+            0,
+            0
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": true,
+        "flow_limited": false
+      },
+      {
+        "type": "sent",
+        "at": "165/16",
+        "pn": 3,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "business",
+            "offset": 1168,
+            "length": 1168
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": true
+      },
+      {
+        "type": "ack",
+        "at": "1153/80",
+        "ranges": [
+          [
+            3,
+            3
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": true,
+        "flow_limited": false
+      },
+      {
+        "type": "sent",
+        "at": "1153/80",
+        "pn": 4,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "business",
+            "offset": 2336,
+            "length": 1168
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "1481/80",
+        "ranges": [
+          [
+            4,
+            4
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": true,
+        "flow_limited": false
+      }
+    ],
+    "down": [
+      {
+        "type": "sent",
+        "at": "21/10",
+        "pn": 0,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "993/80",
+        "pn": 1,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "1321/80",
+        "pn": 2,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      }
+    ]
+  },
+  "final_states": {
+    "up": {
+      "bytes_in_flight": 0,
+      "cwnd": "6000",
+      "ssthresh": "6000",
+      "recovery_start": "1153/80",
+      "latest_rtt": "41/10",
+      "smoothed_rtt": "20649/5120",
+      "rttvar": "2287/2560",
+      "min_rtt": "4",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 4,
+      "next_timer": null,
+      "max_data": 3504,
+      "max_stream_data": {
+        "business": 3504
+      },
+      "stream_highest_sent_offsets": {
+        "business": 3504
+      },
+      "max_data_consumed": 3504
+    },
+    "down": {
+      "bytes_in_flight": 0,
+      "cwnd": "12000",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "4",
+      "smoothed_rtt": "4",
+      "rttvar": "2",
+      "min_rtt": "4",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": null,
+      "next_timer": null,
+      "max_data": 3504,
+      "max_stream_data": {
+        "business": 3504
+      },
+      "stream_highest_sent_offsets": {},
+      "max_data_consumed": 0
+    }
+  },
+  "losses": {
+    "up": [
+      {
+        "at": "1153/80",
+        "pn": 1,
+        "packet_threshold": false,
+        "time_threshold": true
+      },
+      {
+        "at": "1153/80",
+        "pn": 2,
+        "packet_threshold": false,
+        "time_threshold": true
+      }
+    ],
+    "down": []
+  },
+  "timers": {
+    "up": [
+      {
+        "at": "165/16",
+        "kind": "pto",
+        "probe_opportunities": 2
+      }
+    ],
+    "down": []
+  },
+  "numeric_errors": {
+    "up": [],
+    "down": []
+  },
+  "received_intervals": {
+    "up": [
+      [
+        0,
+        3504
+      ]
+    ],
+    "down": []
+  },
+  "consumed": {
+    "up": 0,
+    "down": 0
+  },
+  "summary": {
+    "wire_bytes": 6416,
+    "serialized_wire_bytes_by_horizon": "6416",
+    "unique_received_bytes": 3504,
+    "pending_packets": {
+      "up": 0,
+      "down": 0
+    },
+    "complete": true
+  }
+}

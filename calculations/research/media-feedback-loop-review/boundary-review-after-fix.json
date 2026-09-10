@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "sender_checks": [
+    {
+      "case": "highest-offset300-actual200-retransmit-credit0",
+      "status": "passed"
+    },
+    {
+      "case": "PTO-no-premature-flight-release-PING-and-no-DATAGRAM-retry",
+      "status": "passed"
+    }
+  ],
+  "validation_findings": [
+    {
+      "case": "extra-sender-field-bypasses-task-endpoint-causality",
+      "status": "rejected",
+      "reason": "dependency needs actual delivery at the consumer endpoint"
+    },
+    {
+      "case": "remote-version-change-used-by-client-observer",
+      "status": "rejected",
+      "reason": "version observation must be local to observer"
+    },
+    {
+      "case": "playback-block-unknown-message",
+      "status": "rejected",
+      "reason": "playback requires actual message delivery at observer"
+    },
+    {
+      "case": "cancel-tag-string-becomes-character-targets",
+      "status": "rejected",
+      "reason": "cancellation targets must be a list"
+    },
+    {
+      "case": "boolean-schema-version",
+      "status": "rejected",
+      "reason": "unsupported application schema"
+    }
+  ],
+  "hashes": {
+    "sender.py": "01b7de490da790111aa0cb1901bdc7597a0235d0a77a0d7202d47f828547afea",
+    "sender-dependencies.lock.json": "dc0868b4fb63d21426a9ef55c6363638808697637ffe47bd77d8af066c0c80a0",
+    "application_validation.py": "d4ebb24bbfe734ebb696964f13c16f8ba18064ae306085ea25696adc452712a3"
+  },
+  "checker_sha256": "5f38be62d80bf0d5147229600006738d1be613cbc63d3fdac930105be9c7c57b",
+  "scope": "Independent sender accounting and adversarial application validation; no network acceptance"
+}

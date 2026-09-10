@@ -1,0 +1,428 @@
+{
+  "status": "FAIL",
+  "checks": [
+    {
+      "case": "shared-cwnd-three-streams",
+      "status": "PASS",
+      "summary": {
+        "wire_bytes": 3960,
+        "unique_received_application_bytes": 3504,
+        "complete": true,
+        "all_messages_delivered": true,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        }
+      },
+      "transmissions": 6
+    },
+    {
+      "case": "independent-stream-limit-not-opened-by-other-ACK",
+      "status": "PASS",
+      "summary": {
+        "wire_bytes": 1320,
+        "unique_received_application_bytes": 1168,
+        "complete": false,
+        "all_messages_delivered": false,
+        "pending_packets": {
+          "up": 1,
+          "down": 0
+        }
+      },
+      "transmissions": 2
+    },
+    {
+      "case": "datagram-dropped-once-never-retransmitted",
+      "status": "PASS",
+      "summary": {
+        "wire_bytes": 2548,
+        "unique_received_application_bytes": 960,
+        "complete": false,
+        "all_messages_delivered": false,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        }
+      },
+      "transmissions": 3
+    },
+    {
+      "case": "cancel-held-by-real-recovered-prefix-and-local-scope",
+      "status": "PASS",
+      "summary": {
+        "wire_bytes": 3868,
+        "unique_received_application_bytes": 2,
+        "complete": true,
+        "all_messages_delivered": true,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        }
+      },
+      "transmissions": 5
+    },
+    {
+      "case": "cancelled-unsent-gap-preserved",
+      "status": "PASS",
+      "summary": {
+        "wire_bytes": 3960,
+        "unique_received_application_bytes": 201,
+        "complete": false,
+        "all_messages_delivered": false,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        }
+      },
+      "transmissions": 6
+    },
+    {
+      "case": "nonpreemptive-fifo",
+      "status": "PASS",
+      "summary": {
+        "wire_bytes": 3960,
+        "unique_received_application_bytes": 3504,
+        "complete": true,
+        "all_messages_delivered": true,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        }
+      },
+      "transmissions": 6
+    },
+    {
+      "case": "nonpreemptive-priority",
+      "status": "FAIL",
+      "error": "AssertionError()",
+      "inputs": {
+        "application": {
+          "schema_version": 1,
+          "id": "independent",
+          "messages": [
+            {
+              "id": "bulk-0",
+              "sender": "client",
+              "receiver": "server",
+              "flow_id": "bulk-0",
+              "transport": "stream",
+              "bytes": 1168,
+              "stream_offset": 0,
+              "application_offset": 0,
+              "ready_seconds": "0",
+              "dependencies": [],
+              "priority": 0,
+              "source_order": 0,
+              "deadline_seconds": null,
+              "allow_expire": false,
+              "cancel_tag": null,
+              "on_delivery_cancel_tags": [],
+              "packetization": {
+                "payload_limit_bytes": 1168,
+                "fragment_count": 1,
+                "final_fragment_bytes": 1168,
+                "coalesce_across_messages": false
+              }
+            },
+            {
+              "id": "bulk-1",
+              "sender": "client",
+              "receiver": "server",
+              "flow_id": "bulk-1",
+              "transport": "stream",
+              "bytes": 1168,
+              "stream_offset": 0,
+              "application_offset": 0,
+              "ready_seconds": "0",
+              "dependencies": [],
+              "priority": 0,
+              "source_order": 1,
+              "deadline_seconds": null,
+              "allow_expire": false,
+              "cancel_tag": null,
+              "on_delivery_cancel_tags": [],
+              "packetization": {
+                "payload_limit_bytes": 1168,
+                "fragment_count": 1,
+                "final_fragment_bytes": 1168,
+                "coalesce_across_messages": false
+              }
+            },
+            {
+              "id": "voice",
+              "sender": "client",
+              "receiver": "server",
+              "flow_id": "voice",
+              "transport": "stream",
+              "bytes": 1168,
+              "stream_offset": 0,
+              "application_offset": 0,
+              "ready_seconds": "1/2",
+              "dependencies": [],
+              "priority": 100,
+              "source_order": 2,
+              "deadline_seconds": null,
+              "allow_expire": false,
+              "cancel_tag": null,
+              "on_delivery_cancel_tags": [],
+              "packetization": {
+                "payload_limit_bytes": 1168,
+                "fragment_count": 1,
+                "final_fragment_bytes": 1168,
+                "coalesce_across_messages": false
+              }
+            }
+          ],
+          "compute_tasks": [],
+          "business_observers": [],
+          "scheduling": {
+            "send": "priority",
+            "compute": "fifo",
+            "compute_nonpreemptive": true,
+            "resource_capacity_tasks": 1
+          },
+          "links": {
+            "c2s": {
+              "rate_bits_per_second": 9824,
+              "propagation_seconds": "1"
+            },
+            "s2c": {
+              "rate_bits_per_second": 736,
+              "propagation_seconds": "1"
+            }
+          },
+          "connection_ready_seconds": "0",
+          "external_legacy_assumptions": {
+            "teaching_network": {},
+            "selected_loss_and_recovery": [],
+            "action": "Do not map credit to cwnd, legacy header to MTU, or recovery_ready to PTO. Choose real network inputs explicitly."
+          },
+          "accounting": {
+            "application_bytes_by_direction": {
+              "client_to_server": 3504
+            },
+            "application_bytes": 3504,
+            "message_count": 3,
+            "task_count": 0,
+            "fragment_count": 3
+          }
+        },
+        "network": {
+          "links": {
+            "up": {
+              "rate_bps": 9824,
+              "propagation": 1
+            },
+            "down": {
+              "rate_bps": 736,
+              "propagation": 1
+            }
+          },
+          "until": 100,
+          "initial_cwnd": 3600,
+          "initial_max_data": {
+            "up": 3504,
+            "down": 0
+          },
+          "initial_max_stream_data": {
+            "up": {
+              "bulk-0": 1168,
+              "bulk-1": 1168,
+              "voice": 1168
+            },
+            "down": {}
+          },
+          "receive_memory_bytes": {
+            "up": 100000,
+            "down": 100000
+          },
+          "consume_delay": null,
+          "pad_in_flight": true,
+          "sender": {
+            "rtt_seed": {
+              "latest_rtt": 4,
+              "smoothed_rtt": 4,
+              "rttvar": 20,
+              "min_rtt": 4
+            }
+          }
+        }
+      }
+    },
+    {
+      "case": "reverse-data-blocks-ACK",
+      "status": "FAIL",
+      "error": "KeyError('ack_snapshot')",
+      "inputs": {
+        "application": {
+          "schema_version": 1,
+          "id": "independent",
+          "messages": [
+            {
+              "id": "up",
+              "sender": "client",
+              "receiver": "server",
+              "flow_id": "up",
+              "transport": "stream",
+              "bytes": 1168,
+              "stream_offset": 0,
+              "application_offset": 0,
+              "ready_seconds": "0",
+              "dependencies": [],
+              "priority": 0,
+              "source_order": 0,
+              "deadline_seconds": null,
+              "allow_expire": false,
+              "cancel_tag": null,
+              "on_delivery_cancel_tags": [],
+              "packetization": {
+                "payload_limit_bytes": 1168,
+                "fragment_count": 1,
+                "final_fragment_bytes": 1168,
+                "coalesce_across_messages": false
+              }
+            },
+            {
+              "id": "down",
+              "sender": "server",
+              "receiver": "client",
+              "flow_id": "down",
+              "transport": "stream",
+              "bytes": 1168,
+              "stream_offset": 0,
+              "application_offset": 0,
+              "ready_seconds": "0",
+              "dependencies": [],
+              "priority": 0,
+              "source_order": 1,
+              "deadline_seconds": null,
+              "allow_expire": false,
+              "cancel_tag": null,
+              "on_delivery_cancel_tags": [],
+              "packetization": {
+                "payload_limit_bytes": 1168,
+                "fragment_count": 1,
+                "final_fragment_bytes": 1168,
+                "coalesce_across_messages": false
+              }
+            }
+          ],
+          "compute_tasks": [],
+          "business_observers": [],
+          "scheduling": {
+            "send": "fifo",
+            "compute": "fifo",
+            "compute_nonpreemptive": true,
+            "resource_capacity_tasks": 1
+          },
+          "links": {
+            "c2s": {
+              "rate_bits_per_second": 9824,
+              "propagation_seconds": "1"
+            },
+            "s2c": {
+              "rate_bits_per_second": 736,
+              "propagation_seconds": "1"
+            }
+          },
+          "connection_ready_seconds": "0",
+          "external_legacy_assumptions": {
+            "teaching_network": {},
+            "selected_loss_and_recovery": [],
+            "action": "Do not map credit to cwnd, legacy header to MTU, or recovery_ready to PTO. Choose real network inputs explicitly."
+          },
+          "accounting": {
+            "application_bytes_by_direction": {
+              "client_to_server": 1168,
+              "server_to_client": 1168
+            },
+            "application_bytes": 2336,
+            "message_count": 2,
+            "task_count": 0,
+            "fragment_count": 2
+          }
+        },
+        "network": {
+          "links": {
+            "up": {
+              "rate_bps": 9824,
+              "propagation": 1
+            },
+            "down": {
+              "rate_bps": 736,
+              "propagation": 1
+            }
+          },
+          "until": 100,
+          "initial_cwnd": 2400,
+          "initial_max_data": {
+            "up": 1168,
+            "down": 1168
+          },
+          "initial_max_stream_data": {
+            "up": {
+              "up": 1168
+            },
+            "down": {
+              "down": 1168
+            }
+          },
+          "receive_memory_bytes": {
+            "up": 100000,
+            "down": 100000
+          },
+          "consume_delay": null,
+          "pad_in_flight": true,
+          "sender": {
+            "rtt_seed": {
+              "latest_rtt": 4,
+              "smoothed_rtt": 4,
+              "rttvar": 20,
+              "min_rtt": 4
+            }
+          }
+        }
+      }
+    },
+    {
+      "case": "screenshot-current",
+      "status": "PASS",
+      "summary": {
+        "wire_bytes": 5280,
+        "unique_received_application_bytes": 3507,
+        "complete": true,
+        "all_messages_delivered": true,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        }
+      },
+      "transmissions": 8
+    },
+    {
+      "case": "screenshot-stale",
+      "status": "PASS",
+      "summary": {
+        "wire_bytes": 5280,
+        "unique_received_application_bytes": 3507,
+        "complete": false,
+        "all_messages_delivered": true,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        }
+      },
+      "transmissions": 8
+    }
+  ],
+  "candidate_hashes": {
+    "calculate.py": "ce2ec602906e72f17f6057191693eadc77ba8b6eb546ff969f890774f9fd6cb1",
+    "application.py": "4fc17e92f73116d9aee9fbbac95eda4812620d45b574ec79720cd0156849a527",
+    "sender.py": "01b7de490da790111aa0cb1901bdc7597a0235d0a77a0d7202d47f828547afea",
+    "application_validation.py": "d4ebb24bbfe734ebb696964f13c16f8ba18064ae306085ea25696adc452712a3",
+    "network_validation.py": "1a210489414a33a30c9c51a5793c084b1bb0cf985208f8387fc7124616b1f4f8"
+  },
+  "oracle_sha256": "ba06bd34d177dc04801535f0b73fd1222542a4da14283d5c7c87c09f1eb97b1b",
+  "checker_sha256": "d9fe79dcfcf28375560a3681e712a34dd16897266e76dcd0cc3a705fdff877ba",
+  "scope": "Small actual network scenarios; no injected recovery timestamps. MAX growth arrival algebra separately covered by sender review; no large-workload claim."
+}

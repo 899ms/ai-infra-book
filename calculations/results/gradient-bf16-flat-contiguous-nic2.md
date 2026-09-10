@@ -10686,7 +10686,7 @@
       }
     ],
     "aggregate_resource_lower_seconds": 0.0044040192,
-    "sum_round_resource_lower_seconds": 0.0044040191999999995,
+    "sum_round_resource_lower_seconds": 0.004404019200000001,
     "barrier_lower_with_startup_seconds": 0.0044320192
   },
   "summary": {

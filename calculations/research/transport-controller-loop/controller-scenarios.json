@@ -1,0 +1,167 @@
+{
+  "book-newreno": {
+    "upload_bytes": 30000000,
+    "response_bytes": 5000000,
+    "model_seconds": "0.3",
+    "until": 60,
+    "links": {
+      "up": {
+        "rate_bps": 20000000,
+        "propagation": "0.05"
+      },
+      "down": {
+        "rate_bps": 100000000,
+        "propagation": "0.05"
+      }
+    },
+    "sender": {
+      "initial_cwnd": 12000,
+      "numeric_quantum": "0.000000000001"
+    },
+    "controller": {
+      "name": "newreno"
+    },
+    "pad_in_flight": true
+  },
+  "router-newreno": {
+    "upload_bytes": 3000000,
+    "response_bytes": 500000,
+    "model_seconds": "0.3",
+    "until": 60,
+    "links": {
+      "up": {
+        "rate_bps": 1000000000,
+        "propagation": 0
+      },
+      "down": {
+        "rate_bps": 100000000,
+        "propagation": "0.05"
+      }
+    },
+    "sender": {
+      "initial_cwnd": 12000,
+      "numeric_quantum": "0.000000000001"
+    },
+    "controller": {
+      "name": "newreno"
+    },
+    "pad_in_flight": true,
+    "routers": {
+      "up": {
+        "rate_bps": 20000000,
+        "queue_bytes": 10000000,
+        "propagation": "0.05"
+      }
+    }
+  },
+  "book-cubic_hystart": {
+    "upload_bytes": 30000000,
+    "response_bytes": 5000000,
+    "model_seconds": "0.3",
+    "until": 60,
+    "links": {
+      "up": {
+        "rate_bps": 20000000,
+        "propagation": "0.05"
+      },
+      "down": {
+        "rate_bps": 100000000,
+        "propagation": "0.05"
+      }
+    },
+    "sender": {
+      "initial_cwnd": 12000,
+      "numeric_quantum": "0.000000000001"
+    },
+    "controller": {
+      "name": "cubic_hystart"
+    },
+    "pad_in_flight": true
+  },
+  "router-cubic_hystart": {
+    "upload_bytes": 3000000,
+    "response_bytes": 500000,
+    "model_seconds": "0.3",
+    "until": 60,
+    "links": {
+      "up": {
+        "rate_bps": 1000000000,
+        "propagation": 0
+      },
+      "down": {
+        "rate_bps": 100000000,
+        "propagation": "0.05"
+      }
+    },
+    "sender": {
+      "initial_cwnd": 12000,
+      "numeric_quantum": "0.000000000001"
+    },
+    "controller": {
+      "name": "cubic_hystart"
+    },
+    "pad_in_flight": true,
+    "routers": {
+      "up": {
+        "rate_bps": 20000000,
+        "queue_bytes": 10000000,
+        "propagation": "0.05"
+      }
+    }
+  },
+  "book-bbr": {
+    "upload_bytes": 30000000,
+    "response_bytes": 5000000,
+    "model_seconds": "0.3",
+    "until": 60,
+    "links": {
+      "up": {
+        "rate_bps": 20000000,
+        "propagation": "0.05"
+      },
+      "down": {
+        "rate_bps": 100000000,
+        "propagation": "0.05"
+      }
+    },
+    "sender": {
+      "initial_cwnd": 12000,
+      "numeric_quantum": "0.000000000001"
+    },
+    "controller": {
+      "name": "bbr"
+    },
+    "pad_in_flight": true
+  },
+  "router-bbr": {
+    "upload_bytes": 3000000,
+    "response_bytes": 500000,
+    "model_seconds": "0.3",
+    "until": 60,
+    "links": {
+      "up": {
+        "rate_bps": 1000000000,
+        "propagation": 0
+      },
+      "down": {
+        "rate_bps": 100000000,
+        "propagation": "0.05"
+      }
+    },
+    "sender": {
+      "initial_cwnd": 12000,
+      "numeric_quantum": "0.000000000001"
+    },
+    "controller": {
+      "name": "bbr"
+    },
+    "pad_in_flight": true,
+    "routers": {
+      "up": {
+        "rate_bps": 20000000,
+        "queue_bytes": 10000000,
+        "propagation": "0.05"
+      }
+    }
+  }
+}

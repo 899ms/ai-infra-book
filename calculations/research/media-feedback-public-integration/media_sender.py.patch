@@ -1,0 +1,32 @@
+--- calculations/research/media-feedback-loop/sender.py
++++ calculations/src/infra_calc/transport/media_sender.py
+@@ -1,27 +1,9 @@
+-"""Pinned public multi-stream sender reuse; reliable recovery frame selection only."""
++"""Reuse the public multi-stream sender and select reliable recovery payload."""
+ from copy import deepcopy
+-import hashlib
+-import json
+-from pathlib import Path
+-import sys
+-
+-ROOT = Path(__file__).resolve().parent
+-PROJECT = ROOT.parent.parent
+-sys.path.insert(0, str(PROJECT / 'src'))
+-from infra_calc.topics import transport_sender as _public
+-
+-
+-def verify_dependencies():
+-    rows = json.loads((ROOT / 'sender-dependencies.lock.json').read_text())
+-    for row in rows:
+-        data = (PROJECT / row['file']).read_bytes()
+-        if len(data) != row['bytes'] or hashlib.sha256(data).hexdigest() != row['sha256']:
+-            raise ValueError('frozen sender dependency changed: ' + row['file'])
+-    return rows
++from ..topics import transport_sender as _public
+ 
+ 
+ def create_sender(inputs):
+-    verify_dependencies()
+     return _public.create_sender(inputs)
+ 
+ 

@@ -1,0 +1,205 @@
+--- research/transport_closed_loop.py
++++ calculations/src/infra_calc/topics/transport_closed_loop.py
+@@ -2,23 +2,14 @@
+ 
+ from fractions import Fraction as F
+ from collections import deque
+-import argparse
+ import copy
+ import heapq
+-import hashlib
+-import importlib.util
+ import json
+-from pathlib import Path
+-
+-ROOT = Path(__file__).resolve().parent
+-spec = importlib.util.spec_from_file_location("closed_sender", ROOT / "sender.py")
+-sender = importlib.util.module_from_spec(spec)
+-spec.loader.exec_module(sender)
+-pacer_spec = importlib.util.spec_from_file_location(
+-    "controller_pacer", ROOT / "pacer.py"
+-)
+-pacer_module = importlib.util.module_from_spec(pacer_spec)
+-pacer_spec.loader.exec_module(pacer_module)
++from ..paths import PROJECT
++from . import transport_sender as sender
++from ..transport import pacer as pacer_module
++from ..transport.reference_sources import reference_sources as controller_sources
++
+ 
+ 
+ def validate_inputs(p):
+@@ -140,17 +131,13 @@
+             raise ValueError("invalid consumption")
+ 
+ 
+-def calculate(inputs):
+-    p = copy.deepcopy(inputs)
++def calculate(inputs=None):
++    p = copy.deepcopy(example() if inputs is None else inputs)
+     validate_inputs(p)
+-    reference_sources = json.loads((ROOT / "sources.lock.json").read_text())
+-    for source in reference_sources:
+-        raw = (ROOT / source["file"]).read_bytes()
+-        if (
+-            len(raw) != source["bytes"]
+-            or hashlib.sha256(raw).hexdigest() != source["sha256"]
+-        ):
+-            raise ValueError("network source integrity mismatch")
++    reference_sources = sender.reference_sources()
++    name = (p.get("controller") or {}).get("name")
++    for group in ({"cubic_hystart": ("cubic", "hystart"), "bbr": ("bbr",)}.get(name, ())):
++        reference_sources.extend(controller_sources(group))
+     until = F(str(p.get("until", 60)))
+     directions = ("up", "down")
+     opposite = {"up": "down", "down": "up"}
+@@ -571,7 +558,7 @@
+     result = dict(
+         inputs=p,
+         reference_sources=reference_sources,
+-        reference_source_root=str(ROOT),
++        reference_source_root=str(PROJECT),
+         transmissions=traces,
+         business=completed,
+         application_events=events,
+@@ -689,22 +676,121 @@
+     return out
+ 
+ 
+-def main():
+-    ap = argparse.ArgumentParser(description=__doc__)
+-    ap.add_argument("--inputs", type=Path)
+-    ap.add_argument("--output", type=Path)
+-    a = ap.parse_args()
+-    r = (
+-        calculate(json.loads(a.inputs.read_text()))
+-        if a.inputs
+-        else {k: calculate(v) for k, v in scenarios().items()}
+-    )
+-    output = json.dumps(r, indent=2) + "\n"
+-    if a.output:
+-        a.output.write_text(output)
+-    else:
+-        print(output, end="")
+-
+-
+-if __name__ == "__main__":
+-    main()
++
++def markdown(result):
++    """Readable business endpoints plus complete packet and feedback ledgers."""
++    p = result["inputs"]
++    business = result["business"]
++    lines = [
++        "# 上传、模型工作与响应：有限网络闭环",
++        "",
++        "这是已确认单路径上的参考 NewReno 与显式报文预算计算。包含实际双向发送、ACK、绝对流控、接收消费与可选有限路由队列。尚未覆盖媒体播放/取消/截图版本、控制器适配、自适应 pacing、ACK 聚合及完整 persistent congestion；不能据此宣称完整 TCP/QUIC。",
++        "",
++        f"上传有效输入 **{p['upload_bytes']:,} B**；响应有效输出 **{p.get('response_bytes', 0):,} B**；声明模型工作 **{p.get('model_seconds', 0)} s**。",
++        "",
++        "| 业务事件 | 实际时刻（秒，有理数） |",
++        "|---|---|",
++    ]
++    for key, label in [
++        ("upload", "服务端完整收到上传"),
++        ("model_start", "服务端模型开始"),
++        ("model_end", "模型结束"),
++        ("response", "客户端完整收到响应"),
++    ]:
++        lines.append(
++            f"| {label} | {business[key] if business[key] is not None else '未完成'} |"
++        )
++    lines += [
++        "",
++        "| 方向 | 端点出口 bit/s | 出口后传播 s | 开始发送包数 | QUIC B | UDP/IP B | 声明完整线上 B |",
++        "|---|---:|---:|---:|---:|---:|---:|",
++    ]
++    for d in ("up", "down"):
++        rows = [t for t in result["transmissions"] if t["direction"] == d]
++        lines.append(
++            f"| {d} | {p['links'][d]['rate_bps']} | {p['links'][d]['propagation']} | {len(rows)} | {sum(t['quic_bytes'] for t in rows)} | {sum(t['udp_ip_bytes'] for t in rows)} | {sum(t['wire_bytes'] for t in rows)} |"
++        )
++    lines += [
++        "",
++        f"截至 horizon 实际串行线上字节：**{result['summary']['serialized_wire_bytes_by_horizon']} B**；已开始包的完整声明字节可能包含截止后尚未发完部分。接收唯一字节：**{result['summary']['unique_received_bytes']} B**。",
++        "",
++        "ACK 策略为每个 ack-eliciting 包立即生成独立单范围 ACK；ACK 出口排队和传播进入 RTT。MAX 控制也需 ACK，不能把额度到达时刻当作下一数据包实际发送时刻。纯 ACK/MAX、恢复/探测、普通数据依次优先，各类 FIFO；已经开始的串行发送不抢占。",
++        "",
++        f"数值量化 quantum：`{p.get('sender',{}).get('numeric_quantum','未启用，精确有理数')}`。量化采用 ties-to-even，保留正数和最小窗口；下面记录局部差值，不构成全轨迹误差界。",
++        "",
++        "## 完整线上包时间轴",
++        "",
++        "| 方向/PN | 类型 | STREAM 区间 | 开始 s | 结束 s | 计划到达 s | 实际接收 s | 线上 B | 丢弃 | 恢复/探测旧 PN | router 开始/结束 s |",
++        "|---|---|---|---|---|---|---|---:|---|---|---|",
++    ]
++    for t in result["transmissions"]:
++        spans = (
++            ", ".join(
++                f"{f['stream']}:[{f['offset']},{f['offset']+f['length']})"
++                for f in t["frames"]
++            )
++            or "控制"
++        )
++        prior = t["recovery_of"] if t["recovery_of"] is not None else t["probe_of"]
++        router = f"{t.get('router_start','—')}/{t.get('router_end','—')}"
++        lines.append(
++            f"| {t['direction']}/{t['pn']} | {t['kind']} | {spans} | {t['send_start']} | {t['send_end']} | {t['arrival']} | {t['received_at']} | {t['wire_bytes']} | {t['dropped']} | {prior} | {router} |"
++        )
++    lines += [
++        "",
++        "## 接收、消费与网络丢弃事件",
++        "",
++        "| 时刻 s | 事件 | 方向 | 本地事实 |",
++        "|---|---|---|---|",
++    ]
++    for e in result["application_events"]:
++        rest = {k: v for k, v in e.items() if k not in ("at", "type", "direction")}
++        lines.append(
++            f"| {e['at']} | {e['type']} | {e['direction']} | `{json.dumps(rest,ensure_ascii=False)}` |"
++        )
++    lines += [
++        "",
++        "## 发送方实际反馈与等待",
++        "",
++        "| 方向 | 时刻 s | 事件 | 已知反馈 |",
++        "|---|---|---|---|",
++    ]
++    for d, rows in result["sender_events"].items():
++        for e in rows:
++            if e["type"] == "sent":
++                continue
++            detail = {k: v for k, v in e.items() if k not in ("type", "at")}
++            lines.append(
++                f"| {d} | {e['at']} | {e['type']} | `{json.dumps(detail,ensure_ascii=False)}` |"
++            )
++    for e in result["waits"]:
++        lines.append(
++            f"| {e['direction']} | {e['at']} | 等待 | {', '.join(e['reasons'])} |"
++        )
++    lines += ["", "## 定时器、判失与终态", ""]
++    for key in ("timers", "losses", "final_states", "summary"):
++        lines += [
++            f"### {key}",
++            "",
++            "```json",
++            json.dumps(result[key], ensure_ascii=False, indent=2),
++            "```",
++            "",
++        ]
++    lines += [
++        "## 局部数值量化记录",
++        "",
++        "| 方向 | 时刻 s | 字段 | 原值 | 舍入值 | 局部差 |",
++        "|---|---|---|---|---|---|",
++    ]
++    for d, errors in result["numeric_errors"].items():
++        for e in errors:
++            lines.append(
++                f"| {d} | {e['at']} | {e['field']} | {e['original']} | {e['rounded']} | {e['local_error']} |"
++            )
++    lines += ["", "## 已校验官方来源", ""]
++    for source in result["reference_sources"]:
++        lines.append(
++            f"- [{source['revision']}]({source['url']}) — `{source['sha256']}`"
++        )
++    return "\n".join(lines) + "\n"

@@ -42,7 +42,6 @@ def insert_evidence(book, filename, key, paragraph, before):
     destination.write_text(text)
     original = main.read_text()
     revised = re.sub(pattern + r"\n?", "", original)
-    revised = re.sub(r"\n{3,}", "\n\n", revised)
     changed = [str(destination.relative_to(book))]
     if revised != original:
         main.write_text(revised)
@@ -180,12 +179,12 @@ def sync() -> dict:
            "[训练GEMM保存身份](../calculations/results/pipeline-gemm-save-1f1b.md)逐一覆盖325个矩阵实例，将253个新增张量身份按shape、产生者、最后消费者和stage列明；QKV/gate-up共享输入、已有attention概率与GQA唯一KV均去重。每微批新增保存前三段各141,557,760B、末段143,654,912B，合入原流水寿命后重算峰值，不把两个峰值直接相加。"
            "[重算乘积](../calculations/results/pipeline-gemm-recompute-products.md)只恢复gamma*z与a*u，每stage新增长期保存降到47,185,920B；增加每微批94,896,128次标量运算及每stage6,291,456B乘积工作区。[同时SiLU重算](../calculations/results/pipeline-gemm-recompute-products-silu.md)复用已有双向量工作区，不再给同一sigmoid/a计算计第二次费用；[GPipe对照](../calculations/results/pipeline-gemm-save-gpipe.md)使用相同对象身份。"
            "运行 `python3 calculations/calc.py training-pipeline-gemm-state --format md`。完整shape和语义生命周期已列，但阶段时间仍采用F/B保守预留包络；这是FP32参考下的保存预算，不是实际BF16 autograd保存或完整allocator峰值，持久参数/全部临时量仍单独处理。",
-           '> **实验 10-5')
+           '> **实验 10-4')
     insert('10-训练系统.md', 'C55-training-pipeline-events',
            "[Qwen8 GPipe事件账](../calculations/results/training-pipeline-gpipe-m8.md)与[1F1B事件账](../calculations/results/training-pipeline-1f1b-m8.md)按官方36层划为四段各9层，embedding归首段、head/loss归末段，逐段复用真实训练矩阵和非矩阵工作。每个微批F/B、激活/梯度传输及全梯度就绪后的更新均列时间依赖与独立资源占用。"
            "默认M8、显式前向10ms/反向20ms/各边界传输1ms/更新1ms，GPipe为337ms、1F1B为347ms；后者减少保留状态，不保证任意服务/链路条件下更快。部分保存及收发缓冲预留峰值，GPipe约[1.929,1.929,1.929,2.566]GB，1F1B约[0.966,0.726,0.485,0.323]GB。"
            "运行 `python3 calculations/calc.py training-pipeline-schedule --format md`，`--inputs`指定策略、微批、逐段服务、方向/共享链路和保存策略；M1/4/8/16、不均衡与SiLU重算共14场景。时间是条件输入，非FLOPs自动预测或实测；保存子集加通信缓冲不是全部GEMM激活、参数状态或运行峰值。额外保存可显式按stage补充，长序列/MoE与完整运行时仍需扩展。",
-           '> **实验 10-5')
+           '> **实验 10-4')
     insert('03-推理与训练负载.md', 'C19-v4-overlap-state-training',
            "[V4 ratio4重叠及尾状态反向](../calculations/results/v4-overlap-tail-state-batch2.md)将前块前D与当前块后D通道组成8槽；首块前半为常量padding。返回最后完整块与尾token的KV/score状态，并接受调用者给定的状态上游梯度，合并到两投影/APE/X反向。"
            "[仅3个尾token](../calculations/results/v4-overlap-tail-only.md)没有压缩输出，仍可通过状态损失产生梯度；[首块](../calculations/results/v4-overlap-first-block.md)和[双块](../calculations/results/v4-overlap-two-blocks.md)另测padding与重叠。B2/T9矩阵前向301,989,888、反向603,979,776 FLOPs，标量前向105,220、反向246,016 FLOPs。"
@@ -583,7 +582,7 @@ def sync() -> dict:
            '[完成消费与credit回收](../calculations/results/completion-reclaim-book.md)用16次官方Qwen各8KiB激活传输、8槽位、提交间隔1us、固定完成延迟5us、每20us消费至多4项的教学输入复算：48us传输全完，80us全部回收，最长提交等待28us。预留payload 64KiB，未消费完成项峰值8个，按教学64 bytes/项计512 bytes。'
            '[槽位增至16](../calculations/results/completion-reclaim-more-slots.md)预留128KiB，传输20us全完但回收仍80us；[每5us轮询](../calculations/results/completion-reclaim-fast-poll.md)传输22us／回收25us；[每次仅消费一项](../calculations/results/completion-reclaim-small-batch.md)传输165us／回收320us。'
            '运行 `python3 calculations/calc.py completion-reclaim --format md` 检查逐操作时刻。本例槽位保持至完成项消费，不将传输完成等同回收；轮询瞬时且有批量预算，未模拟独立CQ容量、地址转换或异常路径，元数据大小不代表真实NIC结构。',
-           '## 7.5 并发通信的拥塞与可靠性')
+           '## 7.5 共享网络中的拥塞与可靠性')
     insert('07-数据中心网络.md', 'C38-remote-window',
            '[远程读取窗口](../calculations/results/remote-window-book.md)复算教学单向40GB/s、256 bytes、2us：ceil(BT/m)=313，128个活跃请求窗口上界16.384GB/s。'
            '[串行服务点100ns/请求](../calculations/results/remote-window-serial.md)进一步限制至2.56GB/s；[源端逐次等完成](../calculations/results/remote-window-source-wait.md)虽分配128槽，活跃只有1，上界0.128GB/s。'
@@ -773,7 +772,7 @@ def sync() -> dict:
            "[训练输入供给](../calculations/results/training-supply-default.md)把预token样本按next-fit打包，逐padded token的IDs/labels/valid/segment共21B；存储读取→单CPU准备→H2D→消费与checkpoint快照/写入共享事件图。Qwen8真实参数对应声明14P状态114,670,295,040B，有限host/device/snapshot槽给出反压、预约存活与byte-seconds。"
            "[关闭checkpoint](../calculations/results/training-supply-no-checkpoint.md)、[共享存储阻塞](../calculations/results/training-supply-shared-starvation.md)、[独立存储](../calculations/results/training-supply-independent-storage.md)与[CPU瓶颈](../calculations/results/training-supply-cpu-bottleneck.md)分别比较竞争来源。训练结束与最后写入完成时间分开；设备等待包含启动、输入及checkpoint槽等待，不能全称输入饥饿。"
            "运行 `python3 calculations/calc.py training-input-supply --format md`，`--inputs`提供样本token/存储bytes/CPU准备时间及资源参数。服务时间和带宽是显式假设，whole-write非抢占存储模型不等于实际IO调度；预约峰值不等于allocator峰值，也不宣称实际文件系统持久化保证。",
-           '> **实验 10-7')
+           '<a id="detail-10.4.4"></a>')
     insert('12-端边云协同.md', 'C77-omni-pcm-preprocess',
            "[Omni PCM到mel前处理](../calculations/results/omni-pcm-1s.md)把已解码16kHz波形的padding、Hann窗、STFT、功率谱、mel投影、log归一化和mask选取逐项列出。一秒波形产生100个有效mel帧，随后encoder产生13个位置；前处理已知矩阵5,145,600 FLOPs、标量87,306 FLOPs，语义读1,790,168B、写1,277,400B，FP32 encoder入口51,200B。"
            "[混合长度](../calculations/results/omni-pcm-mixed.md)、[hop尾部](../calculations/results/omni-pcm-hop-tail.md)和[配置上限差异](../calculations/results/omni-pcm-serialized-limit.md)分别核对mask与截断。固定构造器实际默认30秒，不能照JSON中的300秒直接计算；Hann底层401元素与两次max返回后丢弃的int64索引也占写入。"
@@ -879,16 +878,16 @@ def sync() -> dict:
     insert('10-训练系统.md', 'C59-weight-handoff',
            '[权重交接复算](../calculations/results/weight-handoff-book.md)按官方Qwen235全量BF16矩阵拆分专家与非专家，专家423GiB、EP16每rank专家26.4375GiB；非专家权重在本教学布局每rank完整复制，因此总接收量不等于仅专家分片。比较生产端向每rank完整单播与仅发送所需专家加非专家，分别受聚合出口和最大接收端约束，不把字节比当树广播或端到端加速。'
            '[Qwen8阶段容量](../calculations/results/weight-handoff-qwen8.md)复算同时恢复83.2564GiB与先同步权重再释放训练状态、最后分配空KV池的59.2564GiB峰值；40GiB训练状态、24GiB KV、4GiB共用量均为教学输入。[非整除EP7](../calculations/results/weight-handoff-uneven.md)显式给出专家区间，[四副本](../calculations/results/weight-handoff-replicas.md)计生产端出口复制。运行 `python3 calculations/calc.py weight-handoff --format md`；源端重组、真实接收缓冲、版本就绪与量化仍需实测，更新后旧KV不能直接复用。',
-           '> **实验 10-8')
+           '> **实验 10-7')
     insert('10-训练系统.md', 'C59-teacher-cache',
            '[教师缓存复算](../calculations/results/teacher-cache-book.md)按官方Qwen3-8B最终hidden宽4096、词表151936，8192 token的BF16最终hidden为64MiB，全logits为2374MiB，比例37.09375。缓存hidden每次学习重放仍需2THV输出投影；全logits方案生产时投影一次。分别计一次写入、每轮读取和head矩阵工作，chunk只切token维并保留完整词表。'
            '[V4 Flash](../calculations/results/teacher-cache-v4-flash.md)、[V4 Pro](../calculations/results/teacher-cache-v4-pro.md)、[Kimi K3](../calculations/results/teacher-cache-kimi-k3.md)与[Qwen235](../calculations/results/teacher-cache-qwen235.md)使用各自官方文本H/V。运行 `python3 calculations/calc.py teacher-cache --format md`；有效带宽与算力为显式教学输入，串行阶段预算不是端到端时间。缓存限定固定教师版本、最终归一化后hidden，尚不实现版本/token校验或证明低精度重建与蒸馏质量。',
-           '> **实验 10-8')
+           '> **实验 10-7')
     insert('10-训练系统.md', 'C59-routing-metadata',
            '[Routing Replay记录预算](../calculations/results/routing-metadata-book.md)按官方Qwen3-30B的48个MoE层、128专家、top8复算8192token的uint16逻辑专家ID为6291456bytes（6MiB）；[int32](../calculations/results/routing-metadata-int32.md)为12MiB。另按教学布局每token24bytes的sequence/position/weight-version、位图1024bytes、header128bytes计身份元数据，固定revision与layer顺序仍须schema绑定。'
            '[Qwen235](../calculations/results/routing-metadata-qwen235.md)为94层top8，[V4 Flash](../calculations/results/routing-metadata-v4-flash.md)43层top6，[V4 Pro](../calculations/results/routing-metadata-v4-pro.md)61层top6，[Kimi K3](../calculations/results/routing-metadata-kimi-k3.md)排除首dense层后92层top16；shared专家不另写选择ID，V4包含hash层，均不含MTP。uint8恰能编码256专家但不能编码384/896专家。'
            '[三份物理保留](../calculations/results/routing-metadata-retained.md)只乘存储而不自动乘单次传输；运行 `python3 calculations/calc.py routing-metadata --format md` 查编码范围、声明总载荷、供给bytes/s与有效链路余量。此处仅元数据几何，不证明各模型框架R3受支持；多轮共享、packing顺序和缺失记录校验、logprob与质量仍待，不把KV命中当路由日志命中。',
-           '> **实验 10-9')
+           '> **实验 10-8')
     insert('10-训练系统.md', 'C60-dense-training-scale',
            '[名义Dense规模与期限](../calculations/results/dense-training-scale-book.md)按6ND、固定20T token、16384卡与BF16/FP32 dense峰值扫描1T/5T/10T和30/40/50%教学MFU。50%时1T的A100-80GB-SXM／H100-SXM／B200为543.404169／171.358501／75.352045天；5T为2717.020844／856.792504／376.760224天，10T再翻倍。1T在90天内算力张数下界98924／31195／13718，持久16byte状态容量下界200／200／89；两者max仍不证明可部署。'
            '[数据随N增长](../calculations/results/dense-training-scale-proportional.md)使用D=20N，5T相对1T工作25倍，区别于固定D的5倍；[8192卡](../calculations/results/dense-training-scale-half-fleet.md)和[额外30天停顿](../calculations/results/dense-training-scale-calendar.md)另列。运行 `python3 calculations/calc.py dense-training-scale --format md` 查看90/180天所需整数卡数及固定卡数的参数界；D=20N用整数平方根保证N与N+1边界。名义Dense无真实架构config，不代替Qwen/V4/K3或MoE总参数计算；固定MFU、理想分片与16byte只是输入，激活、通信、供数、故障和质量仍需验证。',
@@ -900,37 +899,37 @@ def sync() -> dict:
     insert('10-训练系统.md', 'C56-checkpoint-resume',
            '[真实重分片与下一步复核](../calculations/results/checkpoint-resume-book.md)封存10-6的15原件，含实际DCP两份数据与metadata、提取坐标及各rank记录。19状态唯一载荷463688bytes，文件共518512bytes、其中metadata6393bytes，差额54824bytes不唯一归因序列化。保存2行分片的第一权重[129,129]／[128,129]，恢复3列分片为三份[257,43]，另核验2行原布局与1份完整布局。'
            '保存／三种恢复最大rank API296.783／48.597／64.583／49.605ms；各路径一次且不含加载后聚合，不能排名性能。全部6恢复rank的完整状态与下一步loss1.3159840106964111及状态哈希均同未中断基线，清空Adam动量负对照均检出。运行 `python3 calculations/calc.py checkpoint-resume --format md` 查逐状态与复制载荷：2／3／1 rank全组局部字节473824／483960／463688，增加来自RNG及标量复制。矩形覆盖无交叠且总体积完整；恢复后聚合走相同单进程数学路径，不证明不同分布式归约逐位一致。CLI核验封存记录和文件，不重新执行torch。',
-           '> **实验 10-6')
+           '<a id="detail-10.4.3"></a>')
     insert('10-训练系统.md', 'C56-checkpoint-fault',
            '[真实提交前故障复核](../calculations/results/checkpoint-fault-book.md)导入10-7正常／故障20原件，含实际DCP载荷与metadata，核对监督器执行源码及SHA。第二份故障检查点已写12622659bytes数据，metadata缺失，实际加载报CheckpointException；API9.479633ms返回后Future未完成，提交时间仍null，至SIGKILL的241.845822ms仅为未完成观察。'
            '父进程等待元数据前人工屏障与20步训练完成才终止；第一份实际恢复cursor3、全部状态哈希一致，故障前两轮各20步已到cursor43，需重做40次更新，尚无重做耗时。正常两份及故障第一份共三份提交／加载成功。运行 `python3 calculations/calc.py checkpoint-fault --format md` 分列stage／writer／commit，future观察不当内部就绪。人工屏障不是慢磁盘，进程终止不是断电或多rank可靠性证据；本CLI核验封存文件与真实加载记录，未重新执行torch。',
-           '> **实验 10-7')
+           '<a id="detail-10.4.4"></a>')
     insert('10-训练系统.md', 'C56-checkpoint-baseline',
            '[真实CPU保存基线复核](../calculations/results/checkpoint-baseline-book.md)导入10-7五轮三模式39原件，含10份实际DCP数据与metadata，逐文件核对SHA和运行源码。15次同20步、逐步loss与最终参数／Adam／两种RNG／游标哈希一致，10次恢复哈希同保存前快照。无保存／同步／异步全窗口中位数76.042／207.377／84.569ms，API分别未测／122.268／2.206ms。'
            '按每轮先求差再取中位数，异步−无保存全窗口5.172589ms、训练区间2.959636ms，同步−异步窗口127.423193ms；不能用两组中位数相减替代。运行 `python3 calculations/calc.py checkpoint-baseline --format md` 查看全部运行、writer与训练重叠；future观察不当后台就绪时刻，未经过stage钩子记null。CPU单线程小模型非Qwen／GPU性能，RSS高水位差非staging独占峰值，文件bytes/writer时间非物理磁盘带宽；本模块核验封存加载记录和文件，未重新执行torch恢复。',
-           '> **实验 10-7')
+           '<a id="detail-10.4.4"></a>')
     insert('10-训练系统.md', 'C57-checkpoint-interval',
            '[保存周期与重试](../calculations/results/checkpoint-interval-book.md)以官方Qwen8的114670295040bytes、教学8GB/s同步保存得到c=14.333787s，1024设备各MTBF365天且独立，作业MTBF30796.875s，恢复r=120s。tau为新增有用计算秒，一阶 `c/tau+lambda×tau/2+lambda×r` 给最优939.612519s；另设计算和保存均可失败、恢复期间不失败的Poisson重试模型，`E=(exp(lambda×(tau+c))-1)×(1/lambda+r)`，tau/E数值最优930.081056s，枚举候选两者均选900s。'
            '[每日一次作业共同冲击](../calculations/results/checkpoint-interval-common-shock.md)只加一次率，两个最优改为806.766116／797.238689s；[高故障率](../calculations/results/checkpoint-interval-high-failure.md)展示一阶损失超过1不裁剪，[零故障](../calculations/results/checkpoint-interval-no-failure.md)无有限最优，[恢复500秒](../calculations/results/checkpoint-interval-long-recovery.md)在本模型只改变期望比例、不改变最优tau。运行 `python3 calculations/calc.py checkpoint-interval --format md` 查各项精确分数与重试期望；故障率非设备可靠性测量，独立共同冲击不代表一般时间相关故障，未含异步积压、恢复失败和有限训练终点。',
-           '> **实验 10-7')
+           '> **实验 10-6')
     insert('10-训练系统.md', 'C56-checkpoint-async',
            '[异步保存与背压](../calculations/results/checkpoint-async-book.md)按官方Qwen8全部参数14bytes得到114670295040bytes有效快照，8GB/s单次upload14.333787s；每10秒请求一份超过该写入供给，有限槽会延后实际capture。'
            '[取整8B原例](../calculations/results/checkpoint-async-rounded.md)显式覆盖载荷112GB，20／40秒capture、各staging0.5秒，durable34.5／54.5秒，50秒故障仅能回到20秒；[16GB/s](../calculations/results/checkpoint-async-fast.md)durable27.5／47.5秒，可回到40秒，两路staging总暂停同为1秒。'
            '[单槽背压](../calculations/results/checkpoint-async-one-slot.md)每10秒请求时第二次capture延到34.5秒，训练屏障重叠取并集；[确认额外20秒](../calculations/results/checkpoint-async-delayed-commit.md)时50秒尚无可恢复快照，返回null。运行 `python3 calculations/calc.py checkpoint-async --format md` 查看请求、capture、staging、upload与durable。吞吐／确认语义为显式教学输入，故障之后为反事实计划；墙钟回退不等于损失token，CPU数据状态、加载恢复和后台训练降速另计。',
-           '> **实验 10-7')
+           '<a id="detail-10.4.4"></a>')
     insert('10-训练系统.md', 'C56-checkpoint-reshard',
            '[检查点逻辑重分片](../calculations/results/checkpoint-reshard-book.md)以官方Qwen8 gate[12288,4096]的50331648参数为对象：BF16权重96MiB，连FP32 master及Adam m/v为672MiB。TP4源权重每文件24MiB，TP8目标每份12MiB；目标r取源floor(r/2)，文件偏移(r%2)×12MiB。四状态目标各84MiB，全读取672MiB、32个连续范围，不先写完整离线重分片。'
            '[仅权重](../calculations/results/checkpoint-reshard-weights.md)、[8→4合并](../calculations/results/checkpoint-reshard-reverse.md)、[展平7片→行切5片](../calculations/results/checkpoint-reshard-flat.md)与[Qwen235单专家](../calculations/results/checkpoint-reshard-qwen235.md)分别复算。运行 `python3 calculations/calc.py checkpoint-reshard --format md` 查看全局元素区间、源文件与目标缓冲偏移；小数组真实字节重建验证无重复且完整。原始行主序无header文件仅为声明布局，未执行真实checkpoint恢复；融合／转置／压缩、梯度与CPU状态、数据及随机状态、物理存储IO和完整恢复时间另计。',
-           '> **实验 10-7')
+           '<a id="detail-10.4.3"></a>')
     insert('10-训练系统.md', 'C53-gradient-cast',
            '[梯度转换放置](../calculations/results/gradient-cast-book.md)复用官方Qwen8单层gate[12288,4096]，50331648元素的BF16／FP32梯度为96／192MiB，两端cast逻辑读写均288MiB。教学CPU／GPU转换100／1500GB/s，单向D2H32GB/s时CPU路径6.166ms、GPU路径6.493ms；[300GB/s](../calculations/results/gradient-cast-fast-link.md)改为3.355／0.872ms，等时链路精确250000000000/7 bytes/s。'
            'CPU路径主机活跃峰值288MiB，GPU路径192MiB；GPU路径额外显存192MiB，含共有BF16源的峰值288MiB。[GPU额外预算少1byte](../calculations/results/gradient-cast-tight-gpu.md)时选CPU路径，[等时场景](../calculations/results/gradient-cast-equality.md)保留并列，[Qwen235单专家](../calculations/results/gradient-cast-qwen235.md)按真实gate重新计算。运行 `python3 calculations/calc.py gradient-cast --format md` 查精确操作时序与缓冲寿命；只计梯度就绪到CPU可消费，不含Adam、回传、分块流水和整个训练峰值，活跃载荷不等于预留缓冲池。',
-           '> **实验 10-1')
+           '<a id="detail-10.2.4"></a>')
     insert('10-训练系统.md', 'C53-training-state',
            '[完整Adam／ZeRO状态](../calculations/results/training-state-book.md)按官方Qwen8的399个物理参数张量、8190735360参数逐项核算。BF16权重2＋BF16梯度2＋FP32 master4＋Adam m/v各4＝16bytes/参数，未分片131051765760bytes（131.052GB／122.051GiB）；DP8的stage0/1/2/3每rank持久量分别122.051／41.955／28.606／15.256GiB。'
            '[FP32梯度](../calculations/results/training-state-fp32-gradient.md)改为18bytes/参数，未分片137.308GiB、stage3为17.163GiB；[额外同时驻留10GiB](../calculations/results/training-state-extra-live.md)使stage3超过输入24GiB净预算。'
            '[Qwen235／DP64](../calculations/results/training-state-qwen235.md)全235093634560参数状态3.761TB，stage3每rank54.737GiB，不按top-8缩减专家状态；[逐张量补齐DP7](../calculations/results/training-state-tensor-seven.md)与[展平补齐](../calculations/results/training-state-flat-seven.md)对照。运行 `python3 calculations/calc.py training-state --format md`，可用 `--inputs` 指定精度、DP、补齐和净预算。ZeRO阶段依据已封存官方文档；容量只覆盖所列分配，不含未输入的激活、聚合、casting、通信bucket和allocator，不能证明实际训练可行。',
-           '> **实验 10-1')
+           '<a id="detail-10.2.2"></a>')
     insert('09-分布式推理.md', 'C50-cache-residency',
            '[多级缓存驻留积分](../calculations/results/cache-residency-book.md)按官方Qwen8 BF16每token147456bytes、16token页2359296bytes，对教学驻留区间按物理前缀身份取同层并集，跨HBM／DRAM／SSD副本分别计量。HBM峰值360MiB，实体3888MiB·s、逻辑4608MiB·s，同层共享节省720MiB·s；DRAM6336MiB·s、SSD13824MiB·s。三层同时峰值864MiB，总实体24048MiB·s，其中跨层副本7200MiB·s。'
            '[HBM预算360MiB减1byte](../calculations/results/cache-residency-tight.md)在[5,6)秒超预算1秒，不隐式驱逐；[Qwen235同区间](../calculations/results/cache-residency-qwen235.md)独立使用官方GQA几何。运行 `python3 calculations/calc.py cache-residency --format md`，或用 `--inputs` 指定区间和净容量。身份声明必须覆盖版本／adapter／格式／执行状态，同token不证明KV逐位相同；全局唯一页量只是比较基准，不能当跨层实体容量。完整页、半开区间，不从容量推断写入IO、命中率或取回时间；部分页与混合递推状态仍待。',
@@ -1024,14 +1023,14 @@ def sync() -> dict:
            '借用节点1的16GiB后物理占用64/64/32/32GiB。[两副本](../calculations/results/memory-pool-copies2.md)和[三副本](../calculations/results/memory-pool-copies3.md)分别额外占16/32GiB；故障表按实际持有数据与计算节点枚举，不把副本数乘进读带宽。'
            '每次完整读取16GiB，声明1/60、1、20次/秒，并扫描10/40GB/s、2/20us、128/4096个256B在途事务及5us启动，共24访问条件。使用min(B,Nq/L)乐观服务并明确假定为固定串行时长时，每组10个条件满足严格周期不增长积压；不保证真实队列稳定。'
            '[图6-8容量与读取路径](../calculations/results/memory-pool-layout.svg)来自同一结果。运行 `python3 calculations/calc.py memory-pool-access --copies 2 --format md`。本算例是反复读取不变快照；后接增长KV初始化/追加协议与实验6-10故障恢复成本综合比较，分别保留各自输入和适用边界。',
-           '### 6.6.4 共享范围与故障影响')
+           '## 6.7 从并行方案到超节点规模')
     insert('06-超节点.md', 'C36-growing-kv',
            '[增长KV全部远端](../calculations/results/growing-kv-qwen8-all-r1.md)按已产生P=8192位置、G=128次单token追加，旧历史读取为G×P+G(G−1)/2，当前位置操作数另列；初始化复制、每步读一个副本和向全部副本写入分开。'
            '[两副本](../calculations/results/growing-kv-qwen8-all-r2.md)增加初始化与追加发送、不增加旧历史读取；声明同一发送接口串行、全副本提交后下一步才使用新epoch。'
            '[固定远端前缀/本地增长tail](../calculations/results/growing-kv-qwen8-prefix-r1.md)免去tail的远端重读和副本写入，却新增本地tail容量。[Qwen3.6](../calculations/results/growing-kv-qwen36-all-r1.md)只把10层完整attention的20KiB/位置算作历史，30层递推/卷积固定状态留本地，不能与Qwen8的144KiB/位置混用。'
            '[tail预算反例](../calculations/results/growing-kv-tail-budget-fail.md)明确容量失败；未因此把反事实通信时间称可实现方案。运行 `python3 calculations/calc.py growing-remote-kv --inputs calculations/scenarios/growing-remote-kv-example.json --format md`，可改模型、P/G、batch、副本和声明接口。'
            '时间轴仅为startup+bytes/B的通信骨架，KV生成计算、真实传输协议/控制流、故障恢复和完整内存峰值未知；不是实测decode或系统一致性实现。',
-           '### 6.6.4 共享范围与故障影响')
+           '## 6.7 从并行方案到超节点规模')
     insert('06-超节点.md', 'C36-supernode-cost',
            '[实验6-10同请求集合](../calculations/results/supernode-qwen3-8b-n4-d250-healthy.md)固定8卡，比较TP8单副本、TP4两副本与TP2四副本；Qwen8/32真实BF16逐卡权重/KV/头归属先验容量，服务时长、24GB/卡与2GiBworkspace、信用费率和确定故障事件均为教学输入。54场景改变模型、1/4/8个同步请求、80/250/600ms完成目标与健康/短/长恢复。'
            '[单请求80ms](../calculations/results/supernode-qwen3-8b-n1-d80-healthy.md)仅TP8满足；四请求250ms时Qwen8的四个TP2副本费用较低；[Qwen32](../calculations/results/supernode-qwen3-32b-n4-d600-healthy.md)TP2因容量失败排除，不能拿它的假想速度排名。'
@@ -1061,24 +1060,70 @@ def sync() -> dict:
            '[去除头/ACK且给足窗口](../calculations/results/window-payload-baseline.md)回到12.8s基线；[小接收窗口](../calculations/results/window-receive-limited.md)与[指定一段丢失](../calculations/results/window-loss.md)逐事件展示等待和额外wire bytes，重传不增加唯一文件bytes。ACK同刻到达先取消timeout，过短RTO触发其他timeout时拒绝超出单次恢复合同，未冒充自适应RTO。'
            '[四条有序握手消息](../calculations/results/window-fresh.md)与[两条消息](../calculations/results/window-ticket.md)按各自bytes/方向/到达依赖计时，只是显式消息图，不能直接改名为真实TLS或0RTT。上传完整接收即开始模型，未等最后ACK；未结束的上传ACK继续与下载共享回程，完整成片和最后ACK时刻分开。'
            '运行 `python3 calculations/calc.py connection-window --inputs calculations/scenarios/connection-window-example.json --format md`；JSON保留段ID、发送预约、ACK前缀、窗口、重组峰值及取消timer。官方RFC5681/6298/8446原件已固定校验，只用于概念与实现差异的依据；本例不实现RFC拥塞控制、loss-window reset、真实恢复/0RTT及语音/截图轨迹，C68仍待。',
-           '### 12.3.3 多流传输与媒体截止时间')
+           '### 12.3.3 多流、优先级与交付顺序')
     insert('12-端边云协同.md', 'C68-request-sequence',
            '[四轮每次建链](../calculations/results/sequence-image-complete_received-fresh.md)、[缩短声明握手图](../calculations/results/sequence-image-complete_received-ticket.md)、[仅首轮握手但重置窗口](../calculations/results/sequence-image-complete_received-reuse_reset.md)和[保留双向窗口](../calculations/results/sequence-image-complete_received-reuse_warm.md)使用同30MB上传/5MB响应及共同事件队列。四轮总唯一输入120MB、输出20MB；握手默认四条400/800/400/800B消息，累计分别9600/4800/2400/2400B，仅是声明消息图。'
            '完整响应到达即提交下一轮时，上轮ACK仍占用双向FIFO并更新原连接；上下行cwnd与未确认信用分别保留，不能使用未来final窗口。重置cwnd也不清除尚未确认bytes，旧ACK仍按身份释放信用。'
            '[等待ACK排空](../calculations/results/sequence-image-quiet-reuse_warm.md)与[64KiB小请求](../calculations/results/sequence-small-complete_received-reuse_warm.md)分开比较；[只在第二轮丢段](../calculations/results/sequence-image-request2-loss.md)保留额外wire bytes而不增加唯一输入。每请求记录提交、连接就绪、模型、完整响应与最后ACK，响应时长用完成减提交，握手等待不再与链路忙时重复相加。'
            '运行 `python3 calculations/calc.py connection-sequence --inputs calculations/scenarios/connection-sequence-example.json --format md` 可改策略、提交触发、think time和双向初窗。真实TLS/QUIC握手/0RTT、拥塞控制器及媒体/截图截止时间仍待，不以本教学事件结果作实际协议性能排名。',
-           '### 12.3.3 多流传输与媒体截止时间')
+           '### 12.3.2 窗口、反馈与有效吞吐')
     insert('12-端边云协同.md', 'C68-protocol-handshake',
            '[TCP+TLS1.3首次](../calculations/results/handshake-tcp_tls13-fresh.md)、[恢复但无early](../calculations/results/handshake-tcp_tls13-resume.md)与[QUICv1首次](../calculations/results/handshake-quic_v1-fresh.md)按固定RFC消息依赖及声明包长度计双向FIFO和传播；不额外重复加RTT。有效请求100B/响应200B、承载包180/280B与握手布局分别声明，默认值不是标准规定的握手大小。'
            '[接受早期数据](../calculations/results/handshake-quic_v1-early_accept.md)与[拒绝后应用授权重试](../calculations/results/handshake-quic_v1-early_reject.md)分别记录执行和有效输入；[未授权重试](../calculations/results/handshake-quic_v1-reject-no-retry.md)不产生完整响应。PSK有效、允许发送early、应用执行policy和允许重试是不同条件。'
            'QUIC反放大账只计实际到达UDPpayload；Initial至少1200B，[3600B边界](../calculations/results/handshake-quic-budget-3600-ack-False.md)、[4800B缺解除消息](../calculations/results/handshake-quic-budget-4800-ack-False.md)与[Handshake ACK到达后解除](../calculations/results/handshake-quic-budget-4800-ack-True.md)分列。缺解除事件的图受阻不等于真实QUIC死锁。'
-           '运行 `python3 calculations/calc.py protocol-handshake --inputs calculations/scenarios/protocol-handshake-example.json --format md`。JSON保留包字节、排程、预算和来源，线上字节仅为已建模消息；完整编码、HRR/Retry、一般ACK/PTO和真实拥塞流控仍待。',
-           '### 12.3.2 短请求与大图传输')
+           '运行 `python3 calculations/calc.py protocol-handshake --inputs calculations/scenarios/protocol-handshake-example.json --format md`。JSON保留包字节、排程、预算和来源，线上字节仅为已建模消息；完整编码、TCP上的HRR及组合分支、一般ACK/PTO和真实拥塞流控仍待；后文另列有限QUIC HRR/Retry计算。',
+           '### 12.3.2 窗口、反馈与有效吞吐')
     insert('12-端边云协同.md', 'C68-early-stream',
            '[30MB早期上传接受](../calculations/results/early-stream-30mb-accept-retry-True.md)使用逐包STREAM offset、共享应用包号与发送时密钥，安装1RTT密钥后未发送尾部换用1RTT；已开始包不抢占，同刻先处理密钥。默认1100B有效payload、0RTT/1RTT额外64/48B加IPv4UDP28B，均为声明布局；20/100Mbps、每向50ms和处理0.3s下，232100B有效数据在切换前发送，其余29767900B走1RTT，5MB完整响应13.65867488s。'
            '[拒绝且授权](../calculations/results/early-stream-30mb-reject-retry-True.md)以新包号重发原offset前缀，再发未发送尾部，共30000000B的1RTT有效载荷，完整响应13.75792928s；业务有效输入仍30MB。[未授权](../calculations/results/early-stream-30mb-reject-retry-False.md)停止未发尾部并保持零执行、无完整响应。'
            '[整数边界](../calculations/results/early-stream-oracle-accept-retry-True.md)和[包中途切换](../calculations/results/early-stream-mid-packet-keys-accept.md)保留控制ACK/Finished与业务竞争，避免用整段0RTT或总bytes集合掩盖重发范围。'
            '运行 `python3 calculations/calc.py protocol-early-stream --inputs calculations/scenarios/protocol-early-stream-example.json --format md`，逐包检查有效覆盖和声明线上bytes。时间不是实测QUIC吞吐；未实现一般ACK/PTO、丢失、实际拥塞/流控、HTTP语义与媒体截止，C68继续保留这些范围。',
-           '### 12.3.3 多流传输与媒体截止时间')
+           '### 12.3.2 窗口、反馈与有效吞吐')
+    insert('12-端边云协同.md', 'C68-protocol-retry',
+           '[HRR后重发](../calculations/results/protocol-retry-hrr-retry-True.md)与[Retry后再次early](../calculations/results/protocol-retry-retry-retry-True.md)使用同30MB请求、5MB响应，分别累计30231000B请求业务payload；前者停止early并等待普通密钥，后者更新Initial密钥/DCID、保留包号序列，以新包号重发原STREAM范围，Retry本身不等于TLS拒绝。'
+           '[Retry后又被TLS拒绝](../calculations/results/protocol-retry-retry-then-tls-reject-reattempt.md)在分别授权两次尝试时累计30463100B请求payload，唯一业务仍30MB；头部和控制包另外计入线上bytes。'
+           '[无early的HRR](../calculations/results/protocol-retry-noearly-hrr.md)是首次普通发送，不要求应用重发授权。[多Initial携token](../calculations/results/protocol-retry-retry-token-three-initials.md)分别记录首个有效token到达的地址验证与全部CRYPTO到达，不能把两者合并。服务器发现错误到客户端收到close仍有传播时间；这期间已开始的包继续计费，收到close后才停止未发包。'
+           '运行 `python3 calculations/calc.py protocol-retry --inputs calculations/scenarios/protocol-retry-example.json --format md`，可改消息分支、凭据/授权、token与报文预算。结果是固定RFC约束下的有限QUIC消息计算，不是完整协议栈；TCP HRR、运行时重复/空token Retry、组合分支、一般ACK/PTO/拥塞流控与媒体截止仍待。',
+           '### 12.3.2 窗口、反馈与有效吞吐')
+    insert('12-端边云协同.md', 'C68-shared-media',
+           '[共享多流逐包计算](../calculations/results/shared-media-hol-per_stream.md)将发送、网络到达、应用有序交付和业务可用分开；[同一发送记录的整体有序](../calculations/results/shared-media-hol-connection.md)中音频7秒交付，逐流交付为3秒，图像两者均7秒。声明丢失与恢复时刻相同，不能把这个交付依赖对照称为完整TCP/QUIC性能比较。'
+           '[FIFO](../calculations/results/shared-media-schedule-fifo.md)与[音频优先](../calculations/results/shared-media-schedule-priority.md)保持同分包和计算调度：音频6→3秒、图像5→6秒，新增流不扩大共享信用，已开始的大包不可抢占。[可靠播放](../calculations/results/shared-media-playback-reliable.md)对3/6/7秒到达、每块2秒的序列产生1秒停顿；[固定播放槽](../calculations/results/shared-media-playback-slots.md)丢失第二块、缺音2秒，不能称同质量加速。'
+           '[完整混合业务](../calculations/results/shared-media-mixed-priority.md)逐包运行30MB上传/5MB成片、8块ASR输入、8块TTS、截图和取消；640B/960B音频来自明确PCM格式，模型时间与播放期限为声明值。网络scheduler与compute_scheduler分开；服务端ASR结束才生产TTS，跨端依赖须有真实消息。[额外预览](../calculations/results/shared-media-mixed-preview-priority.md)另计500KB与0.05秒工作。'
+           '[可用截图](../calculations/results/shared-media-screenshot-complete.md)与[旧版本结果](../calculations/results/shared-media-screenshot-stale.md)即使同样完整传输，可用性仍不同。可靠取消须有序交付到接收端后生效，保留已开始计算与在途字节。[无反馈丢失](../calculations/results/shared-media-unreliable-loss-credit.md)不凭空释放信用；事件队列结束不等于业务成功。'
+           '[图12-4教学面板](../calculations/figures/shared-media/figure.png)与[精确事件数据](../calculations/figures/shared-media/data.json)连接交付、排队和播放。运行 `python3 calculations/calc.py shared-media-transport --inputs calculations/scenarios/shared-media-example.json --format md` 可改负载和政策。当前是有限教学信用/声明恢复，非真实拥塞或完整接收内存模型；指定CUBIC/BBR、一般恢复与匹配业务协议对照仍待，完整图12-4也不能仅由这些面板推定完成。',
+           '> **实验 12-4')
+    insert('12-端边云协同.md', 'C68-closed-loop',
+           '[发送方反馈与完整图片请求](../calculations/results/closed-loop-book-30mb-5mb.md)沿30MB上传、5MB响应、20/100Mbps及每向50ms传播，从实际发送、接收、ACK、流控更新与恢复事件推进。声明模型0.3s，上传完整到达13.0166608s、响应完整到达14.36339008s；相同业务的12.8s无封装无限制串行下界不是完整传输结果。'
+           '每包有效载荷最多1168B，声明QUIC预算32B与IPv4/UDP头28B；逐包立即ACK另计64B QUIC及28B外层头。25685个上传数据包、4281个响应数据包与对应ACK共59932包，线上39554832B，不能把35MB有效数据直接当链路流量。'
+           '[绝对额度到达](../calculations/results/closed-loop-absolute-flow-arrival.md)区分普通ACK释放在途量与MAX_DATA/MAX_STREAM_DATA授权新offset；6s获得许可后，MAX本身所需的ACK还占用上行23/307s。'
+           '[有限路由器丢包](../calculations/results/closed-loop-finite-router-drop.md)只在真实排队容量不足时丢弃，发送方等待ACK、loss timer或PTO观察；[尾包探测](../calculations/results/closed-loop-tail-pto-probe.md)使用新PN和旧offset，PTO不直接判失或减窗。'
+           '运行 `python3 calculations/calc.py transport-closed-loop --inputs calculations/scenarios/closed-loop-example.json --format md`。小例精确有理数，长例声明1e-12数值网格并逐次记录局部舍入，不据此保证累计误差；包布局、立即ACK、消费政策均是明确输入。这里只完成已确认单路径上传—模型—响应，尚无完整协议编码、媒体业务或CUBIC/BBR自适应pacing，不用于协议性能排名。',
+           '### 12.3.3 多流、优先级与交付顺序')
+    insert('12-端边云协同.md', 'C68-controller-loop',
+           '[同网络NewReno](../calculations/results/controller-loop-book-newreno.md)、[CUBIC+HyStart++](../calculations/results/controller-loop-book-cubic_hystart.md)与[固定BBR适配](../calculations/results/controller-loop-book-bbr.md)只改变controller.name；统一1200B在途包填充、纯ACK64B及额外28B IPv4/UDP头。30MB上传、0.3s模型、5MB响应沿20/100Mbps及每向50ms路径运行，各59932包、39555120线上B和35M唯一业务B，填充比旧不填充布局多288B。'
+           'NewReno与CUBIC完整响应均14.52103724s，BBR为14.974125992s。这是固定输入下的计算结果，不是通用控制器排名；CUBIC大例全程slow_start，没有进入CSS或立方拥塞避免。'
+           '[中间路由器诊断](../calculations/results/controller-loop-router-cubic_hystart.md)改用3MB上传/0.5MB响应、1Gbps源出口及20Mbps路由器，队列等待使HyStart++进入CSS，终态在第3轮，不能冒称完成5轮后的CA测量。'
+           '共享pacer按旧速率偿还过去的字节债务，新速率只服务未来；纯ACK旁路但仍占物理串行器，MAX与探测包照常计量。恢复副本的新PN计入BBR传输交付，业务offset另做唯一字节去重；丢包定时器证据保留到实际ACK，持续拥塞按未消费loss声明防止迟ACK重复减窗。'
+           '运行 `python3 calculations/calc.py transport-closed-loop --inputs calculations/scenarios/controller-loop-example.json --format md`。共享实现位于infra_calc/transport，官方RFC与固定Linux源码由统一来源锁校验。BBR是明确QUIC每PN适配而非Linux TCP执行；正常恢复可出现1MDS窗口，持续拥塞覆盖为2MDS。数值日志只有局部误差界；完整媒体、ACK聚合与匹配TCP/H3实测仍待。',
+           '### 12.3.3 多流、优先级与交付顺序')
+    insert('12-端边云协同.md', 'C68-ack-policy',
+           '[两包聚合](../calculations/results/ack-policy-count-two.md)把到达2s/3s的两包合为一次ACK，3–4s反向串行、5s到发送方；[尾包期限](../calculations/results/ack-policy-tail-deadline.md)不足两包仍在2.5s触发，4.5s返回。首次RTT不扣接收延迟，已有RTT时按minRTT与声明上限处理，不能把等待直接从传输时间删去。'
+           '[开送前刷新](../calculations/results/ack-policy-queued-snapshot-refresh.md)在真实反向出口可用时冻结ranges；[排队超期](../calculations/results/ack-policy-queued-deadline-overrun.md)保留超max_delay事实，不能夹短delay伪称按时反馈。ACK frame逐varint字段计算，固定空间不足明确拒绝；最近256PN限制的是报告范围而非全部历史内存。'
+           '原书30MB上传/5MB响应采用每2包或10ms、指数3、64B ACK与1200B在途填充：[NewReno](../calculations/results/ack-policy-book-newreno.md)和[CUBIC](../calculations/results/ack-policy-book-cubic_hystart.md)各14990 ACK、38177328线上B、14.564459796s；[BBR适配](../calculations/results/ack-policy-book-bbr.md)14984 ACK、38176776B、14.996386157s。相较立即ACK少约1.38MB，但完整响应分别晚43.422556ms和22.260165ms，减少反馈包不保证业务更快。'
+           '所有数据包无重发，纯ACK身份的loss记录不是物理数据丢包。独立审查逐次核44964个RTT样本及全部实际ACK范围、编码和业务依赖；CUBIC仍在slow_start，不能称立方CA排名。运行 `python3 calculations/calc.py transport-closed-loop --inputs calculations/scenarios/ack-policy-example.json --format md`，JSON保留ACK事件和真实rtt_samples。声明策略不冒充浏览器默认或ACK_FREQUENCY协商，共享媒体真实反馈与TCP/H3匹配实测仍待。',
+           '### 12.3.3 多流、优先级与交付顺序')
+    insert('12-端边云协同.md', 'C68-media-feedback',
+           '[完整媒体反馈](../calculations/results/media-feedback-mixed-priority-aggregate.md)将图片、ASR、TTS和截图消息接入实际ACK、每方向共享cwnd、独立STREAM绝对额度和接收消费。真实交付才触发本端任务或取消，DATAGRAM丢失不重发，PTO可发送独立PING。'
+           '[单图片基线](../calculations/results/media-feedback-image-baseline.md)保留1400个25000B业务块，各拆21×1168+472B，因此有30800个数据包与30800个立即ACK、40656000线上B，35MB完整交付于14.8839358s；与合并字节流的旧分包成本不同。'
+           '固定混合业务35016403B，FIFO/priority×立即/聚合ACK只改发送策略和反馈：[FIFO立即](../calculations/results/media-feedback-mixed-fifo-immediate.md)与[FIFO聚合](../calculations/results/media-feedback-mixed-fifo-aggregate.md)成片14.8839358/14.927358356s，均错过0.16s音频；[媒体优先立即](../calculations/results/media-feedback-mixed-priority-immediate.md)与媒体优先聚合成片14.809457006/14.843085328s，均从0.4s播放完整0.16s音频。四格截图动作都未交付不可用，网络队列空不等于业务成功。'
+           '[图12-4真实反馈媒体面板](../calculations/figures/media-feedback/figure.png)及[精确数据](../calculations/figures/media-feedback/data.json)并列成片、播放质量与实际发送/ACK。运行 `python3 calculations/calc.py transport-closed-loop --inputs calculations/scenarios/media-feedback-example.json --format md`。模型时间/播放槽为声明条件，不是模型实测；本子账不替代匹配TCP/H3、完整握手或无线MAC实验。',
+           '### 12.4.3 双路径选择、分流与故障切换')
+    insert('12-端边云协同.md', 'C69-shared-airtime',
+           '[共享空口单图](../calculations/results/shared-airtime-image-baseline.md)保留30MB上传/5MB响应及20/100Mbps、各50ms的WAN，仅新增client↔AP单共享资源；AP↔server另记WAN。固定ns-3.44官方实现支持的legacy OFDM54/6Mbps参考，非随机DCF或实测Wi-Fi。1200B QUIC数据对应1264B PSDU，PPDU208µs；纯QUIC ACK承载帧PPDU40µs，两者分别还有44µs MAC ACK、34µs前置间隔与16µs SIFS，总交换302/134µs。'
+           '30800个DATA与30800个QUIC ACK共61600次MAC确认，IP账40656000B、所有PSDU43736000B；累计无线服务13.4288s包含RF10.3488s、接入2.0944s和SIFS0.9856s。完整图片15.993881866s，比同输入无无线基线多1.109946066s，WAN流水重叠使无线服务不能直接相加为响应。'
+           '[FIFO即时](../calculations/results/shared-airtime-mixed-fifo-immediate.md)/[聚合](../calculations/results/shared-airtime-mixed-fifo-aggregate.md)成片15.993881866/15.669243112s、无线13.434468/11.109970s，均缺0.16s音频；[优先即时](../calculations/results/shared-airtime-mixed-priority-immediate.md)/[聚合](../calculations/results/shared-airtime-mixed-priority-aggregate.md)成片15.920135004/15.585252555s，均8块全播，四格截图动作仍不可用。'
+           '[另一有限扫描](../calculations/results/shared-airtime-scan-media-960B-ack4.md)使用300KB/50KB背景、不填充与320/640/960B媒体载荷，同10ms timer扫描ACK阈值1/2/4：实际ACK274/144/78，少ACK省空口但成片从1.06265856延至1.07325096s，音频均按固定槽播放；不同载荷不冒充等质量编码。'
+           '[图12-5共享空口面板](../calculations/figures/shared-airtime/figure.png)与[精确数据](../calculations/figures/shared-airtime/data.json)连接服务和业务结果。运行 `python3 calculations/calc.py transport-closed-loop --inputs calculations/scenarios/shared-airtime-example.json --format md`；同PN MAC重试不重复端到端发送，源端ACK快照在client无线或server WAN实际起点冻结。PHY前导不能按IP字节比例分摊，完整MAC ACK超时未知保持null，45µs RXSTART监视器不作完整超时。双路径、真实能源/费用、版本失败重试和匹配TCP/TACK实测继续保留。',
+           '### 12.4.2 业务时限、过期数据与取消')
     return {"updated": sorted(updated),
             "next": "python3 scripts/render_outline.py; python3 scripts/verify_outline.py"}

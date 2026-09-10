@@ -1,0 +1,21 @@
+{
+  "status": "written before implementation, rational source-derived expectations",
+  "growth": [
+    {"paced": false, "smss": 1000, "N": 20000, "standard_delta": 8000, "css_delta": 2000},
+    {"paced": true, "smss": 1000, "N": 20000, "standard_delta": 20000, "css_delta": 5000},
+    {"paced": false, "smss": 1000, "N": 500, "standard_delta": 500, "css_delta": 125}
+  ],
+  "thresholds": [
+    {"last_min": "1/100", "threshold": "1/250", "entry_min": "7/500"},
+    {"last_min": "2/25", "threshold": "1/100", "entry_min": "9/100"},
+    {"last_min": "1/5", "threshold": "2/125", "entry_min": "27/125"}
+  ],
+  "eight_sample_gate": {"samples": 7, "last_min": "1/100", "current_min": "7/500", "enter_css": false},
+  "css_baseline": {"baseline": "7/500", "samples": 8, "equal_min": "7/500", "equal_resumes": false, "lower_min": "13/1000", "lower_resumes": true},
+  "full_trace": {
+    "smss": 1000, "initial_cwnd": 10000,
+    "round1": {"acks": 8, "N_each": 1000, "rtt_each": "1/100", "end_cwnd": 18000},
+    "round2": {"acks": 8, "N_each": 1000, "rtt_each": "7/500", "end_cwnd": 26000, "phase": "css", "completed_css_rounds": 1},
+    "four_more_css_rounds": {"acks_each": 8, "N_each": 1000, "rtt_each": "7/500", "growth_per_ack": 250, "final_cwnd": 34000, "final_ssthresh": 34000, "phase": "congestion_avoidance_handoff"}
+  }
+}

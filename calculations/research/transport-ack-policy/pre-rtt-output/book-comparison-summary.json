@@ -1,0 +1,101 @@
+{
+  "scope": "Derived comparison of full generated results; not independent audit",
+  "rows": [
+    {
+      "controller": "newreno",
+      "aggregate_result_sha256": "e2da1c2c1e62654e2aa182f3df008d9f569296c1e8f8cdc183c9020af3b55f76",
+      "baseline_result_sha256": "af8ecfcc40f77f6d1671088d12817d6e30e4e1754ea3d17d1a8bbff042ff385d",
+      "only_input_change": "ack_policy; sender max_ack_delay=.01 and track_ack_only=True are explicit receiver-policy consequences",
+      "complete_response_seconds": "3641114949/250000000",
+      "immediate_response_seconds": "363025931/25000000",
+      "response_delta_seconds": "10855639/250000000",
+      "wire_bytes": 38177328,
+      "wire_delta_bytes": -1377792,
+      "ack_count": 14990,
+      "ack_counts_by_direction": {
+        "up": 2144,
+        "down": 12846
+      },
+      "physical_drop_count": 0,
+      "recovery_count": 0,
+      "probe_count": 0,
+      "sender_loss_records_by_packet_kind": {
+        "up": {
+          "ack": 0,
+          "data": 0,
+          "max": 0
+        },
+        "down": {
+          "ack": 12591,
+          "data": 0,
+          "max": 0
+        }
+      },
+      "interpretation": "All recorded sender loss declarations concern non-in-flight pure ACK PN no longer covered by bounded ACK retention, not dropped/retransmitted application data; original traces retain these distinctions."
+    },
+    {
+      "controller": "cubic_hystart",
+      "aggregate_result_sha256": "e60c31568bbc2a75b531119fde418278ab4b144df54c3233b6065e980a07c0a3",
+      "baseline_result_sha256": "b1bd5499f8be311d4fce8ba64a5a556da2cc2cfa2ef5838f31c9e15f71ed7614",
+      "only_input_change": "ack_policy; sender max_ack_delay=.01 and track_ack_only=True are explicit receiver-policy consequences",
+      "complete_response_seconds": "3641114949/250000000",
+      "immediate_response_seconds": "363025931/25000000",
+      "response_delta_seconds": "10855639/250000000",
+      "wire_bytes": 38177328,
+      "wire_delta_bytes": -1377792,
+      "ack_count": 14990,
+      "ack_counts_by_direction": {
+        "up": 2144,
+        "down": 12846
+      },
+      "physical_drop_count": 0,
+      "recovery_count": 0,
+      "probe_count": 0,
+      "sender_loss_records_by_packet_kind": {
+        "up": {
+          "ack": 0,
+          "data": 0,
+          "max": 0
+        },
+        "down": {
+          "ack": 12591,
+          "data": 0,
+          "max": 0
+        }
+      },
+      "interpretation": "All recorded sender loss declarations concern non-in-flight pure ACK PN no longer covered by bounded ACK retention, not dropped/retransmitted application data; original traces retain these distinctions."
+    },
+    {
+      "controller": "bbr",
+      "aggregate_result_sha256": "8dcb415126d37cd19c6ad4ce0e5f89c1b831e8cf554e863380347e80237a6ccb",
+      "baseline_result_sha256": "2389e978f362a8df22f36c83fe39393d6bc4558fcd3897a59e8da792a8c1f268",
+      "only_input_change": "ack_policy; sender max_ack_delay=.01 and track_ack_only=True are explicit receiver-policy consequences",
+      "complete_response_seconds": "14996386157/1000000000",
+      "immediate_response_seconds": "1871765749/125000000",
+      "response_delta_seconds": "4452033/200000000",
+      "wire_bytes": 38176776,
+      "wire_delta_bytes": -1378344,
+      "ack_count": 14984,
+      "ack_counts_by_direction": {
+        "up": 2141,
+        "down": 12843
+      },
+      "physical_drop_count": 0,
+      "recovery_count": 0,
+      "probe_count": 0,
+      "sender_loss_records_by_packet_kind": {
+        "up": {
+          "ack": 0,
+          "data": 0,
+          "max": 0
+        },
+        "down": {
+          "ack": 12589,
+          "data": 0,
+          "max": 0
+        }
+      },
+      "interpretation": "All recorded sender loss declarations concern non-in-flight pure ACK PN no longer covered by bounded ACK retention, not dropped/retransmitted application data; original traces retain these distinctions."
+    }
+  ]
+}

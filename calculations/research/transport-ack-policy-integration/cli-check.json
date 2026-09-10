@@ -1,0 +1,1033 @@
+{
+  "status": "passed",
+  "scenario_count": 10,
+  "cli_calls": 20,
+  "checks": [
+    {
+      "id": "ack-policy-count-two",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 2336,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 736,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 2400,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": 10
+        }
+      },
+      "input_sha256": "488d3d43c6b1b2de35e9915a348548f2ead50b19342e36084bc4db9e04411f5e",
+      "expected_file": "results/ack-policy-count-two.json",
+      "manifest_expected_sha256": "acf937717ced836bc6182b91bed297b5fc208d58ecb069cda04426288a91079f",
+      "expected_sha256": "acf937717ced836bc6182b91bed297b5fc208d58ecb069cda04426288a91079f",
+      "actual_sha256": "acf937717ced836bc6182b91bed297b5fc208d58ecb069cda04426288a91079f",
+      "expected_bytes": 8065,
+      "actual_bytes": 8065,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 0.125
+    },
+    {
+      "id": "ack-policy-count-two",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 2336,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 736,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 2400,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": 10
+        }
+      },
+      "input_sha256": "488d3d43c6b1b2de35e9915a348548f2ead50b19342e36084bc4db9e04411f5e",
+      "expected_file": "results/ack-policy-count-two.md",
+      "manifest_expected_sha256": "986d5200978ab25c6f9c3260758f4922e530b24cb0aac1151df0742230a4ce4c",
+      "expected_sha256": "986d5200978ab25c6f9c3260758f4922e530b24cb0aac1151df0742230a4ce4c",
+      "actual_sha256": "986d5200978ab25c6f9c3260758f4922e530b24cb0aac1151df0742230a4ce4c",
+      "expected_bytes": 5075,
+      "actual_bytes": 5075,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 0.117
+    },
+    {
+      "id": "ack-policy-tail-deadline",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 1168,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 736,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 2400,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "1/2"
+        }
+      },
+      "input_sha256": "1dbbdd4c18175a1f6d59cafa55cdf897e339e04368d0df47cc6023ad3cb093f3",
+      "expected_file": "results/ack-policy-tail-deadline.json",
+      "manifest_expected_sha256": "a477d044bbae786e4074f16c48d6ac71a70a7b877970c35fdcfb23f7a2d2de3a",
+      "expected_sha256": "a477d044bbae786e4074f16c48d6ac71a70a7b877970c35fdcfb23f7a2d2de3a",
+      "actual_sha256": "a477d044bbae786e4074f16c48d6ac71a70a7b877970c35fdcfb23f7a2d2de3a",
+      "expected_bytes": 6988,
+      "actual_bytes": 6988,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 0.118
+    },
+    {
+      "id": "ack-policy-tail-deadline",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 1168,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 736,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 2400,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "1/2"
+        }
+      },
+      "input_sha256": "1dbbdd4c18175a1f6d59cafa55cdf897e339e04368d0df47cc6023ad3cb093f3",
+      "expected_file": "results/ack-policy-tail-deadline.md",
+      "manifest_expected_sha256": "8fe4403eaaf849f668cf0c5638df3d3ad0dcb31ad26c853b3f623b5f03f73dae",
+      "expected_sha256": "8fe4403eaaf849f668cf0c5638df3d3ad0dcb31ad26c853b3f623b5f03f73dae",
+      "actual_sha256": "8fe4403eaaf849f668cf0c5638df3d3ad0dcb31ad26c853b3f623b5f03f73dae",
+      "expected_bytes": 4958,
+      "actual_bytes": 4958,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 0.127
+    },
+    {
+      "id": "ack-policy-same-time-arrival-deadline",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 2336,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 736,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 2400,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": 1
+        }
+      },
+      "input_sha256": "0dc543b03b77da6fdd7e4a9086371c1aff4803dd51408be97465f0634a0dd20f",
+      "expected_file": "results/ack-policy-same-time-arrival-deadline.json",
+      "manifest_expected_sha256": "4b6d7c497bad9bb5ec550142c8df98566bc46e435d2970348275e5e0e8d98187",
+      "expected_sha256": "4b6d7c497bad9bb5ec550142c8df98566bc46e435d2970348275e5e0e8d98187",
+      "actual_sha256": "4b6d7c497bad9bb5ec550142c8df98566bc46e435d2970348275e5e0e8d98187",
+      "expected_bytes": 8064,
+      "actual_bytes": 8064,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 0.123
+    },
+    {
+      "id": "ack-policy-same-time-arrival-deadline",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 2336,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 736,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 2400,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": 1
+        }
+      },
+      "input_sha256": "0dc543b03b77da6fdd7e4a9086371c1aff4803dd51408be97465f0634a0dd20f",
+      "expected_file": "results/ack-policy-same-time-arrival-deadline.md",
+      "manifest_expected_sha256": "d74ffd0115f3a8b1d0668ae67bd4d1c6fde930b1bfa5988b99f27731a0494276",
+      "expected_sha256": "d74ffd0115f3a8b1d0668ae67bd4d1c6fde930b1bfa5988b99f27731a0494276",
+      "actual_sha256": "d74ffd0115f3a8b1d0668ae67bd4d1c6fde930b1bfa5988b99f27731a0494276",
+      "expected_bytes": 5074,
+      "actual_bytes": 5074,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 0.117
+    },
+    {
+      "id": "ack-policy-lost-first-ack",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 2336,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 736,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 2400,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 1,
+          "max_delay": 10
+        },
+        "drop_packets": [
+          {
+            "direction": "down",
+            "pn": 0
+          }
+        ]
+      },
+      "input_sha256": "db7fd03f38f175e17d070379a4a8441304d8f3a923e290378f991b7a1e941bd6",
+      "expected_file": "results/ack-policy-lost-first-ack.json",
+      "manifest_expected_sha256": "64c8179df132890069cddfa0314620a9d0cd57a77a14eb136691c12a728b4d8c",
+      "expected_sha256": "64c8179df132890069cddfa0314620a9d0cd57a77a14eb136691c12a728b4d8c",
+      "actual_sha256": "64c8179df132890069cddfa0314620a9d0cd57a77a14eb136691c12a728b4d8c",
+      "expected_bytes": 9821,
+      "actual_bytes": 9821,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 0.117
+    },
+    {
+      "id": "ack-policy-lost-first-ack",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 2336,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 736,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 2400,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 1,
+          "max_delay": 10
+        },
+        "drop_packets": [
+          {
+            "direction": "down",
+            "pn": 0
+          }
+        ]
+      },
+      "input_sha256": "db7fd03f38f175e17d070379a4a8441304d8f3a923e290378f991b7a1e941bd6",
+      "expected_file": "results/ack-policy-lost-first-ack.md",
+      "manifest_expected_sha256": "5bf3f7eb54634f99501c3074157d4bfb1346f8fcb648e9f6e7a7c4651fd200e5",
+      "expected_sha256": "5bf3f7eb54634f99501c3074157d4bfb1346f8fcb648e9f6e7a7c4651fd200e5",
+      "actual_sha256": "5bf3f7eb54634f99501c3074157d4bfb1346f8fcb648e9f6e7a7c4651fd200e5",
+      "expected_bytes": 5197,
+      "actual_bytes": 5197,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 0.118
+    },
+    {
+      "id": "ack-policy-max-flow-control",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 3504,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 736,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 2400,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "1/2"
+        },
+        "receive_window": 2336,
+        "consume_delay": 0
+      },
+      "input_sha256": "7acae08f49479dd18c950a377ae8f6cf6a80fbfccde5afd4c32e5e66603cd6b4",
+      "expected_file": "results/ack-policy-max-flow-control.json",
+      "manifest_expected_sha256": "54a9fc789e7f3219933c562ff42efa12aec37ea354711ff103267a0dc9675380",
+      "expected_sha256": "54a9fc789e7f3219933c562ff42efa12aec37ea354711ff103267a0dc9675380",
+      "actual_sha256": "54a9fc789e7f3219933c562ff42efa12aec37ea354711ff103267a0dc9675380",
+      "expected_bytes": 22029,
+      "actual_bytes": 22029,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 0.122
+    },
+    {
+      "id": "ack-policy-max-flow-control",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 3504,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 736,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 2400,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "1/2"
+        },
+        "receive_window": 2336,
+        "consume_delay": 0
+      },
+      "input_sha256": "7acae08f49479dd18c950a377ae8f6cf6a80fbfccde5afd4c32e5e66603cd6b4",
+      "expected_file": "results/ack-policy-max-flow-control.md",
+      "manifest_expected_sha256": "1a3943f4b0b552350c31dba46cb91e77ce29fd492ea8d883a7e3d819cbd939f3",
+      "expected_sha256": "1a3943f4b0b552350c31dba46cb91e77ce29fd492ea8d883a7e3d819cbd939f3",
+      "actual_sha256": "1a3943f4b0b552350c31dba46cb91e77ce29fd492ea8d883a7e3d819cbd939f3",
+      "expected_bytes": 7185,
+      "actual_bytes": 7185,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 0.119
+    },
+    {
+      "id": "ack-policy-queued-snapshot-refresh",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 3504,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 368,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 3600,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 1,
+          "max_delay": 10
+        }
+      },
+      "input_sha256": "6cf5a322ed9fb8531cb654f7b3aad74f8dac681a196a13bfe90dcff7d0ee9bbd",
+      "expected_file": "results/ack-policy-queued-snapshot-refresh.json",
+      "manifest_expected_sha256": "efba5a116420c3614256d98b869ab6a4215e85f229d7429c57ceb06dab552cb2",
+      "expected_sha256": "efba5a116420c3614256d98b869ab6a4215e85f229d7429c57ceb06dab552cb2",
+      "actual_sha256": "efba5a116420c3614256d98b869ab6a4215e85f229d7429c57ceb06dab552cb2",
+      "expected_bytes": 11399,
+      "actual_bytes": 11399,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 0.117
+    },
+    {
+      "id": "ack-policy-queued-snapshot-refresh",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 3504,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 368,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 3600,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 1,
+          "max_delay": 10
+        }
+      },
+      "input_sha256": "6cf5a322ed9fb8531cb654f7b3aad74f8dac681a196a13bfe90dcff7d0ee9bbd",
+      "expected_file": "results/ack-policy-queued-snapshot-refresh.md",
+      "manifest_expected_sha256": "e438abcbe9f1a68fd79931ebe3cf7b041ac05912e303db290b823884a14489d1",
+      "expected_sha256": "e438abcbe9f1a68fd79931ebe3cf7b041ac05912e303db290b823884a14489d1",
+      "actual_sha256": "e438abcbe9f1a68fd79931ebe3cf7b041ac05912e303db290b823884a14489d1",
+      "expected_bytes": 5446,
+      "actual_bytes": 5446,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 0.117
+    },
+    {
+      "id": "ack-policy-queued-deadline-overrun",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 2336,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 368,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 3600,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 1,
+          "max_delay": "1/2"
+        }
+      },
+      "input_sha256": "ce280c30f5d2a88eb95dd50fdda2c894412b544a7fa524df0c54eba8c06e0031",
+      "expected_file": "results/ack-policy-queued-deadline-overrun.json",
+      "manifest_expected_sha256": "6ac3f11a000cb5d069568f72c61a11d5b72778af4c8245dc5cfb67c9e8fd3af2",
+      "expected_sha256": "6ac3f11a000cb5d069568f72c61a11d5b72778af4c8245dc5cfb67c9e8fd3af2",
+      "actual_sha256": "6ac3f11a000cb5d069568f72c61a11d5b72778af4c8245dc5cfb67c9e8fd3af2",
+      "expected_bytes": 10288,
+      "actual_bytes": 10288,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 0.118
+    },
+    {
+      "id": "ack-policy-queued-deadline-overrun",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 2336,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 368,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 3600,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 1,
+          "max_delay": "1/2"
+        }
+      },
+      "input_sha256": "ce280c30f5d2a88eb95dd50fdda2c894412b544a7fa524df0c54eba8c06e0031",
+      "expected_file": "results/ack-policy-queued-deadline-overrun.md",
+      "manifest_expected_sha256": "be1ebd3f526358cce83cfccd8c94c500d996c598de5adbf225118d77b3d30d38",
+      "expected_sha256": "be1ebd3f526358cce83cfccd8c94c500d996c598de5adbf225118d77b3d30d38",
+      "actual_sha256": "be1ebd3f526358cce83cfccd8c94c500d996c598de5adbf225118d77b3d30d38",
+      "expected_bytes": 5308,
+      "actual_bytes": 5308,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 0.123
+    },
+    {
+      "id": "ack-policy-book-newreno",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 30000000,
+        "response_bytes": 5000000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "newreno"
+        },
+        "pad_in_flight": true,
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "0.01",
+          "delay_exponent": 3,
+          "retain_packets": 256,
+          "reorder_immediate": true,
+          "header_tag_bytes": 24
+        }
+      },
+      "input_sha256": "26fd50fd2bff1362951a8cf7197e71b4faf066be140dc028fc5d198580d30d25",
+      "expected_file": "results/ack-policy-book-newreno.json",
+      "manifest_expected_sha256": "7b7df4557f04a75519d1c6cf9b337b2355ffef361b4a59275a37f7c63ca08553",
+      "expected_sha256": "7b7df4557f04a75519d1c6cf9b337b2355ffef361b4a59275a37f7c63ca08553",
+      "actual_sha256": "7b7df4557f04a75519d1c6cf9b337b2355ffef361b4a59275a37f7c63ca08553",
+      "expected_bytes": 93045376,
+      "actual_bytes": 93045376,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 24.134
+    },
+    {
+      "id": "ack-policy-book-newreno",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 30000000,
+        "response_bytes": 5000000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "newreno"
+        },
+        "pad_in_flight": true,
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "0.01",
+          "delay_exponent": 3,
+          "retain_packets": 256,
+          "reorder_immediate": true,
+          "header_tag_bytes": 24
+        }
+      },
+      "input_sha256": "26fd50fd2bff1362951a8cf7197e71b4faf066be140dc028fc5d198580d30d25",
+      "expected_file": "results/ack-policy-book-newreno.md",
+      "manifest_expected_sha256": "6895f4cd42591413fd879f4c060390191ddb0837423deb0951708d111fa28568",
+      "expected_sha256": "6895f4cd42591413fd879f4c060390191ddb0837423deb0951708d111fa28568",
+      "actual_sha256": "6895f4cd42591413fd879f4c060390191ddb0837423deb0951708d111fa28568",
+      "expected_bytes": 17652612,
+      "actual_bytes": 17652612,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 21.737
+    },
+    {
+      "id": "ack-policy-book-cubic_hystart",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 30000000,
+        "response_bytes": 5000000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "cubic_hystart"
+        },
+        "pad_in_flight": true,
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "0.01",
+          "delay_exponent": 3,
+          "retain_packets": 256,
+          "reorder_immediate": true,
+          "header_tag_bytes": 24
+        }
+      },
+      "input_sha256": "b1aeda9004fd08695f36faff55e7a2528cc63eb40be58918aa59289f5ff4ebac",
+      "expected_file": "results/ack-policy-book-cubic_hystart.json",
+      "manifest_expected_sha256": "3d87b3061406cc42fc48aa4a86cfe66f64176ba713fb71b5849d60f7cfb8bd51",
+      "expected_sha256": "3d87b3061406cc42fc48aa4a86cfe66f64176ba713fb71b5849d60f7cfb8bd51",
+      "actual_sha256": "3d87b3061406cc42fc48aa4a86cfe66f64176ba713fb71b5849d60f7cfb8bd51",
+      "expected_bytes": 119295585,
+      "actual_bytes": 119295585,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 29.477
+    },
+    {
+      "id": "ack-policy-book-cubic_hystart",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 30000000,
+        "response_bytes": 5000000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "cubic_hystart"
+        },
+        "pad_in_flight": true,
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "0.01",
+          "delay_exponent": 3,
+          "retain_packets": 256,
+          "reorder_immediate": true,
+          "header_tag_bytes": 24
+        }
+      },
+      "input_sha256": "b1aeda9004fd08695f36faff55e7a2528cc63eb40be58918aa59289f5ff4ebac",
+      "expected_file": "results/ack-policy-book-cubic_hystart.md",
+      "manifest_expected_sha256": "f0607141138d0455753765e3a343bd4eebedd5f971fda3d4ae767dcf7c2f81f2",
+      "expected_sha256": "f0607141138d0455753765e3a343bd4eebedd5f971fda3d4ae767dcf7c2f81f2",
+      "actual_sha256": "f0607141138d0455753765e3a343bd4eebedd5f971fda3d4ae767dcf7c2f81f2",
+      "expected_bytes": 17653863,
+      "actual_bytes": 17653863,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 26.377
+    },
+    {
+      "id": "ack-policy-book-bbr",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 30000000,
+        "response_bytes": 5000000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "bbr"
+        },
+        "pad_in_flight": true,
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "0.01",
+          "delay_exponent": 3,
+          "retain_packets": 256,
+          "reorder_immediate": true,
+          "header_tag_bytes": 24
+        }
+      },
+      "input_sha256": "fe51ebf28cf0fe4d1c966544b8f8f6b104a62d6c305693231c3e3d24c14d7104",
+      "expected_file": "results/ack-policy-book-bbr.json",
+      "manifest_expected_sha256": "f45bf8f1082e2eb4a315858bee6e322143e7933eda230be8569238b248db6d3a",
+      "expected_sha256": "f45bf8f1082e2eb4a315858bee6e322143e7933eda230be8569238b248db6d3a",
+      "actual_sha256": "f45bf8f1082e2eb4a315858bee6e322143e7933eda230be8569238b248db6d3a",
+      "expected_bytes": 238653714,
+      "actual_bytes": 238653714,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 30.349
+    },
+    {
+      "id": "ack-policy-book-bbr",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 30000000,
+        "response_bytes": 5000000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "bbr"
+        },
+        "pad_in_flight": true,
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "0.01",
+          "delay_exponent": 3,
+          "retain_packets": 256,
+          "reorder_immediate": true,
+          "header_tag_bytes": 24
+        }
+      },
+      "input_sha256": "fe51ebf28cf0fe4d1c966544b8f8f6b104a62d6c305693231c3e3d24c14d7104",
+      "expected_file": "results/ack-policy-book-bbr.md",
+      "manifest_expected_sha256": "d2a102c6bc04b8f8186cca7357f857335024d129161d74a12263accb29be6ef8",
+      "expected_sha256": "d2a102c6bc04b8f8186cca7357f857335024d129161d74a12263accb29be6ef8",
+      "actual_sha256": "d2a102c6bc04b8f8186cca7357f857335024d129161d74a12263accb29be6ef8",
+      "expected_bytes": 15766918,
+      "actual_bytes": 15766918,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "source_fingerprint_after": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+      "elapsed_seconds": 26.066
+    }
+  ],
+  "source_hashes_before": {
+    "calc.py": "0f4aaf2589f4e9804b38abc25fdcc7f785f02dbda709b4a3ba8a348ae7c44b65",
+    "configs/sources.lock.json": "02cd5608d7d00f6213be9e566bc8651657d854f87ee01deec9fdd9d4f2c43a3e",
+    "scenarios/book.json": "d2c3a2a505d10bcc3cc59b837e54c1ba6d60d8a837546e2a9e740be4cba3ee01",
+    "sources/congestion-controllers/errata-check.html": "4765d07ace49aa20e0ce7001016c50329f1309640d1e0a024a5577c0494572db",
+    "sources/congestion-controllers/rfc9406.txt": "43e3ddc1d3446142b125f018cd52aa2ff858b3f1ff9c6969924ab9fbf45d5230",
+    "sources/congestion-controllers/rfc9438.txt": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+    "sources/congestion-controllers/tcp.h": "de555f117e5b039040c94ce693ba5e0c74bb7a4f11df00e0d72de95988f1b553",
+    "sources/congestion-controllers/tcp_bbr.c": "ba7d0706259dfef5bf455f26ac4bab65f43b9209b9cfd4f761c64c89816bdfe4",
+    "sources/congestion-controllers/tcp_rate.c": "52d682c760573819a36bfef45a094ea8615a39d56c0248569d96f9e6e47b2b23",
+    "sources/congestion-controllers/win_minmax.c": "6d7fabb8cdb2a53e485341435483b408a0183f4e349cf894343ac5febcb3fe86",
+    "sources/congestion-controllers/win_minmax.h": "deef538ecd6a56ed99345497b254b1c480f45b1a5b0cb3e30a37bd4a9420db31",
+    "sources/connection-window/rfc5681.txt": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+    "sources/protocol-rfc/rfc9000.txt": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+    "sources/protocol-rfc/rfc9002-errata7539.html": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+    "sources/protocol-rfc/rfc9002.txt": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+    "sources/shared-media-rfc/rfc9221.txt": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+    "src/infra_calc/cli.py": "7979eb64db3b706311a5aa02a4b03fcd6326bf0485f8448dcd073bd674e499dd",
+    "src/infra_calc/sources.py": "bf1a73fc35baf657bf3e13732613f3b92f2d1cc550434da269c0d13cda818747",
+    "src/infra_calc/topics/transport_closed_loop.py": "49cbd00d7f485215de86eb18aa61217dac41923a859fb7adb2190e28d2192c4f",
+    "src/infra_calc/topics/transport_sender.py": "91286019b4f2f1e057603e5011171470453bc9bd76bea6c60b91dd580c99c8b3",
+    "src/infra_calc/transport/__init__.py": "afe84ba19b4e95b5236b841bb80687933bc348f80273d9d126dbe184250a28eb",
+    "src/infra_calc/transport/ack_receiver.py": "a8a44b09c95d76501821a20a4737fdc352d564de706f98082b2c5f7f55949378",
+    "src/infra_calc/transport/bbr_adapter.py": "870b2f2ac35e4d98d0425eb97c86cc4fc8ba0eb6e518fde168165030756dac7c",
+    "src/infra_calc/transport/bbr_minmax.py": "6c763345efa592f6bba348b81350081b0e24050d34c718c1727622739b52d28e",
+    "src/infra_calc/transport/bbr_reference.py": "714b9ffecd300362a354e73aee4adbb744c41795a3019b88bc3e784e31612da6",
+    "src/infra_calc/transport/bbr_state.py": "e24b8d55efb218f344a5799f73db83966cfc71088341f595a60562952f906194",
+    "src/infra_calc/transport/cubic.py": "4e77d2a7c709a3c873009ba89dabd806760cb56f3a5ce7164233925211f5e521",
+    "src/infra_calc/transport/cubic_adapter.py": "4dafed0947806549a354493aa12f976827fe4b8cb83f0f0096da65ac512eb4a3",
+    "src/infra_calc/transport/hystart.py": "216c633b34e3acf39665cf3e920d9701c689434d6b31fe6bcbc65deafc31d3c7",
+    "src/infra_calc/transport/pacer.py": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+    "src/infra_calc/transport/persistent_congestion.py": "2f6b9e998e5a60ce9388aee8e956acbf04e1ffe77646b1c757b1daae77a491d7",
+    "src/infra_calc/transport/reference_sources.py": "86bd8441af9b881953ab4e98bea21ea9d071339039d509d9143b5af8e47ea788"
+  },
+  "source_hashes_after": {
+    "calc.py": "0f4aaf2589f4e9804b38abc25fdcc7f785f02dbda709b4a3ba8a348ae7c44b65",
+    "configs/sources.lock.json": "02cd5608d7d00f6213be9e566bc8651657d854f87ee01deec9fdd9d4f2c43a3e",
+    "scenarios/book.json": "d2c3a2a505d10bcc3cc59b837e54c1ba6d60d8a837546e2a9e740be4cba3ee01",
+    "sources/congestion-controllers/errata-check.html": "4765d07ace49aa20e0ce7001016c50329f1309640d1e0a024a5577c0494572db",
+    "sources/congestion-controllers/rfc9406.txt": "43e3ddc1d3446142b125f018cd52aa2ff858b3f1ff9c6969924ab9fbf45d5230",
+    "sources/congestion-controllers/rfc9438.txt": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+    "sources/congestion-controllers/tcp.h": "de555f117e5b039040c94ce693ba5e0c74bb7a4f11df00e0d72de95988f1b553",
+    "sources/congestion-controllers/tcp_bbr.c": "ba7d0706259dfef5bf455f26ac4bab65f43b9209b9cfd4f761c64c89816bdfe4",
+    "sources/congestion-controllers/tcp_rate.c": "52d682c760573819a36bfef45a094ea8615a39d56c0248569d96f9e6e47b2b23",
+    "sources/congestion-controllers/win_minmax.c": "6d7fabb8cdb2a53e485341435483b408a0183f4e349cf894343ac5febcb3fe86",
+    "sources/congestion-controllers/win_minmax.h": "deef538ecd6a56ed99345497b254b1c480f45b1a5b0cb3e30a37bd4a9420db31",
+    "sources/connection-window/rfc5681.txt": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+    "sources/protocol-rfc/rfc9000.txt": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+    "sources/protocol-rfc/rfc9002-errata7539.html": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+    "sources/protocol-rfc/rfc9002.txt": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+    "sources/shared-media-rfc/rfc9221.txt": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+    "src/infra_calc/cli.py": "7979eb64db3b706311a5aa02a4b03fcd6326bf0485f8448dcd073bd674e499dd",
+    "src/infra_calc/sources.py": "bf1a73fc35baf657bf3e13732613f3b92f2d1cc550434da269c0d13cda818747",
+    "src/infra_calc/topics/transport_closed_loop.py": "49cbd00d7f485215de86eb18aa61217dac41923a859fb7adb2190e28d2192c4f",
+    "src/infra_calc/topics/transport_sender.py": "91286019b4f2f1e057603e5011171470453bc9bd76bea6c60b91dd580c99c8b3",
+    "src/infra_calc/transport/__init__.py": "afe84ba19b4e95b5236b841bb80687933bc348f80273d9d126dbe184250a28eb",
+    "src/infra_calc/transport/ack_receiver.py": "a8a44b09c95d76501821a20a4737fdc352d564de706f98082b2c5f7f55949378",
+    "src/infra_calc/transport/bbr_adapter.py": "870b2f2ac35e4d98d0425eb97c86cc4fc8ba0eb6e518fde168165030756dac7c",
+    "src/infra_calc/transport/bbr_minmax.py": "6c763345efa592f6bba348b81350081b0e24050d34c718c1727622739b52d28e",
+    "src/infra_calc/transport/bbr_reference.py": "714b9ffecd300362a354e73aee4adbb744c41795a3019b88bc3e784e31612da6",
+    "src/infra_calc/transport/bbr_state.py": "e24b8d55efb218f344a5799f73db83966cfc71088341f595a60562952f906194",
+    "src/infra_calc/transport/cubic.py": "4e77d2a7c709a3c873009ba89dabd806760cb56f3a5ce7164233925211f5e521",
+    "src/infra_calc/transport/cubic_adapter.py": "4dafed0947806549a354493aa12f976827fe4b8cb83f0f0096da65ac512eb4a3",
+    "src/infra_calc/transport/hystart.py": "216c633b34e3acf39665cf3e920d9701c689434d6b31fe6bcbc65deafc31d3c7",
+    "src/infra_calc/transport/pacer.py": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+    "src/infra_calc/transport/persistent_congestion.py": "2f6b9e998e5a60ce9388aee8e956acbf04e1ffe77646b1c757b1daae77a491d7",
+    "src/infra_calc/transport/reference_sources.py": "86bd8441af9b881953ab4e98bea21ea9d071339039d509d9143b5af8e47ea788"
+  },
+  "source_fingerprint": "566f2da38265645f3a73fd88b804ebf0bd8fbb671b2f7a2a7a6d0fc7a681e556",
+  "results_manifest_sha256": "55b946ed61b0fad3005c67176b6f5e7e30cf372212f582c5eb303ebcb302d91c",
+  "elapsed_seconds": 159.926,
+  "scope": "Twenty actual CLI calls and full streamed byte equality against official manifested artifacts; not a reproduction run"
+}

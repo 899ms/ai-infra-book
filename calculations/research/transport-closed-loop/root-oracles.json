@@ -1,0 +1,254 @@
+{
+  "status": "preimplementation-arithmetic-only-not-candidate-acceptance",
+  "units": "seconds, bytes; 28-byte declared IPv4/UDP overhead",
+  "reference_contract": "../transport-feedback/NEXT-NETWORK-CONTRACT.md",
+  "policy": "ACK every ack-eliciting packet immediately; ACK-only not acknowledged; explicit consumption only in flow fixture",
+  "correction": "Flow fixture originally conflated eligibility at 6s with actual sending: MAX is ack-eliciting, so its independent reverse ACK occupies the uplink for 23/307s before the next STREAM packet. Corrected after protocol implementation review; no ACK coalescing introduced to preserve the old expectation.",
+  "cases": {
+    "cwnd-three-packets": {
+      "data": [
+        {
+          "start": "0",
+          "end": "1",
+          "receive": "2",
+          "quic_bytes": 1200,
+          "wire_bytes": 1228
+        },
+        {
+          "start": "1",
+          "end": "2",
+          "receive": "3",
+          "quic_bytes": 1200,
+          "wire_bytes": 1228
+        },
+        {
+          "start": "4",
+          "end": "5",
+          "receive": "6",
+          "quic_bytes": 1200,
+          "wire_bytes": 1228
+        }
+      ],
+      "acks": [
+        {
+          "start": "2",
+          "end": "3",
+          "receive": "4",
+          "quic_bytes": 64,
+          "wire_bytes": 92
+        },
+        {
+          "start": "3",
+          "end": "4",
+          "receive": "5",
+          "quic_bytes": 64,
+          "wire_bytes": 92
+        },
+        {
+          "start": "6",
+          "end": "7",
+          "receive": "8",
+          "quic_bytes": 64,
+          "wire_bytes": 92
+        }
+      ],
+      "third_send": "4",
+      "first_rtt": "4",
+      "unique_stream_bytes": 3504,
+      "wire_c2s": 3684,
+      "wire_s2c": 276
+    },
+    "model-response-before-last-upload-ack": {
+      "request": [
+        {
+          "start": "0",
+          "end": "1",
+          "receive": "2",
+          "quic_bytes": 1200,
+          "wire_bytes": 1228
+        },
+        {
+          "start": "1",
+          "end": "2",
+          "receive": "3",
+          "quic_bytes": 1200,
+          "wire_bytes": 1228
+        }
+      ],
+      "upload_acks": [
+        {
+          "start": "2",
+          "end": "3",
+          "receive": "4",
+          "quic_bytes": 64,
+          "wire_bytes": 92
+        },
+        {
+          "start": "3",
+          "end": "4",
+          "receive": "5",
+          "quic_bytes": 64,
+          "wire_bytes": 92
+        }
+      ],
+      "model_start": "3",
+      "model_duration": "1",
+      "model_end": "4",
+      "response": {
+        "start": "4",
+        "end": "5",
+        "receive": "6",
+        "quic_bytes": 64,
+        "wire_bytes": 92
+      },
+      "response_ack": {
+        "start": "6",
+        "end": "1865/307",
+        "receive": "2172/307",
+        "quic_bytes": 64,
+        "wire_bytes": 92
+      },
+      "final_business": "6",
+      "final_response_ack": "2172/307",
+      "unique_request_bytes": 2336,
+      "unique_response_bytes": 32,
+      "wire_c2s": 2548,
+      "wire_s2c": 276
+    },
+    "consumed-credit-arrives-later": {
+      "initial_max_data": 2336,
+      "initial_max_stream_data": 2336,
+      "consume_at": "4",
+      "consumed_unique_bytes": 2336,
+      "max_update": {
+        "start": "4",
+        "end": "5",
+        "receive": "6",
+        "quic_bytes": 64,
+        "wire_bytes": 92
+      },
+      "max_update_ack": {
+        "start": "6",
+        "end": "1865/307",
+        "receive": "2172/307",
+        "quic_bytes": 64,
+        "wire_bytes": 92
+      },
+      "flow_eligible_at": "6",
+      "new_max_data": 4672,
+      "new_max_stream_data": 4672,
+      "data": [
+        {
+          "start": "0",
+          "end": "1",
+          "receive": "2",
+          "quic_bytes": 1200,
+          "wire_bytes": 1228
+        },
+        {
+          "start": "1",
+          "end": "2",
+          "receive": "3",
+          "quic_bytes": 1200,
+          "wire_bytes": 1228
+        },
+        {
+          "start": "1865/307",
+          "end": "2172/307",
+          "receive": "2479/307",
+          "quic_bytes": 1200,
+          "wire_bytes": 1228
+        }
+      ],
+      "third_send": "1865/307",
+      "third_receive": "2479/307",
+      "ordinary_ack_does_not_open_flow": true,
+      "wire_c2s": 3776,
+      "wire_s2c": 368
+    },
+    "hole-recovery-from-actual-feedback": {
+      "lost_original": {
+        "pn": 0,
+        "start": "0",
+        "end": "1",
+        "receive": "2",
+        "quic_bytes": 1200,
+        "wire_bytes": 1228
+      },
+      "later": {
+        "pn": 1,
+        "start": "1",
+        "end": "2",
+        "receive": "3",
+        "quic_bytes": 1200,
+        "wire_bytes": 1228
+      },
+      "later_ack": {
+        "start": "3",
+        "end": "4",
+        "receive": "5",
+        "quic_bytes": 64,
+        "wire_bytes": 92
+      },
+      "loss_observed": "5",
+      "threshold_duration": "9/2",
+      "recovery": {
+        "pn": 2,
+        "offset": 0,
+        "start": "5",
+        "end": "6",
+        "receive": "7",
+        "quic_bytes": 1200,
+        "wire_bytes": 1228
+      },
+      "recovery_ack": {
+        "start": "7",
+        "end": "8",
+        "receive": "9",
+        "quic_bytes": 64,
+        "wire_bytes": 92
+      },
+      "ordered_request_complete": "7",
+      "unique_request_bytes": 2336,
+      "transmitted_stream_bytes": 3504,
+      "wire_c2s": 3684,
+      "wire_s2c": 184
+    },
+    "tail-pto-actual-probe": {
+      "seed_smoothed_rtt": "4",
+      "seed_rttvar": "2",
+      "max_ack_delay": "0",
+      "first_pto": "12",
+      "lost_original": {
+        "pn": 0,
+        "start": "0",
+        "end": "1",
+        "receive": "2",
+        "quic_bytes": 1200,
+        "wire_bytes": 1228
+      },
+      "probe": {
+        "pn": 1,
+        "offset": 0,
+        "start": "12",
+        "end": "13",
+        "receive": "14",
+        "quic_bytes": 1200,
+        "wire_bytes": 1228
+      },
+      "probe_ack": {
+        "start": "14",
+        "end": "15",
+        "receive": "16",
+        "quic_bytes": 64,
+        "wire_bytes": 92
+      },
+      "first_loss_evidence": "16",
+      "pto_itself_marks_loss": false,
+      "unique_request_bytes": 1168,
+      "transmitted_stream_bytes": 2336,
+      "wire_c2s": 2456,
+      "wire_s2c": 92
+    }
+  }
+}

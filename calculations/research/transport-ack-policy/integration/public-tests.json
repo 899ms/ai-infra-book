@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "tests": 8,
+  "command": "python3 -m unittest discover -s calculations/tests -p test_transport_ack_policy.py",
+  "hashes": {
+    "tests/test_transport_ack_policy.py": "f15a66ec1152fcddb820527cafae0e0df8cc078a868b56307df2ad1fd486caef",
+    "src/infra_calc/topics/transport_closed_loop.py": "e3255827a706eb3a483f19a09a223b185f32cdba49313c095536cc710bc0bc55",
+    "src/infra_calc/transport/ack_receiver.py": "a8a44b09c95d76501821a20a4737fdc352d564de706f98082b2c5f7f55949378",
+    "src/infra_calc/topics/transport_sender.py": "91286019b4f2f1e057603e5011171470453bc9bd76bea6c60b91dd580c99c8b3"
+  },
+  "scope": "Independent fixed wire-time, RTT and varint expectations through public interfaces; not large-workload acceptance",
+  "coverage": [
+    "two packets arrive2/3, one count ACK starts3/arrives5",
+    "tail deadline starts5/2, arrives9/2,62500ticks",
+    "first observed RTT9/2 without deduction; prior RTT adjusted4, variance3/2",
+    "arrival/deadline t3 tie produces one ACK",
+    "busy response occupies307/23, queued ACK starts353/23; encoded1668478; adjusted775/46, SRTT2063/368,var3351/184",
+    "varint boundaries and256 singleton ranges require517frame+24header=541; 64/540 rejection preserves entire receiver.__dict__",
+    "largestPN first arrival determines10003us delay; floor leaves -3us residual",
+    "absent vs explicit immediate policy same full result excluding exact echoed inputs; public noarg/default example retained"
+  ],
+  "note": "Initial test compared absent/explicit input echoes as identical; corrected assertion explicitly verifies each echo and compares every other field. No implementation changes made."
+}

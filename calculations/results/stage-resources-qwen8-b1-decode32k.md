@@ -10105,13 +10105,13 @@ Conditional known-work service bounds; full runtime remains unknown.
 | effective_resource_rates.matrix_fp8 | 1978900000000000.0 |
 | effective_resource_rates.vector_fp32 | 66900000000000.01 |
 | effective_resource_rates.interface_bytes | 3350000000000.0 |
-| effective_resource_rates.special:sin | unknown (null) |
 | effective_resource_rates.special:compare_max | unknown (null) |
 | effective_resource_rates.special:cos | unknown (null) |
 | effective_resource_rates.special:exp | unknown (null) |
-| effective_resource_rates.special:rsqrt | unknown (null) |
 | effective_resource_rates.special:mask_decisions | unknown (null) |
 | effective_resource_rates.special:negate | unknown (null) |
+| effective_resource_rates.special:rsqrt | unknown (null) |
+| effective_resource_rates.special:sin | unknown (null) |
 | baseline_work.matrix_flops | 34464137216 |
 | baseline_work.scalar_flops | 155550633 |
 | baseline_work.special_ops.sin | 128 |
@@ -11314,7 +11314,7 @@ Conditional known-work service bounds; full runtime remains unknown.
 | compute_only_bounds.global_resource_seconds.vector_fp32 | 2.3251215695067262e-06 |
 | compute_only_bounds.global_resource_seconds.matrix_bf16 | 3.483337094804932e-05 |
 | compute_only_bounds.known_global_max_seconds | 3.483337094804932e-05 |
-| compute_only_bounds.known_serial_stage_max_sum_seconds | 3.483337190470104e-05 |
+| compute_only_bounds.known_serial_stage_max_sum_seconds | 3.4833371904701036e-05 |
 | compute_only_bounds.accounted_global_max_seconds | unknown (null) |
 | compute_only_bounds.accounted_serial_stage_lower_bound_seconds | unknown (null) |
 | capacity.comparison_bytes | 21213456384 |

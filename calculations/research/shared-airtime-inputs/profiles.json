@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "id": "single-shared-channel-reference-inputs",
+  "status": "INPUTS_ONLY_NO_SIMULATOR_RUN",
+  "topology": {
+    "wireless_hop": "client <-> AP",
+    "resource": "one nonpreemptive shared half-duplex channel",
+    "aggregation": "none; one MPDU per PPDU; normal MAC ACK",
+    "wan_hop": "AP <-> server, separate directional queues",
+    "wan_reference_only": {
+      "up_rate_bps": 20000000,
+      "down_rate_bps": 100000000,
+      "propagation_each_seconds": "0.05"
+    },
+    "composition": "WAN reference rates remain WAN; add separately declared wireless hop, never relabel WAN rates as PHY"
+  },
+  "deployment_observation": {
+    "device": null,
+    "radio_standard": null,
+    "channel_width_hz": null,
+    "actual_data_phy_rate_bps": null,
+    "actual_mac_ack_rate_bps": null,
+    "measured_contention_seconds": null,
+    "measured_mac_loss_probability": null,
+    "measured_retry_limit": null,
+    "encryption_suite": null,
+    "energy_per_exchange_joules": null,
+    "browser_transport_ack_policy": null
+  },
+  "source_backed_reference_selection": {
+    "identity": "chosen legacy OFDM20MHz 5GHz non-QoS three-address unencrypted example; not measured WLAN",
+    "ns3_release": "ns-3.44",
+    "ns3_commit": "43dce6710b8df69685e3479c1d33a571dda714ea",
+    "phy": {
+      "channel_width_hz": 20000000,
+      "band": "5GHz",
+      "data_rate_bps": 54000000,
+      "mac_ack_rate_bps": 6000000,
+      "basic_rate_set_bps": [
+        6000000
+      ],
+      "preamble_seconds": "0.000016",
+      "signal_header_seconds": "0.000004",
+      "ofdm_symbol_seconds": "0.000004",
+      "service_bits": 16,
+      "tail_bits": 6,
+      "signal_extension_seconds": "0"
+    },
+    "layout": {
+      "octet_bits": 8,
+      "quic_packet_bytes": 1200,
+      "quic_ack_packet_bytes": 64,
+      "ipv4_header_bytes": 20,
+      "udp_header_bytes": 8,
+      "llc_snap_bytes": 8,
+      "data_mac_header_bytes": 24,
+      "mac_fcs_bytes": 4,
+      "security_overhead_bytes": 0,
+      "normal_mac_ack_header_bytes": 10,
+      "normal_mac_ack_fcs_bytes": 4,
+      "rts_cts": false,
+      "qos_control": false,
+      "four_address": false
+    },
+    "access": {
+      "arbitration": "declared global FIFO, not simulated DCF contention",
+      "sifs_seconds": "0.000016",
+      "slot_seconds": "0.000009",
+      "aifsn_selected": 2,
+      "pre_exchange_idle_seconds": "0.000034",
+      "backoff_slots_selected": 0,
+      "direction_switch_extra_seconds": "0",
+      "radio_propagation_selected_seconds": "0",
+      "mac_ack_complete_timeout_seconds": null,
+      "source_rxstart_watchdog_seconds": "0.000045",
+      "timeout_warning": "45us is PHY-RXSTART watchdog relative to data TXEND, not full ACK arrival timeout; receive-start extension behavior required"
+    },
+    "formula": "PPDU_seconds=16us+4us+4us*ceil((16+8*PSDU_bytes+6)/N_DBPS), N_DBPS=data_rate_bps*4us; each MAC ACK has its own PPDU at ACK rate",
+    "flags": {
+      "normal_mac_ack_for_unicast_transport_ack": true,
+      "mac_ack_updates_transport_cwnd": false,
+      "mac_retry_reuses_quic_pn": true
+    }
+  },
+  "abstract_teaching_profile": {
+    "identity": "dimensionless-scale teaching seconds; not an IEEE PHY",
+    "global_resource_capacity": 1,
+    "fifo_tie_order": [
+      "client",
+      "AP"
+    ],
+    "data_ppdu_seconds": "1",
+    "post_data_sifs_plus_mac_ack_seconds": "1/4",
+    "transport_ack_whole_exchange_seconds": "1/2",
+    "whole_exchange_includes_own_mac_ack": true,
+    "contention_seconds": "0",
+    "propagation_seconds": "0",
+    "full_ack_failure_known_from_data_txstart_seconds": "3/2",
+    "retry_ready_wait_after_failure_seconds": "1/2",
+    "max_attempts_selected": 2,
+    "warning": "These values only support independent hand arithmetic; never add source-backed microseconds on top.",
+    "transport_ack_ppdu_seconds": "1/4",
+    "transport_ack_post_data_sifs_plus_mac_ack_seconds": "1/4",
+    "transport_ack_endpoint_receives_at": "end of its PPDU; medium remains reserved until its MAC confirmation exchange ends"
+  }
+}

@@ -1,0 +1,571 @@
+{
+  "status": "passed",
+  "scenario_count": 6,
+  "cli_calls": 12,
+  "checks": [
+    {
+      "id": "controller-loop-book-newreno",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 30000000,
+        "response_bytes": 5000000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "newreno"
+        },
+        "pad_in_flight": true
+      },
+      "input_sha256": "897d088fe66daeb0f38074a9c6e68e0f64542d6ece11ef5d262cb8edcb7480cf",
+      "expected_file": "results/controller-loop-book-newreno.json",
+      "manifest_expected_sha256": "95fe3affee4c5d9ab6d6bcf411b776c4164067a71b9255949d038ded962da1d8",
+      "expected_sha256": "95fe3affee4c5d9ab6d6bcf411b776c4164067a71b9255949d038ded962da1d8",
+      "actual_sha256": "95fe3affee4c5d9ab6d6bcf411b776c4164067a71b9255949d038ded962da1d8",
+      "expected_bytes": 76858299,
+      "actual_bytes": 76858299,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "source_fingerprint_after": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "elapsed_seconds": 18.463
+    },
+    {
+      "id": "controller-loop-book-newreno",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 30000000,
+        "response_bytes": 5000000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "newreno"
+        },
+        "pad_in_flight": true
+      },
+      "input_sha256": "897d088fe66daeb0f38074a9c6e68e0f64542d6ece11ef5d262cb8edcb7480cf",
+      "expected_file": "results/controller-loop-book-newreno.md",
+      "manifest_expected_sha256": "619876d4ee32f00204796da90363c747570d34da0aaf6d35578d698abe5da769",
+      "expected_sha256": "619876d4ee32f00204796da90363c747570d34da0aaf6d35578d698abe5da769",
+      "actual_sha256": "619876d4ee32f00204796da90363c747570d34da0aaf6d35578d698abe5da769",
+      "expected_bytes": 19170655,
+      "actual_bytes": 19170655,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "source_fingerprint_after": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "elapsed_seconds": 17.111
+    },
+    {
+      "id": "controller-loop-router-newreno",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 3000000,
+        "response_bytes": 500000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 1000000000,
+            "propagation": 0
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "newreno"
+        },
+        "pad_in_flight": true,
+        "routers": {
+          "up": {
+            "rate_bps": 20000000,
+            "queue_bytes": 10000000,
+            "propagation": "0.05"
+          }
+        }
+      },
+      "input_sha256": "e586b7ee2201e019d25a5e5856ea78bb1003829c2c0a65b577adebb07fb38450",
+      "expected_file": "results/controller-loop-router-newreno.json",
+      "manifest_expected_sha256": "c4d8f9208bc7870311878c628334525dbde97cca3830ed05e871a5f81bcd85d5",
+      "expected_sha256": "c4d8f9208bc7870311878c628334525dbde97cca3830ed05e871a5f81bcd85d5",
+      "actual_sha256": "c4d8f9208bc7870311878c628334525dbde97cca3830ed05e871a5f81bcd85d5",
+      "expected_bytes": 10689513,
+      "actual_bytes": 10689513,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "source_fingerprint_after": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "elapsed_seconds": 2.432
+    },
+    {
+      "id": "controller-loop-router-newreno",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 3000000,
+        "response_bytes": 500000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 1000000000,
+            "propagation": 0
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "newreno"
+        },
+        "pad_in_flight": true,
+        "routers": {
+          "up": {
+            "rate_bps": 20000000,
+            "queue_bytes": 10000000,
+            "propagation": "0.05"
+          }
+        }
+      },
+      "input_sha256": "e586b7ee2201e019d25a5e5856ea78bb1003829c2c0a65b577adebb07fb38450",
+      "expected_file": "results/controller-loop-router-newreno.md",
+      "manifest_expected_sha256": "8e3bc6c67575495b93ea3b72da5470c58c6e534d8d177b8884dbd909f19c1a60",
+      "expected_sha256": "8e3bc6c67575495b93ea3b72da5470c58c6e534d8d177b8884dbd909f19c1a60",
+      "actual_sha256": "8e3bc6c67575495b93ea3b72da5470c58c6e534d8d177b8884dbd909f19c1a60",
+      "expected_bytes": 2327065,
+      "actual_bytes": 2327065,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "source_fingerprint_after": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "elapsed_seconds": 2.214
+    },
+    {
+      "id": "controller-loop-book-cubic_hystart",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 30000000,
+        "response_bytes": 5000000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "cubic_hystart"
+        },
+        "pad_in_flight": true
+      },
+      "input_sha256": "1aebb1703bc23a5a1162daf3c7702292359f8003b2d59f9b01e4e377977a79ef",
+      "expected_file": "results/controller-loop-book-cubic_hystart.json",
+      "manifest_expected_sha256": "93f3597aabef5f516b5db6d0c26dd40417ffcd1d599519d455e977e82ed100fd",
+      "expected_sha256": "93f3597aabef5f516b5db6d0c26dd40417ffcd1d599519d455e977e82ed100fd",
+      "actual_sha256": "93f3597aabef5f516b5db6d0c26dd40417ffcd1d599519d455e977e82ed100fd",
+      "expected_bytes": 112369502,
+      "actual_bytes": 112369502,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "source_fingerprint_after": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "elapsed_seconds": 26.158
+    },
+    {
+      "id": "controller-loop-book-cubic_hystart",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 30000000,
+        "response_bytes": 5000000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "cubic_hystart"
+        },
+        "pad_in_flight": true
+      },
+      "input_sha256": "1aebb1703bc23a5a1162daf3c7702292359f8003b2d59f9b01e4e377977a79ef",
+      "expected_file": "results/controller-loop-book-cubic_hystart.md",
+      "manifest_expected_sha256": "bff3700ce07a24cfd698357d96bedad8d9d0655e1189f6b6b3c188e7014da9c9",
+      "expected_sha256": "bff3700ce07a24cfd698357d96bedad8d9d0655e1189f6b6b3c188e7014da9c9",
+      "actual_sha256": "bff3700ce07a24cfd698357d96bedad8d9d0655e1189f6b6b3c188e7014da9c9",
+      "expected_bytes": 19171876,
+      "actual_bytes": 19171876,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "source_fingerprint_after": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "elapsed_seconds": 23.887
+    },
+    {
+      "id": "controller-loop-router-cubic_hystart",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 3000000,
+        "response_bytes": 500000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 1000000000,
+            "propagation": 0
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "cubic_hystart"
+        },
+        "pad_in_flight": true,
+        "routers": {
+          "up": {
+            "rate_bps": 20000000,
+            "queue_bytes": 10000000,
+            "propagation": "0.05"
+          }
+        }
+      },
+      "input_sha256": "69ffeb0a11a0bbfb4fc4ca6490505271d8554e88f7065f57a8e5df85b7b735a8",
+      "expected_file": "results/controller-loop-router-cubic_hystart.json",
+      "manifest_expected_sha256": "6f1d2686cb11384a5b9fd0fb34e7768b0df4ea6612522ec56b6de4026b891540",
+      "expected_sha256": "6f1d2686cb11384a5b9fd0fb34e7768b0df4ea6612522ec56b6de4026b891540",
+      "actual_sha256": "6f1d2686cb11384a5b9fd0fb34e7768b0df4ea6612522ec56b6de4026b891540",
+      "expected_bytes": 16017959,
+      "actual_bytes": 16017959,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "source_fingerprint_after": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "elapsed_seconds": 3.441
+    },
+    {
+      "id": "controller-loop-router-cubic_hystart",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 3000000,
+        "response_bytes": 500000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 1000000000,
+            "propagation": 0
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "cubic_hystart"
+        },
+        "pad_in_flight": true,
+        "routers": {
+          "up": {
+            "rate_bps": 20000000,
+            "queue_bytes": 10000000,
+            "propagation": "0.05"
+          }
+        }
+      },
+      "input_sha256": "69ffeb0a11a0bbfb4fc4ca6490505271d8554e88f7065f57a8e5df85b7b735a8",
+      "expected_file": "results/controller-loop-router-cubic_hystart.md",
+      "manifest_expected_sha256": "f5f35440575e4d556710a38a4a63e8bb20c7d3a581136c5fa17980cd7587b33a",
+      "expected_sha256": "f5f35440575e4d556710a38a4a63e8bb20c7d3a581136c5fa17980cd7587b33a",
+      "actual_sha256": "f5f35440575e4d556710a38a4a63e8bb20c7d3a581136c5fa17980cd7587b33a",
+      "expected_bytes": 2355854,
+      "actual_bytes": 2355854,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "source_fingerprint_after": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "elapsed_seconds": 3.191
+    },
+    {
+      "id": "controller-loop-book-bbr",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 30000000,
+        "response_bytes": 5000000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "bbr"
+        },
+        "pad_in_flight": true
+      },
+      "input_sha256": "ea178b04e3df34978450968b5dc5c720b56d53b47dfedfb050aa5cc5ad4da857",
+      "expected_file": "results/controller-loop-book-bbr.json",
+      "manifest_expected_sha256": "e858bc4bd14ab5873789379b2a8978ece5ee6caf6cf05f9b13cfefef183751e0",
+      "expected_sha256": "e858bc4bd14ab5873789379b2a8978ece5ee6caf6cf05f9b13cfefef183751e0",
+      "actual_sha256": "e858bc4bd14ab5873789379b2a8978ece5ee6caf6cf05f9b13cfefef183751e0",
+      "expected_bytes": 337235284,
+      "actual_bytes": 337235284,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "source_fingerprint_after": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "elapsed_seconds": 37.555
+    },
+    {
+      "id": "controller-loop-book-bbr",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 30000000,
+        "response_bytes": 5000000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "bbr"
+        },
+        "pad_in_flight": true
+      },
+      "input_sha256": "ea178b04e3df34978450968b5dc5c720b56d53b47dfedfb050aa5cc5ad4da857",
+      "expected_file": "results/controller-loop-book-bbr.md",
+      "manifest_expected_sha256": "0ed6cac4762aeadd623ceb88d236186abd5a2c6e059b9d9ccae85e7209f6a93c",
+      "expected_sha256": "0ed6cac4762aeadd623ceb88d236186abd5a2c6e059b9d9ccae85e7209f6a93c",
+      "actual_sha256": "0ed6cac4762aeadd623ceb88d236186abd5a2c6e059b9d9ccae85e7209f6a93c",
+      "expected_bytes": 19257031,
+      "actual_bytes": 19257031,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "source_fingerprint_after": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "elapsed_seconds": 25.467
+    },
+    {
+      "id": "controller-loop-router-bbr",
+      "format": "json",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format json --output <temporary output>",
+      "input": {
+        "upload_bytes": 3000000,
+        "response_bytes": 500000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 1000000000,
+            "propagation": 0
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "bbr"
+        },
+        "pad_in_flight": true,
+        "routers": {
+          "up": {
+            "rate_bps": 20000000,
+            "queue_bytes": 10000000,
+            "propagation": "0.05"
+          }
+        }
+      },
+      "input_sha256": "8825cbef697ddf045aba1d965d31d25e7e00ad7f09f11cbb6573acd168d94cc5",
+      "expected_file": "results/controller-loop-router-bbr.json",
+      "manifest_expected_sha256": "2982362b214213d73bc771ebebba6653abec3bf3de7c51c649cead20b0171af5",
+      "expected_sha256": "2982362b214213d73bc771ebebba6653abec3bf3de7c51c649cead20b0171af5",
+      "actual_sha256": "2982362b214213d73bc771ebebba6653abec3bf3de7c51c649cead20b0171af5",
+      "expected_bytes": 34827695,
+      "actual_bytes": 34827695,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "source_fingerprint_after": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "elapsed_seconds": 3.684
+    },
+    {
+      "id": "controller-loop-router-bbr",
+      "format": "md",
+      "command": "calc.py transport-closed-loop --inputs <exact temporary input> --format md --output <temporary output>",
+      "input": {
+        "upload_bytes": 3000000,
+        "response_bytes": 500000,
+        "model_seconds": "0.3",
+        "until": 60,
+        "links": {
+          "up": {
+            "rate_bps": 1000000000,
+            "propagation": 0
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "numeric_quantum": "0.000000000001"
+        },
+        "controller": {
+          "name": "bbr"
+        },
+        "pad_in_flight": true,
+        "routers": {
+          "up": {
+            "rate_bps": 20000000,
+            "queue_bytes": 10000000,
+            "propagation": "0.05"
+          }
+        }
+      },
+      "input_sha256": "8825cbef697ddf045aba1d965d31d25e7e00ad7f09f11cbb6573acd168d94cc5",
+      "expected_file": "results/controller-loop-router-bbr.md",
+      "manifest_expected_sha256": "1b1cdacb3c742777b6497325c178ab73498a0c42acdd3941dffec02791e97146",
+      "expected_sha256": "1b1cdacb3c742777b6497325c178ab73498a0c42acdd3941dffec02791e97146",
+      "actual_sha256": "1b1cdacb3c742777b6497325c178ab73498a0c42acdd3941dffec02791e97146",
+      "expected_bytes": 2434710,
+      "actual_bytes": 2434710,
+      "bytewise_equal": true,
+      "source_fingerprint_before": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "source_fingerprint_after": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+      "elapsed_seconds": 3.148
+    }
+  ],
+  "source_hashes_before": {
+    "src/infra_calc/transport/__init__.py": "afe84ba19b4e95b5236b841bb80687933bc348f80273d9d126dbe184250a28eb",
+    "src/infra_calc/transport/bbr_adapter.py": "870b2f2ac35e4d98d0425eb97c86cc4fc8ba0eb6e518fde168165030756dac7c",
+    "src/infra_calc/transport/bbr_minmax.py": "6c763345efa592f6bba348b81350081b0e24050d34c718c1727622739b52d28e",
+    "src/infra_calc/transport/bbr_reference.py": "714b9ffecd300362a354e73aee4adbb744c41795a3019b88bc3e784e31612da6",
+    "src/infra_calc/transport/bbr_state.py": "e24b8d55efb218f344a5799f73db83966cfc71088341f595a60562952f906194",
+    "src/infra_calc/transport/cubic.py": "4e77d2a7c709a3c873009ba89dabd806760cb56f3a5ce7164233925211f5e521",
+    "src/infra_calc/transport/cubic_adapter.py": "4dafed0947806549a354493aa12f976827fe4b8cb83f0f0096da65ac512eb4a3",
+    "src/infra_calc/transport/hystart.py": "216c633b34e3acf39665cf3e920d9701c689434d6b31fe6bcbc65deafc31d3c7",
+    "src/infra_calc/transport/pacer.py": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+    "src/infra_calc/transport/persistent_congestion.py": "2f6b9e998e5a60ce9388aee8e956acbf04e1ffe77646b1c757b1daae77a491d7",
+    "src/infra_calc/transport/reference_sources.py": "86bd8441af9b881953ab4e98bea21ea9d071339039d509d9143b5af8e47ea788",
+    "src/infra_calc/topics/transport_closed_loop.py": "2b3be9cadea997a2315acbd95a4b9e9c42e9992d68cd4483f2dac7fe1d988e78",
+    "src/infra_calc/topics/transport_sender.py": "91286019b4f2f1e057603e5011171470453bc9bd76bea6c60b91dd580c99c8b3",
+    "src/infra_calc/cli.py": "7979eb64db3b706311a5aa02a4b03fcd6326bf0485f8448dcd073bd674e499dd",
+    "src/infra_calc/sources.py": "bf1a73fc35baf657bf3e13732613f3b92f2d1cc550434da269c0d13cda818747",
+    "configs/sources.lock.json": "02cd5608d7d00f6213be9e566bc8651657d854f87ee01deec9fdd9d4f2c43a3e",
+    "scenarios/book.json": "92b276849d06df2c23b06555de7bea106a54bbda60a55e2d64f68a3b823e1dac"
+  },
+  "source_hashes_after": {
+    "src/infra_calc/transport/__init__.py": "afe84ba19b4e95b5236b841bb80687933bc348f80273d9d126dbe184250a28eb",
+    "src/infra_calc/transport/bbr_adapter.py": "870b2f2ac35e4d98d0425eb97c86cc4fc8ba0eb6e518fde168165030756dac7c",
+    "src/infra_calc/transport/bbr_minmax.py": "6c763345efa592f6bba348b81350081b0e24050d34c718c1727622739b52d28e",
+    "src/infra_calc/transport/bbr_reference.py": "714b9ffecd300362a354e73aee4adbb744c41795a3019b88bc3e784e31612da6",
+    "src/infra_calc/transport/bbr_state.py": "e24b8d55efb218f344a5799f73db83966cfc71088341f595a60562952f906194",
+    "src/infra_calc/transport/cubic.py": "4e77d2a7c709a3c873009ba89dabd806760cb56f3a5ce7164233925211f5e521",
+    "src/infra_calc/transport/cubic_adapter.py": "4dafed0947806549a354493aa12f976827fe4b8cb83f0f0096da65ac512eb4a3",
+    "src/infra_calc/transport/hystart.py": "216c633b34e3acf39665cf3e920d9701c689434d6b31fe6bcbc65deafc31d3c7",
+    "src/infra_calc/transport/pacer.py": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+    "src/infra_calc/transport/persistent_congestion.py": "2f6b9e998e5a60ce9388aee8e956acbf04e1ffe77646b1c757b1daae77a491d7",
+    "src/infra_calc/transport/reference_sources.py": "86bd8441af9b881953ab4e98bea21ea9d071339039d509d9143b5af8e47ea788",
+    "src/infra_calc/topics/transport_closed_loop.py": "2b3be9cadea997a2315acbd95a4b9e9c42e9992d68cd4483f2dac7fe1d988e78",
+    "src/infra_calc/topics/transport_sender.py": "91286019b4f2f1e057603e5011171470453bc9bd76bea6c60b91dd580c99c8b3",
+    "src/infra_calc/cli.py": "7979eb64db3b706311a5aa02a4b03fcd6326bf0485f8448dcd073bd674e499dd",
+    "src/infra_calc/sources.py": "bf1a73fc35baf657bf3e13732613f3b92f2d1cc550434da269c0d13cda818747",
+    "configs/sources.lock.json": "02cd5608d7d00f6213be9e566bc8651657d854f87ee01deec9fdd9d4f2c43a3e",
+    "scenarios/book.json": "92b276849d06df2c23b06555de7bea106a54bbda60a55e2d64f68a3b823e1dac"
+  },
+  "source_fingerprint": "4afb4671727e354416db3934b6c45c3c55f40d4cbb400ba8d46f9b3bdc5698cf",
+  "results_manifest_sha256": "ada4c1323eeaec819965604247052b0e16ba13780e5bfb56ea62b1405f0d5398",
+  "elapsed_seconds": 167.36,
+  "scope": "Twelve actual CLI calls and full streamed byte equality against official manifested artifacts; not a reproduction run"
+}

@@ -1,0 +1,49 @@
+{
+  "status": "independent_integer_arithmetic_only",
+  "scope": "Unique application payload offered by workload; no candidate execution, packet headers, ACKs, retransmission or policy drops.",
+  "units": "bytes; decimal B",
+  "asr_input": {
+    "formula": "8 * 640",
+    "bytes": 5120
+  },
+  "tts_output": {
+    "formula": "8 * 960",
+    "bytes": 7680
+  },
+  "image": {
+    "c2s_bytes": 30000000,
+    "s2c_bytes": 5000000,
+    "formula": "30000000 + 5000000",
+    "total_bytes": 35000000
+  },
+  "screenshots": {
+    "sizes_bytes": [
+      3443,
+      3545,
+      3708
+    ],
+    "formula": "3443 + 3545 + 3708",
+    "c2s_bytes": 10696
+  },
+  "asr_text": {
+    "s2c_bytes": 64
+  },
+  "action_results_optional": {
+    "formula": "3 * 64",
+    "s2c_bytes": 192
+  },
+  "mixed_without_actions": {
+    "c2s_formula": "30000000 + 5120 + 10696",
+    "c2s_bytes": 30015816,
+    "s2c_formula": "5000000 + 7680 + 64",
+    "s2c_bytes": 5007744,
+    "total_bytes": 35023560
+  },
+  "mixed_with_three_actions": {
+    "c2s_bytes": 30015816,
+    "s2c_formula": "5000000 + 7680 + 64 + 192",
+    "s2c_bytes": 5007936,
+    "total_bytes": 35023752
+  },
+  "causal_rule": "TTS server production depends on ASR server task completion. Client receipt of ASR text cannot trigger a server action without an explicit return message."
+}

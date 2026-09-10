@@ -1,0 +1,107 @@
+{
+  "status": "prewritten-before-candidate-execution",
+  "units": "seconds, QUIC packet bytes exclude UDP/IP; flow limit counts STREAM high-water offsets",
+  "oracles": [
+    {
+      "id": "rtt_and_pto",
+      "first_rtt": "1/10",
+      "first_smoothed": "1/10",
+      "first_variation": "1/20",
+      "second_latest": "3/25",
+      "second_ack_delay": "1/50",
+      "second_smoothed": "1/10",
+      "second_variation": "3/80",
+      "max_ack_delay": "1/40",
+      "granularity": "1/1000",
+      "last_ack_eliciting_sent": "1",
+      "pto_time": "51/40",
+      "pto_duration": "11/40",
+      "notes": "PTO at1.275 emits probe opportunity, no automatic lost packet or cwnd reduction."
+    },
+    {
+      "id": "verified_errata_order",
+      "initial_smoothed": "1/10",
+      "initial_variation": "1/20",
+      "latest": "9/50",
+      "ack_delay": "1/50",
+      "adjusted": "4/25",
+      "new_variation": "21/400",
+      "new_smoothed": "43/400",
+      "incorrect_original_text_variation": "81/1600",
+      "official_errata": "https://www.rfc-editor.org/errata/eid7539"
+    },
+    {
+      "id": "packet_and_time_threshold",
+      "send_times": [
+        "0",
+        "1/1000",
+        "1/500",
+        "3/1000"
+      ],
+      "ack_at": "103/1000",
+      "acked_pn": 3,
+      "seed_latest": "1/10",
+      "seed_smoothed": "1/10",
+      "lost_at_ack": [
+        0
+      ],
+      "remaining_first_loss_time": "227/2000",
+      "second_loss_time": "229/2000",
+      "notes": "PN1 ACK at227/2000 must run before same-time loss timer; never release twice."
+    },
+    {
+      "id": "absolute_flow_limit",
+      "initial_max_data": 6,
+      "initial_stream_limits": {
+        "A": 4,
+        "B": 2
+      },
+      "sent_intervals": [
+        [
+          "A",
+          0,
+          4
+        ],
+        [
+          "B",
+          0,
+          2
+        ]
+      ],
+      "all_acknowledged_frees_new_flow_bytes": 0,
+      "new_max_data": 8,
+      "new_max_data_arrival": "5",
+      "new_A_limit": 6,
+      "new_A_limit_arrival": "6",
+      "A_tail_interval": [
+        4,
+        6
+      ],
+      "earliest_flow_eligible": "6",
+      "notes": "Retransmit old range uses new PN and flight bytes, but no new absolute flow allowance."
+    },
+    {
+      "id": "flow_high_water_not_union",
+      "stream": "A",
+      "first_offset": 5,
+      "first_length": 1,
+      "first_consumed_connection_allowance": 6,
+      "later_offset": 0,
+      "later_length": 5,
+      "later_additional_allowance": 0,
+      "notes": "Hole filling sends new application bytes though highest offset does not grow; do not equate flow allowance to unique payload sum."
+    },
+    {
+      "id": "newreno_recovery_epoch",
+      "max_datagram_size": 1200,
+      "initial_window": 12000,
+      "first_loss_window": 6000,
+      "minimum_window": 2400,
+      "notes": "Loss at relative sent_time0 must still enter recovery; other pre-recovery losses do not halve again; post-recovery eligible loss may halve again."
+    },
+    {
+      "id": "pto_timer_not_final_completion",
+      "notes": "Horizon/last observed event and next scheduled timer are distinct; no synthetic probe bytes without a sent event, no completion inferred from an empty replay queue."
+    }
+  ]
+}

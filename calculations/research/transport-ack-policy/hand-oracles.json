@@ -1,0 +1,227 @@
+{
+  "status": "written-before-implementation",
+  "layout": {
+    "data_quic_bytes": 1200,
+    "outer_bytes": 28,
+    "ack_quic_bytes": 64,
+    "up_bps": 9824,
+    "down_bps": 736,
+    "propagation_each_seconds": 1,
+    "initial_cwnd": 2400
+  },
+  "cases": [
+    {
+      "name": "two-packets-count",
+      "send_intervals": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "receive_at": [
+        2,
+        3
+      ],
+      "every": 2,
+      "max_delay": 10,
+      "ack_interval": [
+        3,
+        4
+      ],
+      "ack_arrival": 5,
+      "ack_ranges": [
+        [
+          0,
+          1
+        ]
+      ],
+      "ack_delay": 0,
+      "wire_bytes": 2548
+    },
+    {
+      "name": "single-tail-deadline",
+      "send_intervals": [
+        [
+          0,
+          1
+        ]
+      ],
+      "receive_at": [
+        2
+      ],
+      "every": 2,
+      "max_delay": "1/2",
+      "ack_interval": [
+        "5/2",
+        "7/2"
+      ],
+      "ack_arrival": "9/2",
+      "ack_delay": "1/2",
+      "first_rtt_raw": "9/2"
+    },
+    {
+      "name": "arrival-timer-same-time",
+      "send_intervals": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "receive_at": [
+        2,
+        3
+      ],
+      "every": 2,
+      "max_delay": 1,
+      "ack_count": 1,
+      "ack_interval": [
+        3,
+        4
+      ],
+      "ack_ranges": [
+        [
+          0,
+          1
+        ]
+      ],
+      "ack_delay": 0
+    },
+    {
+      "name": "lost-ack-later-range",
+      "receiver_events": [
+        {
+          "at": 2,
+          "pn": 0
+        },
+        {
+          "at": 3,
+          "pn": 1
+        }
+      ],
+      "every": 1,
+      "retain_packets": 256,
+      "first_ack_dropped": true,
+      "second_ack_ranges": [
+        [
+          0,
+          1
+        ]
+      ],
+      "second_ack_arrival": 5,
+      "first_flight_release_at": 5,
+      "duplicate_range_additional_release": 0
+    },
+    {
+      "name": "max-versus-pure-ack",
+      "receiver_events": [
+        {
+          "at": 2,
+          "pn": 0,
+          "kind": "max",
+          "ack_eliciting": true
+        },
+        {
+          "at": "5/2",
+          "pn": 1,
+          "kind": "ack",
+          "ack_eliciting": false
+        }
+      ],
+      "every": 2,
+      "max_delay": 1,
+      "ack_count_before_3": 0,
+      "deadline": 3,
+      "max_authorization_at": 2,
+      "ack_ranges": [
+        [
+          0,
+          1
+        ]
+      ],
+      "ack_delay": "1/2"
+    }
+  ],
+  "additional_before_scenario_execution": [
+    {
+      "name": "queued-snapshot-refresh",
+      "source": "derived after core implementation; before this network scenario execution",
+      "data_arrivals": [
+        2,
+        3,
+        4
+      ],
+      "ack_intervals": [
+        [
+          2,
+          4
+        ],
+        [
+          4,
+          6
+        ]
+      ],
+      "ack_arrivals": [
+        5,
+        7
+      ],
+      "ranges": [
+        [
+          [
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            0,
+            2
+          ]
+        ]
+      ],
+      "raw_delay": [
+        0,
+        0
+      ],
+      "wire_bytes": 3868
+    },
+    {
+      "name": "queued-deadline-overrun",
+      "source": "derived after core implementation; before this network scenario execution",
+      "data_arrivals": [
+        2,
+        3
+      ],
+      "ack_intervals": [
+        [
+          2,
+          4
+        ],
+        [
+          4,
+          6
+        ]
+      ],
+      "ack_arrivals": [
+        5,
+        7
+      ],
+      "raw_delay": [
+        0,
+        1
+      ],
+      "exceeds_max_delay": [
+        false,
+        true
+      ],
+      "wire_bytes": 2640
+    }
+  ]
+}

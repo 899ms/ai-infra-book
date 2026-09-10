@@ -1,0 +1,1381 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "case": "prior_sample one actual ACK",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "prior_sample no phantom loss",
+      "actual": "0",
+      "expected": "0"
+    },
+    {
+      "case": "prior_sample no remaining flight",
+      "actual": "0",
+      "expected": "0"
+    },
+    {
+      "case": "prior_sample exported actual RTT record",
+      "actual": "[{'at': '9/2', 'pn': 0, 'raw': '9/2', 'adjusted': '4', 'smoothed': '4', 'rttvar': '3/2'}]",
+      "expected": "[{'at': '9/2', 'pn': 0, 'raw': '9/2', 'adjusted': '4', 'smoothed': '4', 'rttvar': '3/2'}]"
+    },
+    {
+      "case": "prior_sample ACK arrives",
+      "actual": "9/2",
+      "expected": "9/2"
+    },
+    {
+      "case": "prior_sample wire ACK delay",
+      "actual": "1/2",
+      "expected": "1/2"
+    },
+    {
+      "case": "prior_sample raw latest RTT",
+      "actual": "9/2",
+      "expected": "9/2"
+    },
+    {
+      "case": "valid prior sample allows delay deduction",
+      "actual": "4",
+      "expected": "4"
+    },
+    {
+      "case": "variance uses previous SRTT",
+      "actual": "3/2",
+      "expected": "3/2"
+    },
+    {
+      "case": "first_sample one actual ACK",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "first_sample no phantom loss",
+      "actual": "0",
+      "expected": "0"
+    },
+    {
+      "case": "first_sample no remaining flight",
+      "actual": "0",
+      "expected": "0"
+    },
+    {
+      "case": "first_sample exported actual RTT record",
+      "actual": "[{'at': '9/2', 'pn': 0, 'raw': '9/2', 'adjusted': '9/2', 'smoothed': '9/2', 'rttvar': '9/4'}]",
+      "expected": "[{'at': '9/2', 'pn': 0, 'raw': '9/2', 'adjusted': '9/2', 'smoothed': '9/2', 'rttvar': '9/4'}]"
+    },
+    {
+      "case": "first_sample ACK arrives",
+      "actual": "9/2",
+      "expected": "9/2"
+    },
+    {
+      "case": "first_sample wire ACK delay",
+      "actual": "1/2",
+      "expected": "1/2"
+    },
+    {
+      "case": "first_sample raw latest RTT",
+      "actual": "9/2",
+      "expected": "9/2"
+    },
+    {
+      "case": "first RTT does not deduct receiver delay",
+      "actual": "9/2",
+      "expected": "9/2"
+    },
+    {
+      "case": "first variance is half raw RTT",
+      "actual": "9/4",
+      "expected": "9/4"
+    },
+    {
+      "case": "first minRTT is observed raw RTT",
+      "actual": "9/2",
+      "expected": "9/2"
+    },
+    {
+      "case": "reverse_busy one actual ACK",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "reverse_busy no phantom loss",
+      "actual": "0",
+      "expected": "0"
+    },
+    {
+      "case": "reverse_busy no remaining flight",
+      "actual": "0",
+      "expected": "0"
+    },
+    {
+      "case": "reverse_busy exported actual RTT record",
+      "actual": "[{'at': '399/23', 'pn': 0, 'raw': '399/23', 'adjusted': '775/46', 'smoothed': '2063/368', 'rttvar': '3351/184'}]",
+      "expected": "[{'at': '399/23', 'pn': 0, 'raw': '399/23', 'adjusted': '775/46', 'smoothed': '2063/368', 'rttvar': '3351/184'}]"
+    },
+    {
+      "case": "busy ACK starts after response serialization",
+      "actual": "353/23",
+      "expected": "353/23"
+    },
+    {
+      "case": "busy raw receiver delay",
+      "actual": "307/23",
+      "expected": "307/23"
+    },
+    {
+      "case": "busy decoded delay at eight microsecond tick",
+      "actual": "834239/62500",
+      "expected": "834239/62500"
+    },
+    {
+      "case": "busy deadline violation is visible",
+      "actual": "True",
+      "expected": "True"
+    },
+    {
+      "case": "busy raw RTT includes true queue wait",
+      "actual": "399/23",
+      "expected": "399/23"
+    },
+    {
+      "case": "sender bounds delay subtraction",
+      "actual": "2063/368",
+      "expected": "2063/368"
+    },
+    {
+      "case": "bounded sample variance",
+      "actual": "3351/184",
+      "expected": "3351/184"
+    }
+  ],
+  "cases": {
+    "prior_sample": {
+      "inputs": {
+        "upload_bytes": 1168,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 736,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 2400,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "1/2"
+        }
+      },
+      "reference_sources": [
+        {
+          "file": "sources/rfc9000.txt",
+          "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+          "revision": "RFC9000",
+          "bytes": 403442,
+          "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+          "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+          "verified_at_utc": "2026-09-09T15:53:11.789452+00:00",
+          "verification": "Existing locked official source copied; destination re-read and SHA/length checked. No new fetch."
+        },
+        {
+          "file": "sources/rfc9002.txt",
+          "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+          "revision": "RFC9002",
+          "bytes": 89071,
+          "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+          "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+          "verified_at_utc": "2026-09-09T15:53:11.789853+00:00",
+          "verification": "Existing locked official source copied; destination re-read and SHA/length checked. No new fetch."
+        },
+        {
+          "file": "sources/rfc9002-errata7539.html",
+          "url": "https://www.rfc-editor.org/errata/eid7539",
+          "revision": "RFC9002 Verified Errata7539",
+          "bytes": 8446,
+          "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+          "verified_at_utc": "2026-09-09T15:53:11.790157+00:00",
+          "verification": "Existing locked official source copied; destination re-read and SHA/length checked. No new fetch.",
+          "copied_from": "calculations/sources/protocol-rfc/rfc9002-errata7539.html"
+        }
+      ],
+      "reference_source_root": "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy",
+      "transmissions": [
+        {
+          "direction": "up",
+          "pn": 0,
+          "kind": "data",
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "business",
+              "offset": 0,
+              "length": 1168
+            }
+          ],
+          "send_start": "0",
+          "send_end": "1",
+          "arrival": "2",
+          "quic_bytes": 1200,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 1228,
+          "dropped": false,
+          "probe": false,
+          "received_at": "2",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "down",
+          "pn": 0,
+          "kind": "ack",
+          "frames": [],
+          "send_start": "5/2",
+          "send_end": "7/2",
+          "arrival": "9/2",
+          "quic_bytes": 64,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 92,
+          "dropped": false,
+          "probe": false,
+          "received_at": "9/2",
+          "recovery_of": null,
+          "probe_of": null,
+          "ack_snapshot": {
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "largest": 0,
+            "largest_received_at": "2",
+            "raw_delay": "1/2",
+            "encoded_delay": 62500,
+            "delay_exponent": 3,
+            "decoded_delay": "1/2",
+            "encoding_error": "0",
+            "frame_bytes": 8,
+            "header_tag_bytes": 24,
+            "exceeds_max_delay": false,
+            "covered_pending": 1,
+            "retention_packets": 256
+          }
+        }
+      ],
+      "business": {
+        "upload": "2",
+        "model_start": "2",
+        "model_end": "2",
+        "response": "2"
+      },
+      "application_events": [
+        {
+          "at": "2",
+          "type": "application_prefix",
+          "direction": "up",
+          "prefix": 1168
+        }
+      ],
+      "waits": [],
+      "sender_events": {
+        "up": [
+          {
+            "type": "sent",
+            "at": "0",
+            "pn": 0,
+            "sent_bytes": 1200,
+            "frames": [
+              {
+                "type": "stream",
+                "stream": "business",
+                "offset": 0,
+                "length": 1168
+              }
+            ],
+            "ack_eliciting": true,
+            "in_flight": true,
+            "probe": false
+          },
+          {
+            "type": "ack",
+            "at": "9/2",
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "ack_delay": "1/2",
+            "app_limited": true,
+            "flow_limited": false
+          }
+        ],
+        "down": [
+          {
+            "type": "sent",
+            "at": "5/2",
+            "pn": 0,
+            "sent_bytes": 64,
+            "frames": [],
+            "ack_eliciting": false,
+            "in_flight": false,
+            "probe": false
+          }
+        ]
+      },
+      "final_states": {
+        "up": {
+          "bytes_in_flight": 0,
+          "cwnd": "2400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "9/2",
+          "smoothed_rtt": "4",
+          "rttvar": "3/2",
+          "min_rtt": "4",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 0,
+          "next_timer": null,
+          "max_data": 1168,
+          "max_stream_data": {
+            "business": 1168
+          },
+          "stream_highest_sent_offsets": {
+            "business": 1168
+          },
+          "max_data_consumed": 1168
+        },
+        "down": {
+          "bytes_in_flight": 0,
+          "cwnd": "2400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "4",
+          "smoothed_rtt": "4",
+          "rttvar": "2",
+          "min_rtt": "4",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": null,
+          "max_data": 1168,
+          "max_stream_data": {
+            "business": 1168
+          },
+          "stream_highest_sent_offsets": {},
+          "max_data_consumed": 0
+        }
+      },
+      "losses": {
+        "up": [],
+        "down": []
+      },
+      "timers": {
+        "up": [],
+        "down": []
+      },
+      "numeric_errors": {
+        "up": [],
+        "down": []
+      },
+      "received_intervals": {
+        "up": [
+          [
+            0,
+            1168
+          ]
+        ],
+        "down": []
+      },
+      "consumed": {
+        "up": 0,
+        "down": 0
+      },
+      "summary": {
+        "wire_bytes": 1320,
+        "serialized_wire_bytes_by_horizon": "1320",
+        "unique_received_bytes": 1168,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        },
+        "complete": true
+      },
+      "ack_events": {
+        "up": [
+          {
+            "at": "2",
+            "event": "receive",
+            "pn": 0,
+            "ack_eliciting": true,
+            "duplicate": false
+          },
+          {
+            "at": "5/2",
+            "event": "trigger",
+            "reason": "deadline",
+            "generation": 1
+          },
+          {
+            "at": "5/2",
+            "event": "start",
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "largest": 0,
+            "largest_received_at": "2",
+            "raw_delay": "1/2",
+            "encoded_delay": 62500,
+            "delay_exponent": 3,
+            "decoded_delay": "1/2",
+            "encoding_error": "0",
+            "frame_bytes": 8,
+            "header_tag_bytes": 24,
+            "exceeds_max_delay": false,
+            "covered_pending": 1,
+            "retention_packets": 256
+          }
+        ],
+        "down": [
+          {
+            "at": "9/2",
+            "event": "receive",
+            "pn": 0,
+            "ack_eliciting": false,
+            "duplicate": false
+          }
+        ]
+      },
+      "ack_state": {
+        "up": {
+          "pending": [],
+          "deadline": null,
+          "queued": false,
+          "generation": 2,
+          "retained": [
+            0
+          ],
+          "received_count": 1
+        },
+        "down": {
+          "pending": [],
+          "deadline": null,
+          "queued": false,
+          "generation": 0,
+          "retained": [
+            0
+          ],
+          "received_count": 1
+        }
+      },
+      "rtt_samples": {
+        "up": [
+          {
+            "at": "9/2",
+            "pn": 0,
+            "raw": "9/2",
+            "adjusted": "4",
+            "smoothed": "4",
+            "rttvar": "3/2"
+          }
+        ],
+        "down": []
+      }
+    },
+    "first_sample": {
+      "inputs": {
+        "upload_bytes": 1168,
+        "response_bytes": 0,
+        "model_seconds": 0,
+        "until": 20,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 736,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 2400,
+          "initial_rtt": 10
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "1/2"
+        }
+      },
+      "reference_sources": [
+        {
+          "file": "sources/rfc9000.txt",
+          "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+          "revision": "RFC9000",
+          "bytes": 403442,
+          "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+          "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+          "verified_at_utc": "2026-09-09T15:53:11.789452+00:00",
+          "verification": "Existing locked official source copied; destination re-read and SHA/length checked. No new fetch."
+        },
+        {
+          "file": "sources/rfc9002.txt",
+          "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+          "revision": "RFC9002",
+          "bytes": 89071,
+          "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+          "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+          "verified_at_utc": "2026-09-09T15:53:11.789853+00:00",
+          "verification": "Existing locked official source copied; destination re-read and SHA/length checked. No new fetch."
+        },
+        {
+          "file": "sources/rfc9002-errata7539.html",
+          "url": "https://www.rfc-editor.org/errata/eid7539",
+          "revision": "RFC9002 Verified Errata7539",
+          "bytes": 8446,
+          "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+          "verified_at_utc": "2026-09-09T15:53:11.790157+00:00",
+          "verification": "Existing locked official source copied; destination re-read and SHA/length checked. No new fetch.",
+          "copied_from": "calculations/sources/protocol-rfc/rfc9002-errata7539.html"
+        }
+      ],
+      "reference_source_root": "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy",
+      "transmissions": [
+        {
+          "direction": "up",
+          "pn": 0,
+          "kind": "data",
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "business",
+              "offset": 0,
+              "length": 1168
+            }
+          ],
+          "send_start": "0",
+          "send_end": "1",
+          "arrival": "2",
+          "quic_bytes": 1200,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 1228,
+          "dropped": false,
+          "probe": false,
+          "received_at": "2",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "down",
+          "pn": 0,
+          "kind": "ack",
+          "frames": [],
+          "send_start": "5/2",
+          "send_end": "7/2",
+          "arrival": "9/2",
+          "quic_bytes": 64,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 92,
+          "dropped": false,
+          "probe": false,
+          "received_at": "9/2",
+          "recovery_of": null,
+          "probe_of": null,
+          "ack_snapshot": {
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "largest": 0,
+            "largest_received_at": "2",
+            "raw_delay": "1/2",
+            "encoded_delay": 62500,
+            "delay_exponent": 3,
+            "decoded_delay": "1/2",
+            "encoding_error": "0",
+            "frame_bytes": 8,
+            "header_tag_bytes": 24,
+            "exceeds_max_delay": false,
+            "covered_pending": 1,
+            "retention_packets": 256
+          }
+        }
+      ],
+      "business": {
+        "upload": "2",
+        "model_start": "2",
+        "model_end": "2",
+        "response": "2"
+      },
+      "application_events": [
+        {
+          "at": "2",
+          "type": "application_prefix",
+          "direction": "up",
+          "prefix": 1168
+        }
+      ],
+      "waits": [],
+      "sender_events": {
+        "up": [
+          {
+            "type": "sent",
+            "at": "0",
+            "pn": 0,
+            "sent_bytes": 1200,
+            "frames": [
+              {
+                "type": "stream",
+                "stream": "business",
+                "offset": 0,
+                "length": 1168
+              }
+            ],
+            "ack_eliciting": true,
+            "in_flight": true,
+            "probe": false
+          },
+          {
+            "type": "ack",
+            "at": "9/2",
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "ack_delay": "1/2",
+            "app_limited": true,
+            "flow_limited": false
+          }
+        ],
+        "down": [
+          {
+            "type": "sent",
+            "at": "5/2",
+            "pn": 0,
+            "sent_bytes": 64,
+            "frames": [],
+            "ack_eliciting": false,
+            "in_flight": false,
+            "probe": false
+          }
+        ]
+      },
+      "final_states": {
+        "up": {
+          "bytes_in_flight": 0,
+          "cwnd": "2400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "9/2",
+          "smoothed_rtt": "9/2",
+          "rttvar": "9/4",
+          "min_rtt": "9/2",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 0,
+          "next_timer": null,
+          "max_data": 1168,
+          "max_stream_data": {
+            "business": 1168
+          },
+          "stream_highest_sent_offsets": {
+            "business": 1168
+          },
+          "max_data_consumed": 1168
+        },
+        "down": {
+          "bytes_in_flight": 0,
+          "cwnd": "2400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "0",
+          "smoothed_rtt": "10",
+          "rttvar": "5",
+          "min_rtt": null,
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": null,
+          "max_data": 1168,
+          "max_stream_data": {
+            "business": 1168
+          },
+          "stream_highest_sent_offsets": {},
+          "max_data_consumed": 0
+        }
+      },
+      "losses": {
+        "up": [],
+        "down": []
+      },
+      "timers": {
+        "up": [],
+        "down": []
+      },
+      "numeric_errors": {
+        "up": [],
+        "down": []
+      },
+      "received_intervals": {
+        "up": [
+          [
+            0,
+            1168
+          ]
+        ],
+        "down": []
+      },
+      "consumed": {
+        "up": 0,
+        "down": 0
+      },
+      "summary": {
+        "wire_bytes": 1320,
+        "serialized_wire_bytes_by_horizon": "1320",
+        "unique_received_bytes": 1168,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        },
+        "complete": true
+      },
+      "ack_events": {
+        "up": [
+          {
+            "at": "2",
+            "event": "receive",
+            "pn": 0,
+            "ack_eliciting": true,
+            "duplicate": false
+          },
+          {
+            "at": "5/2",
+            "event": "trigger",
+            "reason": "deadline",
+            "generation": 1
+          },
+          {
+            "at": "5/2",
+            "event": "start",
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "largest": 0,
+            "largest_received_at": "2",
+            "raw_delay": "1/2",
+            "encoded_delay": 62500,
+            "delay_exponent": 3,
+            "decoded_delay": "1/2",
+            "encoding_error": "0",
+            "frame_bytes": 8,
+            "header_tag_bytes": 24,
+            "exceeds_max_delay": false,
+            "covered_pending": 1,
+            "retention_packets": 256
+          }
+        ],
+        "down": [
+          {
+            "at": "9/2",
+            "event": "receive",
+            "pn": 0,
+            "ack_eliciting": false,
+            "duplicate": false
+          }
+        ]
+      },
+      "ack_state": {
+        "up": {
+          "pending": [],
+          "deadline": null,
+          "queued": false,
+          "generation": 2,
+          "retained": [
+            0
+          ],
+          "received_count": 1
+        },
+        "down": {
+          "pending": [],
+          "deadline": null,
+          "queued": false,
+          "generation": 0,
+          "retained": [
+            0
+          ],
+          "received_count": 1
+        }
+      },
+      "rtt_samples": {
+        "up": [
+          {
+            "at": "9/2",
+            "pn": 0,
+            "raw": "9/2",
+            "adjusted": "9/2",
+            "smoothed": "9/2",
+            "rttvar": "9/4"
+          }
+        ],
+        "down": []
+      }
+    },
+    "reverse_busy": {
+      "inputs": {
+        "upload_bytes": 1168,
+        "response_bytes": 1168,
+        "model_seconds": 0,
+        "until": 100,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 736,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 2400,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 20,
+            "min_rtt": 1
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "1/2"
+        }
+      },
+      "reference_sources": [
+        {
+          "file": "sources/rfc9000.txt",
+          "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+          "revision": "RFC9000",
+          "bytes": 403442,
+          "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+          "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+          "verified_at_utc": "2026-09-09T15:53:11.789452+00:00",
+          "verification": "Existing locked official source copied; destination re-read and SHA/length checked. No new fetch."
+        },
+        {
+          "file": "sources/rfc9002.txt",
+          "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+          "revision": "RFC9002",
+          "bytes": 89071,
+          "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+          "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+          "verified_at_utc": "2026-09-09T15:53:11.789853+00:00",
+          "verification": "Existing locked official source copied; destination re-read and SHA/length checked. No new fetch."
+        },
+        {
+          "file": "sources/rfc9002-errata7539.html",
+          "url": "https://www.rfc-editor.org/errata/eid7539",
+          "revision": "RFC9002 Verified Errata7539",
+          "bytes": 8446,
+          "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+          "verified_at_utc": "2026-09-09T15:53:11.790157+00:00",
+          "verification": "Existing locked official source copied; destination re-read and SHA/length checked. No new fetch.",
+          "copied_from": "calculations/sources/protocol-rfc/rfc9002-errata7539.html"
+        }
+      ],
+      "reference_source_root": "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy",
+      "transmissions": [
+        {
+          "direction": "up",
+          "pn": 0,
+          "kind": "data",
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "business",
+              "offset": 0,
+              "length": 1168
+            }
+          ],
+          "send_start": "0",
+          "send_end": "1",
+          "arrival": "2",
+          "quic_bytes": 1200,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 1228,
+          "dropped": false,
+          "probe": false,
+          "received_at": "2",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "down",
+          "pn": 0,
+          "kind": "data",
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "business",
+              "offset": 0,
+              "length": 1168
+            }
+          ],
+          "send_start": "2",
+          "send_end": "353/23",
+          "arrival": "376/23",
+          "quic_bytes": 1200,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 1228,
+          "dropped": false,
+          "probe": false,
+          "received_at": "376/23",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "down",
+          "pn": 1,
+          "kind": "ack",
+          "frames": [],
+          "send_start": "353/23",
+          "send_end": "376/23",
+          "arrival": "399/23",
+          "quic_bytes": 64,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 92,
+          "dropped": false,
+          "probe": false,
+          "received_at": "399/23",
+          "recovery_of": null,
+          "probe_of": null,
+          "ack_snapshot": {
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "largest": 0,
+            "largest_received_at": "2",
+            "raw_delay": "307/23",
+            "encoded_delay": 1668478,
+            "delay_exponent": 3,
+            "decoded_delay": "834239/62500",
+            "encoding_error": "-3/1437500",
+            "frame_bytes": 8,
+            "header_tag_bytes": 24,
+            "exceeds_max_delay": true,
+            "covered_pending": 1,
+            "retention_packets": 256
+          }
+        },
+        {
+          "direction": "up",
+          "pn": 1,
+          "kind": "ack",
+          "frames": [],
+          "send_start": "775/46",
+          "send_end": "238983/14122",
+          "arrival": "253105/14122",
+          "quic_bytes": 64,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 92,
+          "dropped": false,
+          "probe": false,
+          "received_at": "253105/14122",
+          "recovery_of": null,
+          "probe_of": null,
+          "ack_snapshot": {
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "largest": 0,
+            "largest_received_at": "376/23",
+            "raw_delay": "1/2",
+            "encoded_delay": 62500,
+            "delay_exponent": 3,
+            "decoded_delay": "1/2",
+            "encoding_error": "0",
+            "frame_bytes": 8,
+            "header_tag_bytes": 24,
+            "exceeds_max_delay": false,
+            "covered_pending": 1,
+            "retention_packets": 256
+          }
+        }
+      ],
+      "business": {
+        "upload": "2",
+        "model_start": "2",
+        "model_end": "2",
+        "response": "376/23"
+      },
+      "application_events": [
+        {
+          "at": "2",
+          "type": "application_prefix",
+          "direction": "up",
+          "prefix": 1168
+        },
+        {
+          "at": "376/23",
+          "type": "application_prefix",
+          "direction": "down",
+          "prefix": 1168
+        }
+      ],
+      "waits": [],
+      "sender_events": {
+        "up": [
+          {
+            "type": "sent",
+            "at": "0",
+            "pn": 0,
+            "sent_bytes": 1200,
+            "frames": [
+              {
+                "type": "stream",
+                "stream": "business",
+                "offset": 0,
+                "length": 1168
+              }
+            ],
+            "ack_eliciting": true,
+            "in_flight": true,
+            "probe": false
+          },
+          {
+            "type": "sent",
+            "at": "775/46",
+            "pn": 1,
+            "sent_bytes": 64,
+            "frames": [],
+            "ack_eliciting": false,
+            "in_flight": false,
+            "probe": false
+          },
+          {
+            "type": "ack",
+            "at": "399/23",
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "ack_delay": "834239/62500",
+            "app_limited": true,
+            "flow_limited": false
+          }
+        ],
+        "down": [
+          {
+            "type": "sent",
+            "at": "2",
+            "pn": 0,
+            "sent_bytes": 1200,
+            "frames": [
+              {
+                "type": "stream",
+                "stream": "business",
+                "offset": 0,
+                "length": 1168
+              }
+            ],
+            "ack_eliciting": true,
+            "in_flight": true,
+            "probe": false
+          },
+          {
+            "type": "sent",
+            "at": "353/23",
+            "pn": 1,
+            "sent_bytes": 64,
+            "frames": [],
+            "ack_eliciting": false,
+            "in_flight": false,
+            "probe": false
+          },
+          {
+            "type": "ack",
+            "at": "253105/14122",
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "ack_delay": "1/2",
+            "app_limited": true,
+            "flow_limited": false
+          }
+        ]
+      },
+      "final_states": {
+        "up": {
+          "bytes_in_flight": 0,
+          "cwnd": "2400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "399/23",
+          "smoothed_rtt": "2063/368",
+          "rttvar": "3351/184",
+          "min_rtt": "1",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 0,
+          "next_timer": null,
+          "max_data": 1168,
+          "max_stream_data": {
+            "business": 1168
+          },
+          "stream_highest_sent_offsets": {
+            "business": 1168
+          },
+          "max_data_consumed": 1168
+        },
+        "down": {
+          "bytes_in_flight": 0,
+          "cwnd": "2400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "224861/14122",
+          "smoothed_rtt": "38326/7061",
+          "rttvar": "126079/7061",
+          "min_rtt": "1",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 0,
+          "next_timer": null,
+          "max_data": 1168,
+          "max_stream_data": {
+            "business": 1168
+          },
+          "stream_highest_sent_offsets": {
+            "business": 1168
+          },
+          "max_data_consumed": 1168
+        }
+      },
+      "losses": {
+        "up": [],
+        "down": []
+      },
+      "timers": {
+        "up": [],
+        "down": []
+      },
+      "numeric_errors": {
+        "up": [],
+        "down": []
+      },
+      "received_intervals": {
+        "up": [
+          [
+            0,
+            1168
+          ]
+        ],
+        "down": [
+          [
+            0,
+            1168
+          ]
+        ]
+      },
+      "consumed": {
+        "up": 0,
+        "down": 0
+      },
+      "summary": {
+        "wire_bytes": 2640,
+        "serialized_wire_bytes_by_horizon": "2640",
+        "unique_received_bytes": 2336,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        },
+        "complete": true
+      },
+      "ack_events": {
+        "up": [
+          {
+            "at": "2",
+            "event": "receive",
+            "pn": 0,
+            "ack_eliciting": true,
+            "duplicate": false
+          },
+          {
+            "at": "5/2",
+            "event": "trigger",
+            "reason": "deadline",
+            "generation": 1
+          },
+          {
+            "at": "353/23",
+            "event": "start",
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "largest": 0,
+            "largest_received_at": "2",
+            "raw_delay": "307/23",
+            "encoded_delay": 1668478,
+            "delay_exponent": 3,
+            "decoded_delay": "834239/62500",
+            "encoding_error": "-3/1437500",
+            "frame_bytes": 8,
+            "header_tag_bytes": 24,
+            "exceeds_max_delay": true,
+            "covered_pending": 1,
+            "retention_packets": 256
+          },
+          {
+            "at": "253105/14122",
+            "event": "receive",
+            "pn": 1,
+            "ack_eliciting": false,
+            "duplicate": false
+          }
+        ],
+        "down": [
+          {
+            "at": "376/23",
+            "event": "receive",
+            "pn": 0,
+            "ack_eliciting": true,
+            "duplicate": false
+          },
+          {
+            "at": "775/46",
+            "event": "trigger",
+            "reason": "deadline",
+            "generation": 1
+          },
+          {
+            "at": "775/46",
+            "event": "start",
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "largest": 0,
+            "largest_received_at": "376/23",
+            "raw_delay": "1/2",
+            "encoded_delay": 62500,
+            "delay_exponent": 3,
+            "decoded_delay": "1/2",
+            "encoding_error": "0",
+            "frame_bytes": 8,
+            "header_tag_bytes": 24,
+            "exceeds_max_delay": false,
+            "covered_pending": 1,
+            "retention_packets": 256
+          },
+          {
+            "at": "399/23",
+            "event": "receive",
+            "pn": 1,
+            "ack_eliciting": false,
+            "duplicate": false
+          }
+        ]
+      },
+      "ack_state": {
+        "up": {
+          "pending": [],
+          "deadline": null,
+          "queued": false,
+          "generation": 2,
+          "retained": [
+            0,
+            1
+          ],
+          "received_count": 2
+        },
+        "down": {
+          "pending": [],
+          "deadline": null,
+          "queued": false,
+          "generation": 2,
+          "retained": [
+            0,
+            1
+          ],
+          "received_count": 2
+        }
+      },
+      "rtt_samples": {
+        "up": [
+          {
+            "at": "399/23",
+            "pn": 0,
+            "raw": "399/23",
+            "adjusted": "775/46",
+            "smoothed": "2063/368",
+            "rttvar": "3351/184"
+          }
+        ],
+        "down": [
+          {
+            "at": "253105/14122",
+            "pn": 0,
+            "raw": "224861/14122",
+            "adjusted": "108900/7061",
+            "smoothed": "38326/7061",
+            "rttvar": "126079/7061"
+          }
+        ]
+      }
+    }
+  },
+  "source_hashes": {
+    "calculate.py": "58718e22f3e29cba582f7ce2fdaf5f701b9bbb45acf8e71cd22a0253c64e6ae2",
+    "receiver.py": "a8a44b09c95d76501821a20a4737fdc352d564de706f98082b2c5f7f55949378",
+    "dependencies.lock.json": "8a0220189ee88f07cb0d61add32b237a39077b4a35b9293472083d5fbc9fdf27",
+    "sources.lock.json": "2a7029e8f3da83cfed3db6b1ac02666d3d8bd96d5ea101b380541f4cf28a3b93"
+  },
+  "passed": 30,
+  "checker_sha256": "d6ce1799dce3b21e10fc7fd6126a5897aca9800d3c976ffdbfd8cabdaccf0032",
+  "scope": "Three actual network cases, first/prior sample and queued ACK deadline violation; not large-workload acceptance"
+}

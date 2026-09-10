@@ -912,6 +912,42 @@ V4训练可微子图提供 `v4-training-primitives` 与 `v4-hc-training` CLI，�
 图2-8：`python3 calculations/calc.py plot-chat-agent`（可选Matplotlib），输出原Chat/Agent记录与条件KV六面板SVG/PNG/PDF；先运行reproduce更新结果。
 
 
+读者入口补记（以下命令此前未在本文件列出）：
+
+- `python3 calculations/calc.py fetch --model qwen3-8b`：按锁定的 URL、字节数与 SHA 重新下载某一来源组；不带 `--model` 则遍历全部。校验不通过即拒绝写入，不会留下半个文件。
+- `python3 calculations/calc.py verify-results`：校验 results/ 全部产物与配图和当前输入一致；不一致时报出具体文件并要求重跑 reproduce。
+- `python3 calculations/calc.py stage-resource-bounds --model qwen3-8b --tokens 128 --history 0 --format md`：逐阶段资源下界。官方未公布速率的资源逐项列为缺口，不并入下界。
+- `python3 calculations/calc.py v4-compressor-online --format md`：V4 压缩器的在线账。
+- `python3 calculations/calc.py plot-image-request`、`python3 calculations/calc.py plot-supernode-cost`：生成对应配图，需先跑 reproduce。
+
+
+交付检查（F04）：`python3 calculations/calc.py delivery --format md`，加 `--skip-rendered-book` 跳过较慢的正文／网页一致性检查。四项各自独立报告、不合并成一个完成度数字：结果可再生（场景表与产物清单互相对上）、原文已审查（覆盖清单是最新的、引用的结果都存在、且每一块都已逐块审查）、正文与网页同步（转交本书自己的 verify_outline 并原样复述其结论）、读者入口（每个子命令都在本文件里、每个专题模块都可从命令行或其他模块到达）。它只读盘上的状态，不重新生成任何东西，因此通过意味着当前签入的状态自洽，而不是"重跑一次就好了"。
+
+
+原文到工作包的覆盖清单（F01 工作表）：`python3 calculations/calc.py coverage --format md`，加 `--write` 保存[inventory/f01-coverage.json](inventory/f01-coverage.json)。按 PLAN 各工作包自带的小节引用，把 inventory 捕获的 1,268 个文本块机械映射回工作包，逐块记录量化信号与已引用的生成结果；直接命名与仅命名其子节两种关系分开记。这是机械映射不是审查：不设置任何块的 review_status，有候选工作包也不等于该块要求已实现。它的用处是让"没有任何工作包认领"从看不见变成一张表。
+
+
+Queqiao记录的同条件统计：`python3 calculations/calc.py queqiao-records --format md`。两份作者文档按SHA锁入sources/queqiao-records，逐行转录只保留文档打印的数字；只有代次、负载、连接状态与内核设置全等的行才允许比较，8组比值独立复现文档自身口径。给出算术下界的可行载荷判定（撤回的225.8 ms在199–207 ms往返带内对任何载荷都不可行）、逐段残差与0.1 ms分辨率界的分离，以及每个分位数背后的样本支撑（1200帧的p999仅1个样本）。[可读结果](results/queqiao-records-conditions.md)、[精确JSON](results/queqiao-records-conditions.json)。文档未打印的分位数保持缺失，不插值；音频格式是声明假设。
+
+
+跨地域放置与盈亏平衡：`python3 calculations/calc.py region-placement --format md`。同一固定Agent轨迹重放远端无状态／远端保温／本地三种放置，模型revision与token序列相同，字节取自轨迹自身消息体，会话状态按官方K/V几何。硬约束（功率上限、交付期）先于价格排除候选；解出保温可持有121.8 s与出网价格边界84.17/GB两条盈亏平衡，并按模型适配器重算各复用比例下的prefill工作。[可读结果](results/region-placement-agent-session.md)、[紧交付期变体](results/region-placement-tight-deadline.md)。价格、功率上限与交付期为声明输入，不代表任何运营商资费。
+
+
+完整执行DAG与多目标筛选：`python3 calculations/calc.py execution-dag --format md`。38节点关键路径给出基线下界，节点标运算与位置、边标接口字节、状态标产生／复用／更新／释放；缓存前缀、压缩状态、批量与分离四种改写各自登记新增代价，筛选先按容量／功率／面积上限排除再比较帕累托前沿。[可读结果](results/execution-dag-qwen8-h100.md)、[功率受限变体](results/execution-dag-qwen8-h100-power-capped.md)。未公布速率的special资源列为缺口不并入下界；官方未公布裸片面积，面积轴仅在声明占地时参与。
+
+
+权重驻留后的剩余流量：`python3 calculations/calc.py weight-resident-traffic --format md`。由固定官方配置重建checkpoint、活跃decode读取、KV与交叉点，倒推带宽／stack／面积／lane，并给出激活扇出扇入、总跳数与同步跨度；解出预算允许的最大直径（单次4跳、整token 13跳）。[可读结果](results/weight-resident-qwen8-8k.md)、[长上下文](results/weight-resident-qwen8-32k.md)、[宽网格](results/weight-resident-qwen8-wide-mesh.md)。本设计没有流片，无一项作为实测速率。
+
+
+同上限下的两侧独立选择：`python3 calculations/calc.py iso-resource-comparison --format md`。先按两套固定配置定价，再让两侧在同一功率上限下各自选位宽、TP与副本；厂商未公布dense速率的精度按"未公布"拒绝而非按上一位宽推定，改变数值的位宽在无声明质量证据时不参与同质量排名。给出价格比与"仅质量证据改变"两条翻转条件。[可读结果](results/iso-resource-h100-a100.md)、[给定FP8证据的变体](results/iso-resource-h100-a100-fp8-evidence.md)。
+
+
+专用化回本与整站费用：`python3 calculations/calc.py specialization-payback --format md`。解出回本token数与所需机器数，再按经济寿命减半、交付滑期与有效速率下降三类风险各自重算；整站电力经散热系数计量，网络与备份按年度线单列，并把站点成本摊回每百万token检查净节省。[可读结果](results/specialization-payback-baseline.md)、[254台变体](results/specialization-payback-fleet-254.md)。全部金额为教学假设；机器数只是产出折算，仍需真实需求消化。
+
+
+输入区间、最有价值的补测与可证伪预测：`python3 calculations/calc.py design-record --format md`。对回本与执行图两项决定逐个输入在其声明区间内单独移动，报告哪一个输入的不确定性真能改变结论；翻转以二分区间给出而非精确根，留出配置给出可证伪的预测区间。[可读结果](results/design-record-uncertainty.md)。逐输入标注证据类型；对同一模型的复算不充当该模型的独立测量，因此"观察"一栏保持为空。
+
+
 实验4-3容量与带宽代际对照：`python3 calculations/calc.py storage-generation-comparison --format md`。固定官方Qwen8/235逐张量与五款硬件，54工作负载、810独立容量/带宽/产品组合；完整形状与精确分数见[JSON](results/storage-generation-qwen8-235.json)，[可读表](results/storage-generation-qwen8-235.md)分别列常驻与选中专家读取。低位格式、workspace与逻辑接口访问有明确条件，不代表实测HBM或完整时延。
 
 
@@ -951,3 +987,59 @@ Qwen3.6-35B-A3B：`python3 calculations/calc.py qwen36-forward --format md` 输�
 连续请求与窗口：`python3 calculations/calc.py connection-sequence --inputs calculations/scenarios/connection-sequence-example.json --format md`。声明协议的完整事件记录区分成片与最后 ACK；不是实际 TCP/QUIC 测量。
 
 协议消息图与长早期上传：`python3 calculations/calc.py protocol-handshake --inputs calculations/scenarios/protocol-handshake-example.json --format md`；`python3 calculations/calc.py protocol-early-stream --inputs calculations/scenarios/protocol-early-stream-example.json --format md`。七份RFC固定校验，包布局与链路输入声明，不是完整协议栈或实测网络性能。
+
+QUIC HRR、Retry 与 PSK 决策：`python3 calculations/calc.py protocol-retry --inputs calculations/scenarios/protocol-retry-example.json --format md`。20 个固定场景注册到统一复算，包括30MB逐包重试、HRR后普通重发、未知PSK普通回退、选中binder错误终止、无early基线及token引起Initial分包。Retry保留PN、改变Initial密钥/DCID但不自动拒绝0RTT；early再次尝试和TLS拒绝后的应用重发分别授权。JSON保存每包offset、PN、有效字节与握手事件；包长和布局仍为声明值，不是完整QUIC栈或实测吞吐。完整合同见[研究候选说明](research/protocol-retry/README.md)。
+
+共享媒体、截止与完整业务：`python3 calculations/calc.py shared-media-transport --inputs calculations/scenarios/shared-media-example.json --format md`。16个固定场景连接30MB图像／5MB成片、额外预览、ASR/TTS和截图版本／取消；分别比较固定发送轨迹的交付顺序和相同业务输入的发送调度。共享信用仅在实际ACK到达后释放，网络优先级与计算调度独立；缺音、过期、旧版本结果和可靠未完成不会合并成“全部更快”。这是有限教学协议，具体合同见[研究说明](research/shared-media-transport/README.md)。六份官方RFC去重固定，默认串行块／头／ACK／模型时间仍是声明参数。
+
+图12-4的共享媒体教学面板：先运行 `python3 calculations/calc.py reproduce`，再用具备可选Matplotlib依赖的解释器运行 `python3 calculations/calc.py plot-shared-media`。输出[PNG](figures/shared-media/figure.png)、SVG和[精确事件数据](figures/shared-media/data.json)，统一验证器检查实际来源及产物哈希。四个面板分别隔离交付顺序、发送调度和播放政策，混合场景另标参数；它们尚不代表完整图12-4或真实协议性能比较。
+
+发送方反馈与完整请求：`python3 calculations/calc.py transport-closed-loop --inputs calculations/scenarios/closed-loop-example.json --format md`。10个固定场景接双向串行/有限路由队列、实际ACK、消费驱动绝对流控和新PN恢复旧offset；[原书30MB/5MB结果](results/closed-loop-book-30mb-5mb.md)给完整业务14.36339008s与线上39554832B，网络、ACK和数值精度均为声明条件。大场景使用1e-12网格并保留局部舍入账；尚非完整协议、媒体或CUBIC/BBR对照。
+
+### 同网络控制器对照
+
+`transport-closed-loop` 现在接受显式 `controller` 配置，可选择 `newreno`、`cubic_hystart` 或 `bbr`。共享实现位于 `src/infra_calc/transport/`，复用同一双向网络与发送方；旧输入省略此项时保留原行为。
+
+```bash
+python3 calc.py transport-closed-loop --inputs scenarios/controller-loop-example.json --format md --output /tmp/controller-loop.md
+```
+
+示例使用3MB上传、0.5MB响应和中间路由器队列，输入文件可编辑。书中另注册30MB上传/5MB响应的三控制器场景；在途包统一填充至1200B，纯ACK保持64B QUIC负载，额外IPv4/UDP头另计。输出JSON保留完整控制器反馈和局部量化误差，Markdown提供业务时间、包时间轴与计数。
+
+这是固定RFC CUBIC/HyStart++及Linux v6.6 BBR状态的显式QUIC适配。每PN交付与TCP序号不同，不代表完整Linux TCP实测；比较时间必须结合实际控制阶段、队列和业务条件。来源原件通过统一公共锁校验。
+
+### 接收端 ACK 聚合
+
+在同一命令中用 `ack_policy` 字典选择声明的计数/期限策略：
+
+```bash
+python3 calc.py transport-closed-loop --inputs scenarios/ack-policy-example.json --format md --output /tmp/ack-policy.md
+```
+
+示例为可手算的两包请求；book.json 另注册三种控制器的30MB/5MB对照。ACK真正开送时冻结范围与delay，JSON保留实际rtt_samples，报告列出原始/解码延迟与超期。范围预算和编码都是明确输入，不是浏览器默认配置。省略ack_policy仍使用原立即ACK路径。
+
+
+共享媒体真实反馈沿用 `transport-closed-loop`：
+
+```sh
+python3 calculations/calc.py transport-closed-loop --inputs calculations/scenarios/media-feedback-example.json --format md
+python3 calculations/calc.py transport-closed-loop --inputs calculations/scenarios/media-feedback-mixed-example.json --format json --output /tmp/media-feedback.json
+```
+
+媒体输入显式提供业务DAG和网络条件：消息真实有序交付后才启动本端计算或取消，多个流共用连接窗口，DATAGRAM不自动重发。19个场景包括14个小例、30MB/5MB单图和同一混合DAG的FIFO/priority×立即/聚合ACK四格。配置来源见[媒体输入追溯](configs/media-feedback-provenance.json)；模型工作时间和播放槽是声明条件。逐包、RTT、额度和完整业务记录在JSON，Markdown同时列未完成/缺音/截图可用性；队列清空不表示业务成功。
+
+公共结果生成后，`python3 calculations/calc.py plot-media-feedback` 生成图12-4的真实反馈媒体面板，包含成片、播放质量和早期发送/ACK时序。旧shared-media教学图保留用于固定轨迹交付消融；这些有限计算均不冒称匹配TCP/H3实测或无线MAC模型。
+
+
+共享无线段也使用同一命令：
+
+```sh
+python3 calculations/calc.py transport-closed-loop --inputs calculations/scenarios/shared-airtime-example.json --format md
+python3 calculations/calc.py plot-shared-airtime
+```
+
+在媒体输入的network内提供wireless_access，追加client↔AP的单共享非抢占服务；AP↔server仍走声明WAN。省略无线配置或enabled:false完整保留原媒体计算。中央[profile](scenarios/shared-airtime-profiles.json)将固定ns-3.44官方实现支持的OFDM选择与纯教学时间分开，未测硬件字段保留null；[输入追溯](configs/shared-airtime-provenance.json)记录24个场景。五完整例保留30MB/5MB及WAN20/100Mbps、各50ms；九格载荷/ACK扫描是另一个明确300KB/50KB、不填充的教学负载，载荷变化不冒充等质量codec。
+
+JSON分列端到端传输、同PN的MAC尝试、预约、DATA接收和MAC反馈。上行ACK在client无线发送起点冻结，下行ACK在server WAN发送起点冻结，AP不得用未来server状态更新ACK。MAC重试不再次发送端到端包或交付相同字节。45µs RXSTART监视器不是完整MAC ACK超时，未知完整超时的profile拒绝失败模拟。Markdown只在完整成功PHY交换时给PSDU/RF分层总账，否则保留实际观测服务与WAN串行量；不把前导按IP字节比例分摊。
+
+图12-5首面板并列完整业务与有限扫描的资源/时限结果。无线和WAN可流水重叠，服务秒不能直接相加为响应；音频按时、截图动作有效性单列。当前是声明全局FIFO、单帧、无随机DCF/聚合/加密的参考模型，不是实测Wi-Fi、完整TACK或多路径费用能耗计算。

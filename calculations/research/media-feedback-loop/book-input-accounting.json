@@ -1,0 +1,100 @@
+{
+  "status": "PREPARED_AND_CONSTRUCTOR_VALIDATED_NOT_SIMULATED",
+  "source_file": "research/media-feedback-inputs/normalized-inputs.json",
+  "source_sha256": "52a5659d68519671d00ac69d59a0891580766f4ed196482182dd5cf8041b9329",
+  "mixed": {
+    "per_direction": {
+      "up": {
+        "declared_application_bytes": 30008595,
+        "declared_packets": 26412,
+        "declared_stream_bytes": 30008595,
+        "declared_padding_bytes": 840621,
+        "declared_layout_bytes": 845184,
+        "declared_data_quic_bytes": 31694400,
+        "declared_data_wire_bytes": 32433936
+      },
+      "down": {
+        "declared_application_bytes": 5007808,
+        "declared_packets": 4410,
+        "declared_stream_bytes": 5000128,
+        "declared_padding_bytes": 143072,
+        "declared_layout_bytes": 141120,
+        "declared_data_quic_bytes": 5292000,
+        "declared_data_wire_bytes": 5415480,
+        "declared_datagram_bytes": 7680
+      }
+    },
+    "stream_highest_declared_ends": {
+      "up": {
+        "image-upload": 30000000,
+        "asr-audio": 5120,
+        "screen-up": 3443,
+        "control": 32
+      },
+      "down": {
+        "image-final": 5000000,
+        "asr-text": 64,
+        "screen-result": 64
+      }
+    },
+    "total_declared_application_bytes": 35016403,
+    "total_declared_packets": 30822,
+    "total_declared_data_wire_bytes": 37849416,
+    "scope": "All declared messages once. Cancellation, expiry or incomplete dependency can reduce actual sends; not predicted delivery."
+  },
+  "image": {
+    "per_direction": {
+      "up": {
+        "declared_application_bytes": 30000000,
+        "declared_packets": 26400,
+        "declared_stream_bytes": 30000000,
+        "declared_padding_bytes": 835200,
+        "declared_layout_bytes": 844800,
+        "declared_data_quic_bytes": 31680000,
+        "declared_data_wire_bytes": 32419200
+      },
+      "down": {
+        "declared_application_bytes": 5000000,
+        "declared_packets": 4400,
+        "declared_stream_bytes": 5000000,
+        "declared_padding_bytes": 139200,
+        "declared_layout_bytes": 140800,
+        "declared_data_quic_bytes": 5280000,
+        "declared_data_wire_bytes": 5403200
+      }
+    },
+    "stream_highest_declared_ends": {
+      "up": {
+        "image-upload": 30000000
+      },
+      "down": {
+        "image-final": 5000000
+      }
+    },
+    "total_declared_application_bytes": 35000000,
+    "total_declared_packets": 30800,
+    "total_declared_data_wire_bytes": 37822400,
+    "scope": "All declared messages once. Cancellation, expiry or incomplete dependency can reduce actual sends; not predicted delivery.",
+    "conditional_immediate_ack_count": 30800,
+    "conditional_immediate_total_wire_bytes": 40656000,
+    "conditional_aggregate_ack_bounds": [
+      2,
+      30800
+    ],
+    "conditional_aggregate_total_wire_bounds": [
+      37822584,
+      40656000
+    ],
+    "bound_conditions": "All original image data arrive once; no loss/recovery/control/duplicate injection; ACKs finish within horizon. Generic safe bounds, not a forecast for every2."
+  },
+  "four_cell_only_changes": [
+    "application.scheduling.send",
+    "network.ack_policy"
+  ],
+  "files": {
+    "book-inputs.json": "63a2f8143f2966e79f7d6a684835389ac54106c9ae62fb4d3fbf3e8d8fa3d0c8",
+    "image-baseline-inputs.json": "a8f1f12c324da2db191a451502538741862d9603399c6d538c17fc287f61d4d3"
+  },
+  "constructor_sha256": "7f27db5978f2789d5fe1343873364c2254046628c04fd859d4a420a44af70237",
+  "application_validator_sha256": "d4ebb24bbfe734ebb696964f13c16f8ba18064ae306085ea25696adc452712a3"
+}

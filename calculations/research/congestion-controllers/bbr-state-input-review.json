@@ -1,0 +1,36 @@
+{
+  "candidate_sha256": "a185991118d41d66a2949a5dc7e6619ffdc278d34a9f53efa4be1980fc69b11e",
+  "status": "issues reported; not whole-state verification",
+  "cases": [
+    {
+      "name": "rate_sample_count_mismatch",
+      "changed_input": {
+        "delivered": 100
+      },
+      "validate_accepted": true,
+      "callback_accepted": true,
+      "bw_scaled": 16777
+    },
+    {
+      "name": "srtt_above_u32",
+      "changed_input": {
+        "srtt_us_x8": 4294967296
+      },
+      "validate_accepted": true
+    },
+    {
+      "name": "edt_above_u64",
+      "changed_input": {
+        "edt_ns": 18446744073709551616
+      },
+      "validate_accepted": true
+    },
+    {
+      "name": "rtt_above_signed_long64",
+      "changed_input": {
+        "rtt_us": 9223372036854775808
+      },
+      "validate_accepted": true
+    }
+  ]
+}

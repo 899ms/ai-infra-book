@@ -1,0 +1,688 @@
+{
+  "inputs": {
+    "application": {
+      "schema_version": 1,
+      "id": "playback-slots",
+      "messages": [
+        {
+          "id": "a0",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "audio",
+          "transport": "stream",
+          "bytes": 1,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "1",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 0,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 1,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "a1",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "audio",
+          "transport": "stream",
+          "bytes": 1,
+          "stream_offset": 1,
+          "application_offset": 1,
+          "ready_seconds": "4",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 1,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 1,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "a2",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "audio",
+          "transport": "stream",
+          "bytes": 1,
+          "stream_offset": 2,
+          "application_offset": 2,
+          "ready_seconds": "5",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 2,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 1,
+            "coalesce_across_messages": false
+          }
+        }
+      ],
+      "compute_tasks": [],
+      "business_observers": [
+        {
+          "id": "tts",
+          "kind": "tts",
+          "playback": "slots",
+          "blocks": [
+            {
+              "message_ids": [
+                "a0"
+              ],
+              "duration_seconds": "2",
+              "slot_start_seconds": "3"
+            },
+            {
+              "message_ids": [
+                "a1"
+              ],
+              "duration_seconds": "2",
+              "slot_start_seconds": "5"
+            },
+            {
+              "message_ids": [
+                "a2"
+              ],
+              "duration_seconds": "2",
+              "slot_start_seconds": "7"
+            }
+          ],
+          "endpoint": "server",
+          "completion_dependencies": [
+            {
+              "id": "a0",
+              "event": "message_delivered",
+              "endpoint": "server"
+            },
+            {
+              "id": "a1",
+              "event": "message_delivered",
+              "endpoint": "server"
+            },
+            {
+              "id": "a2",
+              "event": "message_delivered",
+              "endpoint": "server"
+            }
+          ],
+          "version_changes": []
+        }
+      ],
+      "scheduling": {
+        "send": "fifo",
+        "compute": "fifo",
+        "compute_nonpreemptive": true,
+        "resource_capacity_tasks": 1
+      },
+      "links": {
+        "c2s": {
+          "rate_bits_per_second": 8,
+          "propagation_seconds": "1"
+        },
+        "s2c": {
+          "rate_bits_per_second": 8,
+          "propagation_seconds": "1"
+        }
+      },
+      "connection_ready_seconds": "0",
+      "external_legacy_assumptions": {
+        "teaching_network": {
+          "delivery_mode": "per_stream",
+          "header_bytes": 0,
+          "ack_bytes": 1,
+          "shared_credit_bytes": 100,
+          "reliable_receive_credit_bytes": 100,
+          "stream_credit_bytes": 100
+        },
+        "selected_loss_and_recovery": [],
+        "action": "Do not map credit to cwnd, legacy header to MTU, or recovery_ready to PTO. Choose real network inputs explicitly."
+      },
+      "accounting": {
+        "application_bytes_by_direction": {
+          "client_to_server": 3
+        },
+        "application_bytes": 3,
+        "message_count": 3,
+        "task_count": 0,
+        "fragment_count": 3
+      }
+    },
+    "network": {
+      "links": {
+        "up": {
+          "rate_bps": 9824,
+          "propagation": 1
+        },
+        "down": {
+          "rate_bps": 9824,
+          "propagation": 1
+        }
+      },
+      "until": 60,
+      "initial_cwnd": 2400,
+      "initial_max_data": {
+        "up": 3,
+        "down": 0
+      },
+      "initial_max_stream_data": {
+        "up": {
+          "audio": 3
+        },
+        "down": {}
+      },
+      "receive_memory_bytes": {
+        "up": 100000,
+        "down": 100000
+      },
+      "pad_in_flight": true,
+      "consume_delay": null,
+      "sender": {
+        "rtt_seed": {
+          "latest_rtt": 4,
+          "smoothed_rtt": 4,
+          "rttvar": 2,
+          "min_rtt": 4
+        }
+      }
+    }
+  },
+  "reference_sources": [
+    {
+      "file": "sources/protocol-rfc/rfc9000.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+      "revision": "RFC9000",
+      "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9002.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+      "revision": "RFC9002",
+      "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9002-errata7539.html",
+      "url": "https://www.rfc-editor.org/errata/eid7539",
+      "revision": "RFC9002 Verified Errata7539",
+      "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a"
+    }
+  ],
+  "transmissions": [
+    {
+      "direction": "up",
+      "pn": 0,
+      "kind": "data",
+      "message_id": "a0",
+      "message_offset": 0,
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "audio",
+          "offset": 0,
+          "length": 1
+        }
+      ],
+      "send_start": "1",
+      "send_end": "2",
+      "arrival": "3",
+      "received_at": "3",
+      "quic_bytes": 1200,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 0,
+      "kind": "ack",
+      "message_id": null,
+      "message_offset": null,
+      "frames": [],
+      "send_start": "3",
+      "send_end": "944/307",
+      "arrival": "1251/307",
+      "received_at": "1251/307",
+      "quic_bytes": 64,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "up",
+      "pn": 1,
+      "kind": "data",
+      "message_id": "a1",
+      "message_offset": 0,
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "audio",
+          "offset": 1,
+          "length": 1
+        }
+      ],
+      "send_start": "4",
+      "send_end": "5",
+      "arrival": "6",
+      "received_at": "6",
+      "quic_bytes": 1200,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "up",
+      "pn": 2,
+      "kind": "data",
+      "message_id": "a2",
+      "message_offset": 0,
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "audio",
+          "offset": 2,
+          "length": 1
+        }
+      ],
+      "send_start": "5",
+      "send_end": "6",
+      "arrival": "7",
+      "received_at": "7",
+      "quic_bytes": 1200,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 1,
+      "kind": "ack",
+      "message_id": null,
+      "message_offset": null,
+      "frames": [],
+      "send_start": "6",
+      "send_end": "1865/307",
+      "arrival": "2172/307",
+      "received_at": "2172/307",
+      "quic_bytes": 64,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 2,
+      "kind": "ack",
+      "message_id": null,
+      "message_offset": null,
+      "frames": [],
+      "send_start": "7",
+      "send_end": "2172/307",
+      "arrival": "2479/307",
+      "received_at": "2479/307",
+      "quic_bytes": 64,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    }
+  ],
+  "sender_events": {
+    "up": [
+      {
+        "type": "sent",
+        "at": "1",
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "audio",
+            "offset": 0,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "4",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "audio",
+            "offset": 1,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "1251/307",
+        "ranges": [
+          [
+            0,
+            0
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": true,
+        "flow_limited": false
+      },
+      {
+        "type": "sent",
+        "at": "5",
+        "pn": 2,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "audio",
+            "offset": 2,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "2172/307",
+        "ranges": [
+          [
+            1,
+            1
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": true,
+        "flow_limited": false
+      },
+      {
+        "type": "ack",
+        "at": "2479/307",
+        "ranges": [
+          [
+            2,
+            2
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": true,
+        "flow_limited": false
+      }
+    ],
+    "down": [
+      {
+        "type": "sent",
+        "at": "3",
+        "pn": 0,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "6",
+        "pn": 1,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "7",
+        "pn": 2,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      }
+    ]
+  },
+  "application_events": [
+    {
+      "at": "3",
+      "kind": "message_delivered",
+      "id": "a0"
+    },
+    {
+      "at": "6",
+      "kind": "message_delivered",
+      "id": "a1"
+    },
+    {
+      "at": "7",
+      "kind": "message_delivered",
+      "id": "a2"
+    }
+  ],
+  "network_events": [],
+  "work": [],
+  "businesses": [
+    {
+      "id": "tts",
+      "kind": "tts",
+      "endpoint": "server",
+      "all_required_delivered": true,
+      "complete_at": "7",
+      "complete": false,
+      "missing": [],
+      "blocks": [
+        {
+          "message_ids": [
+            "a0"
+          ],
+          "arrival": "3",
+          "play_start": "3",
+          "scheduled_play_end": "5",
+          "play_end": "5"
+        },
+        {
+          "message_ids": [
+            "a1"
+          ],
+          "arrival": "6",
+          "play_start": null,
+          "scheduled_play_end": null,
+          "play_end": null
+        },
+        {
+          "message_ids": [
+            "a2"
+          ],
+          "arrival": "7",
+          "play_start": "7",
+          "scheduled_play_end": "9",
+          "play_end": "9"
+        }
+      ],
+      "first_play": "3",
+      "playback_end": "9",
+      "stall_seconds": "0",
+      "missing_audio_seconds": "2"
+    }
+  ],
+  "message_status": {
+    "a0": "delivered",
+    "a1": "delivered",
+    "a2": "delivered"
+  },
+  "delivered": {
+    "a0": "3",
+    "a1": "6",
+    "a2": "7"
+  },
+  "waits": [],
+  "received_intervals": {
+    "up": {
+      "audio": [
+        [
+          0,
+          3
+        ]
+      ]
+    },
+    "down": {}
+  },
+  "consumed": {
+    "up": {},
+    "down": {}
+  },
+  "peak_receive_memory": {
+    "up": 3,
+    "down": 0
+  },
+  "final_states": {
+    "up": {
+      "bytes_in_flight": 0,
+      "cwnd": "2400",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "944/307",
+      "smoothed_rtt": "145185/39296",
+      "rttvar": "25595/19648",
+      "min_rtt": "944/307",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 2,
+      "next_timer": null,
+      "max_data": 3,
+      "max_stream_data": {
+        "audio": 3
+      },
+      "stream_highest_sent_offsets": {
+        "audio": 3
+      },
+      "max_data_consumed": 3
+    },
+    "down": {
+      "bytes_in_flight": 0,
+      "cwnd": "2400",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "4",
+      "smoothed_rtt": "4",
+      "rttvar": "2",
+      "min_rtt": "4",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": null,
+      "next_timer": null,
+      "max_data": 0,
+      "max_stream_data": {},
+      "stream_highest_sent_offsets": {},
+      "max_data_consumed": 0
+    }
+  },
+  "losses": {
+    "up": [],
+    "down": []
+  },
+  "timers": {
+    "up": [],
+    "down": []
+  },
+  "rtt_samples": {
+    "up": [
+      {
+        "at": "1251/307",
+        "pn": 0,
+        "raw": "944/307",
+        "adjusted": "944/307",
+        "smoothed": "2385/614",
+        "rttvar": "1063/614"
+      },
+      {
+        "at": "2172/307",
+        "pn": 1,
+        "raw": "944/307",
+        "adjusted": "944/307",
+        "smoothed": "18583/4912",
+        "rttvar": "1843/1228"
+      },
+      {
+        "at": "2479/307",
+        "pn": 2,
+        "raw": "944/307",
+        "adjusted": "944/307",
+        "smoothed": "145185/39296",
+        "rttvar": "25595/19648"
+      }
+    ],
+    "down": []
+  },
+  "numeric_errors": {
+    "up": [],
+    "down": []
+  },
+  "controller_events": {
+    "up": [],
+    "down": []
+  },
+  "controller_numeric_errors": {
+    "up": [],
+    "down": []
+  },
+  "persistent_events": {
+    "up": [],
+    "down": []
+  },
+  "pacer_final": {},
+  "pacer_errors": {},
+  "ack_events": {},
+  "summary": {
+    "wire_bytes": 3960,
+    "serialized_wire_bytes_by_horizon": "3960",
+    "delivered_application_bytes": 3,
+    "unique_received_application_bytes": 3,
+    "complete": false,
+    "all_messages_delivered": true,
+    "pending_packets": {
+      "up": 0,
+      "down": 0
+    }
+  }
+}

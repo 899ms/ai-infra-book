@@ -1,0 +1,101 @@
+{
+  "newreno": {
+    "upload_bytes": 30000000,
+    "response_bytes": 5000000,
+    "model_seconds": "0.3",
+    "until": 60,
+    "links": {
+      "up": {
+        "rate_bps": 20000000,
+        "propagation": "0.05"
+      },
+      "down": {
+        "rate_bps": 100000000,
+        "propagation": "0.05"
+      }
+    },
+    "sender": {
+      "initial_cwnd": 12000,
+      "numeric_quantum": "0.000000000001"
+    },
+    "controller": {
+      "name": "newreno"
+    },
+    "pad_in_flight": true,
+    "ack_policy": {
+      "mode": "count_or_timer",
+      "every": 2,
+      "max_delay": "0.01",
+      "delay_exponent": 3,
+      "retain_packets": 256,
+      "reorder_immediate": true,
+      "header_tag_bytes": 24
+    }
+  },
+  "cubic_hystart": {
+    "upload_bytes": 30000000,
+    "response_bytes": 5000000,
+    "model_seconds": "0.3",
+    "until": 60,
+    "links": {
+      "up": {
+        "rate_bps": 20000000,
+        "propagation": "0.05"
+      },
+      "down": {
+        "rate_bps": 100000000,
+        "propagation": "0.05"
+      }
+    },
+    "sender": {
+      "initial_cwnd": 12000,
+      "numeric_quantum": "0.000000000001"
+    },
+    "controller": {
+      "name": "cubic_hystart"
+    },
+    "pad_in_flight": true,
+    "ack_policy": {
+      "mode": "count_or_timer",
+      "every": 2,
+      "max_delay": "0.01",
+      "delay_exponent": 3,
+      "retain_packets": 256,
+      "reorder_immediate": true,
+      "header_tag_bytes": 24
+    }
+  },
+  "bbr": {
+    "upload_bytes": 30000000,
+    "response_bytes": 5000000,
+    "model_seconds": "0.3",
+    "until": 60,
+    "links": {
+      "up": {
+        "rate_bps": 20000000,
+        "propagation": "0.05"
+      },
+      "down": {
+        "rate_bps": 100000000,
+        "propagation": "0.05"
+      }
+    },
+    "sender": {
+      "initial_cwnd": 12000,
+      "numeric_quantum": "0.000000000001"
+    },
+    "controller": {
+      "name": "bbr"
+    },
+    "pad_in_flight": true,
+    "ack_policy": {
+      "mode": "count_or_timer",
+      "every": 2,
+      "max_delay": "0.01",
+      "delay_exponent": 3,
+      "retain_packets": 256,
+      "reorder_immediate": true,
+      "header_tag_bytes": 24
+    }
+  }
+}

@@ -1,0 +1,82 @@
+--- calculations/research/shared-airtime-loop/calculate.py
++++ calculations/src/infra_calc/transport/shared_airtime_network.py
+@@ -1,26 +1,12 @@
+-"""Research shared half-duplex access hop over the public media feedback engine."""
+-
+-from pathlib import Path
++"""Shared half-duplex access hop over the public media feedback engine."""
+ from fractions import Fraction as F
+ from collections import deque
+-import argparse
+ import copy
+-import hashlib
+ import heapq
+-import importlib.util
+-import json
+-import sys
+-
+-ROOT = Path(__file__).resolve().parent
+-CALCULATIONS = ROOT.parent.parent
+-sys.path.insert(0, str(CALCULATIONS / "src"))
+-from infra_calc.transport import media_network as base
+-
+-spec = importlib.util.spec_from_file_location(
+-    "shared_airtime_exchange", ROOT / "airtime.py"
+-)
+-airtime = importlib.util.module_from_spec(spec)
+-spec.loader.exec_module(airtime)
++from . import media_network as base
++from . import airtime
++from .reference_sources import reference_sources
++from ..paths import PROJECT
+ 
+ 
+ def json_value(value):
+@@ -34,16 +20,7 @@
+ 
+ 
+ def verify_sources():
+-    root = ROOT.parent / "shared-airtime-inputs"
+-    rows = json.loads((root / "sources.lock.json").read_text())
+-    for row in rows:
+-        data = (root / row["file"]).read_bytes()
+-        if (
+-            len(data) != row["bytes"]
+-            or hashlib.sha256(data).hexdigest() != row["sha256"]
+-        ):
+-            raise ValueError("airtime reference source changed: " + row["file"])
+-    return rows
++    return reference_sources("shared_airtime")
+ 
+ 
+ class Network(base.Network):
+@@ -464,7 +441,7 @@
+         result["wireless_events"] = self.air_events
+         result["wireless_reservations"] = self.air_reservations
+         result["wireless_reference_sources"] = self.air_sources
+-        result["wireless_reference_root"] = str(ROOT.parent / "shared-airtime-inputs")
++        result["wireless_reference_root"] = str(PROJECT)
+         result["wireless_summary"] = dict(
+             attempts_started=len(self.air_attempts),
+             same_pn_retry_attempts=sum(r["attempt"] > 1 for r in self.air_attempts),
+@@ -506,20 +483,3 @@
+         del clean["network"]["wireless_access"]
+         return base.calculate(clean)
+     return Network(inputs).run()
+-
+-
+-def main():
+-    parser = argparse.ArgumentParser()
+-    parser.add_argument("--inputs", type=Path, required=True)
+-    parser.add_argument("--output", type=Path)
+-    args = parser.parse_args()
+-    result = calculate(json.loads(args.inputs.read_text()))
+-    text = json.dumps(result, indent=2) + "\n"
+-    if args.output:
+-        args.output.write_text(text)
+-    else:
+-        print(text, end="")
+-
+-
+-if __name__ == "__main__":
+-    main()

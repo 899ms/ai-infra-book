@@ -1,0 +1,188 @@
+{
+  "status": "PASS",
+  "entry": "calculate(inputs with network.wireless_access={enabled:false})",
+  "comparison": "entire parsed JSON equality, plus independent canonical SHA256 of actual and expected; no metadata exclusions",
+  "source_hashes_before": {
+    "configs/sources.lock.json": "02cd5608d7d00f6213be9e566bc8651657d854f87ee01deec9fdd9d4f2c43a3e",
+    "research/shared-airtime-loop/airtime.py": "131ce04a522e641ece9a851f9e6ab3b1771b7fc83a5417be3b2a52c53a717658",
+    "research/shared-airtime-loop/calculate.py": "37c442824b5b127407658a75b21638882ee5a75ff08156cfc716b141d1b75f6b",
+    "research/shared-airtime-review/check-disabled-book.py": "a903d5dbd094667afea5f89919b96503d7f537f5435ae0077d14fa20b25e6ffa",
+    "src/infra_calc/__init__.py": "1cfdc1ebed94348623bfe43c594587e878731ea8df2dc411c87c96f1b0cab832",
+    "src/infra_calc/paths.py": "6ef679f2583017074cf0c75c7b8606f727b2106b9f133085dba1d957c2e02737",
+    "src/infra_calc/sources.py": "bf1a73fc35baf657bf3e13732613f3b92f2d1cc550434da269c0d13cda818747",
+    "src/infra_calc/topics/__init__.py": "c7657fe2ef4646f0dca090eb1bb864b21d7ace1cca8e089ae60b6096b1965909",
+    "src/infra_calc/topics/transport_sender.py": "91286019b4f2f1e057603e5011171470453bc9bd76bea6c60b91dd580c99c8b3",
+    "src/infra_calc/transport/__init__.py": "afe84ba19b4e95b5236b841bb80687933bc348f80273d9d126dbe184250a28eb",
+    "src/infra_calc/transport/ack_receiver.py": "a8a44b09c95d76501821a20a4737fdc352d564de706f98082b2c5f7f55949378",
+    "src/infra_calc/transport/bbr_adapter.py": "870b2f2ac35e4d98d0425eb97c86cc4fc8ba0eb6e518fde168165030756dac7c",
+    "src/infra_calc/transport/bbr_minmax.py": "6c763345efa592f6bba348b81350081b0e24050d34c718c1727622739b52d28e",
+    "src/infra_calc/transport/bbr_reference.py": "714b9ffecd300362a354e73aee4adbb744c41795a3019b88bc3e784e31612da6",
+    "src/infra_calc/transport/bbr_state.py": "e24b8d55efb218f344a5799f73db83966cfc71088341f595a60562952f906194",
+    "src/infra_calc/transport/cubic.py": "4e77d2a7c709a3c873009ba89dabd806760cb56f3a5ce7164233925211f5e521",
+    "src/infra_calc/transport/cubic_adapter.py": "4dafed0947806549a354493aa12f976827fe4b8cb83f0f0096da65ac512eb4a3",
+    "src/infra_calc/transport/hystart.py": "216c633b34e3acf39665cf3e920d9701c689434d6b31fe6bcbc65deafc31d3c7",
+    "src/infra_calc/transport/media_application.py": "4fc17e92f73116d9aee9fbbac95eda4812620d45b574ec79720cd0156849a527",
+    "src/infra_calc/transport/media_application_validation.py": "d4ebb24bbfe734ebb696964f13c16f8ba18064ae306085ea25696adc452712a3",
+    "src/infra_calc/transport/media_network.py": "2ed6f52a88521421d712b6d32d8fbb3b3aa11d7a8beb38f4371babbb5e2803e8",
+    "src/infra_calc/transport/media_network_validation.py": "1a210489414a33a30c9c51a5793c084b1bb0cf985208f8387fc7124616b1f4f8",
+    "src/infra_calc/transport/media_sender.py": "ce8a643a22af517b07de32eccd7fd67d70a49906a3c3631472707d8816e659b5",
+    "src/infra_calc/transport/pacer.py": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+    "src/infra_calc/transport/persistent_congestion.py": "2f6b9e998e5a60ce9388aee8e956acbf04e1ffe77646b1c757b1daae77a491d7",
+    "src/infra_calc/transport/reference_sources.py": "86bd8441af9b881953ab4e98bea21ea9d071339039d509d9143b5af8e47ea788",
+    "src/infra_calc/units.py": "92d052cbbfd82c6972efcca4d0e9569142009e98b449a7c0c1687640e41429cb"
+  },
+  "baseline_file_hashes": {
+    "book-image-baseline": "ed2f80175a85f5780861ee39e24ba36e4891c23fe58f3f95e8779a704021f1b2",
+    "book-mixed-fifo-immediate": "f724db23ec9820da7d7c55d5849802f586752e611b7b94acd3d14db8426ff00a",
+    "book-mixed-fifo-aggregate": "00ab34f50a7ef2fc810972932c0c3c4046281fc926a174cd487a2bfc7ad85d3a",
+    "book-mixed-priority-immediate": "acadfa4949f094b15b7963685601ac276bc5167a2bf11c3b002d293947a5bd07",
+    "book-mixed-priority-aggregate": "a9662bc9a65440b4096db84b92877423704bfb6a50fafb3c74c6511209223ebe"
+  },
+  "cases": [
+    {
+      "name": "book-image-baseline",
+      "status": "PASS",
+      "calculate_elapsed_seconds": 18.220835666987114,
+      "total_case_elapsed_seconds": 22.19325575005496,
+      "full_json_equal": true,
+      "actual_canonical_sha256": "c3c990b4f2212b1b5804fb1ef7c16c263e7a49b327e6a3a76a800546b1e615de",
+      "expected_canonical_sha256": "c3c990b4f2212b1b5804fb1ef7c16c263e7a49b327e6a3a76a800546b1e615de",
+      "baseline_file_sha256": "ed2f80175a85f5780861ee39e24ba36e4891c23fe58f3f95e8779a704021f1b2",
+      "transmission_count": 61600,
+      "summary": {
+        "wire_bytes": 40656000,
+        "serialized_wire_bytes_by_horizon": "40656000",
+        "delivered_application_bytes": 35000000,
+        "unique_received_application_bytes": 35000000,
+        "complete": true,
+        "all_messages_delivered": true,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        }
+      }
+    },
+    {
+      "name": "book-mixed-fifo-immediate",
+      "status": "PASS",
+      "calculate_elapsed_seconds": 19.148900875006802,
+      "total_case_elapsed_seconds": 23.235207165998872,
+      "full_json_equal": true,
+      "actual_canonical_sha256": "d77a860ea9a067de9b76b1b5365e4924426387e6b0597fd9d27118016c0af2a7",
+      "expected_canonical_sha256": "d77a860ea9a067de9b76b1b5365e4924426387e6b0597fd9d27118016c0af2a7",
+      "baseline_file_sha256": "f724db23ec9820da7d7c55d5849802f586752e611b7b94acd3d14db8426ff00a",
+      "transmission_count": 61626,
+      "summary": {
+        "wire_bytes": 40673160,
+        "serialized_wire_bytes_by_horizon": "40673160",
+        "delivered_application_bytes": 35008659,
+        "unique_received_application_bytes": 35008659,
+        "complete": false,
+        "all_messages_delivered": false,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        }
+      }
+    },
+    {
+      "name": "book-mixed-fifo-aggregate",
+      "status": "PASS",
+      "calculate_elapsed_seconds": 29.258206791011617,
+      "total_case_elapsed_seconds": 33.730594250024296,
+      "full_json_equal": true,
+      "actual_canonical_sha256": "f1dadb9e75f9c65e28a7237bef6cacac65f8877dd7134fb57694697c1ffed675",
+      "expected_canonical_sha256": "f1dadb9e75f9c65e28a7237bef6cacac65f8877dd7134fb57694697c1ffed675",
+      "baseline_file_sha256": "00ab34f50a7ef2fc810972932c0c3c4046281fc926a174cd487a2bfc7ad85d3a",
+      "transmission_count": 46226,
+      "summary": {
+        "wire_bytes": 39256360,
+        "serialized_wire_bytes_by_horizon": "39256360",
+        "delivered_application_bytes": 35008659,
+        "unique_received_application_bytes": 35008659,
+        "complete": false,
+        "all_messages_delivered": false,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        }
+      }
+    },
+    {
+      "name": "book-mixed-priority-immediate",
+      "status": "PASS",
+      "calculate_elapsed_seconds": 19.200961249996908,
+      "total_case_elapsed_seconds": 23.393862334021833,
+      "full_json_equal": true,
+      "actual_canonical_sha256": "15076c30828641a27660caedaef653de3a0dca49b82549ce17ac12cb5adece63",
+      "expected_canonical_sha256": "15076c30828641a27660caedaef653de3a0dca49b82549ce17ac12cb5adece63",
+      "baseline_file_sha256": "acadfa4949f094b15b7963685601ac276bc5167a2bf11c3b002d293947a5bd07",
+      "transmission_count": 61642,
+      "summary": {
+        "wire_bytes": 40683720,
+        "serialized_wire_bytes_by_horizon": "40683720",
+        "delivered_application_bytes": 35016339,
+        "unique_received_application_bytes": 35016339,
+        "complete": false,
+        "all_messages_delivered": false,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        }
+      }
+    },
+    {
+      "name": "book-mixed-priority-aggregate",
+      "status": "PASS",
+      "calculate_elapsed_seconds": 29.718375875032507,
+      "total_case_elapsed_seconds": 34.30099387501832,
+      "full_json_equal": true,
+      "actual_canonical_sha256": "48d7ef8fbc8570433208c42320115e23e588b414b360c6266a6ecb36b88ce832",
+      "expected_canonical_sha256": "48d7ef8fbc8570433208c42320115e23e588b414b360c6266a6ecb36b88ce832",
+      "baseline_file_sha256": "a9662bc9a65440b4096db84b92877423704bfb6a50fafb3c74c6511209223ebe",
+      "transmission_count": 46237,
+      "summary": {
+        "wire_bytes": 39266460,
+        "serialized_wire_bytes_by_horizon": "39266460",
+        "delivered_application_bytes": 35016339,
+        "unique_received_application_bytes": 35016339,
+        "complete": false,
+        "all_messages_delivered": false,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        }
+      }
+    }
+  ],
+  "source_hashes_after": {
+    "configs/sources.lock.json": "02cd5608d7d00f6213be9e566bc8651657d854f87ee01deec9fdd9d4f2c43a3e",
+    "research/shared-airtime-loop/airtime.py": "131ce04a522e641ece9a851f9e6ab3b1771b7fc83a5417be3b2a52c53a717658",
+    "research/shared-airtime-loop/calculate.py": "37c442824b5b127407658a75b21638882ee5a75ff08156cfc716b141d1b75f6b",
+    "research/shared-airtime-review/check-disabled-book.py": "a903d5dbd094667afea5f89919b96503d7f537f5435ae0077d14fa20b25e6ffa",
+    "src/infra_calc/__init__.py": "1cfdc1ebed94348623bfe43c594587e878731ea8df2dc411c87c96f1b0cab832",
+    "src/infra_calc/paths.py": "6ef679f2583017074cf0c75c7b8606f727b2106b9f133085dba1d957c2e02737",
+    "src/infra_calc/sources.py": "bf1a73fc35baf657bf3e13732613f3b92f2d1cc550434da269c0d13cda818747",
+    "src/infra_calc/topics/__init__.py": "c7657fe2ef4646f0dca090eb1bb864b21d7ace1cca8e089ae60b6096b1965909",
+    "src/infra_calc/topics/transport_sender.py": "91286019b4f2f1e057603e5011171470453bc9bd76bea6c60b91dd580c99c8b3",
+    "src/infra_calc/transport/__init__.py": "afe84ba19b4e95b5236b841bb80687933bc348f80273d9d126dbe184250a28eb",
+    "src/infra_calc/transport/ack_receiver.py": "a8a44b09c95d76501821a20a4737fdc352d564de706f98082b2c5f7f55949378",
+    "src/infra_calc/transport/bbr_adapter.py": "870b2f2ac35e4d98d0425eb97c86cc4fc8ba0eb6e518fde168165030756dac7c",
+    "src/infra_calc/transport/bbr_minmax.py": "6c763345efa592f6bba348b81350081b0e24050d34c718c1727622739b52d28e",
+    "src/infra_calc/transport/bbr_reference.py": "714b9ffecd300362a354e73aee4adbb744c41795a3019b88bc3e784e31612da6",
+    "src/infra_calc/transport/bbr_state.py": "e24b8d55efb218f344a5799f73db83966cfc71088341f595a60562952f906194",
+    "src/infra_calc/transport/cubic.py": "4e77d2a7c709a3c873009ba89dabd806760cb56f3a5ce7164233925211f5e521",
+    "src/infra_calc/transport/cubic_adapter.py": "4dafed0947806549a354493aa12f976827fe4b8cb83f0f0096da65ac512eb4a3",
+    "src/infra_calc/transport/hystart.py": "216c633b34e3acf39665cf3e920d9701c689434d6b31fe6bcbc65deafc31d3c7",
+    "src/infra_calc/transport/media_application.py": "4fc17e92f73116d9aee9fbbac95eda4812620d45b574ec79720cd0156849a527",
+    "src/infra_calc/transport/media_application_validation.py": "d4ebb24bbfe734ebb696964f13c16f8ba18064ae306085ea25696adc452712a3",
+    "src/infra_calc/transport/media_network.py": "2ed6f52a88521421d712b6d32d8fbb3b3aa11d7a8beb38f4371babbb5e2803e8",
+    "src/infra_calc/transport/media_network_validation.py": "1a210489414a33a30c9c51a5793c084b1bb0cf985208f8387fc7124616b1f4f8",
+    "src/infra_calc/transport/media_sender.py": "ce8a643a22af517b07de32eccd7fd67d70a49906a3c3631472707d8816e659b5",
+    "src/infra_calc/transport/pacer.py": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+    "src/infra_calc/transport/persistent_congestion.py": "2f6b9e998e5a60ce9388aee8e956acbf04e1ffe77646b1c757b1daae77a491d7",
+    "src/infra_calc/transport/reference_sources.py": "86bd8441af9b881953ab4e98bea21ea9d071339039d509d9143b5af8e47ea788",
+    "src/infra_calc/units.py": "92d052cbbfd82c6972efcca4d0e9569142009e98b449a7c0c1687640e41429cb"
+  },
+  "elapsed_seconds": 138.7701972919749
+}

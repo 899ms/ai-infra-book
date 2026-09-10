@@ -1,0 +1,183 @@
+{
+  "screenshot-complete": {
+    "schema_version": 1,
+    "id": "screenshot-complete",
+    "messages": [
+      {
+        "id": "screenshot-v1",
+        "sender": "client",
+        "receiver": "server",
+        "flow_id": "screen-up",
+        "transport": "stream",
+        "bytes": 3443,
+        "stream_offset": 0,
+        "application_offset": 0,
+        "ready_seconds": "1/25",
+        "dependencies": [],
+        "priority": 50,
+        "source_order": 0,
+        "deadline_seconds": null,
+        "allow_expire": false,
+        "cancel_tag": null,
+        "on_delivery_cancel_tags": [],
+        "packetization": {
+          "payload_limit_bytes": 1168,
+          "fragment_count": 3,
+          "final_fragment_bytes": 1107,
+          "coalesce_across_messages": false
+        }
+      },
+      {
+        "id": "screen-action",
+        "sender": "server",
+        "receiver": "client",
+        "flow_id": "screen-result",
+        "transport": "stream",
+        "bytes": 64,
+        "stream_offset": 0,
+        "application_offset": 0,
+        "ready_seconds": "0",
+        "dependencies": [
+          {
+            "id": "screen-infer",
+            "event": "task_completed",
+            "endpoint": "server"
+          }
+        ],
+        "priority": 50,
+        "source_order": 1,
+        "deadline_seconds": null,
+        "allow_expire": false,
+        "cancel_tag": "screen-v1",
+        "on_delivery_cancel_tags": [],
+        "packetization": {
+          "payload_limit_bytes": 1168,
+          "fragment_count": 1,
+          "final_fragment_bytes": 64,
+          "coalesce_across_messages": false
+        }
+      }
+    ],
+    "compute_tasks": [
+      {
+        "id": "screen-infer",
+        "endpoint": "server",
+        "resource": "server",
+        "duration_seconds": "1/20",
+        "ready_seconds": "0",
+        "dependencies": [
+          {
+            "id": "screenshot-v1",
+            "event": "message_delivered",
+            "endpoint": "server"
+          }
+        ],
+        "priority": 50,
+        "source_order": 0,
+        "cancel_tag": "screen-v1",
+        "timing_basis": "existing declared service duration; not measured model throughput"
+      }
+    ],
+    "business_observers": [
+      {
+        "id": "computer-use",
+        "kind": "screenshot",
+        "version": "v1",
+        "version_changes": [],
+        "endpoint": "client",
+        "completion_dependencies": [
+          {
+            "id": "screen-action",
+            "event": "message_delivered",
+            "endpoint": "client"
+          }
+        ]
+      }
+    ],
+    "scheduling": {
+      "send": "fifo",
+      "compute": "fifo",
+      "compute_nonpreemptive": true,
+      "resource_capacity_tasks": 1
+    },
+    "links": {
+      "c2s": {
+        "rate_bits_per_second": 20000000,
+        "propagation_seconds": "1/20"
+      },
+      "s2c": {
+        "rate_bits_per_second": 100000000,
+        "propagation_seconds": "1/20"
+      }
+    },
+    "connection_ready_seconds": "0",
+    "external_legacy_assumptions": {
+      "teaching_network": {
+        "delivery_mode": "per_stream",
+        "header_bytes": 40,
+        "ack_bytes": 40,
+        "shared_credit_bytes": 1000000,
+        "reliable_receive_credit_bytes": 1000000,
+        "stream_credit_bytes": 1000000
+      },
+      "selected_loss_and_recovery": [],
+      "action": "Do not map credit to cwnd, legacy header to MTU, or recovery_ready to PTO. Choose real network inputs explicitly."
+    },
+    "accounting": {
+      "application_bytes_by_direction": {
+        "client_to_server": 3443,
+        "server_to_client": 64
+      },
+      "application_bytes": 3507,
+      "message_count": 2,
+      "task_count": 1,
+      "fragment_count": 4
+    },
+    "packet_view": [
+      {
+        "message_id": "screenshot-v1",
+        "fragment_index": 0,
+        "message_offset": 0,
+        "bytes": 1168,
+        "stream_offset": 0,
+        "sender": "client",
+        "receiver": "server",
+        "transport": "stream",
+        "flow_id": "screen-up"
+      },
+      {
+        "message_id": "screenshot-v1",
+        "fragment_index": 1,
+        "message_offset": 1168,
+        "bytes": 1168,
+        "stream_offset": 1168,
+        "sender": "client",
+        "receiver": "server",
+        "transport": "stream",
+        "flow_id": "screen-up"
+      },
+      {
+        "message_id": "screenshot-v1",
+        "fragment_index": 2,
+        "message_offset": 2336,
+        "bytes": 1107,
+        "stream_offset": 2336,
+        "sender": "client",
+        "receiver": "server",
+        "transport": "stream",
+        "flow_id": "screen-up"
+      },
+      {
+        "message_id": "screen-action",
+        "fragment_index": 0,
+        "message_offset": 0,
+        "bytes": 64,
+        "stream_offset": 0,
+        "sender": "server",
+        "receiver": "client",
+        "transport": "stream",
+        "flow_id": "screen-result"
+      }
+    ]
+  }
+}

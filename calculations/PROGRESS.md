@@ -1,13 +1,15 @@
 # 当前进度与下一批工作
 
-全书目标保持进行中。计划覆盖全部十三章的计算、扩写变体和案例，不限于当前已经写出的模块。
+全书目标保持进行中。计划覆盖现行十二章的计算、扩写变体和案例。原第 13 章已按作者整理并入前十二章；历史实验目录与旧编号保留证据身份，不代表现行章节。
+
+当前工作包状态以 [PLAN.md](PLAN.md) 为准，最新验证记录见本文末尾。下文早期批次中的模型数、硬件数、产物数和旧章节统计是历史快照，不作为当前状态。
 
 ## 用户补充的优先要求
 
 1. 多模型是项目基础：DeepSeek-V4-Flash、DeepSeek-V4-Pro、**Kimi K3**（不是 Qwen K3）、Qwen3-235B-A22B 等必须分别适配，不能只完成 Qwen3-8B。
 2. 官方硬件基础表先行：NVIDIA Ampere 到 Vera Rubin、4090/5090、RTX PRO 工作站、昇腾、Apple M 系列。精度、累加格式、dense/structured sparsity、执行单元及型号必须严格分开。
 
-## 已有实物证据
+## 初始批次实物证据（历史快照）
 
 - `PLAN.md`：F01–F04 基础、H01–H07 硬件、C01–C76 章节工作包；只有满足证据链的项目勾选。
 - `inventory/sources.json`：十三章正文、扩写和案例的全量文本捕获；正文 240 小节／117 练习。**逐块计算范围审查尚未完成**。工作期间其他写作改动带来新的案例，`inventory` 可以发现增量。
@@ -20,7 +22,7 @@
 - 13 项前向场景、13 项状态场景、1 项连续 decode、27 项真实Q投影、6 项 V4/K3 专家矩阵台账、4 项 V4 mHC 场景、4 项 V4 注意力矩阵场景，生成 183 个结果／表格文件；`verify-results` 会检查计算代码、输入与所有结果哈希。
 - 69 项算术／索引／守恒／精度选择检查通过。第 2、4 章已回填结果，网页重新生成。最近一次全书检查通过：3,987 个本地链接、229 份引用哈希、77 份快照；此前并行更新案例的两个缺失文件现已存在，复查无错误。
 
-## 下一步按依赖继续
+## 初始批次后续安排（历史记录，当前顺序见 PLAN）
 
 1. 硬件已扩展 Apple M1–M6/Ultra、GB 系统与 RTX PRO Server、Hopper 多形态；H100 Table 3 直接核实累加精度、PTX补充Blackwell BF16。H06计算契约完成；继续补 A800/H20 数据中心、昇腾910及实际950板卡、完整片上资源／互联／时钟功率字段，不能把部分已知规格当全表完成。
 2. Qwen3-30B/235B 的完整 MoE 逻辑前向及索引验证已完成；继续补连续生成的路由输入、真实 grouped kernel 与专家并行通信。B=64 的均匀／集中场景 FLOPs 相等、专家权重载荷相差 16 倍。
@@ -1741,3 +1743,278 @@ PLAN原C68更新公共成果，HRR/Retry/PSK回退、真实编码、一般ACK/PT
 ## Qwen3.6 主文与实验入口补齐
 
 本次在第二章 2.5.1 主文直接展开 Qwen3.6-35B-A3B 的三专家矩阵、6×t_e×2048×512 FLOPs、全部常驻/批内读取/逐token工作三个口径，并链接基础文本 decode 和第四章容量结果；说明混合注意力差异不能全部归因于 MoE。实验 2-6 改为先算 Qwen3.6，再推进 V4，K3 为进阶。已有官方来源与计算公式未修改。实际复跑 6 项 Qwen3.6 专项测试通过；重建 skeleton.html 后正文验证通过（5166 本地链接、229 引用哈希、77 快照）。未重跑全套计算验收；C82 的视觉/MTP执行、多卡放置及完整请求/硬件连接仍保留未完成。
+
+## C68 QUIC HRR／Retry／PSK 分支公共接入验收
+
+冻结候选c83da49a经60独立场景、9非法拒绝、7官方来源哈希及6组预先手算核对通过，实际候选CLI20完整轨迹与冻结一致。现新增protocol-retry公共topic/CLI、可编辑JSON、20场景40产物；Markdown显式显示授权与状态变化。Retry重发保留PN序列和STREAM范围、更新Initial密钥/DCID；HRR停early、未知PSK回退及fatal传播分别计，首token地址验证与完整ClientHello分列。
+
+20公共完整数学/逐包payload一致（仅来源注册元数据不同），40次实际CLI及40冻结JSON/Markdown一致。新增8专项tests，全套886项864通过22可选跳过；统一复算/校验2192产物26图，第十二章正文网页通过5171本地链接/229引用hash/77快照。inventory97文件1328项1317待审，不是完成比例。验收：research/protocol-retry-integration/acceptance.json。
+
+C68保持未勾选：TCP HRR/PSK、运行时重复/空token Retry、组合分支、后台票据、完整编码、一般ACK/PTO/拥塞流控及语音/截图/媒体截止、多流和图12-4仍缺。下一步按原文补媒体截止与多流的定量账，握手已有成果不代替这些需求；全书目标继续。
+
+## C68 共享链路、媒体截止与业务交付研究候选验收
+
+按原12.3.3/实验12-4推进，未继续只扩握手。research/shared-media-transport固定6份官方RFC及业务输入依据，候选9d60611e采用共享双向非抢占出口、实际ACK释放的信用、可靠交付与授权独立媒体过期、模型依赖和客户端版本可用性。网络scheduler与compute_scheduler分开；可靠取消须应用有序交付后在接收端生效，不能越过HOL或瞬时传播到另一端。已开始工作/发送保留。
+
+16固定场景含30MB/5MB整图、额外500KB预览、ASR/TTS、可用/过时截图完整轮次、取消与无反馈信用停滞。独立34组（18手算/来源/边界+16实际场景）、15非法输入及root8组预先手算通过；默认实际CLI16全结果与冻结一致，另3次可编辑输入一致。两研究PNG/SVG时间轴及2864精确事件点已校验，目视修正密集工作标签，未将研究面板冒充完整图12-4。验收research/shared-media-transport/acceptance.json。
+
+另对照实测README纠正第十二章H3多流计数为144正式请求+18预热=162响应，重建网页并通过5171链接/229引用hash/77快照校验。本轮未改公共计算代码、未重跑全套计算tests；上一轮886tests/2192产物26图为此前公共基线。本候选公共topic/CLI注册、统一复算和正文/完整图接入是下一步；实际CUBIC/BBR/恢复/流控及原C68/C69剩余条件继续保留，C68仍未勾选，全书目标继续。
+
+## C68 共享媒体公共CLI、正文与图表接入完成
+
+已把冻结候选9d60611e接入shared_media_transport公共topic、shared-media-transport CLI、可编辑shared-media-example.json、16场景32JSON/Markdown。六官方RFC去重注册（3复用/3新增），681全局source file记录无重复；逐原件核revision/URL/bytes/hash。16完整候选payload含输入/事件/业务均一致，32次实际CLI和32冻结文件一致。10新专项tests通过；全套896项874通过22可选跳过。
+
+图12-4新增四个选定教学面板：同wire交付HOL、同分包发送调度、同wire播放政策、独立30MB混合场景首秒。PNG/SVG/data/manifest公共注册，261传输记录、10业务记录、10工作记录逐源核对；首次目检发现标签裁切和图例遮挡，修正仅图布局后重跑reproduce并重绘，最终PNG由root和图agent复核通过。全suite先于最后版式修正，最终图另行验收；数学与场景未变。
+
+最终统一校验2224产物28图，正文主文与扩写及网页同步通过5190本地链接/229引用hash/77快照；验收research/shared-media-integration/acceptance.json。PLAN原C68已重写，去除候选尚未公共接入的过时描述。下一步按next-congestion-scope.md补真实发送方反馈/流控及指定CUBIC/BBR，再接30MB业务闭环；完整图12-4、其余握手/匹配业务协议及C69仍保留。全书目标继续，未勾选C68。
+
+## C68 发送方ACK／loss／PTO与绝对流控研究验收
+
+冻结 transport-feedback 1f389067：14场景覆盖RFC9002包/时间阈值、PTO探测许可、NewReno有理数参考、重复/晚ACK、新PN旧offset、MAX_DATA/MAX_STREAM_DATA最高offset。固定9000/9002/9221及Verified勘误7539，先用旧SRTT更新方差；分歧例得到52.5ms方差与107.5ms平滑RTT。
+
+实际重跑27独立审查组及33主审检查通过；默认CLI全部14结果与冻结JSON一致，14次可编辑输入CLI完整payload一致。恰时ACK更新RTT后剩余loss deadline会重算，主审另核128.5625ms。8份反馈/控制器官方原件逐字节SHA核验通过。[验收](research/transport-feedback/acceptance.json)及[范围说明](research/transport-feedback/ACCEPTANCE.md)已保存。
+
+控制器来源已固定RFC9438和Linux v6.6 commit ffc253263a1375a65fa6c9f62a893e9767fbebfa的BBR/rate/header；补正10/12内部整数阈值等号陷阱，1000/1200才是三轮未达1.25倍例。CUBIC与BBR纯状态和独立规范审查并行推进。当前仅发送方观察重放，persistent congestion明确拒绝；实际网络/接收、自动恢复、控制器、30MB业务闭环及公共接入仍待。未改公共计算/正文/图，未重跑公共全suite，C68与全书目标保持未完成。
+
+## 十二章迁移保护与C68控制器计算推进
+
+按作者新调整以十二章为准，不恢复已删除第13章。读取拆分记录后核现行目录/C72–C76计划与计算同步归属：结构验证12章、110练习、99配图计划、65节/226小节，4998本地链接/229引用hash/77快照通过。临时副本运行完整计算文字同步，12章主文逐字节不变、203已有计算证据归属不变、未重建第13章；2项同步保护测试通过。[迁移复查](research/ch13-calculation-recheck/result.json)记录输入hash。仅临时同步跳过数值产物前置核验以审查编辑保护，不据此称所有计算已重新验收；真实正文未写入，历史ch13实验路径与旧验收保留。
+
+CUBIC冻结91be0851，16场景已具CLI及显式Reno启动合同；10独立组含14非法拒绝、427根区间与63精确立方根检查通过，17实际CLI完整payload与冻结结果一致。[首版验收](research/congestion-controllers/cubic-acceptance.json)限于纯状态；HyStart++/ECN/undo及协议适配未完成。
+
+BBR固定源码3函数原样抽取编译，167 C/Python对照通过；独立审查另完成4834 minmax三样本状态C对照。新模式/恢复候选待逐回调独立检查，不以局部绿灯替代完整控制器。双向网络接入合同预写5个精确例，覆盖真实串行ACK、消费驱动MAX、模型无需等上传末ACK、时间阈值恢复和尾包PTO；闭环实现推进中。公共计算/图尚未扩展，未重跑公共全suite，C68与全书目标继续。
+
+## C68 可推进发送状态与网络闭环初算
+
+新增transport-closed-loop可推进发送状态，根检查48项通过：14旧冻结场景分别整段、20切片与动态注入完整payload一致，另核时间水位、同刻优先级、量化局部误差及最小cwnd。审查发现并修正无事件区间倒退、已执行timer后补ACK、数值0精度误当关闭与量化跌破最低窗口；检查结果记录所测源码hash，不把后续改动自动视为已审。
+
+预写5个物理事件oracle并执行独立代数，网络实现审查发现MAX为ack-eliciting，修正第3例：6s额度到达后，其独立ACK先占上行23/307秒，第三STREAM实际6+23/307发送。修订原因保留在合同与root-oracles.json，未通过临时ACK合包维持错误手算。
+
+30MB上传/5MB响应初版已实际生成59932包（100Mbps双向、每向10ms、模型0.3s、1e-12数值量化），根独立包数/字节账核25685上行数据包、4281下行数据包与对应ACK：上行31,934,952B、下行7,619,880B，合39,554,832B；完整响应3.403984s不低于该条件理想3.12s。证据large-algebra-check.json固定初版结果SHA；不是原书20/100Mbps/50ms条件的替代。原条件精确Fraction模式的大分母限制已发现，量化模式与误差需单独验收；有限中间队列、消费内存及最终网络冻结仍在推进。
+
+BBR完整状态独立输入审查发现sample delivered与total/prior不一致、若干C整数上界未校验，作者修正并建立逐回调C对照中。已有函数/minmax通过数不扩写为全状态通过。当前未修改十二章正文或公共计算，也不关闭C68。
+
+## C68 上传—模型—响应网络候选正式验收
+
+冻结calculate3326f326与senderf81ca5ff，10场景包含5物理手算、ACK丢失、有限router、自动消费与零额度未完成、原书30MB/5MB。48发送状态检查、9独立网络组、4主审网络边界及10实际可编辑CLI完整payload均通过，验收research/transport-closed-loop/acceptance.json固定22文件。根新例核路由器3s丢包而发送方12s才判失，恢复后16s有序完整；horizon半包只串行614B而非完整1228B。
+
+原书20/100Mbps、每向50ms、模型0.3s实际重跑：上传13.0166608s，完整响应14.36339008s，共59932包/39554832线上bytes；59800条局部量化误差逐项验证，不能转述为累计误差保证。审查者早先1秒模型变体独立保留，未用减0.7代替真实重跑。旧100/100Mbps临时large-result已被实现作者在整理时删除，large-algebra-check明确历史hash当前不可直接回放，最终可复算证据统一result.json中的book场景。
+
+公共接入已开始：作者负责统一CLI/报告/复算，审查者复用官方9000/9002/9221并新增Verified勘误7539的公共原件/锁，不重复更改旧来源组。尚未执行最终公共全管线或修改十二章正文。BBR逐回调C对照仍在推进，媒体/控制器pacing与完整协议缺口保留，C68未勾选。
+
+## C68 上传—模型—响应公共项目接入完成
+
+新增统一transport-closed-loop CLI、共享增量sender、10场景20结果、Markdown与8专项tests，并接第12章正文/扩写。20次实际JSON/MD CLI含两次大例重算与冻结文件逐字节一致；10公共数学payload与研究候选一致。全suite904项882通过22可选跳过（160.898s），reproduce/verify2244产物28图。来源复用9000/9002/9221，新增7539官方勘误；锁变化使共享媒体图过期，已实际重生成并通过校验，PNG仍为已审fd2517cb。
+
+按十二章现行编辑结构同步。同步日志没有写入主文章节；最后发现第8章在sync结束后又有外部编辑，保留新内容并重新render/verify。最终12章、106练习、96配图计划、63节/220小节，5038链接229引用hash77快照通过。inventory刷新95文件1251条待逐项审查，不是完成率，不撤销既有工作包验收。主文新增本次第12章算例段落，其余作者改动未回滚。
+
+研究中的BBR已补C回调对照，但独立二审发现tcp_stamp_us_delta测试桩位宽与源码不一致，修复/边界复验仍在推进；HyStart++来源、合同与候选另行独立审查。当前公共闭环尚无媒体/完整控制器pacing/ACK聚合及全部persistent范围，C68与全书目标继续。验收research/transport-closed-loop-integration/acceptance.json。
+
+研究补充：BBR时间差共同盲点已修为固定tcp.h原helper，最终fda8c575经197回调×38字段和6helper原C对照，审查者独立审读并重跑通过，保留TCP核心/时钟/ABI桩边界。HyStart++最终4eb38d1b经18独立组、9非法输入及13固定CLI场景通过；原始发送序号、RTT样本来源与后续控制器接管均显式。两项仍未与公共闭环连接，不把独立状态通过当完整网络算法比较。
+
+## C68 同网络控制器适配启动与持续拥塞证据
+
+新研究目录transport-controller-loop将固定CUBIC+HyStart++与BBR接到同一网络反馈，公共旧10场景继续作为回归基线。已先固定共同比较的1200B在途包padding政策，尾包/MAX/probe与纯ACK分账；不能把新布局差异当控制器收益，也不能沿用旧64B响应时刻。BBR从实际发送快照推导delivery样本，HyStart采用明确QUIC transmission-byte-frontier并在loss后交接，不称TCP累计ACK等价。动态pacing的旧rate扣债/新rate未来服务、idle/ACK旁路与时间网格合同已先写。
+
+root新增persistent_congestion纯证据组件，17主审与13独立例通过：严格时间门槛、实际ACK触发、先验RTT及任何ACK屏障。独立检查证明lateACK使旧span换key不能触发再次减窗，episode/未处理loss的集成验证仍待；不提前取消旧sender范围拒绝。证据research/transport-controller-loop/persistent-acceptance.json，代码/文档明确单路径单PN空间完整历史合同。当前仅research变化，未重跑或改公共产物/十二章正文，全书与C68目标继续。
+
+## C68 动态pacer主审与控制器适配缺陷复现
+
+新增research/transport-controller-loop/check-pacer-root.py，24项局部精确检查通过，固定所测pacer SHA7d5b55d0：变速先按旧速率结算、无idle突发信用、债务和事件时间向上量化、非法输入失败原子性。另check-network-pacer-root.py实际运行3个手算NewReno网络例、17项检查：初始3750 QUIC B/s使前三包在0/0.32/0.64s发送；9824bps源链路使物理串行时间主导为0/1/2s；1ms路径中原上传pacing债务仍正时纯ACK立即旁路，但继续占用物理serializer。1200B填充包、92B ACK线上字节与有效业务字节分账。JSON记录完整输入、轨迹及所测源码hash；候选仍由作者修改，这不是最终冻结验收。
+
+独立适配审查实际复现BBR旧lost PN在恢复完成、flight清空后污染新采样epoch，将新100ms区间拉长为800ms，已交作者修复；另确认同恢复epoch后续loss也须通知BBR身份账，ACK接口必须保留preACK在途量。三控制器闭环与原书大例对照仍未完成，不以局部通过关闭C68。继续保护作者十二章重组，本轮未写正文或重生成公共结果。
+
+## C68 persistent实际窗口动作与BBR修复复验
+
+新增check-persistent-sender-root.py并实际通过21项发送方集成检查（sender af8e9700，CUBIC adapter cdfc2c64）：ACK后NewReno最低窗口2400B，阈值按更新后RTT独立算21/40秒；lateACK拆旧span不重复动作；独立短loss不借旧长span；loss_timer发现第二端点先保留证据，下一真实ACK才消费并降窗。CUBIC另核persistent覆盖普通loss窗口、迟ACK不重复动作/不增窗。范围是实际sender事件重放，尚不称完整网络或BBR持续拥塞验收。JSON固定输入构造脚本、结果和源码hash。
+
+BBR idle采样缺陷已修，适配器冻结c4101a79；root实际重跑其局部check与独立11组适配检查通过，修复后100ms新epoch/BW167。审查者另完成三controller×4场景的网络反馈计量检查；大业务与router CSS场景尚由网络作者继续计算。固定BBR恢复可能给1MDS窗口，这是不同于NewReno推荐2MDS下限的行为，需在对照范围中说明，不能静默修改固定核心。当前仅research和进展记录变化，未接入公共产物、未改十二章正文，C68继续未完成。
+
+## C68 原十场景完整回归与PLAN状态纠正
+
+root新增check-baseline-root.py，实际重算全部10个原场景（含原书30MB/5MB大例，单例43.52秒），与冻结transport-closed-loop/result.json递归比较完整数学payload和输入，仅排除来源元数据，全部相等。检查前后calculate97a12a1c/senderbe435d72/pacer7d5b55d0及冻结基线hash稳定；baseline-root-check.json保存证据。不把新增controller/padding的结果拿来要求旧14.36339008s相等。
+
+PLAN C68已把过时的“尚未接入网络／动作未接入”改为真实研究状态，链接13组适配、12组网络、24局部pacer、17手算网络及21持续拥塞动作检查，各自绑定源码hash；保留未完成勾选和公共接入/全范围缺口。三控制器原书条件大结果正在完善完整轨迹，已有development摘要不作最终验收。BBR活跃索引性能修复由作者完成，2000回调等价结果待独立复验及可重放脚本归档，公共代码与十二章正文未改。
+
+## C68 三大例验收与公共共享包接入进行中
+
+三正式完整轨迹74/108/322MB已独立流式逐包审查通过：三输入仅controller.name不同，各59932包、39555120线上B与35M唯一业务B，完整响应NewReno/CUBIC均14.52103724s、BBR14.974125992s。BBR逐ACK送时快照、真实pre/post flight、采样与RTT全核；CUBIC大例一直slow_start，不把它称作立方CA优势。额外3MB路由器诊断实际进入CSS，止于第3轮，未称完成5轮CA。完整来源补审记录明确首批运行后的核验时序，后续runner前后检查锁。
+
+公共新增transport共享包、复用原topics网络/sender和CLI，注册6场景、可编辑controller-loop-example.json，来源新增8官方原件及统一锁；reproduce输入追踪覆盖新原件目录。迁移保留数学主体，研究/公共差异留档。共享组件结构与固定场景对照通过；原8闭环tests+新增4公共控制器tests通过，可编辑示例MD CLI实际运行通过。全套tests正在运行（日志research/transport-controller-loop-integration/tests.log），六场景公共完整payload重算对照由独立执行者进行。尚未最终reproduce/图/正文同步，公共manifest当前等待重生成，不报整项公共验收完成；十二章正文未改。
+
+公共接入复验补充：六场景公共完整数学payload实际重算比较全部通过，85.34秒，197784包/1258207列表记录及嵌套字段，32公共/研究源码hash始末稳定（证据transport-controller-loop/integration/network-public-check.json）。全suite908项、886通过22可选跳过，145.415秒。统一reproduce现已启动，后续图/outline管线尚待，不把这些通过提前当最终产物验收。
+
+## C68 章节接入与统一产物生成
+
+第12章12.3已在既有闭环段落后新增同网络控制器对照，保留作者其余迁移编辑；正文明确旧不填充布局与新1200B统一填充相差288B，分列14.52103724s/14.974125992s及CUBIC未进CA的条件。outline同步器新增C68-controller-loop证据块，后续接扩写，不恢复第13章；已保存同步前十二章主文hash。修改仅章节文字/同步内容，不改变已验公共数学内核。
+
+统一reproduce仍为同一已确认存活进程，新增6场景12个JSON/MD已生成，最终manifest尚待。独立实际CLI12次全字节核对脚本已准备，等待manifest完成后执行；图重生成、outline同步/渲染/链接及最终验收尚未完成。
+
+公共管线补充：首轮reproduce成功2256产物，plot-chat-agent/plot-shared-media重生成及verify-results的2256/28通过，shared-media PNG保持已审fd2517cb。12次实际CLI JSON/MD全部逐字节一致（167.36秒）。同步已写第12章扩写，但发现同步器全局空行规范化触及第2章一处空行；用同步前SHA精确恢复原字节（editorial-whitespace-recovery.json），未回滚作者内容。删除同步器无关空行规范化，已有编辑保护测试增强为三换行并2项通过。因公共代码hash改变，已实际启动第二轮reproduce（reproduce-final.log），不是手改manifest；其后须重生成受代码hash影响图、同步/render/verify/inventory。首轮manifest已保留供证明最终产物未改变，CLI证据与数学内核仍有效但最终产物校验尚待。
+
+## 复算稳定性修复与最终封存准备
+
+第二轮实际reproduce完成2256产物；对照首轮发现2206文件不变，50份stage-resources JSON/MD字节变化。独立跨PYTHONHASHSEED=1/2复现：25场景数学值全等，差异只在effective_resource_rates的set遍历顺序。已用sorted(demanded)一行修复，新增跨进程test先红后绿；25场景两进程JSON/MD字节一致、topic全部8tests通过。证据tests/evidence/stage-resource-determinism，未将这次字节差异误报数值错误或全部产物一致。
+
+第三轮实际reproduce与最终全suite现并行运行（reproduce-deterministic.log/tests-final.log）；新增check-final-stability.py将在完成后核25场景数学值与保留旧JSON相等、所有非stage产物不变、12实际CLI输出仍匹配最终manifest及原控制器源码。第4章发现作者另有并行编辑，保留现有内容；第2章已恢复同步前精确字节。最终图/同步/render/verify/inventory和验收仍待。下一有限ACK策略包已在独立research推进合同与来源审查，不提前改公共。
+
+## 2026-09-10：C68 同网络控制器公共接入验收完成
+
+最终全suite909项（887通过、22可选跳过，146.287s）；第三轮正式reproduce完成2256产物。最终稳定性核对证明2206非stage文件不变、25 stage场景数学值与修复前JSON全等、50报告仅稳定字段排序；12次实际CLI输出仍匹配最终manifest，17个CLI相关源码/配置校验值不变。图重生成与verify-results2256/28通过；shared-media保持原已审PNG。
+
+最终sync未写任何主文章节，12章主文hash逐项一致；第2章原始空行已恢复且规则修正，第4章同期作者编辑保留。render/verify通过12章、106练习、98配图计划、67节/231小节、36核心、5096本地链接、229引用hash和77历史快照。inventory刷新95文件1268项待逐原文审查，这不是完成率，也不撤销已验工作包。
+
+验收research/transport-controller-loop-integration/acceptance.json记录52个文件hash并逐份回读验证，涵盖公共包、输入、组件/完整网络/CLI证据、两项复现与编辑修复及最终管线。PLAN C68已纠正公共控制器仍未接入的过时文字，保留整项未勾选。后续缺口见transport-controller-loop/NEXT-SCOPE.md。
+
+下一ACK聚合候选已在独立research/transport-ack-policy完成7固定场景、16旧默认完整回归及独立19接收器/8网络例，尚未公共接入或闭合媒体业务；本次验收不把该研究预支为交付，也不关闭全书目标。
+
+## 2026-09-10：ACK聚合大例与真实RTT审计输出
+
+transport-ack-policy在独立19接收器/8网络场景与16默认完整回归基础上，实际跑三controller原书30MB/5MB聚合策略（每2包/10ms，指数3、ACK64B、在途统一1200B）。首版完整响应NewReno/CUBIC14.564459796s、BBR14.996386157s，比立即ACK分别多43.422556ms/22.260165ms；ACK14990/14984而非统一ceil(data/2)，wire减少约1.38MB。大量纯ACK PN状态被记lost与物理data loss分开，不能拿losses数组计应用丢包率。首版完整数据保留pre-rtt-output，尚未用摘要代替最终审计。
+
+root新增check-rtt-root.py并实际通过30项：先验sample可扣delay、首sample不扣、busy反向串行真实超限、sender仅扣max_ack_delay，以及3条实际导出RTT记录逐字段手算。busy例raw399/23，adjusted775/46，SRTT2063/368，variance3351/184。审查发现原大输出无逐次rtt_samples，现仅新策略分支补每方向真实sender记录，calculate58718e22/receivera8a44b09；三大例与七小例正重生并独立逐样本核。默认数学分支未改，但旧16回归仍明确绑定原hash，不冒称新版本全部已复验。当前仅research与进展记录变化，公共2256/28验收版本保持。
+
+ACK聚合补充：含真实rtt_samples的新七小例和三大例已实际重生，除新增审计字段外全部旧数学payload一致（rtt-output-parity.json）。独立大例新版已全通过：每个实际RTT资格/raw/adjusted/SRTT/variance及量化逐项核，NewReno/CUBIC各14990样本、BBR14984；BBR另核送时快照与整数采样。线上B为38177328/38177328/38176776，最大ACKframe10B、rawdelay10ms、无超限，所有data无重发。源码58718e22下默认16场景最终回归另已交作者实际重跑，公共receiver接入尚待。
+
+
+## 2026-09-10：ACK 聚合公共验收与十二章编辑保护
+
+ACK 接收器已接入原 transport-closed-loop CLI，新增10场景20产物。10个新场景完整公共/研究数学比较及12个默认小例通过；20次实际CLI（含三个30MB/5MB大例各JSON/MD独立重算）逐字节等于正式产物，32个代码/输入/官方原件指纹始末稳定。全套917项测试：895通过、22可选跳过；正式reproduce及图验证为2276产物、28图。验收见[acceptance.json](research/transport-ack-policy-integration/acceptance.json)，只覆盖声明的有限ACK策略，不关闭C68或全书目标。
+
+按作者当前十二章结构处理，未恢复第13章。同步仅写扩写文件；期间第4章正文有作者并行变化，保留当前文字。最终正文hash未再变化，render/verify通过12章、106练习、98配图计划、67节/231小节、5108本地链接、229引用hash与77历史快照。修正进展首页与扩写目录仍像现行十三章的描述，历史ch13证据身份保留。inventory仍为95文件1268项待逐原文审查，这不是完成率。
+
+下一步媒体接入的输入准备已在research/media-feedback-inputs完成：16冻结场景统一成消息、任务、依赖与业务字节分片；混合业务仍35016403B，额外预览500000B。当前仅输入规范化与守恒检查，尚未接入真实ACK/cwnd/MAX反馈，不将旧教学信用和指定恢复时刻当网络模拟结果。
+
+
+## 2026-09-10：共享媒体真实反馈候选与独立反例
+
+继续C68，research/media-feedback-loop直接复用已冻结公共多流sender、ACK接收器与controller/pacer，不复制另一套拥塞算法。sender薄接口18项小整数/非法输入和14个历史完整数学回放通过；独立两项覆盖最高offset300/实际唯一200的缺口计账及DATAGRAM PTO独立PING。网络loss/PTO必须只恢复可靠STREAM或控制消息，不复制DATAGRAM身份。
+
+业务预检35项通过，覆盖本端依赖、DAG、STREAM范围、原子DATAGRAM、expiry/取消类型、播放引用与调度合同。独立反例复现并修复task伪sender绕过端点、不存在的TTS消息、字符串取消标签及bool版本号；before/after见media-feedback-loop-review/boundary-review-*.json。另root实际复现观察器按乱序版本列表选错版本、截至5秒却报告10秒首次播放，两项已修并重跑，observer-root-check-before-fix.json保留失败证据。
+
+网络候选第一个root实际小例通过8项：三个1168B可靠流共享2400B初窗，1200B QUIC+28B外层，up9824bps/down736bps、各传播1s；data发送0/1/4、到达2/3/6，ACK发送2/3/6、到达4/5/8；wire3960B、唯一业务3504B、无loss、业务完成6s。check-network-root.py及network-root-check.json固定完整输入/实际轨迹与所测源码；候选仍在修改，此检查不等于最终冻结网络验收。
+
+同一混合DAG的FIFO/priority×立即/聚合ACK四格及单图输入已准备，五份Network构造预检通过但未运行大例。单图保留25000B业务块边界，30800片、原始data wire37822400B；全部到达且无额外传输时立即ACK总40656000B。混合声明35016403B/30822片，实际取消/期限/版本会影响已发送和可用量，不能预报全部业务完成。下一步独立审查剩余小例、冻结候选后实际完整四格复算；公共2276产物/28图保持，正文未改，C68仍未完成。
+
+
+## 2026-09-10：媒体网络完整单图／四格研究验收
+
+媒体候选calculate8f16094b/application4fc17e92冻结后完成14作者小场景、12独立网络例，root另实际4个单图片退化与公共闭环逐包时刻/恢复比较通过。独立审查发现priority数值方向写反，已修为高数字优先，原手算预期不变，失败轨迹保留。
+
+完整30MB/5MB单图与同混合DAG四格已实际跑完，独立审查277331个传输包、约786万次聚合ACK包号范围引用，核实际序列化/传播、真实ACK因果、STREAM最高offset、唯一字节、接收内存、compute依赖及播放/版本。单图61600包、wire40656000B、35M全交付、完整图片14.8839358s。FIFO立即/聚合：wire40673160/39256360B，完整图片14.8839358/14.927358356s，TTS未播放且缺0.16s。priority立即/聚合：wire40683720/39266460B，完整图片14.809457006/14.843085328s，TTS从0.4s完整播放0.16s。四格截图动作都未完整交付不可用，不把pending0当业务成功。
+
+运行器初版漏network_validation.py来源追踪，补齐后相同5例已再次真实运行；全部完整JSON SHA与归档首轮相同。旧5例20输入/完整result/manifest/summary及日志保留runs/pre-validation-lock，搬移SHA和重跑对照另记，未手工补旧manifest冒充事前锁。全部运行/审查进程均exit0结束。
+
+研究验收[acceptance.json](research/media-feedback-loop/acceptance.json)记录37个证据hash并回读核验；完整比较见[BOOK-COMPARISON.md](research/media-feedback-loop/BOOK-COMPARISON.md)，独立范围见[五例审查](research/media-feedback-loop-review/FULL-FIVE-REVIEW.md)。只验声明confirmed-path/per-stream媒体行为，不称真实TCP/H3对照或全协议。下一步按PUBLIC-INTEGRATION-MAP静态复用公共transport组件、原CLI支持媒体输入、注册结果并回填图12-4与十二章。公共现有2276产物/28图和正文未改，C68及全书保持进行中。
+
+
+## 2026-09-10：媒体反馈公共迁移通过，统一产物生成中
+
+媒体Network/Application/两validation及sender薄接口已静态接入公共transport，原transport-closed-loop CLI严格分派{application,network}，旧upload_bytes路径数学保留。新增19场景、2可编辑输入、紧凑业务Markdown与图12-4三面板生成器；图从正式完整JSON派生，当前仍等待统一产物。第12章只增一段四格/业务失败解释，十二章其余作者正文保持。
+
+迁移AST/字节绑定通过；公共实际重算19/19与研究完整数学全等，121.00s、277424包、五大例1368657数组记录、25运行源码hash始末稳定。公共10网络独立tests+4报告tests通过；全suite931项（909通过、22可选跳过），145.227s。正式reproduce正在实际运行PTY41735，日志research/media-feedback-public-integration/reproduce.log；尚未报告公共最终验收。后续38实际CLI、旧产物字节回归、新图视觉检查、sync/render/verify/inventory均待最终产物完成。
+
+
+媒体公共收尾补充：原reproduce PTY41735已exit0，2314产物；2275既有产物逐SHA不变，仅README索引改变，新增38媒体JSON/MD。首轮绘图/verify-results通过2314产物30图。视觉检查发现新图因纵轴反转，上下行lane说明写反，已只修该xlabel文字并保存原图/源码/manifest；网络数学未变。因统一结果锁追踪全部Python源码，正在实际第二轮reproduce（PTY75291，日志reproduce-caption-fix.log），不手工补manifest哈希。38次实际媒体CLI仍由独立进程64153执行，已完成部分不当全部验收；其source指纹不含此绘图文件，最终还需核产物/manifest一致。第3章有同期作者修改，保留最新正文；最终sync/render/inventory仍待。
+
+
+媒体收尾进展：38/38实际CLI已exit0通过（240.901s），19JSON+19MD完整byte与首轮manifest一致，公共源码和manifest各次前后稳定。报告明确绑定首轮a6604f00…，不冒称执行于后续manifest；check-final-binding.py将核最终38产物和CLI源身份继续相同。独立图数据审查四例通过，按真实交付重算成片/播放/缺音，确认只存在已修xlabel反向，未发现新增当前四格数据问题。第二reproduce75291仍持续计算；sync-outline因源码锁尚待刷新而正确拒绝，未绕过验证或改旧manifest，最终同步等待结束。PLAN已把笼统“共享媒体未接真实反馈”纠正为公共接入收尾，并将C69媒体期限缺口限定在共享空口/双路径。
+
+
+## 2026-09-10：媒体反馈公共接入最终验收完成
+
+第二reproduce75291已exit0，2314结果与图注修正前逐字节全等；2275接入前既有产物仍不变，仅索引与38新增媒体产物构成接入差异。38实际CLI在首轮manifest执行，最终续核38输出及41个相关源码身份相同，新manifest990135c0…包含修正绘图源码；未冒称CLI重跑于新manifest。图重生成后实际目检：上方download/下方upload正确，三面板无可见裁切，精确data.json与修正前相同。
+
+最终verify-results2314产物/30图通过；sync仅写扩写，正文同期第3/8章编辑保留。render/verify通过12章、106练习、98图计划、67节/231小节、36核心、5136本地链接、229引用hash与77历史快照。inventory95文件1268项待逐原文审查，不是完成率。公共验收[acceptance.json](research/media-feedback-public-integration/acceptance.json)记录48份证据hash并逐份回读核验；931tests（909通过/22可选跳过）、19实际完整数学比较和38CLI证据均保留。PLAN C68已改为真实公共验收状态，不关闭整个工作包或全书。
+
+下一包按[NEXT-SCOPE](research/media-feedback-public-integration/NEXT-SCOPE.md)进入C69共享空口、两层ACK和媒体期限，避免把双向独立serializer当Wi-Fi空口。并行来源准备research/shared-airtime-inputs已固定14份官方实现/文档及作者论文原件，profile未知留null、五类手算预写；当前仅输入与算术检查，尚未经独立复核或接入网络，不预支为C69验收。
+
+
+## 2026-09-10：共享空口新版小例与观察截止因果检查
+
+C69研究候选复用公共媒体sender/ACK/controller/pacer，增加client↔AP单共享空口与AP↔server独立WAN；同PN的MAC重试不再次上交QUIC或扣端到端额度。14份来源原件为固定ns-3官方实现/文档及作者论文，OFDM参数是明确选择，不冒充真实硬件测量或完整IEEE认证。完整MAC ACK超时未知保留null，拒绝把45µs RXSTART监视器误作完整确认超时。
+
+当前calculate37c442824b5b127407658a75b21638882ee5a75ff08156cfc716b141d1b75f6b经[独立新版检查](research/shared-airtime-review/NETWORK-REVIEW.md)：16小输入、14旧例两种关闭入口，共386检查通过，9c5f旧报告保留归档。修正PHY前导期间按IP比例计字节的问题，无线启用时旧serialized字段为null，WAN串行前缀另列；下行包WAN在途时不再把预定AP抵达误报客户端arrival。44µs前导和0.5s WAN中途反例均实际通过。
+
+root新增[观察截止检查](research/shared-airtime-root-review/check-prefix.py)，对9个无线场景实跑196个提前截止，共980检查通过：真实空口事件、两端sender事件、端到端接收与完整运行的对应前缀一致，资源预约按截止裁切。源码前后hash稳定；这是因果前缀检查，不替代独立PHY/拥塞算法证明。完整无线书本负载及扫描尚未运行，公共2314结果/30图和正文未改。现行12章与作者迁移内容保持；C69及全书目标仍进行中。
+
+
+共享空口完整负载进展：关闭无线的剩余5个完整原例已实际重算，连同14小例构成19旧例完整回归；全JSON及canonical SHA一致，源码和基线始末稳定，138.770s，见[disabled-book-result.json](research/shared-airtime-review/disabled-book-result.json)。新增无线五例输入逐字段核仅添加wireless_access，原WAN20/100Mbps、各50ms和60s horizon保持，见[输入说明](research/shared-airtime-book-inputs/README.md)。
+
+单图新增无线实际exit0，97.8886s，完整结果44955a74…；独立读取61600个端到端包和61600次无线尝试通过，生成manifest与输入/运行源码绑定已核，见[image-baseline-check.json](research/shared-airtime-trace-review/image-baseline-check.json)。35MB全部交付，完整图片15.993881866s，对原14.8839358s多1.109946066s。无线总服务13.4288s分为RF10.3488s、接入等待2.0944s、SIFS0.9856s；所有PSDU43736000B，IP账40656000B，二者不混用。完整图片之后仍有0.163272s确认服务，不能把累计空口秒当完整响应或直接加基线。可复跑分层账见[book-analysis](research/shared-airtime-book-analysis/README.md)。
+
+FIFO即时无线大例也已实际exit0并完成逐轨迹独立审查，61626端到端包、服务13.434468s、图片15.993881866s；TTS仍0/8播放且缺0.16s、截图动作不可用，pending0不冒充全业务成功。其余三格运行中，尚无完整四格比较或公共接入验收；所有修改限研究、PLAN与PROGRESS，未改正文。
+
+
+## 2026-09-10：共享空口五完整例与九格扫描研究收尾
+
+五完整无线例均实际exit0、输入/源码始末稳定，273438条端到端包及无线尝试全部经独立逐轨迹检查。root实际执行compare.py，绑定新旧生成manifest、完整结果/摘要SHA和输入配对：五例只新增wireless_access，四格之间只改send policy/ACK policy；旧基线摘要的来源缺口已在执行前修复。见[完整比较](research/shared-airtime-book-analysis/COMPARISON.md)。FIFO即时/聚合图片15.993881866/15.669243112s，服务13.434468/11.109970s；priority即时/聚合图片15.920135004/15.585252555s，服务13.437956/11.112922s。FIFO全缺0.16s音频，priority八块全播；四格截图仍不可用。
+
+九格320/640/960B载荷×ACK1/2/4已实际执行、739项锁稳定，独立预先输入审查及完整轨迹/72播放槽检查通过。此为300KB/50KB背景、padding=false的新教学场景，不是改写原书负载或等质量codec比较。真实ACK数274/144/78，不能用静态308/155/78代替；少ACK省空口但图片从1.06265856延后到1.07325096s，九格八音频块均按固定槽播放。见[扫描说明](research/shared-airtime-scan-inputs/README.md)。
+
+[有限研究验收](research/shared-airtime-book-analysis/acceptance.json)封存28份证据hash并实际回读。范围是声明单共享空口与WAN/包身份/字节和输入配对，不冒称独立重演全部应用/控制器、真实DCF或硬件测量。公共2314结果/30图保持，正文未编辑；下一步静态复用公共模块、CLI/场景/报告/图12-5首面板和第12章接入。C69双路径/费用能源/版本重试/TCP对照及全书仍未完成。
+
+
+## 2026-09-10：共享空口公共接入与统一验证进行中
+
+已静态迁移transport.airtime/shared_airtime_network，复用媒体内核，14官方原件字节不变接统一source组。原transport-closed-loop媒体入口支持wireless_access；仅无线来源包装两字段允许研究/公共差异。AST绑定和33实际小完整payload比较通过，9机制tests通过。新增分层无线报告及6tests，5实际报告边界含44µs前导/失败/disabled通过。book.json原45项保留并追加24项（10机制+5完整+9扫描），中央profile、读者example、provenance齐备。
+
+全suite实际exit0：946项，924通过、22可选跳过，147.516s，日志research/shared-airtime-public-integration/tests.log。24新+19旧的43公共完整数学比较进程29977仍运行，必须等待全部case和源码始末核验；不据部分通过标全验收。新图四面板及CLI/复现追踪已接入，独立研究预览发现图例遮挡和固定注释风险，修订先放shared_airtime_plot.reviewed.py，未改变本轮比较锁定的public源；修订提取器实读5full/9scan且预览目检通过。待比较结束再替换public图文件并正式reproduce。
+
+第12章12.4只新增一段定量连接，outline同步器新增C69证据块，保持作者当前12章；这些新链接的正式结果/图尚待生成，未宣称已通过最终render/verify。48实际CLI验证脚本已准备未执行。公共最终产物、图、网页验证和C69公共验收仍待；全书目标继续。
+
+## 2026-09-10 跨章综合条目 C70–C76 收口
+
+按[状态复核](PLAN-STATUS-REVIEW.md)的收口顺序处理剩余的跨章综合队列，七项全部交付并勾选：C70 Queqiao 记录再核算、C71 跨地域放置、C72 执行图与多目标筛选、C73 权重驻留后的剩余流量、C74 同上限两侧独立选择、C75 专用化回本与整站费用、C76 输入区间与设计记录。
+
+新增七个模块、七个 CLI 子命令、七组 book.json 场景与 146 项独立测试；新增固定来源组 `sources/queqiao-records/`（两份作者文档按原 manifest 的 SHA 逐字节一致，加一份逐行转录的 records.json），锁入 `configs/queqiao-records.lock.json`。
+
+本轮的复算与既有材料对齐处：C73 逐项重现 OpenTallas 案例 A/C 的全部十个数字（checkpoint 16,381,470,720 B、活跃 decode 读取 15,136,811,008 B、KV 每 token 147,456 B、8K 每步 1,207,959,552 B、交叉点 12.53 与整数 13、B=1 加速比 13.53、B=16 为 1.78、32K 交叉点 3.13、12.08 TB/s 与 11 stack、401 mm²、理想 75,674 lane 与降额 315,306 lane）；C75 重现案例 F 的 4×10^13 回本量、1.5768×10^13 年产出与 254 台；C70 的八组同条件比值重现 PATH 文档自身的 15.5×／8.8×／1.24×／1.3×／1.03×；C76 的二分区间 [253,254] 在不知道案例答案的情况下重新找到同一个 254。这些是对既有材料的复算一致性，不构成新的独立测量。
+
+本轮明确拒绝填充的地方：文档未打印的分位数保持缺失（9 组因此拒绝给出 p99/p50），1200 帧的 p999 标为仅 1 个样本支撑；逐段中位数不可相加，残差用来证明这一点而不当作未测阶段；A100 未公布 dense FP8 速率的四个候选按"未公布"拒绝而非按上一位宽推定；改变数值的位宽在没有声明质量证据时列出但不参与同质量排名；special 类算子未公布速率，逐项列为缺口不并入下界；官方未公布裸片面积，面积轴仅在声明占地时参与筛选；OpenTallas 无流片，全部速率不作为实测；设计记录的"观察"一栏保持为空，复算不充当独立测量。
+
+全 suite 1,092 项通过（此前 969 项），无跳过。重跑 reproduce 后 2,388 份产物与 32 份图经 verify-results 校验一致；重生成 skeleton.html，verify_outline 检查 5,413 个本地链接、229 项引用哈希与 77 份快照，新增的 29 个结果链接全部解析成功。
+
+结果产物与正文回填：C70–C76 的结果已写回大纲 1.3.4、4.7.4、6.5.1、9.6.2、11.3.2、11.4.1、12.5、12.6.1 及[跨章设计决定](../outlines/decision-record.md)。PLAN 现为 93 项、32 勾选、61 未勾选；状态不清队列中仅余 F01、F04、C37、C58、C63、C68、C69，各自已登记具体缺口。
+
+verify_outline 目前仍报 6 项失败，均与本轮无关，属于作者未提交的第 5／6 章改写中间状态：第 5 章 companion 缺 detail-5.1.1–5.1.4 锚点及对应小节，第 6 章 6.1.1 标题在正文为"独立部署还是多卡协作"、在 companion 为"同样八张卡：独立部署还是多卡协作"。已用"移除本轮全部插入段后重跑"的对照确认这 6 项在插入前后完全相同，本轮未作改动，留给作者按其改写意图收口。
+
+
+## 2026-09-10 F01 覆盖映射（首轮，非审查）
+
+原文清单一直只做到"捕获"：95 份原件、1,268 个文本块都在 `inventory/sources.json` 里，但每块的 `work_packages` 全为空、`review_status` 全为 pending，所以没人能说出哪一段正文背后没有计算。本轮补上从文本块回到工作包的那一半，新增 [coverage 模块](src/infra_calc/coverage.py)、`calc.py coverage` 入口与 [inventory/f01-coverage.json](inventory/f01-coverage.json)，20 项独立 tests 通过。
+
+映射机械生成，输入是 PLAN 各条自带的小节引用（79/93 条带引用）与每块所处的小节。解析要点：小节号必须带点，因此"复用第 4、7 章"与"实验 2-2"不会被当成小节，`2.4.1–2`／`4.5–6`／`2.6.3–5` 这类区间按末位展开，`## 2024`／`## 2025` 这类年份标题不被当成小节。直接命名与"只命名了其子节"分开记，不合并。
+
+当前数字：988 块有量化信号，813 块有直接候选工作包，25 块仅通过子节相关，360 块有量化信号却无候选；129 块引用了生成结果，全部解析成功，失效链接 0 处。逐章看，第 4、7、8、9、11、12 章已无未映射的量化块。
+
+定位到的空洞先是四处：改写后的 1.1、3.3、3.4 与 10.4.3 没有任何工作包声称。逐条查证后分成两类。
+
+一类是解析不足：C56 写的是 `（10.4.1、3）`，这种"同级简写"此前解析不出 10.4.3。已补上规则——紧跟在带点引用后的裸数字按同级展开，而带"第／章／实验／图"字样的数字仍不算小节，所以"复用第 4、7 章"与"实验 2-2"不受影响；同时补上剥离全角括号。
+
+另一类是计划欠账：第 3 章改写后从 2 节扩到 6 节，小节全部移位，而 C15–C20 仍写着旧编号，导致 C16 声称的视觉 E→P→D（现 3.3.1）、C17 声称的实时语音（现 3.3.3）、C18 声称的 6ND 与 SFT（现 3.4.1–3）在映射上成为无人认领的空白。已按标题逐条对应更新 C15–C20 与 C56/C57 的小节引用，并在每条注明原编号以便追溯。C57 另补 10.4.4，因为故障规模与保存周期已移到那里。
+
+修正后：823 块有直接候选工作包，27 块仅通过子节相关，350 块仍无候选。其中 333 块是案例笔记（PLAN 里没有任何一条按文件名认领 `case-studies/*.md`，这是工作包写法的问题，不是案例未被计算），12 块是各章章首（本就没有小节号），真正剩下的只有第 1 章 1.1 全景的 3 块，是否需要计算由作者判断。
+
+**本轮明确没有做的事**：1,268 块的 `review_status` 全部仍为 pending，一块也没有改；`work_packages`（已审查归属）一个也没有填。机械映射不是审查，有候选工作包不等于该块要求已实现。F01 因此保持未勾选，逐块审查、上述空洞的归属决定、案例笔记的认领方式与旧脚本迁移仍待。
+
+
+## 2026-09-10 网页同步的阻塞点（非本轮造成）
+
+`scripts/render_outline.py` 当前无法跑完：它要求每章都有 `## 本章的设计决定`，而第 5 章用的是 `## 本章小结与常见误区`，脚本在提取该章决定时抛 IndexError。这是仓库既有状态而非本轮改动——`git show HEAD:outlines/05-算子与运行时.md` 同样没有这一节。因此 `skeleton.html` 停留在第 5 章改写之前的版本，`verify_outline.py` 报出的第 5 章数十条 stale HTML paragraph 与 companion anchor 5.1.1–5.1.4，以及第 11 章的若干 undefined 图号，都是同一原因。
+
+本轮用"移除全部插入段后重跑"的对照确认过：在只剩 6 条错误的那次运行里，插入前后完全相同，本轮插入没有引入任何一条。
+
+另需作者留意：第 1 章在本轮进行中被改写，原 1.3.4「跨章执行图与设计决定」小节已不存在，写在那里的 C72 结果随之丢失，已改写回 1.3 节末尾并核对在位。第 5 章在 10:55 之后也被换成了不含设计决定节的版本。这两处都不是本轮编辑，记录在此以免下次同步时再次意外。
+
+第 5 章补回该节（或让脚本接受该章现用的小结标题）之后，重跑 `python3 scripts/render_outline.py` 即可让网页重新包含本轮全部 11 处回填。
+
+## 2026-09-10 F04 交付检查（四项中两项通过）
+
+F04 此前是全项目唯一一条既无模块、也无结果、也无验收文件的工作包。本轮把它的四项要求实现成一条命令 `calc.py delivery`，新增 [delivery 模块](src/infra_calc/delivery.py)与 15 项独立 tests。四项各自独立报告，不合并成完成度数字；模块只读盘上状态，不重新生成任何东西，所以"通过"意味着当前签入的状态自洽，而不是"重跑一次就好了"。
+
+写这条检查本身就查出四处欠账，均已修好：`states`／`generation` 两组场景按行内字段构造结果名而非 `id`，审计起初把它们的 14 份产物误报为"无场景"；`results/memory-pool-layout.svg` 是画在某个场景旁边的图而非场景产物，已归入常驻产物；可达性判定最初只看 `import` 之后的名字，漏掉 `from .image_stages import ...` 这种写法，误报 7 个模块孤立（实际 210 个全部可达）；README 里有 7 条子命令从未列出（fetch、verify-results、stage-resource-bounds、v4-compressor-online、plot-image-request、plot-supernode-cost，以及新加的 delivery），已按可直接运行的完整形式补齐。
+
+当前结论：结果可再生**通过**（1,171 个场景 id 与 2,388 份产物互相对上，两侧都不多不少）；读者入口**通过**（73 个子命令全部有文档，210 个专题模块全部可达）；原文审查**未通过**（覆盖清单最新、129 处结果引用全部解析成功，但 1,268 块仍全为 pending——机械映射不是审查）；正文与网页同步**未通过**（转交 verify_outline，当前 failed、71 条错误，根因是第 5 章缺 `## 本章的设计决定` 导致 render 无法跑完，属仓库既有状态）。
+
+F04 因此保持未勾选。可以关闭它的两件事很具体：逐块审查 1,268 个文本块，以及让第 5 章与 render 脚本对齐。

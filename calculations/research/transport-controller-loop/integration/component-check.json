@@ -1,0 +1,151 @@
+{
+  "status": "passed",
+  "structural": [
+    {
+      "module": "cubic",
+      "identical_function_or_constant_blocks": 17
+    },
+    {
+      "module": "hystart",
+      "identical_function_or_constant_blocks": 14
+    },
+    {
+      "module": "bbr_state",
+      "identical_function_or_constant_blocks": 32
+    },
+    {
+      "module": "bbr_minmax",
+      "identical_function_or_constant_blocks": 7
+    },
+    {
+      "module": "bbr_reference",
+      "identical_function_or_constant_blocks": 15
+    },
+    {
+      "module": "bbr_adapter",
+      "identical_function_or_constant_blocks": 22
+    },
+    {
+      "module": "cubic_adapter",
+      "identical_function_or_constant_blocks": 13
+    },
+    {
+      "module": "pacer",
+      "identical_function_or_constant_blocks": 7
+    },
+    {
+      "module": "persistent_congestion",
+      "identical_function_or_constant_blocks": 3
+    }
+  ],
+  "payload_parity": [
+    {
+      "module": "cubic",
+      "scenarios": 16
+    },
+    {
+      "module": "hystart",
+      "scenarios": 13
+    },
+    {
+      "module": "bbr_adapter",
+      "checks": "all local hook returned payloads identical"
+    }
+  ],
+  "source_groups": {
+    "quic": [
+      {
+        "file": "sources/protocol-rfc/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22"
+      },
+      {
+        "file": "sources/protocol-rfc/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af"
+      },
+      {
+        "file": "sources/protocol-rfc/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a"
+      }
+    ],
+    "cubic": [
+      {
+        "file": "sources/congestion-controllers/rfc9438.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+        "revision": "RFC9438",
+        "bytes": 73704,
+        "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a"
+      },
+      {
+        "file": "sources/connection-window/rfc5681.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+        "revision": "RFC5681",
+        "bytes": 44339,
+        "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d"
+      }
+    ],
+    "hystart": [
+      {
+        "file": "sources/congestion-controllers/rfc9406.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9406.txt",
+        "revision": "RFC9406",
+        "bytes": 18917,
+        "sha256": "43e3ddc1d3446142b125f018cd52aa2ff858b3f1ff9c6969924ab9fbf45d5230"
+      },
+      {
+        "file": "sources/congestion-controllers/errata-check.html",
+        "url": "https://www.rfc-editor.org/errata_search.php?rfc=9406",
+        "revision": "RFC9406 errata search snapshot 2026-09-09",
+        "bytes": 7052,
+        "sha256": "4765d07ace49aa20e0ce7001016c50329f1309640d1e0a024a5577c0494572db"
+      }
+    ],
+    "bbr": [
+      {
+        "file": "sources/congestion-controllers/tcp_bbr.c",
+        "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/net/ipv4/tcp_bbr.c",
+        "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+        "bytes": 42724,
+        "sha256": "ba7d0706259dfef5bf455f26ac4bab65f43b9209b9cfd4f761c64c89816bdfe4"
+      },
+      {
+        "file": "sources/congestion-controllers/tcp_rate.c",
+        "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/net/ipv4/tcp_rate.c",
+        "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+        "bytes": 8436,
+        "sha256": "52d682c760573819a36bfef45a094ea8615a39d56c0248569d96f9e6e47b2b23"
+      },
+      {
+        "file": "sources/congestion-controllers/tcp.h",
+        "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/include/net/tcp.h",
+        "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+        "bytes": 78187,
+        "sha256": "de555f117e5b039040c94ce693ba5e0c74bb7a4f11df00e0d72de95988f1b553"
+      },
+      {
+        "file": "sources/congestion-controllers/win_minmax.c",
+        "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/lib/win_minmax.c",
+        "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+        "bytes": 3435,
+        "sha256": "6d7fabb8cdb2a53e485341435483b408a0183f4e349cf894343ac5febcb3fe86"
+      },
+      {
+        "file": "sources/congestion-controllers/win_minmax.h",
+        "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/include/linux/win_minmax.h",
+        "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+        "bytes": 832,
+        "sha256": "deef538ecd6a56ed99345497b254b1c480f45b1a5b0cb3e30a37bd4a9420db31"
+      }
+    ]
+  },
+  "scope": "Shared component migration; no network or full public reproduce claim",
+  "checker_sha256": "52862424f09f1f61af6f22083bb00fb16b25170c7ba5265adf197b24095417a6"
+}

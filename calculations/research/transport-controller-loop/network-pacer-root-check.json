@@ -1,0 +1,1619 @@
+{
+  "scope": "Three independently calculated padded NewReno cases including ACK bypass with outstanding debt; not three-controller acceptance",
+  "passed": 17,
+  "source_hashes": {
+    "calculate.py": "97a12a1c2e94e58d31ed370b098ef576cf9575451d75097973c19f43c16552dc",
+    "sender.py": "b7e861b03cbdfda720f069691ea93f39b6e0897373b18ca211159726a2e9c487",
+    "pacer.py": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+    "check-network-pacer-root.py": "f7d53bbbed99b8e2c0b7eb2d535d296f20598c95d3b9d3ea811cb1f003a239d3"
+  },
+  "checks": [
+    {
+      "case": "three pre-feedback paced starts",
+      "actual": "[Fraction(0, 1), Fraction(8, 25), Fraction(16, 25)]",
+      "expected": "[Fraction(0, 1), Fraction(8, 25), Fraction(16, 25)]"
+    },
+    {
+      "case": "physical data serialization and propagation",
+      "actual": "[Fraction(31250307, 31250000), Fraction(41250307, 31250000), Fraction(51250307, 31250000)]",
+      "expected": "[Fraction(31250307, 31250000), Fraction(41250307, 31250000), Fraction(51250307, 31250000)]"
+    },
+    {
+      "case": "ACKs start at receiver arrival",
+      "actual": "[Fraction(31250307, 31250000), Fraction(41250307, 31250000), Fraction(51250307, 31250000)]",
+      "expected": "[Fraction(31250307, 31250000), Fraction(41250307, 31250000), Fraction(51250307, 31250000)]"
+    },
+    {
+      "case": "ACK serializer precedes response without pacing debt",
+      "actual": "5125033/3125000",
+      "expected": "5125033/3125000"
+    },
+    {
+      "case": "short response is padded",
+      "actual": "1200",
+      "expected": "1200"
+    },
+    {
+      "case": "response still carries only 32 business bytes",
+      "actual": "32",
+      "expected": "32"
+    },
+    {
+      "case": "response completion includes full padded packet",
+      "actual": "82500637/31250000",
+      "expected": "82500637/31250000"
+    },
+    {
+      "case": "four padded packets and four ACKs wire bytes",
+      "actual": "5280",
+      "expected": "5280"
+    },
+    {
+      "case": "effective bytes exclude padding and transport",
+      "actual": "3536",
+      "expected": "3536"
+    },
+    {
+      "case": "physical serializer dominates pacer",
+      "actual": "[Fraction(0, 1), Fraction(1, 1), Fraction(2, 1)]",
+      "expected": "[Fraction(0, 1), Fraction(1, 1), Fraction(2, 1)]"
+    },
+    {
+      "case": "physical serialization is nonpreemptive",
+      "actual": "[Fraction(1, 1), Fraction(2, 1), Fraction(3, 1)]",
+      "expected": "[Fraction(1, 1), Fraction(2, 1), Fraction(3, 1)]"
+    },
+    {
+      "case": "ACK bypass starts on response arrival",
+      "actual": "63137/31250000",
+      "expected": "63137/31250000"
+    },
+    {
+      "case": "upload pacing debt still positive after ACK bypass",
+      "actual": "True",
+      "expected": "True"
+    },
+    {
+      "case": "bypass pure ACK remains unpadded",
+      "actual": "64",
+      "expected": "64"
+    },
+    {
+      "case": "paced complete",
+      "actual": "True",
+      "expected": "True"
+    },
+    {
+      "case": "source_limited complete",
+      "actual": "True",
+      "expected": "True"
+    },
+    {
+      "case": "ack_bypass complete",
+      "actual": "True",
+      "expected": "True"
+    }
+  ],
+  "cases": {
+    "paced": {
+      "inputs": {
+        "upload_bytes": 3504,
+        "response_bytes": 32,
+        "model_seconds": 0,
+        "until": 8,
+        "links": {
+          "up": {
+            "rate_bps": 1000000000,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 1000000000,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "controller": {
+          "name": "newreno"
+        },
+        "pad_in_flight": true
+      },
+      "reference_sources": [
+        {
+          "file": "sources/rfc9000.txt",
+          "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+          "revision": "RFC9000",
+          "bytes": 403442,
+          "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+          "copied_from": "calculations/research/transport-feedback/sources/rfc9000.txt",
+          "verified_at_utc": "2026-09-09T14:17:17.701392+00:00",
+          "verification": "official frozen local source copied; destination reread and SHA256 checked"
+        },
+        {
+          "file": "sources/rfc9002.txt",
+          "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+          "revision": "RFC9002",
+          "bytes": 89071,
+          "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+          "copied_from": "calculations/research/transport-feedback/sources/rfc9002.txt",
+          "verified_at_utc": "2026-09-09T14:17:17.702054+00:00",
+          "verification": "official frozen local source copied; destination reread and SHA256 checked"
+        },
+        {
+          "file": "sources/rfc9002-errata7539.html",
+          "url": "https://www.rfc-editor.org/errata/eid7539",
+          "revision": "RFC9002 Verified Errata7539",
+          "bytes": 8446,
+          "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+          "verified_at_utc": "2026-09-09T14:17:17.702348+00:00",
+          "verification": "official frozen local source copied; destination reread and SHA256 checked",
+          "copied_from": "calculations/research/transport-feedback/sources/rfc9002-errata7539.html"
+        }
+      ],
+      "reference_source_root": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop",
+      "transmissions": [
+        {
+          "direction": "up",
+          "pn": 0,
+          "kind": "data",
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "business",
+              "offset": 0,
+              "length": 1168
+            }
+          ],
+          "send_start": "0",
+          "send_end": "307/31250000",
+          "arrival": "31250307/31250000",
+          "quic_bytes": 1200,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 1228,
+          "dropped": false,
+          "probe": false,
+          "received_at": "31250307/31250000",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "up",
+          "pn": 1,
+          "kind": "data",
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "business",
+              "offset": 1168,
+              "length": 1168
+            }
+          ],
+          "send_start": "8/25",
+          "send_end": "10000307/31250000",
+          "arrival": "41250307/31250000",
+          "quic_bytes": 1200,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 1228,
+          "dropped": false,
+          "probe": false,
+          "received_at": "41250307/31250000",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "up",
+          "pn": 2,
+          "kind": "data",
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "business",
+              "offset": 2336,
+              "length": 1168
+            }
+          ],
+          "send_start": "16/25",
+          "send_end": "20000307/31250000",
+          "arrival": "51250307/31250000",
+          "quic_bytes": 1200,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 1228,
+          "dropped": false,
+          "probe": false,
+          "received_at": "51250307/31250000",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "down",
+          "pn": 0,
+          "kind": "ack",
+          "frames": [],
+          "send_start": "31250307/31250000",
+          "send_end": "3125033/3125000",
+          "arrival": "6250033/3125000",
+          "quic_bytes": 64,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 92,
+          "dropped": false,
+          "probe": false,
+          "received_at": "6250033/3125000",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "down",
+          "pn": 1,
+          "kind": "ack",
+          "frames": [],
+          "send_start": "41250307/31250000",
+          "send_end": "4125033/3125000",
+          "arrival": "7250033/3125000",
+          "quic_bytes": 64,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 92,
+          "dropped": false,
+          "probe": false,
+          "received_at": "7250033/3125000",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "down",
+          "pn": 2,
+          "kind": "ack",
+          "frames": [],
+          "send_start": "51250307/31250000",
+          "send_end": "5125033/3125000",
+          "arrival": "8250033/3125000",
+          "quic_bytes": 64,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 92,
+          "dropped": false,
+          "probe": false,
+          "received_at": "8250033/3125000",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "down",
+          "pn": 3,
+          "kind": "data",
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "business",
+              "offset": 0,
+              "length": 32
+            }
+          ],
+          "send_start": "5125033/3125000",
+          "send_end": "51250637/31250000",
+          "arrival": "82500637/31250000",
+          "quic_bytes": 1200,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 1228,
+          "dropped": false,
+          "probe": false,
+          "received_at": "82500637/31250000",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "up",
+          "pn": 3,
+          "kind": "ack",
+          "frames": [],
+          "send_start": "82500637/31250000",
+          "send_end": "4125033/1562500",
+          "arrival": "5687533/1562500",
+          "quic_bytes": 64,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 92,
+          "dropped": false,
+          "probe": false,
+          "received_at": "5687533/1562500",
+          "recovery_of": null,
+          "probe_of": null
+        }
+      ],
+      "business": {
+        "upload": "51250307/31250000",
+        "model_start": "51250307/31250000",
+        "model_end": "51250307/31250000",
+        "response": "82500637/31250000"
+      },
+      "application_events": [
+        {
+          "at": "31250307/31250000",
+          "type": "application_prefix",
+          "direction": "up",
+          "prefix": 1168
+        },
+        {
+          "at": "41250307/31250000",
+          "type": "application_prefix",
+          "direction": "up",
+          "prefix": 2336
+        },
+        {
+          "at": "51250307/31250000",
+          "type": "application_prefix",
+          "direction": "up",
+          "prefix": 3504
+        },
+        {
+          "at": "82500637/31250000",
+          "type": "application_prefix",
+          "direction": "down",
+          "prefix": 32
+        }
+      ],
+      "waits": [
+        {
+          "at": "307/31250000",
+          "direction": "up",
+          "reasons": [
+            "pacer"
+          ]
+        },
+        {
+          "at": "10000307/31250000",
+          "direction": "up",
+          "reasons": [
+            "pacer"
+          ]
+        }
+      ],
+      "sender_events": {
+        "up": [
+          {
+            "type": "sent",
+            "at": "0",
+            "pn": 0,
+            "sent_bytes": 1200,
+            "frames": [
+              {
+                "type": "stream",
+                "stream": "business",
+                "offset": 0,
+                "length": 1168
+              }
+            ],
+            "ack_eliciting": true,
+            "in_flight": true,
+            "probe": false
+          },
+          {
+            "type": "sent",
+            "at": "8/25",
+            "pn": 1,
+            "sent_bytes": 1200,
+            "frames": [
+              {
+                "type": "stream",
+                "stream": "business",
+                "offset": 1168,
+                "length": 1168
+              }
+            ],
+            "ack_eliciting": true,
+            "in_flight": true,
+            "probe": false
+          },
+          {
+            "type": "sent",
+            "at": "16/25",
+            "pn": 2,
+            "sent_bytes": 1200,
+            "frames": [
+              {
+                "type": "stream",
+                "stream": "business",
+                "offset": 2336,
+                "length": 1168
+              }
+            ],
+            "ack_eliciting": true,
+            "in_flight": true,
+            "probe": false
+          },
+          {
+            "type": "ack",
+            "at": "6250033/3125000",
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "ack_delay": "0",
+            "app_limited": true,
+            "flow_limited": false
+          },
+          {
+            "type": "ack",
+            "at": "7250033/3125000",
+            "ranges": [
+              [
+                1,
+                1
+              ]
+            ],
+            "ack_delay": "0",
+            "app_limited": true,
+            "flow_limited": false
+          },
+          {
+            "type": "ack",
+            "at": "8250033/3125000",
+            "ranges": [
+              [
+                2,
+                2
+              ]
+            ],
+            "ack_delay": "0",
+            "app_limited": true,
+            "flow_limited": false
+          },
+          {
+            "type": "sent",
+            "at": "82500637/31250000",
+            "pn": 3,
+            "sent_bytes": 64,
+            "frames": [],
+            "ack_eliciting": false,
+            "in_flight": false,
+            "probe": false
+          }
+        ],
+        "down": [
+          {
+            "type": "sent",
+            "at": "31250307/31250000",
+            "pn": 0,
+            "sent_bytes": 64,
+            "frames": [],
+            "ack_eliciting": false,
+            "in_flight": false,
+            "probe": false
+          },
+          {
+            "type": "sent",
+            "at": "41250307/31250000",
+            "pn": 1,
+            "sent_bytes": 64,
+            "frames": [],
+            "ack_eliciting": false,
+            "in_flight": false,
+            "probe": false
+          },
+          {
+            "type": "sent",
+            "at": "51250307/31250000",
+            "pn": 2,
+            "sent_bytes": 64,
+            "frames": [],
+            "ack_eliciting": false,
+            "in_flight": false,
+            "probe": false
+          },
+          {
+            "type": "sent",
+            "at": "5125033/3125000",
+            "pn": 3,
+            "sent_bytes": 1200,
+            "frames": [
+              {
+                "type": "stream",
+                "stream": "business",
+                "offset": 0,
+                "length": 32
+              }
+            ],
+            "ack_eliciting": true,
+            "in_flight": true,
+            "probe": false
+          },
+          {
+            "type": "ack",
+            "at": "5687533/1562500",
+            "ranges": [
+              [
+                3,
+                3
+              ]
+            ],
+            "ack_delay": "0",
+            "app_limited": true,
+            "flow_limited": false
+          }
+        ]
+      },
+      "final_states": {
+        "up": {
+          "bytes_in_flight": 0,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "6250033/3125000",
+          "smoothed_rtt": "5343755577/1600000000",
+          "rttvar": "1468745809/800000000",
+          "min_rtt": "6250033/3125000",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 2,
+          "next_timer": null,
+          "max_data": 3504,
+          "max_stream_data": {
+            "business": 3504
+          },
+          "stream_highest_sent_offsets": {
+            "business": 3504
+          },
+          "max_data_consumed": 3504,
+          "controller": {
+            "controller": "newreno",
+            "cwnd_bytes": "12000"
+          },
+          "pacing_rate_quic_bytes_per_second": "8000000000000/1781251859"
+        },
+        "down": {
+          "bytes_in_flight": 0,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "6250033/3125000",
+          "smoothed_rtt": "93750033/25000000",
+          "rttvar": "24999967/12500000",
+          "min_rtt": "6250033/3125000",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 3,
+          "next_timer": null,
+          "max_data": 3504,
+          "max_stream_data": {
+            "business": 3504
+          },
+          "stream_highest_sent_offsets": {
+            "business": 32
+          },
+          "max_data_consumed": 32,
+          "controller": {
+            "controller": "newreno",
+            "cwnd_bytes": "12000"
+          },
+          "pacing_rate_quic_bytes_per_second": "125000000000/31250011"
+        }
+      },
+      "losses": {
+        "up": [],
+        "down": []
+      },
+      "timers": {
+        "up": [],
+        "down": []
+      },
+      "numeric_errors": {
+        "up": [],
+        "down": []
+      },
+      "received_intervals": {
+        "up": [
+          [
+            0,
+            3504
+          ]
+        ],
+        "down": [
+          [
+            0,
+            32
+          ]
+        ]
+      },
+      "consumed": {
+        "up": 0,
+        "down": 0
+      },
+      "summary": {
+        "wire_bytes": 5280,
+        "serialized_wire_bytes_by_horizon": "5280",
+        "unique_received_bytes": 3536,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        },
+        "complete": true
+      },
+      "controller_events": {
+        "up": [],
+        "down": []
+      },
+      "controller_numeric_errors": {
+        "up": [],
+        "down": []
+      },
+      "pacer_errors": {
+        "up": [],
+        "down": []
+      },
+      "pacer_final": {
+        "up": {
+          "at": "82500637/31250000",
+          "debt_quic_bytes": "0",
+          "rate_quic_bytes_per_second": "8000000000000/1781251859"
+        },
+        "down": {
+          "at": "5687533/1562500",
+          "debt_quic_bytes": "0",
+          "rate_quic_bytes_per_second": "125000000000/31250011"
+        }
+      },
+      "persistent_events": {
+        "up": [],
+        "down": []
+      }
+    },
+    "source_limited": {
+      "inputs": {
+        "upload_bytes": 3504,
+        "response_bytes": 32,
+        "model_seconds": 0,
+        "until": 40,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 10
+          },
+          "down": {
+            "rate_bps": 1000000000,
+            "propagation": 10
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 20,
+            "min_rtt": 4
+          }
+        },
+        "controller": {
+          "name": "newreno"
+        },
+        "pad_in_flight": true
+      },
+      "reference_sources": [
+        {
+          "file": "sources/rfc9000.txt",
+          "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+          "revision": "RFC9000",
+          "bytes": 403442,
+          "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+          "copied_from": "calculations/research/transport-feedback/sources/rfc9000.txt",
+          "verified_at_utc": "2026-09-09T14:17:17.701392+00:00",
+          "verification": "official frozen local source copied; destination reread and SHA256 checked"
+        },
+        {
+          "file": "sources/rfc9002.txt",
+          "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+          "revision": "RFC9002",
+          "bytes": 89071,
+          "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+          "copied_from": "calculations/research/transport-feedback/sources/rfc9002.txt",
+          "verified_at_utc": "2026-09-09T14:17:17.702054+00:00",
+          "verification": "official frozen local source copied; destination reread and SHA256 checked"
+        },
+        {
+          "file": "sources/rfc9002-errata7539.html",
+          "url": "https://www.rfc-editor.org/errata/eid7539",
+          "revision": "RFC9002 Verified Errata7539",
+          "bytes": 8446,
+          "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+          "verified_at_utc": "2026-09-09T14:17:17.702348+00:00",
+          "verification": "official frozen local source copied; destination reread and SHA256 checked",
+          "copied_from": "calculations/research/transport-feedback/sources/rfc9002-errata7539.html"
+        }
+      ],
+      "reference_source_root": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop",
+      "transmissions": [
+        {
+          "direction": "up",
+          "pn": 0,
+          "kind": "data",
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "business",
+              "offset": 0,
+              "length": 1168
+            }
+          ],
+          "send_start": "0",
+          "send_end": "1",
+          "arrival": "11",
+          "quic_bytes": 1200,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 1228,
+          "dropped": false,
+          "probe": false,
+          "received_at": "11",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "up",
+          "pn": 1,
+          "kind": "data",
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "business",
+              "offset": 1168,
+              "length": 1168
+            }
+          ],
+          "send_start": "1",
+          "send_end": "2",
+          "arrival": "12",
+          "quic_bytes": 1200,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 1228,
+          "dropped": false,
+          "probe": false,
+          "received_at": "12",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "up",
+          "pn": 2,
+          "kind": "data",
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "business",
+              "offset": 2336,
+              "length": 1168
+            }
+          ],
+          "send_start": "2",
+          "send_end": "3",
+          "arrival": "13",
+          "quic_bytes": 1200,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 1228,
+          "dropped": false,
+          "probe": false,
+          "received_at": "13",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "down",
+          "pn": 0,
+          "kind": "ack",
+          "frames": [],
+          "send_start": "11",
+          "send_end": "343750023/31250000",
+          "arrival": "656250023/31250000",
+          "quic_bytes": 64,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 92,
+          "dropped": false,
+          "probe": false,
+          "received_at": "656250023/31250000",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "down",
+          "pn": 1,
+          "kind": "ack",
+          "frames": [],
+          "send_start": "12",
+          "send_end": "375000023/31250000",
+          "arrival": "687500023/31250000",
+          "quic_bytes": 64,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 92,
+          "dropped": false,
+          "probe": false,
+          "received_at": "687500023/31250000",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "down",
+          "pn": 2,
+          "kind": "ack",
+          "frames": [],
+          "send_start": "13",
+          "send_end": "406250023/31250000",
+          "arrival": "718750023/31250000",
+          "quic_bytes": 64,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 92,
+          "dropped": false,
+          "probe": false,
+          "received_at": "718750023/31250000",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "down",
+          "pn": 3,
+          "kind": "data",
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "business",
+              "offset": 0,
+              "length": 32
+            }
+          ],
+          "send_start": "406250023/31250000",
+          "send_end": "40625033/3125000",
+          "arrival": "71875033/3125000",
+          "quic_bytes": 1200,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 1228,
+          "dropped": false,
+          "probe": false,
+          "received_at": "71875033/3125000",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "up",
+          "pn": 3,
+          "kind": "ack",
+          "frames": [],
+          "send_start": "71875033/3125000",
+          "send_end": "22137510131/959375000",
+          "arrival": "31731260131/959375000",
+          "quic_bytes": 64,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 92,
+          "dropped": false,
+          "probe": false,
+          "received_at": "31731260131/959375000",
+          "recovery_of": null,
+          "probe_of": null
+        }
+      ],
+      "business": {
+        "upload": "13",
+        "model_start": "13",
+        "model_end": "13",
+        "response": "71875033/3125000"
+      },
+      "application_events": [
+        {
+          "at": "11",
+          "type": "application_prefix",
+          "direction": "up",
+          "prefix": 1168
+        },
+        {
+          "at": "12",
+          "type": "application_prefix",
+          "direction": "up",
+          "prefix": 2336
+        },
+        {
+          "at": "13",
+          "type": "application_prefix",
+          "direction": "up",
+          "prefix": 3504
+        },
+        {
+          "at": "71875033/3125000",
+          "type": "application_prefix",
+          "direction": "down",
+          "prefix": 32
+        }
+      ],
+      "waits": [],
+      "sender_events": {
+        "up": [
+          {
+            "type": "sent",
+            "at": "0",
+            "pn": 0,
+            "sent_bytes": 1200,
+            "frames": [
+              {
+                "type": "stream",
+                "stream": "business",
+                "offset": 0,
+                "length": 1168
+              }
+            ],
+            "ack_eliciting": true,
+            "in_flight": true,
+            "probe": false
+          },
+          {
+            "type": "sent",
+            "at": "1",
+            "pn": 1,
+            "sent_bytes": 1200,
+            "frames": [
+              {
+                "type": "stream",
+                "stream": "business",
+                "offset": 1168,
+                "length": 1168
+              }
+            ],
+            "ack_eliciting": true,
+            "in_flight": true,
+            "probe": false
+          },
+          {
+            "type": "sent",
+            "at": "2",
+            "pn": 2,
+            "sent_bytes": 1200,
+            "frames": [
+              {
+                "type": "stream",
+                "stream": "business",
+                "offset": 2336,
+                "length": 1168
+              }
+            ],
+            "ack_eliciting": true,
+            "in_flight": true,
+            "probe": false
+          },
+          {
+            "type": "ack",
+            "at": "656250023/31250000",
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "ack_delay": "0",
+            "app_limited": true,
+            "flow_limited": false
+          },
+          {
+            "type": "ack",
+            "at": "687500023/31250000",
+            "ranges": [
+              [
+                1,
+                1
+              ]
+            ],
+            "ack_delay": "0",
+            "app_limited": true,
+            "flow_limited": false
+          },
+          {
+            "type": "ack",
+            "at": "718750023/31250000",
+            "ranges": [
+              [
+                2,
+                2
+              ]
+            ],
+            "ack_delay": "0",
+            "app_limited": true,
+            "flow_limited": false
+          },
+          {
+            "type": "sent",
+            "at": "71875033/3125000",
+            "pn": 3,
+            "sent_bytes": 64,
+            "frames": [],
+            "ack_eliciting": false,
+            "in_flight": false,
+            "probe": false
+          }
+        ],
+        "down": [
+          {
+            "type": "sent",
+            "at": "11",
+            "pn": 0,
+            "sent_bytes": 64,
+            "frames": [],
+            "ack_eliciting": false,
+            "in_flight": false,
+            "probe": false
+          },
+          {
+            "type": "sent",
+            "at": "12",
+            "pn": 1,
+            "sent_bytes": 64,
+            "frames": [],
+            "ack_eliciting": false,
+            "in_flight": false,
+            "probe": false
+          },
+          {
+            "type": "sent",
+            "at": "13",
+            "pn": 2,
+            "sent_bytes": 64,
+            "frames": [],
+            "ack_eliciting": false,
+            "in_flight": false,
+            "probe": false
+          },
+          {
+            "type": "sent",
+            "at": "406250023/31250000",
+            "pn": 3,
+            "sent_bytes": 1200,
+            "frames": [
+              {
+                "type": "stream",
+                "stream": "business",
+                "offset": 0,
+                "length": 32
+              }
+            ],
+            "ack_eliciting": true,
+            "in_flight": true,
+            "probe": false
+          },
+          {
+            "type": "ack",
+            "at": "31731260131/959375000",
+            "ranges": [
+              [
+                3,
+                3
+              ]
+            ],
+            "ack_delay": "0",
+            "app_limited": true,
+            "flow_limited": false
+          }
+        ]
+      },
+      "final_states": {
+        "up": {
+          "bytes_in_flight": 0,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "656250023/31250000",
+          "smoothed_rtt": "153781253887/16000000000",
+          "rttvar": "134968752921/8000000000",
+          "min_rtt": "4",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 2,
+          "next_timer": null,
+          "max_data": 3504,
+          "max_stream_data": {
+            "business": 3504
+          },
+          "stream_highest_sent_offsets": {
+            "business": 3504
+          },
+          "max_data_consumed": 3504,
+          "controller": {
+            "controller": "newreno",
+            "cwnd_bytes": "12000"
+          },
+          "pacing_rate_quic_bytes_per_second": "240000000000000/153781253887"
+        },
+        "down": {
+          "bytes_in_flight": 0,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "192593844249/9593750000",
+          "smoothed_rtt": "461218844249/76750000000",
+          "rttvar": "729843844249/38375000000",
+          "min_rtt": "4",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 3,
+          "next_timer": null,
+          "max_data": 3504,
+          "max_stream_data": {
+            "business": 3504
+          },
+          "stream_highest_sent_offsets": {
+            "business": 32
+          },
+          "max_data_consumed": 32,
+          "controller": {
+            "controller": "newreno",
+            "cwnd_bytes": "12000"
+          },
+          "pacing_rate_quic_bytes_per_second": "1151250000000000/461218844249"
+        }
+      },
+      "losses": {
+        "up": [],
+        "down": []
+      },
+      "timers": {
+        "up": [],
+        "down": []
+      },
+      "numeric_errors": {
+        "up": [],
+        "down": []
+      },
+      "received_intervals": {
+        "up": [
+          [
+            0,
+            3504
+          ]
+        ],
+        "down": [
+          [
+            0,
+            32
+          ]
+        ]
+      },
+      "consumed": {
+        "up": 0,
+        "down": 0
+      },
+      "summary": {
+        "wire_bytes": 5280,
+        "serialized_wire_bytes_by_horizon": "5280",
+        "unique_received_bytes": 3536,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        },
+        "complete": true
+      },
+      "controller_events": {
+        "up": [],
+        "down": []
+      },
+      "controller_numeric_errors": {
+        "up": [],
+        "down": []
+      },
+      "pacer_errors": {
+        "up": [],
+        "down": [
+          {
+            "at": "31731260131/959375000",
+            "kind": "ready_time_ceil",
+            "original": "31731260131/959375000",
+            "rounded": "33074929127/1000000000",
+            "local_error": "69/307000000000"
+          }
+        ]
+      },
+      "pacer_final": {
+        "up": {
+          "at": "71875033/3125000",
+          "debt_quic_bytes": "0",
+          "rate_quic_bytes_per_second": "240000000000000/153781253887"
+        },
+        "down": {
+          "at": "31731260131/959375000",
+          "debt_quic_bytes": "0",
+          "rate_quic_bytes_per_second": "1151250000000000/461218844249"
+        }
+      },
+      "persistent_events": {
+        "up": [],
+        "down": []
+      }
+    },
+    "ack_bypass": {
+      "inputs": {
+        "upload_bytes": 1168,
+        "response_bytes": 32,
+        "model_seconds": 0,
+        "until": "0.003",
+        "links": {
+          "up": {
+            "rate_bps": 1000000000,
+            "propagation": "0.001"
+          },
+          "down": {
+            "rate_bps": 1000000000,
+            "propagation": "0.001"
+          }
+        },
+        "sender": {
+          "initial_cwnd": 12000,
+          "rtt_seed": {
+            "latest_rtt": 4,
+            "smoothed_rtt": 4,
+            "rttvar": 2,
+            "min_rtt": 4
+          }
+        },
+        "controller": {
+          "name": "newreno"
+        },
+        "pad_in_flight": true
+      },
+      "reference_sources": [
+        {
+          "file": "sources/rfc9000.txt",
+          "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+          "revision": "RFC9000",
+          "bytes": 403442,
+          "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+          "copied_from": "calculations/research/transport-feedback/sources/rfc9000.txt",
+          "verified_at_utc": "2026-09-09T14:17:17.701392+00:00",
+          "verification": "official frozen local source copied; destination reread and SHA256 checked"
+        },
+        {
+          "file": "sources/rfc9002.txt",
+          "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+          "revision": "RFC9002",
+          "bytes": 89071,
+          "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+          "copied_from": "calculations/research/transport-feedback/sources/rfc9002.txt",
+          "verified_at_utc": "2026-09-09T14:17:17.702054+00:00",
+          "verification": "official frozen local source copied; destination reread and SHA256 checked"
+        },
+        {
+          "file": "sources/rfc9002-errata7539.html",
+          "url": "https://www.rfc-editor.org/errata/eid7539",
+          "revision": "RFC9002 Verified Errata7539",
+          "bytes": 8446,
+          "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+          "verified_at_utc": "2026-09-09T14:17:17.702348+00:00",
+          "verification": "official frozen local source copied; destination reread and SHA256 checked",
+          "copied_from": "calculations/research/transport-feedback/sources/rfc9002-errata7539.html"
+        }
+      ],
+      "reference_source_root": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop",
+      "transmissions": [
+        {
+          "direction": "up",
+          "pn": 0,
+          "kind": "data",
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "business",
+              "offset": 0,
+              "length": 1168
+            }
+          ],
+          "send_start": "0",
+          "send_end": "307/31250000",
+          "arrival": "31557/31250000",
+          "quic_bytes": 1200,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 1228,
+          "dropped": false,
+          "probe": false,
+          "received_at": "31557/31250000",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "down",
+          "pn": 0,
+          "kind": "ack",
+          "frames": [],
+          "send_start": "31557/31250000",
+          "send_end": "1579/1562500",
+          "arrival": "6283/3125000",
+          "quic_bytes": 64,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 92,
+          "dropped": false,
+          "probe": false,
+          "received_at": "6283/3125000",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "down",
+          "pn": 1,
+          "kind": "data",
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "business",
+              "offset": 0,
+              "length": 32
+            }
+          ],
+          "send_start": "1579/1562500",
+          "send_end": "31887/31250000",
+          "arrival": "63137/31250000",
+          "quic_bytes": 1200,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 1228,
+          "dropped": false,
+          "probe": false,
+          "received_at": "63137/31250000",
+          "recovery_of": null,
+          "probe_of": null
+        },
+        {
+          "direction": "up",
+          "pn": 1,
+          "kind": "ack",
+          "frames": [],
+          "send_start": "63137/31250000",
+          "send_end": "1579/781250",
+          "arrival": "9441/3125000",
+          "quic_bytes": 64,
+          "udp_ip_bytes": 28,
+          "wire_bytes": 92,
+          "dropped": false,
+          "probe": false,
+          "received_at": null,
+          "recovery_of": null,
+          "probe_of": null
+        }
+      ],
+      "business": {
+        "upload": "31557/31250000",
+        "model_start": "31557/31250000",
+        "model_end": "31557/31250000",
+        "response": "63137/31250000"
+      },
+      "application_events": [
+        {
+          "at": "31557/31250000",
+          "type": "application_prefix",
+          "direction": "up",
+          "prefix": 1168
+        },
+        {
+          "at": "63137/31250000",
+          "type": "application_prefix",
+          "direction": "down",
+          "prefix": 32
+        }
+      ],
+      "waits": [],
+      "sender_events": {
+        "up": [
+          {
+            "type": "sent",
+            "at": "0",
+            "pn": 0,
+            "sent_bytes": 1200,
+            "frames": [
+              {
+                "type": "stream",
+                "stream": "business",
+                "offset": 0,
+                "length": 1168
+              }
+            ],
+            "ack_eliciting": true,
+            "in_flight": true,
+            "probe": false
+          },
+          {
+            "type": "ack",
+            "at": "6283/3125000",
+            "ranges": [
+              [
+                0,
+                0
+              ]
+            ],
+            "ack_delay": "0",
+            "app_limited": true,
+            "flow_limited": false
+          },
+          {
+            "type": "sent",
+            "at": "63137/31250000",
+            "pn": 1,
+            "sent_bytes": 64,
+            "frames": [],
+            "ack_eliciting": false,
+            "in_flight": false,
+            "probe": false
+          }
+        ],
+        "down": [
+          {
+            "type": "sent",
+            "at": "31557/31250000",
+            "pn": 0,
+            "sent_bytes": 64,
+            "frames": [],
+            "ack_eliciting": false,
+            "in_flight": false,
+            "probe": false
+          },
+          {
+            "type": "sent",
+            "at": "1579/1562500",
+            "pn": 1,
+            "sent_bytes": 1200,
+            "frames": [
+              {
+                "type": "stream",
+                "stream": "business",
+                "offset": 0,
+                "length": 32
+              }
+            ],
+            "ack_eliciting": true,
+            "in_flight": true,
+            "probe": false
+          }
+        ]
+      },
+      "final_states": {
+        "up": {
+          "bytes_in_flight": 0,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "6283/3125000",
+          "smoothed_rtt": "87506283/25000000",
+          "rttvar": "31243717/12500000",
+          "min_rtt": "6283/3125000",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 0,
+          "next_timer": null,
+          "max_data": 1168,
+          "max_stream_data": {
+            "business": 1168
+          },
+          "stream_highest_sent_offsets": {
+            "business": 1168
+          },
+          "max_data_consumed": 1168,
+          "controller": {
+            "controller": "newreno",
+            "cwnd_bytes": "12000"
+          },
+          "pacing_rate_quic_bytes_per_second": "125000000000/29168761"
+        },
+        "down": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "4",
+          "smoothed_rtt": "4",
+          "rttvar": "2",
+          "min_rtt": "4",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "18751579/1562500"
+          },
+          "max_data": 1168,
+          "max_stream_data": {
+            "business": 1168
+          },
+          "stream_highest_sent_offsets": {
+            "business": 32
+          },
+          "max_data_consumed": 32,
+          "controller": {
+            "controller": "newreno",
+            "cwnd_bytes": "12000"
+          },
+          "pacing_rate_quic_bytes_per_second": "3750"
+        }
+      },
+      "losses": {
+        "up": [],
+        "down": []
+      },
+      "timers": {
+        "up": [],
+        "down": []
+      },
+      "numeric_errors": {
+        "up": [],
+        "down": []
+      },
+      "received_intervals": {
+        "up": [
+          [
+            0,
+            1168
+          ]
+        ],
+        "down": [
+          [
+            0,
+            32
+          ]
+        ]
+      },
+      "consumed": {
+        "up": 0,
+        "down": 0
+      },
+      "summary": {
+        "wire_bytes": 2640,
+        "serialized_wire_bytes_by_horizon": "2640",
+        "unique_received_bytes": 1200,
+        "pending_packets": {
+          "up": 0,
+          "down": 0
+        },
+        "complete": true
+      },
+      "controller_events": {
+        "up": [],
+        "down": []
+      },
+      "controller_numeric_errors": {
+        "up": [],
+        "down": []
+      },
+      "pacer_errors": {
+        "up": [
+          {
+            "at": "6283/3125000",
+            "kind": "ready_time_ceil",
+            "original": "87584781023911/312500000000000",
+            "rounded": "2802713/10000000",
+            "local_error": "226089/312500000000000"
+          },
+          {
+            "at": "63137/31250000",
+            "kind": "debt_round",
+            "original": "86953411023911/72921902500",
+            "rounded": "596209150082933/500000000000",
+            "local_error": "2856013/14584380500000000000"
+          },
+          {
+            "at": "63137/31250000",
+            "kind": "ready_time_ceil",
+            "original": "17516956204782202856013/62500000000000000000000",
+            "rounded": "2802713/10000000",
+            "local_error": "45217797143987/62500000000000000000000"
+          }
+        ],
+        "down": []
+      },
+      "pacer_final": {
+        "up": {
+          "at": "63137/31250000",
+          "debt_quic_bytes": "596209150082933/500000000000",
+          "rate_quic_bytes_per_second": "125000000000/29168761"
+        },
+        "down": {
+          "at": "1579/1562500",
+          "debt_quic_bytes": "1200",
+          "rate_quic_bytes_per_second": "3750"
+        }
+      },
+      "persistent_events": {
+        "up": [],
+        "down": []
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "status": "PASS_THREE_EXISTING_LEDGERS",
+  "script_hashes": {
+    "compare.py": "17dcfd7de218f283b6d6907c6bdd89a925ac5a033867cf64827b7f649647807d",
+    "summarize.py": "451e9da875d9ebafdc36208803eafd106ce74cd404acfc55e4bec210443f9b33"
+  },
+  "checks": [
+    {
+      "case": "image-baseline",
+      "result_sha256": "44955a7478d5da294273e49ac530b884953beb5a9111e828d020b6898680c5c1",
+      "attempts": 61600,
+      "ip_bytes": 40656000,
+      "all_psdu_bytes": 43736000,
+      "reserved_seconds": "8393/625",
+      "played_completed_blocks": []
+    },
+    {
+      "case": "mixed-fifo-immediate",
+      "result_sha256": "29180921f9e1323dc9446144cd52e9eb7e5f8851840e1878db6fdf3cb348dbcb",
+      "attempts": 61626,
+      "ip_bytes": 40673160,
+      "all_psdu_bytes": 43754460,
+      "reserved_seconds": "3358617/250000",
+      "played_completed_blocks": [
+        0
+      ]
+    },
+    {
+      "case": "mixed-fifo-aggregate",
+      "result_sha256": "a73b1f779d6ecaa46b3e0a32d982f2a666d544153a1896b01dfe686c8952f27d",
+      "attempts": 44279,
+      "ip_bytes": 39077236,
+      "all_psdu_bytes": 41291186,
+      "reserved_seconds": "1110997/100000",
+      "played_completed_blocks": [
+        0
+      ]
+    }
+  ],
+  "findings": [
+    "Initial compare baseline-summary binding gap reported; revised compare now checks old manifest/input/result/summary linkage, and the three available old summary links were actually verified.",
+    "Revised compare uses wan_serialized_ip_bytes_by_horizon. The three existing complete ledgers also satisfy WAN bytes == started wire_bytes == radio-attempt IP bytes.",
+    "play_end excludes future scheduled end in inspected application implementation",
+    "PSDU and MAC ACK separately counted once; no double counting found"
+  ]
+}

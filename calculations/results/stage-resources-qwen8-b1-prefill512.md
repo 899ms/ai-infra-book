@@ -10105,13 +10105,13 @@ Conditional known-work service bounds; full runtime remains unknown.
 | effective_resource_rates.matrix_fp8 | 1978900000000000.0 |
 | effective_resource_rates.vector_fp32 | 66900000000000.01 |
 | effective_resource_rates.interface_bytes | 3350000000000.0 |
-| effective_resource_rates.special:sin | unknown (null) |
 | effective_resource_rates.special:compare_max | unknown (null) |
 | effective_resource_rates.special:cos | unknown (null) |
 | effective_resource_rates.special:exp | unknown (null) |
-| effective_resource_rates.special:rsqrt | unknown (null) |
 | effective_resource_rates.special:mask_decisions | unknown (null) |
 | effective_resource_rates.special:negate | unknown (null) |
+| effective_resource_rates.special:rsqrt | unknown (null) |
+| effective_resource_rates.special:sin | unknown (null) |
 | baseline_work.matrix_flops | 7191170908160 |
 | baseline_work.scalar_flops | 2935312896 |
 | baseline_work.special_ops.sin | 65536 |
@@ -10736,7 +10736,7 @@ Conditional known-work service bounds; full runtime remains unknown.
 | resource_bounds.global_resource_seconds.interface_bytes | 0.007320983460298507 |
 | resource_bounds.global_resource_seconds.matrix_bf16 | 0.007268213976308874 |
 | resource_bounds.known_global_max_seconds | 0.007320983460298507 |
-| resource_bounds.known_serial_stage_max_sum_seconds | 0.007643680691109401 |
+| resource_bounds.known_serial_stage_max_sum_seconds | 0.007643680691109403 |
 | resource_bounds.accounted_global_max_seconds | unknown (null) |
 | resource_bounds.accounted_serial_stage_lower_bound_seconds | unknown (null) |
 | compute_only_bounds.stages[0].id | input |
@@ -11314,7 +11314,7 @@ Conditional known-work service bounds; full runtime remains unknown.
 | compute_only_bounds.global_resource_seconds.vector_fp32 | 4.387612699551569e-05 |
 | compute_only_bounds.global_resource_seconds.matrix_bf16 | 0.007268213976308874 |
 | compute_only_bounds.known_global_max_seconds | 0.007268213976308874 |
-| compute_only_bounds.known_serial_stage_max_sum_seconds | 0.007268214466114554 |
+| compute_only_bounds.known_serial_stage_max_sum_seconds | 0.007268214466114556 |
 | compute_only_bounds.accounted_global_max_seconds | unknown (null) |
 | compute_only_bounds.accounted_serial_stage_lower_bound_seconds | unknown (null) |
 | capacity.comparison_bytes | 16456968192 |

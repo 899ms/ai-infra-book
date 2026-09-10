@@ -1,0 +1,186 @@
+{
+  "status": "passed",
+  "scope": "Selected source functions; full BBR and transport not implemented",
+  "sources": [
+    {
+      "file": "sources/rfc9438.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+      "revision": "RFC9438",
+      "bytes": 73704,
+      "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+      "retrieved": "2026-09-09",
+      "status": "downloaded_verified_against_prior_scope"
+    },
+    {
+      "file": "sources/tcp_bbr.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/net/ipv4/tcp_bbr.c",
+      "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+      "bytes": 42724,
+      "sha256": "ba7d0706259dfef5bf455f26ac4bab65f43b9209b9cfd4f761c64c89816bdfe4",
+      "retrieved": "2026-09-09",
+      "status": "downloaded_verified_against_prior_scope"
+    },
+    {
+      "file": "sources/tcp_rate.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/net/ipv4/tcp_rate.c",
+      "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+      "bytes": 8436,
+      "sha256": "52d682c760573819a36bfef45a094ea8615a39d56c0248569d96f9e6e47b2b23",
+      "retrieved": "2026-09-09",
+      "status": "downloaded_verified_against_prior_scope"
+    },
+    {
+      "file": "sources/tcp.h",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/include/net/tcp.h",
+      "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+      "bytes": 78187,
+      "sha256": "de555f117e5b039040c94ce693ba5e0c74bb7a4f11df00e0d72de95988f1b553",
+      "retrieved": "2026-09-09",
+      "status": "downloaded_dependency_no_prior_hash",
+      "purpose": "before()/after() serial arithmetic and rate_sample unit definitions"
+    }
+  ],
+  "sample": {
+    "valid": true,
+    "reason": null,
+    "delivered": 10,
+    "interval_us": 100000,
+    "snd_interval_us": 100000,
+    "rcv_interval_us": 20000,
+    "prior_delivered": 100,
+    "is_app_limited": false,
+    "bw_scaled": 1677
+  },
+  "pacing_bytes_per_second": 428493,
+  "bdp_packets": 10,
+  "quantized_drain_target_packets": 14,
+  "rounds": [
+    {
+      "state": {
+        "next_rtt_delivered": 110,
+        "rtt_cnt": 1,
+        "full_bw": 1000,
+        "full_bw_cnt": 1,
+        "full_bw_reached": false,
+        "mode": "STARTUP"
+      },
+      "round_start": true,
+      "bw_threshold": 1250,
+      "pacing_gain": 739,
+      "needs_probe_bw_phase_initialization": false
+    },
+    {
+      "state": {
+        "next_rtt_delivered": 120,
+        "rtt_cnt": 2,
+        "full_bw": 1000,
+        "full_bw_cnt": 2,
+        "full_bw_reached": false,
+        "mode": "STARTUP"
+      },
+      "round_start": true,
+      "bw_threshold": 1250,
+      "pacing_gain": 739,
+      "needs_probe_bw_phase_initialization": false
+    },
+    {
+      "state": {
+        "next_rtt_delivered": 130,
+        "rtt_cnt": 3,
+        "full_bw": 1000,
+        "full_bw_cnt": 3,
+        "full_bw_reached": true,
+        "mode": "DRAIN"
+      },
+      "round_start": true,
+      "bw_threshold": 1250,
+      "pacing_gain": 88,
+      "needs_probe_bw_phase_initialization": false
+    }
+  ],
+  "drain": {
+    "state": {
+      "next_rtt_delivered": 140,
+      "rtt_cnt": 4,
+      "full_bw": 1000,
+      "full_bw_cnt": 3,
+      "full_bw_reached": true,
+      "mode": "PROBE_BW"
+    },
+    "round_start": true,
+    "bw_threshold": 1250,
+    "pacing_gain": null,
+    "needs_probe_bw_phase_initialization": true
+  },
+  "integer_threshold_correction": {
+    "state": {
+      "next_rtt_delivered": 110,
+      "rtt_cnt": 1,
+      "full_bw": 12,
+      "full_bw_cnt": 0,
+      "full_bw_reached": false,
+      "mode": "STARTUP"
+    },
+    "round_start": true,
+    "bw_threshold": 12,
+    "pacing_gain": 739,
+    "needs_probe_bw_phase_initialization": false
+  },
+  "app_limited": {
+    "state": {
+      "next_rtt_delivered": 110,
+      "rtt_cnt": 1,
+      "full_bw": 1000,
+      "full_bw_cnt": 0,
+      "full_bw_reached": false,
+      "mode": "STARTUP"
+    },
+    "round_start": true,
+    "bw_threshold": 1250,
+    "pacing_gain": 739,
+    "needs_probe_bw_phase_initialization": false
+  },
+  "not_new_round": {
+    "state": {
+      "next_rtt_delivered": 101,
+      "rtt_cnt": 0,
+      "full_bw": 1000,
+      "full_bw_cnt": 0,
+      "full_bw_reached": false,
+      "mode": "STARTUP"
+    },
+    "round_start": false,
+    "bw_threshold": 1250,
+    "pacing_gain": 739,
+    "needs_probe_bw_phase_initialization": false
+  },
+  "invalid_interval": {
+    "valid": false,
+    "reason": "nonpositive_or_below_min_rtt",
+    "delivered": 10,
+    "interval_us": -1,
+    "snd_interval_us": 100000,
+    "rcv_interval_us": 20000,
+    "prior_delivered": 100,
+    "is_app_limited": false,
+    "bw_scaled": null
+  },
+  "missing_timestamp": {
+    "valid": false,
+    "reason": "missing_prior_timestamp_or_sack_reneging",
+    "delivered": -1,
+    "interval_us": -1
+  },
+  "recovery": {
+    "cwnd_before_target_and_caps": 73,
+    "packet_conservation": true,
+    "reset_next_rtt_delivered_to_current_total": true,
+    "previous_ca_after": 3
+  },
+  "restored": {
+    "cwnd_before_target_and_caps": 100,
+    "packet_conservation": false,
+    "reset_next_rtt_delivered_to_current_total": false,
+    "previous_ca_after": 0
+  }
+}

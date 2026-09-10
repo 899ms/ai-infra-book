@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "checks": [
+    "selected-send-snapshot-and-dominant-send-interval",
+    "late-ack-once-no-duplicate-flight-or-rtt",
+    "pure-ack-not-bbr-delivery",
+    "flow-limited-not-application-limited",
+    "application-flag-from-sent-snapshot",
+    "pto-not-loss-or-delivery",
+    "new-empty-flight-epoch-after-retransmission-ack",
+    "hystart-frontier-does-not-skip-ack-hole",
+    "hystart-does-not-sample-smoothed-rtt",
+    "hystart-css-to-cubic-byte-unit-handoff-once",
+    "cubic-one-loss-reduction-per-epoch-and-no-late-growth",
+    "sender-pto-probe-late-duplicate-bbr",
+    "sender-pto-probe-late-duplicate-cubic_hystart"
+  ],
+  "hashes": {
+    "bbr_adapter.py": "606b263d23d8c7917fd6deab94378a4639b343c43bf35087937eb9eebe7d66ba",
+    "cubic_adapter.py": "cdfc2c64e387dc48e7e940d67885cfc2630f8423800976373d968b458045dc42",
+    "sender.py": "be435d7222f2531f485e23611633c8622b3385d7ecb3e8406342b7b9a1e7b77d"
+  },
+  "scope": "direct independent adapter callbacks, excludes pacer and full network"
+}

@@ -1,0 +1,16 @@
+{
+  "status": "preexecution expectations; independent of candidate functions",
+  "units": "byte windows and sequence offsets; RTT seconds",
+  "round_contract": "Actual sent SND.NXT defines windowEnd. An ACK's sample and growth belong to the ending round before boundary reset. Every new round is backed by additional sent bytes, never inferred from ACK delta.",
+  "cases": [
+    {"name":"threshold-clamps", "previous_round_min_rtt":["0.010","0.080","0.200"], "expected_threshold":["0.004","0.010","0.016"]},
+    {"name":"first-two-rounds-enter-css-on-eighth-sample", "smss":1000,"initial_cwnd":10000,"round1":{"sent_end":8000,"ack_offsets":[1000,2000,3000,4000,5000,6000,7000,8000],"rtt":"0.010"},"round2":{"sent_end":16000,"ack_offsets":[9000,10000,11000,12000,13000,14000,15000,16000],"rtt":"0.014"},"expected":{"after_round1_cwnd":18000,"after_second_round_seventh_ack_phase":"slow_start","after_round2_cwnd":26000,"phase":"css","css_completed_rounds":1,"css_baseline":"0.014"}},
+    {"name":"css-fifth-round-complete", "continuation_of":"first-two-rounds-enter-css-on-eighth-sample", "additional_rounds":4,"acks_each_round":8,"new_bytes_per_ack":1000,"rtt":"0.014","expected":{"cwnd":34000,"ssthresh":34000,"phase":"congestion_avoidance"}},
+    {"name":"css-spurious-exit-requires-eight-new-round-samples", "continuation_of":"first-two-rounds-enter-css-on-eighth-sample","rtt":"0.013","expected":{"after_seven_new_round_acks_phase":"css","after_eighth_cwnd":28000,"after_eighth_phase":"slow_start","baseline_reset":true}},
+    {"name":"css-baseline-equality-does-not-reenter-slow-start", "continuation_of":"first-two-rounds-enter-css-on-eighth-sample","new_round_samples":8,"rtt":"0.014","expected_phase":"css"},
+    {"name":"new-ack-growth-cap", "initial_cwnd":10000,"smss":1000,"new_bytes":20000,"expected":{"unpaced_slow_start":18000,"paced_slow_start":30000,"unpaced_css":12000,"paced_css":15000}},
+    {"name":"missing-rtt-is-not-eight-samples", "acks":8,"new_bytes_per_ack":1000,"rtt":null,"expected":{"new_valid_sample_count":0,"slow_start_growth":8000,"css_triggered":false}},
+    {"name":"loss-or-ecn-exits-without-invented-beta", "phase":"css","cwnd":26000,"signals":["loss","ecn"],"expected":{"phase":"congestion_avoidance","cwnd":26000,"ssthresh":26000}},
+    {"name":"ack-crosses-window-marker-once", "window_end":8000,"sent_end":20000,"ack_sequence":9000,"expected":{"ended_rounds":1,"next_window_end":20000},"note":"Does not create nine rounds from 1000-byte ACK increments; new ACK payload/sample processed once."}
+  ]
+}

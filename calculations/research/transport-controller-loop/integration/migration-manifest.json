@@ -1,0 +1,190 @@
+{
+  "scope": "Shared components only; network/CLI/reproduce pending",
+  "modules": [
+    {
+      "research_file": "research/congestion-controllers/cubic.py",
+      "research_sha256": "91be0851fb7a2e947e42578e8703bd098df98ba7432672440a2f81e677282836",
+      "public_file": "src/infra_calc/transport/cubic.py",
+      "public_sha256": "4e77d2a7c709a3c873009ba89dabd806760cb56f3a5ce7164233925211f5e521",
+      "wrapper_diff": "cubic.patch"
+    },
+    {
+      "research_file": "research/hystart-plus-plus/calculate.py",
+      "research_sha256": "4eb38d1b4e09a4d5922a89a6bbcb7127ed4cfbf4678afb94323aea6eb3cb139d",
+      "public_file": "src/infra_calc/transport/hystart.py",
+      "public_sha256": "216c633b34e3acf39665cf3e920d9701c689434d6b31fe6bcbc65deafc31d3c7",
+      "wrapper_diff": "hystart.patch"
+    },
+    {
+      "research_file": "research/congestion-controllers/bbr_state.py",
+      "research_sha256": "fda8c57569767c94c9bbdbeca7e0155425542ade3c9f9356db188a131b9127c6",
+      "public_file": "src/infra_calc/transport/bbr_state.py",
+      "public_sha256": "e24b8d55efb218f344a5799f73db83966cfc71088341f595a60562952f906194",
+      "wrapper_diff": "bbr_state.patch"
+    },
+    {
+      "research_file": "research/congestion-controllers/bbr_minmax.py",
+      "research_sha256": "07cdbf94e82d20115657810522d09461422815ccca539d9e61ce23ebb1397b28",
+      "public_file": "src/infra_calc/transport/bbr_minmax.py",
+      "public_sha256": "6c763345efa592f6bba348b81350081b0e24050d34c718c1727622739b52d28e",
+      "wrapper_diff": "bbr_minmax.patch"
+    },
+    {
+      "research_file": "research/congestion-controllers/bbr_reference.py",
+      "research_sha256": "bce5ee725bb7027195fae50356d8ddb95f8441a4721e21eaac548beeede8ba05",
+      "public_file": "src/infra_calc/transport/bbr_reference.py",
+      "public_sha256": "714b9ffecd300362a354e73aee4adbb744c41795a3019b88bc3e784e31612da6",
+      "wrapper_diff": "bbr_reference.patch"
+    },
+    {
+      "research_file": "research/transport-controller-loop/bbr_adapter.py",
+      "research_sha256": "606b263d23d8c7917fd6deab94378a4639b343c43bf35087937eb9eebe7d66ba",
+      "public_file": "src/infra_calc/transport/bbr_adapter.py",
+      "public_sha256": "870b2f2ac35e4d98d0425eb97c86cc4fc8ba0eb6e518fde168165030756dac7c",
+      "wrapper_diff": "bbr_adapter.patch"
+    },
+    {
+      "research_file": "research/transport-controller-loop/cubic_adapter.py",
+      "research_sha256": "cdfc2c64e387dc48e7e940d67885cfc2630f8423800976373d968b458045dc42",
+      "public_file": "src/infra_calc/transport/cubic_adapter.py",
+      "public_sha256": "4dafed0947806549a354493aa12f976827fe4b8cb83f0f0096da65ac512eb4a3",
+      "wrapper_diff": "cubic_adapter.patch"
+    },
+    {
+      "research_file": "research/transport-controller-loop/pacer.py",
+      "research_sha256": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+      "public_file": "src/infra_calc/transport/pacer.py",
+      "public_sha256": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+      "wrapper_diff": "pacer.patch"
+    },
+    {
+      "research_file": "research/transport-controller-loop/persistent_congestion.py",
+      "research_sha256": "116448af2c5c8c1bc0571c1452b032b01f3300771dae9a7e8bc7ac5ea8833a7f",
+      "public_file": "src/infra_calc/transport/persistent_congestion.py",
+      "public_sha256": "2f6b9e998e5a60ce9388aee8e956acbf04e1ffe77646b1c757b1daae77a491d7",
+      "wrapper_diff": "persistent_congestion.patch"
+    }
+  ],
+  "added_sources": [
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+      "revision": "RFC9438",
+      "bytes": 73704,
+      "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+      "file": "sources/congestion-controllers/rfc9438.txt",
+      "model": "congestion-controllers",
+      "id": "congestion-controllers-rfc9438.txt",
+      "status": "downloaded",
+      "copied_from": "calculations/research/congestion-controllers/sources/rfc9438.txt",
+      "verification": "Pinned official local original and copied destination bytes/SHA256 verified"
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc9406.txt",
+      "revision": "RFC9406",
+      "bytes": 18917,
+      "sha256": "43e3ddc1d3446142b125f018cd52aa2ff858b3f1ff9c6969924ab9fbf45d5230",
+      "file": "sources/congestion-controllers/rfc9406.txt",
+      "model": "congestion-controllers",
+      "id": "congestion-controllers-rfc9406.txt",
+      "status": "downloaded",
+      "copied_from": "calculations/research/hystart-plus-plus/sources/rfc9406.txt",
+      "verification": "Pinned official local original and copied destination bytes/SHA256 verified"
+    },
+    {
+      "url": "https://www.rfc-editor.org/errata_search.php?rfc=9406",
+      "revision": "RFC9406 errata search snapshot 2026-09-09",
+      "bytes": 7052,
+      "sha256": "4765d07ace49aa20e0ce7001016c50329f1309640d1e0a024a5577c0494572db",
+      "file": "sources/congestion-controllers/errata-check.html",
+      "model": "congestion-controllers",
+      "id": "congestion-controllers-errata-check.html",
+      "status": "downloaded",
+      "copied_from": "calculations/research/hystart-plus-plus/errata-check.html",
+      "verification": "Pinned official local original and copied destination bytes/SHA256 verified"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/net/ipv4/tcp_bbr.c",
+      "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+      "bytes": 42724,
+      "sha256": "ba7d0706259dfef5bf455f26ac4bab65f43b9209b9cfd4f761c64c89816bdfe4",
+      "file": "sources/congestion-controllers/tcp_bbr.c",
+      "model": "congestion-controllers",
+      "id": "congestion-controllers-tcp_bbr.c",
+      "status": "downloaded",
+      "copied_from": "calculations/research/congestion-controller-inputs/sources/tcp_bbr.c",
+      "verification": "Pinned official local original and copied destination bytes/SHA256 verified"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/net/ipv4/tcp_rate.c",
+      "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+      "bytes": 8436,
+      "sha256": "52d682c760573819a36bfef45a094ea8615a39d56c0248569d96f9e6e47b2b23",
+      "file": "sources/congestion-controllers/tcp_rate.c",
+      "model": "congestion-controllers",
+      "id": "congestion-controllers-tcp_rate.c",
+      "status": "downloaded",
+      "copied_from": "calculations/research/congestion-controller-inputs/sources/tcp_rate.c",
+      "verification": "Pinned official local original and copied destination bytes/SHA256 verified"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/include/net/tcp.h",
+      "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+      "bytes": 78187,
+      "sha256": "de555f117e5b039040c94ce693ba5e0c74bb7a4f11df00e0d72de95988f1b553",
+      "file": "sources/congestion-controllers/tcp.h",
+      "model": "congestion-controllers",
+      "id": "congestion-controllers-tcp.h",
+      "status": "downloaded",
+      "copied_from": "calculations/research/congestion-controller-inputs/sources/tcp.h",
+      "verification": "Pinned official local original and copied destination bytes/SHA256 verified"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/include/linux/win_minmax.h",
+      "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+      "bytes": 832,
+      "sha256": "deef538ecd6a56ed99345497b254b1c480f45b1a5b0cb3e30a37bd4a9420db31",
+      "file": "sources/congestion-controllers/win_minmax.h",
+      "model": "congestion-controllers",
+      "id": "congestion-controllers-win_minmax.h",
+      "status": "downloaded",
+      "copied_from": "calculations/research/congestion-controllers/bbr-sources/win_minmax.h",
+      "verification": "Pinned official local original and copied destination bytes/SHA256 verified"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/lib/win_minmax.c",
+      "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+      "bytes": 3435,
+      "sha256": "6d7fabb8cdb2a53e485341435483b408a0183f4e349cf894343ac5febcb3fe86",
+      "file": "sources/congestion-controllers/win_minmax.c",
+      "model": "congestion-controllers",
+      "id": "congestion-controllers-win_minmax.c",
+      "status": "downloaded",
+      "copied_from": "calculations/research/congestion-controllers/bbr-sources/win_minmax.c",
+      "verification": "Pinned official local original and copied destination bytes/SHA256 verified"
+    }
+  ],
+  "source_mapping": {
+    "rfc9000.txt": "sources/protocol-rfc/rfc9000.txt",
+    "rfc9002.txt": "sources/protocol-rfc/rfc9002.txt",
+    "rfc9002-errata7539.html": "sources/protocol-rfc/rfc9002-errata7539.html",
+    "rfc9438.txt": "sources/congestion-controllers/rfc9438.txt",
+    "rfc5681.txt": "sources/connection-window/rfc5681.txt",
+    "rfc9406.txt": "sources/congestion-controllers/rfc9406.txt",
+    "errata-check.html": "sources/congestion-controllers/errata-check.html",
+    "tcp_bbr.c": "sources/congestion-controllers/tcp_bbr.c",
+    "tcp_rate.c": "sources/congestion-controllers/tcp_rate.c",
+    "tcp.h": "sources/congestion-controllers/tcp.h",
+    "win_minmax.h": "sources/congestion-controllers/win_minmax.h",
+    "win_minmax.c": "sources/congestion-controllers/win_minmax.c"
+  },
+  "public_support_files": [
+    {
+      "file": "src/infra_calc/transport/__init__.py",
+      "sha256": "afe84ba19b4e95b5236b841bb80687933bc348f80273d9d126dbe184250a28eb"
+    },
+    {
+      "file": "src/infra_calc/transport/reference_sources.py",
+      "sha256": "86bd8441af9b881953ab4e98bea21ea9d071339039d509d9143b5af8e47ea788"
+    }
+  ]
+}

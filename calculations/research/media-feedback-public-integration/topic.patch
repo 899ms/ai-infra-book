@@ -1,0 +1,14 @@
+--- 
++++ 
+@@ -133,6 +133,11 @@
+ 
+ 
+ def calculate(inputs=None):
++    if isinstance(inputs, dict) and ("application" in inputs or "network" in inputs):
++        if set(inputs) != {"application", "network"}:
++            raise ValueError("media input requires exactly application and network")
++        from ..transport.media_network import calculate as calculate_media
++        return calculate_media(inputs)
+     p = copy.deepcopy(example() if inputs is None else inputs)
+     validate_inputs(p)
+     reference_sources = sender.reference_sources()

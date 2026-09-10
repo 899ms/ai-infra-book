@@ -1,0 +1,32 @@
+--- calculations/research/congestion-controllers/bbr_reference.py
++++ calculations/src/infra_calc/transport/bbr_reference.py
+@@ -4,9 +4,9 @@
+ explicit inputs. No QUIC feedback is interpreted as a Linux TCP callback.
+ """
+ 
++from .reference_sources import reference_sources
++
+ from dataclasses import dataclass, asdict
+-from pathlib import Path
+-import hashlib
+ import json
+ 
+ BW_UNIT = 1 << 24
+@@ -54,16 +54,7 @@
+ 
+ 
+ def sources():
+-    root = Path(__file__).resolve().parent.parent / "congestion-controller-inputs"
+-    lock = json.loads((root / "sources.lock.json").read_text())
+-    for row in lock["sources"]:
+-        payload = (root / row["file"]).read_bytes()
+-        if (
+-            len(payload) != row["bytes"]
+-            or hashlib.sha256(payload).hexdigest() != row["sha256"]
+-        ):
+-            raise ValueError("Source hash mismatch: " + row["file"])
+-    return lock["sources"]
++    return reference_sources("bbr")
+ 
+ 
+ def rate_sample(

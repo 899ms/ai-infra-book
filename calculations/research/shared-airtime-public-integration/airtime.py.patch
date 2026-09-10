@@ -1,0 +1,29 @@
+--- calculations/research/shared-airtime-loop/airtime.py
++++ calculations/src/infra_calc/transport/airtime.py
+@@ -125,26 +125,3 @@
+                 radio_transmit_seconds=(data_duration+(F(0) if outcome=='data_lost' else ack_duration)) if data is not None else None,
+                 data_and_confirmation_phase_seconds=data_duration+(F(0) if outcome=='data_lost' else sifs+ack_duration),
+                 note='Offsets do not authorize end-to-end ACK, cwnd, flow credit or retry before their actual events.')
+-
+-
+-def main():
+-    """Reader-facing exact ledger for a selected editable profile."""
+-    import argparse
+-    import hashlib
+-    import json
+-    from pathlib import Path
+-    parser=argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument('--profiles',type=Path,required=True)
+-    parser.add_argument('--mode',choices=('reference','teaching'),default='reference')
+-    parser.add_argument('--ip-bytes',type=int,required=True)
+-    parser.add_argument('--transport-ack',action='store_true')
+-    parser.add_argument('--outcome',choices=('success','data_lost','mac_ack_lost'),default='success')
+-    args=parser.parse_args()
+-    raw=args.profiles.read_bytes()
+-    profiles=json.loads(raw)
+-    key='source_backed_reference_selection' if args.mode=='reference' else 'abstract_teaching_profile'
+-    result=exchange(profiles[key],args.ip_bytes,args.outcome,transport_ack=args.transport_ack)
+-    print(json.dumps({'profiles_sha256':hashlib.sha256(raw).hexdigest(),'profile_key':key,'exchange':result},default=str,indent=2))
+-
+-
+-if __name__=='__main__':main()

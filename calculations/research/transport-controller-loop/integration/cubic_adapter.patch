@@ -1,0 +1,39 @@
+--- calculations/research/transport-controller-loop/cubic_adapter.py
++++ calculations/src/infra_calc/transport/cubic_adapter.py
+@@ -2,33 +2,9 @@
+ 
+ import copy
+ from fractions import Fraction as F
+-import hashlib
+-import importlib.util
+-from pathlib import Path
+-
+-ROOT = Path(__file__).resolve().parent
+-
+-
+-def pinned_module(path, name, sha):
+-    raw = path.read_bytes()
+-    if hashlib.sha256(raw).hexdigest() != sha:
+-        raise ValueError("frozen controller source changed")
+-    spec = importlib.util.spec_from_file_location(name, path)
+-    module = importlib.util.module_from_spec(spec)
+-    spec.loader.exec_module(module)
+-    return module
+-
+-
+-CUBIC = pinned_module(
+-    ROOT.parent / "congestion-controllers/cubic.py",
+-    "controller_cubic",
+-    "91be0851fb7a2e947e42578e8703bd098df98ba7432672440a2f81e677282836",
+-)
+-HYSTART = pinned_module(
+-    ROOT.parent / "hystart-plus-plus/calculate.py",
+-    "controller_hystart",
+-    "4eb38d1b4e09a4d5922a89a6bbcb7127ed4cfbf4678afb94323aea6eb3cb139d",
+-)
++
++from . import cubic as CUBIC
++from . import hystart as HYSTART
+ 
+ 
+ class CubicAdapter:

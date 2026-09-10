@@ -1,0 +1,399 @@
+# quic-retry-declared-packets
+
+这是声明数据包和消息依赖的计算；包长不是官方测量值，时间不是真实协议实测。
+
+状态：`complete`。
+
+## 协议分支与授权
+
+| 输入 | 声明值 |
+| --- | --- |
+| handshake_event | `"retry"` |
+| send_early | `false` |
+| early_result | `"accept"` |
+| client_credentials_available | `true` |
+| application_early_data_authorized | `false` |
+| retry_early_policy | `"reattempt"` |
+| retry_early_replay_authorized | `true` |
+| application_retry_authorized | `false` |
+| application_policy | `"immediate"` |
+| retry_token_bytes | `32` |
+| retry_token_valid | `true` |
+| retry_integrity_valid | `true` |
+| initial_dcid | `"original-server-cid"` |
+| retry_scid | `"retry-server-cid"` |
+| client_scid | `"client-cid"` |
+
+Retry 不自动拒绝 0RTT；HRR 和未知 PSK 回退拒绝早期输入。客户端凭据条件与服务器的 PSK 决策分开。
+
+## 握手状态变化
+
+| 精确时刻（s） | 事件 |
+| ---: | --- |
+| 314067/3125000 | Retry_validated_Initial_keys_changed_PN_retained_recovery_reset_unmodeled |
+
+服务器检测失败不会让客户端立刻停发；客户端收到关闭消息后停止未开始的包，已发包和在途字节保留。
+
+## 业务与握手时刻
+
+时间单位为秒，保留精确分数；不存在的完整响应不会以最后消息时刻替代。
+
+| 事件 | 精确时刻（s） |
+| --- | ---: |
+| client_hello_received | 31557/625000 |
+| retry_received | 314067/3125000 |
+| server_address_validated | 117963/781250 |
+| client_hello_retry_received | 117963/781250 |
+| server_flight_received | 157179/781250 |
+| client_1rtt_keys_installed | 157179/781250 |
+| handshake_ack_received | 785101/3125000 |
+| client_finished_received | 785261/3125000 |
+| complete_request | 785481/3125000 |
+| application_execution | 785481/3125000 |
+| response_ready | 1722981/3125000 |
+| complete_response | 18793/31250 |
+
+## 有效业务与已建模字节
+
+| 数量 | 值 |
+| --- | ---: |
+| early_payload_sent_bytes | 0 |
+| one_rtt_payload_sent_bytes | 100 |
+| request_payload_sent_bytes | 100 |
+| accepted_unique_request_bytes | 100 |
+| discarded_early_payload_bytes | 0 |
+| delivered_response_payload_bytes | 200 |
+| application_execution_count | 1 |
+| modeled_wire_bytes_by_direction.c2s | 2868 |
+| modeled_wire_bytes_by_direction.s2c | 2860 |
+| last_modeled_arrival | 18793/31250 |
+
+物理字节仅包括本图显式列出的消息，不是包含全部 ACK／控制消息的抓包总量。
+
+## 适用范围
+
+- Declared IPv4/UDP/QUIC layout; no packet codec, congestion, flow control, general ACK, loss or PTO.
+- First final server_flight datagram supplies ServerHello; its remaining datagrams use Handshake keys.
+- Handshake ACK optionally sent after second server datagram; blocked graph is not a real QUIC deadlock.
+- 0RTT acceptance/rejection and application replay policy are declared; no exactly-once guarantee.
+- TCP HRR, combined events, buffered pre-Retry 0RTT, general loss recovery, HTTP settings and background tickets remain unimplemented.
+
+## 固定官方来源
+
+- [RFC9293](https://www.rfc-editor.org/rfc/rfc9293.txt)：`6d9ac8be4b0286f8c3d337addf442b2eb6a9b14e1366594ea7fbc273f93dc2d9`。
+- [RFC8446](https://www.rfc-editor.org/rfc/rfc8446.txt)：`47871bc8820a2c3b6ea89f061055577058862cf543686b82d10131239702b3bd`。
+- [RFC9000](https://www.rfc-editor.org/rfc/rfc9000.txt)：`f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22`。
+- [RFC9001](https://www.rfc-editor.org/rfc/rfc9001.txt)：`3bbaecdf5afd278052a2c48348ce118c4ff8d0cf6b9915549858171b3f98a591`。
+- [RFC9002](https://www.rfc-editor.org/rfc/rfc9002.txt)：`3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af`。
+- [RFC5681](https://www.rfc-editor.org/rfc/rfc5681.txt)：`a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d`。
+- [RFC9114](https://www.rfc-editor.org/rfc/rfc9114.txt)：`6b84555c88eeebcf5d2b2e1d9d7b58630abc97ab877b2cf62dee4cd635db34e4`。
+
+## 完整输入与逐包事件
+
+```json
+{
+  "calculation": "quic-retry-declared-packets",
+  "inputs": {
+    "early_result": "accept",
+    "application_early_data_authorized": false,
+    "application_retry_authorized": false,
+    "valid_psk": true,
+    "early_credentials_valid": true,
+    "address_token_valid": false,
+    "server_flight_ack": true,
+    "application_policy": "immediate",
+    "request_payload_bytes": 100,
+    "response_payload_bytes": 200,
+    "packet_payload_bytes": 1100,
+    "zero_rtt_overhead_bytes": 64,
+    "one_rtt_overhead_bytes": 48,
+    "c2s_bits_per_second": 20000000,
+    "s2c_bits_per_second": 100000000,
+    "c2s_propagation_seconds": "0.05",
+    "s2c_propagation_seconds": "0.05",
+    "model_seconds": "0.3",
+    "packets": {
+      "client_hello": [
+        1200
+      ],
+      "server_flight": [
+        1200,
+        1200
+      ],
+      "client_finished": [
+        100
+      ],
+      "handshake_ack": [
+        80
+      ],
+      "retry": [
+        100
+      ],
+      "client_hello_retry": [
+        1200
+      ],
+      "hrr": [
+        1200
+      ],
+      "client_hello_hrr": [
+        1200
+      ],
+      "failure": [
+        1200
+      ]
+    },
+    "handshake_event": "retry",
+    "send_early": false,
+    "client_credentials_available": true,
+    "retry_early_policy": "reattempt",
+    "retry_early_replay_authorized": true,
+    "retry_token_valid": true,
+    "retry_integrity_valid": true,
+    "initial_dcid": "original-server-cid",
+    "retry_scid": "retry-server-cid",
+    "client_scid": "client-cid",
+    "retry_token_bytes": 32,
+    "client_hello_crypto_bytes": 400,
+    "response_overhead_bytes": 48
+  },
+  "reference_sources": [
+    {
+      "file": "sources/protocol-rfc/rfc9293.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9293.txt",
+      "revision": "RFC9293",
+      "sha256": "6d9ac8be4b0286f8c3d337addf442b2eb6a9b14e1366594ea7fbc273f93dc2d9"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc8446.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc8446.txt",
+      "revision": "RFC8446",
+      "sha256": "47871bc8820a2c3b6ea89f061055577058862cf543686b82d10131239702b3bd"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9000.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+      "revision": "RFC9000",
+      "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9001.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9001.txt",
+      "revision": "RFC9001",
+      "sha256": "3bbaecdf5afd278052a2c48348ce118c4ff8d0cf6b9915549858171b3f98a591"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9002.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+      "revision": "RFC9002",
+      "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc5681.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+      "revision": "RFC5681",
+      "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9114.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9114.txt",
+      "revision": "RFC9114",
+      "sha256": "6b84555c88eeebcf5d2b2e1d9d7b58630abc97ab877b2cf62dee4cd635db34e4"
+    }
+  ],
+  "reference_source_root": "calculations",
+  "status": "complete",
+  "milestones": {
+    "client_hello_received": "31557/625000",
+    "retry_received": "314067/3125000",
+    "server_address_validated": "117963/781250",
+    "client_hello_retry_received": "117963/781250",
+    "server_flight_received": "157179/781250",
+    "client_1rtt_keys_installed": "157179/781250",
+    "handshake_ack_received": "785101/3125000",
+    "client_finished_received": "785261/3125000",
+    "complete_request": "785481/3125000",
+    "application_execution": "785481/3125000",
+    "response_ready": "1722981/3125000",
+    "complete_response": "18793/31250"
+  },
+  "state_transitions": [
+    {
+      "at": "314067/3125000",
+      "event": "Retry_validated_Initial_keys_changed_PN_retained_recovery_reset_unmodeled"
+    }
+  ],
+  "transmissions": [
+    {
+      "kind": "client_hello",
+      "index": 0,
+      "udp_bytes": 1200,
+      "payload_bytes": 0,
+      "packet_number_space": "initial",
+      "packet_number": 0,
+      "initial_key_epoch": 0,
+      "destination_connection_id": "original-server-cid",
+      "source_connection_id": "client-cid",
+      "retry_token_bytes": 0,
+      "tls_client_hello_identity": "CH1",
+      "direction": "c2s",
+      "start": "0",
+      "end": "307/625000",
+      "arrival": "31557/625000",
+      "wire_bytes": 1228
+    },
+    {
+      "kind": "retry",
+      "index": 0,
+      "udp_bytes": 100,
+      "payload_bytes": 0,
+      "initial_key_epoch": 0,
+      "direction": "s2c",
+      "start": "31557/625000",
+      "end": "157817/3125000",
+      "arrival": "314067/3125000",
+      "wire_bytes": 128
+    },
+    {
+      "kind": "client_hello_retry",
+      "index": 0,
+      "udp_bytes": 1200,
+      "payload_bytes": 0,
+      "packet_number_space": "initial",
+      "packet_number": 1,
+      "initial_key_epoch": 1,
+      "destination_connection_id": "retry-server-cid",
+      "source_connection_id": "client-cid",
+      "retry_token_bytes": 32,
+      "tls_client_hello_identity": "CH1",
+      "direction": "c2s",
+      "start": "314067/3125000",
+      "end": "157801/1562500",
+      "arrival": "117963/781250",
+      "wire_bytes": 1228
+    },
+    {
+      "kind": "server_flight",
+      "index": 0,
+      "udp_bytes": 1200,
+      "payload_bytes": 0,
+      "packet_number_space": "initial",
+      "packet_number": 0,
+      "initial_key_epoch": 1,
+      "direction": "s2c",
+      "start": "117963/781250",
+      "end": "472159/3125000",
+      "arrival": "628409/3125000",
+      "wire_bytes": 1228
+    },
+    {
+      "kind": "server_flight",
+      "index": 1,
+      "udp_bytes": 1200,
+      "payload_bytes": 0,
+      "packet_number_space": "handshake",
+      "packet_number": 0,
+      "initial_key_epoch": 1,
+      "direction": "s2c",
+      "start": "472159/3125000",
+      "end": "236233/1562500",
+      "arrival": "157179/781250",
+      "wire_bytes": 1228
+    },
+    {
+      "kind": "handshake_ack",
+      "index": 0,
+      "udp_bytes": 80,
+      "payload_bytes": 0,
+      "packet_number_space": "handshake",
+      "packet_number": 0,
+      "initial_key_epoch": 1,
+      "destination_connection_id": "retry-server-cid",
+      "source_connection_id": "client-cid",
+      "retry_token_bytes": 0,
+      "direction": "c2s",
+      "start": "157179/781250",
+      "end": "628851/3125000",
+      "arrival": "785101/3125000",
+      "wire_bytes": 108
+    },
+    {
+      "kind": "client_finished",
+      "index": 0,
+      "udp_bytes": 100,
+      "payload_bytes": 0,
+      "packet_number_space": "handshake",
+      "packet_number": 1,
+      "initial_key_epoch": 1,
+      "destination_connection_id": "retry-server-cid",
+      "source_connection_id": "client-cid",
+      "retry_token_bytes": 0,
+      "direction": "c2s",
+      "start": "628851/3125000",
+      "end": "629011/3125000",
+      "arrival": "785261/3125000",
+      "wire_bytes": 128
+    },
+    {
+      "kind": "request",
+      "offset": 0,
+      "payload_bytes": 100,
+      "encryption_level": "1rtt",
+      "udp_bytes": 148,
+      "packet_number_space": "application",
+      "packet_number": 0,
+      "attempt_epoch": 1,
+      "application_key_epoch": 1,
+      "destination_connection_id": "retry-server-cid",
+      "stream_id": 0,
+      "end_offset": 100,
+      "direction": "c2s",
+      "start": "629011/3125000",
+      "end": "629231/3125000",
+      "arrival": "785481/3125000",
+      "wire_bytes": 176,
+      "accepted": true
+    },
+    {
+      "kind": "response",
+      "offset": 0,
+      "payload_bytes": 200,
+      "encryption_level": "1rtt",
+      "udp_bytes": 248,
+      "packet_number_space": "application",
+      "packet_number": 0,
+      "attempt_epoch": 1,
+      "application_key_epoch": 1,
+      "destination_connection_id": "client-cid",
+      "stream_id": 0,
+      "end_offset": 200,
+      "direction": "s2c",
+      "start": "1722981/3125000",
+      "end": "34461/62500",
+      "arrival": "18793/31250",
+      "wire_bytes": 276
+    }
+  ],
+  "anti_amplification_blocks": [],
+  "summary": {
+    "early_payload_sent_bytes": 0,
+    "one_rtt_payload_sent_bytes": 100,
+    "request_payload_sent_bytes": 100,
+    "accepted_unique_request_bytes": 100,
+    "discarded_early_payload_bytes": 0,
+    "delivered_response_payload_bytes": 200,
+    "application_execution_count": 1,
+    "modeled_wire_bytes_by_direction": {
+      "c2s": 2868,
+      "s2c": 2860
+    },
+    "last_modeled_arrival": "18793/31250"
+  },
+  "limitations": [
+    "Declared IPv4/UDP/QUIC layout; no packet codec, congestion, flow control, general ACK, loss or PTO.",
+    "First final server_flight datagram supplies ServerHello; its remaining datagrams use Handshake keys.",
+    "Handshake ACK optionally sent after second server datagram; blocked graph is not a real QUIC deadlock.",
+    "0RTT acceptance/rejection and application replay policy are declared; no exactly-once guarantee.",
+    "TCP HRR, combined events, buffered pre-Retry 0RTT, general loss recovery, HTTP settings and background tickets remain unimplemented."
+  ]
+}
+```

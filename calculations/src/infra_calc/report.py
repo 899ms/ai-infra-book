@@ -6,6 +6,21 @@ from fractions import Fraction
 
 
 def markdown(result: dict) -> str:
+    if "wireless_attempts" in result and "wireless_summary" in result:
+        from .transport.airtime_report import markdown as render
+        return render(result)
+    if all(key in result for key in ("sender_events", "final_states", "transmissions", "businesses", "message_status")):
+        from .transport.media_report import markdown as render
+        return render(result)
+    if all(key in result for key in ("sender_events", "final_states", "transmissions", "business")):
+        from .topics.transport_closed_loop import markdown as render
+        return render(result)
+    if result.get("calculation") == "shared-media-finite-teaching-transport":
+        from .topics.shared_media_transport import markdown as render
+        return render(result)
+    if result.get("calculation") == "quic-retry-declared-packets":
+        from .topics.protocol_retry import markdown as render
+        return render(result)
     if result.get("calculation") == "protocol-handshake-declared-packet-graph":
         from .topics.protocol_handshake import markdown as render
         return render(result)
@@ -20,6 +35,33 @@ def markdown(result: dict) -> str:
         return render(result)
     if result.get("calculation") == "image-request-streaming":
         from .topics.image_request_streaming import markdown as render
+        return render(result)
+    if result.get("calculation") == "iso-resource-two-sided-comparison":
+        from .topics.iso_resource_comparison import markdown as render
+        return render(result)
+    if result.get("calculation") == "specialisation-payback":
+        from .topics.specialization_payback import markdown as render
+        return render(result)
+    if result.get("calculation") == "design-record-uncertainty":
+        from .topics.design_record import markdown as render
+        return render(result)
+    if result.get("calculation") == "weight-resident-remaining-traffic":
+        from .topics.weight_resident_traffic import markdown as render
+        return render(result)
+    if result.get("calculation") == "execution-dag-screening":
+        from .topics.execution_dag import markdown as render
+        return render(result)
+    if result.get("calculation") == "cross-region-placement":
+        from .topics.region_placement import markdown as render
+        return render(result)
+    if result.get("calculation") == "f04-delivery-audit":
+        from .delivery import markdown as render
+        return render(result)
+    if result.get("calculation") == "f01-source-coverage-map":
+        from .coverage import markdown as render
+        return render(result)
+    if result.get("calculation") == "queqiao-recorded-conditions":
+        from .topics.queqiao_records import markdown as render
         return render(result)
     if result.get("calculation") == "image-request-budget":
         from .topics.image_request_budget import markdown as render

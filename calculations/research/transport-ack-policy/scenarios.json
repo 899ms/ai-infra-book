@@ -1,0 +1,220 @@
+{
+  "count-two": {
+    "upload_bytes": 2336,
+    "response_bytes": 0,
+    "model_seconds": 0,
+    "until": 20,
+    "links": {
+      "up": {
+        "rate_bps": 9824,
+        "propagation": 1
+      },
+      "down": {
+        "rate_bps": 736,
+        "propagation": 1
+      }
+    },
+    "sender": {
+      "initial_cwnd": 2400,
+      "rtt_seed": {
+        "latest_rtt": 4,
+        "smoothed_rtt": 4,
+        "rttvar": 2,
+        "min_rtt": 4
+      }
+    },
+    "ack_policy": {
+      "mode": "count_or_timer",
+      "every": 2,
+      "max_delay": 10
+    }
+  },
+  "tail-deadline": {
+    "upload_bytes": 1168,
+    "response_bytes": 0,
+    "model_seconds": 0,
+    "until": 20,
+    "links": {
+      "up": {
+        "rate_bps": 9824,
+        "propagation": 1
+      },
+      "down": {
+        "rate_bps": 736,
+        "propagation": 1
+      }
+    },
+    "sender": {
+      "initial_cwnd": 2400,
+      "rtt_seed": {
+        "latest_rtt": 4,
+        "smoothed_rtt": 4,
+        "rttvar": 2,
+        "min_rtt": 4
+      }
+    },
+    "ack_policy": {
+      "mode": "count_or_timer",
+      "every": 2,
+      "max_delay": "1/2"
+    }
+  },
+  "same-time-arrival-deadline": {
+    "upload_bytes": 2336,
+    "response_bytes": 0,
+    "model_seconds": 0,
+    "until": 20,
+    "links": {
+      "up": {
+        "rate_bps": 9824,
+        "propagation": 1
+      },
+      "down": {
+        "rate_bps": 736,
+        "propagation": 1
+      }
+    },
+    "sender": {
+      "initial_cwnd": 2400,
+      "rtt_seed": {
+        "latest_rtt": 4,
+        "smoothed_rtt": 4,
+        "rttvar": 2,
+        "min_rtt": 4
+      }
+    },
+    "ack_policy": {
+      "mode": "count_or_timer",
+      "every": 2,
+      "max_delay": 1
+    }
+  },
+  "lost-first-ack": {
+    "upload_bytes": 2336,
+    "response_bytes": 0,
+    "model_seconds": 0,
+    "until": 20,
+    "links": {
+      "up": {
+        "rate_bps": 9824,
+        "propagation": 1
+      },
+      "down": {
+        "rate_bps": 736,
+        "propagation": 1
+      }
+    },
+    "sender": {
+      "initial_cwnd": 2400,
+      "rtt_seed": {
+        "latest_rtt": 4,
+        "smoothed_rtt": 4,
+        "rttvar": 2,
+        "min_rtt": 4
+      }
+    },
+    "ack_policy": {
+      "mode": "count_or_timer",
+      "every": 1,
+      "max_delay": 10
+    },
+    "drop_packets": [
+      {
+        "direction": "down",
+        "pn": 0
+      }
+    ]
+  },
+  "max-flow-control": {
+    "upload_bytes": 3504,
+    "response_bytes": 0,
+    "model_seconds": 0,
+    "until": 20,
+    "links": {
+      "up": {
+        "rate_bps": 9824,
+        "propagation": 1
+      },
+      "down": {
+        "rate_bps": 736,
+        "propagation": 1
+      }
+    },
+    "sender": {
+      "initial_cwnd": 2400,
+      "rtt_seed": {
+        "latest_rtt": 4,
+        "smoothed_rtt": 4,
+        "rttvar": 2,
+        "min_rtt": 4
+      }
+    },
+    "ack_policy": {
+      "mode": "count_or_timer",
+      "every": 2,
+      "max_delay": "1/2"
+    },
+    "receive_window": 2336,
+    "consume_delay": 0
+  },
+  "queued-snapshot-refresh": {
+    "upload_bytes": 3504,
+    "response_bytes": 0,
+    "model_seconds": 0,
+    "until": 20,
+    "links": {
+      "up": {
+        "rate_bps": 9824,
+        "propagation": 1
+      },
+      "down": {
+        "rate_bps": 368,
+        "propagation": 1
+      }
+    },
+    "sender": {
+      "initial_cwnd": 3600,
+      "rtt_seed": {
+        "latest_rtt": 4,
+        "smoothed_rtt": 4,
+        "rttvar": 2,
+        "min_rtt": 4
+      }
+    },
+    "ack_policy": {
+      "mode": "count_or_timer",
+      "every": 1,
+      "max_delay": 10
+    }
+  },
+  "queued-deadline-overrun": {
+    "upload_bytes": 2336,
+    "response_bytes": 0,
+    "model_seconds": 0,
+    "until": 20,
+    "links": {
+      "up": {
+        "rate_bps": 9824,
+        "propagation": 1
+      },
+      "down": {
+        "rate_bps": 368,
+        "propagation": 1
+      }
+    },
+    "sender": {
+      "initial_cwnd": 3600,
+      "rtt_seed": {
+        "latest_rtt": 4,
+        "smoothed_rtt": 4,
+        "rttvar": 2,
+        "min_rtt": 4
+      }
+    },
+    "ack_policy": {
+      "mode": "count_or_timer",
+      "every": 1,
+      "max_delay": "1/2"
+    }
+  }
+}

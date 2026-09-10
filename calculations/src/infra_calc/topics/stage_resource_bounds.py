@@ -371,7 +371,7 @@ def calculate(
         rates[resource] = rate
     rates["interface_bytes"] = selected["memory"]["bandwidth_bytes_per_second"]
     demanded = {resource for s in stages for resource in s["work"]}
-    for resource in demanded:
+    for resource in sorted(demanded):
         rates.setdefault(resource, None)
     assumed_rates = {} if assumed_rates is None else dict(assumed_rates)
     rate_multipliers = {} if rate_multipliers is None else dict(rate_multipliers)

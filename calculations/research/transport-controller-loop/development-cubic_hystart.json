@@ -1,0 +1,140 @@
+{
+  "controller": "cubic_hystart",
+  "inputs": {
+    "upload_bytes": 30000000,
+    "response_bytes": 5000000,
+    "model_seconds": "0.3",
+    "until": 60,
+    "links": {
+      "up": {
+        "rate_bps": 20000000,
+        "propagation": "0.05"
+      },
+      "down": {
+        "rate_bps": 100000000,
+        "propagation": "0.05"
+      }
+    },
+    "sender": {
+      "initial_cwnd": 12000,
+      "numeric_quantum": "0.000000000001"
+    },
+    "controller": {
+      "name": "cubic_hystart"
+    },
+    "pad_in_flight": true
+  },
+  "seconds": 24.38534375000745,
+  "business": {
+    "upload": "13087839089/1000000000",
+    "model_start": "13087839089/1000000000",
+    "model_end": "13387839089/1000000000",
+    "response": "363025931/25000000"
+  },
+  "summary": {
+    "wire_bytes": 39555120,
+    "serialized_wire_bytes_by_horizon": "39555120",
+    "unique_received_bytes": 35000000,
+    "pending_packets": {
+      "up": 0,
+      "down": 0
+    },
+    "complete": true
+  },
+  "packets": 59932,
+  "final_states": {
+    "up": {
+      "bytes_in_flight": 0,
+      "cwnd": "30588000",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "157029/1562500",
+      "smoothed_rtt": "157029/1562500",
+      "rttvar": "1/500000000000",
+      "min_rtt": "157029/1562500",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 25684,
+      "next_timer": null,
+      "max_data": 30000000,
+      "max_stream_data": {
+        "business": 30000000
+      },
+      "stream_highest_sent_offsets": {
+        "business": 30000000
+      },
+      "max_data_consumed": 30000000,
+      "controller": {
+        "controller": "cubic_hystart",
+        "cwnd_bytes": "30588000",
+        "phase": "slow_start",
+        "effective_epoch": "0",
+        "w_est_segments": "10",
+        "w_max_segments": "10",
+        "k_bounds": [
+          "0",
+          "0"
+        ],
+        "hystart_round": 132,
+        "hystart_css_rounds": 0,
+        "pacing_rate_quic_bytes_per_second": "19914062500000/52343",
+        "limited": true
+      },
+      "pacing_rate_quic_bytes_per_second": "19914062500000/52343"
+    },
+    "down": {
+      "bytes_in_flight": 0,
+      "cwnd": "3925200",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "156461/1562500",
+      "smoothed_rtt": "156461/1562500",
+      "rttvar": "1/500000000000",
+      "min_rtt": "156461/1562500",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 29965,
+      "next_timer": null,
+      "max_data": 30000000,
+      "max_stream_data": {
+        "business": 30000000
+      },
+      "stream_highest_sent_offsets": {
+        "business": 5000000
+      },
+      "max_data_consumed": 5000000,
+      "controller": {
+        "controller": "cubic_hystart",
+        "cwnd_bytes": "3925200",
+        "phase": "slow_start",
+        "effective_epoch": "0",
+        "w_est_segments": "10",
+        "w_max_segments": "10",
+        "k_bounds": [
+          "0",
+          "0"
+        ],
+        "hystart_round": 13,
+        "hystart_css_rounds": 0,
+        "pacing_rate_quic_bytes_per_second": "7666406250000/156461",
+        "limited": true
+      },
+      "pacing_rate_quic_bytes_per_second": "7666406250000/156461"
+    }
+  },
+  "controller_events": {
+    "up": 25686,
+    "down": 4284
+  },
+  "pacer_errors": {
+    "up": 78976,
+    "down": 28646
+  },
+  "code_sha256": {
+    "calculate.py": "97a12a1c2e94e58d31ed370b098ef576cf9575451d75097973c19f43c16552dc",
+    "sender.py": "af8e97006cfcdea1c6a414aa8bff11f1eef39c57e86a9dfa845fec08ef250db8",
+    "pacer.py": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+    "cubic_adapter.py": "cdfc2c64e387dc48e7e940d67885cfc2630f8423800976373d968b458045dc42",
+    "bbr_adapter.py": "c4101a79a516d66f6ea002593b1f3e67e2e84d8dd5fe6372ef97d39a7049dc56"
+  }
+}

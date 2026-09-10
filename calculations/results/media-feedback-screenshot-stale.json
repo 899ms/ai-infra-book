@@ -1,0 +1,755 @@
+{
+  "inputs": {
+    "application": {
+      "schema_version": 1,
+      "id": "screenshot-stale",
+      "messages": [
+        {
+          "id": "screenshot-v1",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "screen-up",
+          "transport": "stream",
+          "bytes": 3443,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "1/25",
+          "dependencies": [],
+          "priority": 50,
+          "source_order": 0,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 3,
+            "final_fragment_bytes": 1107,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "screen-action",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "screen-result",
+          "transport": "stream",
+          "bytes": 64,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [
+            {
+              "id": "screen-infer",
+              "event": "task_completed",
+              "endpoint": "server"
+            }
+          ],
+          "priority": 50,
+          "source_order": 1,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": "screen-v1",
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 64,
+            "coalesce_across_messages": false
+          }
+        }
+      ],
+      "compute_tasks": [
+        {
+          "id": "screen-infer",
+          "endpoint": "server",
+          "resource": "server",
+          "duration_seconds": "1/20",
+          "ready_seconds": "0",
+          "dependencies": [
+            {
+              "id": "screenshot-v1",
+              "event": "message_delivered",
+              "endpoint": "server"
+            }
+          ],
+          "priority": 50,
+          "source_order": 0,
+          "cancel_tag": "screen-v1",
+          "timing_basis": "existing declared service duration; not measured model throughput"
+        }
+      ],
+      "business_observers": [
+        {
+          "id": "computer-use",
+          "kind": "screenshot",
+          "version": "v1",
+          "version_changes": [
+            {
+              "endpoint": "client",
+              "at_seconds": "2/25",
+              "version": "v2"
+            }
+          ],
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "screen-action",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ]
+        }
+      ],
+      "scheduling": {
+        "send": "fifo",
+        "compute": "fifo",
+        "compute_nonpreemptive": true,
+        "resource_capacity_tasks": 1
+      },
+      "links": {
+        "c2s": {
+          "rate_bits_per_second": 20000000,
+          "propagation_seconds": "1/20"
+        },
+        "s2c": {
+          "rate_bits_per_second": 100000000,
+          "propagation_seconds": "1/20"
+        }
+      },
+      "connection_ready_seconds": "0",
+      "external_legacy_assumptions": {
+        "teaching_network": {
+          "delivery_mode": "per_stream",
+          "header_bytes": 40,
+          "ack_bytes": 40,
+          "shared_credit_bytes": 1000000,
+          "reliable_receive_credit_bytes": 1000000,
+          "stream_credit_bytes": 1000000
+        },
+        "selected_loss_and_recovery": [],
+        "action": "Do not map credit to cwnd, legacy header to MTU, or recovery_ready to PTO. Choose real network inputs explicitly."
+      },
+      "accounting": {
+        "application_bytes_by_direction": {
+          "client_to_server": 3443,
+          "server_to_client": 64
+        },
+        "application_bytes": 3507,
+        "message_count": 2,
+        "task_count": 1,
+        "fragment_count": 4
+      }
+    },
+    "network": {
+      "links": {
+        "up": {
+          "rate_bps": 9824,
+          "propagation": 1
+        },
+        "down": {
+          "rate_bps": 9824,
+          "propagation": 1
+        }
+      },
+      "until": 60,
+      "initial_cwnd": 2400,
+      "initial_max_data": {
+        "up": 3443,
+        "down": 64
+      },
+      "initial_max_stream_data": {
+        "up": {
+          "screen-up": 3443
+        },
+        "down": {
+          "screen-result": 64
+        }
+      },
+      "receive_memory_bytes": {
+        "up": 100000,
+        "down": 100000
+      },
+      "pad_in_flight": true,
+      "consume_delay": null,
+      "sender": {
+        "rtt_seed": {
+          "latest_rtt": 4,
+          "smoothed_rtt": 4,
+          "rttvar": 2,
+          "min_rtt": 4
+        }
+      }
+    }
+  },
+  "reference_sources": [
+    {
+      "file": "sources/protocol-rfc/rfc9000.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+      "revision": "RFC9000",
+      "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9002.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+      "revision": "RFC9002",
+      "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9002-errata7539.html",
+      "url": "https://www.rfc-editor.org/errata/eid7539",
+      "revision": "RFC9002 Verified Errata7539",
+      "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a"
+    }
+  ],
+  "transmissions": [
+    {
+      "direction": "up",
+      "pn": 0,
+      "kind": "data",
+      "message_id": "screenshot-v1",
+      "message_offset": 0,
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "screen-up",
+          "offset": 0,
+          "length": 1168
+        }
+      ],
+      "send_start": "1/25",
+      "send_end": "26/25",
+      "arrival": "51/25",
+      "received_at": "51/25",
+      "quic_bytes": 1200,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "up",
+      "pn": 1,
+      "kind": "data",
+      "message_id": "screenshot-v1",
+      "message_offset": 1168,
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "screen-up",
+          "offset": 1168,
+          "length": 1168
+        }
+      ],
+      "send_start": "26/25",
+      "send_end": "51/25",
+      "arrival": "76/25",
+      "received_at": "76/25",
+      "quic_bytes": 1200,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 0,
+      "kind": "ack",
+      "message_id": null,
+      "message_offset": null,
+      "frames": [],
+      "send_start": "51/25",
+      "send_end": "16232/7675",
+      "arrival": "23907/7675",
+      "received_at": "23907/7675",
+      "quic_bytes": 64,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 1,
+      "kind": "ack",
+      "message_id": null,
+      "message_offset": null,
+      "frames": [],
+      "send_start": "76/25",
+      "send_end": "23907/7675",
+      "arrival": "31582/7675",
+      "received_at": "31582/7675",
+      "quic_bytes": 64,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "up",
+      "pn": 2,
+      "kind": "data",
+      "message_id": "screenshot-v1",
+      "message_offset": 2336,
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "screen-up",
+          "offset": 2336,
+          "length": 1107
+        }
+      ],
+      "send_start": "23907/7675",
+      "send_end": "31582/7675",
+      "arrival": "39257/7675",
+      "received_at": "39257/7675",
+      "quic_bytes": 1200,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 2,
+      "kind": "ack",
+      "message_id": null,
+      "message_offset": null,
+      "frames": [],
+      "send_start": "39257/7675",
+      "send_end": "39832/7675",
+      "arrival": "47507/7675",
+      "received_at": "47507/7675",
+      "quic_bytes": 64,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 3,
+      "kind": "data",
+      "message_id": "screen-action",
+      "message_offset": 0,
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "screen-result",
+          "offset": 0,
+          "length": 64
+        }
+      ],
+      "send_start": "39832/7675",
+      "send_end": "47507/7675",
+      "arrival": "55182/7675",
+      "received_at": "55182/7675",
+      "quic_bytes": 1200,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "up",
+      "pn": 3,
+      "kind": "ack",
+      "message_id": null,
+      "message_offset": null,
+      "frames": [],
+      "send_start": "55182/7675",
+      "send_end": "55757/7675",
+      "arrival": "63432/7675",
+      "received_at": "63432/7675",
+      "quic_bytes": 64,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    }
+  ],
+  "sender_events": {
+    "up": [
+      {
+        "type": "sent",
+        "at": "1/25",
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "screen-up",
+            "offset": 0,
+            "length": 1168
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "26/25",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "screen-up",
+            "offset": 1168,
+            "length": 1168
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "23907/7675",
+        "ranges": [
+          [
+            0,
+            0
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": false,
+        "flow_limited": false
+      },
+      {
+        "type": "sent",
+        "at": "23907/7675",
+        "pn": 2,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "screen-up",
+            "offset": 2336,
+            "length": 1107
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "31582/7675",
+        "ranges": [
+          [
+            1,
+            1
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": true,
+        "flow_limited": false
+      },
+      {
+        "type": "ack",
+        "at": "47507/7675",
+        "ranges": [
+          [
+            2,
+            2
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": true,
+        "flow_limited": false
+      },
+      {
+        "type": "sent",
+        "at": "55182/7675",
+        "pn": 3,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      }
+    ],
+    "down": [
+      {
+        "type": "sent",
+        "at": "51/25",
+        "pn": 0,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "76/25",
+        "pn": 1,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "39257/7675",
+        "pn": 2,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "39832/7675",
+        "pn": 3,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "screen-result",
+            "offset": 0,
+            "length": 64
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "63432/7675",
+        "ranges": [
+          [
+            3,
+            3
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": true,
+        "flow_limited": false
+      }
+    ]
+  },
+  "application_events": [
+    {
+      "at": "39257/7675",
+      "kind": "message_delivered",
+      "id": "screenshot-v1"
+    },
+    {
+      "at": "158563/30700",
+      "kind": "task_completed",
+      "id": "screen-infer"
+    },
+    {
+      "at": "55182/7675",
+      "kind": "message_delivered",
+      "id": "screen-action"
+    }
+  ],
+  "network_events": [],
+  "work": [
+    {
+      "id": "screen-infer",
+      "endpoint": "server",
+      "resource": "server",
+      "start": "39257/7675",
+      "end": "158563/30700",
+      "finished": true
+    }
+  ],
+  "businesses": [
+    {
+      "id": "computer-use",
+      "kind": "screenshot",
+      "endpoint": "client",
+      "all_required_delivered": true,
+      "complete_at": "55182/7675",
+      "complete": false,
+      "missing": [],
+      "version_at_result": "v2",
+      "expected_version": "v1",
+      "usable": false
+    }
+  ],
+  "message_status": {
+    "screenshot-v1": "delivered",
+    "screen-action": "delivered",
+    "screen-infer": "finished"
+  },
+  "delivered": {
+    "screenshot-v1": "39257/7675",
+    "screen-infer": "158563/30700",
+    "screen-action": "55182/7675"
+  },
+  "waits": [
+    {
+      "at": "51/25",
+      "direction": "up",
+      "reasons": [
+        "cwnd"
+      ]
+    }
+  ],
+  "received_intervals": {
+    "up": {
+      "screen-up": [
+        [
+          0,
+          3443
+        ]
+      ]
+    },
+    "down": {
+      "screen-result": [
+        [
+          0,
+          64
+        ]
+      ]
+    }
+  },
+  "consumed": {
+    "up": {},
+    "down": {}
+  },
+  "peak_receive_memory": {
+    "up": 3443,
+    "down": 64
+  },
+  "final_states": {
+    "up": {
+      "bytes_in_flight": 0,
+      "cwnd": "3600",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "944/307",
+      "smoothed_rtt": "145185/39296",
+      "rttvar": "25595/19648",
+      "min_rtt": "944/307",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 2,
+      "next_timer": null,
+      "max_data": 3443,
+      "max_stream_data": {
+        "screen-up": 3443
+      },
+      "stream_highest_sent_offsets": {
+        "screen-up": 3443
+      },
+      "max_data_consumed": 3443
+    },
+    "down": {
+      "bytes_in_flight": 0,
+      "cwnd": "2400",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "944/307",
+      "smoothed_rtt": "2385/614",
+      "rttvar": "1063/614",
+      "min_rtt": "944/307",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 3,
+      "next_timer": null,
+      "max_data": 64,
+      "max_stream_data": {
+        "screen-result": 64
+      },
+      "stream_highest_sent_offsets": {
+        "screen-result": 64
+      },
+      "max_data_consumed": 64
+    }
+  },
+  "losses": {
+    "up": [],
+    "down": []
+  },
+  "timers": {
+    "up": [],
+    "down": []
+  },
+  "rtt_samples": {
+    "up": [
+      {
+        "at": "23907/7675",
+        "pn": 0,
+        "raw": "944/307",
+        "adjusted": "944/307",
+        "smoothed": "2385/614",
+        "rttvar": "1063/614"
+      },
+      {
+        "at": "31582/7675",
+        "pn": 1,
+        "raw": "944/307",
+        "adjusted": "944/307",
+        "smoothed": "18583/4912",
+        "rttvar": "1843/1228"
+      },
+      {
+        "at": "47507/7675",
+        "pn": 2,
+        "raw": "944/307",
+        "adjusted": "944/307",
+        "smoothed": "145185/39296",
+        "rttvar": "25595/19648"
+      }
+    ],
+    "down": [
+      {
+        "at": "63432/7675",
+        "pn": 3,
+        "raw": "944/307",
+        "adjusted": "944/307",
+        "smoothed": "2385/614",
+        "rttvar": "1063/614"
+      }
+    ]
+  },
+  "numeric_errors": {
+    "up": [],
+    "down": []
+  },
+  "controller_events": {
+    "up": [],
+    "down": []
+  },
+  "controller_numeric_errors": {
+    "up": [],
+    "down": []
+  },
+  "persistent_events": {
+    "up": [],
+    "down": []
+  },
+  "pacer_final": {},
+  "pacer_errors": {},
+  "ack_events": {},
+  "summary": {
+    "wire_bytes": 5280,
+    "serialized_wire_bytes_by_horizon": "5280",
+    "delivered_application_bytes": 3507,
+    "unique_received_application_bytes": 3507,
+    "complete": false,
+    "all_messages_delivered": true,
+    "pending_packets": {
+      "up": 0,
+      "down": 0
+    }
+  }
+}

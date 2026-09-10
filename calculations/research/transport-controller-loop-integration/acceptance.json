@@ -1,0 +1,312 @@
+{
+  "status": "accepted_for_declared_scope",
+  "date": "2026-09-10",
+  "scope": "Public confirmed-path upload/model/response controller comparison; not whole C68 or whole-book completion",
+  "tests": {
+    "total": 909,
+    "passed": 887,
+    "optional_skipped": 22
+  },
+  "public_scenarios": 6,
+  "actual_cli_calls": 12,
+  "artifacts": {
+    "verified_artifacts": 2256,
+    "verified_figures": 28,
+    "scope": "implemented scenarios only; not evidence of whole-book completion"
+  },
+  "outline": {
+    "status": "passed",
+    "chapters": 12,
+    "experiments": 106,
+    "figures": 98,
+    "sections": 67,
+    "subsections": 231,
+    "core": 36,
+    "local_links_checked": 5096,
+    "reference_hashes_checked": 229,
+    "snapshot_files_checked": 77,
+    "errors": []
+  },
+  "editorial_main_changes_during_final_sync": [],
+  "reproducibility": {
+    "unchanged_other_artifacts": 2206,
+    "stable_order_stage_reports": 50,
+    "stage_math_preserved": 25,
+    "cli_outputs_preserved": 12
+  },
+  "business_seconds": {
+    "newreno": "14.52103724",
+    "cubic_hystart": "14.52103724",
+    "bbr": "14.974125992"
+  },
+  "packets_each": 59932,
+  "wire_bytes_each": 39555120,
+  "unique_bytes_each": 35000000,
+  "limitations": [
+    "CUBIC book case stays in slow start; router case reaches CSS round3, not completed CA.",
+    "Fixed QUIC adaptation, not measured Linux TCP or HTTP3 comparison.",
+    "Media feedback connection and public aggregated ACK remain separate unfinished work."
+  ],
+  "files": [
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/cubic.py",
+      "bytes": 16012,
+      "sha256": "4e77d2a7c709a3c873009ba89dabd806760cb56f3a5ce7164233925211f5e521"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/bbr_adapter.py",
+      "bytes": 16972,
+      "sha256": "870b2f2ac35e4d98d0425eb97c86cc4fc8ba0eb6e518fde168165030756dac7c"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/cubic_adapter.py",
+      "bytes": 9580,
+      "sha256": "4dafed0947806549a354493aa12f976827fe4b8cb83f0f0096da65ac512eb4a3"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/bbr_minmax.py",
+      "bytes": 1607,
+      "sha256": "6c763345efa592f6bba348b81350081b0e24050d34c718c1727622739b52d28e"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/bbr_reference.py",
+      "bytes": 9418,
+      "sha256": "714b9ffecd300362a354e73aee4adbb744c41795a3019b88bc3e784e31612da6"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/pacer.py",
+      "bytes": 3027,
+      "sha256": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/__init__.py",
+      "bytes": 77,
+      "sha256": "afe84ba19b4e95b5236b841bb80687933bc348f80273d9d126dbe184250a28eb"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/hystart.py",
+      "bytes": 13691,
+      "sha256": "216c633b34e3acf39665cf3e920d9701c689434d6b31fe6bcbc65deafc31d3c7"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/persistent_congestion.py",
+      "bytes": 4602,
+      "sha256": "2f6b9e998e5a60ce9388aee8e956acbf04e1ffe77646b1c757b1daae77a491d7"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/reference_sources.py",
+      "bytes": 1295,
+      "sha256": "86bd8441af9b881953ab4e98bea21ea9d071339039d509d9143b5af8e47ea788"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/bbr_state.py",
+      "bytes": 21190,
+      "sha256": "e24b8d55efb218f344a5799f73db83966cfc71088341f595a60562952f906194"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/transport_closed_loop.py",
+      "bytes": 32778,
+      "sha256": "2b3be9cadea997a2315acbd95a4b9e9c42e9992d68cd4483f2dac7fe1d988e78"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/transport_sender.py",
+      "bytes": 34362,
+      "sha256": "91286019b4f2f1e057603e5011171470453bc9bd76bea6c60b91dd580c99c8b3"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py",
+      "bytes": 20913,
+      "sha256": "7e77ff9da9444190ea65e6f9f6038d0e89f6ea95e8a028dfbc91c08ca40e79cf"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/reproduce.py",
+      "bytes": 130920,
+      "sha256": "31f95184e3cb59c87b37cdae7399cd83554e9826c1fd342e04b9137f714a0447"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/outline.py",
+      "bytes": 244178,
+      "sha256": "1c9e8d5590bde7654412ee261ada8c31a9bfbf3b944a1fb71df9e66c683c0a78"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/configs/sources.lock.json",
+      "bytes": 456510,
+      "sha256": "02cd5608d7d00f6213be9e566bc8651657d854f87ee01deec9fdd9d4f2c43a3e"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/scenarios/book.json",
+      "bytes": 1878014,
+      "sha256": "92b276849d06df2c23b06555de7bea106a54bbda60a55e2d64f68a3b823e1dac"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/scenarios/controller-loop-example.json",
+      "bytes": 553,
+      "sha256": "69ffeb0a11a0bbfb4fc4ca6490505271d8554e88f7065f57a8e5df85b7b735a8"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/results/manifest.json",
+      "bytes": 507740,
+      "sha256": "c407932d83e39f63ae47e26fcaaddb1f8da5813bf55c3a2f83732d403ff34c1e"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/tests/test_transport_controllers.py",
+      "bytes": 4135,
+      "sha256": "ae582a8e89f50a0b73d4a40c7542143aea600023b393522ae453be31ba4acaa5"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/tests/test_outline_evidence.py",
+      "bytes": 2364,
+      "sha256": "d531f3050366c0315743826c23a9cffe3a88ea96ac92a199c1ea6eb0f15c5381"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/tests/test_stage_resource_bounds.py",
+      "bytes": 7828,
+      "sha256": "a3f332f97f211e91c6a63a1b4d5a9ea0edf7a4014b8fb1736ee6c4f47aef7869"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop/integration/network-public-check.json",
+      "bytes": 9265,
+      "sha256": "631807be39dec4903efc6309021fda98a1992305584049e2267c588496d93f95"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop/integration/component-check.json",
+      "bytes": 5314,
+      "sha256": "f7538f8e81b617a7bad747b5b18722fd1fe614fa43d8bb017bfc4a245f9c327a"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop/integration/migration-manifest.json",
+      "bytes": 9789,
+      "sha256": "3808b13b850b53255b0285bf638f46b375ca1c9cadd79e2a6ae2841f1cdc0f36"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop/LARGE-INDEPENDENT-REVIEW.md",
+      "bytes": 3393,
+      "sha256": "a3167cf1ffaf63e424eda30ce25d0e18291a834cb9a5d3d8e8bf292213e8fd7b"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop/large-comparison-independent.json",
+      "bytes": 285,
+      "sha256": "5ff3a01d1c610a56016d7a58d8f4850a78357a201183edd346d5fe37afe9e81b"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop/baseline-root-check.json",
+      "bytes": 1810,
+      "sha256": "257b0272d67c7a8dc9743f459e7a8aef47fda83bd47dd044c2c028855ac32069"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/tests-final.log",
+      "bytes": 1024,
+      "sha256": "f80f9b77ead1039fd4a76120394aa9ff18c77f1cd046d12f7a102dfa385be13d"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/cli-check.json",
+      "bytes": 24034,
+      "sha256": "18d7a5d93b307ac75322d8e2e48b9ba26dd095077994593adc76cdccc68256ca"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/check-cli.py",
+      "bytes": 4807,
+      "sha256": "91248b2c1bdde4ffdfbb68051476d10ac7dd828bf4a29ebadd47d17984964dd4"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/sources-check.json",
+      "bytes": 192,
+      "sha256": "e7c90ce713e9d71397013988fbbc2e23e8abfc2e136112a312ebedd3aa60d4be"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/final-stability-check.json",
+      "bytes": 4613,
+      "sha256": "95a2699649726702b45f8e3d0304b706485c53fea0590b0fb467d52e403282bd"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/check-final-stability.py",
+      "bytes": 2118,
+      "sha256": "c03beff84f4482d0a7837c07593101524c2d69db343943f28a464eb0fc0fd7d6"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/editorial-final-check.json",
+      "bytes": 2441,
+      "sha256": "6fb1ca1648983ced9c275bd08dec3b0906694b9e45614a5588f79312d0d06c2a"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/editorial-whitespace-recovery.json",
+      "bytes": 206,
+      "sha256": "f52b4a62ec0cf411aa23c07ea3158cfb440a0ba97c3208d42e6f37a50e566fe1"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/editorial-tests.log",
+      "bytes": 100,
+      "sha256": "24adda79e21044fef19cdc7f0606a9cd7770fc9a99c705a8622ee923c13bce5d"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/reproduce-deterministic.log",
+      "bytes": 4117,
+      "sha256": "b30a22a10afd17ae2d4ec4ec68046dfc50f547e5439ac4664af0507aeb8b1fe6"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/verify-results-deterministic.log",
+      "bytes": 139,
+      "sha256": "b5afa5ec634367d33f87c8edaa2ffd546b4cbf62560183ad6c5f4fc9da87dc09"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/plot-chat-agent-deterministic.log",
+      "bytes": 108,
+      "sha256": "b2b8fcce0feb020836f89cf7344a75230ce11d646654af97da0ac7c4de6ccebc"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/plot-shared-media-deterministic.log",
+      "bytes": 67,
+      "sha256": "f4c5bde002cd26f91f80ae091f8973696cd92da6fd5c5fb850085312bc88e5cc"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/sync-outline-deterministic.log",
+      "bytes": 704,
+      "sha256": "43649808d1f049cc6c503c20d9eeaa3dbbad83566965216409937a6f9556f1ce"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/render-outline-deterministic.log",
+      "bytes": 82,
+      "sha256": "79f49de4809ff1d5023dbdc607773f701c1507d5cc5a3e5a63e66c14bd8bbe66"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/verify-outline-deterministic.log",
+      "bytes": 250,
+      "sha256": "dfe315a218673bc856d4cae9ab4e412085707f07bb08a148a9edd90f128a9500"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/research/transport-controller-loop-integration/inventory-final.log",
+      "bytes": 663,
+      "sha256": "aec88c58a3b0439c268b028650f720d03c5ca6b6b6998f1bd279d2f8b548a853"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/tests/evidence/stage-resource-determinism/before.json",
+      "bytes": 4543,
+      "sha256": "290af4d3afebe83a25def9ef3e439e7c9d2fa846cf9db37ce9bd44d026a64349"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/tests/evidence/stage-resource-determinism/check_hash_seeds.py",
+      "bytes": 1708,
+      "sha256": "3223279ca1b910a1901f767b8ae4faea8566c559869cb69cf85a56e8541e0bb2"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/tests/evidence/stage-resource-determinism/after.json",
+      "bytes": 497,
+      "sha256": "386040cc7a1f868642392b1820eb971b96b5fae0e0cfd5f46b95d6a5c463f1a4"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/calculations/tests/evidence/stage-resource-determinism/README.json",
+      "bytes": 1051,
+      "sha256": "7dbe114b86b366392fd56a8b6a1e8cb38414232c9ea058b247bb09a9def638bc"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/outlines/12-端边云协同.md",
+      "bytes": 24845,
+      "sha256": "3a96c74dfe8aad86985f929df24d26aae07ee4ba634fdf58a6e1556264991e08"
+    },
+    {
+      "file": "/Users/boj/book/ai-infra-book/outlines/extensions/12-端边云协同.md",
+      "bytes": 52485,
+      "sha256": "3c2bdda6b7bd7e04422d5349e1a520e0cd3edb33cc29728665aa20b819143316"
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "scope": "Independent arithmetic oracles for scope cases 6\u20138; no controller or transport simulation implemented.",
+  "cubic": {
+    "units": "cwnd/W in segments; t/RTT/K in seconds; C in segments per second cubed",
+    "seed": {
+      "W_max": "100",
+      "cwnd_epoch": "484/5",
+      "C": "2/5",
+      "K": "2"
+    },
+    "K_check": "(100-484/5)/(2/5)=8=2^3; this seed does not follow beta=0.7 reduction",
+    "curve_at_seconds": {
+      "0": "484/5",
+      "2": "100",
+      "3": "502/5"
+    },
+    "loss_reduction": {
+      "flight_size_segments": 100,
+      "beta": "7/10",
+      "ssthresh_segments": "70",
+      "cwnd_loss_segments": "70",
+      "condition": "One fresh loss-recovery entry; minimum2 irrelevant here"
+    },
+    "one_new_ack_non_reno": {
+      "t": "2",
+      "smoothed_rtt": "1",
+      "cwnd_before": "100",
+      "segments_acked": "1",
+      "W_est_before": "484/5",
+      "alpha": "9/17",
+      "W_est_after": "164569/1700",
+      "W_cubic_t": "100",
+      "W_cubic_t_plus_rtt": "502/5",
+      "target": "502/5",
+      "delta_cwnd": "1/250",
+      "cwnd_after": "25001/250",
+      "distinction": "100.004 != curve-at-t=100 and != target=100.4; W_est stays below W_cubic(t)"
+    },
+    "target_clamps": [
+      {
+        "cwnd": "100",
+        "unclamped_target": "90",
+        "target": "100",
+        "delta": "0"
+      },
+      {
+        "cwnd": "100",
+        "unclamped_target": "200",
+        "target": "150",
+        "delta": "1/2"
+      }
+    ],
+    "not_covered": "Reno branch trajectory, slow start/HyStart++, recovery integration, idle accounting and arbitrary cube-root rounding"
+  },
+  "bbr_rate": {
+    "delivered_segments": 10,
+    "send_interval_us": 100000,
+    "ack_interval_us": 20000,
+    "selected_interval_us": 100000,
+    "raw_segments_per_second": "100",
+    "wrong_ack_only_segments_per_second": "500",
+    "BW_SCALE": 24,
+    "integer_bw": 1677,
+    "integer_bw_formula": "floor(10*2^24/100000)",
+    "quantized_segments_per_second": "26203125/262144",
+    "preconditions": "prior timestamp valid, no SACK reneging, interval >= minRTT; sample delivered differs from current ACK newly-acked count"
+  },
+  "bbr_gain": {
+    "BBR_SCALE": 8,
+    "high_gain_integer": 739,
+    "high_gain_exact": "739/256",
+    "drain_gain_integer": 88,
+    "drain_gain_exact": "11/32",
+    "cwnd_gain_integer": 512,
+    "probe_bw_gain_integers": [
+      320,
+      192,
+      256,
+      256,
+      256,
+      256,
+      256,
+      256
+    ],
+    "pacing_margin_percent": 1,
+    "pacing_example": {
+      "bw_integer": 1677,
+      "declared_mss_bytes": 1500,
+      "gain_integer": 739,
+      "bytes_per_second": 428493,
+      "formula": "((((bw * 1500 * 739) >> 8) * 990000) >> 24); before socket pacing cap"
+    }
+  },
+  "bbr_full_bw": {
+    "scaled_example": {
+      "full_bw_integer": 1000,
+      "samples_integer": [
+        1200,
+        1200,
+        1200
+      ],
+      "threshold_integer": 1250,
+      "new_round_non_app_limited_counts": [
+        1,
+        2,
+        3
+      ],
+      "reached": [
+        false,
+        false,
+        true
+      ]
+    },
+    "important_scope_correction": {
+      "full_bw_integer": 10,
+      "sample_integer": 12,
+      "threshold_formula": "(10*320)>>8",
+      "threshold_integer": 12,
+      "sample_meets_threshold": true,
+      "new_full_bw_integer": 12,
+      "new_count": 0,
+      "explanation": "Scope abstract 10/12 must be scaled before invoking fixed integer Linux semantics; raw integer10/12 does not yield count1/2/3"
+    },
+    "app_limited": "Does not advance full_bw count even on a new round; higher app-limited rate may still update max BW filter.",
+    "not_new_round": "Does not advance full_bw count.",
+    "drain_exit": "full_bw_reached moves STARTUP to DRAIN; same callback may enter PROBE_BW only if packets_in_net_at_edt <= bbr_inflight(max_bw,256)."
+  },
+  "bbr_packet_round": {
+    "formula": "valid sample AND !before(rs.prior_delivered,next_rtt_delivered); before(a,b)=signed32(a-b)<0",
+    "cases": [
+      {
+        "next_before": 100,
+        "prior_delivered": 99,
+        "tp_delivered": 130,
+        "new_round": false,
+        "next_after": 100
+      },
+      {
+        "next_before": 100,
+        "prior_delivered": 100,
+        "tp_delivered": 130,
+        "new_round": true,
+        "next_after": 130
+      },
+      {
+        "next_before": 130,
+        "prior_delivered": 110,
+        "tp_delivered": 140,
+        "new_round": false,
+        "next_after": 130
+      },
+      {
+        "next_before": 130,
+        "prior_delivered": 130,
+        "tp_delivered": 150,
+        "new_round": true,
+        "next_after": 150
+      },
+      {
+        "next_before": 4294967294,
+        "prior_delivered": 1,
+        "tp_delivered": 5,
+        "new_round": true,
+        "next_after": 5
+      }
+    ],
+    "note": "These packet-delivered counter boundaries are not wall-clock RTT timers. Invalid sample exits before round update; wrap example assumes serial-distance below2^31."
+  }
+}

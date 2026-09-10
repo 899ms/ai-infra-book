@@ -1,0 +1,747 @@
+# 输入区间、最有价值的补测与可证伪预测
+
+每次只移动一个输入，其余保持标称值。翻转以二分区间给出，不写成精确根。证据类型逐项标注；对同一模型的复算不充当该模型的独立测量。
+
+## specialisation_payback（4.6.5）
+
+问题：Do the operating savings repay the specialisation before the model is replaced?
+
+- 候选：build the specialisation、stay on the general-purpose fleet
+- 初次预测：does_not_pay_back
+- 证据类型：teaching_input
+- 观察：None yet. Every input above is a declared teaching value or an analytical recomputation, and a recomputation of the same model is not an independent measurement of it.
+- 修改后的决定：does_not_pay_back（Unchanged: nothing here is new evidence, only the same account moved across its declared intervals.）
+- 下一个限制：saving_per_million_tokens
+- 翻转条件：Moving saving_per_million_tokens above this bracket, with everything else nominal, changes the decision to pays_back
+- 最小补测：No declared interval changes this decision on its own. The cheapest useful measurement is still saving_per_million_tokens, and it buys confidence rather than a different choice.
+
+| 输入 | 证据 | 区间 | 低端 | 标称 | 高端 | 区间内可改变决定 | 余量摆幅 |
+|---|---|---|---|---|---|---|---:|
+| saving_per_million_tokens | teaching_input | [0.30, 0.80] | does_not_pay_back | does_not_pay_back | does_not_pay_back | 否 | 0.3942 |
+| utilisation | teaching_input | [0.3, 0.7] | does_not_pay_back | does_not_pay_back | does_not_pay_back | 否 | 0.3154 |
+| electricity_price_per_kwh | teaching_input | [0.04, 0.15] | does_not_pay_back | does_not_pay_back | does_not_pay_back | 否 | 0.0000 |
+| machines | teaching_input | [60, 160] | does_not_pay_back | does_not_pay_back | does_not_pay_back | 否 | 0.3942 |
+| economic_life_months | teaching_input | [6, 18] | does_not_pay_back | does_not_pay_back | does_not_pay_back | 否 | 0.3942 |
+
+| 补测优先级 | 输入 | 结论 | 翻转方向 | 翻转区间 |
+|---:|---|---|---|---|
+| 1 | saving_per_million_tokens | the decision only changes outside this input's declared interval, so measuring it settles confidence, not the choice | above | [1.2681, 1.2686] |
+| 2 | machines | the decision only changes outside this input's declared interval, so measuring it settles confidence, not the choice | above | [253.0000, 254.0000] |
+| 3 | economic_life_months | the decision only changes outside this input's declared interval, so measuring it settles confidence, not the choice | above | [30.0000, 31.0000] |
+| 4 | utilisation | this input alone never changes the decision in the searched range | — | — |
+| 5 | electricity_price_per_kwh | this input alone never changes the decision in the searched range | — | — |
+
+### 留出配置的可证伪预测
+
+| 配置 | 留出理由 | 预测标签 | 预测余量区间 | 何时被证伪 |
+|---|---|---|---|---|
+| life_halves | kept out of the decision so it can test it | does_not_pay_back | [0.1183, 0.3154] | an observation of this configuration lands outside the predicted margin interval, or produces a label not listed |
+| output_rate_falls | kept out of the decision so it can test it | does_not_pay_back | [0.1183, 0.3784] | an observation of this configuration lands outside the predicted margin interval, or produces a label not listed |
+
+## execution_dag_screening（1.3, 9.6）
+
+问题：Which graph rewrite wins on cost per token under the declared caps?
+
+- 候选：baseline、cache_prefix、compress_state、batch、disaggregate
+- 初次预测：batch
+- 证据类型：analytical_model、teaching_input
+- 观察：None yet. Every input above is a declared teaching value or an analytical recomputation, and a recomputation of the same model is not an independent measurement of it.
+- 修改后的决定：batch（Unchanged: nothing here is new evidence, only the same account moved across its declared intervals.）
+- 下一个限制：power_cap_watts
+- 翻转条件：Moving power_cap_watts below this bracket, with everything else nominal, changes the decision to no_admissible_candidate
+- 最小补测：No declared interval changes this decision on its own. The cheapest useful measurement is still power_cap_watts, and it buys confidence rather than a different choice.
+
+| 输入 | 证据 | 区间 | 低端 | 标称 | 高端 | 区间内可改变决定 | 余量摆幅 |
+|---|---|---|---|---|---|---|---:|
+| price_per_device_hour | teaching_input | [1.0, 8.0] | batch | batch | batch | 否 | 0.0000 |
+| power_cap_watts | teaching_input | [700, 4000] | batch | batch | batch | 否 | 0.0000 |
+| history | analytical_model | [1024, 32768] | batch | batch | batch | 否 | 1.5670 |
+
+| 补测优先级 | 输入 | 结论 | 翻转方向 | 翻转区间 |
+|---:|---|---|---|---|
+| 1 | power_cap_watts | the decision only changes outside this input's declared interval, so measuring it settles confidence, not the choice | below | [699.0000, 700.0000] |
+| 2 | history | not searched beyond its interval; the endpoint scan is the evidence, and it did not change the decision | — | — |
+| 3 | price_per_device_hour | this input alone never changes the decision in the searched range | — | — |
+
+### 留出配置的可证伪预测
+
+| 配置 | 留出理由 | 预测标签 | 预测余量区间 | 何时被证伪 |
+|---|---|---|---|---|
+| disaggregate | priced but never chosen, so its standing is a prediction | dominated、excluded_by_caps | [0.0000, 5.7471] | an observation of this configuration lands outside the predicted margin interval, or produces a label not listed |
+
+## 口径与限制
+
+- Each input is moved on its own with the others at nominal; joint moves are not covered.
+- A flip is reported as a bisection bracket at the declared tolerance, never as a root.
+- The search covers a bounded factor either way; outside it nothing is claimed.
+- Evidence kind is recorded per input, and an analytical recomputation of the same model is not an independent measurement of it.
+- Held-out predictions are intervals a later measurement can fall outside of; they are refutable, not confirmed.
+- No observation has been entered yet, so no revised decision here rests on new evidence.
+
+## 完整输入与结果
+
+```json
+{
+  "calculation": "design-record-uncertainty",
+  "inputs": {
+    "decisions": [
+      "specialisation_payback",
+      "execution_dag_screening"
+    ],
+    "flip_tolerance": {
+      "numerator": 1,
+      "denominator": 1000
+    },
+    "search_multiple": 64
+  },
+  "evidence_kinds": [
+    "measured",
+    "paper_reported",
+    "teaching_input",
+    "analytical_model"
+  ],
+  "decisions": [
+    {
+      "name": "specialisation_payback",
+      "scan": {
+        "baseline": {
+          "label": "does_not_pay_back",
+          "margin": {
+            "numerator": 1971,
+            "denominator": 5000
+          }
+        },
+        "inputs": [
+          {
+            "input": "saving_per_million_tokens",
+            "evidence": "teaching_input",
+            "interval": [
+              "0.30",
+              "0.80"
+            ],
+            "nominal": "0.50",
+            "points": {
+              "low": {
+                "value": "0.30",
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 5913,
+                  "denominator": 25000
+                }
+              },
+              "nominal": {
+                "value": "0.50",
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 1971,
+                  "denominator": 5000
+                }
+              },
+              "high": {
+                "value": "0.80",
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 1971,
+                  "denominator": 3125
+                }
+              }
+            },
+            "changes_the_decision_within_its_interval": false,
+            "margin_swing": {
+              "numerator": 1971,
+              "denominator": 5000
+            }
+          },
+          {
+            "input": "utilisation",
+            "evidence": "teaching_input",
+            "interval": [
+              "0.3",
+              "0.7"
+            ],
+            "nominal": "0.5",
+            "points": {
+              "low": {
+                "value": "0.3",
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 5913,
+                  "denominator": 25000
+                }
+              },
+              "nominal": {
+                "value": "0.5",
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 1971,
+                  "denominator": 5000
+                }
+              },
+              "high": {
+                "value": "0.7",
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 13797,
+                  "denominator": 25000
+                }
+              }
+            },
+            "changes_the_decision_within_its_interval": false,
+            "margin_swing": {
+              "numerator": 1971,
+              "denominator": 6250
+            }
+          },
+          {
+            "input": "electricity_price_per_kwh",
+            "evidence": "teaching_input",
+            "interval": [
+              "0.04",
+              "0.15"
+            ],
+            "nominal": "0.08",
+            "points": {
+              "low": {
+                "value": "0.04",
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 1971,
+                  "denominator": 5000
+                }
+              },
+              "nominal": {
+                "value": "0.08",
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 1971,
+                  "denominator": 5000
+                }
+              },
+              "high": {
+                "value": "0.15",
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 1971,
+                  "denominator": 5000
+                }
+              }
+            },
+            "changes_the_decision_within_its_interval": false,
+            "margin_swing": {
+              "numerator": 0,
+              "denominator": 1
+            }
+          },
+          {
+            "input": "machines",
+            "evidence": "teaching_input",
+            "interval": [
+              60,
+              160
+            ],
+            "nominal": 100,
+            "points": {
+              "low": {
+                "value": 60,
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 5913,
+                  "denominator": 25000
+                }
+              },
+              "nominal": {
+                "value": 100,
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 1971,
+                  "denominator": 5000
+                }
+              },
+              "high": {
+                "value": 160,
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 1971,
+                  "denominator": 3125
+                }
+              }
+            },
+            "changes_the_decision_within_its_interval": false,
+            "margin_swing": {
+              "numerator": 1971,
+              "denominator": 5000
+            }
+          },
+          {
+            "input": "economic_life_months",
+            "evidence": "teaching_input",
+            "interval": [
+              6,
+              18
+            ],
+            "nominal": 12,
+            "points": {
+              "low": {
+                "value": 6,
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 1971,
+                  "denominator": 10000
+                }
+              },
+              "nominal": {
+                "value": 12,
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 1971,
+                  "denominator": 5000
+                }
+              },
+              "high": {
+                "value": 18,
+                "label": "does_not_pay_back",
+                "margin": {
+                  "numerator": 5913,
+                  "denominator": 10000
+                }
+              }
+            },
+            "changes_the_decision_within_its_interval": false,
+            "margin_swing": {
+              "numerator": 1971,
+              "denominator": 5000
+            }
+          }
+        ]
+      },
+      "value_of_information": [
+        {
+          "input": "saving_per_million_tokens",
+          "evidence": "teaching_input",
+          "rank": 1,
+          "margin_swing": {
+            "numerator": 1971,
+            "denominator": 5000
+          },
+          "flip": {
+            "direction": "above",
+            "bracket": [
+              {
+                "numerator": 83105,
+                "denominator": 65536
+              },
+              {
+                "numerator": 166273,
+                "denominator": 131072
+              }
+            ],
+            "outside_label": "pays_back",
+            "searched": true,
+            "inside_declared_interval": false,
+            "reason": "Moving saving_per_million_tokens above this bracket, with everything else nominal, changes the decision to pays_back"
+          },
+          "verdict": "the decision only changes outside this input's declared interval, so measuring it settles confidence, not the choice"
+        },
+        {
+          "input": "machines",
+          "evidence": "teaching_input",
+          "rank": 1,
+          "margin_swing": {
+            "numerator": 1971,
+            "denominator": 5000
+          },
+          "flip": {
+            "direction": "above",
+            "bracket": [
+              {
+                "numerator": 253,
+                "denominator": 1
+              },
+              {
+                "numerator": 254,
+                "denominator": 1
+              }
+            ],
+            "outside_label": "pays_back",
+            "searched": true,
+            "inside_declared_interval": false,
+            "reason": "Moving machines above this bracket, with everything else nominal, changes the decision to pays_back"
+          },
+          "verdict": "the decision only changes outside this input's declared interval, so measuring it settles confidence, not the choice"
+        },
+        {
+          "input": "economic_life_months",
+          "evidence": "teaching_input",
+          "rank": 1,
+          "margin_swing": {
+            "numerator": 1971,
+            "denominator": 5000
+          },
+          "flip": {
+            "direction": "above",
+            "bracket": [
+              {
+                "numerator": 30,
+                "denominator": 1
+              },
+              {
+                "numerator": 31,
+                "denominator": 1
+              }
+            ],
+            "outside_label": "pays_back",
+            "searched": true,
+            "inside_declared_interval": false,
+            "reason": "Moving economic_life_months above this bracket, with everything else nominal, changes the decision to pays_back"
+          },
+          "verdict": "the decision only changes outside this input's declared interval, so measuring it settles confidence, not the choice"
+        },
+        {
+          "input": "utilisation",
+          "evidence": "teaching_input",
+          "rank": 3,
+          "margin_swing": {
+            "numerator": 1971,
+            "denominator": 6250
+          },
+          "flip": {
+            "direction": null,
+            "bracket": null,
+            "outside_label": null,
+            "inside_declared_interval": false,
+            "searched": true,
+            "reason": "Within a factor of 64 either way, utilisation alone never changes the decision"
+          },
+          "verdict": "this input alone never changes the decision in the searched range"
+        },
+        {
+          "input": "electricity_price_per_kwh",
+          "evidence": "teaching_input",
+          "rank": 3,
+          "margin_swing": {
+            "numerator": 0,
+            "denominator": 1
+          },
+          "flip": {
+            "direction": null,
+            "bracket": null,
+            "outside_label": null,
+            "inside_declared_interval": false,
+            "searched": true,
+            "reason": "Within a factor of 64 either way, electricity_price_per_kwh alone never changes the decision"
+          },
+          "verdict": "this input alone never changes the decision in the searched range"
+        }
+      ],
+      "record": {
+        "decision": "specialisation_payback",
+        "section": "4.6.5",
+        "question": "Do the operating savings repay the specialisation before the model is replaced?",
+        "candidates": [
+          "build the specialisation",
+          "stay on the general-purpose fleet"
+        ],
+        "first_prediction": "does_not_pay_back",
+        "evidence_kinds": [
+          "teaching_input"
+        ],
+        "observation": "None yet. Every input above is a declared teaching value or an analytical recomputation, and a recomputation of the same model is not an independent measurement of it.",
+        "revised_decision": "does_not_pay_back",
+        "revision_reason": "Unchanged: nothing here is new evidence, only the same account moved across its declared intervals.",
+        "next_limit": "saving_per_million_tokens",
+        "flip_condition": "Moving saving_per_million_tokens above this bracket, with everything else nominal, changes the decision to pays_back",
+        "minimum_measurement": "No declared interval changes this decision on its own. The cheapest useful measurement is still saving_per_million_tokens, and it buys confidence rather than a different choice.",
+        "held_out_predictions": [
+          {
+            "configuration": "life_halves",
+            "reason": "kept out of the decision so it can test it",
+            "predicted_labels": [
+              "does_not_pay_back"
+            ],
+            "predicted_margin_interval": [
+              {
+                "numerator": 5913,
+                "denominator": 50000
+              },
+              {
+                "numerator": 1971,
+                "denominator": 6250
+              }
+            ],
+            "falsified_if": "an observation of this configuration lands outside the predicted margin interval, or produces a label not listed"
+          },
+          {
+            "configuration": "output_rate_falls",
+            "reason": "kept out of the decision so it can test it",
+            "predicted_labels": [
+              "does_not_pay_back"
+            ],
+            "predicted_margin_interval": [
+              {
+                "numerator": 5913,
+                "denominator": 50000
+              },
+              {
+                "numerator": 5913,
+                "denominator": 15625
+              }
+            ],
+            "falsified_if": "an observation of this configuration lands outside the predicted margin interval, or produces a label not listed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "execution_dag_screening",
+      "scan": {
+        "baseline": {
+          "label": "batch",
+          "margin": {
+            "numerator": 53652544,
+            "denominator": 22018327
+          }
+        },
+        "inputs": [
+          {
+            "input": "price_per_device_hour",
+            "evidence": "teaching_input",
+            "interval": [
+              "1.0",
+              "8.0"
+            ],
+            "nominal": "3.0",
+            "points": {
+              "low": {
+                "value": "1.0",
+                "label": "batch",
+                "margin": {
+                  "numerator": 53652544,
+                  "denominator": 22018327
+                }
+              },
+              "nominal": {
+                "value": "3.0",
+                "label": "batch",
+                "margin": {
+                  "numerator": 53652544,
+                  "denominator": 22018327
+                }
+              },
+              "high": {
+                "value": "8.0",
+                "label": "batch",
+                "margin": {
+                  "numerator": 53652544,
+                  "denominator": 22018327
+                }
+              }
+            },
+            "changes_the_decision_within_its_interval": false,
+            "margin_swing": {
+              "numerator": 0,
+              "denominator": 1
+            }
+          },
+          {
+            "input": "power_cap_watts",
+            "evidence": "teaching_input",
+            "interval": [
+              700,
+              4000
+            ],
+            "nominal": 1500,
+            "points": {
+              "low": {
+                "value": 700,
+                "label": "batch",
+                "margin": {
+                  "numerator": 53652544,
+                  "denominator": 22018327
+                }
+              },
+              "nominal": {
+                "value": 1500,
+                "label": "batch",
+                "margin": {
+                  "numerator": 53652544,
+                  "denominator": 22018327
+                }
+              },
+              "high": {
+                "value": 4000,
+                "label": "batch",
+                "margin": {
+                  "numerator": 53652544,
+                  "denominator": 22018327
+                }
+              }
+            },
+            "changes_the_decision_within_its_interval": false,
+            "margin_swing": {
+              "numerator": 0,
+              "denominator": 1
+            }
+          },
+          {
+            "input": "history",
+            "evidence": "analytical_model",
+            "interval": [
+              1024,
+              32768
+            ],
+            "nominal": 4096,
+            "points": {
+              "low": {
+                "value": 1024,
+                "label": "batch",
+                "margin": {
+                  "numerator": 43916704,
+                  "denominator": 15424135
+                }
+              },
+              "nominal": {
+                "value": 4096,
+                "label": "batch",
+                "margin": {
+                  "numerator": 53652544,
+                  "denominator": 22018327
+                }
+              },
+              "high": {
+                "value": 32768,
+                "label": "batch",
+                "margin": {
+                  "numerator": 144520000,
+                  "denominator": 112885711
+                }
+              }
+            },
+            "changes_the_decision_within_its_interval": false,
+            "margin_swing": {
+              "numerator": 2728472365616544,
+              "denominator": 1741164446034985
+            }
+          }
+        ]
+      },
+      "value_of_information": [
+        {
+          "input": "power_cap_watts",
+          "evidence": "teaching_input",
+          "rank": 1,
+          "margin_swing": {
+            "numerator": 0,
+            "denominator": 1
+          },
+          "flip": {
+            "direction": "below",
+            "bracket": [
+              {
+                "numerator": 699,
+                "denominator": 1
+              },
+              {
+                "numerator": 700,
+                "denominator": 1
+              }
+            ],
+            "outside_label": "no_admissible_candidate",
+            "searched": true,
+            "inside_declared_interval": false,
+            "reason": "Moving power_cap_watts below this bracket, with everything else nominal, changes the decision to no_admissible_candidate"
+          },
+          "verdict": "the decision only changes outside this input's declared interval, so measuring it settles confidence, not the choice"
+        },
+        {
+          "input": "history",
+          "evidence": "analytical_model",
+          "rank": 2,
+          "margin_swing": {
+            "numerator": 2728472365616544,
+            "denominator": 1741164446034985
+          },
+          "flip": {
+            "direction": null,
+            "bracket": null,
+            "outside_label": null,
+            "inside_declared_interval": false,
+            "searched": false,
+            "reason": "history is not searched beyond its declared interval: each evaluation rebuilds the whole graph, so the endpoint scan above is the evidence for it"
+          },
+          "verdict": "not searched beyond its interval; the endpoint scan is the evidence, and it did not change the decision"
+        },
+        {
+          "input": "price_per_device_hour",
+          "evidence": "teaching_input",
+          "rank": 3,
+          "margin_swing": {
+            "numerator": 0,
+            "denominator": 1
+          },
+          "flip": {
+            "direction": null,
+            "bracket": null,
+            "outside_label": null,
+            "inside_declared_interval": false,
+            "searched": true,
+            "reason": "Within a factor of 8 either way, price_per_device_hour alone never changes the decision"
+          },
+          "verdict": "this input alone never changes the decision in the searched range"
+        }
+      ],
+      "record": {
+        "decision": "execution_dag_screening",
+        "section": "1.3, 9.6",
+        "question": "Which graph rewrite wins on cost per token under the declared caps?",
+        "candidates": [
+          "baseline",
+          "cache_prefix",
+          "compress_state",
+          "batch",
+          "disaggregate"
+        ],
+        "first_prediction": "batch",
+        "evidence_kinds": [
+          "analytical_model",
+          "teaching_input"
+        ],
+        "observation": "None yet. Every input above is a declared teaching value or an analytical recomputation, and a recomputation of the same model is not an independent measurement of it.",
+        "revised_decision": "batch",
+        "revision_reason": "Unchanged: nothing here is new evidence, only the same account moved across its declared intervals.",
+        "next_limit": "power_cap_watts",
+        "flip_condition": "Moving power_cap_watts below this bracket, with everything else nominal, changes the decision to no_admissible_candidate",
+        "minimum_measurement": "No declared interval changes this decision on its own. The cheapest useful measurement is still power_cap_watts, and it buys confidence rather than a different choice.",
+        "held_out_predictions": [
+          {
+            "configuration": "disaggregate",
+            "reason": "priced but never chosen, so its standing is a prediction",
+            "predicted_labels": [
+              "dominated",
+              "excluded_by_caps"
+            ],
+            "predicted_margin_interval": [
+              {
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "numerator": 17728944,
+                "denominator": 3084827
+              }
+            ],
+            "falsified_if": "an observation of this configuration lands outside the predicted margin interval, or produces a label not listed"
+          }
+        ]
+      }
+    }
+  ],
+  "assumptions": [
+    "Each input is moved on its own with the others at nominal; joint moves are not covered.",
+    "A flip is reported as a bisection bracket at the declared tolerance, never as a root.",
+    "The search covers a bounded factor either way; outside it nothing is claimed.",
+    "Evidence kind is recorded per input, and an analytical recomputation of the same model is not an independent measurement of it.",
+    "Held-out predictions are intervals a later measurement can fall outside of; they are refutable, not confirmed.",
+    "No observation has been entered yet, so no revised decision here rests on new evidence."
+  ]
+}
+```

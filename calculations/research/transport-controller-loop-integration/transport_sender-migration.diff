@@ -1,0 +1,99 @@
+--- research/transport_sender.py
++++ calculations/src/infra_calc/topics/transport_sender.py
+@@ -4,11 +4,13 @@
+ """
+ 
+ from fractions import Fraction as F
+-import hashlib
+ import heapq
+-import importlib.util
+ import json
+-from pathlib import Path
++from ..sources import provenance, read_source
++from ..transport import persistent_congestion
++from ..transport.bbr_adapter import BbrAdapter
++from ..transport.cubic_adapter import CubicAdapter
++from ..transport.reference_sources import reference_sources as controller_sources
+ 
+ 
+ def union(intervals):
+@@ -21,17 +23,29 @@
+     return result
+ 
+ 
++def reference_sources(include_datagram=False):
++    selected = {"RFC9000", "RFC9002", "RFC9002 Verified Errata7539"}
++    if include_datagram:
++        selected.add("RFC9221")
++    available = (
++        provenance("protocol-rfc")
++        + provenance("shared-media-rfc")
++        + provenance("transport-feedback-errata")
++    )
++    rows = [row for row in available if row["revision"] in selected]
++    if len(rows) != len(selected) or {row["revision"] for row in rows} != selected:
++        raise ValueError("missing pinned transport feedback sources")
++    for row in rows:
++        read_source(row["file"])
++    return rows
++
++
+ def create_sender(inputs):
+     p = json.loads(json.dumps(inputs))
+-    root = Path(__file__).resolve().parent.parent / "transport-feedback"
+-    sources = json.loads((root / "sources.lock.json").read_text())
+-    for source in sources:
+-        raw = (root / source["file"]).read_bytes()
+-        if (
+-            len(raw) != source["bytes"]
+-            or hashlib.sha256(raw).hexdigest() != source["sha256"]
+-        ):
+-            raise ValueError("source integrity mismatch")
++    sources = reference_sources(include_datagram=True)
++    name = (p.get("controller") or {}).get("name")
++    for group in ({"cubic_hystart": ("cubic", "hystart"), "bbr": ("bbr",)}.get(name, ())):
++        sources.extend(controller_sources(group))
+     mds = p.get("max_datagram_size", 1200)
+     if type(mds) is not int or mds < 1200:
+         raise ValueError("max_datagram_size >=1200")
+@@ -81,18 +95,11 @@
+     adapter = None
+     if controller_config and controller_config["name"] != "newreno":
+         name = controller_config["name"]
+-        filename, classname = {
+-            "cubic_hystart": ("cubic_adapter.py", "CubicAdapter"),
+-            "bbr": ("bbr_adapter.py", "BbrAdapter"),
+-        }[name]
+-        module_path = Path(__file__).resolve().parent / filename
+-        spec = importlib.util.spec_from_file_location("loop_" + name, module_path)
+-        module = importlib.util.module_from_spec(spec)
+-        spec.loader.exec_module(module)
++        adapter_class = {"cubic_hystart": CubicAdapter, "bbr": BbrAdapter}[name]
+         cfg = dict(controller_config)
+         cfg["bbr_rtt_seed_known"] = bool(p.get("rtt_seed"))
+         cfg["external_pacer"] = True
+-        adapter = getattr(module, classname)(mds, cwnd, smoothed, cfg)
++        adapter = adapter_class(mds, cwnd, smoothed, cfg)
+     pacer_hook = None
+     limited_flags = {"app_limited": False, "flow_limited": False}
+     controller_events = []
+@@ -203,10 +210,6 @@
+             <= 3 * pto_period()
+         ):
+             return
+-        path = Path(__file__).resolve().parent / "persistent_congestion.py"
+-        spec = importlib.util.spec_from_file_location("loop_persistent", path)
+-        module = importlib.util.module_from_spec(spec)
+-        spec.loader.exec_module(module)
+         records = [
+             dict(
+                 pn=h["pn"],
+@@ -217,7 +220,7 @@
+             )
+             for h in history.values()
+         ]
+-        evidence = module.evaluate(
++        evidence = persistent_congestion.evaluate(
+             records,
+             smoothed_rtt=smoothed,
+             rttvar=variance,

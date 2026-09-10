@@ -1,0 +1,21 @@
+# HyStart++ 实现前合同
+
+本合同先于状态内核实现。来源为固定官方 RFC9406§4.2–4.3；它说明启动算法，不包含完整 TCP/QUIC 发送、恢复或 CUBIC 拥塞避免。当前工作归入现有前12章计算体系，不恢复已拆除章节。
+
+使用 byte 窗口、秒 RTT、有理数算术。推荐参数默认 MIN_RTT_THRESH=4ms、MAX_RTT_THRESH=16ms、MIN_RTT_DIVISOR=8、N_RTT_SAMPLE=8、CSS_GROWTH_DIVISOR=4、CSS_ROUNDS=5；paced 模式L为无穷，non-paced为8。实际pacer由调用方提供，不能仅切换paced布尔值便宣称已实现网络pacing。
+
+输入给定初始已发送的第一flight：initial_snd_nxt 是最高已发送字节的排他端点，initial_acked_seq 是累计确认排他端点，二者之间必须有未确认数据，window_end 初始化为 initial_snd_nxt。序号是不会回绕的逻辑字节索引，不实现TCP32位序号展开。事件sent更新实际观察到的snd_nxt，不能倒退；ACK给ack_seq、newly_acked_bytes及可选独立有效RTT样本。ACK序号不能倒退/超过实际snd_nxt，累计新确认量不能超过已发唯一字节。选择性确认可使newly_acked_bytes与累计ack_seq推进不同；真正ACK范围/去重/RTT采样资格由反馈适配器负责，本层不是ACK检测器。
+
+每个有效RTT样本必须携唯一rtt_sample_id。没有样本的ACK仍可推进窗口，不能复用上次RTT并虚增sample count；ACK新确认量为0时不增窗，但调用方提供新的合法RTT样本仍可参与本轮统计。重复sample_id拒绝，不能把重复ACK包装成多个独立样本。
+
+RFC给出了序号round边界但没有完整事件调度器。本参考明确采用：ACK先按其到达前阶段更新窗口和当前round的有效RTT统计，然后判断CSS进入/恢复，最后若ack_seq>=window_end则结束此round并将window_end设为此时本地snd_nxt。边界ACK的样本归结束的round。若没有更多已发送字节，新round等待首次实际sent后确定其window_end，重复ACK不能无限计空round。
+
+标准HyStart慢启动每ACK增量min(N,L*SMSS)；CSS增量再除CSS_GROWTH_DIVISOR。CSS开始的那个ACK使用进入前的标准增量；CSS退出恢复慢启动的ACK使用进入前的CSS增量。RTT比较包括等号：当前round最小RTT达到lastRoundMinRTT+clamp(lastRoundMinRTT/8,4ms,16ms)才进入CSS。
+
+CSS抖动恢复严格依照§4.2正文的“本round至少N_RTT_SAMPLE样本”：满足样本门槛后，currentRoundMinRTT严格小于cssBaselineMinRtt才恢复标准HyStart慢启动，清除baseline及CSS完成计数。伪码短片段没有重复写门槛，本参考不会跳过相邻正文限定。样本不足的轮次仍是实际CSS轮次，计入CSS_ROUNDS时长上限；不能把没有足够RTT样本解释成时间不推进。
+
+CSS进入时若在round中途，该partial round计为第1个；完成5个CSS round后交付拥塞避免handoff，ssthresh=cwnd。若在边界ACK触发CSS，该ACK所结束的round按同一明确策略计partial round。loss/ecn在标准HyStart或CSS出现也立即handoff，先按9406设置ssthresh=cwnd；后续CUBIC/NewReno的实际减窗由恢复适配器单独执行一次，不能把这里的退出当成已执行beta减窗。
+
+HyStart++默认仅运行初始启动。handoff后不接管CA增长；后续连接再启动交给已有标准慢启动实现。显式restart事件标记standard-slow-start handoff并保持HyStart禁用，不在这里复制完整Reno/CUBIC。未知事件、handoff后试图继续本模块ACK增长、非法参数、CSS_GROWTH_DIVISOR<2均拒绝。
+
+输出逐事件原阶段、实际增量、RTT门槛、round结束/新window_end、CSS计数与handoff，便于后续同反馈适配。不会从这里单独推导30MB传输时间。

@@ -1,0 +1,70 @@
+{
+  "status": "passed",
+  "source_hashes": {
+    "calculate.py": "97a12a1c2e94e58d31ed370b098ef576cf9575451d75097973c19f43c16552dc",
+    "sender.py": "be435d7222f2531f485e23611633c8622b3385d7ecb3e8406342b7b9a1e7b77d",
+    "cubic_adapter.py": "cdfc2c64e387dc48e7e940d67885cfc2630f8423800976373d968b458045dc42",
+    "bbr_adapter.py": "606b263d23d8c7917fd6deab94378a4639b343c43bf35087937eb9eebe7d66ba",
+    "pacer.py": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+    "persistent_congestion.py": "116448af2c5c8c1bc0571c1452b032b01f3300771dae9a7e8bc7ac5ea8833a7f"
+  },
+  "result_file": "book-bbr-result.json",
+  "result_sha256": "2389e978f362a8df22f36c83fe39393d6bc4558fcd3897a59e8da792a8c1f268",
+  "controller": "bbr",
+  "inputs": {
+    "upload_bytes": 30000000,
+    "response_bytes": 5000000,
+    "model_seconds": "0.3",
+    "until": 60,
+    "links": {
+      "up": {
+        "rate_bps": 20000000,
+        "propagation": "0.05"
+      },
+      "down": {
+        "rate_bps": 100000000,
+        "propagation": "0.05"
+      }
+    },
+    "sender": {
+      "initial_cwnd": 12000,
+      "numeric_quantum": "0.000000000001"
+    },
+    "controller": {
+      "name": "bbr"
+    },
+    "pad_in_flight": true
+  },
+  "wire_bytes": {
+    "up": 31935032,
+    "down": 7620088
+  },
+  "padding_bytes": {
+    "up": 80,
+    "down": 208
+  },
+  "packets": 59932,
+  "business": {
+    "upload": "13344766867/1000000000",
+    "model_start": "13344766867/1000000000",
+    "model_end": "13644766867/1000000000",
+    "response": "1871765749/125000000"
+  },
+  "local_error_counts": {
+    "numeric_errors": 29900,
+    "controller_events": 119864,
+    "pacer_errors": 175501
+  },
+  "observed_controller_phases": {
+    "up": [
+      "PROBE_BW",
+      "PROBE_RTT",
+      "STARTUP"
+    ],
+    "down": [
+      "PROBE_RTT",
+      "STARTUP"
+    ]
+  },
+  "scope": "one full frozen trace; streaming physical, byte, numeric and controller-state audit"
+}

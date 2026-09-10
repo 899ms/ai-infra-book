@@ -1,0 +1,2154 @@
+{
+  "calculation": "queqiao-recorded-conditions",
+  "inputs": {
+    "prebuffer_ms": 60.0,
+    "comparison_leg": "total"
+  },
+  "sources": [
+    {
+      "file": "sources/queqiao-records/PATH-CHARACTER-DC-20260826.md",
+      "bytes": 43272,
+      "sha256": "26b2b1086d63579276ac304d456c9cfd69ca8c23b242b71ba27f10c87eef3675",
+      "origin": "references/author-context/queqiao-168ff4b/PATH-CHARACTER-DC-20260826.md"
+    },
+    {
+      "file": "sources/queqiao-records/DESIGN-DC-PROFILE.md",
+      "bytes": 28995,
+      "sha256": "0c1e1a6f47b14a7ab60e671bc2163ed3c0d4f2a99ad413e6fa0d5afd4d335491",
+      "origin": "references/author-context/queqiao-168ff4b/DESIGN-DC-PROFILE.md"
+    },
+    {
+      "file": "sources/queqiao-records/records.json",
+      "bytes": 19413,
+      "sha256": "02d83d3479fc8433df0525db364ddef8ed21269219456a2723c17384b2d1f0c4",
+      "origin": "transcribed from the two pinned documents above"
+    }
+  ],
+  "reported_resolution_ms": 0.1,
+  "half_ulp_ms": {
+    "numerator": 1,
+    "denominator": 20
+  },
+  "generations": {
+    "rotating-eight-files": {
+      "superseded": true,
+      "payload_low_bytes": 146000,
+      "payload_high_bytes": 405000,
+      "claimed_label_bytes": 355000,
+      "label_supported": false,
+      "reason": "The benchmark rotated eight files and reported only the last request's size, so every figure labelled 355KB is a median across the whole range.",
+      "section": "PATH#the-workload-this-was-built-for"
+    },
+    "single-fixed-file": {
+      "superseded": false,
+      "payload_low_bytes": 354640,
+      "payload_high_bytes": 354640,
+      "claimed_label_bytes": 354640,
+      "label_supported": true,
+      "reason": "One fixed file, arms alternating within the run, after the pacing fix.",
+      "section": "PATH#re-measured-with-one-fixed-file"
+    }
+  },
+  "same_condition_comparisons": [
+    {
+      "leg": "total",
+      "condition": [
+        "rotating-eight-files",
+        "asr_upload",
+        "held_open",
+        0
+      ],
+      "numerator_id": "asr-rot-held-tuned-direct",
+      "denominator_id": "asr-rot-held-tuned-queqiao",
+      "numerator_ms": {
+        "numerator": 1129,
+        "denominator": 5
+      },
+      "denominator_ms": {
+        "numerator": 295,
+        "denominator": 1
+      },
+      "ratio": {
+        "numerator": 1129,
+        "denominator": 1475
+      },
+      "difference_ms": {
+        "numerator": -346,
+        "denominator": 5
+      },
+      "documented_paired_ratio": null,
+      "paired_vs_ratio_of_medians": null,
+      "paired_note": "The documents give only a spread for this condition, not a paired median",
+      "documented_paired_spread": [
+        0.66,
+        2.93
+      ]
+    },
+    {
+      "leg": "total",
+      "condition": [
+        "rotating-eight-files",
+        "asr_upload",
+        "held_open",
+        1
+      ],
+      "numerator_id": "asr-rot-held-stock-direct",
+      "denominator_id": "asr-rot-held-stock-queqiao",
+      "numerator_ms": {
+        "numerator": 7899,
+        "denominator": 10
+      },
+      "denominator_ms": {
+        "numerator": 2927,
+        "denominator": 10
+      },
+      "ratio": {
+        "numerator": 7899,
+        "denominator": 2927
+      },
+      "difference_ms": {
+        "numerator": 2486,
+        "denominator": 5
+      },
+      "documented_paired_ratio": null,
+      "paired_vs_ratio_of_medians": null,
+      "paired_note": "The documents give no median of per-round ratios for this condition",
+      "documented_paired_spread": null
+    },
+    {
+      "leg": "total",
+      "condition": [
+        "rotating-eight-files",
+        "asr_upload",
+        "new",
+        1
+      ],
+      "numerator_id": "asr-rot-new-direct",
+      "denominator_id": "asr-rot-new-queqiao",
+      "numerator_ms": {
+        "numerator": 2267,
+        "denominator": 2
+      },
+      "denominator_ms": {
+        "numerator": 1451,
+        "denominator": 5
+      },
+      "ratio": {
+        "numerator": 11335,
+        "denominator": 2902
+      },
+      "difference_ms": {
+        "numerator": 8433,
+        "denominator": 10
+      },
+      "documented_paired_ratio": {
+        "numerator": 363,
+        "denominator": 100
+      },
+      "paired_vs_ratio_of_medians": {
+        "numerator": -40037,
+        "denominator": 145100
+      },
+      "paired_note": "A median of per-round ratios is not the ratio of the two medians; the per-round values are not in the records, so only the difference is shown",
+      "documented_paired_spread": [
+        3.47,
+        4.21
+      ]
+    },
+    {
+      "leg": "download",
+      "condition": [
+        "rotating-eight-files",
+        "tts_download",
+        "held_open",
+        0
+      ],
+      "numerator_id": "tts-rot-held-tuned-direct",
+      "denominator_id": "tts-rot-held-tuned-queqiao",
+      "numerator_ms": {
+        "numerator": 3147,
+        "denominator": 5
+      },
+      "denominator_ms": {
+        "numerator": 357,
+        "denominator": 5
+      },
+      "ratio": {
+        "numerator": 1049,
+        "denominator": 119
+      },
+      "difference_ms": {
+        "numerator": 558,
+        "denominator": 1
+      },
+      "documented_paired_ratio": null,
+      "paired_vs_ratio_of_medians": null,
+      "paired_note": "The documents give no median of per-round ratios for this condition",
+      "documented_paired_spread": null
+    },
+    {
+      "leg": "total",
+      "condition": [
+        "rotating-eight-files",
+        "tts_download",
+        "new",
+        1
+      ],
+      "numerator_id": "tts-rot-new-direct",
+      "denominator_id": "tts-rot-new-queqiao",
+      "numerator_ms": {
+        "numerator": 56613,
+        "denominator": 10
+      },
+      "denominator_ms": {
+        "numerator": 22752,
+        "denominator": 5
+      },
+      "ratio": {
+        "numerator": 18871,
+        "denominator": 15168
+      },
+      "difference_ms": {
+        "numerator": 11109,
+        "denominator": 10
+      },
+      "documented_paired_ratio": null,
+      "paired_vs_ratio_of_medians": null,
+      "paired_note": "The documents give only a spread for this condition, not a paired median",
+      "documented_paired_spread": [
+        0.9,
+        1.42
+      ]
+    },
+    {
+      "leg": "total",
+      "condition": [
+        "single-fixed-file",
+        "asr_upload",
+        "held_open",
+        0
+      ],
+      "numerator_id": "asr-fixed-held-tuned-direct",
+      "denominator_id": "asr-fixed-held-tuned-queqiao",
+      "numerator_ms": {
+        "numerator": 2409,
+        "denominator": 10
+      },
+      "denominator_ms": {
+        "numerator": 473,
+        "denominator": 2
+      },
+      "ratio": {
+        "numerator": 219,
+        "denominator": 215
+      },
+      "difference_ms": {
+        "numerator": 22,
+        "denominator": 5
+      },
+      "documented_paired_ratio": {
+        "numerator": 103,
+        "denominator": 100
+      },
+      "paired_vs_ratio_of_medians": {
+        "numerator": 49,
+        "denominator": 4300
+      },
+      "paired_note": "A median of per-round ratios is not the ratio of the two medians; the per-round values are not in the records, so only the difference is shown",
+      "documented_paired_spread": [
+        null,
+        null
+      ]
+    },
+    {
+      "leg": "total",
+      "condition": [
+        "single-fixed-file",
+        "asr_upload",
+        "new",
+        1
+      ],
+      "numerator_id": "asr-fixed-new-direct",
+      "denominator_id": "asr-fixed-new-queqiao",
+      "numerator_ms": {
+        "numerator": 11853,
+        "denominator": 10
+      },
+      "denominator_ms": {
+        "numerator": 1508,
+        "denominator": 5
+      },
+      "ratio": {
+        "numerator": 11853,
+        "denominator": 3016
+      },
+      "difference_ms": {
+        "numerator": 8837,
+        "denominator": 10
+      },
+      "documented_paired_ratio": {
+        "numerator": 99,
+        "denominator": 25
+      },
+      "paired_vs_ratio_of_medians": {
+        "numerator": 2259,
+        "denominator": 75400
+      },
+      "paired_note": "A median of per-round ratios is not the ratio of the two medians; the per-round values are not in the records, so only the difference is shown",
+      "documented_paired_spread": [
+        null,
+        null
+      ]
+    },
+    {
+      "leg": "download",
+      "condition": [
+        "single-fixed-file",
+        "tts_download",
+        "new",
+        1
+      ],
+      "numerator_id": "tts-fixed-new-direct",
+      "denominator_id": "tts-fixed-new-queqiao",
+      "numerator_ms": {
+        "numerator": 8277,
+        "denominator": 10
+      },
+      "denominator_ms": {
+        "numerator": 267,
+        "denominator": 5
+      },
+      "ratio": {
+        "numerator": 31,
+        "denominator": 2
+      },
+      "difference_ms": {
+        "numerator": 7743,
+        "denominator": 10
+      },
+      "documented_paired_ratio": null,
+      "paired_vs_ratio_of_medians": null,
+      "paired_note": "The documents give no median of per-round ratios for this condition",
+      "documented_paired_spread": null
+    }
+  ],
+  "conditions_without_a_pair": [
+    {
+      "condition": [
+        "single-fixed-file",
+        "tts_download",
+        "held_open",
+        0
+      ],
+      "ids": [
+        "tts-fixed-held-tuned-direct"
+      ],
+      "reason": "This condition does not hold both arms with a shared leg median"
+    }
+  ],
+  "floor_feasibility": [
+    {
+      "id": "asr-rot-new-direct",
+      "generation": "rotating-eight-files",
+      "observed_p50_ms": {
+        "numerator": 2267,
+        "denominator": 2
+      },
+      "payload_interval_bytes": [
+        146000,
+        405000
+      ],
+      "label_supported": false,
+      "round_trip_band_ms": [
+        199.0,
+        207.0
+      ],
+      "floor_at_smallest_payload": {
+        "payload_bytes": 146000,
+        "wire_ms": {
+          "numerator": 1168,
+          "denominator": 333
+        },
+        "low_ms": {
+          "numerator": 77425,
+          "denominator": 333
+        },
+        "high_ms": {
+          "numerator": 82753,
+          "denominator": 333
+        }
+      },
+      "floor_at_largest_payload": {
+        "payload_bytes": 405000,
+        "wire_ms": {
+          "numerator": 360,
+          "denominator": 37
+        },
+        "low_ms": {
+          "numerator": 8833,
+          "denominator": 37
+        },
+        "high_ms": {
+          "numerator": 9425,
+          "denominator": 37
+        }
+      },
+      "below_floor_at_smallest_payload": false,
+      "largest_feasible_payload_bytes": 37649812,
+      "largest_feasible_payload_bytes_at_minimum_rtt": 38195100,
+      "exceeds_recorded_payload_range": true,
+      "verdict": "Consistent with the recorded payload range"
+    },
+    {
+      "id": "asr-rot-new-queqiao",
+      "generation": "rotating-eight-files",
+      "observed_p50_ms": {
+        "numerator": 1451,
+        "denominator": 5
+      },
+      "payload_interval_bytes": [
+        146000,
+        405000
+      ],
+      "label_supported": false,
+      "round_trip_band_ms": [
+        199.0,
+        207.0
+      ],
+      "floor_at_smallest_payload": {
+        "payload_bytes": 146000,
+        "wire_ms": {
+          "numerator": 1168,
+          "denominator": 333
+        },
+        "low_ms": {
+          "numerator": 77425,
+          "denominator": 333
+        },
+        "high_ms": {
+          "numerator": 82753,
+          "denominator": 333
+        }
+      },
+      "floor_at_largest_payload": {
+        "payload_bytes": 405000,
+        "wire_ms": {
+          "numerator": 360,
+          "denominator": 37
+        },
+        "low_ms": {
+          "numerator": 8833,
+          "denominator": 37
+        },
+        "high_ms": {
+          "numerator": 9425,
+          "denominator": 37
+        }
+      },
+      "below_floor_at_smallest_payload": false,
+      "largest_feasible_payload_bytes": 2547450,
+      "largest_feasible_payload_bytes_at_minimum_rtt": 3092737,
+      "exceeds_recorded_payload_range": true,
+      "verdict": "Consistent with the recorded payload range"
+    },
+    {
+      "id": "asr-rot-held-stock-direct",
+      "generation": "rotating-eight-files",
+      "observed_p50_ms": {
+        "numerator": 7899,
+        "denominator": 10
+      },
+      "payload_interval_bytes": [
+        146000,
+        405000
+      ],
+      "label_supported": false,
+      "round_trip_band_ms": [
+        199.0,
+        207.0
+      ],
+      "floor_at_smallest_payload": {
+        "payload_bytes": 146000,
+        "wire_ms": {
+          "numerator": 1168,
+          "denominator": 333
+        },
+        "low_ms": {
+          "numerator": 77425,
+          "denominator": 333
+        },
+        "high_ms": {
+          "numerator": 82753,
+          "denominator": 333
+        }
+      },
+      "floor_at_largest_payload": {
+        "payload_bytes": 405000,
+        "wire_ms": {
+          "numerator": 360,
+          "denominator": 37
+        },
+        "low_ms": {
+          "numerator": 8833,
+          "denominator": 37
+        },
+        "high_ms": {
+          "numerator": 9425,
+          "denominator": 37
+        }
+      },
+      "below_floor_at_smallest_payload": false,
+      "largest_feasible_payload_bytes": 23347462,
+      "largest_feasible_payload_bytes_at_minimum_rtt": 23892750,
+      "exceeds_recorded_payload_range": true,
+      "verdict": "Consistent with the recorded payload range"
+    },
+    {
+      "id": "asr-rot-held-stock-queqiao",
+      "generation": "rotating-eight-files",
+      "observed_p50_ms": {
+        "numerator": 2927,
+        "denominator": 10
+      },
+      "payload_interval_bytes": [
+        146000,
+        405000
+      ],
+      "label_supported": false,
+      "round_trip_band_ms": [
+        199.0,
+        207.0
+      ],
+      "floor_at_smallest_payload": {
+        "payload_bytes": 146000,
+        "wire_ms": {
+          "numerator": 1168,
+          "denominator": 333
+        },
+        "low_ms": {
+          "numerator": 77425,
+          "denominator": 333
+        },
+        "high_ms": {
+          "numerator": 82753,
+          "denominator": 333
+        }
+      },
+      "floor_at_largest_payload": {
+        "payload_bytes": 405000,
+        "wire_ms": {
+          "numerator": 360,
+          "denominator": 37
+        },
+        "low_ms": {
+          "numerator": 8833,
+          "denominator": 37
+        },
+        "high_ms": {
+          "numerator": 9425,
+          "denominator": 37
+        }
+      },
+      "below_floor_at_smallest_payload": false,
+      "largest_feasible_payload_bytes": 2651512,
+      "largest_feasible_payload_bytes_at_minimum_rtt": 3196800,
+      "exceeds_recorded_payload_range": true,
+      "verdict": "Consistent with the recorded payload range"
+    },
+    {
+      "id": "asr-rot-held-tuned-direct",
+      "generation": "rotating-eight-files",
+      "observed_p50_ms": {
+        "numerator": 1129,
+        "denominator": 5
+      },
+      "payload_interval_bytes": [
+        146000,
+        405000
+      ],
+      "label_supported": false,
+      "round_trip_band_ms": [
+        199.0,
+        207.0
+      ],
+      "floor_at_smallest_payload": {
+        "payload_bytes": 146000,
+        "wire_ms": {
+          "numerator": 1168,
+          "denominator": 333
+        },
+        "low_ms": {
+          "numerator": 77425,
+          "denominator": 333
+        },
+        "high_ms": {
+          "numerator": 82753,
+          "denominator": 333
+        }
+      },
+      "floor_at_largest_payload": {
+        "payload_bytes": 405000,
+        "wire_ms": {
+          "numerator": 360,
+          "denominator": 37
+        },
+        "low_ms": {
+          "numerator": 8833,
+          "denominator": 37
+        },
+        "high_ms": {
+          "numerator": 9425,
+          "denominator": 37
+        }
+      },
+      "below_floor_at_smallest_payload": true,
+      "largest_feasible_payload_bytes": null,
+      "largest_feasible_payload_bytes_at_minimum_rtt": 412087,
+      "exceeds_recorded_payload_range": false,
+      "verdict": "Below the floor across the recorded round-trip band; only the recorded minimum round trip admits it"
+    },
+    {
+      "id": "asr-rot-held-tuned-queqiao",
+      "generation": "rotating-eight-files",
+      "observed_p50_ms": {
+        "numerator": 295,
+        "denominator": 1
+      },
+      "payload_interval_bytes": [
+        146000,
+        405000
+      ],
+      "label_supported": false,
+      "round_trip_band_ms": [
+        199.0,
+        207.0
+      ],
+      "floor_at_smallest_payload": {
+        "payload_bytes": 146000,
+        "wire_ms": {
+          "numerator": 1168,
+          "denominator": 333
+        },
+        "low_ms": {
+          "numerator": 77425,
+          "denominator": 333
+        },
+        "high_ms": {
+          "numerator": 82753,
+          "denominator": 333
+        }
+      },
+      "floor_at_largest_payload": {
+        "payload_bytes": 405000,
+        "wire_ms": {
+          "numerator": 360,
+          "denominator": 37
+        },
+        "low_ms": {
+          "numerator": 8833,
+          "denominator": 37
+        },
+        "high_ms": {
+          "numerator": 9425,
+          "denominator": 37
+        }
+      },
+      "below_floor_at_smallest_payload": false,
+      "largest_feasible_payload_bytes": 2747250,
+      "largest_feasible_payload_bytes_at_minimum_rtt": 3292537,
+      "exceeds_recorded_payload_range": true,
+      "verdict": "Consistent with the recorded payload range"
+    },
+    {
+      "id": "asr-fixed-new-direct",
+      "generation": "single-fixed-file",
+      "observed_p50_ms": {
+        "numerator": 11853,
+        "denominator": 10
+      },
+      "payload_interval_bytes": [
+        354640,
+        354640
+      ],
+      "label_supported": true,
+      "round_trip_band_ms": [
+        197.0,
+        205.0
+      ],
+      "floor_at_smallest_payload": {
+        "payload_bytes": 354640,
+        "wire_ms": {
+          "numerator": 70928,
+          "denominator": 8325
+        },
+        "low_ms": {
+          "numerator": 1960703,
+          "denominator": 8325
+        },
+        "high_ms": {
+          "numerator": 2093903,
+          "denominator": 8325
+        }
+      },
+      "floor_at_largest_payload": {
+        "payload_bytes": 354640,
+        "wire_ms": {
+          "numerator": 70928,
+          "denominator": 8325
+        },
+        "low_ms": {
+          "numerator": 1960703,
+          "denominator": 8325
+        },
+        "high_ms": {
+          "numerator": 2093903,
+          "denominator": 8325
+        }
+      },
+      "below_floor_at_smallest_payload": false,
+      "largest_feasible_payload_bytes": 39889237,
+      "largest_feasible_payload_bytes_at_minimum_rtt": null,
+      "exceeds_recorded_payload_range": true,
+      "verdict": "Consistent with the recorded payload range"
+    },
+    {
+      "id": "asr-fixed-new-queqiao",
+      "generation": "single-fixed-file",
+      "observed_p50_ms": {
+        "numerator": 1508,
+        "denominator": 5
+      },
+      "payload_interval_bytes": [
+        354640,
+        354640
+      ],
+      "label_supported": true,
+      "round_trip_band_ms": [
+        197.0,
+        205.0
+      ],
+      "floor_at_smallest_payload": {
+        "payload_bytes": 354640,
+        "wire_ms": {
+          "numerator": 70928,
+          "denominator": 8325
+        },
+        "low_ms": {
+          "numerator": 1960703,
+          "denominator": 8325
+        },
+        "high_ms": {
+          "numerator": 2093903,
+          "denominator": 8325
+        }
+      },
+      "floor_at_largest_payload": {
+        "payload_bytes": 354640,
+        "wire_ms": {
+          "numerator": 70928,
+          "denominator": 8325
+        },
+        "low_ms": {
+          "numerator": 1960703,
+          "denominator": 8325
+        },
+        "high_ms": {
+          "numerator": 2093903,
+          "denominator": 8325
+        }
+      },
+      "below_floor_at_smallest_payload": false,
+      "largest_feasible_payload_bytes": 3105225,
+      "largest_feasible_payload_bytes_at_minimum_rtt": null,
+      "exceeds_recorded_payload_range": true,
+      "verdict": "Consistent with the recorded payload range"
+    },
+    {
+      "id": "asr-fixed-held-tuned-direct",
+      "generation": "single-fixed-file",
+      "observed_p50_ms": {
+        "numerator": 2409,
+        "denominator": 10
+      },
+      "payload_interval_bytes": [
+        354640,
+        354640
+      ],
+      "label_supported": true,
+      "round_trip_band_ms": [
+        197.0,
+        205.0
+      ],
+      "floor_at_smallest_payload": {
+        "payload_bytes": 354640,
+        "wire_ms": {
+          "numerator": 70928,
+          "denominator": 8325
+        },
+        "low_ms": {
+          "numerator": 1960703,
+          "denominator": 8325
+        },
+        "high_ms": {
+          "numerator": 2093903,
+          "denominator": 8325
+        }
+      },
+      "floor_at_largest_payload": {
+        "payload_bytes": 354640,
+        "wire_ms": {
+          "numerator": 70928,
+          "denominator": 8325
+        },
+        "low_ms": {
+          "numerator": 1960703,
+          "denominator": 8325
+        },
+        "high_ms": {
+          "numerator": 2093903,
+          "denominator": 8325
+        }
+      },
+      "below_floor_at_smallest_payload": false,
+      "largest_feasible_payload_bytes": 578587,
+      "largest_feasible_payload_bytes_at_minimum_rtt": null,
+      "exceeds_recorded_payload_range": true,
+      "verdict": "Consistent with the recorded payload range"
+    },
+    {
+      "id": "asr-fixed-held-tuned-queqiao",
+      "generation": "single-fixed-file",
+      "observed_p50_ms": {
+        "numerator": 473,
+        "denominator": 2
+      },
+      "payload_interval_bytes": [
+        354640,
+        354640
+      ],
+      "label_supported": true,
+      "round_trip_band_ms": [
+        197.0,
+        205.0
+      ],
+      "floor_at_smallest_payload": {
+        "payload_bytes": 354640,
+        "wire_ms": {
+          "numerator": 70928,
+          "denominator": 8325
+        },
+        "low_ms": {
+          "numerator": 1960703,
+          "denominator": 8325
+        },
+        "high_ms": {
+          "numerator": 2093903,
+          "denominator": 8325
+        }
+      },
+      "floor_at_largest_payload": {
+        "payload_bytes": 354640,
+        "wire_ms": {
+          "numerator": 70928,
+          "denominator": 8325
+        },
+        "low_ms": {
+          "numerator": 1960703,
+          "denominator": 8325
+        },
+        "high_ms": {
+          "numerator": 2093903,
+          "denominator": 8325
+        }
+      },
+      "below_floor_at_smallest_payload": false,
+      "largest_feasible_payload_bytes": 395437,
+      "largest_feasible_payload_bytes_at_minimum_rtt": null,
+      "exceeds_recorded_payload_range": true,
+      "verdict": "Consistent with the recorded payload range"
+    },
+    {
+      "id": "tts-rot-new-direct",
+      "generation": "rotating-eight-files",
+      "observed_p50_ms": {
+        "numerator": 56613,
+        "denominator": 10
+      },
+      "payload_interval_bytes": [
+        146000,
+        405000
+      ],
+      "label_supported": false,
+      "round_trip_band_ms": [
+        199.0,
+        207.0
+      ],
+      "floor_at_smallest_payload": {
+        "payload_bytes": 146000,
+        "wire_ms": {
+          "numerator": 1168,
+          "denominator": 333
+        },
+        "low_ms": {
+          "numerator": 77425,
+          "denominator": 333
+        },
+        "high_ms": {
+          "numerator": 82753,
+          "denominator": 333
+        }
+      },
+      "floor_at_largest_payload": {
+        "payload_bytes": 405000,
+        "wire_ms": {
+          "numerator": 360,
+          "denominator": 37
+        },
+        "low_ms": {
+          "numerator": 8833,
+          "denominator": 37
+        },
+        "high_ms": {
+          "numerator": 9425,
+          "denominator": 37
+        }
+      },
+      "below_floor_at_smallest_payload": false,
+      "largest_feasible_payload_bytes": 226119487,
+      "largest_feasible_payload_bytes_at_minimum_rtt": 226664775,
+      "exceeds_recorded_payload_range": true,
+      "verdict": "Consistent with the recorded payload range"
+    },
+    {
+      "id": "tts-rot-new-queqiao",
+      "generation": "rotating-eight-files",
+      "observed_p50_ms": {
+        "numerator": 22752,
+        "denominator": 5
+      },
+      "payload_interval_bytes": [
+        146000,
+        405000
+      ],
+      "label_supported": false,
+      "round_trip_band_ms": [
+        199.0,
+        207.0
+      ],
+      "floor_at_smallest_payload": {
+        "payload_bytes": 146000,
+        "wire_ms": {
+          "numerator": 1168,
+          "denominator": 333
+        },
+        "low_ms": {
+          "numerator": 77425,
+          "denominator": 333
+        },
+        "high_ms": {
+          "numerator": 82753,
+          "denominator": 333
+        }
+      },
+      "floor_at_largest_payload": {
+        "payload_bytes": 405000,
+        "wire_ms": {
+          "numerator": 360,
+          "denominator": 37
+        },
+        "low_ms": {
+          "numerator": 8833,
+          "denominator": 37
+        },
+        "high_ms": {
+          "numerator": 9425,
+          "denominator": 37
+        }
+      },
+      "below_floor_at_smallest_payload": false,
+      "largest_feasible_payload_bytes": 179878275,
+      "largest_feasible_payload_bytes_at_minimum_rtt": 180423562,
+      "exceeds_recorded_payload_range": true,
+      "verdict": "Consistent with the recorded payload range"
+    }
+  ],
+  "leg_accounts": [
+    {
+      "id": "asr-rot-new-direct",
+      "decomposable": true,
+      "legs_ms": {
+        "connect": {
+          "numerator": 1871,
+          "denominator": 10
+        },
+        "request_to_first_byte": {
+          "numerator": 4741,
+          "denominator": 5
+        }
+      },
+      "total_ms": {
+        "numerator": 2267,
+        "denominator": 2
+      },
+      "summed_legs_ms": {
+        "numerator": 11353,
+        "denominator": 10
+      },
+      "residual_ms": {
+        "numerator": -9,
+        "denominator": 5
+      },
+      "resolution_bound_ms": {
+        "numerator": 3,
+        "denominator": 20
+      },
+      "within_resolution": false,
+      "explanation": "Residual exceeds rounding, so these are per-leg medians of different rounds and do not add",
+      "stages_covered": [
+        "asr_model",
+        "llm",
+        "tts_model",
+        "upload"
+      ],
+      "stages_uncovered": [
+        "capture",
+        "encode",
+        "download",
+        "playback_buffer",
+        "playback"
+      ]
+    },
+    {
+      "id": "asr-rot-new-queqiao",
+      "decomposable": true,
+      "legs_ms": {
+        "connect": {
+          "numerator": 1,
+          "denominator": 1
+        },
+        "request_to_first_byte": {
+          "numerator": 2893,
+          "denominator": 10
+        }
+      },
+      "total_ms": {
+        "numerator": 1451,
+        "denominator": 5
+      },
+      "summed_legs_ms": {
+        "numerator": 2903,
+        "denominator": 10
+      },
+      "residual_ms": {
+        "numerator": -1,
+        "denominator": 10
+      },
+      "resolution_bound_ms": {
+        "numerator": 3,
+        "denominator": 20
+      },
+      "within_resolution": true,
+      "explanation": "Residual fits the reported resolution",
+      "stages_covered": [
+        "asr_model",
+        "llm",
+        "tts_model",
+        "upload"
+      ],
+      "stages_uncovered": [
+        "capture",
+        "encode",
+        "download",
+        "playback_buffer",
+        "playback"
+      ]
+    },
+    {
+      "id": "asr-rot-held-stock-direct",
+      "decomposable": false,
+      "reason": "The document reports no total, or no separate legs, for this row"
+    },
+    {
+      "id": "asr-rot-held-stock-queqiao",
+      "decomposable": false,
+      "reason": "The document reports no total, or no separate legs, for this row"
+    },
+    {
+      "id": "asr-rot-held-tuned-direct",
+      "decomposable": false,
+      "reason": "The document reports no total, or no separate legs, for this row"
+    },
+    {
+      "id": "asr-rot-held-tuned-queqiao",
+      "decomposable": false,
+      "reason": "The document reports no total, or no separate legs, for this row"
+    },
+    {
+      "id": "asr-fixed-new-direct",
+      "decomposable": false,
+      "reason": "The document reports no total, or no separate legs, for this row"
+    },
+    {
+      "id": "asr-fixed-new-queqiao",
+      "decomposable": false,
+      "reason": "The document reports no total, or no separate legs, for this row"
+    },
+    {
+      "id": "asr-fixed-held-tuned-direct",
+      "decomposable": false,
+      "reason": "The document reports no total, or no separate legs, for this row"
+    },
+    {
+      "id": "asr-fixed-held-tuned-queqiao",
+      "decomposable": false,
+      "reason": "The document reports no total, or no separate legs, for this row"
+    },
+    {
+      "id": "tts-rot-new-direct",
+      "decomposable": true,
+      "legs_ms": {
+        "connect": {
+          "numerator": 963,
+          "denominator": 5
+        },
+        "request_to_first_byte": {
+          "numerator": 44793,
+          "denominator": 10
+        },
+        "download": {
+          "numerator": 4581,
+          "denominator": 5
+        }
+      },
+      "total_ms": {
+        "numerator": 56613,
+        "denominator": 10
+      },
+      "summed_legs_ms": {
+        "numerator": 55881,
+        "denominator": 10
+      },
+      "residual_ms": {
+        "numerator": 366,
+        "denominator": 5
+      },
+      "resolution_bound_ms": {
+        "numerator": 1,
+        "denominator": 5
+      },
+      "within_resolution": false,
+      "explanation": "Residual exceeds rounding, so these are per-leg medians of different rounds and do not add",
+      "stages_covered": [
+        "asr_model",
+        "download",
+        "llm",
+        "tts_model",
+        "upload"
+      ],
+      "stages_uncovered": [
+        "capture",
+        "encode",
+        "playback_buffer",
+        "playback"
+      ]
+    },
+    {
+      "id": "tts-rot-new-queqiao",
+      "decomposable": true,
+      "legs_ms": {
+        "connect": {
+          "numerator": 4,
+          "denominator": 5
+        },
+        "request_to_first_byte": {
+          "numerator": 44577,
+          "denominator": 10
+        },
+        "download": {
+          "numerator": 749,
+          "denominator": 10
+        }
+      },
+      "total_ms": {
+        "numerator": 22752,
+        "denominator": 5
+      },
+      "summed_legs_ms": {
+        "numerator": 22667,
+        "denominator": 5
+      },
+      "residual_ms": {
+        "numerator": 17,
+        "denominator": 1
+      },
+      "resolution_bound_ms": {
+        "numerator": 1,
+        "denominator": 5
+      },
+      "within_resolution": false,
+      "explanation": "Residual exceeds rounding, so these are per-leg medians of different rounds and do not add",
+      "stages_covered": [
+        "asr_model",
+        "download",
+        "llm",
+        "tts_model",
+        "upload"
+      ],
+      "stages_uncovered": [
+        "capture",
+        "encode",
+        "playback_buffer",
+        "playback"
+      ]
+    },
+    {
+      "id": "tts-rot-held-tuned-direct",
+      "decomposable": false,
+      "reason": "The document reports no total, or no separate legs, for this row"
+    },
+    {
+      "id": "tts-rot-held-tuned-queqiao",
+      "decomposable": false,
+      "reason": "The document reports no total, or no separate legs, for this row"
+    },
+    {
+      "id": "tts-fixed-new-direct",
+      "decomposable": false,
+      "reason": "The document reports no total, or no separate legs, for this row"
+    },
+    {
+      "id": "tts-fixed-new-queqiao",
+      "decomposable": false,
+      "reason": "The document reports no total, or no separate legs, for this row"
+    },
+    {
+      "id": "tts-fixed-held-tuned-direct",
+      "decomposable": false,
+      "reason": "The document reports no total, or no separate legs, for this row"
+    }
+  ],
+  "frame_runs": [
+    {
+      "id": "frames-live-udp-direct",
+      "carrier": "udp",
+      "arm": "direct",
+      "sessions": 16,
+      "offered": 3200,
+      "lost": 163,
+      "delivered_recorded": 3037,
+      "delivered_derived": 3037,
+      "loss_fraction": {
+        "numerator": 163,
+        "denominator": 3200
+      },
+      "quantiles": {
+        "p50": {
+          "value_ms": {
+            "numerator": 968,
+            "denominator": 5
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 1,
+              "denominator": 2
+            },
+            "sample_count": 3200,
+            "order_statistic_rank": 1600,
+            "samples_beyond": 1600,
+            "supported": true,
+            "reason": null
+          }
+        },
+        "p90": {
+          "value_ms": {
+            "numerator": 1028,
+            "denominator": 5
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 9,
+              "denominator": 10
+            },
+            "sample_count": 3200,
+            "order_statistic_rank": 2880,
+            "samples_beyond": 320,
+            "supported": true,
+            "reason": null
+          }
+        },
+        "p99": {
+          "value_ms": {
+            "numerator": 2137,
+            "denominator": 10
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 99,
+              "denominator": 100
+            },
+            "sample_count": 3200,
+            "order_statistic_rank": 3168,
+            "samples_beyond": 32,
+            "supported": true,
+            "reason": null
+          }
+        }
+      },
+      "tail_over_median": {
+        "numerator": 2137,
+        "denominator": 1936
+      },
+      "tail_over_median_reason": null,
+      "section": "PATH#what-fixes-the-frame-tail-using-the-carrier-voice-actually-uses"
+    },
+    {
+      "id": "frames-live-udp-queqiao",
+      "carrier": "udp",
+      "arm": "queqiao",
+      "sessions": 16,
+      "offered": 3200,
+      "lost": 34,
+      "delivered_recorded": 3166,
+      "delivered_derived": 3166,
+      "loss_fraction": {
+        "numerator": 17,
+        "denominator": 1600
+      },
+      "quantiles": {
+        "p50": {
+          "value_ms": {
+            "numerator": 1041,
+            "denominator": 5
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 1,
+              "denominator": 2
+            },
+            "sample_count": 3200,
+            "order_statistic_rank": 1600,
+            "samples_beyond": 1600,
+            "supported": true,
+            "reason": null
+          }
+        },
+        "p90": {
+          "value_ms": {
+            "numerator": 2139,
+            "denominator": 10
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 9,
+              "denominator": 10
+            },
+            "sample_count": 3200,
+            "order_statistic_rank": 2880,
+            "samples_beyond": 320,
+            "supported": true,
+            "reason": null
+          }
+        },
+        "p99": {
+          "value_ms": {
+            "numerator": 1088,
+            "denominator": 5
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 99,
+              "denominator": 100
+            },
+            "sample_count": 3200,
+            "order_statistic_rank": 3168,
+            "samples_beyond": 32,
+            "supported": true,
+            "reason": null
+          }
+        }
+      },
+      "tail_over_median": {
+        "numerator": 1088,
+        "denominator": 1041
+      },
+      "tail_over_median_reason": null,
+      "section": "PATH#what-fixes-the-frame-tail-using-the-carrier-voice-actually-uses"
+    },
+    {
+      "id": "frames-live-tcp-queqiao",
+      "carrier": "tcp",
+      "arm": "queqiao",
+      "sessions": 16,
+      "offered": 3200,
+      "lost": 0,
+      "delivered_recorded": 3200,
+      "delivered_derived": 3200,
+      "loss_fraction": {
+        "numerator": 0,
+        "denominator": 1
+      },
+      "quantiles": {
+        "p50": {
+          "value_ms": {
+            "numerator": 1042,
+            "denominator": 5
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 1,
+              "denominator": 2
+            },
+            "sample_count": 3200,
+            "order_statistic_rank": 1600,
+            "samples_beyond": 1600,
+            "supported": true,
+            "reason": null
+          }
+        },
+        "p90": {
+          "value_ms": {
+            "numerator": 214,
+            "denominator": 1
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 9,
+              "denominator": 10
+            },
+            "sample_count": 3200,
+            "order_statistic_rank": 2880,
+            "samples_beyond": 320,
+            "supported": true,
+            "reason": null
+          }
+        },
+        "p99": {
+          "value_ms": {
+            "numerator": 3642,
+            "denominator": 5
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 99,
+              "denominator": 100
+            },
+            "sample_count": 3200,
+            "order_statistic_rank": 3168,
+            "samples_beyond": 32,
+            "supported": true,
+            "reason": null
+          }
+        }
+      },
+      "tail_over_median": {
+        "numerator": 1821,
+        "denominator": 521
+      },
+      "tail_over_median_reason": null,
+      "section": "PATH#what-fixes-the-frame-tail-using-the-carrier-voice-actually-uses"
+    },
+    {
+      "id": "frames-dc-udp-direct",
+      "carrier": "udp",
+      "arm": "direct",
+      "sessions": 8,
+      "offered": 1200,
+      "lost": 40,
+      "delivered_recorded": null,
+      "delivered_derived": 1160,
+      "loss_fraction": {
+        "numerator": 1,
+        "denominator": 30
+      },
+      "quantiles": {
+        "p50": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p90": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p99": {
+          "value_ms": {
+            "numerator": 2101,
+            "denominator": 10
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 99,
+              "denominator": 100
+            },
+            "sample_count": 1200,
+            "order_statistic_rank": 1188,
+            "samples_beyond": 12,
+            "supported": true,
+            "reason": null
+          }
+        }
+      },
+      "tail_over_median": null,
+      "tail_over_median_reason": "Needs both p99 and p50; this run reports only one of them",
+      "section": "PATH#end-to-end-validation-both-profiles-all-three-carriers"
+    },
+    {
+      "id": "frames-dc-udp-queqiao",
+      "carrier": "udp",
+      "arm": "queqiao",
+      "sessions": 8,
+      "offered": 1200,
+      "lost": 2,
+      "delivered_recorded": null,
+      "delivered_derived": 1198,
+      "loss_fraction": {
+        "numerator": 1,
+        "denominator": 600
+      },
+      "quantiles": {
+        "p50": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p90": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p99": {
+          "value_ms": {
+            "numerator": 427,
+            "denominator": 2
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 99,
+              "denominator": 100
+            },
+            "sample_count": 1200,
+            "order_statistic_rank": 1188,
+            "samples_beyond": 12,
+            "supported": true,
+            "reason": null
+          }
+        }
+      },
+      "tail_over_median": null,
+      "tail_over_median_reason": "Needs both p99 and p50; this run reports only one of them",
+      "section": "PATH#end-to-end-validation-both-profiles-all-three-carriers"
+    },
+    {
+      "id": "frames-dc-tcp-queqiao",
+      "carrier": "tcp",
+      "arm": "queqiao",
+      "sessions": 8,
+      "offered": 1200,
+      "lost": 0,
+      "delivered_recorded": null,
+      "delivered_derived": 1200,
+      "loss_fraction": {
+        "numerator": 0,
+        "denominator": 1
+      },
+      "quantiles": {
+        "p50": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p90": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p99": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p999": {
+          "value_ms": {
+            "numerator": 7317,
+            "denominator": 10
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 999,
+              "denominator": 1000
+            },
+            "sample_count": 1200,
+            "order_statistic_rank": 1199,
+            "samples_beyond": 1,
+            "supported": false,
+            "reason": "Only 1 sample(s) lie beyond this quantile; it is decided by that many points"
+          }
+        }
+      },
+      "tail_over_median": null,
+      "tail_over_median_reason": "Needs both p99 and p50; this run reports only one of them",
+      "section": "PATH#end-to-end-validation-both-profiles-all-three-carriers"
+    },
+    {
+      "id": "frames-access-udp-direct",
+      "carrier": "udp",
+      "arm": "direct",
+      "sessions": 8,
+      "offered": 1200,
+      "lost": 156,
+      "delivered_recorded": null,
+      "delivered_derived": 1044,
+      "loss_fraction": {
+        "numerator": 13,
+        "denominator": 100
+      },
+      "quantiles": {
+        "p50": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p90": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p99": {
+          "value_ms": {
+            "numerator": 2121,
+            "denominator": 10
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 99,
+              "denominator": 100
+            },
+            "sample_count": 1200,
+            "order_statistic_rank": 1188,
+            "samples_beyond": 12,
+            "supported": true,
+            "reason": null
+          }
+        }
+      },
+      "tail_over_median": null,
+      "tail_over_median_reason": "Needs both p99 and p50; this run reports only one of them",
+      "section": "PATH#end-to-end-validation-both-profiles-all-three-carriers"
+    },
+    {
+      "id": "frames-access-udp-queqiao",
+      "carrier": "udp",
+      "arm": "queqiao",
+      "sessions": 8,
+      "offered": 1200,
+      "lost": 45,
+      "delivered_recorded": null,
+      "delivered_derived": 1155,
+      "loss_fraction": {
+        "numerator": 3,
+        "denominator": 80
+      },
+      "quantiles": {
+        "p50": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p90": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p99": {
+          "value_ms": {
+            "numerator": 215,
+            "denominator": 1
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 99,
+              "denominator": 100
+            },
+            "sample_count": 1200,
+            "order_statistic_rank": 1188,
+            "samples_beyond": 12,
+            "supported": true,
+            "reason": null
+          }
+        }
+      },
+      "tail_over_median": null,
+      "tail_over_median_reason": "Needs both p99 and p50; this run reports only one of them",
+      "section": "PATH#end-to-end-validation-both-profiles-all-three-carriers"
+    },
+    {
+      "id": "frames-access-tcp-queqiao",
+      "carrier": "tcp",
+      "arm": "queqiao",
+      "sessions": 8,
+      "offered": 1200,
+      "lost": 0,
+      "delivered_recorded": null,
+      "delivered_derived": 1200,
+      "loss_fraction": {
+        "numerator": 0,
+        "denominator": 1
+      },
+      "quantiles": {
+        "p50": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p90": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p99": {
+          "value_ms": {
+            "numerator": 5999,
+            "denominator": 10
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 99,
+              "denominator": 100
+            },
+            "sample_count": 1200,
+            "order_statistic_rank": 1188,
+            "samples_beyond": 12,
+            "supported": true,
+            "reason": null
+          }
+        }
+      },
+      "tail_over_median": null,
+      "tail_over_median_reason": "Needs both p99 and p50; this run reports only one of them",
+      "section": "PATH#end-to-end-validation-both-profiles-all-three-carriers"
+    },
+    {
+      "id": "frames-revalidated-udp-direct",
+      "carrier": "udp",
+      "arm": "direct",
+      "sessions": 8,
+      "offered": 1200,
+      "lost": 52,
+      "delivered_recorded": null,
+      "delivered_derived": 1148,
+      "loss_fraction": {
+        "numerator": 13,
+        "denominator": 300
+      },
+      "quantiles": {
+        "p50": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p90": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p99": {
+          "value_ms": {
+            "numerator": 1062,
+            "denominator": 5
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 99,
+              "denominator": 100
+            },
+            "sample_count": 1200,
+            "order_statistic_rank": 1188,
+            "samples_beyond": 12,
+            "supported": true,
+            "reason": null
+          }
+        }
+      },
+      "tail_over_median": null,
+      "tail_over_median_reason": "Needs both p99 and p50; this run reports only one of them",
+      "section": "PATH#re-validated-after-the-classification-and-carrier-changes"
+    },
+    {
+      "id": "frames-revalidated-udp-queqiao",
+      "carrier": "udp",
+      "arm": "queqiao",
+      "sessions": 8,
+      "offered": 1200,
+      "lost": 15,
+      "delivered_recorded": null,
+      "delivered_derived": 1185,
+      "loss_fraction": {
+        "numerator": 1,
+        "denominator": 80
+      },
+      "quantiles": {
+        "p50": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p90": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p99": {
+          "value_ms": {
+            "numerator": 1049,
+            "denominator": 5
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 99,
+              "denominator": 100
+            },
+            "sample_count": 1200,
+            "order_statistic_rank": 1188,
+            "samples_beyond": 12,
+            "supported": true,
+            "reason": null
+          }
+        }
+      },
+      "tail_over_median": null,
+      "tail_over_median_reason": "Needs both p99 and p50; this run reports only one of them",
+      "section": "PATH#re-validated-after-the-classification-and-carrier-changes"
+    },
+    {
+      "id": "frames-revalidated-tcp-queqiao",
+      "carrier": "tcp",
+      "arm": "queqiao",
+      "sessions": 8,
+      "offered": 1200,
+      "lost": 0,
+      "delivered_recorded": null,
+      "delivered_derived": 1200,
+      "loss_fraction": {
+        "numerator": 0,
+        "denominator": 1
+      },
+      "quantiles": {
+        "p50": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p90": {
+          "value_ms": null,
+          "available": false,
+          "reason": "The document does not report this quantile for this run"
+        },
+        "p99": {
+          "value_ms": {
+            "numerator": 7371,
+            "denominator": 10
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 99,
+              "denominator": 100
+            },
+            "sample_count": 1200,
+            "order_statistic_rank": 1188,
+            "samples_beyond": 12,
+            "supported": true,
+            "reason": null
+          }
+        }
+      },
+      "tail_over_median": null,
+      "tail_over_median_reason": "Needs both p99 and p50; this run reports only one of them",
+      "section": "PATH#re-validated-after-the-classification-and-carrier-changes"
+    },
+    {
+      "id": "frames-emulated-24-session",
+      "carrier": "tcp",
+      "arm": "queqiao",
+      "sessions": 24,
+      "offered": null,
+      "lost": null,
+      "delivered_recorded": null,
+      "delivered_derived": null,
+      "loss_fraction": null,
+      "quantiles": {
+        "p50": {
+          "value_ms": {
+            "numerator": 2033,
+            "denominator": 10
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 1,
+              "denominator": 2
+            },
+            "sample_count": null,
+            "supported": null,
+            "reason": "The document does not state how many samples this run produced"
+          }
+        },
+        "p90": {
+          "value_ms": {
+            "numerator": 1041,
+            "denominator": 5
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 9,
+              "denominator": 10
+            },
+            "sample_count": null,
+            "supported": null,
+            "reason": "The document does not state how many samples this run produced"
+          }
+        },
+        "p99": {
+          "value_ms": {
+            "numerator": 3833,
+            "denominator": 5
+          },
+          "available": true,
+          "support": {
+            "quantile": {
+              "numerator": 99,
+              "denominator": 100
+            },
+            "sample_count": null,
+            "supported": null,
+            "reason": "The document does not state how many samples this run produced"
+          }
+        }
+      },
+      "tail_over_median": {
+        "numerator": 7666,
+        "denominator": 2033
+      },
+      "tail_over_median_reason": null,
+      "section": "PATH#concurrency-the-two-workload-shapes-disagree"
+    }
+  ],
+  "slow_start_check": {
+    "rounds": 5,
+    "schedule": [
+      {
+        "round": 1,
+        "window_segments": 10,
+        "cumulative_segments": 10
+      },
+      {
+        "round": 2,
+        "window_segments": 20,
+        "cumulative_segments": 30
+      },
+      {
+        "round": 3,
+        "window_segments": 40,
+        "cumulative_segments": 70
+      },
+      {
+        "round": 4,
+        "window_segments": 80,
+        "cumulative_segments": 150
+      },
+      {
+        "round": 5,
+        "window_segments": 160,
+        "cumulative_segments": 245
+      }
+    ],
+    "predicted_ramp_ms": {
+      "numerator": 995,
+      "denominator": 1
+    },
+    "measured_request_to_first_byte_ms": {
+      "numerator": 4741,
+      "denominator": 5
+    },
+    "measured_minus_predicted_ms": {
+      "numerator": -234,
+      "denominator": 5
+    },
+    "note": "The ramp accounts for the request-to-first-byte leg to within one model service time; it is an arithmetic bound on a doubling window, not a simulation of cubic"
+  },
+  "playback_supply": {
+    "assumed_format": {
+      "sample_rate_hz": 16000,
+      "channels": 1,
+      "sample_bytes": 2,
+      "declared_by_document": false
+    },
+    "consumption_bytes_per_s": 32000,
+    "consumption_bits_per_s": 256000,
+    "file_bytes": 354640,
+    "pcm_bytes": 354596,
+    "implied_duration_s": {
+      "numerator": 88649,
+      "denominator": 8000
+    },
+    "prebuffer_ms": {
+      "numerator": 60,
+      "denominator": 1
+    },
+    "rows": [
+      {
+        "measurement": "download_direct_cubic_high",
+        "supply_bits_per_s": 470000,
+        "headroom": {
+          "numerator": 235,
+          "denominator": 128
+        },
+        "sufficient_for_playback": true,
+        "stall_onset_ms": null,
+        "note": null
+      },
+      {
+        "measurement": "download_direct_cubic_low",
+        "supply_bits_per_s": 130000,
+        "headroom": {
+          "numerator": 65,
+          "denominator": 128
+        },
+        "sufficient_for_playback": false,
+        "stall_onset_ms": {
+          "numerator": 2560,
+          "denominator": 21
+        },
+        "note": "Average supply is under consumption, so the prebuffer only postpones the stall"
+      },
+      {
+        "measurement": "download_direct_high",
+        "supply_bits_per_s": 84000000,
+        "headroom": {
+          "numerator": 2625,
+          "denominator": 8
+        },
+        "sufficient_for_playback": true,
+        "stall_onset_ms": null,
+        "note": null
+      },
+      {
+        "measurement": "download_direct_low",
+        "supply_bits_per_s": 68000000,
+        "headroom": {
+          "numerator": 2125,
+          "denominator": 8
+        },
+        "sufficient_for_playback": true,
+        "stall_onset_ms": null,
+        "note": null
+      },
+      {
+        "measurement": "download_queqiao_high",
+        "supply_bits_per_s": 268000000,
+        "headroom": {
+          "numerator": 8375,
+          "denominator": 8
+        },
+        "sufficient_for_playback": true,
+        "stall_onset_ms": null,
+        "note": null
+      },
+      {
+        "measurement": "download_queqiao_low",
+        "supply_bits_per_s": 224000000,
+        "headroom": {
+          "numerator": 875,
+          "denominator": 1
+        },
+        "sufficient_for_playback": true,
+        "stall_onset_ms": null,
+        "note": null
+      },
+      {
+        "measurement": "upload_direct_high",
+        "supply_bits_per_s": 105800000,
+        "headroom": {
+          "numerator": 13225,
+          "denominator": 32
+        },
+        "sufficient_for_playback": true,
+        "stall_onset_ms": null,
+        "note": null
+      },
+      {
+        "measurement": "upload_direct_low",
+        "supply_bits_per_s": 3600000,
+        "headroom": {
+          "numerator": 225,
+          "denominator": 16
+        },
+        "sufficient_for_playback": true,
+        "stall_onset_ms": null,
+        "note": null
+      },
+      {
+        "measurement": "upload_queqiao_high",
+        "supply_bits_per_s": 310400000,
+        "headroom": {
+          "numerator": 2425,
+          "denominator": 2
+        },
+        "sufficient_for_playback": true,
+        "stall_onset_ms": null,
+        "note": null
+      },
+      {
+        "measurement": "upload_queqiao_low",
+        "supply_bits_per_s": 400000,
+        "headroom": {
+          "numerator": 25,
+          "denominator": 16
+        },
+        "sufficient_for_playback": true,
+        "stall_onset_ms": null,
+        "note": null
+      }
+    ]
+  },
+  "stages": [
+    "capture",
+    "encode",
+    "upload",
+    "asr_model",
+    "llm",
+    "tts_model",
+    "download",
+    "playback_buffer",
+    "playback"
+  ],
+  "assumptions": [
+    "Every figure is transcribed from the two pinned documents; no run was repeated for this calculation.",
+    "Rows are compared only when generation, workload, connection state and kernel setting all match.",
+    "The rotating-eight-file generation carries a payload interval, not a size, so no per-size claim rests on it.",
+    "Per-leg medians come from different rounds and are not additive; the residual measures that, not a missing stage.",
+    "Audio sample rate, channel count and sample width are declared assumptions; the documents state only the byte count.",
+    "Capture and playback are outside every recorded leg, so no recorded total is a user-perceived time.",
+    "A quantile the documents do not print stays unavailable; none is interpolated from the ones they do print.",
+    "Ratios here are ratios of medians; the documents' paired per-round ratios are carried for comparison and cannot be recomputed from these records."
+  ]
+}

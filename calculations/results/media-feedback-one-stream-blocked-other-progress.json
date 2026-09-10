@@ -1,0 +1,534 @@
+{
+  "inputs": {
+    "application": {
+      "schema_version": 1,
+      "id": "credit-3-streams",
+      "messages": [
+        {
+          "id": "p0",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "s0",
+          "transport": "stream",
+          "bytes": 1,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 0,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 1,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "p1",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "s1",
+          "transport": "stream",
+          "bytes": 1,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 1,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 1,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "p2",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "s2",
+          "transport": "stream",
+          "bytes": 1,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 2,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 1,
+            "coalesce_across_messages": false
+          }
+        }
+      ],
+      "compute_tasks": [],
+      "business_observers": [],
+      "scheduling": {
+        "send": "fifo",
+        "compute": "fifo",
+        "compute_nonpreemptive": true,
+        "resource_capacity_tasks": 1
+      },
+      "links": {
+        "c2s": {
+          "rate_bits_per_second": 8,
+          "propagation_seconds": "1"
+        },
+        "s2c": {
+          "rate_bits_per_second": 8,
+          "propagation_seconds": "1"
+        }
+      },
+      "connection_ready_seconds": "0",
+      "external_legacy_assumptions": {
+        "teaching_network": {
+          "delivery_mode": "per_stream",
+          "header_bytes": 0,
+          "ack_bytes": 1,
+          "shared_credit_bytes": 2,
+          "reliable_receive_credit_bytes": 100,
+          "stream_credit_bytes": 100
+        },
+        "selected_loss_and_recovery": [],
+        "action": "Do not map credit to cwnd, legacy header to MTU, or recovery_ready to PTO. Choose real network inputs explicitly."
+      },
+      "accounting": {
+        "application_bytes_by_direction": {
+          "client_to_server": 3
+        },
+        "application_bytes": 3,
+        "message_count": 3,
+        "task_count": 0,
+        "fragment_count": 3
+      }
+    },
+    "network": {
+      "links": {
+        "up": {
+          "rate_bps": 9824,
+          "propagation": 1
+        },
+        "down": {
+          "rate_bps": 9824,
+          "propagation": 1
+        }
+      },
+      "until": 60,
+      "initial_cwnd": 2400,
+      "initial_max_data": {
+        "up": 3,
+        "down": 0
+      },
+      "initial_max_stream_data": {
+        "up": {
+          "s0": 0,
+          "s1": 1,
+          "s2": 1
+        },
+        "down": {}
+      },
+      "receive_memory_bytes": {
+        "up": 100000,
+        "down": 100000
+      },
+      "pad_in_flight": true,
+      "consume_delay": null,
+      "sender": {
+        "rtt_seed": {
+          "latest_rtt": 4,
+          "smoothed_rtt": 4,
+          "rttvar": 2,
+          "min_rtt": 4
+        }
+      }
+    }
+  },
+  "reference_sources": [
+    {
+      "file": "sources/protocol-rfc/rfc9000.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+      "revision": "RFC9000",
+      "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9002.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+      "revision": "RFC9002",
+      "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9002-errata7539.html",
+      "url": "https://www.rfc-editor.org/errata/eid7539",
+      "revision": "RFC9002 Verified Errata7539",
+      "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a"
+    }
+  ],
+  "transmissions": [
+    {
+      "direction": "up",
+      "pn": 0,
+      "kind": "data",
+      "message_id": "p1",
+      "message_offset": 0,
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "s1",
+          "offset": 0,
+          "length": 1
+        }
+      ],
+      "send_start": "0",
+      "send_end": "1",
+      "arrival": "2",
+      "received_at": "2",
+      "quic_bytes": 1200,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "up",
+      "pn": 1,
+      "kind": "data",
+      "message_id": "p2",
+      "message_offset": 0,
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "s2",
+          "offset": 0,
+          "length": 1
+        }
+      ],
+      "send_start": "1",
+      "send_end": "2",
+      "arrival": "3",
+      "received_at": "3",
+      "quic_bytes": 1200,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 0,
+      "kind": "ack",
+      "message_id": null,
+      "message_offset": null,
+      "frames": [],
+      "send_start": "2",
+      "send_end": "637/307",
+      "arrival": "944/307",
+      "received_at": "944/307",
+      "quic_bytes": 64,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 1,
+      "kind": "ack",
+      "message_id": null,
+      "message_offset": null,
+      "frames": [],
+      "send_start": "3",
+      "send_end": "944/307",
+      "arrival": "1251/307",
+      "received_at": "1251/307",
+      "quic_bytes": 64,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null
+    }
+  ],
+  "sender_events": {
+    "up": [
+      {
+        "type": "sent",
+        "at": "0",
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "s1",
+            "offset": 0,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "1",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "s2",
+            "offset": 0,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "944/307",
+        "ranges": [
+          [
+            0,
+            0
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": false,
+        "flow_limited": true
+      },
+      {
+        "type": "ack",
+        "at": "1251/307",
+        "ranges": [
+          [
+            1,
+            1
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": false,
+        "flow_limited": true
+      }
+    ],
+    "down": [
+      {
+        "type": "sent",
+        "at": "2",
+        "pn": 0,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "3",
+        "pn": 1,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      }
+    ]
+  },
+  "application_events": [
+    {
+      "at": "2",
+      "kind": "message_delivered",
+      "id": "p1"
+    },
+    {
+      "at": "3",
+      "kind": "message_delivered",
+      "id": "p2"
+    }
+  ],
+  "network_events": [],
+  "work": [],
+  "businesses": [],
+  "message_status": {
+    "p0": "ready",
+    "p1": "delivered",
+    "p2": "delivered"
+  },
+  "delivered": {
+    "p1": "2",
+    "p2": "3"
+  },
+  "waits": [
+    {
+      "at": "2",
+      "direction": "up",
+      "reasons": [
+        "MAX_STREAM_DATA:s0",
+        "cwnd"
+      ]
+    },
+    {
+      "at": "944/307",
+      "direction": "up",
+      "reasons": [
+        "MAX_STREAM_DATA:s0"
+      ]
+    },
+    {
+      "at": "1251/307",
+      "direction": "up",
+      "reasons": [
+        "MAX_STREAM_DATA:s0"
+      ]
+    }
+  ],
+  "received_intervals": {
+    "up": {
+      "s1": [
+        [
+          0,
+          1
+        ]
+      ],
+      "s2": [
+        [
+          0,
+          1
+        ]
+      ]
+    },
+    "down": {}
+  },
+  "consumed": {
+    "up": {},
+    "down": {}
+  },
+  "peak_receive_memory": {
+    "up": 2,
+    "down": 0
+  },
+  "final_states": {
+    "up": {
+      "bytes_in_flight": 0,
+      "cwnd": "2400",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "944/307",
+      "smoothed_rtt": "18583/4912",
+      "rttvar": "1843/1228",
+      "min_rtt": "944/307",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 1,
+      "next_timer": null,
+      "max_data": 3,
+      "max_stream_data": {
+        "s0": 0,
+        "s1": 1,
+        "s2": 1
+      },
+      "stream_highest_sent_offsets": {
+        "s1": 1,
+        "s2": 1
+      },
+      "max_data_consumed": 2
+    },
+    "down": {
+      "bytes_in_flight": 0,
+      "cwnd": "2400",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "4",
+      "smoothed_rtt": "4",
+      "rttvar": "2",
+      "min_rtt": "4",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": null,
+      "next_timer": null,
+      "max_data": 0,
+      "max_stream_data": {},
+      "stream_highest_sent_offsets": {},
+      "max_data_consumed": 0
+    }
+  },
+  "losses": {
+    "up": [],
+    "down": []
+  },
+  "timers": {
+    "up": [],
+    "down": []
+  },
+  "rtt_samples": {
+    "up": [
+      {
+        "at": "944/307",
+        "pn": 0,
+        "raw": "944/307",
+        "adjusted": "944/307",
+        "smoothed": "2385/614",
+        "rttvar": "1063/614"
+      },
+      {
+        "at": "1251/307",
+        "pn": 1,
+        "raw": "944/307",
+        "adjusted": "944/307",
+        "smoothed": "18583/4912",
+        "rttvar": "1843/1228"
+      }
+    ],
+    "down": []
+  },
+  "numeric_errors": {
+    "up": [],
+    "down": []
+  },
+  "controller_events": {
+    "up": [],
+    "down": []
+  },
+  "controller_numeric_errors": {
+    "up": [],
+    "down": []
+  },
+  "persistent_events": {
+    "up": [],
+    "down": []
+  },
+  "pacer_final": {},
+  "pacer_errors": {},
+  "ack_events": {},
+  "summary": {
+    "wire_bytes": 2640,
+    "serialized_wire_bytes_by_horizon": "2640",
+    "delivered_application_bytes": 2,
+    "unique_received_application_bytes": 2,
+    "complete": false,
+    "all_messages_delivered": false,
+    "pending_packets": {
+      "up": 1,
+      "down": 0
+    }
+  }
+}

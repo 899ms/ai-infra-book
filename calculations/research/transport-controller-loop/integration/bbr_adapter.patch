@@ -1,0 +1,48 @@
+--- calculations/research/transport-controller-loop/bbr_adapter.py
++++ calculations/src/infra_calc/transport/bbr_adapter.py
+@@ -2,16 +2,11 @@
+ 
+ from copy import deepcopy
+ from fractions import Fraction as F
+-from pathlib import Path
+-import sys
+-import hashlib
+ import json
+ 
+-CONTROLLERS = Path(__file__).resolve().parent.parent / "congestion-controllers"
+-if str(CONTROLLERS) not in sys.path:
+-    sys.path.insert(0, str(CONTROLLERS))
+-from bbr_state import BBR, Ack
+-from bbr_reference import rate_sample, stamp_us_delta, integer, boolean
++from .reference_sources import reference_sources
++from .bbr_state import BBR, Ack
++from .bbr_reference import rate_sample, stamp_us_delta, integer, boolean
+ 
+ 
+ def seconds(value):
+@@ -41,13 +36,7 @@
+         require_padding=True,
+         random_draws=(0,) * 100,
+     ):
+-        root = Path(__file__).resolve().parent
+-        for row in json.loads((root / "bbr-adapter-lock.json").read_text())["files"]:
+-            if (
+-                hashlib.sha256((root / row["file"]).read_bytes()).hexdigest()
+-                != row["sha256"]
+-            ):
+-                raise ValueError("Reviewed BBR module changed: " + row["file"])
++        reference_sources("bbr")
+         config = {} if config is None else dict(config)
+         require_padding = config.get("pad_in_flight", require_padding)
+         random_draws = config.get("bbr_random_draws", random_draws)
+@@ -109,7 +98,9 @@
+ 
+     def _flight(self, supplied):
+         if supplied is not None and supplied != self.active_bytes:
+-            raise ValueError(f"Sender flight mismatch {supplied} != {self.active_bytes}")
++            raise ValueError(
++                f"Sender flight mismatch {supplied} != {self.active_bytes}"
++            )
+         return len(self.active_records)
+ 
+     def _on_sent(self, packet, now, flight_before=None, limited_flags=None):

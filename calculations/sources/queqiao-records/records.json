@@ -1,0 +1,724 @@
+{
+  "scope": "Transcribed rows from the two pinned Queqiao documents. Only figures the documents state are present; a quantile the documents do not report is null and must stay null.",
+  "origin_documents": [
+    {
+      "file": "sources/queqiao-records/PATH-CHARACTER-DC-20260826.md",
+      "short": "PATH"
+    },
+    {
+      "file": "sources/queqiao-records/DESIGN-DC-PROFILE.md",
+      "short": "DESIGN"
+    }
+  ],
+  "reported_resolution_ms": 0.1,
+  "path": {
+    "round_trip_ms": {
+      "low": 199.0,
+      "high": 207.0,
+      "minimum": 185.9,
+      "section": "PATH#the-path"
+    },
+    "remeasurement_round_trip_ms": {
+      "low": 197.0,
+      "high": 205.0,
+      "section": "PATH#re-measured-with-one-fixed-file"
+    },
+    "jitter_mdev_ms": {
+      "value": 0.58,
+      "probes": 30,
+      "probe_rate_per_s": 1,
+      "section": "PATH#the-path"
+    },
+    "path_mtu_bytes": 1500,
+    "tcp_mss_bytes": 1448,
+    "initial_window_segments": 10,
+    "downstream_knee_bits_per_s": 333000000,
+    "upstream_probe": {
+      "offered_bits_per_s": 50000000,
+      "datagrams": 41663,
+      "lost": 0,
+      "section": "PATH#the-two-directions-behave-like-different-paths"
+    },
+    "downstream_erasure_fraction": {
+      "low": 0.135,
+      "high": 0.175,
+      "typical": 0.14,
+      "section": "PATH#download-loss-is-memoryless-and-doesnt-depend-on-rate"
+    },
+    "sustained_bits_per_s": {
+      "upload_direct_low": 3600000,
+      "upload_direct_high": 105800000,
+      "upload_queqiao_low": 400000,
+      "upload_queqiao_high": 310400000,
+      "download_direct_low": 68000000,
+      "download_direct_high": 84000000,
+      "download_queqiao_low": 224000000,
+      "download_queqiao_high": 268000000,
+      "download_direct_cubic_low": 130000,
+      "download_direct_cubic_high": 470000,
+      "section": "PATH#sustained-throughput-which-this-document-had-never-measured"
+    }
+  },
+  "model_service_ms": {
+    "asr_low": 30.0,
+    "asr_high": 38.0,
+    "note": "DESIGN says about 30ms for a 355KB request; PATH says 38ms for transcribing a 355KB file. Both are kept as an interval.",
+    "sections": [
+      "DESIGN#where-the-time-actually-goes",
+      "PATH#asr-upload"
+    ]
+  },
+  "audio_file": {
+    "name": "dashboard.wav",
+    "bytes": 354640,
+    "wav_header_bytes": 44,
+    "declared_format": false,
+    "assumed_sample_rate_hz": 16000,
+    "assumed_channels": 1,
+    "assumed_sample_bytes": 2,
+    "note": "The documents give the byte count only. Sample rate, channel count and sample width are declared assumptions of this calculation, not recorded facts.",
+    "section": "PATH#re-measured-with-one-fixed-file"
+  },
+  "generations": {
+    "rotating-eight-files": {
+      "superseded": true,
+      "payload_low_bytes": 146000,
+      "payload_high_bytes": 405000,
+      "claimed_label_bytes": 355000,
+      "label_supported": false,
+      "reason": "The benchmark rotated eight files and reported only the last request's size, so every figure labelled 355KB is a median across the whole range.",
+      "section": "PATH#the-workload-this-was-built-for"
+    },
+    "single-fixed-file": {
+      "superseded": false,
+      "payload_low_bytes": 354640,
+      "payload_high_bytes": 354640,
+      "claimed_label_bytes": 354640,
+      "label_supported": true,
+      "reason": "One fixed file, arms alternating within the run, after the pacing fix.",
+      "section": "PATH#re-measured-with-one-fixed-file"
+    }
+  },
+  "request_records": [
+    {
+      "id": "asr-rot-new-direct",
+      "generation": "rotating-eight-files",
+      "workload": "asr_upload",
+      "arm": "direct",
+      "connection": "new",
+      "kernel_ssai": 1,
+      "rounds": 20,
+      "legs": {
+        "total": {
+          "p50": 1133.5,
+          "p99": 1343.6
+        },
+        "connect": {
+          "p50": 187.1,
+          "p99": null
+        },
+        "request_to_first_byte": {
+          "p50": 948.2,
+          "p99": null
+        }
+      },
+      "section": "PATH#asr-upload"
+    },
+    {
+      "id": "asr-rot-new-queqiao",
+      "generation": "rotating-eight-files",
+      "workload": "asr_upload",
+      "arm": "queqiao",
+      "connection": "new",
+      "kernel_ssai": 1,
+      "rounds": 20,
+      "legs": {
+        "total": {
+          "p50": 290.2,
+          "p99": 346.5
+        },
+        "connect": {
+          "p50": 1.0,
+          "p99": null
+        },
+        "request_to_first_byte": {
+          "p50": 289.3,
+          "p99": null
+        }
+      },
+      "section": "PATH#asr-upload"
+    },
+    {
+      "id": "asr-rot-held-stock-direct",
+      "generation": "rotating-eight-files",
+      "workload": "asr_upload",
+      "arm": "direct",
+      "connection": "held_open",
+      "kernel_ssai": 1,
+      "rounds": 20,
+      "legs": {
+        "total": {
+          "p50": 789.9,
+          "p99": 1161.6
+        }
+      },
+      "section": "PATH#what-connection-reuse-actually-recovers"
+    },
+    {
+      "id": "asr-rot-held-stock-queqiao",
+      "generation": "rotating-eight-files",
+      "workload": "asr_upload",
+      "arm": "queqiao",
+      "connection": "held_open",
+      "kernel_ssai": 1,
+      "rounds": 20,
+      "legs": {
+        "total": {
+          "p50": 292.7,
+          "p99": 348.8
+        }
+      },
+      "section": "PATH#what-connection-reuse-actually-recovers"
+    },
+    {
+      "id": "asr-rot-held-tuned-direct",
+      "generation": "rotating-eight-files",
+      "workload": "asr_upload",
+      "arm": "direct",
+      "connection": "held_open",
+      "kernel_ssai": 0,
+      "rounds": 20,
+      "legs": {
+        "total": {
+          "p50": 225.8,
+          "p99": 1026.5
+        }
+      },
+      "section": "PATH#what-connection-reuse-actually-recovers"
+    },
+    {
+      "id": "asr-rot-held-tuned-queqiao",
+      "generation": "rotating-eight-files",
+      "workload": "asr_upload",
+      "arm": "queqiao",
+      "connection": "held_open",
+      "kernel_ssai": 0,
+      "rounds": 20,
+      "legs": {
+        "total": {
+          "p50": 295.0,
+          "p99": 373.5
+        }
+      },
+      "section": "PATH#what-connection-reuse-actually-recovers"
+    },
+    {
+      "id": "asr-fixed-new-direct",
+      "generation": "single-fixed-file",
+      "workload": "asr_upload",
+      "arm": "direct",
+      "connection": "new",
+      "kernel_ssai": 1,
+      "rounds": null,
+      "legs": {
+        "total": {
+          "p50": 1185.3,
+          "p99": null
+        }
+      },
+      "section": "PATH#re-measured-with-one-fixed-file"
+    },
+    {
+      "id": "asr-fixed-new-queqiao",
+      "generation": "single-fixed-file",
+      "workload": "asr_upload",
+      "arm": "queqiao",
+      "connection": "new",
+      "kernel_ssai": 1,
+      "rounds": null,
+      "legs": {
+        "total": {
+          "p50": 301.6,
+          "p99": null
+        }
+      },
+      "section": "PATH#re-measured-with-one-fixed-file"
+    },
+    {
+      "id": "asr-fixed-held-tuned-direct",
+      "generation": "single-fixed-file",
+      "workload": "asr_upload",
+      "arm": "direct",
+      "connection": "held_open",
+      "kernel_ssai": 0,
+      "rounds": null,
+      "legs": {
+        "total": {
+          "p50": 240.9,
+          "p99": 251.7
+        }
+      },
+      "section": "PATH#re-measured-with-one-fixed-file"
+    },
+    {
+      "id": "asr-fixed-held-tuned-queqiao",
+      "generation": "single-fixed-file",
+      "workload": "asr_upload",
+      "arm": "queqiao",
+      "connection": "held_open",
+      "kernel_ssai": 0,
+      "rounds": null,
+      "legs": {
+        "total": {
+          "p50": 236.5,
+          "p99": 246.4
+        }
+      },
+      "section": "PATH#re-measured-with-one-fixed-file"
+    },
+    {
+      "id": "tts-rot-new-direct",
+      "generation": "rotating-eight-files",
+      "workload": "tts_download",
+      "arm": "direct",
+      "connection": "new",
+      "kernel_ssai": 1,
+      "rounds": 20,
+      "legs": {
+        "total": {
+          "p50": 5661.3,
+          "p99": null
+        },
+        "connect": {
+          "p50": 192.6,
+          "p99": null
+        },
+        "request_to_first_byte": {
+          "p50": 4479.3,
+          "p99": null
+        },
+        "download": {
+          "p50": 916.2,
+          "p99": null
+        }
+      },
+      "section": "PATH#tts-download"
+    },
+    {
+      "id": "tts-rot-new-queqiao",
+      "generation": "rotating-eight-files",
+      "workload": "tts_download",
+      "arm": "queqiao",
+      "connection": "new",
+      "kernel_ssai": 1,
+      "rounds": 20,
+      "legs": {
+        "total": {
+          "p50": 4550.4,
+          "p99": null
+        },
+        "connect": {
+          "p50": 0.8,
+          "p99": null
+        },
+        "request_to_first_byte": {
+          "p50": 4457.7,
+          "p99": null
+        },
+        "download": {
+          "p50": 74.9,
+          "p99": null
+        }
+      },
+      "section": "PATH#tts-download"
+    },
+    {
+      "id": "tts-rot-held-tuned-direct",
+      "generation": "rotating-eight-files",
+      "workload": "tts_download",
+      "arm": "direct",
+      "connection": "held_open",
+      "kernel_ssai": 0,
+      "rounds": 16,
+      "legs": {
+        "download": {
+          "p50": 629.4,
+          "p99": null
+        }
+      },
+      "section": "PATH#the-client-fix-works-in-one-direction-only"
+    },
+    {
+      "id": "tts-rot-held-tuned-queqiao",
+      "generation": "rotating-eight-files",
+      "workload": "tts_download",
+      "arm": "queqiao",
+      "connection": "held_open",
+      "kernel_ssai": 0,
+      "rounds": 16,
+      "legs": {
+        "download": {
+          "p50": 71.4,
+          "p99": null
+        }
+      },
+      "section": "PATH#the-client-fix-works-in-one-direction-only"
+    },
+    {
+      "id": "tts-fixed-new-direct",
+      "generation": "single-fixed-file",
+      "workload": "tts_download",
+      "arm": "direct",
+      "connection": "new",
+      "kernel_ssai": 1,
+      "rounds": null,
+      "legs": {
+        "download": {
+          "p50": 827.7,
+          "p99": null
+        }
+      },
+      "section": "PATH#re-measured-with-one-fixed-file"
+    },
+    {
+      "id": "tts-fixed-new-queqiao",
+      "generation": "single-fixed-file",
+      "workload": "tts_download",
+      "arm": "queqiao",
+      "connection": "new",
+      "kernel_ssai": 1,
+      "rounds": null,
+      "legs": {
+        "download": {
+          "p50": 53.4,
+          "p99": null
+        }
+      },
+      "section": "PATH#re-measured-with-one-fixed-file"
+    },
+    {
+      "id": "tts-fixed-held-tuned-direct",
+      "generation": "single-fixed-file",
+      "workload": "tts_download",
+      "arm": "direct",
+      "connection": "held_open",
+      "kernel_ssai": 0,
+      "rounds": null,
+      "legs": {
+        "download": {
+          "p50": 2281.2,
+          "p99": null
+        }
+      },
+      "section": "PATH#tuning-the-client-makes-the-erasing-direction-worse"
+    }
+  ],
+  "frame_records": [
+    {
+      "id": "frames-live-udp-direct",
+      "carrier": "udp",
+      "arm": "direct",
+      "sessions": 16,
+      "messages_per_session": 200,
+      "offered": 3200,
+      "delivered_recorded": 3037,
+      "lost": 163,
+      "quantiles_ms": {
+        "p50": 193.6,
+        "p90": 205.6,
+        "p99": 213.7
+      },
+      "over_250ms_fraction": 0.0,
+      "path_downstream_loss_fraction": 0.036,
+      "section": "PATH#what-fixes-the-frame-tail-using-the-carrier-voice-actually-uses"
+    },
+    {
+      "id": "frames-live-udp-queqiao",
+      "carrier": "udp",
+      "arm": "queqiao",
+      "sessions": 16,
+      "messages_per_session": 200,
+      "offered": 3200,
+      "delivered_recorded": 3166,
+      "lost": 34,
+      "quantiles_ms": {
+        "p50": 208.2,
+        "p90": 213.9,
+        "p99": 217.6
+      },
+      "over_250ms_fraction": 0.0,
+      "path_downstream_loss_fraction": 0.036,
+      "section": "PATH#what-fixes-the-frame-tail-using-the-carrier-voice-actually-uses"
+    },
+    {
+      "id": "frames-live-tcp-queqiao",
+      "carrier": "tcp",
+      "arm": "queqiao",
+      "sessions": 16,
+      "messages_per_session": 200,
+      "offered": 3200,
+      "delivered_recorded": 3200,
+      "lost": 0,
+      "quantiles_ms": {
+        "p50": 208.4,
+        "p90": 214.0,
+        "p99": 728.4
+      },
+      "over_250ms_fraction": 0.0216,
+      "path_downstream_loss_fraction": 0.036,
+      "section": "PATH#what-fixes-the-frame-tail-using-the-carrier-voice-actually-uses"
+    },
+    {
+      "id": "frames-dc-udp-direct",
+      "carrier": "udp",
+      "arm": "direct",
+      "sessions": 8,
+      "messages_per_session": null,
+      "offered": 1200,
+      "delivered_recorded": null,
+      "lost": 40,
+      "quantiles_ms": {
+        "p50": null,
+        "p90": null,
+        "p99": 210.1
+      },
+      "over_250ms_fraction": null,
+      "path_downstream_loss_fraction": null,
+      "section": "PATH#end-to-end-validation-both-profiles-all-three-carriers"
+    },
+    {
+      "id": "frames-dc-udp-queqiao",
+      "carrier": "udp",
+      "arm": "queqiao",
+      "sessions": 8,
+      "messages_per_session": null,
+      "offered": 1200,
+      "delivered_recorded": null,
+      "lost": 2,
+      "quantiles_ms": {
+        "p50": null,
+        "p90": null,
+        "p99": 213.5
+      },
+      "over_250ms_fraction": null,
+      "path_downstream_loss_fraction": null,
+      "section": "PATH#end-to-end-validation-both-profiles-all-three-carriers"
+    },
+    {
+      "id": "frames-dc-tcp-queqiao",
+      "carrier": "tcp",
+      "arm": "queqiao",
+      "sessions": 8,
+      "messages_per_session": null,
+      "offered": 1200,
+      "delivered_recorded": null,
+      "lost": 0,
+      "quantiles_ms": {
+        "p50": null,
+        "p90": null,
+        "p99": null,
+        "p999": 731.7
+      },
+      "over_250ms_fraction": 0.0058,
+      "path_downstream_loss_fraction": null,
+      "section": "PATH#end-to-end-validation-both-profiles-all-three-carriers"
+    },
+    {
+      "id": "frames-access-udp-direct",
+      "carrier": "udp",
+      "arm": "direct",
+      "sessions": 8,
+      "messages_per_session": null,
+      "offered": 1200,
+      "delivered_recorded": null,
+      "lost": 156,
+      "quantiles_ms": {
+        "p50": null,
+        "p90": null,
+        "p99": 212.1
+      },
+      "over_250ms_fraction": null,
+      "path_downstream_loss_fraction": null,
+      "section": "PATH#end-to-end-validation-both-profiles-all-three-carriers"
+    },
+    {
+      "id": "frames-access-udp-queqiao",
+      "carrier": "udp",
+      "arm": "queqiao",
+      "sessions": 8,
+      "messages_per_session": null,
+      "offered": 1200,
+      "delivered_recorded": null,
+      "lost": 45,
+      "quantiles_ms": {
+        "p50": null,
+        "p90": null,
+        "p99": 215.0
+      },
+      "over_250ms_fraction": null,
+      "path_downstream_loss_fraction": null,
+      "section": "PATH#end-to-end-validation-both-profiles-all-three-carriers"
+    },
+    {
+      "id": "frames-access-tcp-queqiao",
+      "carrier": "tcp",
+      "arm": "queqiao",
+      "sessions": 8,
+      "messages_per_session": null,
+      "offered": 1200,
+      "delivered_recorded": null,
+      "lost": 0,
+      "quantiles_ms": {
+        "p50": null,
+        "p90": null,
+        "p99": 599.9
+      },
+      "over_250ms_fraction": 0.0167,
+      "path_downstream_loss_fraction": null,
+      "section": "PATH#end-to-end-validation-both-profiles-all-three-carriers"
+    },
+    {
+      "id": "frames-revalidated-udp-direct",
+      "carrier": "udp",
+      "arm": "direct",
+      "sessions": 8,
+      "messages_per_session": null,
+      "offered": 1200,
+      "delivered_recorded": null,
+      "lost": 52,
+      "quantiles_ms": {
+        "p50": null,
+        "p90": null,
+        "p99": 212.4
+      },
+      "over_250ms_fraction": null,
+      "path_downstream_loss_fraction": null,
+      "section": "PATH#re-validated-after-the-classification-and-carrier-changes"
+    },
+    {
+      "id": "frames-revalidated-udp-queqiao",
+      "carrier": "udp",
+      "arm": "queqiao",
+      "sessions": 8,
+      "messages_per_session": null,
+      "offered": 1200,
+      "delivered_recorded": null,
+      "lost": 15,
+      "quantiles_ms": {
+        "p50": null,
+        "p90": null,
+        "p99": 209.8
+      },
+      "over_250ms_fraction": null,
+      "path_downstream_loss_fraction": null,
+      "section": "PATH#re-validated-after-the-classification-and-carrier-changes"
+    },
+    {
+      "id": "frames-revalidated-tcp-queqiao",
+      "carrier": "tcp",
+      "arm": "queqiao",
+      "sessions": 8,
+      "messages_per_session": null,
+      "offered": 1200,
+      "delivered_recorded": null,
+      "lost": 0,
+      "quantiles_ms": {
+        "p50": null,
+        "p90": null,
+        "p99": 737.1
+      },
+      "over_250ms_fraction": 0.0258,
+      "path_downstream_loss_fraction": null,
+      "section": "PATH#re-validated-after-the-classification-and-carrier-changes"
+    },
+    {
+      "id": "frames-emulated-24-session",
+      "carrier": "tcp",
+      "arm": "queqiao",
+      "sessions": 24,
+      "messages_per_session": null,
+      "offered": null,
+      "delivered_recorded": null,
+      "lost": null,
+      "quantiles_ms": {
+        "p50": 203.3,
+        "p90": 208.2,
+        "p99": 766.6
+      },
+      "over_250ms_fraction": null,
+      "path_downstream_loss_fraction": 0.14,
+      "late_by_one_frame_interval_fraction": 0.0496,
+      "section": "PATH#concurrency-the-two-workload-shapes-disagree"
+    }
+  ],
+  "frame_stream": {
+    "payload_bytes": 80,
+    "interval_ms": 20,
+    "floor_ms": 200.0,
+    "section": "PATH#concurrency-the-two-workload-shapes-disagree"
+  },
+  "frame_record_note": "offered is the count the document states (16x200 messages, or 'N of 1200'). delivered_recorded is filled only where the document prints it; elsewhere the module derives offered - lost and says so. messages_per_session is null where the document does not state it.",
+  "documented_paired_ratios": [
+    {
+      "condition": [
+        "rotating-eight-files",
+        "asr_upload",
+        "new",
+        1
+      ],
+      "median_of_per_round_ratios": 3.63,
+      "middle_80_low": 3.47,
+      "middle_80_high": 4.21,
+      "section": "PATH#asr-upload"
+    },
+    {
+      "condition": [
+        "rotating-eight-files",
+        "tts_download",
+        "new",
+        1
+      ],
+      "median_of_per_round_ratios": null,
+      "middle_80_low": 0.9,
+      "middle_80_high": 1.42,
+      "section": "PATH#tts-download"
+    },
+    {
+      "condition": [
+        "rotating-eight-files",
+        "asr_upload",
+        "held_open",
+        0
+      ],
+      "median_of_per_round_ratios": null,
+      "middle_80_low": 0.66,
+      "middle_80_high": 2.93,
+      "section": "PATH#what-connection-reuse-actually-recovers"
+    },
+    {
+      "condition": [
+        "single-fixed-file",
+        "asr_upload",
+        "new",
+        1
+      ],
+      "median_of_per_round_ratios": 3.96,
+      "middle_80_low": null,
+      "middle_80_high": null,
+      "section": "PATH#re-measured-with-one-fixed-file"
+    },
+    {
+      "condition": [
+        "single-fixed-file",
+        "asr_upload",
+        "held_open",
+        0
+      ],
+      "median_of_per_round_ratios": 1.03,
+      "middle_80_low": null,
+      "middle_80_high": null,
+      "section": "PATH#re-measured-with-one-fixed-file"
+    }
+  ],
+  "paired_ratio_note": "These are medians of per-round ratios. The per-round values are not in the documents, so a paired statistic cannot be recomputed here; it is carried for comparison against the ratio of medians, which is a different statistic."
+}

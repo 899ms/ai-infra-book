@@ -1,0 +1,630 @@
+{
+  "status": "manifested_results_compared_not_independent_acceptance",
+  "controlled_differences": [
+    "application.scheduling.send",
+    "network.ack_policy"
+  ],
+  "source_hashes": {
+    "configs/sources.lock.json": "02cd5608d7d00f6213be9e566bc8651657d854f87ee01deec9fdd9d4f2c43a3e",
+    "research/media-feedback-loop/application.py": "4fc17e92f73116d9aee9fbbac95eda4812620d45b574ec79720cd0156849a527",
+    "research/media-feedback-loop/application_validation.py": "d4ebb24bbfe734ebb696964f13c16f8ba18064ae306085ea25696adc452712a3",
+    "research/media-feedback-loop/calculate.py": "8f16094ba1d346f04f8bbd6840cc9bfa37eef1092513c9f84d11c453643da182",
+    "research/media-feedback-loop/network_validation.py": "1a210489414a33a30c9c51a5793c084b1bb0cf985208f8387fc7124616b1f4f8",
+    "research/media-feedback-loop/run-book-inputs.lock.json": "647636d10bc6b54e93234e777d7ee7038f21072711ae5d370a2d8c250361a6f3",
+    "research/media-feedback-loop/run-book.py": "6d06ebab75e4f71aaefe222892f2030bab3a664319703c157afe5878fe859f95",
+    "research/media-feedback-loop/sender-dependencies.lock.json": "dc0868b4fb63d21426a9ef55c6363638808697637ffe47bd77d8af066c0c80a0",
+    "research/media-feedback-loop/sender.py": "01b7de490da790111aa0cb1901bdc7597a0235d0a77a0d7202d47f828547afea",
+    "sources/congestion-controllers/errata-check.html": "4765d07ace49aa20e0ce7001016c50329f1309640d1e0a024a5577c0494572db",
+    "sources/congestion-controllers/rfc9406.txt": "43e3ddc1d3446142b125f018cd52aa2ff858b3f1ff9c6969924ab9fbf45d5230",
+    "sources/congestion-controllers/rfc9438.txt": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+    "sources/congestion-controllers/tcp.h": "de555f117e5b039040c94ce693ba5e0c74bb7a4f11df00e0d72de95988f1b553",
+    "sources/congestion-controllers/tcp_bbr.c": "ba7d0706259dfef5bf455f26ac4bab65f43b9209b9cfd4f761c64c89816bdfe4",
+    "sources/congestion-controllers/tcp_rate.c": "52d682c760573819a36bfef45a094ea8615a39d56c0248569d96f9e6e47b2b23",
+    "sources/congestion-controllers/win_minmax.c": "6d7fabb8cdb2a53e485341435483b408a0183f4e349cf894343ac5febcb3fe86",
+    "sources/congestion-controllers/win_minmax.h": "deef538ecd6a56ed99345497b254b1c480f45b1a5b0cb3e30a37bd4a9420db31",
+    "sources/connection-window/rfc5681.txt": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+    "sources/protocol-rfc/rfc9000.txt": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+    "sources/protocol-rfc/rfc9002-errata7539.html": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+    "sources/protocol-rfc/rfc9002.txt": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+    "sources/shared-media-rfc/rfc9221.txt": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+    "src/infra_calc/sources.py": "bf1a73fc35baf657bf3e13732613f3b92f2d1cc550434da269c0d13cda818747",
+    "src/infra_calc/topics/transport_sender.py": "91286019b4f2f1e057603e5011171470453bc9bd76bea6c60b91dd580c99c8b3",
+    "src/infra_calc/transport/__init__.py": "afe84ba19b4e95b5236b841bb80687933bc348f80273d9d126dbe184250a28eb",
+    "src/infra_calc/transport/ack_receiver.py": "a8a44b09c95d76501821a20a4737fdc352d564de706f98082b2c5f7f55949378",
+    "src/infra_calc/transport/bbr_adapter.py": "870b2f2ac35e4d98d0425eb97c86cc4fc8ba0eb6e518fde168165030756dac7c",
+    "src/infra_calc/transport/bbr_minmax.py": "6c763345efa592f6bba348b81350081b0e24050d34c718c1727622739b52d28e",
+    "src/infra_calc/transport/bbr_reference.py": "714b9ffecd300362a354e73aee4adbb744c41795a3019b88bc3e784e31612da6",
+    "src/infra_calc/transport/bbr_state.py": "e24b8d55efb218f344a5799f73db83966cfc71088341f595a60562952f906194",
+    "src/infra_calc/transport/cubic.py": "4e77d2a7c709a3c873009ba89dabd806760cb56f3a5ce7164233925211f5e521",
+    "src/infra_calc/transport/cubic_adapter.py": "4dafed0947806549a354493aa12f976827fe4b8cb83f0f0096da65ac512eb4a3",
+    "src/infra_calc/transport/hystart.py": "216c633b34e3acf39665cf3e920d9701c689434d6b31fe6bcbc65deafc31d3c7",
+    "src/infra_calc/transport/pacer.py": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+    "src/infra_calc/transport/persistent_congestion.py": "2f6b9e998e5a60ce9388aee8e956acbf04e1ffe77646b1c757b1daae77a491d7",
+    "src/infra_calc/transport/reference_sources.py": "86bd8441af9b881953ab4e98bea21ea9d071339039d509d9143b5af8e47ea788"
+  },
+  "rows": [
+    {
+      "case": "image-baseline",
+      "wire_bytes": 40656000,
+      "packets": 61600,
+      "received_bytes": 35000000,
+      "delivered_bytes": 35000000,
+      "image_complete_at": "74419679/5000000",
+      "image_complete_seconds": 14.8839358,
+      "first_play": null,
+      "missing_audio_seconds": null,
+      "screenshot_usable": null,
+      "all_messages_delivered": true,
+      "businesses": [
+        {
+          "id": "image",
+          "kind": "image",
+          "endpoint": "client",
+          "all_required_delivered": true,
+          "complete_at": "74419679/5000000",
+          "complete": true,
+          "missing": []
+        }
+      ],
+      "result_sha256": "ed2f80175a85f5780861ee39e24ba36e4891c23fe58f3f95e8779a704021f1b2"
+    },
+    {
+      "case": "mixed-fifo-immediate",
+      "wire_bytes": 40673160,
+      "packets": 61626,
+      "received_bytes": 35008659,
+      "delivered_bytes": 35008659,
+      "image_complete_at": "74419679/5000000",
+      "image_complete_seconds": 14.8839358,
+      "first_play": null,
+      "missing_audio_seconds": "4/25",
+      "screenshot_usable": false,
+      "all_messages_delivered": false,
+      "businesses": [
+        {
+          "id": "image",
+          "kind": "image",
+          "endpoint": "client",
+          "all_required_delivered": true,
+          "complete_at": "74419679/5000000",
+          "complete": true,
+          "missing": []
+        },
+        {
+          "id": "asr",
+          "kind": "asr",
+          "endpoint": "client",
+          "all_required_delivered": true,
+          "complete_at": "372100851/25000000",
+          "complete": true,
+          "missing": []
+        },
+        {
+          "id": "tts",
+          "kind": "tts",
+          "endpoint": "client",
+          "all_required_delivered": false,
+          "complete_at": null,
+          "complete": false,
+          "missing": [
+            "tts-0",
+            "tts-1",
+            "tts-2",
+            "tts-3",
+            "tts-4",
+            "tts-5",
+            "tts-6",
+            "tts-7"
+          ],
+          "blocks": [
+            {
+              "message_ids": [
+                "tts-0"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            },
+            {
+              "message_ids": [
+                "tts-1"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            },
+            {
+              "message_ids": [
+                "tts-2"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            },
+            {
+              "message_ids": [
+                "tts-3"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            },
+            {
+              "message_ids": [
+                "tts-4"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            },
+            {
+              "message_ids": [
+                "tts-5"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            },
+            {
+              "message_ids": [
+                "tts-6"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            },
+            {
+              "message_ids": [
+                "tts-7"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            }
+          ],
+          "first_play": null,
+          "playback_end": null,
+          "stall_seconds": "0",
+          "missing_audio_seconds": "4/25"
+        },
+        {
+          "id": "computer-use",
+          "kind": "screenshot",
+          "endpoint": "client",
+          "all_required_delivered": false,
+          "complete_at": null,
+          "complete": false,
+          "missing": [
+            "screen-action"
+          ],
+          "version_at_result": "v1",
+          "expected_version": "v1",
+          "usable": false
+        }
+      ],
+      "result_sha256": "f724db23ec9820da7d7c55d5849802f586752e611b7b94acd3d14db8426ff00a"
+    },
+    {
+      "case": "mixed-fifo-aggregate",
+      "wire_bytes": 39256360,
+      "packets": 46226,
+      "received_bytes": 35008659,
+      "delivered_bytes": 35008659,
+      "image_complete_at": "3731839589/250000000",
+      "image_complete_seconds": 14.927358356,
+      "first_play": null,
+      "missing_audio_seconds": "4/25",
+      "screenshot_usable": false,
+      "all_messages_delivered": false,
+      "businesses": [
+        {
+          "id": "image",
+          "kind": "image",
+          "endpoint": "client",
+          "all_required_delivered": true,
+          "complete_at": "3731839589/250000000",
+          "complete": true,
+          "missing": []
+        },
+        {
+          "id": "asr",
+          "kind": "asr",
+          "endpoint": "client",
+          "all_required_delivered": true,
+          "complete_at": "3731864149/250000000",
+          "complete": true,
+          "missing": []
+        },
+        {
+          "id": "tts",
+          "kind": "tts",
+          "endpoint": "client",
+          "all_required_delivered": false,
+          "complete_at": null,
+          "complete": false,
+          "missing": [
+            "tts-0",
+            "tts-1",
+            "tts-2",
+            "tts-3",
+            "tts-4",
+            "tts-5",
+            "tts-6",
+            "tts-7"
+          ],
+          "blocks": [
+            {
+              "message_ids": [
+                "tts-0"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            },
+            {
+              "message_ids": [
+                "tts-1"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            },
+            {
+              "message_ids": [
+                "tts-2"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            },
+            {
+              "message_ids": [
+                "tts-3"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            },
+            {
+              "message_ids": [
+                "tts-4"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            },
+            {
+              "message_ids": [
+                "tts-5"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            },
+            {
+              "message_ids": [
+                "tts-6"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            },
+            {
+              "message_ids": [
+                "tts-7"
+              ],
+              "arrival": null,
+              "play_start": null,
+              "scheduled_play_end": null,
+              "play_end": null
+            }
+          ],
+          "first_play": null,
+          "playback_end": null,
+          "stall_seconds": "0",
+          "missing_audio_seconds": "4/25"
+        },
+        {
+          "id": "computer-use",
+          "kind": "screenshot",
+          "endpoint": "client",
+          "all_required_delivered": false,
+          "complete_at": null,
+          "complete": false,
+          "missing": [
+            "screen-action"
+          ],
+          "version_at_result": "v1",
+          "expected_version": "v1",
+          "usable": false
+        }
+      ],
+      "result_sha256": "00ab34f50a7ef2fc810972932c0c3c4046281fc926a174cd487a2bfc7ad85d3a"
+    },
+    {
+      "case": "mixed-priority-immediate",
+      "wire_bytes": 40683720,
+      "packets": 61642,
+      "received_bytes": 35016339,
+      "delivered_bytes": 35016339,
+      "image_complete_at": "7404728503/500000000",
+      "image_complete_seconds": 14.809457006,
+      "first_play": "2/5",
+      "missing_audio_seconds": "0",
+      "screenshot_usable": false,
+      "all_messages_delivered": false,
+      "businesses": [
+        {
+          "id": "image",
+          "kind": "image",
+          "endpoint": "client",
+          "all_required_delivered": true,
+          "complete_at": "7404728503/500000000",
+          "complete": true,
+          "missing": []
+        },
+        {
+          "id": "asr",
+          "kind": "asr",
+          "endpoint": "client",
+          "all_required_delivered": true,
+          "complete_at": "62860723/200000000",
+          "complete": true,
+          "missing": []
+        },
+        {
+          "id": "tts",
+          "kind": "tts",
+          "endpoint": "client",
+          "all_required_delivered": true,
+          "complete_at": "88994271/200000000",
+          "complete": true,
+          "missing": [],
+          "blocks": [
+            {
+              "message_ids": [
+                "tts-0"
+              ],
+              "arrival": "1331811/3906250",
+              "play_start": "2/5",
+              "scheduled_play_end": "21/50",
+              "play_end": "21/50"
+            },
+            {
+              "message_ids": [
+                "tts-1"
+              ],
+              "arrival": "367583617/1000000000",
+              "play_start": "21/50",
+              "scheduled_play_end": "11/25",
+              "play_end": "11/25"
+            },
+            {
+              "message_ids": [
+                "tts-2"
+              ],
+              "arrival": "197111809/500000000",
+              "play_start": "11/25",
+              "scheduled_play_end": "23/50",
+              "play_end": "23/50"
+            },
+            {
+              "message_ids": [
+                "tts-3"
+              ],
+              "arrival": "416195041/1000000000",
+              "play_start": "23/50",
+              "scheduled_play_end": "12/25",
+              "play_end": "12/25"
+            },
+            {
+              "message_ids": [
+                "tts-4"
+              ],
+              "arrival": "42347759/100000000",
+              "play_start": "12/25",
+              "scheduled_play_end": "1/2",
+              "play_end": "1/2"
+            },
+            {
+              "message_ids": [
+                "tts-5"
+              ],
+              "arrival": "430760139/1000000000",
+              "play_start": "1/2",
+              "scheduled_play_end": "13/25",
+              "play_end": "13/25"
+            },
+            {
+              "message_ids": [
+                "tts-6"
+              ],
+              "arrival": "6844417/15625000",
+              "play_start": "13/25",
+              "scheduled_play_end": "27/50",
+              "play_end": "27/50"
+            },
+            {
+              "message_ids": [
+                "tts-7"
+              ],
+              "arrival": "88994271/200000000",
+              "play_start": "27/50",
+              "scheduled_play_end": "14/25",
+              "play_end": "14/25"
+            }
+          ],
+          "first_play": "2/5",
+          "playback_end": "14/25",
+          "stall_seconds": "0",
+          "missing_audio_seconds": "0"
+        },
+        {
+          "id": "computer-use",
+          "kind": "screenshot",
+          "endpoint": "client",
+          "all_required_delivered": false,
+          "complete_at": null,
+          "complete": false,
+          "missing": [
+            "screen-action"
+          ],
+          "version_at_result": "v1",
+          "expected_version": "v1",
+          "usable": false
+        }
+      ],
+      "result_sha256": "acadfa4949f094b15b7963685601ac276bc5167a2bf11c3b002d293947a5bd07"
+    },
+    {
+      "case": "mixed-priority-aggregate",
+      "wire_bytes": 39266460,
+      "packets": 46237,
+      "received_bytes": 35016339,
+      "delivered_bytes": 35016339,
+      "image_complete_at": "927692833/62500000",
+      "image_complete_seconds": 14.843085328,
+      "first_play": "2/5",
+      "missing_audio_seconds": "0",
+      "screenshot_usable": false,
+      "all_messages_delivered": false,
+      "businesses": [
+        {
+          "id": "image",
+          "kind": "image",
+          "endpoint": "client",
+          "all_required_delivered": true,
+          "complete_at": "927692833/62500000",
+          "complete": true,
+          "missing": []
+        },
+        {
+          "id": "asr",
+          "kind": "asr",
+          "endpoint": "client",
+          "all_required_delivered": true,
+          "complete_at": "4902889/15625000",
+          "complete": true,
+          "missing": []
+        },
+        {
+          "id": "tts",
+          "kind": "tts",
+          "endpoint": "client",
+          "all_required_delivered": true,
+          "complete_at": "452020309/1000000000",
+          "complete": true,
+          "missing": [],
+          "blocks": [
+            {
+              "message_ids": [
+                "tts-0"
+              ],
+              "arrival": "340424897/1000000000",
+              "play_start": "2/5",
+              "scheduled_play_end": "21/50",
+              "play_end": "21/50"
+            },
+            {
+              "message_ids": [
+                "tts-1"
+              ],
+              "arrival": "183532449/500000000",
+              "play_start": "21/50",
+              "scheduled_play_end": "11/25",
+              "play_end": "11/25"
+            },
+            {
+              "message_ids": [
+                "tts-2"
+              ],
+              "arrival": "393704899/1000000000",
+              "play_start": "11/25",
+              "scheduled_play_end": "23/50",
+              "play_end": "23/50"
+            },
+            {
+              "message_ids": [
+                "tts-3"
+              ],
+              "arrival": "4203449/10000000",
+              "play_start": "23/50",
+              "scheduled_play_end": "12/25",
+              "play_end": "12/25"
+            },
+            {
+              "message_ids": [
+                "tts-4"
+              ],
+              "arrival": "215120261/500000000",
+              "play_start": "12/25",
+              "scheduled_play_end": "1/2",
+              "play_end": "1/2"
+            },
+            {
+              "message_ids": [
+                "tts-5"
+              ],
+              "arrival": "43754079/100000000",
+              "play_start": "1/2",
+              "scheduled_play_end": "13/25",
+              "play_end": "13/25"
+            },
+            {
+              "message_ids": [
+                "tts-6"
+              ],
+              "arrival": "222420529/500000000",
+              "play_start": "13/25",
+              "scheduled_play_end": "27/50",
+              "play_end": "27/50"
+            },
+            {
+              "message_ids": [
+                "tts-7"
+              ],
+              "arrival": "452020309/1000000000",
+              "play_start": "27/50",
+              "scheduled_play_end": "14/25",
+              "play_end": "14/25"
+            }
+          ],
+          "first_play": "2/5",
+          "playback_end": "14/25",
+          "stall_seconds": "0",
+          "missing_audio_seconds": "0"
+        },
+        {
+          "id": "computer-use",
+          "kind": "screenshot",
+          "endpoint": "client",
+          "all_required_delivered": false,
+          "complete_at": null,
+          "complete": false,
+          "missing": [
+            "screen-action"
+          ],
+          "version_at_result": "v1",
+          "expected_version": "v1",
+          "usable": false
+        }
+      ],
+      "result_sha256": "a9662bc9a65440b4096db84b92877423704bfb6a50fafb3c74c6511209223ebe"
+    }
+  ]
+}

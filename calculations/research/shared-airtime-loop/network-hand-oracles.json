@@ -1,0 +1,147 @@
+{
+  "status": "PREWRITTEN_NOT_EXECUTED",
+  "scope": "Finite-WAN refinement of five prior local service oracles, derived before network output. Source profile remains under independent review.",
+  "alpha_WAN_ACK_seconds": "23/307",
+  "cases": {
+    "bidirectional-shared": {
+      "first_up_air_exchange": [
+        "0",
+        "5/4"
+      ],
+      "first_down_WAN": [
+        "0",
+        "1"
+      ],
+      "first_down_AP_ready": "1",
+      "first_down_air_exchange": [
+        "5/4",
+        "5/2"
+      ],
+      "up_server_delivery": "2",
+      "down_client_delivery": "9/4"
+    },
+    "bidirectional-disabled": {
+      "first_up_WAN": [
+        "0",
+        "1"
+      ],
+      "first_down_WAN": [
+        "0",
+        "1"
+      ],
+      "up_server_delivery": "1",
+      "down_client_delivery": "1",
+      "scope": "Exact existing public disabled result must be compared separately; no radio timeline exists."
+    },
+    "two-data-immediate": {
+      "data_MAC_confirmation_count": 2,
+      "transport_ACK_count": 2,
+      "total_success_airtime": "7/2"
+    },
+    "two-data-every2": {
+      "data_MAC_confirmation_count": 2,
+      "transport_ACK_count": 1,
+      "total_success_airtime": "3"
+    },
+    "busy-client-ACK-refresh": {
+      "first_down_air_exchange": [
+        "1",
+        "9/4"
+      ],
+      "second_down_air_exchange": [
+        "9/4",
+        "7/2"
+      ],
+      "first_client_ACK_deadline": "9/4",
+      "first_client_ACK_air_start": "7/2",
+      "first_client_ACK_ranges": [
+        [
+          0,
+          1
+        ]
+      ],
+      "largest_received_at": "13/4",
+      "raw_delay": "1/4",
+      "encoded_delay": 31250,
+      "exceeds_max_delay": false
+    },
+    "busy-client-ACK-overrun": {
+      "first_client_ACK_deadline": "21/10",
+      "first_client_ACK_air_start": "7/2",
+      "first_client_ACK_ranges": [
+        [
+          0,
+          1
+        ]
+      ],
+      "largest_received_at": "13/4",
+      "raw_delay": "1/4",
+      "encoded_delay": 31250,
+      "exceeds_max_delay": true
+    },
+    "same-PN-MAC-ACK-lost": {
+      "up_MAC_attempt_PNs": [
+        0,
+        0
+      ],
+      "up_DATA_air_intervals": [
+        [
+          "0",
+          "1"
+        ],
+        [
+          "2",
+          "3"
+        ]
+      ],
+      "first_AP_receive": "1",
+      "failure_known": "3/2",
+      "retry_MAC_success": "13/4",
+      "up_original_sender_sent_events": 1,
+      "up_WAN_forward_count": 1,
+      "server_unique_delivery": "2"
+    },
+    "MAC-data-loss-exhaustion-then-PTO": {
+      "original_MAC_attempt_PNs": [
+        0,
+        0
+      ],
+      "failures_known": [
+        "3/2",
+        "7/2"
+      ],
+      "end_to_end_PTO": "4",
+      "probe_new_PN": 1,
+      "probe_air_DATA_interval": [
+        "4",
+        "5"
+      ],
+      "server_unique_delivery": "6",
+      "scope": "Both original MAC attempts lose DATA; no early receiver delivery/transportACK can cancel the declared PTO. PTO itself is not loss or cwnd decrease."
+    },
+    "tail-immediate": {
+      "initial_cwnd_bytes": 2400,
+      "server_tail_delivery": "5",
+      "tail_slot_usable": true,
+      "tail_play_start": "6",
+      "tail_play_end": "25/4",
+      "total_success_airtime": "21/4",
+      "transport_ACK_count": 3
+    },
+    "tail-every4": {
+      "first_two_server_arrivals": [
+        "2",
+        "13/4"
+      ],
+      "first_server_ACK_deadline": "6",
+      "first_ACK_AP_ready": "1865/307",
+      "first_ACK_client_receive": "7767/1228",
+      "third_DATA_air_start": "4037/614",
+      "server_tail_delivery": "5265/614",
+      "tail_slot_usable": false,
+      "missing_audio_seconds": "1/4",
+      "total_success_airtime": "19/4",
+      "transport_ACK_count": 2
+    }
+  }
+}

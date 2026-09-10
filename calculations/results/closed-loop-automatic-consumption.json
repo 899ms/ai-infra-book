@@ -1,0 +1,688 @@
+{
+  "inputs": {
+    "upload_bytes": 3504,
+    "response_bytes": 0,
+    "model_seconds": 0,
+    "until": "20",
+    "links": {
+      "up": {
+        "rate_bps": 9824,
+        "propagation": 1
+      },
+      "down": {
+        "rate_bps": 736,
+        "propagation": 1
+      }
+    },
+    "sender": {
+      "initial_cwnd": 2400,
+      "rtt_seed": {
+        "latest_rtt": 4,
+        "smoothed_rtt": 4,
+        "rttvar": 2,
+        "min_rtt": 4
+      }
+    },
+    "receive_window": 2336,
+    "consume_delay": 1
+  },
+  "reference_sources": [
+    {
+      "file": "sources/protocol-rfc/rfc9000.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+      "revision": "RFC9000",
+      "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9002.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+      "revision": "RFC9002",
+      "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9002-errata7539.html",
+      "url": "https://www.rfc-editor.org/errata/eid7539",
+      "revision": "RFC9002 Verified Errata7539",
+      "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a"
+    }
+  ],
+  "reference_source_root": "/Users/boj/book/ai-infra-book/calculations",
+  "transmissions": [
+    {
+      "direction": "up",
+      "pn": 0,
+      "kind": "data",
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "business",
+          "offset": 0,
+          "length": 1168
+        }
+      ],
+      "send_start": "0",
+      "send_end": "1",
+      "arrival": "2",
+      "quic_bytes": 1200,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "received_at": "2",
+      "recovery_of": null,
+      "probe_of": null
+    },
+    {
+      "direction": "up",
+      "pn": 1,
+      "kind": "data",
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "business",
+          "offset": 1168,
+          "length": 1168
+        }
+      ],
+      "send_start": "1",
+      "send_end": "2",
+      "arrival": "3",
+      "quic_bytes": 1200,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "received_at": "3",
+      "recovery_of": null,
+      "probe_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 0,
+      "kind": "ack",
+      "frames": [],
+      "send_start": "2",
+      "send_end": "3",
+      "arrival": "4",
+      "quic_bytes": 64,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "received_at": "4",
+      "recovery_of": null,
+      "probe_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 1,
+      "kind": "ack",
+      "frames": [],
+      "send_start": "3",
+      "send_end": "4",
+      "arrival": "5",
+      "quic_bytes": 64,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "received_at": "5",
+      "recovery_of": null,
+      "probe_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 2,
+      "kind": "max",
+      "frames": [],
+      "send_start": "4",
+      "send_end": "5",
+      "arrival": "6",
+      "quic_bytes": 64,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "received_at": "6",
+      "recovery_of": null,
+      "probe_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 3,
+      "kind": "max",
+      "frames": [],
+      "send_start": "5",
+      "send_end": "6",
+      "arrival": "7",
+      "quic_bytes": 64,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "received_at": "7",
+      "recovery_of": null,
+      "probe_of": null
+    },
+    {
+      "direction": "up",
+      "pn": 2,
+      "kind": "ack",
+      "frames": [],
+      "send_start": "6",
+      "send_end": "1865/307",
+      "arrival": "2172/307",
+      "quic_bytes": 64,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "received_at": "2172/307",
+      "recovery_of": null,
+      "probe_of": null
+    },
+    {
+      "direction": "up",
+      "pn": 3,
+      "kind": "data",
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "business",
+          "offset": 2336,
+          "length": 1168
+        }
+      ],
+      "send_start": "1865/307",
+      "send_end": "2172/307",
+      "arrival": "2479/307",
+      "quic_bytes": 1200,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "received_at": "2479/307",
+      "recovery_of": null,
+      "probe_of": null
+    },
+    {
+      "direction": "up",
+      "pn": 4,
+      "kind": "ack",
+      "frames": [],
+      "send_start": "2172/307",
+      "send_end": "2195/307",
+      "arrival": "2502/307",
+      "quic_bytes": 64,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "received_at": "2502/307",
+      "recovery_of": null,
+      "probe_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 4,
+      "kind": "ack",
+      "frames": [],
+      "send_start": "2479/307",
+      "send_end": "2786/307",
+      "arrival": "3093/307",
+      "quic_bytes": 64,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "received_at": "3093/307",
+      "recovery_of": null,
+      "probe_of": null
+    },
+    {
+      "direction": "down",
+      "pn": 5,
+      "kind": "max",
+      "frames": [],
+      "send_start": "2786/307",
+      "send_end": "3093/307",
+      "arrival": "3400/307",
+      "quic_bytes": 64,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "received_at": "3400/307",
+      "recovery_of": null,
+      "probe_of": null
+    },
+    {
+      "direction": "up",
+      "pn": 5,
+      "kind": "ack",
+      "frames": [],
+      "send_start": "3400/307",
+      "send_end": "3423/307",
+      "arrival": "3730/307",
+      "quic_bytes": 64,
+      "udp_ip_bytes": 28,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "received_at": "3730/307",
+      "recovery_of": null,
+      "probe_of": null
+    }
+  ],
+  "business": {
+    "upload": "2479/307",
+    "model_start": "2479/307",
+    "model_end": "2479/307",
+    "response": "2479/307"
+  },
+  "application_events": [
+    {
+      "at": "2",
+      "type": "application_prefix",
+      "direction": "up",
+      "prefix": 1168
+    },
+    {
+      "at": "3",
+      "type": "application_prefix",
+      "direction": "up",
+      "prefix": 2336
+    },
+    {
+      "at": "3",
+      "type": "consume",
+      "direction": "up",
+      "consumed": 1168,
+      "advertised_limit": 3504
+    },
+    {
+      "at": "4",
+      "type": "consume",
+      "direction": "up",
+      "consumed": 2336,
+      "advertised_limit": 4672
+    },
+    {
+      "at": "2479/307",
+      "type": "application_prefix",
+      "direction": "up",
+      "prefix": 3504
+    },
+    {
+      "at": "2786/307",
+      "type": "consume",
+      "direction": "up",
+      "consumed": 3504,
+      "advertised_limit": 5840
+    }
+  ],
+  "waits": [
+    {
+      "at": "2",
+      "direction": "up",
+      "reasons": [
+        "MAX_DATA",
+        "MAX_STREAM_DATA:business",
+        "cwnd"
+      ]
+    },
+    {
+      "at": "4",
+      "direction": "up",
+      "reasons": [
+        "MAX_DATA",
+        "MAX_STREAM_DATA:business"
+      ]
+    },
+    {
+      "at": "5",
+      "direction": "up",
+      "reasons": [
+        "MAX_DATA",
+        "MAX_STREAM_DATA:business"
+      ]
+    }
+  ],
+  "sender_events": {
+    "up": [
+      {
+        "type": "sent",
+        "at": "0",
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "business",
+            "offset": 0,
+            "length": 1168
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "1",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "business",
+            "offset": 1168,
+            "length": 1168
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "4",
+        "ranges": [
+          [
+            0,
+            0
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": false,
+        "flow_limited": true
+      },
+      {
+        "type": "ack",
+        "at": "5",
+        "ranges": [
+          [
+            1,
+            1
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": false,
+        "flow_limited": true
+      },
+      {
+        "type": "max_data",
+        "at": "6",
+        "value": 3504
+      },
+      {
+        "type": "max_stream_data",
+        "at": "6",
+        "value": 3504,
+        "stream": "business"
+      },
+      {
+        "type": "sent",
+        "at": "6",
+        "pn": 2,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "1865/307",
+        "pn": 3,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "business",
+            "offset": 2336,
+            "length": 1168
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "max_data",
+        "at": "7",
+        "value": 4672
+      },
+      {
+        "type": "max_stream_data",
+        "at": "7",
+        "value": 4672,
+        "stream": "business"
+      },
+      {
+        "type": "sent",
+        "at": "2172/307",
+        "pn": 4,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "3093/307",
+        "ranges": [
+          [
+            3,
+            3
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": true,
+        "flow_limited": false
+      },
+      {
+        "type": "max_data",
+        "at": "3400/307",
+        "value": 5840
+      },
+      {
+        "type": "max_stream_data",
+        "at": "3400/307",
+        "value": 5840,
+        "stream": "business"
+      },
+      {
+        "type": "sent",
+        "at": "3400/307",
+        "pn": 5,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      }
+    ],
+    "down": [
+      {
+        "type": "sent",
+        "at": "2",
+        "pn": 0,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "3",
+        "pn": 1,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "4",
+        "pn": 2,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "5",
+        "pn": 3,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "2172/307",
+        "ranges": [
+          [
+            2,
+            2
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": true,
+        "flow_limited": false
+      },
+      {
+        "type": "sent",
+        "at": "2479/307",
+        "pn": 4,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "2502/307",
+        "ranges": [
+          [
+            3,
+            3
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": true,
+        "flow_limited": false
+      },
+      {
+        "type": "sent",
+        "at": "2786/307",
+        "pn": 5,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "3730/307",
+        "ranges": [
+          [
+            5,
+            5
+          ]
+        ],
+        "ack_delay": "0",
+        "app_limited": true,
+        "flow_limited": false
+      }
+    ]
+  },
+  "final_states": {
+    "up": {
+      "bytes_in_flight": 0,
+      "cwnd": "2400",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "4",
+      "smoothed_rtt": "4",
+      "rttvar": "27/32",
+      "min_rtt": "4",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 3,
+      "next_timer": null,
+      "max_data": 5840,
+      "max_stream_data": {
+        "business": 5840
+      },
+      "stream_highest_sent_offsets": {
+        "business": 3504
+      },
+      "max_data_consumed": 3504
+    },
+    "down": {
+      "bytes_in_flight": 0,
+      "cwnd": "2400",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "944/307",
+      "smoothed_rtt": "145507/39296",
+      "rttvar": "25365/19648",
+      "min_rtt": "944/307",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 5,
+      "next_timer": null,
+      "max_data": 2336,
+      "max_stream_data": {
+        "business": 2336
+      },
+      "stream_highest_sent_offsets": {},
+      "max_data_consumed": 0
+    }
+  },
+  "losses": {
+    "up": [],
+    "down": []
+  },
+  "timers": {
+    "up": [],
+    "down": []
+  },
+  "numeric_errors": {
+    "up": [],
+    "down": []
+  },
+  "received_intervals": {
+    "up": [
+      [
+        0,
+        3504
+      ]
+    ],
+    "down": []
+  },
+  "consumed": {
+    "up": 3504,
+    "down": 0
+  },
+  "summary": {
+    "wire_bytes": 4512,
+    "serialized_wire_bytes_by_horizon": "4512",
+    "unique_received_bytes": 3504,
+    "pending_packets": {
+      "up": 0,
+      "down": 0
+    },
+    "complete": true
+  }
+}

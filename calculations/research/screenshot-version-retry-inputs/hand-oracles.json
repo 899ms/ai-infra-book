@@ -1,0 +1,70 @@
+{
+  "status": "PREWRITTEN_HAND_ARITHMETIC_NOT_CANDIDATE_OUTPUT",
+  "events": [
+    {
+      "at": "0",
+      "event": "screen0 upload begins"
+    },
+    {
+      "at": "1",
+      "event": "screen0 server delivery and nonpreemptive work0 starts; client version changes and sends real version notice"
+    },
+    {
+      "at": "3475/3443",
+      "event": "server receives actual version notice; work0 continues"
+    },
+    {
+      "at": "3",
+      "event": "work0 ends, server emits stale failure notice"
+    },
+    {
+      "at": "4",
+      "event": "client actually receives failure notice; sole retry capture starts"
+    },
+    {
+      "at": "9/2",
+      "event": "capture ends; screen1 uploads"
+    },
+    {
+      "at": "11/2",
+      "event": "screen1 server delivery; work1 starts"
+    },
+    {
+      "at": "15/2",
+      "event": "work1 ends; action1 sends"
+    },
+    {
+      "at": "17/2",
+      "event": "client receives matching v1 action and commits"
+    }
+  ],
+  "up_application_bytes": 6918,
+  "down_application_bytes": 64,
+  "total_application_bytes": 6982,
+  "one_attempt_no_failure_reference_bytes": 3475,
+  "incremental_bytes_vs_one_attempt_no_failure_reference": 3507,
+  "server_work_seconds": "4",
+  "client_retry_capture_seconds": "1/2",
+  "matrix_flops_per_attempt": 2112,
+  "wasted_old_attempt_matrix_flops": 2112,
+  "total_matrix_flops": 4224,
+  "valid_action_time_seconds": "17/2",
+  "variants": [
+    {
+      "id": "drop-failure-notice-before-horizon",
+      "expected": "No retry begins before actual notice delivery; do not seed a retry at4 if transport has not delivered it."
+    },
+    {
+      "id": "duplicate-failure-notice",
+      "expected": "At most one capture1; duplicate notice consumes no new retry budget."
+    },
+    {
+      "id": "version-changes-to-v2-before-action1",
+      "expected": "Client rejects action1 locally; retry budget exhausted, terminal failure, no attempt2."
+    },
+    {
+      "id": "version-notice-arrives-after-work0",
+      "expected": "Server cannot use future v1 knowledge at work0 completion. Client independently rejects a mismatching v0 action; a separately specified policy branch is needed."
+    }
+  ]
+}

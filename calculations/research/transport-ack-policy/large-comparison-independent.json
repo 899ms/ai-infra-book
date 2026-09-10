@@ -1,0 +1,97 @@
+{
+  "status": "PASS",
+  "comparison": "All 3 inputs identical except controller.name; ACK count measured, not imposed",
+  "inputs_identical_except_controller": true,
+  "controllers": {
+    "newreno": {
+      "result_sha256": "8d391dc59c52b33f30457ee5317f873aa97eecfa0a677682f754483ddfaf69a9",
+      "business": {
+        "upload": "3277343693/250000000",
+        "model_start": "3277343693/250000000",
+        "model_end": "3352343693/250000000",
+        "response": "3641114949/250000000"
+      },
+      "ack_count": 14990,
+      "wire_bytes": {
+        "up": 31738428,
+        "down": 6438900
+      },
+      "ack_overruns": 0,
+      "rtt_samples_compared": {
+        "up": 12846,
+        "down": 2144
+      },
+      "loss_identity_classes": {
+        "('down', 'ack')": 12591
+      },
+      "observed_phases": {
+        "up": [],
+        "down": []
+      }
+    },
+    "cubic_hystart": {
+      "result_sha256": "9c65a41704e8cf3a892b46c632f9505a4e6eafe3bfce1c88dce59db476f9f77a",
+      "business": {
+        "upload": "3277343693/250000000",
+        "model_start": "3277343693/250000000",
+        "model_end": "3352343693/250000000",
+        "response": "3641114949/250000000"
+      },
+      "ack_count": 14990,
+      "wire_bytes": {
+        "up": 31738428,
+        "down": 6438900
+      },
+      "ack_overruns": 0,
+      "rtt_samples_compared": {
+        "up": 12846,
+        "down": 2144
+      },
+      "loss_identity_classes": {
+        "('down', 'ack')": 12591
+      },
+      "observed_phases": {
+        "up": [
+          "slow_start"
+        ],
+        "down": [
+          "initial_waiting_for_ack",
+          "slow_start"
+        ]
+      }
+    },
+    "bbr": {
+      "result_sha256": "a91336ab97420c3680ba3ffd86c0a0ea2a0742b96f65d79330072d4d7ce1dfec",
+      "business": {
+        "upload": "1335632771/100000000",
+        "model_start": "1335632771/100000000",
+        "model_end": "1365632771/100000000",
+        "response": "14996386157/1000000000"
+      },
+      "ack_count": 14984,
+      "wire_bytes": {
+        "up": 31738152,
+        "down": 6438624
+      },
+      "ack_overruns": 0,
+      "rtt_samples_compared": {
+        "up": 12843,
+        "down": 2141
+      },
+      "loss_identity_classes": {
+        "('down', 'ack')": 12589
+      },
+      "observed_phases": {
+        "up": [
+          "PROBE_BW",
+          "PROBE_RTT",
+          "STARTUP"
+        ],
+        "down": [
+          "PROBE_RTT",
+          "STARTUP"
+        ]
+      }
+    }
+  }
+}

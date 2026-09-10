@@ -1,0 +1,21 @@
+# 控制器适配与实际反馈独立审查：限定范围 PASS
+
+实际完成两类检查：`check-adapters-independent.py` 的13组独立控制器/发送方回调，以及 `check-network-feedback-independent.py` 的12组实际网络路径。后者为三控制器各四场景：无损、同恢复epoch两次丢失、消费/MAX流控、短尾padding。源码hash记录在各JSON，网络检查始末hash保持一致；作者继续修改时需重跑，不把此结果迁移到未核版本。
+
+独立发现并促成修正的实际问题：
+
+1. BBR旧lost PN墓碑阻止空管道重置发送采样epoch。原包lost、新PN副本ACK、再idle发送后，旧版得到800ms采样区间而非新一轮100ms；修复后独立输入得到100000us、scaled bandwidth167。原始墓碑仍保留供lateACK，不再混为网络中的active包。
+2. 网络sender把adapter.on_loss置于新恢复epoch判定内，遗漏同epoch后续loss身份。现每批新loss均通知BBR账本；CUBIC以显式new_recovery_epoch避免重复乘beta。
+3. 网络ACK回调未保留真实入口flight_before，曾把扣除ACK后的值用作BBR prior_inflight。现保存真实前后快照。独立网络检查从实际发送、首次ACK与判失时间重建逐ACK前后flight并核对。
+
+我曾怀疑CUBIC减窗flight包含本次已ACK量；进一步检查表明其使用已pop新ACK后的active集合，因此该疑虑不成立，不列为修复缺陷。
+
+直接采样手算：先前ACK建立delivered快照后，选择最新实际发送PN的send interval80ms、ACK interval50ms，最终取80ms、交付2包、scaledBW419；实际/名义QUIC字节均2400。lateACK首次确认旧lost PN与副本共计2个传输身份，重复ACK不再计；业务区间始终只1168。flow-limited不冒充app-limited，旧包样本的app标志来自实际send快照。pureACK不进BBR交付计数；PTO没有虚构loss。
+
+HyStart确认前缀不越过ACK洞，pureACK不扩展transmission frontier，缺有效样本不会使用SRTT凑数。六轮独立发送/ACK回调从12000B初始窗到40800B、完成5CSS轮后只交接一次。CUBIC同epoch第二loss不重复降窗，旧lost PN lateACK不重复增长。
+
+另通过真实sender事件推进了0秒原包、0.3秒PTO与probe、0.4秒probe ACK判失、0.5秒原PN lateACK及0.6秒重复ACK两控制器例。该发送方回放使用给定发送时刻和中性pacer hook，专门核反馈，不能冒充独立pacer测试。BBR固定packet-conservation在此小例可到1packet窗口；RFC9002的2MDS为推荐值，此差异须作为显式适配行为保留，不能笼统声称三个控制器所有最小窗政策相同。
+
+12组实际网络路径逐包核统一padding和28B线上头；逐ACK核BBR首确认PN集合、delivered累计、选中发送快照及前后flight；含MAX作为1200B在途包和独立ACK。业务区间及0.3秒模型依赖都实际完成。这些检查没有独立重算RFC loss判定本身（它们使用sender所记录的loss时刻重建flight），不覆盖30MB吞吐结论、所有恢复组合或完整TCP行为。
+
+pacer由根任务独立审查，本文件不替代它；大例、共同负载公平性、persistent controller动作及剩余媒体/多流仍需相应验收。只写研究检查与证据，没有修改作者实现、公共项目或主纲。

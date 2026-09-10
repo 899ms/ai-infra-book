@@ -1,0 +1,904 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "case": "immediate",
+      "inputs": {
+        "application": {
+          "schema_version": 1,
+          "id": "screenshot-complete",
+          "messages": [
+            {
+              "id": "screenshot-v1",
+              "sender": "client",
+              "receiver": "server",
+              "flow_id": "business",
+              "transport": "stream",
+              "bytes": 3443,
+              "stream_offset": 0,
+              "application_offset": 0,
+              "ready_seconds": "0",
+              "dependencies": [],
+              "priority": 50,
+              "source_order": 0,
+              "deadline_seconds": null,
+              "allow_expire": false,
+              "cancel_tag": null,
+              "on_delivery_cancel_tags": [],
+              "packetization": {
+                "payload_limit_bytes": 1168,
+                "fragment_count": 3,
+                "final_fragment_bytes": 1107,
+                "coalesce_across_messages": false
+              }
+            },
+            {
+              "id": "screen-action",
+              "sender": "server",
+              "receiver": "client",
+              "flow_id": "business",
+              "transport": "stream",
+              "bytes": 64,
+              "stream_offset": 0,
+              "application_offset": 0,
+              "ready_seconds": "0",
+              "dependencies": [
+                {
+                  "id": "screen-infer",
+                  "event": "task_completed",
+                  "endpoint": "server"
+                }
+              ],
+              "priority": 50,
+              "source_order": 1,
+              "deadline_seconds": null,
+              "allow_expire": false,
+              "cancel_tag": "screen-v1",
+              "on_delivery_cancel_tags": [],
+              "packetization": {
+                "payload_limit_bytes": 1168,
+                "fragment_count": 1,
+                "final_fragment_bytes": 64,
+                "coalesce_across_messages": false
+              }
+            }
+          ],
+          "compute_tasks": [
+            {
+              "id": "screen-infer",
+              "endpoint": "server",
+              "resource": "server",
+              "duration_seconds": "1/20",
+              "ready_seconds": "0",
+              "dependencies": [
+                {
+                  "id": "screenshot-v1",
+                  "event": "message_delivered",
+                  "endpoint": "server"
+                }
+              ],
+              "priority": 50,
+              "source_order": 0,
+              "cancel_tag": "screen-v1",
+              "timing_basis": "existing declared service duration; not measured model throughput"
+            }
+          ],
+          "business_observers": [
+            {
+              "id": "computer-use",
+              "kind": "screenshot",
+              "version": "v1",
+              "version_changes": [],
+              "endpoint": "client",
+              "completion_dependencies": [
+                {
+                  "id": "screen-action",
+                  "event": "message_delivered",
+                  "endpoint": "client"
+                }
+              ]
+            }
+          ],
+          "scheduling": {
+            "send": "fifo",
+            "compute": "fifo",
+            "compute_nonpreemptive": true,
+            "resource_capacity_tasks": 1
+          },
+          "links": {
+            "c2s": {
+              "rate_bits_per_second": 20000000,
+              "propagation_seconds": "1/20"
+            },
+            "s2c": {
+              "rate_bits_per_second": 100000000,
+              "propagation_seconds": "1/20"
+            }
+          },
+          "connection_ready_seconds": "0",
+          "external_legacy_assumptions": {
+            "teaching_network": {
+              "delivery_mode": "per_stream",
+              "header_bytes": 40,
+              "ack_bytes": 40,
+              "shared_credit_bytes": 1000000,
+              "reliable_receive_credit_bytes": 1000000,
+              "stream_credit_bytes": 1000000
+            },
+            "selected_loss_and_recovery": [],
+            "action": "Do not map credit to cwnd, legacy header to MTU, or recovery_ready to PTO. Choose real network inputs explicitly."
+          },
+          "accounting": {
+            "application_bytes_by_direction": {
+              "client_to_server": 3443,
+              "server_to_client": 64
+            },
+            "application_bytes": 3507,
+            "message_count": 2,
+            "task_count": 1,
+            "fragment_count": 4
+          }
+        },
+        "network": {
+          "links": {
+            "up": {
+              "rate_bps": 20000000,
+              "propagation": "0.05"
+            },
+            "down": {
+              "rate_bps": 100000000,
+              "propagation": "0.05"
+            }
+          },
+          "until": 10,
+          "initial_cwnd": 12000,
+          "initial_max_data": {
+            "up": 3443,
+            "down": 64
+          },
+          "initial_max_stream_data": {
+            "up": {
+              "business": 3443
+            },
+            "down": {
+              "business": 64
+            }
+          },
+          "receive_memory_bytes": {
+            "up": 3443,
+            "down": 64
+          },
+          "pad_in_flight": true
+        }
+      },
+      "established_inputs": {
+        "upload_bytes": 3443,
+        "response_bytes": 64,
+        "model_seconds": "0.05",
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "until": 10,
+        "pad_in_flight": true,
+        "receive_window": 3443
+      },
+      "source_hashes": {
+        "calculate.py": "8f16094ba1d346f04f8bbd6840cc9bfa37eef1092513c9f84d11c453643da182",
+        "application.py": "4fc17e92f73116d9aee9fbbac95eda4812620d45b574ec79720cd0156849a527",
+        "network_validation.py": "1a210489414a33a30c9c51a5793c084b1bb0cf985208f8387fc7124616b1f4f8",
+        "application_validation.py": "d4ebb24bbfe734ebb696964f13c16f8ba18064ae306085ea25696adc452712a3"
+      },
+      "packets": 8,
+      "wire_bytes": 5280,
+      "response_at": "236831/1562500",
+      "compared_fields": [
+        "direction",
+        "pn",
+        "kind",
+        "frames",
+        "send_start",
+        "send_end",
+        "arrival",
+        "quic_bytes",
+        "wire_bytes",
+        "dropped",
+        "probe",
+        "received_at",
+        "recovery_of",
+        "probe_of"
+      ]
+    },
+    {
+      "case": "first-data-loss",
+      "inputs": {
+        "application": {
+          "schema_version": 1,
+          "id": "screenshot-complete",
+          "messages": [
+            {
+              "id": "screenshot-v1",
+              "sender": "client",
+              "receiver": "server",
+              "flow_id": "business",
+              "transport": "stream",
+              "bytes": 3443,
+              "stream_offset": 0,
+              "application_offset": 0,
+              "ready_seconds": "0",
+              "dependencies": [],
+              "priority": 50,
+              "source_order": 0,
+              "deadline_seconds": null,
+              "allow_expire": false,
+              "cancel_tag": null,
+              "on_delivery_cancel_tags": [],
+              "packetization": {
+                "payload_limit_bytes": 1168,
+                "fragment_count": 3,
+                "final_fragment_bytes": 1107,
+                "coalesce_across_messages": false
+              }
+            },
+            {
+              "id": "screen-action",
+              "sender": "server",
+              "receiver": "client",
+              "flow_id": "business",
+              "transport": "stream",
+              "bytes": 64,
+              "stream_offset": 0,
+              "application_offset": 0,
+              "ready_seconds": "0",
+              "dependencies": [
+                {
+                  "id": "screen-infer",
+                  "event": "task_completed",
+                  "endpoint": "server"
+                }
+              ],
+              "priority": 50,
+              "source_order": 1,
+              "deadline_seconds": null,
+              "allow_expire": false,
+              "cancel_tag": "screen-v1",
+              "on_delivery_cancel_tags": [],
+              "packetization": {
+                "payload_limit_bytes": 1168,
+                "fragment_count": 1,
+                "final_fragment_bytes": 64,
+                "coalesce_across_messages": false
+              }
+            }
+          ],
+          "compute_tasks": [
+            {
+              "id": "screen-infer",
+              "endpoint": "server",
+              "resource": "server",
+              "duration_seconds": "1/20",
+              "ready_seconds": "0",
+              "dependencies": [
+                {
+                  "id": "screenshot-v1",
+                  "event": "message_delivered",
+                  "endpoint": "server"
+                }
+              ],
+              "priority": 50,
+              "source_order": 0,
+              "cancel_tag": "screen-v1",
+              "timing_basis": "existing declared service duration; not measured model throughput"
+            }
+          ],
+          "business_observers": [
+            {
+              "id": "computer-use",
+              "kind": "screenshot",
+              "version": "v1",
+              "version_changes": [],
+              "endpoint": "client",
+              "completion_dependencies": [
+                {
+                  "id": "screen-action",
+                  "event": "message_delivered",
+                  "endpoint": "client"
+                }
+              ]
+            }
+          ],
+          "scheduling": {
+            "send": "fifo",
+            "compute": "fifo",
+            "compute_nonpreemptive": true,
+            "resource_capacity_tasks": 1
+          },
+          "links": {
+            "c2s": {
+              "rate_bits_per_second": 20000000,
+              "propagation_seconds": "1/20"
+            },
+            "s2c": {
+              "rate_bits_per_second": 100000000,
+              "propagation_seconds": "1/20"
+            }
+          },
+          "connection_ready_seconds": "0",
+          "external_legacy_assumptions": {
+            "teaching_network": {
+              "delivery_mode": "per_stream",
+              "header_bytes": 40,
+              "ack_bytes": 40,
+              "shared_credit_bytes": 1000000,
+              "reliable_receive_credit_bytes": 1000000,
+              "stream_credit_bytes": 1000000
+            },
+            "selected_loss_and_recovery": [],
+            "action": "Do not map credit to cwnd, legacy header to MTU, or recovery_ready to PTO. Choose real network inputs explicitly."
+          },
+          "accounting": {
+            "application_bytes_by_direction": {
+              "client_to_server": 3443,
+              "server_to_client": 64
+            },
+            "application_bytes": 3507,
+            "message_count": 2,
+            "task_count": 1,
+            "fragment_count": 4
+          }
+        },
+        "network": {
+          "links": {
+            "up": {
+              "rate_bps": 20000000,
+              "propagation": "0.05"
+            },
+            "down": {
+              "rate_bps": 100000000,
+              "propagation": "0.05"
+            }
+          },
+          "until": 10,
+          "initial_cwnd": 12000,
+          "initial_max_data": {
+            "up": 3443,
+            "down": 64
+          },
+          "initial_max_stream_data": {
+            "up": {
+              "business": 3443
+            },
+            "down": {
+              "business": 64
+            }
+          },
+          "receive_memory_bytes": {
+            "up": 3443,
+            "down": 64
+          },
+          "pad_in_flight": true,
+          "drop_packets": [
+            {
+              "direction": "up",
+              "pn": 0
+            }
+          ]
+        }
+      },
+      "established_inputs": {
+        "upload_bytes": 3443,
+        "response_bytes": 64,
+        "model_seconds": "0.05",
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "until": 10,
+        "pad_in_flight": true,
+        "receive_window": 3443,
+        "drop_packets": [
+          {
+            "direction": "up",
+            "pn": 0
+          }
+        ]
+      },
+      "source_hashes": {
+        "calculate.py": "8f16094ba1d346f04f8bbd6840cc9bfa37eef1092513c9f84d11c453643da182",
+        "application.py": "4fc17e92f73116d9aee9fbbac95eda4812620d45b574ec79720cd0156849a527",
+        "network_validation.py": "1a210489414a33a30c9c51a5793c084b1bb0cf985208f8387fc7124616b1f4f8",
+        "application_validation.py": "d4ebb24bbfe734ebb696964f13c16f8ba18064ae306085ea25696adc452712a3"
+      },
+      "packets": 9,
+      "wire_bytes": 6508,
+      "response_at": "3295629/12500000",
+      "compared_fields": [
+        "direction",
+        "pn",
+        "kind",
+        "frames",
+        "send_start",
+        "send_end",
+        "arrival",
+        "quic_bytes",
+        "wire_bytes",
+        "dropped",
+        "probe",
+        "received_at",
+        "recovery_of",
+        "probe_of"
+      ]
+    },
+    {
+      "case": "first-ACK-loss",
+      "inputs": {
+        "application": {
+          "schema_version": 1,
+          "id": "screenshot-complete",
+          "messages": [
+            {
+              "id": "screenshot-v1",
+              "sender": "client",
+              "receiver": "server",
+              "flow_id": "business",
+              "transport": "stream",
+              "bytes": 3443,
+              "stream_offset": 0,
+              "application_offset": 0,
+              "ready_seconds": "0",
+              "dependencies": [],
+              "priority": 50,
+              "source_order": 0,
+              "deadline_seconds": null,
+              "allow_expire": false,
+              "cancel_tag": null,
+              "on_delivery_cancel_tags": [],
+              "packetization": {
+                "payload_limit_bytes": 1168,
+                "fragment_count": 3,
+                "final_fragment_bytes": 1107,
+                "coalesce_across_messages": false
+              }
+            },
+            {
+              "id": "screen-action",
+              "sender": "server",
+              "receiver": "client",
+              "flow_id": "business",
+              "transport": "stream",
+              "bytes": 64,
+              "stream_offset": 0,
+              "application_offset": 0,
+              "ready_seconds": "0",
+              "dependencies": [
+                {
+                  "id": "screen-infer",
+                  "event": "task_completed",
+                  "endpoint": "server"
+                }
+              ],
+              "priority": 50,
+              "source_order": 1,
+              "deadline_seconds": null,
+              "allow_expire": false,
+              "cancel_tag": "screen-v1",
+              "on_delivery_cancel_tags": [],
+              "packetization": {
+                "payload_limit_bytes": 1168,
+                "fragment_count": 1,
+                "final_fragment_bytes": 64,
+                "coalesce_across_messages": false
+              }
+            }
+          ],
+          "compute_tasks": [
+            {
+              "id": "screen-infer",
+              "endpoint": "server",
+              "resource": "server",
+              "duration_seconds": "1/20",
+              "ready_seconds": "0",
+              "dependencies": [
+                {
+                  "id": "screenshot-v1",
+                  "event": "message_delivered",
+                  "endpoint": "server"
+                }
+              ],
+              "priority": 50,
+              "source_order": 0,
+              "cancel_tag": "screen-v1",
+              "timing_basis": "existing declared service duration; not measured model throughput"
+            }
+          ],
+          "business_observers": [
+            {
+              "id": "computer-use",
+              "kind": "screenshot",
+              "version": "v1",
+              "version_changes": [],
+              "endpoint": "client",
+              "completion_dependencies": [
+                {
+                  "id": "screen-action",
+                  "event": "message_delivered",
+                  "endpoint": "client"
+                }
+              ]
+            }
+          ],
+          "scheduling": {
+            "send": "fifo",
+            "compute": "fifo",
+            "compute_nonpreemptive": true,
+            "resource_capacity_tasks": 1
+          },
+          "links": {
+            "c2s": {
+              "rate_bits_per_second": 20000000,
+              "propagation_seconds": "1/20"
+            },
+            "s2c": {
+              "rate_bits_per_second": 100000000,
+              "propagation_seconds": "1/20"
+            }
+          },
+          "connection_ready_seconds": "0",
+          "external_legacy_assumptions": {
+            "teaching_network": {
+              "delivery_mode": "per_stream",
+              "header_bytes": 40,
+              "ack_bytes": 40,
+              "shared_credit_bytes": 1000000,
+              "reliable_receive_credit_bytes": 1000000,
+              "stream_credit_bytes": 1000000
+            },
+            "selected_loss_and_recovery": [],
+            "action": "Do not map credit to cwnd, legacy header to MTU, or recovery_ready to PTO. Choose real network inputs explicitly."
+          },
+          "accounting": {
+            "application_bytes_by_direction": {
+              "client_to_server": 3443,
+              "server_to_client": 64
+            },
+            "application_bytes": 3507,
+            "message_count": 2,
+            "task_count": 1,
+            "fragment_count": 4
+          }
+        },
+        "network": {
+          "links": {
+            "up": {
+              "rate_bps": 20000000,
+              "propagation": "0.05"
+            },
+            "down": {
+              "rate_bps": 100000000,
+              "propagation": "0.05"
+            }
+          },
+          "until": 10,
+          "initial_cwnd": 12000,
+          "initial_max_data": {
+            "up": 3443,
+            "down": 64
+          },
+          "initial_max_stream_data": {
+            "up": {
+              "business": 3443
+            },
+            "down": {
+              "business": 64
+            }
+          },
+          "receive_memory_bytes": {
+            "up": 3443,
+            "down": 64
+          },
+          "pad_in_flight": true,
+          "drop_packets": [
+            {
+              "direction": "down",
+              "pn": 0
+            }
+          ]
+        }
+      },
+      "established_inputs": {
+        "upload_bytes": 3443,
+        "response_bytes": 64,
+        "model_seconds": "0.05",
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "until": 10,
+        "pad_in_flight": true,
+        "receive_window": 3443,
+        "drop_packets": [
+          {
+            "direction": "down",
+            "pn": 0
+          }
+        ]
+      },
+      "source_hashes": {
+        "calculate.py": "8f16094ba1d346f04f8bbd6840cc9bfa37eef1092513c9f84d11c453643da182",
+        "application.py": "4fc17e92f73116d9aee9fbbac95eda4812620d45b574ec79720cd0156849a527",
+        "network_validation.py": "1a210489414a33a30c9c51a5793c084b1bb0cf985208f8387fc7124616b1f4f8",
+        "application_validation.py": "d4ebb24bbfe734ebb696964f13c16f8ba18064ae306085ea25696adc452712a3"
+      },
+      "packets": 10,
+      "wire_bytes": 6600,
+      "response_at": "236831/1562500",
+      "compared_fields": [
+        "direction",
+        "pn",
+        "kind",
+        "frames",
+        "send_start",
+        "send_end",
+        "arrival",
+        "quic_bytes",
+        "wire_bytes",
+        "dropped",
+        "probe",
+        "received_at",
+        "recovery_of",
+        "probe_of"
+      ]
+    },
+    {
+      "case": "aggregate",
+      "inputs": {
+        "application": {
+          "schema_version": 1,
+          "id": "screenshot-complete",
+          "messages": [
+            {
+              "id": "screenshot-v1",
+              "sender": "client",
+              "receiver": "server",
+              "flow_id": "business",
+              "transport": "stream",
+              "bytes": 3443,
+              "stream_offset": 0,
+              "application_offset": 0,
+              "ready_seconds": "0",
+              "dependencies": [],
+              "priority": 50,
+              "source_order": 0,
+              "deadline_seconds": null,
+              "allow_expire": false,
+              "cancel_tag": null,
+              "on_delivery_cancel_tags": [],
+              "packetization": {
+                "payload_limit_bytes": 1168,
+                "fragment_count": 3,
+                "final_fragment_bytes": 1107,
+                "coalesce_across_messages": false
+              }
+            },
+            {
+              "id": "screen-action",
+              "sender": "server",
+              "receiver": "client",
+              "flow_id": "business",
+              "transport": "stream",
+              "bytes": 64,
+              "stream_offset": 0,
+              "application_offset": 0,
+              "ready_seconds": "0",
+              "dependencies": [
+                {
+                  "id": "screen-infer",
+                  "event": "task_completed",
+                  "endpoint": "server"
+                }
+              ],
+              "priority": 50,
+              "source_order": 1,
+              "deadline_seconds": null,
+              "allow_expire": false,
+              "cancel_tag": "screen-v1",
+              "on_delivery_cancel_tags": [],
+              "packetization": {
+                "payload_limit_bytes": 1168,
+                "fragment_count": 1,
+                "final_fragment_bytes": 64,
+                "coalesce_across_messages": false
+              }
+            }
+          ],
+          "compute_tasks": [
+            {
+              "id": "screen-infer",
+              "endpoint": "server",
+              "resource": "server",
+              "duration_seconds": "1/20",
+              "ready_seconds": "0",
+              "dependencies": [
+                {
+                  "id": "screenshot-v1",
+                  "event": "message_delivered",
+                  "endpoint": "server"
+                }
+              ],
+              "priority": 50,
+              "source_order": 0,
+              "cancel_tag": "screen-v1",
+              "timing_basis": "existing declared service duration; not measured model throughput"
+            }
+          ],
+          "business_observers": [
+            {
+              "id": "computer-use",
+              "kind": "screenshot",
+              "version": "v1",
+              "version_changes": [],
+              "endpoint": "client",
+              "completion_dependencies": [
+                {
+                  "id": "screen-action",
+                  "event": "message_delivered",
+                  "endpoint": "client"
+                }
+              ]
+            }
+          ],
+          "scheduling": {
+            "send": "fifo",
+            "compute": "fifo",
+            "compute_nonpreemptive": true,
+            "resource_capacity_tasks": 1
+          },
+          "links": {
+            "c2s": {
+              "rate_bits_per_second": 20000000,
+              "propagation_seconds": "1/20"
+            },
+            "s2c": {
+              "rate_bits_per_second": 100000000,
+              "propagation_seconds": "1/20"
+            }
+          },
+          "connection_ready_seconds": "0",
+          "external_legacy_assumptions": {
+            "teaching_network": {
+              "delivery_mode": "per_stream",
+              "header_bytes": 40,
+              "ack_bytes": 40,
+              "shared_credit_bytes": 1000000,
+              "reliable_receive_credit_bytes": 1000000,
+              "stream_credit_bytes": 1000000
+            },
+            "selected_loss_and_recovery": [],
+            "action": "Do not map credit to cwnd, legacy header to MTU, or recovery_ready to PTO. Choose real network inputs explicitly."
+          },
+          "accounting": {
+            "application_bytes_by_direction": {
+              "client_to_server": 3443,
+              "server_to_client": 64
+            },
+            "application_bytes": 3507,
+            "message_count": 2,
+            "task_count": 1,
+            "fragment_count": 4
+          }
+        },
+        "network": {
+          "links": {
+            "up": {
+              "rate_bps": 20000000,
+              "propagation": "0.05"
+            },
+            "down": {
+              "rate_bps": 100000000,
+              "propagation": "0.05"
+            }
+          },
+          "until": 10,
+          "initial_cwnd": 12000,
+          "initial_max_data": {
+            "up": 3443,
+            "down": 64
+          },
+          "initial_max_stream_data": {
+            "up": {
+              "business": 3443
+            },
+            "down": {
+              "business": 64
+            }
+          },
+          "receive_memory_bytes": {
+            "up": 3443,
+            "down": 64
+          },
+          "pad_in_flight": true,
+          "ack_policy": {
+            "mode": "count_or_timer",
+            "every": 2,
+            "max_delay": "0.01",
+            "delay_exponent": 3,
+            "retain_packets": 256,
+            "reorder_immediate": true,
+            "header_tag_bytes": 24
+          }
+        }
+      },
+      "established_inputs": {
+        "upload_bytes": 3443,
+        "response_bytes": 64,
+        "model_seconds": "0.05",
+        "links": {
+          "up": {
+            "rate_bps": 20000000,
+            "propagation": "0.05"
+          },
+          "down": {
+            "rate_bps": 100000000,
+            "propagation": "0.05"
+          }
+        },
+        "until": 10,
+        "pad_in_flight": true,
+        "receive_window": 3443,
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "0.01",
+          "delay_exponent": 3,
+          "retain_packets": 256,
+          "reorder_immediate": true,
+          "header_tag_bytes": 24
+        }
+      },
+      "source_hashes": {
+        "calculate.py": "8f16094ba1d346f04f8bbd6840cc9bfa37eef1092513c9f84d11c453643da182",
+        "application.py": "4fc17e92f73116d9aee9fbbac95eda4812620d45b574ec79720cd0156849a527",
+        "network_validation.py": "1a210489414a33a30c9c51a5793c084b1bb0cf985208f8387fc7124616b1f4f8",
+        "application_validation.py": "d4ebb24bbfe734ebb696964f13c16f8ba18064ae306085ea25696adc452712a3"
+      },
+      "packets": 7,
+      "wire_bytes": 5188,
+      "response_at": "236831/1562500",
+      "compared_fields": [
+        "direction",
+        "pn",
+        "kind",
+        "frames",
+        "send_start",
+        "send_end",
+        "arrival",
+        "quic_bytes",
+        "wire_bytes",
+        "dropped",
+        "probe",
+        "received_at",
+        "recovery_of",
+        "probe_of"
+      ]
+    }
+  ],
+  "scope": "Four actual one-message upload/compute/response degenerations; physical packet/feedback equality, not whole media acceptance"
+}

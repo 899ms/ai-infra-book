@@ -1,0 +1,1791 @@
+{
+  "status": "PASS",
+  "source_hashes": {
+    "/Users/boj/book/ai-infra-book/calculations/research/shared-airtime-loop/airtime.py": "131ce04a522e641ece9a851f9e6ab3b1771b7fc83a5417be3b2a52c53a717658",
+    "/Users/boj/book/ai-infra-book/calculations/research/shared-airtime-loop/calculate.py": "9c5fbd9deeaa22f030b34048402c9eda9afe4e540de0ae8412d90b82014bf6bd",
+    "/Users/boj/book/ai-infra-book/calculations/research/shared-airtime-loop/network-hand-oracles.json": "8b32a211d15c13efda4b3c30dd62634645ca02736944a1fe5f0104aaabf53f36",
+    "/Users/boj/book/ai-infra-book/calculations/research/shared-airtime-loop/scenarios.json": "dca2ea8a969f767bb23c383760f657880b61dca6f75c273309ee9d90e517fa3b",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/__init__.py": "1cfdc1ebed94348623bfe43c594587e878731ea8df2dc411c87c96f1b0cab832",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/paths.py": "6ef679f2583017074cf0c75c7b8606f727b2106b9f133085dba1d957c2e02737",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py": "bf1a73fc35baf657bf3e13732613f3b92f2d1cc550434da269c0d13cda818747",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/__init__.py": "c7657fe2ef4646f0dca090eb1bb864b21d7ace1cca8e089ae60b6096b1965909",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/transport_sender.py": "91286019b4f2f1e057603e5011171470453bc9bd76bea6c60b91dd580c99c8b3",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/__init__.py": "afe84ba19b4e95b5236b841bb80687933bc348f80273d9d126dbe184250a28eb",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/ack_receiver.py": "a8a44b09c95d76501821a20a4737fdc352d564de706f98082b2c5f7f55949378",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/bbr_adapter.py": "870b2f2ac35e4d98d0425eb97c86cc4fc8ba0eb6e518fde168165030756dac7c",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/bbr_minmax.py": "6c763345efa592f6bba348b81350081b0e24050d34c718c1727622739b52d28e",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/bbr_reference.py": "714b9ffecd300362a354e73aee4adbb744c41795a3019b88bc3e784e31612da6",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/bbr_state.py": "e24b8d55efb218f344a5799f73db83966cfc71088341f595a60562952f906194",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/cubic.py": "4e77d2a7c709a3c873009ba89dabd806760cb56f3a5ce7164233925211f5e521",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/cubic_adapter.py": "4dafed0947806549a354493aa12f976827fe4b8cb83f0f0096da65ac512eb4a3",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/hystart.py": "216c633b34e3acf39665cf3e920d9701c689434d6b31fe6bcbc65deafc31d3c7",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/media_application.py": "4fc17e92f73116d9aee9fbbac95eda4812620d45b574ec79720cd0156849a527",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/media_application_validation.py": "d4ebb24bbfe734ebb696964f13c16f8ba18064ae306085ea25696adc452712a3",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/media_network.py": "2ed6f52a88521421d712b6d32d8fbb3b3aa11d7a8beb38f4371babbb5e2803e8",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/media_network_validation.py": "1a210489414a33a30c9c51a5793c084b1bb0cf985208f8387fc7124616b1f4f8",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/media_sender.py": "ce8a643a22af517b07de32eccd7fd67d70a49906a3c3631472707d8816e659b5",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/pacer.py": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/persistent_congestion.py": "2f6b9e998e5a60ce9388aee8e956acbf04e1ffe77646b1c757b1daae77a491d7",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/transport/reference_sources.py": "86bd8441af9b881953ab4e98bea21ea9d071339039d509d9143b5af8e47ea788",
+    "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/units.py": "92d052cbbfd82c6972efcca4d0e9569142009e98b449a7c0c1687640e41429cb"
+  },
+  "checker_sha256": "4bbb4681dc1bc476402c5ee6d4943461c8095c2aeac5b586fa94e938a26402fb",
+  "scenarios_executed": [
+    "bidirectional-shared",
+    "bidirectional-disabled",
+    "two-data-immediate",
+    "two-data-every2",
+    "busy-client-ACK-refresh",
+    "busy-client-ACK-overrun",
+    "same-PN-MAC-ACK-lost",
+    "MAC-data-loss-exhaustion-then-PTO",
+    "tail-immediate",
+    "tail-every4",
+    "down-MAC-duplicate-immediate",
+    "down-MAC-duplicate-count",
+    "source-profile-ACK-snapshot",
+    "horizon-before-failure"
+  ],
+  "disabled_existing_cases": [
+    "credit-3-streams",
+    "schedule-fifo",
+    "schedule-priority",
+    "playback-reliable",
+    "playback-slots",
+    "cancel-running-work",
+    "screenshot-complete",
+    "screenshot-stale",
+    "unreliable-loss-credit",
+    "one-stream-blocked-other-progress",
+    "reliable-loss-recovery",
+    "shared-credit-consumption",
+    "shared-credit-aggregate-ack",
+    "datagram-tail-pto-ping"
+  ],
+  "checks": [
+    {
+      "case": "bidirectional-shared.shared reservation nonoverlap",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.one sender transmission record per PN",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.attempt0.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.attempt0.no future receive",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.attempt0.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.attempt1.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.attempt1.no future receive",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.attempt1.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.attempt2.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.attempt2.no future receive",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.attempt2.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.attempt3.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.attempt3.no future receive",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.attempt3.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.down0.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.up0.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.up0.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.down1.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.up1.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.up1.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-shared",
+      "field": "up_server_delivery",
+      "actual": "2",
+      "expected": "2"
+    },
+    {
+      "case": "bidirectional-shared",
+      "field": "down_client_delivery",
+      "actual": "9/4",
+      "expected": "9/4"
+    },
+    {
+      "case": "bidirectional-shared",
+      "field": "first_down_WAN",
+      "actual": [
+        "0",
+        "1"
+      ],
+      "expected": [
+        "0",
+        "1"
+      ]
+    },
+    {
+      "case": "bidirectional-shared",
+      "field": "first_up_air_exchange",
+      "actual": [
+        "0",
+        "5/4"
+      ],
+      "expected": [
+        "0",
+        "5/4"
+      ]
+    },
+    {
+      "case": "bidirectional-shared",
+      "field": "first_down_air_exchange",
+      "actual": [
+        "5/4",
+        "5/2"
+      ],
+      "expected": [
+        "5/4",
+        "5/2"
+      ]
+    },
+    {
+      "case": "bidirectional-shared",
+      "field": "first_down_AP_ready",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "bidirectional-disabled.shared reservation nonoverlap",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-disabled.one sender transmission record per PN",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-disabled.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-disabled.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "bidirectional-disabled",
+      "field": "up_server_delivery",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "bidirectional-disabled",
+      "field": "down_client_delivery",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "bidirectional-disabled",
+      "field": "first_down_WAN",
+      "actual": [
+        "0",
+        "1"
+      ],
+      "expected": [
+        "0",
+        "1"
+      ]
+    },
+    {
+      "case": "bidirectional-disabled",
+      "field": "first_up_WAN",
+      "actual": [
+        "0",
+        "1"
+      ],
+      "expected": [
+        "0",
+        "1"
+      ]
+    },
+    {
+      "case": "two-data-immediate.shared reservation nonoverlap",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.one sender transmission record per PN",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.attempt0.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.attempt0.no future receive",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.attempt0.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.attempt1.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.attempt1.no future receive",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.attempt1.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.attempt2.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.attempt2.no future receive",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.attempt2.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.attempt3.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.attempt3.no future receive",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.attempt3.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.up0.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.up0.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.up1.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.up1.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.down0.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.down1.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "two-data-immediate",
+      "field": "transport_ACK_count",
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "case": "two-data-immediate",
+      "field": "total_success_airtime",
+      "actual": "7/2",
+      "expected": "7/2"
+    },
+    {
+      "case": "two-data-immediate",
+      "field": "data_MAC_confirmation_count",
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "case": "two-data-every2.shared reservation nonoverlap",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.one sender transmission record per PN",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.attempt0.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.attempt0.no future receive",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.attempt0.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.attempt1.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.attempt1.no future receive",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.attempt1.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.attempt2.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.attempt2.no future receive",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.attempt2.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.up0.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.up0.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.up1.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.up1.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.down0.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "two-data-every2",
+      "field": "transport_ACK_count",
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "two-data-every2",
+      "field": "total_success_airtime",
+      "actual": "3",
+      "expected": "3"
+    },
+    {
+      "case": "two-data-every2",
+      "field": "data_MAC_confirmation_count",
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "case": "busy-client-ACK-refresh.shared reservation nonoverlap",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.one sender transmission record per PN",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt0.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt0.no future receive",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt0.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt1.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt1.no future receive",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt1.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt2.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt2.no future receive",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt2.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt3.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt3.no future receive",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt3.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt4.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt4.no future receive",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.attempt4.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.down0.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.down1.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.down2.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.up0.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.up0.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.up1.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.up1.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-refresh",
+      "field": "first_client_ACK_deadline",
+      "actual": "9/4",
+      "expected": "9/4"
+    },
+    {
+      "case": "busy-client-ACK-refresh",
+      "field": "first_client_ACK_air_start",
+      "actual": "7/2",
+      "expected": "7/2"
+    },
+    {
+      "case": "busy-client-ACK-refresh",
+      "field": "first_client_ACK_ranges",
+      "actual": [
+        [
+          0,
+          1
+        ]
+      ],
+      "expected": [
+        [
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "case": "busy-client-ACK-refresh",
+      "field": "largest_received_at",
+      "actual": "13/4",
+      "expected": "13/4"
+    },
+    {
+      "case": "busy-client-ACK-refresh",
+      "field": "raw_delay",
+      "actual": "1/4",
+      "expected": "1/4"
+    },
+    {
+      "case": "busy-client-ACK-refresh",
+      "field": "encoded_delay",
+      "actual": 31250,
+      "expected": 31250
+    },
+    {
+      "case": "busy-client-ACK-refresh",
+      "field": "exceeds_max_delay",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "busy-client-ACK-refresh",
+      "field": "first_down_air_exchange",
+      "actual": [
+        "1",
+        "9/4"
+      ],
+      "expected": [
+        "1",
+        "9/4"
+      ]
+    },
+    {
+      "case": "busy-client-ACK-refresh",
+      "field": "second_down_air_exchange",
+      "actual": [
+        "9/4",
+        "7/2"
+      ],
+      "expected": [
+        "9/4",
+        "7/2"
+      ]
+    },
+    {
+      "case": "busy-client-ACK-overrun.shared reservation nonoverlap",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.one sender transmission record per PN",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt0.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt0.no future receive",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt0.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt1.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt1.no future receive",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt1.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt2.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt2.no future receive",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt2.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt3.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt3.no future receive",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt3.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt4.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt4.no future receive",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.attempt4.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.down0.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.down1.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.down2.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.up0.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.up0.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.up1.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.up1.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "busy-client-ACK-overrun",
+      "field": "first_client_ACK_deadline",
+      "actual": "21/10",
+      "expected": "21/10"
+    },
+    {
+      "case": "busy-client-ACK-overrun",
+      "field": "first_client_ACK_air_start",
+      "actual": "7/2",
+      "expected": "7/2"
+    },
+    {
+      "case": "busy-client-ACK-overrun",
+      "field": "first_client_ACK_ranges",
+      "actual": [
+        [
+          0,
+          1
+        ]
+      ],
+      "expected": [
+        [
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "case": "busy-client-ACK-overrun",
+      "field": "largest_received_at",
+      "actual": "13/4",
+      "expected": "13/4"
+    },
+    {
+      "case": "busy-client-ACK-overrun",
+      "field": "raw_delay",
+      "actual": "1/4",
+      "expected": "1/4"
+    },
+    {
+      "case": "busy-client-ACK-overrun",
+      "field": "encoded_delay",
+      "actual": 31250,
+      "expected": 31250
+    },
+    {
+      "case": "busy-client-ACK-overrun",
+      "field": "exceeds_max_delay",
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.shared reservation nonoverlap",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.one sender transmission record per PN",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.attempt0.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.attempt0.no future receive",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.attempt0.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.attempt1.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.attempt1.no future receive",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.attempt1.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.attempt1.retry waits actual feedback",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.attempt2.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.attempt2.no future receive",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.attempt2.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.up0.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.up0.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.down0.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost",
+      "field": "up_MAC_attempt_PNs",
+      "actual": [
+        0,
+        0
+      ],
+      "expected": [
+        0,
+        0
+      ]
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost",
+      "field": "up_DATA_air_intervals",
+      "actual": [
+        [
+          "0",
+          "1"
+        ],
+        [
+          "2",
+          "3"
+        ]
+      ],
+      "expected": [
+        [
+          "0",
+          "1"
+        ],
+        [
+          "2",
+          "3"
+        ]
+      ]
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost",
+      "field": "first_AP_receive",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost",
+      "field": "failure_known",
+      "actual": "3/2",
+      "expected": "3/2"
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost",
+      "field": "retry_MAC_success",
+      "actual": "13/4",
+      "expected": "13/4"
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost",
+      "field": "up_original_sender_sent_events",
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost",
+      "field": "up_WAN_forward_count",
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "same-PN-MAC-ACK-lost",
+      "field": "server_unique_delivery",
+      "actual": "2",
+      "expected": "2"
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.shared reservation nonoverlap",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.one sender transmission record per PN",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.attempt0.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.attempt0.no future receive",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.attempt0.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.attempt1.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.attempt1.no future receive",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.attempt1.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.attempt1.retry waits actual feedback",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.attempt2.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.attempt2.no future receive",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.attempt2.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.attempt3.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.attempt3.no future receive",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.attempt3.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.up1.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.up1.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.down0.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO",
+      "field": "original_MAC_attempt_PNs",
+      "actual": [
+        0,
+        0
+      ],
+      "expected": [
+        0,
+        0
+      ]
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO",
+      "field": "failures_known",
+      "actual": [
+        "3/2",
+        "7/2"
+      ],
+      "expected": [
+        "3/2",
+        "7/2"
+      ]
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO",
+      "field": "end_to_end_PTO",
+      "actual": "4",
+      "expected": "4"
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO",
+      "field": "probe_new_PN",
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO",
+      "field": "probe_air_DATA_interval",
+      "actual": [
+        "4",
+        "5"
+      ],
+      "expected": [
+        "4",
+        "5"
+      ]
+    },
+    {
+      "case": "MAC-data-loss-exhaustion-then-PTO",
+      "field": "server_unique_delivery",
+      "actual": "6",
+      "expected": "6"
+    },
+    {
+      "case": "tail-immediate.shared reservation nonoverlap",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.one sender transmission record per PN",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt0.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt0.no future receive",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt0.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt1.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt1.no future receive",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt1.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt2.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt2.no future receive",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt2.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt3.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt3.no future receive",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt3.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt4.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt4.no future receive",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt4.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt5.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt5.no future receive",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.attempt5.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.up0.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.up0.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.up1.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.up1.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.down0.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.up2.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.up2.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.down1.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.down2.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "tail-immediate",
+      "field": "transport_ACK_count",
+      "actual": 3,
+      "expected": 3
+    },
+    {
+      "case": "tail-immediate",
+      "field": "total_success_airtime",
+      "actual": "21/4",
+      "expected": "21/4"
+    },
+    {
+      "case": "tail-immediate",
+      "field": "server_tail_delivery",
+      "actual": "5",
+      "expected": "5"
+    },
+    {
+      "case": "tail-immediate",
+      "field": "tail_slot_usable",
+      "actual": true,
+      "expected": true
+    },
+    {
+      "case": "tail-immediate",
+      "field": "initial_cwnd_bytes",
+      "actual": 2400,
+      "expected": 2400
+    },
+    {
+      "case": "tail-immediate",
+      "field": "tail_play_start",
+      "actual": "6",
+      "expected": "6"
+    },
+    {
+      "case": "tail-immediate",
+      "field": "tail_play_end",
+      "actual": "25/4",
+      "expected": "25/4"
+    },
+    {
+      "case": "tail-every4.shared reservation nonoverlap",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.one sender transmission record per PN",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt0.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt0.no future receive",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt0.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt1.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt1.no future receive",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt1.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt2.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt2.no future receive",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt2.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt3.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt3.no future receive",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt3.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt4.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt4.no future receive",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.attempt4.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.up0.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.up0.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.up1.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.up1.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.down0.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.up2.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.up2.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.down1.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "tail-every4.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "tail-every4",
+      "field": "transport_ACK_count",
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "case": "tail-every4",
+      "field": "total_success_airtime",
+      "actual": "19/4",
+      "expected": "19/4"
+    },
+    {
+      "case": "tail-every4",
+      "field": "server_tail_delivery",
+      "actual": "5265/614",
+      "expected": "5265/614"
+    },
+    {
+      "case": "tail-every4",
+      "field": "tail_slot_usable",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "tail-every4",
+      "field": "first_two_server_arrivals",
+      "actual": [
+        "2",
+        "13/4"
+      ],
+      "expected": [
+        "2",
+        "13/4"
+      ]
+    },
+    {
+      "case": "tail-every4",
+      "field": "first_server_ACK_deadline",
+      "actual": "6",
+      "expected": "6"
+    },
+    {
+      "case": "tail-every4",
+      "field": "first_ACK_AP_ready",
+      "actual": "1865/307",
+      "expected": "1865/307"
+    },
+    {
+      "case": "tail-every4",
+      "field": "first_ACK_client_receive",
+      "actual": "7767/1228",
+      "expected": "7767/1228"
+    },
+    {
+      "case": "tail-every4",
+      "field": "third_DATA_air_start",
+      "actual": "4037/614",
+      "expected": "4037/614"
+    },
+    {
+      "case": "tail-every4",
+      "field": "missing_audio_seconds",
+      "actual": "1/4",
+      "expected": "1/4"
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.shared reservation nonoverlap",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.one sender transmission record per PN",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.attempt0.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.attempt0.no future receive",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.attempt0.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.attempt1.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.attempt1.no future receive",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.attempt1.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.attempt2.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.attempt2.no future receive",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.attempt2.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.attempt2.retry waits actual feedback",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.down0.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.up0.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.up0.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.single application delivery",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.same PN two MAC attempts",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-immediate.no extra transport ACK",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.shared reservation nonoverlap",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.one sender transmission record per PN",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.attempt0.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.attempt0.no future receive",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.attempt0.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.attempt1.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.attempt1.no future receive",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.attempt1.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.attempt2.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.attempt2.no future receive",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.attempt2.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.attempt2.retry waits actual feedback",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.down0.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.up0.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.up0.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.single application delivery",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.same PN two MAC attempts",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.no extra transport ACK",
+      "passed": true
+    },
+    {
+      "case": "down-MAC-duplicate-count.one QUIC receive notification",
+      "passed": true
+    },
+    {
+      "case": "source-profile-ACK-snapshot.shared reservation nonoverlap",
+      "passed": true
+    },
+    {
+      "case": "source-profile-ACK-snapshot.one sender transmission record per PN",
+      "passed": true
+    },
+    {
+      "case": "source-profile-ACK-snapshot.attempt0.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "source-profile-ACK-snapshot.attempt0.no future receive",
+      "passed": true
+    },
+    {
+      "case": "source-profile-ACK-snapshot.attempt0.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "source-profile-ACK-snapshot.attempt1.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "source-profile-ACK-snapshot.attempt1.no future receive",
+      "passed": true
+    },
+    {
+      "case": "source-profile-ACK-snapshot.attempt1.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "source-profile-ACK-snapshot.down0.air after WAN",
+      "passed": true
+    },
+    {
+      "case": "source-profile-ACK-snapshot.up0.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "source-profile-ACK-snapshot.up0.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "source-profile-ACK-snapshot.ACK feedback exists only at endpoint receipt",
+      "passed": true
+    },
+    {
+      "case": "source-profile.actual source ACK start",
+      "passed": true
+    },
+    {
+      "case": "source-profile.raw94us includes waiting and access",
+      "passed": true
+    },
+    {
+      "case": "source-profile.encoded delay floors94us to88us",
+      "passed": true
+    },
+    {
+      "case": "source-profile.IP overhead single accounting",
+      "passed": true
+    },
+    {
+      "case": "horizon-before-failure.shared reservation nonoverlap",
+      "passed": true
+    },
+    {
+      "case": "horizon-before-failure.one sender transmission record per PN",
+      "passed": true
+    },
+    {
+      "case": "horizon-before-failure.attempt0.no future feedback",
+      "passed": true
+    },
+    {
+      "case": "horizon-before-failure.attempt0.no future receive",
+      "passed": true
+    },
+    {
+      "case": "horizon-before-failure.attempt0.actual transport send precedes radio",
+      "passed": true
+    },
+    {
+      "case": "horizon-before-failure.up0.WAN after AP receive",
+      "passed": true
+    },
+    {
+      "case": "horizon-before-failure.up0.WAN serializer bytes",
+      "passed": true
+    },
+    {
+      "case": "horizon-before-failure.no feedback events",
+      "passed": true
+    },
+    {
+      "case": "horizon-before-failure.one attempt",
+      "passed": true
+    },
+    {
+      "case": "horizon-before-failure.no endpoint delivery",
+      "passed": true
+    },
+    {
+      "case": "disabled-existing-full-result.credit-3-streams",
+      "passed": true
+    },
+    {
+      "case": "explicit-disabled-existing-full-result.credit-3-streams",
+      "passed": true
+    },
+    {
+      "case": "disabled-existing-full-result.schedule-fifo",
+      "passed": true
+    },
+    {
+      "case": "explicit-disabled-existing-full-result.schedule-fifo",
+      "passed": true
+    },
+    {
+      "case": "disabled-existing-full-result.schedule-priority",
+      "passed": true
+    },
+    {
+      "case": "explicit-disabled-existing-full-result.schedule-priority",
+      "passed": true
+    },
+    {
+      "case": "disabled-existing-full-result.playback-reliable",
+      "passed": true
+    },
+    {
+      "case": "explicit-disabled-existing-full-result.playback-reliable",
+      "passed": true
+    },
+    {
+      "case": "disabled-existing-full-result.playback-slots",
+      "passed": true
+    },
+    {
+      "case": "explicit-disabled-existing-full-result.playback-slots",
+      "passed": true
+    },
+    {
+      "case": "disabled-existing-full-result.cancel-running-work",
+      "passed": true
+    },
+    {
+      "case": "explicit-disabled-existing-full-result.cancel-running-work",
+      "passed": true
+    },
+    {
+      "case": "disabled-existing-full-result.screenshot-complete",
+      "passed": true
+    },
+    {
+      "case": "explicit-disabled-existing-full-result.screenshot-complete",
+      "passed": true
+    },
+    {
+      "case": "disabled-existing-full-result.screenshot-stale",
+      "passed": true
+    },
+    {
+      "case": "explicit-disabled-existing-full-result.screenshot-stale",
+      "passed": true
+    },
+    {
+      "case": "disabled-existing-full-result.unreliable-loss-credit",
+      "passed": true
+    },
+    {
+      "case": "explicit-disabled-existing-full-result.unreliable-loss-credit",
+      "passed": true
+    },
+    {
+      "case": "disabled-existing-full-result.one-stream-blocked-other-progress",
+      "passed": true
+    },
+    {
+      "case": "explicit-disabled-existing-full-result.one-stream-blocked-other-progress",
+      "passed": true
+    },
+    {
+      "case": "disabled-existing-full-result.reliable-loss-recovery",
+      "passed": true
+    },
+    {
+      "case": "explicit-disabled-existing-full-result.reliable-loss-recovery",
+      "passed": true
+    },
+    {
+      "case": "disabled-existing-full-result.shared-credit-consumption",
+      "passed": true
+    },
+    {
+      "case": "explicit-disabled-existing-full-result.shared-credit-consumption",
+      "passed": true
+    },
+    {
+      "case": "disabled-existing-full-result.shared-credit-aggregate-ack",
+      "passed": true
+    },
+    {
+      "case": "explicit-disabled-existing-full-result.shared-credit-aggregate-ack",
+      "passed": true
+    },
+    {
+      "case": "disabled-existing-full-result.datagram-tail-pto-ping",
+      "passed": true
+    },
+    {
+      "case": "explicit-disabled-existing-full-result.datagram-tail-pto-ping",
+      "passed": true
+    },
+    {
+      "case": "source hashes unchanged",
+      "passed": true
+    }
+  ],
+  "result_sha256": {
+    "bidirectional-shared": "2928d41ba0b90fd02809ff95e27dea4a1cf1a200c52f9c37f8ea1be134e01fb8",
+    "bidirectional-disabled": "a1a4eca1d001b6b4d66d19467c2ab5d9c72f65304c3820415d6e95e42c58c2b2",
+    "two-data-immediate": "00bb9d5af53fe4707e61932754790fe49cd3e68a5bedcf50375635e1b2fcd36f",
+    "two-data-every2": "013e034deed7d8f9714b6f329f39d84530495eb2897d7f82bac426b7480f24b0",
+    "busy-client-ACK-refresh": "32dff5b952af94e8962facd961bea52382c35c43ad54f5074354770a32ad7fa5",
+    "busy-client-ACK-overrun": "a188a8464815022f8866bfc377751236f06f76f35914a33a8b03f4d6516250fc",
+    "same-PN-MAC-ACK-lost": "19ddbbabf4a68fc2ff69fe5a4e28e304c314f961e76d366fcb5235a3f3edfd15",
+    "MAC-data-loss-exhaustion-then-PTO": "ae7c21e0f11d2b44bc66427e26606b35ca7fa916e1300bbc1642c04bd970a88e",
+    "tail-immediate": "f2a921ad23589405ee2968f10faa92d7eb8be98570e4d5352a575dc1bb3dfe87",
+    "tail-every4": "2865c2ec5a09824ed0931ceac2b9803a551c93f893ed9761225d3d4b74d2bf27",
+    "down-MAC-duplicate-immediate": "b72f20b1b4d9c50c9062e491c73c20ca9acea3dc08a34e10d3a67500475a9b6c",
+    "down-MAC-duplicate-count": "45c7108d0a41902c815cf001285c52dc5b4adb85fc6245da0708fee88983574e",
+    "source-profile-ACK-snapshot": "55640affe6ebd0271ad60c5bc9de845b8d17d8c396002e43f2eda60e5267781d",
+    "horizon-before-failure": "4ec1f2c8cbc0f05ee38b4dfcf81284f405564ce637018ceb846fbc4bdcd8f12f"
+  }
+}

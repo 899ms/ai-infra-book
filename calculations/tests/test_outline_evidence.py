@@ -33,7 +33,7 @@ class OutlineEvidenceTests(unittest.TestCase):
             ext = root / "outlines/extensions"
             ext.mkdir(parents=True)
             main = root / "outlines/05-kernels.md"
-            main.write_text("# Main\n\n> exercise\n")
+            main.write_text("# Main\n\n\n> exercise\n\n\nAuthor spacing stays.\n")
             companion = ext / main.name
             companion.write_text("# Detail\n\n> exercise\n")
             original = main.read_bytes()

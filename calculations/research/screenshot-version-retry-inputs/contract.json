@@ -1,0 +1,137 @@
+{
+  "status": "STATIC_INPUT_CONTRACT_NOT_CURRENT_ENGINE_EXECUTION",
+  "max_retries": 1,
+  "initial_client_version": "v0",
+  "client_version_changes": [
+    {
+      "at": "1",
+      "version": "v1"
+    }
+  ],
+  "transport_hand_assumptions": {
+    "up_application_bytes_per_second": 3443,
+    "down_application_bytes_per_second": 32,
+    "propagation_seconds": "0",
+    "packet_headers_ACK_cwnd_recovery": "excluded from this application-level hand oracle; real network must determine actual delivery later",
+    "scope": "two directional nonpreemptive FIFO byte servers, not the shared radio engine"
+  },
+  "policy": {
+    "initial_attempt": 0,
+    "retry_trigger": "failure-notice-0 message delivered to client AND retry_count<1",
+    "capture_version": "read client current version only when retry capture starts",
+    "server_rejection": "after old nonpreemptive task completes compare captured version with latest actual delivered client version notification",
+    "client_action_commit": "only if action.attempt is active and action.version equals local version at receipt; otherwise locally reject",
+    "deduplication": "attempt token and notice ID consumed once; duplicate delivery cannot create another retry",
+    "retry_exhaustion": "terminal failure after attempt1 rejection; no implicit attempt2"
+  },
+  "message_templates": [
+    {
+      "id": "screen-0",
+      "sender": "client",
+      "receiver": "server",
+      "bytes": 3443,
+      "transport": "stream",
+      "flow": "screen-0",
+      "version": "v0",
+      "attempt": 0,
+      "ready": "0"
+    },
+    {
+      "id": "version-notice",
+      "sender": "client",
+      "receiver": "server",
+      "bytes": 32,
+      "transport": "stream",
+      "flow": "control",
+      "version": "v1",
+      "ready": "1"
+    },
+    {
+      "id": "failure-notice-0",
+      "sender": "server",
+      "receiver": "client",
+      "bytes": 32,
+      "transport": "stream",
+      "flow": "status",
+      "attempt": 0,
+      "ready_event": "server task0 end with stale version"
+    },
+    {
+      "id": "screen-1",
+      "sender": "client",
+      "receiver": "server",
+      "bytes": 3443,
+      "transport": "stream",
+      "flow": "screen-1",
+      "version": "capture-time local version",
+      "attempt": 1,
+      "ready_event": "client capture1 end after actual failure-notice-0 delivery"
+    },
+    {
+      "id": "action-1",
+      "sender": "server",
+      "receiver": "client",
+      "bytes": 32,
+      "transport": "stream",
+      "flow": "action",
+      "attempt": 1,
+      "version": "v1",
+      "ready_event": "server task1 end with matching delivered version"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "server-work-0",
+      "endpoint": "server",
+      "duration_seconds": "2",
+      "nonpreemptive": true,
+      "dependencies": [
+        "screen-0 delivered"
+      ],
+      "operator_fixture": "vision_decision"
+    },
+    {
+      "id": "client-capture-1",
+      "endpoint": "client",
+      "duration_seconds": "1/2",
+      "nonpreemptive": true,
+      "dependencies": [
+        "failure-notice-0 delivered"
+      ],
+      "matrix_flops": null,
+      "scope": "capture/PNG work unmodeled; do not report zero total compute"
+    },
+    {
+      "id": "server-work-1",
+      "endpoint": "server",
+      "duration_seconds": "2",
+      "nonpreemptive": true,
+      "dependencies": [
+        "screen-1 delivered"
+      ],
+      "operator_fixture": "vision_decision"
+    }
+  ],
+  "operator_fixture": {
+    "identity": "tiny declared matrix-work fixture, not a real VL model and not inferred from PNG bytes",
+    "operations": [
+      {
+        "name": "feature_projection",
+        "M": 8,
+        "K": 16,
+        "N": 8,
+        "flops": 2048
+      },
+      {
+        "name": "action_projection",
+        "M": 1,
+        "K": 8,
+        "N": 4,
+        "flops": 64
+      }
+    ],
+    "per_attempt_matrix_flops": 2112,
+    "failed_work_reused": false,
+    "excluded": "PNG decode, preprocessing, real vision encoder, full attention/MLP, nonmatmul operators; plug separately verified VL operator ledger into task work_ref before any real-model claim"
+  }
+}

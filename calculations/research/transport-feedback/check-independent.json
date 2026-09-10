@@ -1,0 +1,611 @@
+{
+  "status": "PASS",
+  "candidate_sha256": "1f3890671c60d9841d3dd89e289483940872c2823d7ba767b3a6b845dcbea567",
+  "passed": [
+    "sources",
+    "1_BDP_lower_only",
+    "2_RTT_verified_errata",
+    "3_packet_time_loss",
+    "4_PTO_ACK_ties",
+    "5_absolute_flow_limits",
+    "late_ACK_newPN_oldoffset",
+    "limited_and_ACK_only",
+    "datagram",
+    "invalid",
+    "duplicate_ACK_PTO",
+    "probe_flow_constraints",
+    "persistent_scope_guard",
+    "scenario_rtt-duplicate-ack",
+    "scenario_rtt-verified-errata",
+    "scenario_packet-and-time-threshold",
+    "scenario_ack-at-loss-deadline",
+    "scenario_tail-no-feedback-pto",
+    "scenario_probe-then-ack-reset",
+    "scenario_ack-at-pto-deadline",
+    "scenario_absolute-flow-feedback",
+    "scenario_stream-offset-high-water",
+    "scenario_datagram-without-stream-credit",
+    "scenario_ack-only",
+    "scenario_padding-only",
+    "scenario_new-pn-old-offset-recovery",
+    "scenario_pto-probe-over-cwnd"
+  ],
+  "failures": [],
+  "scenario_evidence": {
+    "rtt-duplicate-ack": {
+      "final_state": {
+        "bytes_in_flight": 0,
+        "cwnd": "14400",
+        "ssthresh": null,
+        "recovery_start": null,
+        "latest_rtt": "3/25",
+        "smoothed_rtt": "1/10",
+        "rttvar": "3/80",
+        "min_rtt": "1/10",
+        "pto_count": 0,
+        "probe_allowance": 0,
+        "largest_acked": 1,
+        "next_timer": null,
+        "max_data": 100000,
+        "max_stream_data": {
+          "A": 100000
+        },
+        "stream_highest_sent_offsets": {
+          "A": 200
+        },
+        "max_data_consumed": 200
+      },
+      "summary": {
+        "sent_udp_payload_bytes": 2400,
+        "stream_payload_transmission_bytes": 200,
+        "datagram_payload_transmission_bytes": 0,
+        "declared_quic_overhead_padding_control_bytes": 2200,
+        "last_processed_event": "7/20",
+        "replay_until": "2/5"
+      },
+      "loss_events": [],
+      "timer_events": []
+    },
+    "rtt-verified-errata": {
+      "final_state": {
+        "bytes_in_flight": 0,
+        "cwnd": "14400",
+        "ssthresh": null,
+        "recovery_start": null,
+        "latest_rtt": "9/50",
+        "smoothed_rtt": "43/400",
+        "rttvar": "21/400",
+        "min_rtt": "1/10",
+        "pto_count": 0,
+        "probe_allowance": 0,
+        "largest_acked": 1,
+        "next_timer": null,
+        "max_data": 100000,
+        "max_stream_data": {
+          "A": 100000
+        },
+        "stream_highest_sent_offsets": {
+          "A": 200
+        },
+        "max_data_consumed": 200
+      },
+      "summary": {
+        "sent_udp_payload_bytes": 2400,
+        "stream_payload_transmission_bytes": 200,
+        "datagram_payload_transmission_bytes": 0,
+        "declared_quic_overhead_padding_control_bytes": 2200,
+        "last_processed_event": "19/50",
+        "replay_until": "19/50"
+      },
+      "loss_events": [],
+      "timer_events": []
+    },
+    "packet-and-time-threshold": {
+      "final_state": {
+        "bytes_in_flight": 0,
+        "cwnd": "6000",
+        "ssthresh": "6000",
+        "recovery_start": "103/1000",
+        "latest_rtt": "1/10",
+        "smoothed_rtt": "1/10",
+        "rttvar": "9/320",
+        "min_rtt": "1/10",
+        "pto_count": 0,
+        "probe_allowance": 0,
+        "largest_acked": 3,
+        "next_timer": null,
+        "max_data": 100000,
+        "max_stream_data": {
+          "A": 100000
+        },
+        "stream_highest_sent_offsets": {
+          "A": 4
+        },
+        "max_data_consumed": 4
+      },
+      "summary": {
+        "sent_udp_payload_bytes": 4800,
+        "stream_payload_transmission_bytes": 4,
+        "datagram_payload_transmission_bytes": 0,
+        "declared_quic_overhead_padding_control_bytes": 4796,
+        "last_processed_event": "229/2000",
+        "replay_until": "23/200"
+      },
+      "loss_events": [
+        {
+          "at": "103/1000",
+          "pn": 0,
+          "packet_threshold": true,
+          "time_threshold": false
+        },
+        {
+          "at": "227/2000",
+          "pn": 1,
+          "packet_threshold": false,
+          "time_threshold": true
+        },
+        {
+          "at": "229/2000",
+          "pn": 2,
+          "packet_threshold": false,
+          "time_threshold": true
+        }
+      ],
+      "timer_events": [
+        {
+          "at": "227/2000",
+          "kind": "loss",
+          "newly_lost": [
+            1
+          ]
+        },
+        {
+          "at": "229/2000",
+          "kind": "loss",
+          "newly_lost": [
+            2
+          ]
+        }
+      ]
+    },
+    "ack-at-loss-deadline": {
+      "final_state": {
+        "bytes_in_flight": 1200,
+        "cwnd": "6000",
+        "ssthresh": "6000",
+        "recovery_start": "103/1000",
+        "latest_rtt": "9/80",
+        "smoothed_rtt": "1/10",
+        "rttvar": "27/1280",
+        "min_rtt": "1/10",
+        "pto_count": 0,
+        "probe_allowance": 0,
+        "largest_acked": 3,
+        "next_timer": {
+          "kind": "loss",
+          "at": "2057/16000"
+        },
+        "max_data": 100000,
+        "max_stream_data": {
+          "A": 100000
+        },
+        "stream_highest_sent_offsets": {
+          "A": 4
+        },
+        "max_data_consumed": 4
+      },
+      "summary": {
+        "sent_udp_payload_bytes": 4800,
+        "stream_payload_transmission_bytes": 4,
+        "datagram_payload_transmission_bytes": 0,
+        "declared_quic_overhead_padding_control_bytes": 4796,
+        "last_processed_event": "227/2000",
+        "replay_until": "23/200"
+      },
+      "loss_events": [
+        {
+          "at": "103/1000",
+          "pn": 0,
+          "packet_threshold": true,
+          "time_threshold": false
+        }
+      ],
+      "timer_events": []
+    },
+    "tail-no-feedback-pto": {
+      "final_state": {
+        "bytes_in_flight": 1200,
+        "cwnd": "12000",
+        "ssthresh": null,
+        "recovery_start": null,
+        "latest_rtt": "1/10",
+        "smoothed_rtt": "1/10",
+        "rttvar": "3/80",
+        "min_rtt": "1/10",
+        "pto_count": 2,
+        "probe_allowance": 2,
+        "largest_acked": null,
+        "next_timer": {
+          "kind": "pto",
+          "at": "21/10"
+        },
+        "max_data": 100000,
+        "max_stream_data": {
+          "A": 100000
+        },
+        "stream_highest_sent_offsets": {
+          "A": 10
+        },
+        "max_data_consumed": 10
+      },
+      "summary": {
+        "sent_udp_payload_bytes": 1200,
+        "stream_payload_transmission_bytes": 10,
+        "datagram_payload_transmission_bytes": 0,
+        "declared_quic_overhead_padding_control_bytes": 1190,
+        "last_processed_event": "31/20",
+        "replay_until": "19/10"
+      },
+      "loss_events": [],
+      "timer_events": [
+        {
+          "at": "51/40",
+          "kind": "pto",
+          "probe_opportunities": 2
+        },
+        {
+          "at": "31/20",
+          "kind": "pto",
+          "probe_opportunities": 2
+        }
+      ]
+    },
+    "probe-then-ack-reset": {
+      "final_state": {
+        "bytes_in_flight": 0,
+        "cwnd": "14400",
+        "ssthresh": null,
+        "recovery_start": null,
+        "latest_rtt": "1/10",
+        "smoothed_rtt": "1/10",
+        "rttvar": "9/320",
+        "min_rtt": "1/10",
+        "pto_count": 0,
+        "probe_allowance": 0,
+        "largest_acked": 1,
+        "next_timer": null,
+        "max_data": 100000,
+        "max_stream_data": {
+          "A": 100000
+        },
+        "stream_highest_sent_offsets": {
+          "A": 10
+        },
+        "max_data_consumed": 10
+      },
+      "summary": {
+        "sent_udp_payload_bytes": 2400,
+        "stream_payload_transmission_bytes": 20,
+        "datagram_payload_transmission_bytes": 0,
+        "declared_quic_overhead_padding_control_bytes": 2380,
+        "last_processed_event": "11/8",
+        "replay_until": "19/10"
+      },
+      "loss_events": [],
+      "timer_events": [
+        {
+          "at": "51/40",
+          "kind": "pto",
+          "probe_opportunities": 2
+        }
+      ]
+    },
+    "ack-at-pto-deadline": {
+      "final_state": {
+        "bytes_in_flight": 0,
+        "cwnd": "13200",
+        "ssthresh": null,
+        "recovery_start": null,
+        "latest_rtt": "11/40",
+        "smoothed_rtt": "39/320",
+        "rttvar": "23/320",
+        "min_rtt": "1/10",
+        "pto_count": 0,
+        "probe_allowance": 0,
+        "largest_acked": 0,
+        "next_timer": null,
+        "max_data": 100000,
+        "max_stream_data": {
+          "A": 100000
+        },
+        "stream_highest_sent_offsets": {},
+        "max_data_consumed": 0
+      },
+      "summary": {
+        "sent_udp_payload_bytes": 1200,
+        "stream_payload_transmission_bytes": 0,
+        "datagram_payload_transmission_bytes": 0,
+        "declared_quic_overhead_padding_control_bytes": 1200,
+        "last_processed_event": "51/40",
+        "replay_until": "51/40"
+      },
+      "loss_events": [],
+      "timer_events": []
+    },
+    "absolute-flow-feedback": {
+      "final_state": {
+        "bytes_in_flight": 0,
+        "cwnd": "12000",
+        "ssthresh": null,
+        "recovery_start": null,
+        "latest_rtt": "99/1000",
+        "smoothed_rtt": "99/1000",
+        "rttvar": "99/2000",
+        "min_rtt": "99/1000",
+        "pto_count": 0,
+        "probe_allowance": 0,
+        "largest_acked": 1,
+        "next_timer": null,
+        "max_data": 8,
+        "max_stream_data": {
+          "A": 6,
+          "B": 2
+        },
+        "stream_highest_sent_offsets": {
+          "A": 4,
+          "B": 2
+        },
+        "max_data_consumed": 6
+      },
+      "summary": {
+        "sent_udp_payload_bytes": 2400,
+        "stream_payload_transmission_bytes": 6,
+        "datagram_payload_transmission_bytes": 0,
+        "declared_quic_overhead_padding_control_bytes": 2394,
+        "last_processed_event": "6",
+        "replay_until": "6"
+      },
+      "loss_events": [],
+      "timer_events": []
+    },
+    "stream-offset-high-water": {
+      "final_state": {
+        "bytes_in_flight": 0,
+        "cwnd": "14400",
+        "ssthresh": null,
+        "recovery_start": null,
+        "latest_rtt": "1/10",
+        "smoothed_rtt": "1/10",
+        "rttvar": "3/80",
+        "min_rtt": "1/10",
+        "pto_count": 0,
+        "probe_allowance": 0,
+        "largest_acked": 1,
+        "next_timer": null,
+        "max_data": 6,
+        "max_stream_data": {
+          "A": 6
+        },
+        "stream_highest_sent_offsets": {
+          "A": 6
+        },
+        "max_data_consumed": 6
+      },
+      "summary": {
+        "sent_udp_payload_bytes": 2400,
+        "stream_payload_transmission_bytes": 6,
+        "datagram_payload_transmission_bytes": 0,
+        "declared_quic_overhead_padding_control_bytes": 2394,
+        "last_processed_event": "3/10",
+        "replay_until": "3/10"
+      },
+      "loss_events": [],
+      "timer_events": []
+    },
+    "datagram-without-stream-credit": {
+      "final_state": {
+        "bytes_in_flight": 0,
+        "cwnd": "13200",
+        "ssthresh": null,
+        "recovery_start": null,
+        "latest_rtt": "1/10",
+        "smoothed_rtt": "1/10",
+        "rttvar": "1/20",
+        "min_rtt": "1/10",
+        "pto_count": 0,
+        "probe_allowance": 0,
+        "largest_acked": 0,
+        "next_timer": null,
+        "max_data": 0,
+        "max_stream_data": {
+          "A": 0
+        },
+        "stream_highest_sent_offsets": {},
+        "max_data_consumed": 0
+      },
+      "summary": {
+        "sent_udp_payload_bytes": 1200,
+        "stream_payload_transmission_bytes": 0,
+        "datagram_payload_transmission_bytes": 100,
+        "declared_quic_overhead_padding_control_bytes": 1100,
+        "last_processed_event": "1/10",
+        "replay_until": "1/10"
+      },
+      "loss_events": [],
+      "timer_events": []
+    },
+    "ack-only": {
+      "final_state": {
+        "bytes_in_flight": 0,
+        "cwnd": "12000",
+        "ssthresh": null,
+        "recovery_start": null,
+        "latest_rtt": "0",
+        "smoothed_rtt": "333/1000",
+        "rttvar": "333/2000",
+        "min_rtt": null,
+        "pto_count": 0,
+        "probe_allowance": 0,
+        "largest_acked": null,
+        "next_timer": null,
+        "max_data": 100000,
+        "max_stream_data": {
+          "A": 100000
+        },
+        "stream_highest_sent_offsets": {},
+        "max_data_consumed": 0
+      },
+      "summary": {
+        "sent_udp_payload_bytes": 1200,
+        "stream_payload_transmission_bytes": 0,
+        "datagram_payload_transmission_bytes": 0,
+        "declared_quic_overhead_padding_control_bytes": 1200,
+        "last_processed_event": "0",
+        "replay_until": "1/2"
+      },
+      "loss_events": [],
+      "timer_events": []
+    },
+    "padding-only": {
+      "final_state": {
+        "bytes_in_flight": 1200,
+        "cwnd": "12000",
+        "ssthresh": null,
+        "recovery_start": null,
+        "latest_rtt": "0",
+        "smoothed_rtt": "333/1000",
+        "rttvar": "333/2000",
+        "min_rtt": null,
+        "pto_count": 0,
+        "probe_allowance": 0,
+        "largest_acked": null,
+        "next_timer": null,
+        "max_data": 100000,
+        "max_stream_data": {
+          "A": 100000
+        },
+        "stream_highest_sent_offsets": {},
+        "max_data_consumed": 0
+      },
+      "summary": {
+        "sent_udp_payload_bytes": 1200,
+        "stream_payload_transmission_bytes": 0,
+        "datagram_payload_transmission_bytes": 0,
+        "declared_quic_overhead_padding_control_bytes": 1200,
+        "last_processed_event": "0",
+        "replay_until": "1/2"
+      },
+      "loss_events": [],
+      "timer_events": []
+    },
+    "new-pn-old-offset-recovery": {
+      "final_state": {
+        "bytes_in_flight": 0,
+        "cwnd": "6240",
+        "ssthresh": "6000",
+        "recovery_start": "103/1000",
+        "latest_rtt": "1/10",
+        "smoothed_rtt": "1/10",
+        "rttvar": "27/1280",
+        "min_rtt": "1/10",
+        "pto_count": 0,
+        "probe_allowance": 0,
+        "largest_acked": 4,
+        "next_timer": null,
+        "max_data": 100000,
+        "max_stream_data": {
+          "A": 100000
+        },
+        "stream_highest_sent_offsets": {
+          "A": 4
+        },
+        "max_data_consumed": 4
+      },
+      "summary": {
+        "sent_udp_payload_bytes": 6000,
+        "stream_payload_transmission_bytes": 5,
+        "datagram_payload_transmission_bytes": 0,
+        "declared_quic_overhead_padding_control_bytes": 5995,
+        "last_processed_event": "51/250",
+        "replay_until": "51/250"
+      },
+      "loss_events": [
+        {
+          "at": "103/1000",
+          "pn": 0,
+          "packet_threshold": true,
+          "time_threshold": false
+        },
+        {
+          "at": "227/2000",
+          "pn": 1,
+          "packet_threshold": false,
+          "time_threshold": true
+        },
+        {
+          "at": "229/2000",
+          "pn": 2,
+          "packet_threshold": false,
+          "time_threshold": true
+        }
+      ],
+      "timer_events": [
+        {
+          "at": "227/2000",
+          "kind": "loss",
+          "newly_lost": [
+            1
+          ]
+        },
+        {
+          "at": "229/2000",
+          "kind": "loss",
+          "newly_lost": [
+            2
+          ]
+        }
+      ]
+    },
+    "pto-probe-over-cwnd": {
+      "final_state": {
+        "bytes_in_flight": 3600,
+        "cwnd": "2400",
+        "ssthresh": null,
+        "recovery_start": null,
+        "latest_rtt": "1/10",
+        "smoothed_rtt": "1/10",
+        "rttvar": "3/80",
+        "min_rtt": "1/10",
+        "pto_count": 1,
+        "probe_allowance": 1,
+        "largest_acked": null,
+        "next_timer": {
+          "kind": "pto",
+          "at": "413/500"
+        },
+        "max_data": 100000,
+        "max_stream_data": {
+          "A": 100000
+        },
+        "stream_highest_sent_offsets": {},
+        "max_data_consumed": 0
+      },
+      "summary": {
+        "sent_udp_payload_bytes": 3600,
+        "stream_payload_transmission_bytes": 0,
+        "datagram_payload_transmission_bytes": 0,
+        "declared_quic_overhead_padding_control_bytes": 3600,
+        "last_processed_event": "69/250",
+        "replay_until": "69/250"
+      },
+      "loss_events": [],
+      "timer_events": [
+        {
+          "at": "69/250",
+          "kind": "pto",
+          "probe_opportunities": 2
+        }
+      ]
+    }
+  }
+}

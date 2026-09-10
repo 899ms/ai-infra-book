@@ -1,0 +1,306 @@
+{
+  "schema_version": 1,
+  "scope": "Exact frozen research-to-public input migration. Workload/model times are declared, not measurements. Official implementation-supported OFDM selection and abstract teaching profile remain separate; not full DCF or TACK.",
+  "sources": [
+    {
+      "file": "research/shared-airtime-loop/scenarios.json",
+      "bytes": 51147,
+      "sha256": "dca2ea8a969f767bb23c383760f657880b61dca6f75c273309ee9d90e517fa3b"
+    },
+    {
+      "file": "research/shared-airtime-book-inputs/book-inputs.json",
+      "bytes": 6548102,
+      "sha256": "a1dcf290d7145e5513b01b1d6f7169031362b51d11423de0a0922767de184945"
+    },
+    {
+      "file": "research/shared-airtime-scan-inputs/scenarios.json",
+      "bytes": 138468,
+      "sha256": "5c3abac539957cdd2a147f4dc3150373d7035ba48e339a84a16f09fedef86769"
+    },
+    {
+      "file": "research/shared-airtime-inputs/profiles.json",
+      "bytes": 4032,
+      "sha256": "fab1744bbc2f361d976522af8bc7bf6f3745db642247d45f8a8bfa55584a319e"
+    },
+    {
+      "file": "research/shared-airtime-inputs/sources.lock.json",
+      "bytes": 6201,
+      "sha256": "5a2783ffd260120201256a43917cd711d093038a00f5d2e15df895389e5a19f9"
+    },
+    {
+      "file": "research/shared-airtime-book-inputs/inputs.lock.json",
+      "bytes": 579,
+      "sha256": "38f51e042be99c178a01c86ba572a8fb5cc60da48a74d9c5fbdf736429e7c077"
+    },
+    {
+      "file": "research/shared-airtime-scan-inputs/inputs.lock.json",
+      "bytes": 1161,
+      "sha256": "33f042495277ff4f0f09930ddaaca5e6330f411a6c206038b171572fec267ddd"
+    },
+    {
+      "file": "research/shared-airtime-book-analysis/PUBLIC-INTEGRATION-MAP.md",
+      "bytes": 9081,
+      "sha256": "ae71270ed440d2c2f642b113b495985392a9a8e14de837d881040f63d4cbe7a6"
+    }
+  ],
+  "public_scenario_prefix": "shared-airtime-",
+  "public_group": "transport_closed_loop",
+  "scenario_count": 24,
+  "category_counts": {
+    "small": 10,
+    "full": 5,
+    "scan": 9
+  },
+  "profile_file": "scenarios/shared-airtime-profiles.json",
+  "profile_file_sha256": "fab1744bbc2f361d976522af8bc7bf6f3745db642247d45f8a8bfa55584a319e",
+  "example_file": "scenarios/shared-airtime-example.json",
+  "example_from_public_id": "shared-airtime-two-data-every2",
+  "example_canonical_input_sha256": "bae2fd2de43ad0817b0c587dea7020a71e8355b452f3cbbac9672cf3aba2fb2d",
+  "mapping": [
+    {
+      "category": "small",
+      "research_file": "research/shared-airtime-loop/scenarios.json",
+      "research_key": "bidirectional-shared",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-bidirectional-shared",
+      "canonical_input_sha256": "aa92f8bce41aba32ebf28ee88bd210273157fd74c4846ebfc57a82c3a5cd630f",
+      "profile_key": "abstract_teaching_profile",
+      "canonical_profile_sha256": "c18fc6d317114e978575e3fa83414894cf13f9de989e043c9e11b50f468b5b5e"
+    },
+    {
+      "category": "small",
+      "research_file": "research/shared-airtime-loop/scenarios.json",
+      "research_key": "bidirectional-disabled",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-bidirectional-disabled",
+      "canonical_input_sha256": "a56e267ca2622457f79009b95da383893e5b6ff8afc8dddb0caf770d27509605",
+      "profile_key": "abstract_teaching_profile",
+      "canonical_profile_sha256": "c18fc6d317114e978575e3fa83414894cf13f9de989e043c9e11b50f468b5b5e"
+    },
+    {
+      "category": "small",
+      "research_file": "research/shared-airtime-loop/scenarios.json",
+      "research_key": "two-data-immediate",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-two-data-immediate",
+      "canonical_input_sha256": "afd1c13ebe78965b1147b9f0b9bab150b9cdef5552d1f375a0a12f01b61ed679",
+      "profile_key": "abstract_teaching_profile",
+      "canonical_profile_sha256": "c18fc6d317114e978575e3fa83414894cf13f9de989e043c9e11b50f468b5b5e"
+    },
+    {
+      "category": "small",
+      "research_file": "research/shared-airtime-loop/scenarios.json",
+      "research_key": "two-data-every2",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-two-data-every2",
+      "canonical_input_sha256": "bae2fd2de43ad0817b0c587dea7020a71e8355b452f3cbbac9672cf3aba2fb2d",
+      "profile_key": "abstract_teaching_profile",
+      "canonical_profile_sha256": "c18fc6d317114e978575e3fa83414894cf13f9de989e043c9e11b50f468b5b5e"
+    },
+    {
+      "category": "small",
+      "research_file": "research/shared-airtime-loop/scenarios.json",
+      "research_key": "busy-client-ACK-refresh",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-busy-client-ACK-refresh",
+      "canonical_input_sha256": "e7b5e4e71b70693aea4db914b2c9febc2c5cb5b20f6cf3fa5b009721c94e9757",
+      "profile_key": "abstract_teaching_profile",
+      "canonical_profile_sha256": "c18fc6d317114e978575e3fa83414894cf13f9de989e043c9e11b50f468b5b5e"
+    },
+    {
+      "category": "small",
+      "research_file": "research/shared-airtime-loop/scenarios.json",
+      "research_key": "busy-client-ACK-overrun",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-busy-client-ACK-overrun",
+      "canonical_input_sha256": "996c68c9d4ee523a5177022c33456ae332eba840f9c116f318fb3bd662ef98fb",
+      "profile_key": "abstract_teaching_profile",
+      "canonical_profile_sha256": "c18fc6d317114e978575e3fa83414894cf13f9de989e043c9e11b50f468b5b5e"
+    },
+    {
+      "category": "small",
+      "research_file": "research/shared-airtime-loop/scenarios.json",
+      "research_key": "same-PN-MAC-ACK-lost",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-same-PN-MAC-ACK-lost",
+      "canonical_input_sha256": "347d93d95c9f149f6b1e03d03fde902ecc85682712bd59628d5ba2a9734dfda8",
+      "profile_key": "abstract_teaching_profile",
+      "canonical_profile_sha256": "c18fc6d317114e978575e3fa83414894cf13f9de989e043c9e11b50f468b5b5e"
+    },
+    {
+      "category": "small",
+      "research_file": "research/shared-airtime-loop/scenarios.json",
+      "research_key": "MAC-data-loss-exhaustion-then-PTO",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-MAC-data-loss-exhaustion-then-PTO",
+      "canonical_input_sha256": "5dd8911ed2a72bc8e5f04f58f38ae09d9888e50db7f3ad069addeee4052502cf",
+      "profile_key": "abstract_teaching_profile",
+      "canonical_profile_sha256": "c18fc6d317114e978575e3fa83414894cf13f9de989e043c9e11b50f468b5b5e"
+    },
+    {
+      "category": "small",
+      "research_file": "research/shared-airtime-loop/scenarios.json",
+      "research_key": "tail-immediate",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-tail-immediate",
+      "canonical_input_sha256": "b81da3f3aae7d66edb4b139457ccd0d7c8ae7c309c538759f19943852bb1c6e5",
+      "profile_key": "abstract_teaching_profile",
+      "canonical_profile_sha256": "c18fc6d317114e978575e3fa83414894cf13f9de989e043c9e11b50f468b5b5e"
+    },
+    {
+      "category": "small",
+      "research_file": "research/shared-airtime-loop/scenarios.json",
+      "research_key": "tail-every4",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-tail-every4",
+      "canonical_input_sha256": "df705d02e4fb429b1c61cdcbd964a33568ad088aded5fd4be68d380d31db23aa",
+      "profile_key": "abstract_teaching_profile",
+      "canonical_profile_sha256": "c18fc6d317114e978575e3fa83414894cf13f9de989e043c9e11b50f468b5b5e"
+    },
+    {
+      "category": "full",
+      "research_file": "research/shared-airtime-book-inputs/book-inputs.json",
+      "research_key": "mixed-fifo-immediate",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-mixed-fifo-immediate",
+      "canonical_input_sha256": "160185d38b00dcaadcc3eb3173f7148ea0e04875a68dfe32e303cdf575697e8d",
+      "profile_key": "source_backed_reference_selection",
+      "canonical_profile_sha256": "edcf9f80eec6f8da5e0c52c06e9fb8a9b327d674651820e4515930a798c1cc39"
+    },
+    {
+      "category": "full",
+      "research_file": "research/shared-airtime-book-inputs/book-inputs.json",
+      "research_key": "mixed-fifo-aggregate",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-mixed-fifo-aggregate",
+      "canonical_input_sha256": "80ff8506cd1a56e2a6c21521e2b1c92b3440fdd791680705c26f465e685b5180",
+      "profile_key": "source_backed_reference_selection",
+      "canonical_profile_sha256": "edcf9f80eec6f8da5e0c52c06e9fb8a9b327d674651820e4515930a798c1cc39"
+    },
+    {
+      "category": "full",
+      "research_file": "research/shared-airtime-book-inputs/book-inputs.json",
+      "research_key": "mixed-priority-immediate",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-mixed-priority-immediate",
+      "canonical_input_sha256": "2c26dd5ec80bc2054eedf99fc589ae9684becd6207ea613622dfca73274cc330",
+      "profile_key": "source_backed_reference_selection",
+      "canonical_profile_sha256": "edcf9f80eec6f8da5e0c52c06e9fb8a9b327d674651820e4515930a798c1cc39"
+    },
+    {
+      "category": "full",
+      "research_file": "research/shared-airtime-book-inputs/book-inputs.json",
+      "research_key": "mixed-priority-aggregate",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-mixed-priority-aggregate",
+      "canonical_input_sha256": "a77af84ac6a95b9af46fd231792ce28bef729dbee11a6e3d17bba878d2d52f64",
+      "profile_key": "source_backed_reference_selection",
+      "canonical_profile_sha256": "edcf9f80eec6f8da5e0c52c06e9fb8a9b327d674651820e4515930a798c1cc39"
+    },
+    {
+      "category": "full",
+      "research_file": "research/shared-airtime-book-inputs/book-inputs.json",
+      "research_key": "image-baseline",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-image-baseline",
+      "canonical_input_sha256": "88dfaa34ae90c02d8aad678b7c737aafc4e2590089fbcb4e6e027a94a03848e9",
+      "profile_key": "source_backed_reference_selection",
+      "canonical_profile_sha256": "edcf9f80eec6f8da5e0c52c06e9fb8a9b327d674651820e4515930a798c1cc39"
+    },
+    {
+      "category": "scan",
+      "research_file": "research/shared-airtime-scan-inputs/scenarios.json",
+      "research_key": "media-320B-ack1",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-scan-media-320B-ack1",
+      "canonical_input_sha256": "385b6f9cbe2baac38a85bfc720bcff4b5b9b38ae53acb4b7f58b2882d3b56760",
+      "profile_key": "source_backed_reference_selection",
+      "canonical_profile_sha256": "edcf9f80eec6f8da5e0c52c06e9fb8a9b327d674651820e4515930a798c1cc39"
+    },
+    {
+      "category": "scan",
+      "research_file": "research/shared-airtime-scan-inputs/scenarios.json",
+      "research_key": "media-320B-ack2",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-scan-media-320B-ack2",
+      "canonical_input_sha256": "813dcf7520e86c0335d697441323382cbd4afdc81769c5c80f8295d8861903ca",
+      "profile_key": "source_backed_reference_selection",
+      "canonical_profile_sha256": "edcf9f80eec6f8da5e0c52c06e9fb8a9b327d674651820e4515930a798c1cc39"
+    },
+    {
+      "category": "scan",
+      "research_file": "research/shared-airtime-scan-inputs/scenarios.json",
+      "research_key": "media-320B-ack4",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-scan-media-320B-ack4",
+      "canonical_input_sha256": "0b40a9ca0f5404df8301246fb2b278ce7d89465c5b3286faacfa67fcb9310eb5",
+      "profile_key": "source_backed_reference_selection",
+      "canonical_profile_sha256": "edcf9f80eec6f8da5e0c52c06e9fb8a9b327d674651820e4515930a798c1cc39"
+    },
+    {
+      "category": "scan",
+      "research_file": "research/shared-airtime-scan-inputs/scenarios.json",
+      "research_key": "media-640B-ack1",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-scan-media-640B-ack1",
+      "canonical_input_sha256": "65dbbd117e27ba72317bf3475de060cbad70db16a719626f2adb30276c9e08a0",
+      "profile_key": "source_backed_reference_selection",
+      "canonical_profile_sha256": "edcf9f80eec6f8da5e0c52c06e9fb8a9b327d674651820e4515930a798c1cc39"
+    },
+    {
+      "category": "scan",
+      "research_file": "research/shared-airtime-scan-inputs/scenarios.json",
+      "research_key": "media-640B-ack2",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-scan-media-640B-ack2",
+      "canonical_input_sha256": "94c1f9d89d2d067edbe68782a9ba9c7e8aca3189acee3a5e99a76bf2abd8c575",
+      "profile_key": "source_backed_reference_selection",
+      "canonical_profile_sha256": "edcf9f80eec6f8da5e0c52c06e9fb8a9b327d674651820e4515930a798c1cc39"
+    },
+    {
+      "category": "scan",
+      "research_file": "research/shared-airtime-scan-inputs/scenarios.json",
+      "research_key": "media-640B-ack4",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-scan-media-640B-ack4",
+      "canonical_input_sha256": "6cba83acc07b8c5c5c3775dfdd0a95cf3b34c53fa58c971962a49315b89b4fd6",
+      "profile_key": "source_backed_reference_selection",
+      "canonical_profile_sha256": "edcf9f80eec6f8da5e0c52c06e9fb8a9b327d674651820e4515930a798c1cc39"
+    },
+    {
+      "category": "scan",
+      "research_file": "research/shared-airtime-scan-inputs/scenarios.json",
+      "research_key": "media-960B-ack1",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-scan-media-960B-ack1",
+      "canonical_input_sha256": "06f2001d888c2d03a0aa0076ae4b50152255a91be3216a0cb6e5f3dab8901e70",
+      "profile_key": "source_backed_reference_selection",
+      "canonical_profile_sha256": "edcf9f80eec6f8da5e0c52c06e9fb8a9b327d674651820e4515930a798c1cc39"
+    },
+    {
+      "category": "scan",
+      "research_file": "research/shared-airtime-scan-inputs/scenarios.json",
+      "research_key": "media-960B-ack2",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-scan-media-960B-ack2",
+      "canonical_input_sha256": "e2078e8f444bd73204c50f307ed8174433ce1edb2716021542bbac1ad05897a0",
+      "profile_key": "source_backed_reference_selection",
+      "canonical_profile_sha256": "edcf9f80eec6f8da5e0c52c06e9fb8a9b327d674651820e4515930a798c1cc39"
+    },
+    {
+      "category": "scan",
+      "research_file": "research/shared-airtime-scan-inputs/scenarios.json",
+      "research_key": "media-960B-ack4",
+      "public_group": "transport_closed_loop",
+      "public_id": "shared-airtime-scan-media-960B-ack4",
+      "canonical_input_sha256": "5bd074c9223bb2b52c895e6dbb597b50b9cbaca71d9a743f4e262b77ec3024cf",
+      "profile_key": "source_backed_reference_selection",
+      "canonical_profile_sha256": "edcf9f80eec6f8da5e0c52c06e9fb8a9b327d674651820e4515930a798c1cc39"
+    }
+  ],
+  "validation": {
+    "status": "INPUT_SCHEMA_AND_EXACT_VALUE_MAPPING_PASS_NO_CALCULATE",
+    "count": 24,
+    "existing_entries_preserved": true
+  }
+}

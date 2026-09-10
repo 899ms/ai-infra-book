@@ -1,0 +1,71 @@
+{
+  "status": "PASS",
+  "controller": "bbr",
+  "result_sha256": "a91336ab97420c3680ba3ffd86c0a0ea2a0742b96f65d79330072d4d7ce1dfec",
+  "source_hashes": {
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/calculate.py": "58718e22f3e29cba582f7ce2fdaf5f701b9bbb45acf8e71cd22a0253c64e6ae2",
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/receiver.py": "a8a44b09c95d76501821a20a4737fdc352d564de706f98082b2c5f7f55949378",
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/run-book-comparison.py": "2540db6a74405975b58c359ede8a558947a681788419001f780fe67ea7ee08e3",
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/../transport-controller-loop/sender.py": "be435d7222f2531f485e23611633c8622b3385d7ecb3e8406342b7b9a1e7b77d",
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/../transport-controller-loop/pacer.py": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/../transport-controller-loop/cubic_adapter.py": "cdfc2c64e387dc48e7e940d67885cfc2630f8423800976373d968b458045dc42",
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/../transport-controller-loop/bbr_adapter.py": "606b263d23d8c7917fd6deab94378a4639b343c43bf35087937eb9eebe7d66ba",
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/../transport-controller-loop/persistent_congestion.py": "116448af2c5c8c1bc0571c1452b032b01f3300771dae9a7e8bc7ac5ea8833a7f",
+    "/Users/boj/book/ai-infra-book/calculations/research/congestion-controllers/cubic.py": "91be0851fb7a2e947e42578e8703bd098df98ba7432672440a2f81e677282836",
+    "/Users/boj/book/ai-infra-book/calculations/research/congestion-controllers/bbr_state.py": "fda8c57569767c94c9bbdbeca7e0155425542ade3c9f9356db188a131b9127c6",
+    "/Users/boj/book/ai-infra-book/calculations/research/congestion-controllers/bbr_reference.py": "bce5ee725bb7027195fae50356d8ddb95f8441a4721e21eaac548beeede8ba05",
+    "/Users/boj/book/ai-infra-book/calculations/research/congestion-controllers/bbr_minmax.py": "07cdbf94e82d20115657810522d09461422815ccca539d9e61ce23ebb1397b28",
+    "/Users/boj/book/ai-infra-book/calculations/research/hystart-plus-plus/calculate.py": "4eb38d1b4e09a4d5922a89a6bbcb7127ed4cfbf4678afb94323aea6eb3cb139d"
+  },
+  "business": {
+    "upload": "1335632771/100000000",
+    "model_start": "1335632771/100000000",
+    "model_end": "1365632771/100000000",
+    "response": "14996386157/1000000000"
+  },
+  "counts": {
+    "('up', 'data')": 25685,
+    "('down', 'ack')": 12843,
+    "('down', 'data')": 4281,
+    "('up', 'ack')": 2141,
+    "controller_events": 74918
+  },
+  "wire_bytes": {
+    "up": 31738152,
+    "down": 6438624
+  },
+  "ack_count": 14984,
+  "ack_overruns": 0,
+  "max_raw_ack_delay": "1/100",
+  "max_ack_frame_bytes": 10,
+  "loss_identity_classes": {
+    "('down', 'ack')": 12589
+  },
+  "rtt_eligibility_independently_derived": {
+    "eligible": 14984
+  },
+  "local_error_counts": {
+    "numeric_errors": 14918,
+    "pacer_errors": 134491
+  },
+  "max_absolute_local_errors": {
+    "numeric_errors": "1/2000000000000",
+    "pacer_errors": "7095431/7095870000000000"
+  },
+  "observed_phases": {
+    "up": [
+      "PROBE_BW",
+      "PROBE_RTT",
+      "STARTUP"
+    ],
+    "down": [
+      "PROBE_RTT",
+      "STARTUP"
+    ]
+  },
+  "rtt_samples_compared": {
+    "up": 12843,
+    "down": 2141
+  },
+  "limits": "All actual sender RTT samples independently compared against wire, eligibility, delay cap, old-SRTT variance and declared quantization. BBR actual send snapshots, first-ACK delivery, selected PN, send/ACK interval, integer bandwidth, app/flow flags, pre/post flight and raw RTT callback checked (adapter explicitly selects raw, separately from sender adjusted RTT); not full Linux TCP implementation proof."
+}

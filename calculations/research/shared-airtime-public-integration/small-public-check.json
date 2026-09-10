@@ -1,0 +1,205 @@
+{
+  "status": "passed",
+  "static_math": "All airtime functions and Network math AST equal; only source root assignment normalized. Topic only adds wireless import branch; static base/airtime bindings verified.",
+  "source_files_verified": 14,
+  "allowed_result_differences": [
+    "wireless_reference_sources",
+    "wireless_reference_root"
+  ],
+  "new_public_small_and_scan_cases": 19,
+  "old_public_media_small_cases": 14,
+  "checks": [
+    {
+      "id": "shared-airtime-bidirectional-shared",
+      "packets": 4,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-bidirectional-disabled",
+      "packets": 4,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-two-data-immediate",
+      "packets": 4,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-two-data-every2",
+      "packets": 3,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-busy-client-ACK-refresh",
+      "packets": 5,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-busy-client-ACK-overrun",
+      "packets": 5,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-same-PN-MAC-ACK-lost",
+      "packets": 2,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-MAC-data-loss-exhaustion-then-PTO",
+      "packets": 3,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-tail-immediate",
+      "packets": 6,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-tail-every4",
+      "packets": 5,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-scan-media-320B-ack1",
+      "packets": 582,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-scan-media-320B-ack2",
+      "packets": 452,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-scan-media-320B-ack4",
+      "packets": 386,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-scan-media-640B-ack1",
+      "packets": 582,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-scan-media-640B-ack2",
+      "packets": 452,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-scan-media-640B-ack4",
+      "packets": 386,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-scan-media-960B-ack1",
+      "packets": 582,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-scan-media-960B-ack2",
+      "packets": 452,
+      "status": "passed"
+    },
+    {
+      "id": "shared-airtime-scan-media-960B-ack4",
+      "packets": 386,
+      "status": "passed"
+    },
+    {
+      "id": "default-credit-3-streams",
+      "packets": 6,
+      "status": "passed"
+    },
+    {
+      "id": "default-schedule-fifo",
+      "packets": 10,
+      "status": "passed"
+    },
+    {
+      "id": "default-schedule-priority",
+      "packets": 10,
+      "status": "passed"
+    },
+    {
+      "id": "default-playback-reliable",
+      "packets": 6,
+      "status": "passed"
+    },
+    {
+      "id": "default-playback-slots",
+      "packets": 6,
+      "status": "passed"
+    },
+    {
+      "id": "default-cancel-running-work",
+      "packets": 4,
+      "status": "passed"
+    },
+    {
+      "id": "default-screenshot-complete",
+      "packets": 8,
+      "status": "passed"
+    },
+    {
+      "id": "default-screenshot-stale",
+      "packets": 8,
+      "status": "passed"
+    },
+    {
+      "id": "default-unreliable-loss-credit",
+      "packets": 3,
+      "status": "passed"
+    },
+    {
+      "id": "default-one-stream-blocked-other-progress",
+      "packets": 4,
+      "status": "passed"
+    },
+    {
+      "id": "default-reliable-loss-recovery",
+      "packets": 7,
+      "status": "passed"
+    },
+    {
+      "id": "default-shared-credit-consumption",
+      "packets": 12,
+      "status": "passed"
+    },
+    {
+      "id": "default-shared-credit-aggregate-ack",
+      "packets": 6,
+      "status": "passed"
+    },
+    {
+      "id": "default-datagram-tail-pto-ping",
+      "packets": 3,
+      "status": "passed"
+    }
+  ],
+  "elapsed_seconds": 2.78628783300519,
+  "runtime_hashes": {
+    "src/infra_calc/transport/airtime.py": "e663029623a88275034b14f89dbcffbc3649d067da636e159b4a140d7d1e837a",
+    "src/infra_calc/transport/shared_airtime_network.py": "43369e2ef42140dda45b3de62e8908e96b74213195a697e91c01ca29a0dbe155",
+    "src/infra_calc/transport/media_network.py": "2ed6f52a88521421d712b6d32d8fbb3b3aa11d7a8beb38f4371babbb5e2803e8",
+    "src/infra_calc/transport/media_application.py": "4fc17e92f73116d9aee9fbbac95eda4812620d45b574ec79720cd0156849a527",
+    "src/infra_calc/transport/media_application_validation.py": "d4ebb24bbfe734ebb696964f13c16f8ba18064ae306085ea25696adc452712a3",
+    "src/infra_calc/transport/media_network_validation.py": "1a210489414a33a30c9c51a5793c084b1bb0cf985208f8387fc7124616b1f4f8",
+    "src/infra_calc/transport/media_sender.py": "ce8a643a22af517b07de32eccd7fd67d70a49906a3c3631472707d8816e659b5",
+    "src/infra_calc/transport/ack_receiver.py": "a8a44b09c95d76501821a20a4737fdc352d564de706f98082b2c5f7f55949378",
+    "src/infra_calc/transport/pacer.py": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+    "src/infra_calc/transport/reference_sources.py": "ae89cd27fae9007069ddf2a8a5b8edfcd4267f8cd060e6e09906d114d16bc3ea",
+    "src/infra_calc/transport/cubic.py": "4e77d2a7c709a3c873009ba89dabd806760cb56f3a5ce7164233925211f5e521",
+    "src/infra_calc/transport/cubic_adapter.py": "4dafed0947806549a354493aa12f976827fe4b8cb83f0f0096da65ac512eb4a3",
+    "src/infra_calc/transport/hystart.py": "216c633b34e3acf39665cf3e920d9701c689434d6b31fe6bcbc65deafc31d3c7",
+    "src/infra_calc/transport/bbr_adapter.py": "870b2f2ac35e4d98d0425eb97c86cc4fc8ba0eb6e518fde168165030756dac7c",
+    "src/infra_calc/transport/bbr_reference.py": "714b9ffecd300362a354e73aee4adbb744c41795a3019b88bc3e784e31612da6",
+    "src/infra_calc/transport/bbr_minmax.py": "6c763345efa592f6bba348b81350081b0e24050d34c718c1727622739b52d28e",
+    "src/infra_calc/transport/bbr_state.py": "e24b8d55efb218f344a5799f73db83966cfc71088341f595a60562952f906194",
+    "src/infra_calc/transport/persistent_congestion.py": "2f6b9e998e5a60ce9388aee8e956acbf04e1ffe77646b1c757b1daae77a491d7",
+    "src/infra_calc/topics/transport_closed_loop.py": "9930a12214b712007b982a22af89cd4392e35082e67fe93ab74fb086361e25db",
+    "src/infra_calc/topics/transport_sender.py": "91286019b4f2f1e057603e5011171470453bc9bd76bea6c60b91dd580c99c8b3",
+    "research/shared-airtime-loop/calculate.py": "37c442824b5b127407658a75b21638882ee5a75ff08156cfc716b141d1b75f6b",
+    "research/shared-airtime-loop/airtime.py": "131ce04a522e641ece9a851f9e6ab3b1771b7fc83a5417be3b2a52c53a717658",
+    "configs/sources.lock.json": "7f73f983a0f5678458dd3e0b764a299d8f27baa6b824679e5f6a91a2b462b39f"
+  },
+  "checker_sha256": "0d6b9854bda14504844e77159c4b1393fe3d947ead9d6ea991f93c785a14f954"
+}

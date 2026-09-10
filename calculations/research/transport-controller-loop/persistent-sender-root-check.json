@@ -1,0 +1,213 @@
+{
+  "scope": "NewReno sender replay: persistent action, late ACK deduplication, separate short loss and deferred loss-timer evidence; CUBIC minimum action and late ACK; not full network or BBR acceptance",
+  "passed": 21,
+  "source_hashes": {
+    "sender.py": "af8e97006cfcdea1c6a414aa8bff11f1eef39c57e86a9dfa845fec08ef250db8",
+    "persistent_congestion.py": "116448af2c5c8c1bc0571c1452b032b01f3300771dae9a7e8bc7ac5ea8833a7f",
+    "cubic_adapter.py": "cdfc2c64e387dc48e7e940d67885cfc2630f8423800976373d968b458045dc42",
+    "check-persistent-sender-root.py": "1a4d9df80393b3b49556cb65ff92300eeb0567a0338d26e5c12b1a669392f5c7"
+  },
+  "checks": [
+    {
+      "case": "PTOs without ACK do not establish persistence",
+      "actual": "0",
+      "expected": "0"
+    },
+    {
+      "case": "PTOs do not declare packets lost",
+      "actual": "0",
+      "expected": "0"
+    },
+    {
+      "case": "ACK establishes one episode",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "post ACK threshold",
+      "actual": "21/40",
+      "expected": "21/40"
+    },
+    {
+      "case": "all loss declarations consumed",
+      "actual": "[0, 1, 2, 3, 4, 5, 6, 7]",
+      "expected": "[0, 1, 2, 3, 4, 5, 6, 7]"
+    },
+    {
+      "case": "actual minimum window action",
+      "actual": "2400",
+      "expected": "2400"
+    },
+    {
+      "case": "late ACK changes history without a second action",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "late ACK does not release flight twice",
+      "actual": "0",
+      "expected": "0"
+    },
+    {
+      "case": "new separate short loss cannot reuse old long span",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "separate loss remains unconsumed",
+      "actual": "[10]",
+      "expected": "[10]"
+    },
+    {
+      "case": "first ACK only loses older endpoint",
+      "actual": "[0]",
+      "expected": "[0]"
+    },
+    {
+      "case": "one lost endpoint is insufficient",
+      "actual": "0",
+      "expected": "0"
+    },
+    {
+      "case": "loss timer discovers second endpoint",
+      "actual": "[0, 1]",
+      "expected": "[0, 1]"
+    },
+    {
+      "case": "loss timer alone does not perform action",
+      "actual": "0",
+      "expected": "0"
+    },
+    {
+      "case": "next actual ACK consumes deferred evidence",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "deferred action sets minimum window",
+      "actual": "2400",
+      "expected": "2400"
+    },
+    {
+      "case": "deferred loss declarations consumed once",
+      "actual": "[]",
+      "expected": "[]"
+    },
+    {
+      "case": "CUBIC persistent action occurs once",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "CUBIC persistent overrides ordinary loss window",
+      "actual": "2400",
+      "expected": "2400"
+    },
+    {
+      "case": "CUBIC late ACK does not repeat persistent action",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "CUBIC late ACK does not grow minimum window",
+      "actual": "2400",
+      "expected": "2400"
+    }
+  ],
+  "immediate_events": [
+    {
+      "at": "81/10",
+      "evidence": {
+        "established": true,
+        "trigger": "ack",
+        "threshold_duration": "21/40",
+        "qualifying_spans": [
+          {
+            "first_pn": 0,
+            "last_pn": 7,
+            "start": "0",
+            "end": "7",
+            "duration": "7",
+            "evidence_key": "0:7"
+          }
+        ],
+        "required_cwnd_bytes": 2400,
+        "scope": "Confirmed single Application PN space; RTT state supplied at this observation; no PTO exponential factor.",
+        "integration": "Caller must track unconsumed loss declarations and persistent episodes before applying minimum cwnd. evidence_key describes a span but is not sufficient for deduplication: late ACK can split old spans without new loss. Late ACKs do not automatically undo a prior action."
+      },
+      "consumed_loss_declarations": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "cwnd_after": "2400"
+    }
+  ],
+  "deferred_events": [
+    {
+      "at": "6/5",
+      "evidence": {
+        "established": true,
+        "trigger": "ack",
+        "threshold_duration": "21/40",
+        "qualifying_spans": [
+          {
+            "first_pn": 0,
+            "last_pn": 1,
+            "start": "0",
+            "end": "1",
+            "duration": "1",
+            "evidence_key": "0:1"
+          }
+        ],
+        "required_cwnd_bytes": 2400,
+        "scope": "Confirmed single Application PN space; RTT state supplied at this observation; no PTO exponential factor.",
+        "integration": "Caller must track unconsumed loss declarations and persistent episodes before applying minimum cwnd. evidence_key describes a span but is not sufficient for deduplication: late ACK can split old spans without new loss. Late ACKs do not automatically undo a prior action."
+      },
+      "consumed_loss_declarations": [
+        0,
+        1
+      ],
+      "cwnd_after": "2400"
+    }
+  ],
+  "cubic_events": [
+    {
+      "at": "81/10",
+      "evidence": {
+        "established": true,
+        "trigger": "ack",
+        "threshold_duration": "21/40",
+        "qualifying_spans": [
+          {
+            "first_pn": 0,
+            "last_pn": 7,
+            "start": "0",
+            "end": "7",
+            "duration": "7",
+            "evidence_key": "0:7"
+          }
+        ],
+        "required_cwnd_bytes": 2400,
+        "scope": "Confirmed single Application PN space; RTT state supplied at this observation; no PTO exponential factor.",
+        "integration": "Caller must track unconsumed loss declarations and persistent episodes before applying minimum cwnd. evidence_key describes a span but is not sufficient for deduplication: late ACK can split old spans without new loss. Late ACKs do not automatically undo a prior action."
+      },
+      "consumed_loss_declarations": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "cwnd_after": "2400"
+    }
+  ]
+}

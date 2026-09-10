@@ -1,0 +1,4700 @@
+{
+  "media-320B-ack1": {
+    "application": {
+      "schema_version": 1,
+      "id": "media-size-320",
+      "messages": [
+        {
+          "id": "image-upload",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "image-up",
+          "transport": "stream",
+          "bytes": 300000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 0,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 257,
+            "final_fragment_bytes": 992,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "image-response",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "image-down",
+          "transport": "stream",
+          "bytes": 50000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [
+            {
+              "id": "image-compute",
+              "event": "task_completed",
+              "endpoint": "server"
+            }
+          ],
+          "priority": 0,
+          "source_order": 1,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 43,
+            "final_fragment_bytes": 944,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-0",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 2,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-1",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 3,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-2",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 4,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-3",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 5,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-4",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "2/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 6,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-5",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/10",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 7,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-6",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 8,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-7",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "7/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 9,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        }
+      ],
+      "compute_tasks": [
+        {
+          "source_order": 0,
+          "priority": 0,
+          "id": "image-compute",
+          "endpoint": "server",
+          "resource": "server",
+          "ready_seconds": "0",
+          "duration_seconds": "3/10",
+          "dependencies": [
+            {
+              "id": "image-upload",
+              "event": "message_delivered",
+              "endpoint": "server"
+            }
+          ],
+          "cancel_tag": null
+        }
+      ],
+      "business_observers": [
+        {
+          "id": "image",
+          "kind": "image",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "image-response",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": []
+        },
+        {
+          "id": "audio",
+          "kind": "tts",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "audio-0",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-1",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-2",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-3",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-4",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-5",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-6",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-7",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": [],
+          "playback": "slots",
+          "blocks": [
+            {
+              "message_ids": [
+                "audio-0"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/10"
+            },
+            {
+              "message_ids": [
+                "audio-1"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "3/25"
+            },
+            {
+              "message_ids": [
+                "audio-2"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "7/50"
+            },
+            {
+              "message_ids": [
+                "audio-3"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "4/25"
+            },
+            {
+              "message_ids": [
+                "audio-4"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "9/50"
+            },
+            {
+              "message_ids": [
+                "audio-5"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/5"
+            },
+            {
+              "message_ids": [
+                "audio-6"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "11/50"
+            },
+            {
+              "message_ids": [
+                "audio-7"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "6/25"
+            }
+          ]
+        }
+      ],
+      "scheduling": {
+        "send": "priority",
+        "compute": "fifo",
+        "compute_nonpreemptive": true,
+        "resource_capacity_tasks": 1
+      },
+      "links": {},
+      "connection_ready_seconds": "0",
+      "external_legacy_assumptions": {},
+      "accounting": {
+        "application_bytes_by_direction": {
+          "client_to_server": 300000,
+          "server_to_client": 52560
+        },
+        "application_bytes": 352560,
+        "message_count": 10,
+        "task_count": 1,
+        "fragment_count": 308
+      }
+    },
+    "network": {
+      "links": {
+        "up": {
+          "rate_bps": 20000000,
+          "propagation": "1/20"
+        },
+        "down": {
+          "rate_bps": 100000000,
+          "propagation": "1/20"
+        }
+      },
+      "until": 3,
+      "initial_cwnd": 12000,
+      "initial_max_data": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "initial_max_stream_data": {
+        "up": {
+          "image-up": 300000
+        },
+        "down": {
+          "image-down": 50000
+        }
+      },
+      "receive_memory_bytes": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "consume_delay": null,
+      "pad_in_flight": false,
+      "ack_bytes": 64,
+      "sender": {
+        "initial_rtt": "1/10"
+      },
+      "ack_policy": {
+        "mode": "count_or_timer",
+        "every": 1,
+        "max_delay": "1/100",
+        "delay_exponent": 3,
+        "retain_packets": 256,
+        "reorder_immediate": true,
+        "header_tag_bytes": 24
+      },
+      "drop_packets": [],
+      "routers": {},
+      "wireless_access": {
+        "enabled": true,
+        "profile": {
+          "identity": "chosen legacy OFDM20MHz 5GHz non-QoS three-address unencrypted example; not measured WLAN",
+          "ns3_release": "ns-3.44",
+          "ns3_commit": "43dce6710b8df69685e3479c1d33a571dda714ea",
+          "phy": {
+            "channel_width_hz": 20000000,
+            "band": "5GHz",
+            "data_rate_bps": 54000000,
+            "mac_ack_rate_bps": 6000000,
+            "basic_rate_set_bps": [
+              6000000
+            ],
+            "preamble_seconds": "0.000016",
+            "signal_header_seconds": "0.000004",
+            "ofdm_symbol_seconds": "0.000004",
+            "service_bits": 16,
+            "tail_bits": 6,
+            "signal_extension_seconds": "0"
+          },
+          "layout": {
+            "octet_bits": 8,
+            "quic_packet_bytes": 1200,
+            "quic_ack_packet_bytes": 64,
+            "ipv4_header_bytes": 20,
+            "udp_header_bytes": 8,
+            "llc_snap_bytes": 8,
+            "data_mac_header_bytes": 24,
+            "mac_fcs_bytes": 4,
+            "security_overhead_bytes": 0,
+            "normal_mac_ack_header_bytes": 10,
+            "normal_mac_ack_fcs_bytes": 4,
+            "rts_cts": false,
+            "qos_control": false,
+            "four_address": false
+          },
+          "access": {
+            "arbitration": "declared global FIFO, not simulated DCF contention",
+            "sifs_seconds": "0.000016",
+            "slot_seconds": "0.000009",
+            "aifsn_selected": 2,
+            "pre_exchange_idle_seconds": "0.000034",
+            "backoff_slots_selected": 0,
+            "direction_switch_extra_seconds": "0",
+            "radio_propagation_selected_seconds": "0",
+            "mac_ack_complete_timeout_seconds": null,
+            "source_rxstart_watchdog_seconds": "0.000045",
+            "timeout_warning": "45us is PHY-RXSTART watchdog relative to data TXEND, not full ACK arrival timeout; receive-start extension behavior required"
+          },
+          "formula": "PPDU_seconds=16us+4us+4us*ceil((16+8*PSDU_bytes+6)/N_DBPS), N_DBPS=data_rate_bps*4us; each MAC ACK has its own PPDU at ACK rate",
+          "flags": {
+            "normal_mac_ack_for_unicast_transport_ack": true,
+            "mac_ack_updates_transport_cwnd": false,
+            "mac_retry_reuses_quic_pn": true
+          }
+        },
+        "max_attempts": 1,
+        "retry_wait": 0,
+        "failures": []
+      }
+    }
+  },
+  "media-320B-ack2": {
+    "application": {
+      "schema_version": 1,
+      "id": "media-size-320",
+      "messages": [
+        {
+          "id": "image-upload",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "image-up",
+          "transport": "stream",
+          "bytes": 300000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 0,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 257,
+            "final_fragment_bytes": 992,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "image-response",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "image-down",
+          "transport": "stream",
+          "bytes": 50000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [
+            {
+              "id": "image-compute",
+              "event": "task_completed",
+              "endpoint": "server"
+            }
+          ],
+          "priority": 0,
+          "source_order": 1,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 43,
+            "final_fragment_bytes": 944,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-0",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 2,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-1",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 3,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-2",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 4,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-3",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 5,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-4",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "2/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 6,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-5",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/10",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 7,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-6",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 8,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-7",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "7/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 9,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        }
+      ],
+      "compute_tasks": [
+        {
+          "source_order": 0,
+          "priority": 0,
+          "id": "image-compute",
+          "endpoint": "server",
+          "resource": "server",
+          "ready_seconds": "0",
+          "duration_seconds": "3/10",
+          "dependencies": [
+            {
+              "id": "image-upload",
+              "event": "message_delivered",
+              "endpoint": "server"
+            }
+          ],
+          "cancel_tag": null
+        }
+      ],
+      "business_observers": [
+        {
+          "id": "image",
+          "kind": "image",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "image-response",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": []
+        },
+        {
+          "id": "audio",
+          "kind": "tts",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "audio-0",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-1",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-2",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-3",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-4",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-5",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-6",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-7",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": [],
+          "playback": "slots",
+          "blocks": [
+            {
+              "message_ids": [
+                "audio-0"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/10"
+            },
+            {
+              "message_ids": [
+                "audio-1"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "3/25"
+            },
+            {
+              "message_ids": [
+                "audio-2"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "7/50"
+            },
+            {
+              "message_ids": [
+                "audio-3"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "4/25"
+            },
+            {
+              "message_ids": [
+                "audio-4"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "9/50"
+            },
+            {
+              "message_ids": [
+                "audio-5"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/5"
+            },
+            {
+              "message_ids": [
+                "audio-6"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "11/50"
+            },
+            {
+              "message_ids": [
+                "audio-7"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "6/25"
+            }
+          ]
+        }
+      ],
+      "scheduling": {
+        "send": "priority",
+        "compute": "fifo",
+        "compute_nonpreemptive": true,
+        "resource_capacity_tasks": 1
+      },
+      "links": {},
+      "connection_ready_seconds": "0",
+      "external_legacy_assumptions": {},
+      "accounting": {
+        "application_bytes_by_direction": {
+          "client_to_server": 300000,
+          "server_to_client": 52560
+        },
+        "application_bytes": 352560,
+        "message_count": 10,
+        "task_count": 1,
+        "fragment_count": 308
+      }
+    },
+    "network": {
+      "links": {
+        "up": {
+          "rate_bps": 20000000,
+          "propagation": "1/20"
+        },
+        "down": {
+          "rate_bps": 100000000,
+          "propagation": "1/20"
+        }
+      },
+      "until": 3,
+      "initial_cwnd": 12000,
+      "initial_max_data": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "initial_max_stream_data": {
+        "up": {
+          "image-up": 300000
+        },
+        "down": {
+          "image-down": 50000
+        }
+      },
+      "receive_memory_bytes": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "consume_delay": null,
+      "pad_in_flight": false,
+      "ack_bytes": 64,
+      "sender": {
+        "initial_rtt": "1/10"
+      },
+      "ack_policy": {
+        "mode": "count_or_timer",
+        "every": 2,
+        "max_delay": "1/100",
+        "delay_exponent": 3,
+        "retain_packets": 256,
+        "reorder_immediate": true,
+        "header_tag_bytes": 24
+      },
+      "drop_packets": [],
+      "routers": {},
+      "wireless_access": {
+        "enabled": true,
+        "profile": {
+          "identity": "chosen legacy OFDM20MHz 5GHz non-QoS three-address unencrypted example; not measured WLAN",
+          "ns3_release": "ns-3.44",
+          "ns3_commit": "43dce6710b8df69685e3479c1d33a571dda714ea",
+          "phy": {
+            "channel_width_hz": 20000000,
+            "band": "5GHz",
+            "data_rate_bps": 54000000,
+            "mac_ack_rate_bps": 6000000,
+            "basic_rate_set_bps": [
+              6000000
+            ],
+            "preamble_seconds": "0.000016",
+            "signal_header_seconds": "0.000004",
+            "ofdm_symbol_seconds": "0.000004",
+            "service_bits": 16,
+            "tail_bits": 6,
+            "signal_extension_seconds": "0"
+          },
+          "layout": {
+            "octet_bits": 8,
+            "quic_packet_bytes": 1200,
+            "quic_ack_packet_bytes": 64,
+            "ipv4_header_bytes": 20,
+            "udp_header_bytes": 8,
+            "llc_snap_bytes": 8,
+            "data_mac_header_bytes": 24,
+            "mac_fcs_bytes": 4,
+            "security_overhead_bytes": 0,
+            "normal_mac_ack_header_bytes": 10,
+            "normal_mac_ack_fcs_bytes": 4,
+            "rts_cts": false,
+            "qos_control": false,
+            "four_address": false
+          },
+          "access": {
+            "arbitration": "declared global FIFO, not simulated DCF contention",
+            "sifs_seconds": "0.000016",
+            "slot_seconds": "0.000009",
+            "aifsn_selected": 2,
+            "pre_exchange_idle_seconds": "0.000034",
+            "backoff_slots_selected": 0,
+            "direction_switch_extra_seconds": "0",
+            "radio_propagation_selected_seconds": "0",
+            "mac_ack_complete_timeout_seconds": null,
+            "source_rxstart_watchdog_seconds": "0.000045",
+            "timeout_warning": "45us is PHY-RXSTART watchdog relative to data TXEND, not full ACK arrival timeout; receive-start extension behavior required"
+          },
+          "formula": "PPDU_seconds=16us+4us+4us*ceil((16+8*PSDU_bytes+6)/N_DBPS), N_DBPS=data_rate_bps*4us; each MAC ACK has its own PPDU at ACK rate",
+          "flags": {
+            "normal_mac_ack_for_unicast_transport_ack": true,
+            "mac_ack_updates_transport_cwnd": false,
+            "mac_retry_reuses_quic_pn": true
+          }
+        },
+        "max_attempts": 1,
+        "retry_wait": 0,
+        "failures": []
+      }
+    }
+  },
+  "media-320B-ack4": {
+    "application": {
+      "schema_version": 1,
+      "id": "media-size-320",
+      "messages": [
+        {
+          "id": "image-upload",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "image-up",
+          "transport": "stream",
+          "bytes": 300000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 0,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 257,
+            "final_fragment_bytes": 992,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "image-response",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "image-down",
+          "transport": "stream",
+          "bytes": 50000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [
+            {
+              "id": "image-compute",
+              "event": "task_completed",
+              "endpoint": "server"
+            }
+          ],
+          "priority": 0,
+          "source_order": 1,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 43,
+            "final_fragment_bytes": 944,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-0",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 2,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-1",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 3,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-2",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 4,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-3",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 5,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-4",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "2/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 6,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-5",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/10",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 7,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-6",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 8,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-7",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 320,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "7/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 9,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 320,
+            "coalesce_across_messages": false
+          }
+        }
+      ],
+      "compute_tasks": [
+        {
+          "source_order": 0,
+          "priority": 0,
+          "id": "image-compute",
+          "endpoint": "server",
+          "resource": "server",
+          "ready_seconds": "0",
+          "duration_seconds": "3/10",
+          "dependencies": [
+            {
+              "id": "image-upload",
+              "event": "message_delivered",
+              "endpoint": "server"
+            }
+          ],
+          "cancel_tag": null
+        }
+      ],
+      "business_observers": [
+        {
+          "id": "image",
+          "kind": "image",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "image-response",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": []
+        },
+        {
+          "id": "audio",
+          "kind": "tts",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "audio-0",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-1",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-2",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-3",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-4",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-5",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-6",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-7",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": [],
+          "playback": "slots",
+          "blocks": [
+            {
+              "message_ids": [
+                "audio-0"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/10"
+            },
+            {
+              "message_ids": [
+                "audio-1"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "3/25"
+            },
+            {
+              "message_ids": [
+                "audio-2"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "7/50"
+            },
+            {
+              "message_ids": [
+                "audio-3"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "4/25"
+            },
+            {
+              "message_ids": [
+                "audio-4"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "9/50"
+            },
+            {
+              "message_ids": [
+                "audio-5"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/5"
+            },
+            {
+              "message_ids": [
+                "audio-6"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "11/50"
+            },
+            {
+              "message_ids": [
+                "audio-7"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "6/25"
+            }
+          ]
+        }
+      ],
+      "scheduling": {
+        "send": "priority",
+        "compute": "fifo",
+        "compute_nonpreemptive": true,
+        "resource_capacity_tasks": 1
+      },
+      "links": {},
+      "connection_ready_seconds": "0",
+      "external_legacy_assumptions": {},
+      "accounting": {
+        "application_bytes_by_direction": {
+          "client_to_server": 300000,
+          "server_to_client": 52560
+        },
+        "application_bytes": 352560,
+        "message_count": 10,
+        "task_count": 1,
+        "fragment_count": 308
+      }
+    },
+    "network": {
+      "links": {
+        "up": {
+          "rate_bps": 20000000,
+          "propagation": "1/20"
+        },
+        "down": {
+          "rate_bps": 100000000,
+          "propagation": "1/20"
+        }
+      },
+      "until": 3,
+      "initial_cwnd": 12000,
+      "initial_max_data": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "initial_max_stream_data": {
+        "up": {
+          "image-up": 300000
+        },
+        "down": {
+          "image-down": 50000
+        }
+      },
+      "receive_memory_bytes": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "consume_delay": null,
+      "pad_in_flight": false,
+      "ack_bytes": 64,
+      "sender": {
+        "initial_rtt": "1/10"
+      },
+      "ack_policy": {
+        "mode": "count_or_timer",
+        "every": 4,
+        "max_delay": "1/100",
+        "delay_exponent": 3,
+        "retain_packets": 256,
+        "reorder_immediate": true,
+        "header_tag_bytes": 24
+      },
+      "drop_packets": [],
+      "routers": {},
+      "wireless_access": {
+        "enabled": true,
+        "profile": {
+          "identity": "chosen legacy OFDM20MHz 5GHz non-QoS three-address unencrypted example; not measured WLAN",
+          "ns3_release": "ns-3.44",
+          "ns3_commit": "43dce6710b8df69685e3479c1d33a571dda714ea",
+          "phy": {
+            "channel_width_hz": 20000000,
+            "band": "5GHz",
+            "data_rate_bps": 54000000,
+            "mac_ack_rate_bps": 6000000,
+            "basic_rate_set_bps": [
+              6000000
+            ],
+            "preamble_seconds": "0.000016",
+            "signal_header_seconds": "0.000004",
+            "ofdm_symbol_seconds": "0.000004",
+            "service_bits": 16,
+            "tail_bits": 6,
+            "signal_extension_seconds": "0"
+          },
+          "layout": {
+            "octet_bits": 8,
+            "quic_packet_bytes": 1200,
+            "quic_ack_packet_bytes": 64,
+            "ipv4_header_bytes": 20,
+            "udp_header_bytes": 8,
+            "llc_snap_bytes": 8,
+            "data_mac_header_bytes": 24,
+            "mac_fcs_bytes": 4,
+            "security_overhead_bytes": 0,
+            "normal_mac_ack_header_bytes": 10,
+            "normal_mac_ack_fcs_bytes": 4,
+            "rts_cts": false,
+            "qos_control": false,
+            "four_address": false
+          },
+          "access": {
+            "arbitration": "declared global FIFO, not simulated DCF contention",
+            "sifs_seconds": "0.000016",
+            "slot_seconds": "0.000009",
+            "aifsn_selected": 2,
+            "pre_exchange_idle_seconds": "0.000034",
+            "backoff_slots_selected": 0,
+            "direction_switch_extra_seconds": "0",
+            "radio_propagation_selected_seconds": "0",
+            "mac_ack_complete_timeout_seconds": null,
+            "source_rxstart_watchdog_seconds": "0.000045",
+            "timeout_warning": "45us is PHY-RXSTART watchdog relative to data TXEND, not full ACK arrival timeout; receive-start extension behavior required"
+          },
+          "formula": "PPDU_seconds=16us+4us+4us*ceil((16+8*PSDU_bytes+6)/N_DBPS), N_DBPS=data_rate_bps*4us; each MAC ACK has its own PPDU at ACK rate",
+          "flags": {
+            "normal_mac_ack_for_unicast_transport_ack": true,
+            "mac_ack_updates_transport_cwnd": false,
+            "mac_retry_reuses_quic_pn": true
+          }
+        },
+        "max_attempts": 1,
+        "retry_wait": 0,
+        "failures": []
+      }
+    }
+  },
+  "media-640B-ack1": {
+    "application": {
+      "schema_version": 1,
+      "id": "media-size-640",
+      "messages": [
+        {
+          "id": "image-upload",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "image-up",
+          "transport": "stream",
+          "bytes": 300000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 0,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 257,
+            "final_fragment_bytes": 992,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "image-response",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "image-down",
+          "transport": "stream",
+          "bytes": 50000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [
+            {
+              "id": "image-compute",
+              "event": "task_completed",
+              "endpoint": "server"
+            }
+          ],
+          "priority": 0,
+          "source_order": 1,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 43,
+            "final_fragment_bytes": 944,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-0",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 2,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-1",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 3,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-2",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 4,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-3",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 5,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-4",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "2/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 6,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-5",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/10",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 7,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-6",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 8,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-7",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "7/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 9,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        }
+      ],
+      "compute_tasks": [
+        {
+          "source_order": 0,
+          "priority": 0,
+          "id": "image-compute",
+          "endpoint": "server",
+          "resource": "server",
+          "ready_seconds": "0",
+          "duration_seconds": "3/10",
+          "dependencies": [
+            {
+              "id": "image-upload",
+              "event": "message_delivered",
+              "endpoint": "server"
+            }
+          ],
+          "cancel_tag": null
+        }
+      ],
+      "business_observers": [
+        {
+          "id": "image",
+          "kind": "image",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "image-response",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": []
+        },
+        {
+          "id": "audio",
+          "kind": "tts",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "audio-0",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-1",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-2",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-3",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-4",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-5",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-6",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-7",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": [],
+          "playback": "slots",
+          "blocks": [
+            {
+              "message_ids": [
+                "audio-0"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/10"
+            },
+            {
+              "message_ids": [
+                "audio-1"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "3/25"
+            },
+            {
+              "message_ids": [
+                "audio-2"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "7/50"
+            },
+            {
+              "message_ids": [
+                "audio-3"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "4/25"
+            },
+            {
+              "message_ids": [
+                "audio-4"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "9/50"
+            },
+            {
+              "message_ids": [
+                "audio-5"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/5"
+            },
+            {
+              "message_ids": [
+                "audio-6"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "11/50"
+            },
+            {
+              "message_ids": [
+                "audio-7"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "6/25"
+            }
+          ]
+        }
+      ],
+      "scheduling": {
+        "send": "priority",
+        "compute": "fifo",
+        "compute_nonpreemptive": true,
+        "resource_capacity_tasks": 1
+      },
+      "links": {},
+      "connection_ready_seconds": "0",
+      "external_legacy_assumptions": {},
+      "accounting": {
+        "application_bytes_by_direction": {
+          "client_to_server": 300000,
+          "server_to_client": 55120
+        },
+        "application_bytes": 355120,
+        "message_count": 10,
+        "task_count": 1,
+        "fragment_count": 308
+      }
+    },
+    "network": {
+      "links": {
+        "up": {
+          "rate_bps": 20000000,
+          "propagation": "1/20"
+        },
+        "down": {
+          "rate_bps": 100000000,
+          "propagation": "1/20"
+        }
+      },
+      "until": 3,
+      "initial_cwnd": 12000,
+      "initial_max_data": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "initial_max_stream_data": {
+        "up": {
+          "image-up": 300000
+        },
+        "down": {
+          "image-down": 50000
+        }
+      },
+      "receive_memory_bytes": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "consume_delay": null,
+      "pad_in_flight": false,
+      "ack_bytes": 64,
+      "sender": {
+        "initial_rtt": "1/10"
+      },
+      "ack_policy": {
+        "mode": "count_or_timer",
+        "every": 1,
+        "max_delay": "1/100",
+        "delay_exponent": 3,
+        "retain_packets": 256,
+        "reorder_immediate": true,
+        "header_tag_bytes": 24
+      },
+      "drop_packets": [],
+      "routers": {},
+      "wireless_access": {
+        "enabled": true,
+        "profile": {
+          "identity": "chosen legacy OFDM20MHz 5GHz non-QoS three-address unencrypted example; not measured WLAN",
+          "ns3_release": "ns-3.44",
+          "ns3_commit": "43dce6710b8df69685e3479c1d33a571dda714ea",
+          "phy": {
+            "channel_width_hz": 20000000,
+            "band": "5GHz",
+            "data_rate_bps": 54000000,
+            "mac_ack_rate_bps": 6000000,
+            "basic_rate_set_bps": [
+              6000000
+            ],
+            "preamble_seconds": "0.000016",
+            "signal_header_seconds": "0.000004",
+            "ofdm_symbol_seconds": "0.000004",
+            "service_bits": 16,
+            "tail_bits": 6,
+            "signal_extension_seconds": "0"
+          },
+          "layout": {
+            "octet_bits": 8,
+            "quic_packet_bytes": 1200,
+            "quic_ack_packet_bytes": 64,
+            "ipv4_header_bytes": 20,
+            "udp_header_bytes": 8,
+            "llc_snap_bytes": 8,
+            "data_mac_header_bytes": 24,
+            "mac_fcs_bytes": 4,
+            "security_overhead_bytes": 0,
+            "normal_mac_ack_header_bytes": 10,
+            "normal_mac_ack_fcs_bytes": 4,
+            "rts_cts": false,
+            "qos_control": false,
+            "four_address": false
+          },
+          "access": {
+            "arbitration": "declared global FIFO, not simulated DCF contention",
+            "sifs_seconds": "0.000016",
+            "slot_seconds": "0.000009",
+            "aifsn_selected": 2,
+            "pre_exchange_idle_seconds": "0.000034",
+            "backoff_slots_selected": 0,
+            "direction_switch_extra_seconds": "0",
+            "radio_propagation_selected_seconds": "0",
+            "mac_ack_complete_timeout_seconds": null,
+            "source_rxstart_watchdog_seconds": "0.000045",
+            "timeout_warning": "45us is PHY-RXSTART watchdog relative to data TXEND, not full ACK arrival timeout; receive-start extension behavior required"
+          },
+          "formula": "PPDU_seconds=16us+4us+4us*ceil((16+8*PSDU_bytes+6)/N_DBPS), N_DBPS=data_rate_bps*4us; each MAC ACK has its own PPDU at ACK rate",
+          "flags": {
+            "normal_mac_ack_for_unicast_transport_ack": true,
+            "mac_ack_updates_transport_cwnd": false,
+            "mac_retry_reuses_quic_pn": true
+          }
+        },
+        "max_attempts": 1,
+        "retry_wait": 0,
+        "failures": []
+      }
+    }
+  },
+  "media-640B-ack2": {
+    "application": {
+      "schema_version": 1,
+      "id": "media-size-640",
+      "messages": [
+        {
+          "id": "image-upload",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "image-up",
+          "transport": "stream",
+          "bytes": 300000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 0,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 257,
+            "final_fragment_bytes": 992,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "image-response",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "image-down",
+          "transport": "stream",
+          "bytes": 50000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [
+            {
+              "id": "image-compute",
+              "event": "task_completed",
+              "endpoint": "server"
+            }
+          ],
+          "priority": 0,
+          "source_order": 1,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 43,
+            "final_fragment_bytes": 944,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-0",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 2,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-1",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 3,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-2",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 4,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-3",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 5,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-4",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "2/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 6,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-5",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/10",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 7,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-6",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 8,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-7",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "7/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 9,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        }
+      ],
+      "compute_tasks": [
+        {
+          "source_order": 0,
+          "priority": 0,
+          "id": "image-compute",
+          "endpoint": "server",
+          "resource": "server",
+          "ready_seconds": "0",
+          "duration_seconds": "3/10",
+          "dependencies": [
+            {
+              "id": "image-upload",
+              "event": "message_delivered",
+              "endpoint": "server"
+            }
+          ],
+          "cancel_tag": null
+        }
+      ],
+      "business_observers": [
+        {
+          "id": "image",
+          "kind": "image",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "image-response",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": []
+        },
+        {
+          "id": "audio",
+          "kind": "tts",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "audio-0",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-1",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-2",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-3",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-4",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-5",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-6",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-7",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": [],
+          "playback": "slots",
+          "blocks": [
+            {
+              "message_ids": [
+                "audio-0"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/10"
+            },
+            {
+              "message_ids": [
+                "audio-1"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "3/25"
+            },
+            {
+              "message_ids": [
+                "audio-2"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "7/50"
+            },
+            {
+              "message_ids": [
+                "audio-3"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "4/25"
+            },
+            {
+              "message_ids": [
+                "audio-4"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "9/50"
+            },
+            {
+              "message_ids": [
+                "audio-5"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/5"
+            },
+            {
+              "message_ids": [
+                "audio-6"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "11/50"
+            },
+            {
+              "message_ids": [
+                "audio-7"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "6/25"
+            }
+          ]
+        }
+      ],
+      "scheduling": {
+        "send": "priority",
+        "compute": "fifo",
+        "compute_nonpreemptive": true,
+        "resource_capacity_tasks": 1
+      },
+      "links": {},
+      "connection_ready_seconds": "0",
+      "external_legacy_assumptions": {},
+      "accounting": {
+        "application_bytes_by_direction": {
+          "client_to_server": 300000,
+          "server_to_client": 55120
+        },
+        "application_bytes": 355120,
+        "message_count": 10,
+        "task_count": 1,
+        "fragment_count": 308
+      }
+    },
+    "network": {
+      "links": {
+        "up": {
+          "rate_bps": 20000000,
+          "propagation": "1/20"
+        },
+        "down": {
+          "rate_bps": 100000000,
+          "propagation": "1/20"
+        }
+      },
+      "until": 3,
+      "initial_cwnd": 12000,
+      "initial_max_data": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "initial_max_stream_data": {
+        "up": {
+          "image-up": 300000
+        },
+        "down": {
+          "image-down": 50000
+        }
+      },
+      "receive_memory_bytes": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "consume_delay": null,
+      "pad_in_flight": false,
+      "ack_bytes": 64,
+      "sender": {
+        "initial_rtt": "1/10"
+      },
+      "ack_policy": {
+        "mode": "count_or_timer",
+        "every": 2,
+        "max_delay": "1/100",
+        "delay_exponent": 3,
+        "retain_packets": 256,
+        "reorder_immediate": true,
+        "header_tag_bytes": 24
+      },
+      "drop_packets": [],
+      "routers": {},
+      "wireless_access": {
+        "enabled": true,
+        "profile": {
+          "identity": "chosen legacy OFDM20MHz 5GHz non-QoS three-address unencrypted example; not measured WLAN",
+          "ns3_release": "ns-3.44",
+          "ns3_commit": "43dce6710b8df69685e3479c1d33a571dda714ea",
+          "phy": {
+            "channel_width_hz": 20000000,
+            "band": "5GHz",
+            "data_rate_bps": 54000000,
+            "mac_ack_rate_bps": 6000000,
+            "basic_rate_set_bps": [
+              6000000
+            ],
+            "preamble_seconds": "0.000016",
+            "signal_header_seconds": "0.000004",
+            "ofdm_symbol_seconds": "0.000004",
+            "service_bits": 16,
+            "tail_bits": 6,
+            "signal_extension_seconds": "0"
+          },
+          "layout": {
+            "octet_bits": 8,
+            "quic_packet_bytes": 1200,
+            "quic_ack_packet_bytes": 64,
+            "ipv4_header_bytes": 20,
+            "udp_header_bytes": 8,
+            "llc_snap_bytes": 8,
+            "data_mac_header_bytes": 24,
+            "mac_fcs_bytes": 4,
+            "security_overhead_bytes": 0,
+            "normal_mac_ack_header_bytes": 10,
+            "normal_mac_ack_fcs_bytes": 4,
+            "rts_cts": false,
+            "qos_control": false,
+            "four_address": false
+          },
+          "access": {
+            "arbitration": "declared global FIFO, not simulated DCF contention",
+            "sifs_seconds": "0.000016",
+            "slot_seconds": "0.000009",
+            "aifsn_selected": 2,
+            "pre_exchange_idle_seconds": "0.000034",
+            "backoff_slots_selected": 0,
+            "direction_switch_extra_seconds": "0",
+            "radio_propagation_selected_seconds": "0",
+            "mac_ack_complete_timeout_seconds": null,
+            "source_rxstart_watchdog_seconds": "0.000045",
+            "timeout_warning": "45us is PHY-RXSTART watchdog relative to data TXEND, not full ACK arrival timeout; receive-start extension behavior required"
+          },
+          "formula": "PPDU_seconds=16us+4us+4us*ceil((16+8*PSDU_bytes+6)/N_DBPS), N_DBPS=data_rate_bps*4us; each MAC ACK has its own PPDU at ACK rate",
+          "flags": {
+            "normal_mac_ack_for_unicast_transport_ack": true,
+            "mac_ack_updates_transport_cwnd": false,
+            "mac_retry_reuses_quic_pn": true
+          }
+        },
+        "max_attempts": 1,
+        "retry_wait": 0,
+        "failures": []
+      }
+    }
+  },
+  "media-640B-ack4": {
+    "application": {
+      "schema_version": 1,
+      "id": "media-size-640",
+      "messages": [
+        {
+          "id": "image-upload",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "image-up",
+          "transport": "stream",
+          "bytes": 300000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 0,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 257,
+            "final_fragment_bytes": 992,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "image-response",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "image-down",
+          "transport": "stream",
+          "bytes": 50000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [
+            {
+              "id": "image-compute",
+              "event": "task_completed",
+              "endpoint": "server"
+            }
+          ],
+          "priority": 0,
+          "source_order": 1,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 43,
+            "final_fragment_bytes": 944,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-0",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 2,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-1",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 3,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-2",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 4,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-3",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 5,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-4",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "2/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 6,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-5",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/10",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 7,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-6",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 8,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-7",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 640,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "7/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 9,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 640,
+            "coalesce_across_messages": false
+          }
+        }
+      ],
+      "compute_tasks": [
+        {
+          "source_order": 0,
+          "priority": 0,
+          "id": "image-compute",
+          "endpoint": "server",
+          "resource": "server",
+          "ready_seconds": "0",
+          "duration_seconds": "3/10",
+          "dependencies": [
+            {
+              "id": "image-upload",
+              "event": "message_delivered",
+              "endpoint": "server"
+            }
+          ],
+          "cancel_tag": null
+        }
+      ],
+      "business_observers": [
+        {
+          "id": "image",
+          "kind": "image",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "image-response",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": []
+        },
+        {
+          "id": "audio",
+          "kind": "tts",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "audio-0",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-1",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-2",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-3",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-4",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-5",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-6",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-7",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": [],
+          "playback": "slots",
+          "blocks": [
+            {
+              "message_ids": [
+                "audio-0"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/10"
+            },
+            {
+              "message_ids": [
+                "audio-1"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "3/25"
+            },
+            {
+              "message_ids": [
+                "audio-2"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "7/50"
+            },
+            {
+              "message_ids": [
+                "audio-3"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "4/25"
+            },
+            {
+              "message_ids": [
+                "audio-4"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "9/50"
+            },
+            {
+              "message_ids": [
+                "audio-5"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/5"
+            },
+            {
+              "message_ids": [
+                "audio-6"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "11/50"
+            },
+            {
+              "message_ids": [
+                "audio-7"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "6/25"
+            }
+          ]
+        }
+      ],
+      "scheduling": {
+        "send": "priority",
+        "compute": "fifo",
+        "compute_nonpreemptive": true,
+        "resource_capacity_tasks": 1
+      },
+      "links": {},
+      "connection_ready_seconds": "0",
+      "external_legacy_assumptions": {},
+      "accounting": {
+        "application_bytes_by_direction": {
+          "client_to_server": 300000,
+          "server_to_client": 55120
+        },
+        "application_bytes": 355120,
+        "message_count": 10,
+        "task_count": 1,
+        "fragment_count": 308
+      }
+    },
+    "network": {
+      "links": {
+        "up": {
+          "rate_bps": 20000000,
+          "propagation": "1/20"
+        },
+        "down": {
+          "rate_bps": 100000000,
+          "propagation": "1/20"
+        }
+      },
+      "until": 3,
+      "initial_cwnd": 12000,
+      "initial_max_data": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "initial_max_stream_data": {
+        "up": {
+          "image-up": 300000
+        },
+        "down": {
+          "image-down": 50000
+        }
+      },
+      "receive_memory_bytes": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "consume_delay": null,
+      "pad_in_flight": false,
+      "ack_bytes": 64,
+      "sender": {
+        "initial_rtt": "1/10"
+      },
+      "ack_policy": {
+        "mode": "count_or_timer",
+        "every": 4,
+        "max_delay": "1/100",
+        "delay_exponent": 3,
+        "retain_packets": 256,
+        "reorder_immediate": true,
+        "header_tag_bytes": 24
+      },
+      "drop_packets": [],
+      "routers": {},
+      "wireless_access": {
+        "enabled": true,
+        "profile": {
+          "identity": "chosen legacy OFDM20MHz 5GHz non-QoS three-address unencrypted example; not measured WLAN",
+          "ns3_release": "ns-3.44",
+          "ns3_commit": "43dce6710b8df69685e3479c1d33a571dda714ea",
+          "phy": {
+            "channel_width_hz": 20000000,
+            "band": "5GHz",
+            "data_rate_bps": 54000000,
+            "mac_ack_rate_bps": 6000000,
+            "basic_rate_set_bps": [
+              6000000
+            ],
+            "preamble_seconds": "0.000016",
+            "signal_header_seconds": "0.000004",
+            "ofdm_symbol_seconds": "0.000004",
+            "service_bits": 16,
+            "tail_bits": 6,
+            "signal_extension_seconds": "0"
+          },
+          "layout": {
+            "octet_bits": 8,
+            "quic_packet_bytes": 1200,
+            "quic_ack_packet_bytes": 64,
+            "ipv4_header_bytes": 20,
+            "udp_header_bytes": 8,
+            "llc_snap_bytes": 8,
+            "data_mac_header_bytes": 24,
+            "mac_fcs_bytes": 4,
+            "security_overhead_bytes": 0,
+            "normal_mac_ack_header_bytes": 10,
+            "normal_mac_ack_fcs_bytes": 4,
+            "rts_cts": false,
+            "qos_control": false,
+            "four_address": false
+          },
+          "access": {
+            "arbitration": "declared global FIFO, not simulated DCF contention",
+            "sifs_seconds": "0.000016",
+            "slot_seconds": "0.000009",
+            "aifsn_selected": 2,
+            "pre_exchange_idle_seconds": "0.000034",
+            "backoff_slots_selected": 0,
+            "direction_switch_extra_seconds": "0",
+            "radio_propagation_selected_seconds": "0",
+            "mac_ack_complete_timeout_seconds": null,
+            "source_rxstart_watchdog_seconds": "0.000045",
+            "timeout_warning": "45us is PHY-RXSTART watchdog relative to data TXEND, not full ACK arrival timeout; receive-start extension behavior required"
+          },
+          "formula": "PPDU_seconds=16us+4us+4us*ceil((16+8*PSDU_bytes+6)/N_DBPS), N_DBPS=data_rate_bps*4us; each MAC ACK has its own PPDU at ACK rate",
+          "flags": {
+            "normal_mac_ack_for_unicast_transport_ack": true,
+            "mac_ack_updates_transport_cwnd": false,
+            "mac_retry_reuses_quic_pn": true
+          }
+        },
+        "max_attempts": 1,
+        "retry_wait": 0,
+        "failures": []
+      }
+    }
+  },
+  "media-960B-ack1": {
+    "application": {
+      "schema_version": 1,
+      "id": "media-size-960",
+      "messages": [
+        {
+          "id": "image-upload",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "image-up",
+          "transport": "stream",
+          "bytes": 300000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 0,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 257,
+            "final_fragment_bytes": 992,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "image-response",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "image-down",
+          "transport": "stream",
+          "bytes": 50000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [
+            {
+              "id": "image-compute",
+              "event": "task_completed",
+              "endpoint": "server"
+            }
+          ],
+          "priority": 0,
+          "source_order": 1,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 43,
+            "final_fragment_bytes": 944,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-0",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 2,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-1",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 3,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-2",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 4,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-3",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 5,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-4",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "2/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 6,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-5",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/10",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 7,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-6",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 8,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-7",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "7/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 9,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        }
+      ],
+      "compute_tasks": [
+        {
+          "source_order": 0,
+          "priority": 0,
+          "id": "image-compute",
+          "endpoint": "server",
+          "resource": "server",
+          "ready_seconds": "0",
+          "duration_seconds": "3/10",
+          "dependencies": [
+            {
+              "id": "image-upload",
+              "event": "message_delivered",
+              "endpoint": "server"
+            }
+          ],
+          "cancel_tag": null
+        }
+      ],
+      "business_observers": [
+        {
+          "id": "image",
+          "kind": "image",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "image-response",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": []
+        },
+        {
+          "id": "audio",
+          "kind": "tts",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "audio-0",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-1",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-2",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-3",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-4",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-5",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-6",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-7",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": [],
+          "playback": "slots",
+          "blocks": [
+            {
+              "message_ids": [
+                "audio-0"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/10"
+            },
+            {
+              "message_ids": [
+                "audio-1"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "3/25"
+            },
+            {
+              "message_ids": [
+                "audio-2"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "7/50"
+            },
+            {
+              "message_ids": [
+                "audio-3"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "4/25"
+            },
+            {
+              "message_ids": [
+                "audio-4"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "9/50"
+            },
+            {
+              "message_ids": [
+                "audio-5"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/5"
+            },
+            {
+              "message_ids": [
+                "audio-6"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "11/50"
+            },
+            {
+              "message_ids": [
+                "audio-7"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "6/25"
+            }
+          ]
+        }
+      ],
+      "scheduling": {
+        "send": "priority",
+        "compute": "fifo",
+        "compute_nonpreemptive": true,
+        "resource_capacity_tasks": 1
+      },
+      "links": {},
+      "connection_ready_seconds": "0",
+      "external_legacy_assumptions": {},
+      "accounting": {
+        "application_bytes_by_direction": {
+          "client_to_server": 300000,
+          "server_to_client": 57680
+        },
+        "application_bytes": 357680,
+        "message_count": 10,
+        "task_count": 1,
+        "fragment_count": 308
+      }
+    },
+    "network": {
+      "links": {
+        "up": {
+          "rate_bps": 20000000,
+          "propagation": "1/20"
+        },
+        "down": {
+          "rate_bps": 100000000,
+          "propagation": "1/20"
+        }
+      },
+      "until": 3,
+      "initial_cwnd": 12000,
+      "initial_max_data": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "initial_max_stream_data": {
+        "up": {
+          "image-up": 300000
+        },
+        "down": {
+          "image-down": 50000
+        }
+      },
+      "receive_memory_bytes": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "consume_delay": null,
+      "pad_in_flight": false,
+      "ack_bytes": 64,
+      "sender": {
+        "initial_rtt": "1/10"
+      },
+      "ack_policy": {
+        "mode": "count_or_timer",
+        "every": 1,
+        "max_delay": "1/100",
+        "delay_exponent": 3,
+        "retain_packets": 256,
+        "reorder_immediate": true,
+        "header_tag_bytes": 24
+      },
+      "drop_packets": [],
+      "routers": {},
+      "wireless_access": {
+        "enabled": true,
+        "profile": {
+          "identity": "chosen legacy OFDM20MHz 5GHz non-QoS three-address unencrypted example; not measured WLAN",
+          "ns3_release": "ns-3.44",
+          "ns3_commit": "43dce6710b8df69685e3479c1d33a571dda714ea",
+          "phy": {
+            "channel_width_hz": 20000000,
+            "band": "5GHz",
+            "data_rate_bps": 54000000,
+            "mac_ack_rate_bps": 6000000,
+            "basic_rate_set_bps": [
+              6000000
+            ],
+            "preamble_seconds": "0.000016",
+            "signal_header_seconds": "0.000004",
+            "ofdm_symbol_seconds": "0.000004",
+            "service_bits": 16,
+            "tail_bits": 6,
+            "signal_extension_seconds": "0"
+          },
+          "layout": {
+            "octet_bits": 8,
+            "quic_packet_bytes": 1200,
+            "quic_ack_packet_bytes": 64,
+            "ipv4_header_bytes": 20,
+            "udp_header_bytes": 8,
+            "llc_snap_bytes": 8,
+            "data_mac_header_bytes": 24,
+            "mac_fcs_bytes": 4,
+            "security_overhead_bytes": 0,
+            "normal_mac_ack_header_bytes": 10,
+            "normal_mac_ack_fcs_bytes": 4,
+            "rts_cts": false,
+            "qos_control": false,
+            "four_address": false
+          },
+          "access": {
+            "arbitration": "declared global FIFO, not simulated DCF contention",
+            "sifs_seconds": "0.000016",
+            "slot_seconds": "0.000009",
+            "aifsn_selected": 2,
+            "pre_exchange_idle_seconds": "0.000034",
+            "backoff_slots_selected": 0,
+            "direction_switch_extra_seconds": "0",
+            "radio_propagation_selected_seconds": "0",
+            "mac_ack_complete_timeout_seconds": null,
+            "source_rxstart_watchdog_seconds": "0.000045",
+            "timeout_warning": "45us is PHY-RXSTART watchdog relative to data TXEND, not full ACK arrival timeout; receive-start extension behavior required"
+          },
+          "formula": "PPDU_seconds=16us+4us+4us*ceil((16+8*PSDU_bytes+6)/N_DBPS), N_DBPS=data_rate_bps*4us; each MAC ACK has its own PPDU at ACK rate",
+          "flags": {
+            "normal_mac_ack_for_unicast_transport_ack": true,
+            "mac_ack_updates_transport_cwnd": false,
+            "mac_retry_reuses_quic_pn": true
+          }
+        },
+        "max_attempts": 1,
+        "retry_wait": 0,
+        "failures": []
+      }
+    }
+  },
+  "media-960B-ack2": {
+    "application": {
+      "schema_version": 1,
+      "id": "media-size-960",
+      "messages": [
+        {
+          "id": "image-upload",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "image-up",
+          "transport": "stream",
+          "bytes": 300000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 0,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 257,
+            "final_fragment_bytes": 992,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "image-response",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "image-down",
+          "transport": "stream",
+          "bytes": 50000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [
+            {
+              "id": "image-compute",
+              "event": "task_completed",
+              "endpoint": "server"
+            }
+          ],
+          "priority": 0,
+          "source_order": 1,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 43,
+            "final_fragment_bytes": 944,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-0",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 2,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-1",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 3,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-2",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 4,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-3",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 5,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-4",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "2/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 6,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-5",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/10",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 7,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-6",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 8,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-7",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "7/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 9,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        }
+      ],
+      "compute_tasks": [
+        {
+          "source_order": 0,
+          "priority": 0,
+          "id": "image-compute",
+          "endpoint": "server",
+          "resource": "server",
+          "ready_seconds": "0",
+          "duration_seconds": "3/10",
+          "dependencies": [
+            {
+              "id": "image-upload",
+              "event": "message_delivered",
+              "endpoint": "server"
+            }
+          ],
+          "cancel_tag": null
+        }
+      ],
+      "business_observers": [
+        {
+          "id": "image",
+          "kind": "image",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "image-response",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": []
+        },
+        {
+          "id": "audio",
+          "kind": "tts",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "audio-0",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-1",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-2",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-3",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-4",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-5",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-6",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-7",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": [],
+          "playback": "slots",
+          "blocks": [
+            {
+              "message_ids": [
+                "audio-0"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/10"
+            },
+            {
+              "message_ids": [
+                "audio-1"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "3/25"
+            },
+            {
+              "message_ids": [
+                "audio-2"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "7/50"
+            },
+            {
+              "message_ids": [
+                "audio-3"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "4/25"
+            },
+            {
+              "message_ids": [
+                "audio-4"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "9/50"
+            },
+            {
+              "message_ids": [
+                "audio-5"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/5"
+            },
+            {
+              "message_ids": [
+                "audio-6"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "11/50"
+            },
+            {
+              "message_ids": [
+                "audio-7"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "6/25"
+            }
+          ]
+        }
+      ],
+      "scheduling": {
+        "send": "priority",
+        "compute": "fifo",
+        "compute_nonpreemptive": true,
+        "resource_capacity_tasks": 1
+      },
+      "links": {},
+      "connection_ready_seconds": "0",
+      "external_legacy_assumptions": {},
+      "accounting": {
+        "application_bytes_by_direction": {
+          "client_to_server": 300000,
+          "server_to_client": 57680
+        },
+        "application_bytes": 357680,
+        "message_count": 10,
+        "task_count": 1,
+        "fragment_count": 308
+      }
+    },
+    "network": {
+      "links": {
+        "up": {
+          "rate_bps": 20000000,
+          "propagation": "1/20"
+        },
+        "down": {
+          "rate_bps": 100000000,
+          "propagation": "1/20"
+        }
+      },
+      "until": 3,
+      "initial_cwnd": 12000,
+      "initial_max_data": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "initial_max_stream_data": {
+        "up": {
+          "image-up": 300000
+        },
+        "down": {
+          "image-down": 50000
+        }
+      },
+      "receive_memory_bytes": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "consume_delay": null,
+      "pad_in_flight": false,
+      "ack_bytes": 64,
+      "sender": {
+        "initial_rtt": "1/10"
+      },
+      "ack_policy": {
+        "mode": "count_or_timer",
+        "every": 2,
+        "max_delay": "1/100",
+        "delay_exponent": 3,
+        "retain_packets": 256,
+        "reorder_immediate": true,
+        "header_tag_bytes": 24
+      },
+      "drop_packets": [],
+      "routers": {},
+      "wireless_access": {
+        "enabled": true,
+        "profile": {
+          "identity": "chosen legacy OFDM20MHz 5GHz non-QoS three-address unencrypted example; not measured WLAN",
+          "ns3_release": "ns-3.44",
+          "ns3_commit": "43dce6710b8df69685e3479c1d33a571dda714ea",
+          "phy": {
+            "channel_width_hz": 20000000,
+            "band": "5GHz",
+            "data_rate_bps": 54000000,
+            "mac_ack_rate_bps": 6000000,
+            "basic_rate_set_bps": [
+              6000000
+            ],
+            "preamble_seconds": "0.000016",
+            "signal_header_seconds": "0.000004",
+            "ofdm_symbol_seconds": "0.000004",
+            "service_bits": 16,
+            "tail_bits": 6,
+            "signal_extension_seconds": "0"
+          },
+          "layout": {
+            "octet_bits": 8,
+            "quic_packet_bytes": 1200,
+            "quic_ack_packet_bytes": 64,
+            "ipv4_header_bytes": 20,
+            "udp_header_bytes": 8,
+            "llc_snap_bytes": 8,
+            "data_mac_header_bytes": 24,
+            "mac_fcs_bytes": 4,
+            "security_overhead_bytes": 0,
+            "normal_mac_ack_header_bytes": 10,
+            "normal_mac_ack_fcs_bytes": 4,
+            "rts_cts": false,
+            "qos_control": false,
+            "four_address": false
+          },
+          "access": {
+            "arbitration": "declared global FIFO, not simulated DCF contention",
+            "sifs_seconds": "0.000016",
+            "slot_seconds": "0.000009",
+            "aifsn_selected": 2,
+            "pre_exchange_idle_seconds": "0.000034",
+            "backoff_slots_selected": 0,
+            "direction_switch_extra_seconds": "0",
+            "radio_propagation_selected_seconds": "0",
+            "mac_ack_complete_timeout_seconds": null,
+            "source_rxstart_watchdog_seconds": "0.000045",
+            "timeout_warning": "45us is PHY-RXSTART watchdog relative to data TXEND, not full ACK arrival timeout; receive-start extension behavior required"
+          },
+          "formula": "PPDU_seconds=16us+4us+4us*ceil((16+8*PSDU_bytes+6)/N_DBPS), N_DBPS=data_rate_bps*4us; each MAC ACK has its own PPDU at ACK rate",
+          "flags": {
+            "normal_mac_ack_for_unicast_transport_ack": true,
+            "mac_ack_updates_transport_cwnd": false,
+            "mac_retry_reuses_quic_pn": true
+          }
+        },
+        "max_attempts": 1,
+        "retry_wait": 0,
+        "failures": []
+      }
+    }
+  },
+  "media-960B-ack4": {
+    "application": {
+      "schema_version": 1,
+      "id": "media-size-960",
+      "messages": [
+        {
+          "id": "image-upload",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "image-up",
+          "transport": "stream",
+          "bytes": 300000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 0,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 257,
+            "final_fragment_bytes": 992,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "image-response",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "image-down",
+          "transport": "stream",
+          "bytes": 50000,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [
+            {
+              "id": "image-compute",
+              "event": "task_completed",
+              "endpoint": "server"
+            }
+          ],
+          "priority": 0,
+          "source_order": 1,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 43,
+            "final_fragment_bytes": 944,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-0",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 2,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-1",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 3,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-2",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 4,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-3",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 5,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-4",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "2/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 6,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-5",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "1/10",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 7,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-6",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "3/25",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 8,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "audio-7",
+          "sender": "server",
+          "receiver": "client",
+          "flow_id": "audio",
+          "transport": "datagram",
+          "bytes": 960,
+          "stream_offset": null,
+          "application_offset": 0,
+          "ready_seconds": "7/50",
+          "dependencies": [],
+          "priority": 100,
+          "source_order": 9,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 960,
+            "coalesce_across_messages": false
+          }
+        }
+      ],
+      "compute_tasks": [
+        {
+          "source_order": 0,
+          "priority": 0,
+          "id": "image-compute",
+          "endpoint": "server",
+          "resource": "server",
+          "ready_seconds": "0",
+          "duration_seconds": "3/10",
+          "dependencies": [
+            {
+              "id": "image-upload",
+              "event": "message_delivered",
+              "endpoint": "server"
+            }
+          ],
+          "cancel_tag": null
+        }
+      ],
+      "business_observers": [
+        {
+          "id": "image",
+          "kind": "image",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "image-response",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": []
+        },
+        {
+          "id": "audio",
+          "kind": "tts",
+          "endpoint": "client",
+          "completion_dependencies": [
+            {
+              "id": "audio-0",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-1",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-2",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-3",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-4",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-5",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-6",
+              "event": "message_delivered",
+              "endpoint": "client"
+            },
+            {
+              "id": "audio-7",
+              "event": "message_delivered",
+              "endpoint": "client"
+            }
+          ],
+          "version_changes": [],
+          "playback": "slots",
+          "blocks": [
+            {
+              "message_ids": [
+                "audio-0"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/10"
+            },
+            {
+              "message_ids": [
+                "audio-1"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "3/25"
+            },
+            {
+              "message_ids": [
+                "audio-2"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "7/50"
+            },
+            {
+              "message_ids": [
+                "audio-3"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "4/25"
+            },
+            {
+              "message_ids": [
+                "audio-4"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "9/50"
+            },
+            {
+              "message_ids": [
+                "audio-5"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "1/5"
+            },
+            {
+              "message_ids": [
+                "audio-6"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "11/50"
+            },
+            {
+              "message_ids": [
+                "audio-7"
+              ],
+              "duration_seconds": "1/50",
+              "slot_start_seconds": "6/25"
+            }
+          ]
+        }
+      ],
+      "scheduling": {
+        "send": "priority",
+        "compute": "fifo",
+        "compute_nonpreemptive": true,
+        "resource_capacity_tasks": 1
+      },
+      "links": {},
+      "connection_ready_seconds": "0",
+      "external_legacy_assumptions": {},
+      "accounting": {
+        "application_bytes_by_direction": {
+          "client_to_server": 300000,
+          "server_to_client": 57680
+        },
+        "application_bytes": 357680,
+        "message_count": 10,
+        "task_count": 1,
+        "fragment_count": 308
+      }
+    },
+    "network": {
+      "links": {
+        "up": {
+          "rate_bps": 20000000,
+          "propagation": "1/20"
+        },
+        "down": {
+          "rate_bps": 100000000,
+          "propagation": "1/20"
+        }
+      },
+      "until": 3,
+      "initial_cwnd": 12000,
+      "initial_max_data": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "initial_max_stream_data": {
+        "up": {
+          "image-up": 300000
+        },
+        "down": {
+          "image-down": 50000
+        }
+      },
+      "receive_memory_bytes": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "consume_delay": null,
+      "pad_in_flight": false,
+      "ack_bytes": 64,
+      "sender": {
+        "initial_rtt": "1/10"
+      },
+      "ack_policy": {
+        "mode": "count_or_timer",
+        "every": 4,
+        "max_delay": "1/100",
+        "delay_exponent": 3,
+        "retain_packets": 256,
+        "reorder_immediate": true,
+        "header_tag_bytes": 24
+      },
+      "drop_packets": [],
+      "routers": {},
+      "wireless_access": {
+        "enabled": true,
+        "profile": {
+          "identity": "chosen legacy OFDM20MHz 5GHz non-QoS three-address unencrypted example; not measured WLAN",
+          "ns3_release": "ns-3.44",
+          "ns3_commit": "43dce6710b8df69685e3479c1d33a571dda714ea",
+          "phy": {
+            "channel_width_hz": 20000000,
+            "band": "5GHz",
+            "data_rate_bps": 54000000,
+            "mac_ack_rate_bps": 6000000,
+            "basic_rate_set_bps": [
+              6000000
+            ],
+            "preamble_seconds": "0.000016",
+            "signal_header_seconds": "0.000004",
+            "ofdm_symbol_seconds": "0.000004",
+            "service_bits": 16,
+            "tail_bits": 6,
+            "signal_extension_seconds": "0"
+          },
+          "layout": {
+            "octet_bits": 8,
+            "quic_packet_bytes": 1200,
+            "quic_ack_packet_bytes": 64,
+            "ipv4_header_bytes": 20,
+            "udp_header_bytes": 8,
+            "llc_snap_bytes": 8,
+            "data_mac_header_bytes": 24,
+            "mac_fcs_bytes": 4,
+            "security_overhead_bytes": 0,
+            "normal_mac_ack_header_bytes": 10,
+            "normal_mac_ack_fcs_bytes": 4,
+            "rts_cts": false,
+            "qos_control": false,
+            "four_address": false
+          },
+          "access": {
+            "arbitration": "declared global FIFO, not simulated DCF contention",
+            "sifs_seconds": "0.000016",
+            "slot_seconds": "0.000009",
+            "aifsn_selected": 2,
+            "pre_exchange_idle_seconds": "0.000034",
+            "backoff_slots_selected": 0,
+            "direction_switch_extra_seconds": "0",
+            "radio_propagation_selected_seconds": "0",
+            "mac_ack_complete_timeout_seconds": null,
+            "source_rxstart_watchdog_seconds": "0.000045",
+            "timeout_warning": "45us is PHY-RXSTART watchdog relative to data TXEND, not full ACK arrival timeout; receive-start extension behavior required"
+          },
+          "formula": "PPDU_seconds=16us+4us+4us*ceil((16+8*PSDU_bytes+6)/N_DBPS), N_DBPS=data_rate_bps*4us; each MAC ACK has its own PPDU at ACK rate",
+          "flags": {
+            "normal_mac_ack_for_unicast_transport_ack": true,
+            "mac_ack_updates_transport_cwnd": false,
+            "mac_retry_reuses_quic_pn": true
+          }
+        },
+        "max_attempts": 1,
+        "retry_wait": 0,
+        "failures": []
+      }
+    }
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "status": "PASS",
+  "scope": "Eight actual small network scenarios; independently reconstructed serialization/ACK ranges/delay/arrival feedback plus four prespecified timing oracles. No large workload claim.",
+  "sources_before": {
+    "calculate.py": "58718e22f3e29cba582f7ce2fdaf5f701b9bbb45acf8e71cd22a0253c64e6ae2",
+    "receiver.py": "a8a44b09c95d76501821a20a4737fdc352d564de706f98082b2c5f7f55949378",
+    "sources.lock.json": "2a7029e8f3da83cfed3db6b1ac02666d3d8bd96d5ea101b380541f4cf28a3b93",
+    "dependencies.lock.json": "8a0220189ee88f07cb0d61add32b237a39077b4a35b9293472083d5fbc9fdf27"
+  },
+  "sources_after": {
+    "calculate.py": "58718e22f3e29cba582f7ce2fdaf5f701b9bbb45acf8e71cd22a0253c64e6ae2",
+    "receiver.py": "a8a44b09c95d76501821a20a4737fdc352d564de706f98082b2c5f7f55949378",
+    "sources.lock.json": "2a7029e8f3da83cfed3db6b1ac02666d3d8bd96d5ea101b380541f4cf28a3b93",
+    "dependencies.lock.json": "8a0220189ee88f07cb0d61add32b237a39077b4a35b9293472083d5fbc9fdf27"
+  },
+  "scenarios": [
+    {
+      "name": "count-two",
+      "transmissions": 3,
+      "acks_independently_checked": 1,
+      "actual_matches_saved": true
+    },
+    {
+      "name": "tail-deadline",
+      "transmissions": 2,
+      "acks_independently_checked": 1,
+      "actual_matches_saved": true
+    },
+    {
+      "name": "same-time-arrival-deadline",
+      "transmissions": 3,
+      "acks_independently_checked": 1,
+      "actual_matches_saved": true
+    },
+    {
+      "name": "lost-first-ack",
+      "transmissions": 4,
+      "acks_independently_checked": 2,
+      "actual_matches_saved": true
+    },
+    {
+      "name": "max-flow-control",
+      "transmissions": 11,
+      "acks_independently_checked": 5,
+      "actual_matches_saved": true
+    },
+    {
+      "name": "queued-snapshot-refresh",
+      "transmissions": 5,
+      "acks_independently_checked": 2,
+      "actual_matches_saved": true
+    },
+    {
+      "name": "queued-deadline-overrun",
+      "transmissions": 4,
+      "acks_independently_checked": 2,
+      "actual_matches_saved": true
+    },
+    {
+      "name": "busy-reverse-serializer-independent",
+      "inputs": {
+        "upload_bytes": 1168,
+        "response_bytes": 1168,
+        "model_seconds": 0,
+        "until": 100,
+        "links": {
+          "up": {
+            "rate_bps": 9824,
+            "propagation": 1
+          },
+          "down": {
+            "rate_bps": 736,
+            "propagation": 1
+          }
+        },
+        "sender": {
+          "initial_cwnd": 2400,
+          "rtt_seed": {
+            "latest_rtt": 100,
+            "smoothed_rtt": 100,
+            "rttvar": 100,
+            "min_rtt": 100
+          }
+        },
+        "ack_policy": {
+          "mode": "count_or_timer",
+          "every": 2,
+          "max_delay": "1/2"
+        }
+      },
+      "ack_start": "353/23",
+      "raw_delay": "307/23",
+      "exceeds_max_delay": true
+    }
+  ]
+}

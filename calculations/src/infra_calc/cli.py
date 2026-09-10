@@ -33,7 +33,7 @@ from .topics import image_request_budget
 from .topics import image_request_streaming
 from .topics import connection_window
 from .topics import connection_sequence
-from .topics import protocol_handshake, protocol_early_stream
+from .topics import protocol_handshake, protocol_early_stream, protocol_retry, shared_media_transport, transport_closed_loop
 from .topics import growing_remote_kv
 from .topics import paired_projection_cost
 from .topics import matrix_vector_handoff
@@ -41,6 +41,13 @@ from .topics import v4_copy_coordinates
 from .topics import attention_input_pipeline
 from .topics import fa4_resource_balance
 from .topics import storage_generation_comparison
+from .topics import queqiao_records
+from .topics import region_placement
+from .topics import execution_dag
+from .topics import weight_resident_traffic
+from .topics import iso_resource_comparison
+from .topics import specialization_payback
+from .topics import design_record
 from .topics import granularity_selection
 from .topics import omni_audio_preprocess
 from .topics import v4_optimizer
@@ -53,6 +60,8 @@ from .topics import v4_prefix_continuation
 from .topics import flux_vae_decode, architecture_variants
 from .topics import workload_profiles
 from .topics import qwen35_forward
+from . import coverage
+from . import delivery
 from . import hardware
 
 
@@ -191,6 +200,9 @@ def parser() -> argparse.ArgumentParser:
     topic_parser.add_argument("--inputs", type=Path)
     topic_parser.add_argument("--format", choices=("json", "md"), default="json")
     topic_parser.add_argument("--output", type=Path)
+    sub.add_parser("plot-shared-airtime", help="Render shared wireless service, feedback and media outcomes")
+    sub.add_parser("plot-media-feedback", help="Render actual shared-media feedback and business-quality panels")
+    sub.add_parser("plot-shared-media", help="Render shared-link delivery and playback teaching panels")
     sub.add_parser("plot-chat-agent", help="Render archived Chat/Agent and conditional KV figure")
     sub.add_parser("plot-architecture-shapes", help="Render data-bound architecture shape diagram (optional Matplotlib)")
     sub.add_parser("plot-capacity-curves", help="Render exact per-rank capacity staircases (optional Matplotlib)")
@@ -219,6 +231,43 @@ def parser() -> argparse.ArgumentParser:
     topic_parser.add_argument("--format", choices=("json", "md"), default="json")
     topic_parser.add_argument("--output", type=Path)
     topic_parser = sub.add_parser("fa4-resource-balance", help="Pinned FA4 Table 1 and single-SM resource supply scenarios")
+    topic_parser.add_argument("--format", choices=("json", "md"), default="json")
+    topic_parser.add_argument("--output", type=Path)
+    topic_parser = sub.add_parser("iso-resource-comparison", help="Two sides tuned independently under one shared cap: fixed pair, tuned pair, and the flip")
+    topic_parser.add_argument("--inputs", type=Path)
+    topic_parser.add_argument("--format", choices=("json", "md"), default="json")
+    topic_parser.add_argument("--output", type=Path)
+    topic_parser = sub.add_parser("specialization-payback", help="Whether operating savings repay a specialisation, with delivery, life and site cost")
+    topic_parser.add_argument("--inputs", type=Path)
+    topic_parser.add_argument("--format", choices=("json", "md"), default="json")
+    topic_parser.add_argument("--output", type=Path)
+    topic_parser = sub.add_parser("design-record", help="Input intervals, the measurement worth taking, and falsifiable held-out predictions")
+    topic_parser.add_argument("--inputs", type=Path)
+    topic_parser.add_argument("--format", choices=("json", "md"), default="json")
+    topic_parser.add_argument("--output", type=Path)
+    topic_parser = sub.add_parser("weight-resident-traffic", help="What still moves once weights are resident: fan-out/in, hops, sync span, supply back-solve")
+    topic_parser.add_argument("--inputs", type=Path)
+    topic_parser.add_argument("--format", choices=("json", "md"), default="json")
+    topic_parser.add_argument("--output", type=Path)
+    topic_parser = sub.add_parser("execution-dag", help="Full execution DAG bound, candidate rewrites and multi-objective screening")
+    topic_parser.add_argument("--inputs", type=Path)
+    topic_parser.add_argument("--format", choices=("json", "md"), default="json")
+    topic_parser.add_argument("--output", type=Path)
+    topic_parser = sub.add_parser("region-placement", help="Cross-region placement, transfer billing and break-even for one measured Agent session")
+    topic_parser.add_argument("--inputs", type=Path)
+    topic_parser.add_argument("--format", choices=("json", "md"), default="json")
+    topic_parser.add_argument("--output", type=Path)
+    topic_parser = sub.add_parser("delivery", help="F04 delivery audit: results regenerable, source audited, book in step, reader entry")
+    topic_parser.add_argument("--skip-rendered-book", action="store_true", help="Skip the slower outline/web check")
+    topic_parser.add_argument("--format", choices=("json", "md"), default="json")
+    topic_parser.add_argument("--output", type=Path)
+    topic_parser = sub.add_parser("coverage", help="F01 worklist: map every captured text block to the work packages that name its section")
+    topic_parser.add_argument("--write", action="store_true", help="Save inventory/f01-coverage.json")
+    topic_parser.add_argument("--format", choices=("json", "md"), default="json")
+    topic_parser.add_argument("--output", type=Path)
+    topic_parser = sub.add_parser("queqiao-records", help="Same-condition statistics, stage coverage and quantile support for the pinned Queqiao records")
+    topic_parser.add_argument("--prebuffer-ms", type=float, default=60.0, help="Declared playback prebuffer used for the stall-onset arithmetic")
+    topic_parser.add_argument("--comparison-leg", choices=("total", "download"), default="total")
     topic_parser.add_argument("--format", choices=("json", "md"), default="json")
     topic_parser.add_argument("--output", type=Path)
     topic_parser = sub.add_parser("storage-generation-comparison", help="Official memory capacity/bandwidth comparison for Qwen8/235")
@@ -287,7 +336,10 @@ def parser() -> argparse.ArgumentParser:
     cohort.add_argument("--format", choices=("json", "md"), default="json")
     cohort.add_argument("--output", type=Path)
     for name, help_text in (("protocol-handshake", "TLS1.3/QUICv1 declared message dependencies"),
-                            ("protocol-early-stream", "QUIC long early upload key transition and authorized replay")):
+                            ("protocol-early-stream", "QUIC long early upload key transition and authorized replay"),
+                            ("protocol-retry", "QUIC HRR, Retry and PSK decisions with packet-level replay"),
+                            ("shared-media-transport", "Shared finite credit, media deadlines and application delivery"),
+                            ("transport-closed-loop", "Confirmed-path upload or shared-media DAG with actual sender feedback")):
         protocol = sub.add_parser(name, help=help_text)
         protocol.add_argument("--inputs", type=Path)
         protocol.add_argument("--format", choices=("json", "md"), default="json")
@@ -1107,6 +1159,15 @@ def main(argv: list[str] | None = None) -> None:
             result = qwen235_expert_granularity.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
         elif args.command == "architecture-tile-work":
             result = architecture_tile_work.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+        elif args.command == "plot-shared-airtime":
+            from .shared_airtime_plot import render
+            result = render()
+        elif args.command == "plot-media-feedback":
+            from .media_feedback_plot import render
+            result = render()
+        elif args.command == "plot-shared-media":
+            from .shared_media_plot import render
+            result = render()
         elif args.command == "plot-chat-agent":
             from .chat_agent_plot import render
             result = render()
@@ -1128,6 +1189,24 @@ def main(argv: list[str] | None = None) -> None:
             result = attention_input_pipeline.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
         elif args.command == "fa4-resource-balance":
             result = fa4_resource_balance.calculate()
+        elif args.command == "iso-resource-comparison":
+            result = iso_resource_comparison.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+        elif args.command == "specialization-payback":
+            result = specialization_payback.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+        elif args.command == "design-record":
+            result = design_record.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+        elif args.command == "weight-resident-traffic":
+            result = weight_resident_traffic.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+        elif args.command == "execution-dag":
+            result = execution_dag.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+        elif args.command == "region-placement":
+            result = region_placement.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+        elif args.command == "delivery":
+            result = delivery.calculate(include_rendered_book=not args.skip_rendered_book)
+        elif args.command == "coverage":
+            result = coverage.write() if args.write else {k: v for k, v in coverage.build().items() if k != "rows"}
+        elif args.command == "queqiao-records":
+            result = queqiao_records.calculate(prebuffer_ms=args.prebuffer_ms, comparison_leg=args.comparison_leg)
         elif args.command == "storage-generation-comparison":
             result = storage_generation_comparison.calculate()
         elif args.command == "granularity-selection":
@@ -1157,6 +1236,12 @@ def main(argv: list[str] | None = None) -> None:
             result = render()
         elif args.command == "workload-profiles":
             result = workload_profiles.calculate()
+        elif args.command == "transport-closed-loop":
+            result = transport_closed_loop.calculate(json.loads(args.inputs.read_text()) if args.inputs else None)
+        elif args.command == "shared-media-transport":
+            result = shared_media_transport.calculate(json.loads(args.inputs.read_text()) if args.inputs else None)
+        elif args.command == "protocol-retry":
+            result = protocol_retry.calculate(json.loads(args.inputs.read_text()) if args.inputs else None)
         elif args.command == "protocol-handshake":
             result = protocol_handshake.calculate(json.loads(args.inputs.read_text()) if args.inputs else None)
         elif args.command == "protocol-early-stream":

@@ -1,0 +1,828 @@
+{
+  "rtt-duplicate-ack": {
+    "max_datagram_size": 1200,
+    "initial_max_data": 100000,
+    "initial_max_stream_data": {
+      "A": 100000
+    },
+    "until": "0.4",
+    "events": [
+      {
+        "type": "sent",
+        "at": 0,
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 100
+          }
+        ]
+      },
+      {
+        "type": "ack",
+        "at": "0.1",
+        "ranges": [
+          [
+            0,
+            0
+          ]
+        ],
+        "ack_delay": 0
+      },
+      {
+        "type": "sent",
+        "at": "0.2",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 100,
+            "length": 100
+          }
+        ]
+      },
+      {
+        "type": "ack",
+        "at": "0.32",
+        "ranges": [
+          [
+            1,
+            1
+          ]
+        ],
+        "ack_delay": "0.02"
+      },
+      {
+        "type": "ack",
+        "at": "0.35",
+        "ranges": [
+          [
+            0,
+            1
+          ]
+        ],
+        "ack_delay": 0
+      }
+    ]
+  },
+  "rtt-verified-errata": {
+    "max_datagram_size": 1200,
+    "initial_max_data": 100000,
+    "initial_max_stream_data": {
+      "A": 100000
+    },
+    "until": "0.38",
+    "events": [
+      {
+        "type": "sent",
+        "at": 0,
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 100
+          }
+        ]
+      },
+      {
+        "type": "ack",
+        "at": "0.1",
+        "ranges": [
+          [
+            0,
+            0
+          ]
+        ],
+        "ack_delay": 0
+      },
+      {
+        "type": "sent",
+        "at": "0.2",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 100,
+            "length": 100
+          }
+        ]
+      },
+      {
+        "type": "ack",
+        "at": "0.38",
+        "ranges": [
+          [
+            1,
+            1
+          ]
+        ],
+        "ack_delay": "0.02"
+      }
+    ]
+  },
+  "packet-and-time-threshold": {
+    "max_datagram_size": 1200,
+    "initial_max_data": 100000,
+    "initial_max_stream_data": {
+      "A": 100000
+    },
+    "until": "0.115",
+    "events": [
+      {
+        "type": "sent",
+        "at": "0",
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 1
+          }
+        ]
+      },
+      {
+        "type": "sent",
+        "at": "1/1000",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 1,
+            "length": 1
+          }
+        ]
+      },
+      {
+        "type": "sent",
+        "at": "1/500",
+        "pn": 2,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 2,
+            "length": 1
+          }
+        ]
+      },
+      {
+        "type": "sent",
+        "at": "3/1000",
+        "pn": 3,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 3,
+            "length": 1
+          }
+        ]
+      },
+      {
+        "type": "ack",
+        "at": "0.103",
+        "ranges": [
+          [
+            3,
+            3
+          ]
+        ],
+        "ack_delay": 0
+      }
+    ],
+    "rtt_seed": {
+      "latest_rtt": "0.1",
+      "smoothed_rtt": "0.1",
+      "rttvar": "0.0375",
+      "min_rtt": "0.1",
+      "first_sample_at": -1
+    }
+  },
+  "ack-at-loss-deadline": {
+    "max_datagram_size": 1200,
+    "initial_max_data": 100000,
+    "initial_max_stream_data": {
+      "A": 100000
+    },
+    "until": "0.115",
+    "events": [
+      {
+        "type": "sent",
+        "at": "0",
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 1
+          }
+        ]
+      },
+      {
+        "type": "sent",
+        "at": "1/1000",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 1,
+            "length": 1
+          }
+        ]
+      },
+      {
+        "type": "sent",
+        "at": "1/500",
+        "pn": 2,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 2,
+            "length": 1
+          }
+        ]
+      },
+      {
+        "type": "sent",
+        "at": "3/1000",
+        "pn": 3,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 3,
+            "length": 1
+          }
+        ]
+      },
+      {
+        "type": "ack",
+        "at": "0.103",
+        "ranges": [
+          [
+            3,
+            3
+          ]
+        ],
+        "ack_delay": 0
+      },
+      {
+        "type": "ack",
+        "at": "0.1135",
+        "ranges": [
+          [
+            1,
+            1
+          ]
+        ],
+        "ack_delay": "0.0125"
+      }
+    ],
+    "rtt_seed": {
+      "latest_rtt": "0.1",
+      "smoothed_rtt": "0.1",
+      "rttvar": "0.0375",
+      "min_rtt": "0.1",
+      "first_sample_at": -1
+    }
+  },
+  "tail-no-feedback-pto": {
+    "max_datagram_size": 1200,
+    "initial_max_data": 100000,
+    "initial_max_stream_data": {
+      "A": 100000
+    },
+    "until": "1.9",
+    "events": [
+      {
+        "type": "sent",
+        "at": 1,
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 10
+          }
+        ]
+      }
+    ],
+    "rtt_seed": {
+      "latest_rtt": "0.1",
+      "smoothed_rtt": "0.1",
+      "rttvar": "0.0375",
+      "min_rtt": "0.1",
+      "first_sample_at": -1
+    }
+  },
+  "probe-then-ack-reset": {
+    "max_datagram_size": 1200,
+    "initial_max_data": 100000,
+    "initial_max_stream_data": {
+      "A": 100000
+    },
+    "until": "1.9",
+    "events": [
+      {
+        "type": "sent",
+        "at": 1,
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 10
+          }
+        ]
+      },
+      {
+        "type": "sent",
+        "at": "1.275",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "probe": true,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 10
+          }
+        ]
+      },
+      {
+        "type": "ack",
+        "at": "1.375",
+        "ranges": [
+          [
+            0,
+            1
+          ]
+        ],
+        "ack_delay": 0
+      }
+    ],
+    "rtt_seed": {
+      "latest_rtt": "0.1",
+      "smoothed_rtt": "0.1",
+      "rttvar": "0.0375",
+      "min_rtt": "0.1",
+      "first_sample_at": -1
+    }
+  },
+  "ack-at-pto-deadline": {
+    "max_datagram_size": 1200,
+    "initial_max_data": 100000,
+    "initial_max_stream_data": {
+      "A": 100000
+    },
+    "until": "1.275",
+    "events": [
+      {
+        "type": "sent",
+        "at": 1,
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": []
+      },
+      {
+        "type": "ack",
+        "at": "1.275",
+        "ranges": [
+          [
+            0,
+            0
+          ]
+        ],
+        "ack_delay": 0
+      }
+    ],
+    "rtt_seed": {
+      "latest_rtt": "0.1",
+      "smoothed_rtt": "0.1",
+      "rttvar": "0.0375",
+      "min_rtt": "0.1",
+      "first_sample_at": -1
+    }
+  },
+  "absolute-flow-feedback": {
+    "max_datagram_size": 1200,
+    "initial_max_data": 6,
+    "initial_max_stream_data": {
+      "A": 4,
+      "B": 2
+    },
+    "until": 6,
+    "events": [
+      {
+        "type": "sent",
+        "at": 0,
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 4
+          }
+        ]
+      },
+      {
+        "type": "sent",
+        "at": "0.001",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "B",
+            "offset": 0,
+            "length": 2
+          }
+        ]
+      },
+      {
+        "type": "ack",
+        "at": "0.1",
+        "ranges": [
+          [
+            0,
+            1
+          ]
+        ],
+        "ack_delay": 0,
+        "flow_limited": true
+      },
+      {
+        "type": "can_send",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 4,
+            "length": 2
+          }
+        ],
+        "at": 4
+      },
+      {
+        "type": "max_data",
+        "at": 5,
+        "value": 8
+      },
+      {
+        "type": "can_send",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 4,
+            "length": 2
+          }
+        ],
+        "at": 5
+      },
+      {
+        "type": "max_stream_data",
+        "at": 6,
+        "stream": "A",
+        "value": 6
+      },
+      {
+        "type": "can_send",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 4,
+            "length": 2
+          }
+        ],
+        "at": 6
+      }
+    ]
+  },
+  "stream-offset-high-water": {
+    "max_datagram_size": 1200,
+    "initial_max_data": 6,
+    "initial_max_stream_data": {
+      "A": 6
+    },
+    "until": "0.3",
+    "events": [
+      {
+        "type": "sent",
+        "at": 0,
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 5,
+            "length": 1
+          }
+        ]
+      },
+      {
+        "type": "ack",
+        "at": "0.1",
+        "ranges": [
+          [
+            0,
+            0
+          ]
+        ],
+        "ack_delay": 0
+      },
+      {
+        "type": "sent",
+        "at": "0.2",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 5
+          }
+        ]
+      },
+      {
+        "type": "ack",
+        "at": "0.3",
+        "ranges": [
+          [
+            1,
+            1
+          ]
+        ],
+        "ack_delay": 0
+      }
+    ]
+  },
+  "datagram-without-stream-credit": {
+    "max_datagram_size": 1200,
+    "initial_max_data": 0,
+    "initial_max_stream_data": {
+      "A": 0
+    },
+    "until": "0.1",
+    "events": [
+      {
+        "type": "sent",
+        "at": 0,
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "datagram",
+            "id": "audio0",
+            "length": 100
+          }
+        ]
+      },
+      {
+        "type": "ack",
+        "at": "0.1",
+        "ranges": [
+          [
+            0,
+            0
+          ]
+        ],
+        "ack_delay": 0
+      }
+    ]
+  },
+  "ack-only": {
+    "max_datagram_size": 1200,
+    "initial_max_data": 100000,
+    "initial_max_stream_data": {
+      "A": 100000
+    },
+    "until": "0.5",
+    "events": [
+      {
+        "type": "sent",
+        "at": 0,
+        "pn": 0,
+        "sent_bytes": 1200,
+        "ack_eliciting": false,
+        "in_flight": false,
+        "frames": []
+      }
+    ]
+  },
+  "padding-only": {
+    "max_datagram_size": 1200,
+    "initial_max_data": 100000,
+    "initial_max_stream_data": {
+      "A": 100000
+    },
+    "until": "0.5",
+    "events": [
+      {
+        "type": "sent",
+        "at": 0,
+        "pn": 0,
+        "sent_bytes": 1200,
+        "ack_eliciting": false,
+        "in_flight": true,
+        "frames": []
+      }
+    ]
+  },
+  "new-pn-old-offset-recovery": {
+    "max_datagram_size": 1200,
+    "initial_max_data": 100000,
+    "initial_max_stream_data": {
+      "A": 100000
+    },
+    "until": "0.204",
+    "events": [
+      {
+        "type": "sent",
+        "at": "0",
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 1
+          }
+        ]
+      },
+      {
+        "type": "sent",
+        "at": "1/1000",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 1,
+            "length": 1
+          }
+        ]
+      },
+      {
+        "type": "sent",
+        "at": "1/500",
+        "pn": 2,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 2,
+            "length": 1
+          }
+        ]
+      },
+      {
+        "type": "sent",
+        "at": "3/1000",
+        "pn": 3,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 3,
+            "length": 1
+          }
+        ]
+      },
+      {
+        "type": "ack",
+        "at": "0.103",
+        "ranges": [
+          [
+            3,
+            3
+          ]
+        ],
+        "ack_delay": 0
+      },
+      {
+        "type": "sent",
+        "at": "0.104",
+        "pn": 4,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 1
+          }
+        ]
+      },
+      {
+        "type": "ack",
+        "at": "0.12",
+        "ranges": [
+          [
+            0,
+            0
+          ]
+        ],
+        "ack_delay": 0
+      },
+      {
+        "type": "ack",
+        "at": "0.204",
+        "ranges": [
+          [
+            4,
+            4
+          ]
+        ],
+        "ack_delay": 0
+      }
+    ],
+    "rtt_seed": {
+      "latest_rtt": "0.1",
+      "smoothed_rtt": "0.1",
+      "rttvar": "0.0375",
+      "min_rtt": "0.1",
+      "first_sample_at": -1
+    }
+  },
+  "pto-probe-over-cwnd": {
+    "max_datagram_size": 1200,
+    "initial_max_data": 100000,
+    "initial_max_stream_data": {
+      "A": 100000
+    },
+    "until": "0.276",
+    "events": [
+      {
+        "type": "sent",
+        "at": "0",
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": []
+      },
+      {
+        "type": "sent",
+        "at": "1/1000",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "frames": []
+      },
+      {
+        "type": "sent",
+        "at": "0.276",
+        "pn": 2,
+        "sent_bytes": 1200,
+        "probe": true,
+        "frames": []
+      }
+    ],
+    "rtt_seed": {
+      "latest_rtt": "0.1",
+      "smoothed_rtt": "0.1",
+      "rttvar": "0.0375",
+      "min_rtt": "0.1",
+      "first_sample_at": -1
+    },
+    "initial_cwnd": 2400
+  }
+}

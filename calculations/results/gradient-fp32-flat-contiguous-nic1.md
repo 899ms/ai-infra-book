@@ -9515,7 +9515,7 @@
     ],
     "aggregate_resource_lower_seconds": 0.01409286144,
     "sum_round_resource_lower_seconds": 0.01409286144,
-    "barrier_lower_with_startup_seconds": 0.01412086144
+    "barrier_lower_with_startup_seconds": 0.014120861440000002
   },
   "summary": {
     "network_send_bytes": 2818572288,

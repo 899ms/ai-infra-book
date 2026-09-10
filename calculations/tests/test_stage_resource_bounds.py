@@ -1,4 +1,6 @@
 import copy
+import os
+import subprocess
 import unittest
 from pathlib import Path
 import sys
@@ -17,6 +19,25 @@ from infra_calc.topics import stage_resource_bounds as m
 
 
 class BoundsTests(unittest.TestCase):
+    def test_serialization_is_stable_across_process_hash_seeds(self):
+        # A same-process dict equality check misses hash-dependent key order.
+        program = """
+import json
+from infra_calc.topics import stage_resource_bounds as m
+for model in ("qwen3-8b", "deepseek-v4-flash"):
+    for tokens, history in ((128, 0), (1, 8192)):
+        result = m.calculate(model=model, tokens=tokens, history=history)
+        print(json.dumps(result, ensure_ascii=False, allow_nan=False))
+        print(m.markdown(result))
+"""
+        source = str(Path(__file__).resolve().parents[1] / "src")
+        outputs = []
+        for seed in ("1", "2"):
+            environment = dict(os.environ, PYTHONHASHSEED=seed, PYTHONPATH=source)
+            outputs.append(subprocess.check_output(
+                [sys.executable, "-c", program], env=environment, timeout=90))
+        self.assertEqual(outputs[0], outputs[1])
+
     def test_serial_counterexample_and_zero_unknown(self):
         stages = [
             dict(id="a", work={"compute": 10, "bytes": 1}),

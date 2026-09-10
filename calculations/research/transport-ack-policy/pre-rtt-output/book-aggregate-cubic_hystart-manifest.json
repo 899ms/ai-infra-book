@@ -1,0 +1,201 @@
+{
+  "scenario": "book-aggregate-cubic_hystart",
+  "code_hashes": {
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/calculate.py": "5e921efa58d85f7f77dd9ba945f20facbb91cf2f6033f25145092e9750dd5c38",
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/receiver.py": "a8a44b09c95d76501821a20a4737fdc352d564de706f98082b2c5f7f55949378",
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/run-book-comparison.py": "2540db6a74405975b58c359ede8a558947a681788419001f780fe67ea7ee08e3",
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/../transport-controller-loop/sender.py": "be435d7222f2531f485e23611633c8622b3385d7ecb3e8406342b7b9a1e7b77d",
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/../transport-controller-loop/pacer.py": "7d5b55d04d52b9c14c96b7de0eec03ecb531d258c3d25489d07781c74209b510",
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/../transport-controller-loop/cubic_adapter.py": "cdfc2c64e387dc48e7e940d67885cfc2630f8423800976373d968b458045dc42",
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/../transport-controller-loop/bbr_adapter.py": "606b263d23d8c7917fd6deab94378a4639b343c43bf35087937eb9eebe7d66ba",
+    "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy/../transport-controller-loop/persistent_congestion.py": "116448af2c5c8c1bc0571c1452b032b01f3300771dae9a7e8bc7ac5ea8833a7f",
+    "/Users/boj/book/ai-infra-book/calculations/research/congestion-controllers/cubic.py": "91be0851fb7a2e947e42578e8703bd098df98ba7432672440a2f81e677282836",
+    "/Users/boj/book/ai-infra-book/calculations/research/congestion-controllers/bbr_state.py": "fda8c57569767c94c9bbdbeca7e0155425542ade3c9f9356db188a131b9127c6",
+    "/Users/boj/book/ai-infra-book/calculations/research/congestion-controllers/bbr_reference.py": "bce5ee725bb7027195fae50356d8ddb95f8441a4721e21eaac548beeede8ba05",
+    "/Users/boj/book/ai-infra-book/calculations/research/congestion-controllers/bbr_minmax.py": "07cdbf94e82d20115657810522d09461422815ccca539d9e61ce23ebb1397b28",
+    "/Users/boj/book/ai-infra-book/calculations/research/hystart-plus-plus/calculate.py": "4eb38d1b4e09a4d5922a89a6bbcb7127ed4cfbf4678afb94323aea6eb3cb139d"
+  },
+  "reference_sources": [
+    {
+      "source_root": "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy",
+      "file": "sources/rfc9000.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+      "revision": "RFC9000",
+      "bytes": 403442,
+      "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+      "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+      "verified_at_utc": "2026-09-09T15:53:11.789452+00:00",
+      "verification": "Existing locked official source copied; destination re-read and SHA/length checked. No new fetch."
+    },
+    {
+      "source_root": "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy",
+      "file": "sources/rfc9002.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+      "revision": "RFC9002",
+      "bytes": 89071,
+      "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+      "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+      "verified_at_utc": "2026-09-09T15:53:11.789853+00:00",
+      "verification": "Existing locked official source copied; destination re-read and SHA/length checked. No new fetch."
+    },
+    {
+      "source_root": "/Users/boj/book/ai-infra-book/calculations/research/transport-ack-policy",
+      "file": "sources/rfc9002-errata7539.html",
+      "url": "https://www.rfc-editor.org/errata/eid7539",
+      "revision": "RFC9002 Verified Errata7539",
+      "bytes": 8446,
+      "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+      "verified_at_utc": "2026-09-09T15:53:11.790157+00:00",
+      "verification": "Existing locked official source copied; destination re-read and SHA/length checked. No new fetch.",
+      "copied_from": "calculations/sources/protocol-rfc/rfc9002-errata7539.html"
+    },
+    {
+      "source_root": "/Users/boj/book/ai-infra-book/calculations/research/congestion-controllers",
+      "file": "sources/rfc9438.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+      "revision": "RFC9438",
+      "bytes": 73704,
+      "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+      "copied_from": "calculations/research/congestion-controller-inputs/sources/rfc9438.txt",
+      "verified_at_utc": "2026-09-09T13:59:21.142653+00:00"
+    },
+    {
+      "source_root": "/Users/boj/book/ai-infra-book/calculations/research/congestion-controllers",
+      "file": "sources/rfc5681.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc5681.txt",
+      "revision": "RFC5681",
+      "bytes": 44339,
+      "sha256": "a2d99a2421d5c57b248394f26ba44fc364aa546680fbf10ff0aa7034dad8b87d",
+      "copied_from": "calculations/sources/protocol-rfc/rfc5681.txt",
+      "verified_at_utc": "2026-09-09T13:59:21.143031+00:00"
+    },
+    {
+      "source_root": "/Users/boj/book/ai-infra-book/calculations/research/hystart-plus-plus",
+      "file": "sources/rfc9406.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9406.txt",
+      "revision": "RFC9406",
+      "bytes": 18917,
+      "sha256": "43e3ddc1d3446142b125f018cd52aa2ff858b3f1ff9c6969924ab9fbf45d5230"
+    },
+    {
+      "source_root": "/Users/boj/book/ai-infra-book/calculations/research/hystart-plus-plus",
+      "file": "errata-check.html",
+      "url": "https://www.rfc-editor.org/errata_search.php?rfc=9406",
+      "revision": "RFC9406 errata search snapshot 2026-09-09",
+      "bytes": 7052,
+      "sha256": "4765d07ace49aa20e0ce7001016c50329f1309640d1e0a024a5577c0494572db",
+      "finding": "No matching errata found in official filtered response"
+    },
+    {
+      "source_root": "/Users/boj/book/ai-infra-book/calculations/research/congestion-controller-inputs",
+      "file": "sources/rfc9438.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9438.txt",
+      "revision": "RFC9438",
+      "bytes": 73704,
+      "sha256": "baa4dd77295e27b9fa5c79993e962e70f728409bd1a48b9029bae4b551b0348a",
+      "retrieved": "2026-09-09",
+      "status": "downloaded_verified_against_prior_scope"
+    },
+    {
+      "source_root": "/Users/boj/book/ai-infra-book/calculations/research/congestion-controller-inputs",
+      "file": "sources/tcp_bbr.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/net/ipv4/tcp_bbr.c",
+      "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+      "bytes": 42724,
+      "sha256": "ba7d0706259dfef5bf455f26ac4bab65f43b9209b9cfd4f761c64c89816bdfe4",
+      "retrieved": "2026-09-09",
+      "status": "downloaded_verified_against_prior_scope"
+    },
+    {
+      "source_root": "/Users/boj/book/ai-infra-book/calculations/research/congestion-controller-inputs",
+      "file": "sources/tcp_rate.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/net/ipv4/tcp_rate.c",
+      "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+      "bytes": 8436,
+      "sha256": "52d682c760573819a36bfef45a094ea8615a39d56c0248569d96f9e6e47b2b23",
+      "retrieved": "2026-09-09",
+      "status": "downloaded_verified_against_prior_scope"
+    },
+    {
+      "source_root": "/Users/boj/book/ai-infra-book/calculations/research/congestion-controller-inputs",
+      "file": "sources/tcp.h",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/ffc253263a1375a65fa6c9f62a893e9767fbebfa/include/net/tcp.h",
+      "revision": "ffc253263a1375a65fa6c9f62a893e9767fbebfa",
+      "bytes": 78187,
+      "sha256": "de555f117e5b039040c94ce693ba5e0c74bb7a4f11df00e0d72de95988f1b553",
+      "retrieved": "2026-09-09",
+      "status": "downloaded_dependency_no_prior_hash",
+      "purpose": "before()/after() serial arithmetic and rate_sample unit definitions"
+    }
+  ],
+  "elapsed_seconds": 31.09337970899651,
+  "result_file": "book-aggregate-cubic_hystart-result.json",
+  "result_sha256": "e60c31568bbc2a75b531119fde418278ab4b144df54c3233b6065e980a07c0a3",
+  "inputs": {
+    "upload_bytes": 30000000,
+    "response_bytes": 5000000,
+    "model_seconds": "0.3",
+    "until": 60,
+    "links": {
+      "up": {
+        "rate_bps": 20000000,
+        "propagation": "0.05"
+      },
+      "down": {
+        "rate_bps": 100000000,
+        "propagation": "0.05"
+      }
+    },
+    "sender": {
+      "initial_cwnd": 12000,
+      "numeric_quantum": "0.000000000001"
+    },
+    "controller": {
+      "name": "cubic_hystart"
+    },
+    "pad_in_flight": true,
+    "ack_policy": {
+      "mode": "count_or_timer",
+      "every": 2,
+      "max_delay": "0.01",
+      "delay_exponent": 3,
+      "retain_packets": 256,
+      "reorder_immediate": true,
+      "header_tag_bytes": 24
+    }
+  },
+  "comparison_baseline_manifest": "../transport-controller-loop/book-cubic_hystart-manifest.json",
+  "baseline_result_sha256": "b1bd5499f8be311d4fce8ba64a5a556da2cc2cfa2ef5838f31c9e15f71ed7614",
+  "only_original_book_input_change": "ack_policy",
+  "sender_policy_effect": {
+    "max_ack_delay_seconds": "0.01",
+    "track_ack_only": true,
+    "reason": "peer receive policy feeds PTO/RTT rules; ACK ranges may acknowledge pure ACK PN"
+  },
+  "business": {
+    "upload": "3277343693/250000000",
+    "model_start": "3277343693/250000000",
+    "model_end": "3352343693/250000000",
+    "response": "3641114949/250000000"
+  },
+  "summary": {
+    "wire_bytes": 38177328,
+    "serialized_wire_bytes_by_horizon": "38177328",
+    "unique_received_bytes": 35000000,
+    "pending_packets": {
+      "up": 0,
+      "down": 0
+    },
+    "complete": true
+  },
+  "transmission_count": 44956,
+  "ack_count": 14990,
+  "ack_quic_bytes": 959360,
+  "max_ack_frame_bytes": 10,
+  "max_ack_ranges": 1,
+  "ack_delay_overruns": 0,
+  "loss_counts": {
+    "up": 0,
+    "down": 12591
+  }
+}

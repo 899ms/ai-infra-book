@@ -1,0 +1,142 @@
+{
+  "status": "prewritten-before-candidate-execution",
+  "units": "seconds, serialized bytes; rates bits/s",
+  "common": {
+    "forward_rate": 8,
+    "reverse_rate": 8,
+    "propagation_each_direction": 1,
+    "data_wire_bytes": 1
+  },
+  "oracles": [
+    {
+      "id": "hol_same_wire",
+      "description": "B0 lost 0-1, A0 1-2, B1 2-3; declared B0 recovery5-6; ACK cannot constrain send",
+      "arrivals": {
+        "A0": 3,
+        "B1": 4,
+        "B0": 7
+      },
+      "connection_ordered_audio_delivery": 7,
+      "stream_ordered_audio_delivery": 3,
+      "image_complete_both": 7,
+      "audio_deadline": 4,
+      "sent_data_wire_bytes": 4,
+      "unique_data_bytes": 3
+    },
+    {
+      "id": "priority_same_packets",
+      "description": "Four image packets available0; audio available1; arrival/production before same-time next send",
+      "fifo": {
+        "image_complete": 5,
+        "audio_complete": 6
+      },
+      "audio_priority": {
+        "image_complete": 6,
+        "audio_complete": 3
+      },
+      "data_wire_bytes_both": 5,
+      "all_complete_both": 6
+    },
+    {
+      "id": "nonpreemptive_large_packet",
+      "description": "One 4-byte image packet starts0; audio ready1",
+      "image_complete": 5,
+      "audio_complete": 6
+    },
+    {
+      "id": "shared_credit",
+      "description": "2 packet credits total, no growth; reverse1-byteACK per arrival; same credit for 1stream or3streams",
+      "data_starts": [
+        0,
+        1,
+        4
+      ],
+      "data_arrivals": [
+        2,
+        3,
+        6
+      ],
+      "first_two_ack_arrivals": [
+        4,
+        5
+      ]
+    },
+    {
+      "id": "playback",
+      "arrival_times": [
+        3,
+        6,
+        7
+      ],
+      "chunk_duration": 2,
+      "reliable": {
+        "intervals": [
+          [
+            3,
+            5
+          ],
+          [
+            6,
+            8
+          ],
+          [
+            8,
+            10
+          ]
+        ],
+        "first_play": 3,
+        "stall": 1,
+        "finish": 10
+      },
+      "fixed_slots": {
+        "intervals": [
+          [
+            3,
+            5
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            7,
+            9
+          ]
+        ],
+        "played_indices": [
+          0,
+          2
+        ],
+        "expired_indices": [
+          1
+        ],
+        "missing_duration": 2,
+        "finish": 9
+      }
+    },
+    {
+      "id": "image_dependency",
+      "description": "HOL oracle stream delivery; image complete7, model2s, response2bytes on free reverse link",
+      "model_start": 7,
+      "model_end": 9,
+      "response_start": 9,
+      "response_end": 11,
+      "response_delivery": 12
+    },
+    {
+      "id": "cancel_nonpreemptive_compute",
+      "description": "Independent case: upload1byte0-1arr2; model3s starts2; cancel1byte starts2ends3arr4; compute nonpreemptive but unsent output suppressed",
+      "server_knows_cancel": 4,
+      "compute_start": 2,
+      "compute_end": 5,
+      "response_sent_bytes": 0,
+      "useful_response": false
+    }
+  ],
+  "notes": [
+    "ACK wire bytes additional; sufficient credits in A/B/E isolate intended factor.",
+    "Reliable image cannot use expiry drop.",
+    "Fixed-slot missing duration is a quality change, not equivalent acceleration.",
+    "Loss recovery send time is a declared input, not TCP RTO/QUIC PTO."
+  ]
+}

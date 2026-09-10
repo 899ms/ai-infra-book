@@ -1,0 +1,1227 @@
+{
+  "inputs": {
+    "application": {
+      "schema_version": 1,
+      "id": "three-up-same-ready",
+      "messages": [
+        {
+          "id": "d0",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "file",
+          "transport": "stream",
+          "bytes": 1,
+          "stream_offset": 0,
+          "application_offset": 0,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 0,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 1,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "d1",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "file",
+          "transport": "stream",
+          "bytes": 1,
+          "stream_offset": 1,
+          "application_offset": 1,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 1,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 1,
+            "coalesce_across_messages": false
+          }
+        },
+        {
+          "id": "d2",
+          "sender": "client",
+          "receiver": "server",
+          "flow_id": "file",
+          "transport": "stream",
+          "bytes": 1,
+          "stream_offset": 2,
+          "application_offset": 2,
+          "ready_seconds": "0",
+          "dependencies": [],
+          "priority": 0,
+          "source_order": 2,
+          "deadline_seconds": null,
+          "allow_expire": false,
+          "cancel_tag": null,
+          "on_delivery_cancel_tags": [],
+          "packetization": {
+            "payload_limit_bytes": 1168,
+            "fragment_count": 1,
+            "final_fragment_bytes": 1,
+            "coalesce_across_messages": false
+          }
+        }
+      ],
+      "compute_tasks": [],
+      "business_observers": [
+        {
+          "id": "file",
+          "kind": "image",
+          "endpoint": "server",
+          "completion_dependencies": [
+            {
+              "id": "d0",
+              "event": "message_delivered",
+              "endpoint": "server"
+            },
+            {
+              "id": "d1",
+              "event": "message_delivered",
+              "endpoint": "server"
+            },
+            {
+              "id": "d2",
+              "event": "message_delivered",
+              "endpoint": "server"
+            }
+          ],
+          "version_changes": []
+        },
+        {
+          "id": "tail-audio-slot",
+          "kind": "tts",
+          "endpoint": "server",
+          "completion_dependencies": [
+            {
+              "id": "d2",
+              "event": "message_delivered",
+              "endpoint": "server"
+            }
+          ],
+          "version_changes": [],
+          "playback": "slots",
+          "blocks": [
+            {
+              "message_ids": [
+                "d2"
+              ],
+              "duration_seconds": "1/4",
+              "slot_start_seconds": "6"
+            }
+          ]
+        }
+      ],
+      "scheduling": {
+        "send": "fifo",
+        "compute": "fifo",
+        "compute_nonpreemptive": true,
+        "resource_capacity_tasks": 1
+      },
+      "links": {},
+      "connection_ready_seconds": "0",
+      "external_legacy_assumptions": {},
+      "accounting": {
+        "application_bytes_by_direction": {
+          "client_to_server": 3,
+          "server_to_client": 0
+        },
+        "application_bytes": 3,
+        "message_count": 3,
+        "task_count": 0,
+        "fragment_count": 3
+      }
+    },
+    "network": {
+      "links": {
+        "up": {
+          "rate_bps": 9824,
+          "propagation": 0
+        },
+        "down": {
+          "rate_bps": 9824,
+          "propagation": 0
+        }
+      },
+      "until": 14,
+      "initial_cwnd": 2400,
+      "initial_max_data": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "initial_max_stream_data": {
+        "up": {
+          "file": 3
+        },
+        "down": {}
+      },
+      "receive_memory_bytes": {
+        "up": 1000000,
+        "down": 1000000
+      },
+      "consume_delay": null,
+      "pad_in_flight": true,
+      "ack_bytes": 64,
+      "sender": {
+        "rtt_seed": {
+          "latest_rtt": 100,
+          "smoothed_rtt": 100,
+          "rttvar": 50,
+          "min_rtt": 100
+        }
+      },
+      "ack_policy": {
+        "mode": "count_or_timer",
+        "every": 4,
+        "max_delay": "4",
+        "delay_exponent": 3,
+        "retain_packets": 256,
+        "reorder_immediate": true,
+        "header_tag_bytes": 24
+      },
+      "drop_packets": [],
+      "routers": {},
+      "wireless_access": {
+        "enabled": true,
+        "profile": {
+          "identity": "dimensionless-scale teaching seconds; not an IEEE PHY",
+          "global_resource_capacity": 1,
+          "fifo_tie_order": [
+            "client",
+            "AP"
+          ],
+          "data_ppdu_seconds": "1",
+          "post_data_sifs_plus_mac_ack_seconds": "1/4",
+          "transport_ack_whole_exchange_seconds": "1/2",
+          "whole_exchange_includes_own_mac_ack": true,
+          "contention_seconds": "0",
+          "propagation_seconds": "0",
+          "full_ack_failure_known_from_data_txstart_seconds": "3/2",
+          "retry_ready_wait_after_failure_seconds": "1/2",
+          "max_attempts_selected": 2,
+          "warning": "These values only support independent hand arithmetic; never add source-backed microseconds on top.",
+          "transport_ack_ppdu_seconds": "1/4",
+          "transport_ack_post_data_sifs_plus_mac_ack_seconds": "1/4",
+          "transport_ack_endpoint_receives_at": "end of its PPDU; medium remains reserved until its MAC confirmation exchange ends"
+        },
+        "max_attempts": 2,
+        "retry_wait": "1/2",
+        "failures": []
+      }
+    }
+  },
+  "reference_sources": [
+    {
+      "file": "sources/protocol-rfc/rfc9000.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+      "revision": "RFC9000",
+      "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9002.txt",
+      "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+      "revision": "RFC9002",
+      "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af"
+    },
+    {
+      "file": "sources/protocol-rfc/rfc9002-errata7539.html",
+      "url": "https://www.rfc-editor.org/errata/eid7539",
+      "revision": "RFC9002 Verified Errata7539",
+      "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a"
+    }
+  ],
+  "transmissions": [
+    {
+      "direction": "up",
+      "pn": 0,
+      "kind": "data",
+      "message_id": "d0",
+      "message_offset": 0,
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "file",
+          "offset": 0,
+          "length": 1
+        }
+      ],
+      "send_start": "0",
+      "send_end": "1",
+      "arrival": "2",
+      "received_at": "2",
+      "quic_bytes": 1200,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null,
+      "wireless_attempt_indices": [
+        0
+      ],
+      "wireless_received_at": "1",
+      "wan_start": "1",
+      "wan_end": "2"
+    },
+    {
+      "direction": "up",
+      "pn": 1,
+      "kind": "data",
+      "message_id": "d1",
+      "message_offset": 0,
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "file",
+          "offset": 1,
+          "length": 1
+        }
+      ],
+      "send_start": "5/4",
+      "send_end": "9/4",
+      "arrival": "13/4",
+      "received_at": "13/4",
+      "quic_bytes": 1200,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null,
+      "wireless_attempt_indices": [
+        1
+      ],
+      "wireless_received_at": "9/4",
+      "wan_start": "9/4",
+      "wan_end": "13/4"
+    },
+    {
+      "direction": "down",
+      "pn": 0,
+      "kind": "ack",
+      "message_id": null,
+      "message_offset": null,
+      "frames": [],
+      "send_start": "6",
+      "send_end": "1865/307",
+      "arrival": "7767/1228",
+      "received_at": "7767/1228",
+      "quic_bytes": 64,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null,
+      "ack_snapshot": {
+        "ranges": [
+          [
+            0,
+            1
+          ]
+        ],
+        "largest": 1,
+        "largest_received_at": "13/4",
+        "raw_delay": "11/4",
+        "encoded_delay": 343750,
+        "delay_exponent": 3,
+        "decoded_delay": "11/4",
+        "encoding_error": "0",
+        "frame_bytes": 8,
+        "header_tag_bytes": 24,
+        "exceeds_max_delay": false,
+        "covered_pending": 2,
+        "retention_packets": 256
+      },
+      "wan_arrival": "1865/307",
+      "ap_ready_at": "1865/307",
+      "wireless_attempt_indices": [
+        2
+      ],
+      "wireless_received_at": "7767/1228"
+    },
+    {
+      "direction": "up",
+      "pn": 2,
+      "kind": "data",
+      "message_id": "d2",
+      "message_offset": 0,
+      "frames": [
+        {
+          "type": "stream",
+          "stream": "file",
+          "offset": 2,
+          "length": 1
+        }
+      ],
+      "send_start": "4037/614",
+      "send_end": "4651/614",
+      "arrival": "5265/614",
+      "received_at": "5265/614",
+      "quic_bytes": 1200,
+      "wire_bytes": 1228,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null,
+      "wireless_attempt_indices": [
+        3
+      ],
+      "wireless_received_at": "4651/614",
+      "wan_start": "4651/614",
+      "wan_end": "5265/614"
+    },
+    {
+      "direction": "down",
+      "pn": 1,
+      "kind": "ack",
+      "message_id": null,
+      "message_offset": null,
+      "frames": [],
+      "send_start": "7721/614",
+      "send_end": "7767/614",
+      "arrival": "15841/1228",
+      "received_at": "15841/1228",
+      "quic_bytes": 64,
+      "wire_bytes": 92,
+      "dropped": false,
+      "probe": false,
+      "probe_of": null,
+      "recovery_of": null,
+      "ack_snapshot": {
+        "ranges": [
+          [
+            0,
+            2
+          ]
+        ],
+        "largest": 2,
+        "largest_received_at": "5265/614",
+        "raw_delay": "4",
+        "encoded_delay": 500000,
+        "delay_exponent": 3,
+        "decoded_delay": "4",
+        "encoding_error": "0",
+        "frame_bytes": 8,
+        "header_tag_bytes": 24,
+        "exceeds_max_delay": false,
+        "covered_pending": 1,
+        "retention_packets": 256
+      },
+      "wan_arrival": "7767/614",
+      "ap_ready_at": "7767/614",
+      "wireless_attempt_indices": [
+        4
+      ],
+      "wireless_received_at": "15841/1228"
+    }
+  ],
+  "sender_events": {
+    "up": [
+      {
+        "type": "sent",
+        "at": "0",
+        "pn": 0,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "file",
+            "offset": 0,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "5/4",
+        "pn": 1,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "file",
+            "offset": 1,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "7767/1228",
+        "ranges": [
+          [
+            0,
+            1
+          ]
+        ],
+        "ack_delay": "11/4",
+        "app_limited": false,
+        "flow_limited": false
+      },
+      {
+        "type": "sent",
+        "at": "4037/614",
+        "pn": 2,
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "file",
+            "offset": 2,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "probe": false
+      },
+      {
+        "type": "ack",
+        "at": "15841/1228",
+        "ranges": [
+          [
+            0,
+            2
+          ]
+        ],
+        "ack_delay": "4",
+        "app_limited": true,
+        "flow_limited": false
+      }
+    ],
+    "down": [
+      {
+        "type": "sent",
+        "at": "6",
+        "pn": 0,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      },
+      {
+        "type": "sent",
+        "at": "7721/614",
+        "pn": 1,
+        "sent_bytes": 64,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "probe": false
+      }
+    ]
+  },
+  "application_events": [
+    {
+      "at": "2",
+      "kind": "message_delivered",
+      "id": "d0"
+    },
+    {
+      "at": "13/4",
+      "kind": "message_delivered",
+      "id": "d1"
+    },
+    {
+      "at": "5265/614",
+      "kind": "message_delivered",
+      "id": "d2"
+    }
+  ],
+  "network_events": [],
+  "work": [],
+  "businesses": [
+    {
+      "id": "file",
+      "kind": "image",
+      "endpoint": "server",
+      "all_required_delivered": true,
+      "complete_at": "5265/614",
+      "complete": true,
+      "missing": []
+    },
+    {
+      "id": "tail-audio-slot",
+      "kind": "tts",
+      "endpoint": "server",
+      "all_required_delivered": true,
+      "complete_at": "5265/614",
+      "complete": false,
+      "missing": [],
+      "blocks": [
+        {
+          "message_ids": [
+            "d2"
+          ],
+          "arrival": "5265/614",
+          "play_start": null,
+          "scheduled_play_end": null,
+          "play_end": null
+        }
+      ],
+      "first_play": null,
+      "playback_end": null,
+      "stall_seconds": "0",
+      "missing_audio_seconds": "1/4"
+    }
+  ],
+  "message_status": {
+    "d0": "delivered",
+    "d1": "delivered",
+    "d2": "delivered"
+  },
+  "delivered": {
+    "d0": "2",
+    "d1": "13/4",
+    "d2": "5265/614"
+  },
+  "waits": [],
+  "received_intervals": {
+    "up": {
+      "file": [
+        [
+          0,
+          3
+        ]
+      ]
+    },
+    "down": {}
+  },
+  "consumed": {
+    "up": {},
+    "down": {}
+  },
+  "peak_receive_memory": {
+    "up": 3,
+    "down": 0
+  },
+  "final_states": {
+    "up": {
+      "bytes_in_flight": 0,
+      "cwnd": "4800",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "7767/1228",
+      "smoothed_rtt": "382685/4912",
+      "rttvar": "163019/2456",
+      "min_rtt": "1558/307",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 2,
+      "next_timer": null,
+      "max_data": 1000000,
+      "max_stream_data": {
+        "file": 3
+      },
+      "stream_highest_sent_offsets": {
+        "file": 3
+      },
+      "max_data_consumed": 3
+    },
+    "down": {
+      "bytes_in_flight": 0,
+      "cwnd": "2400",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "100",
+      "smoothed_rtt": "100",
+      "rttvar": "50",
+      "min_rtt": "100",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": null,
+      "next_timer": null,
+      "max_data": 1000000,
+      "max_stream_data": {},
+      "stream_highest_sent_offsets": {},
+      "max_data_consumed": 0
+    }
+  },
+  "losses": {
+    "up": [],
+    "down": []
+  },
+  "timers": {
+    "up": [],
+    "down": []
+  },
+  "rtt_samples": {
+    "up": [
+      {
+        "at": "7767/1228",
+        "pn": 1,
+        "raw": "1558/307",
+        "adjusted": "1558/307",
+        "smoothed": "108229/1228",
+        "rttvar": "18798/307"
+      },
+      {
+        "at": "15841/1228",
+        "pn": 2,
+        "raw": "7767/1228",
+        "adjusted": "7767/1228",
+        "smoothed": "382685/4912",
+        "rttvar": "163019/2456"
+      }
+    ],
+    "down": []
+  },
+  "numeric_errors": {
+    "up": [],
+    "down": []
+  },
+  "controller_events": {
+    "up": [],
+    "down": []
+  },
+  "controller_numeric_errors": {
+    "up": [],
+    "down": []
+  },
+  "persistent_events": {
+    "up": [],
+    "down": []
+  },
+  "pacer_final": {},
+  "pacer_errors": {},
+  "ack_events": {
+    "up": [
+      {
+        "at": "2",
+        "event": "receive",
+        "pn": 0,
+        "ack_eliciting": true,
+        "duplicate": false
+      },
+      {
+        "at": "13/4",
+        "event": "receive",
+        "pn": 1,
+        "ack_eliciting": true,
+        "duplicate": false
+      },
+      {
+        "at": "6",
+        "event": "trigger",
+        "reason": "deadline",
+        "generation": 1
+      },
+      {
+        "at": "6",
+        "event": "start",
+        "ranges": [
+          [
+            0,
+            1
+          ]
+        ],
+        "largest": 1,
+        "largest_received_at": "13/4",
+        "raw_delay": "11/4",
+        "encoded_delay": 343750,
+        "delay_exponent": 3,
+        "decoded_delay": "11/4",
+        "encoding_error": "0",
+        "frame_bytes": 8,
+        "header_tag_bytes": 24,
+        "exceeds_max_delay": false,
+        "covered_pending": 2,
+        "retention_packets": 256
+      },
+      {
+        "at": "5265/614",
+        "event": "receive",
+        "pn": 2,
+        "ack_eliciting": true,
+        "duplicate": false
+      },
+      {
+        "at": "7721/614",
+        "event": "trigger",
+        "reason": "deadline",
+        "generation": 3
+      },
+      {
+        "at": "7721/614",
+        "event": "start",
+        "ranges": [
+          [
+            0,
+            2
+          ]
+        ],
+        "largest": 2,
+        "largest_received_at": "5265/614",
+        "raw_delay": "4",
+        "encoded_delay": 500000,
+        "delay_exponent": 3,
+        "decoded_delay": "4",
+        "encoding_error": "0",
+        "frame_bytes": 8,
+        "header_tag_bytes": 24,
+        "exceeds_max_delay": false,
+        "covered_pending": 1,
+        "retention_packets": 256
+      }
+    ],
+    "down": [
+      {
+        "at": "7767/1228",
+        "event": "receive",
+        "pn": 0,
+        "ack_eliciting": false,
+        "duplicate": false
+      },
+      {
+        "at": "15841/1228",
+        "event": "receive",
+        "pn": 1,
+        "ack_eliciting": false,
+        "duplicate": false
+      }
+    ]
+  },
+  "summary": {
+    "wire_bytes": 3868,
+    "serialized_wire_bytes_by_horizon": null,
+    "delivered_application_bytes": 3,
+    "unique_received_application_bytes": 3,
+    "complete": false,
+    "all_messages_delivered": true,
+    "pending_packets": {
+      "up": 0,
+      "down": 0
+    },
+    "wan_serialized_ip_bytes_by_horizon": "3868"
+  },
+  "wireless_attempts": [
+    {
+      "index": 0,
+      "direction": "up",
+      "pn": 0,
+      "attempt": 1,
+      "kind": "data",
+      "reservation_start": "0",
+      "data_start": "0",
+      "data_end": "1",
+      "receive_at": "1",
+      "feedback_at": "5/4",
+      "end": "5/4",
+      "outcome": "success",
+      "service": {
+        "mode": "declared teaching phase times, not an IEEE PHY",
+        "outcome": "success",
+        "ip_bytes": 1228,
+        "data_psdu_bytes": null,
+        "mac_ack_psdu_bytes": null,
+        "data_ppdu": null,
+        "mac_ack_ppdu": null,
+        "access_idle_seconds": "0",
+        "data_start_offset": "0",
+        "data_end_offset": "1",
+        "nominal_data_receive_offset": "1",
+        "data_receive_offset": "1",
+        "mac_ack_start_offset": "1",
+        "mac_ack_end_offset": "5/4",
+        "mac_feedback_offset": "5/4",
+        "exchange_end_offset": "5/4",
+        "reserved_service_seconds": "5/4",
+        "radio_transmit_seconds": null,
+        "data_and_confirmation_phase_seconds": "5/4",
+        "note": "Offsets do not authorize end-to-end ACK, cwnd, flow credit or retry before their actual events."
+      },
+      "received": true,
+      "feedback_known": true,
+      "duplicate_at_hop_receiver": false
+    },
+    {
+      "index": 1,
+      "direction": "up",
+      "pn": 1,
+      "attempt": 1,
+      "kind": "data",
+      "reservation_start": "5/4",
+      "data_start": "5/4",
+      "data_end": "9/4",
+      "receive_at": "9/4",
+      "feedback_at": "5/2",
+      "end": "5/2",
+      "outcome": "success",
+      "service": {
+        "mode": "declared teaching phase times, not an IEEE PHY",
+        "outcome": "success",
+        "ip_bytes": 1228,
+        "data_psdu_bytes": null,
+        "mac_ack_psdu_bytes": null,
+        "data_ppdu": null,
+        "mac_ack_ppdu": null,
+        "access_idle_seconds": "0",
+        "data_start_offset": "0",
+        "data_end_offset": "1",
+        "nominal_data_receive_offset": "1",
+        "data_receive_offset": "1",
+        "mac_ack_start_offset": "1",
+        "mac_ack_end_offset": "5/4",
+        "mac_feedback_offset": "5/4",
+        "exchange_end_offset": "5/4",
+        "reserved_service_seconds": "5/4",
+        "radio_transmit_seconds": null,
+        "data_and_confirmation_phase_seconds": "5/4",
+        "note": "Offsets do not authorize end-to-end ACK, cwnd, flow credit or retry before their actual events."
+      },
+      "received": true,
+      "feedback_known": true,
+      "duplicate_at_hop_receiver": false
+    },
+    {
+      "index": 2,
+      "direction": "down",
+      "pn": 0,
+      "attempt": 1,
+      "kind": "ack",
+      "reservation_start": "1865/307",
+      "data_start": "1865/307",
+      "data_end": "7767/1228",
+      "receive_at": "7767/1228",
+      "feedback_at": "4037/614",
+      "end": "4037/614",
+      "outcome": "success",
+      "service": {
+        "mode": "declared teaching phase times, not an IEEE PHY",
+        "outcome": "success",
+        "ip_bytes": 92,
+        "data_psdu_bytes": null,
+        "mac_ack_psdu_bytes": null,
+        "data_ppdu": null,
+        "mac_ack_ppdu": null,
+        "access_idle_seconds": "0",
+        "data_start_offset": "0",
+        "data_end_offset": "1/4",
+        "nominal_data_receive_offset": "1/4",
+        "data_receive_offset": "1/4",
+        "mac_ack_start_offset": "1/4",
+        "mac_ack_end_offset": "1/2",
+        "mac_feedback_offset": "1/2",
+        "exchange_end_offset": "1/2",
+        "reserved_service_seconds": "1/2",
+        "radio_transmit_seconds": null,
+        "data_and_confirmation_phase_seconds": "1/2",
+        "note": "Offsets do not authorize end-to-end ACK, cwnd, flow credit or retry before their actual events."
+      },
+      "received": true,
+      "feedback_known": true,
+      "duplicate_at_hop_receiver": false
+    },
+    {
+      "index": 3,
+      "direction": "up",
+      "pn": 2,
+      "attempt": 1,
+      "kind": "data",
+      "reservation_start": "4037/614",
+      "data_start": "4037/614",
+      "data_end": "4651/614",
+      "receive_at": "4651/614",
+      "feedback_at": "9609/1228",
+      "end": "9609/1228",
+      "outcome": "success",
+      "service": {
+        "mode": "declared teaching phase times, not an IEEE PHY",
+        "outcome": "success",
+        "ip_bytes": 1228,
+        "data_psdu_bytes": null,
+        "mac_ack_psdu_bytes": null,
+        "data_ppdu": null,
+        "mac_ack_ppdu": null,
+        "access_idle_seconds": "0",
+        "data_start_offset": "0",
+        "data_end_offset": "1",
+        "nominal_data_receive_offset": "1",
+        "data_receive_offset": "1",
+        "mac_ack_start_offset": "1",
+        "mac_ack_end_offset": "5/4",
+        "mac_feedback_offset": "5/4",
+        "exchange_end_offset": "5/4",
+        "reserved_service_seconds": "5/4",
+        "radio_transmit_seconds": null,
+        "data_and_confirmation_phase_seconds": "5/4",
+        "note": "Offsets do not authorize end-to-end ACK, cwnd, flow credit or retry before their actual events."
+      },
+      "received": true,
+      "feedback_known": true,
+      "duplicate_at_hop_receiver": false
+    },
+    {
+      "index": 4,
+      "direction": "down",
+      "pn": 1,
+      "attempt": 1,
+      "kind": "ack",
+      "reservation_start": "7767/614",
+      "data_start": "7767/614",
+      "data_end": "15841/1228",
+      "receive_at": "15841/1228",
+      "feedback_at": "4037/307",
+      "end": "4037/307",
+      "outcome": "success",
+      "service": {
+        "mode": "declared teaching phase times, not an IEEE PHY",
+        "outcome": "success",
+        "ip_bytes": 92,
+        "data_psdu_bytes": null,
+        "mac_ack_psdu_bytes": null,
+        "data_ppdu": null,
+        "mac_ack_ppdu": null,
+        "access_idle_seconds": "0",
+        "data_start_offset": "0",
+        "data_end_offset": "1/4",
+        "nominal_data_receive_offset": "1/4",
+        "data_receive_offset": "1/4",
+        "mac_ack_start_offset": "1/4",
+        "mac_ack_end_offset": "1/2",
+        "mac_feedback_offset": "1/2",
+        "exchange_end_offset": "1/2",
+        "reserved_service_seconds": "1/2",
+        "radio_transmit_seconds": null,
+        "data_and_confirmation_phase_seconds": "1/2",
+        "note": "Offsets do not authorize end-to-end ACK, cwnd, flow credit or retry before their actual events."
+      },
+      "received": true,
+      "feedback_known": true,
+      "duplicate_at_hop_receiver": false
+    }
+  ],
+  "wireless_events": [
+    {
+      "at": "0",
+      "kind": "air_reserved",
+      "direction": "up",
+      "data_start": "0"
+    },
+    {
+      "at": "5/4",
+      "kind": "mac_feedback",
+      "direction": "up",
+      "pn": 0,
+      "attempt": 1,
+      "outcome": "success"
+    },
+    {
+      "at": "5/4",
+      "kind": "air_reserved",
+      "direction": "up",
+      "data_start": "5/4"
+    },
+    {
+      "at": "5/2",
+      "kind": "mac_feedback",
+      "direction": "up",
+      "pn": 1,
+      "attempt": 1,
+      "outcome": "success"
+    },
+    {
+      "at": "1865/307",
+      "kind": "air_reserved",
+      "direction": "down",
+      "data_start": "1865/307"
+    },
+    {
+      "at": "4037/614",
+      "kind": "mac_feedback",
+      "direction": "down",
+      "pn": 0,
+      "attempt": 1,
+      "outcome": "success"
+    },
+    {
+      "at": "4037/614",
+      "kind": "air_reserved",
+      "direction": "up",
+      "data_start": "4037/614"
+    },
+    {
+      "at": "9609/1228",
+      "kind": "mac_feedback",
+      "direction": "up",
+      "pn": 2,
+      "attempt": 1,
+      "outcome": "success"
+    },
+    {
+      "at": "7767/614",
+      "kind": "air_reserved",
+      "direction": "down",
+      "data_start": "7767/614"
+    },
+    {
+      "at": "4037/307",
+      "kind": "mac_feedback",
+      "direction": "down",
+      "pn": 1,
+      "attempt": 1,
+      "outcome": "success"
+    }
+  ],
+  "wireless_reservations": [
+    {
+      "start": "0",
+      "data_start": "0",
+      "end": "5/4",
+      "direction": "up"
+    },
+    {
+      "start": "5/4",
+      "data_start": "5/4",
+      "end": "5/2",
+      "direction": "up"
+    },
+    {
+      "start": "1865/307",
+      "data_start": "1865/307",
+      "end": "4037/614",
+      "direction": "down"
+    },
+    {
+      "start": "4037/614",
+      "data_start": "4037/614",
+      "end": "9609/1228",
+      "direction": "up"
+    },
+    {
+      "start": "7767/614",
+      "data_start": "7767/614",
+      "end": "4037/307",
+      "direction": "down"
+    }
+  ],
+  "wireless_reference_sources": [
+    {
+      "file": "sources/shared-airtime/wifi-phy.cc",
+      "url": "https://gitlab.com/nsnam/ns-3-dev/-/raw/43dce6710b8df69685e3479c1d33a571dda714ea/src/wifi/model/wifi-phy.cc",
+      "revision": "43dce6710b8df69685e3479c1d33a571dda714ea",
+      "bytes": 75571,
+      "sha256": "68c3b7da079cc48f74b238cd1942df5f5720861d4002194d60e2f7cab64b773a"
+    },
+    {
+      "file": "sources/shared-airtime/ofdm-phy.cc",
+      "url": "https://gitlab.com/nsnam/ns-3-dev/-/raw/43dce6710b8df69685e3479c1d33a571dda714ea/src/wifi/model/non-ht/ofdm-phy.cc",
+      "revision": "43dce6710b8df69685e3479c1d33a571dda714ea",
+      "bytes": 23463,
+      "sha256": "2132cdea1feff36104b9f371ac03f9df2d48a97cc1b71f62950761d83d016dea"
+    },
+    {
+      "file": "sources/shared-airtime/wifi-mac-header.cc",
+      "url": "https://gitlab.com/nsnam/ns-3-dev/-/raw/43dce6710b8df69685e3479c1d33a571dda714ea/src/wifi/model/wifi-mac-header.cc",
+      "revision": "43dce6710b8df69685e3479c1d33a571dda714ea",
+      "bytes": 29211,
+      "sha256": "ee5e72992ad3e8881b07310c8b03e9a30687c599cf1444ef53c246af2daa868d"
+    },
+    {
+      "file": "sources/shared-airtime/wifi-mac-trailer.cc",
+      "url": "https://gitlab.com/nsnam/ns-3-dev/-/raw/43dce6710b8df69685e3479c1d33a571dda714ea/src/wifi/model/wifi-mac-trailer.cc",
+      "revision": "43dce6710b8df69685e3479c1d33a571dda714ea",
+      "bytes": 1051,
+      "sha256": "c246241011af73242a6048ddab73d142594df8ba0e56eb9a22ff4121ca557a13"
+    },
+    {
+      "file": "sources/shared-airtime/llc-snap-header.cc",
+      "url": "https://gitlab.com/nsnam/ns-3-dev/-/raw/43dce6710b8df69685e3479c1d33a571dda714ea/src/network/utils/llc-snap-header.cc",
+      "revision": "43dce6710b8df69685e3479c1d33a571dda714ea",
+      "bytes": 1767,
+      "sha256": "6a89e53e5b3bce433056a72a45d1c65226d2847f6a8a008a3c7a542a47ae93cd"
+    },
+    {
+      "file": "sources/shared-airtime/frame-exchange-manager.cc",
+      "url": "https://gitlab.com/nsnam/ns-3-dev/-/raw/43dce6710b8df69685e3479c1d33a571dda714ea/src/wifi/model/frame-exchange-manager.cc",
+      "revision": "43dce6710b8df69685e3479c1d33a571dda714ea",
+      "bytes": 51249,
+      "sha256": "c0e97785701f7e588cb8fdd9592ec9ee51ae0ce24a76123a430785f27e649cc3"
+    },
+    {
+      "file": "sources/shared-airtime/channel-access-manager.cc",
+      "url": "https://gitlab.com/nsnam/ns-3-dev/-/raw/43dce6710b8df69685e3479c1d33a571dda714ea/src/wifi/model/channel-access-manager.cc",
+      "revision": "43dce6710b8df69685e3479c1d33a571dda714ea",
+      "bytes": 39444,
+      "sha256": "12475bb5ca05b2ce84d4662495eda2a0d54708b7e334955ed9f3f4a0ee769e6b"
+    },
+    {
+      "file": "sources/shared-airtime/wifi-remote-station-manager.cc",
+      "url": "https://gitlab.com/nsnam/ns-3-dev/-/raw/43dce6710b8df69685e3479c1d33a571dda714ea/src/wifi/model/wifi-remote-station-manager.cc",
+      "revision": "43dce6710b8df69685e3479c1d33a571dda714ea",
+      "bytes": 78586,
+      "sha256": "f0a8708fae3362db178a520e2888ffa5d1a053a24df5d13e07a41230d4eb61af"
+    },
+    {
+      "file": "sources/shared-airtime/ns3-release-commit.json",
+      "url": "https://gitlab.com/api/v4/projects/nsnam%2Fns-3-dev/repository/commits/ns-3.44",
+      "revision": "43dce6710b8df69685e3479c1d33a571dda714ea",
+      "bytes": 1039,
+      "sha256": "fe1279ef2015d8e6abeaa0002f930c174d6e15a7f8084407e09809c8bd4af680"
+    },
+    {
+      "file": "sources/shared-airtime/wifi-mac-trailer.h",
+      "url": "https://gitlab.com/nsnam/ns-3-dev/-/raw/43dce6710b8df69685e3479c1d33a571dda714ea/src/wifi/model/wifi-mac-trailer.h",
+      "revision": "43dce6710b8df69685e3479c1d33a571dda714ea",
+      "bytes": 958,
+      "sha256": "89c74f092df1afee6f4d9dc5bc9e3673ad73d0aa75b3a98e49dd7299b02f8f63"
+    },
+    {
+      "file": "sources/shared-airtime/llc-snap-header.h",
+      "url": "https://gitlab.com/nsnam/ns-3-dev/-/raw/43dce6710b8df69685e3479c1d33a571dda714ea/src/network/utils/llc-snap-header.h",
+      "revision": "43dce6710b8df69685e3479c1d33a571dda714ea",
+      "bytes": 1345,
+      "sha256": "71ea388a018fc9b704c7a910626add69b2f5390c8599299d8e71510f762571b9"
+    },
+    {
+      "file": "sources/shared-airtime/tack-sigcomm2020.pdf",
+      "url": "https://cs.stanford.edu/~keithw/tack-sigcomm2020.pdf",
+      "revision": "SIGCOMM2020 DOI10.1145/3387514.3405850 author-hosted copy",
+      "bytes": 1395246,
+      "sha256": "4ac6a3fd3396626a69e941251caed3483a9176bb62479fde8b20eca001154b10"
+    },
+    {
+      "file": "sources/shared-airtime/LICENSE.ns3",
+      "url": "https://gitlab.com/nsnam/ns-3-dev/-/raw/43dce6710b8df69685e3479c1d33a571dda714ea/LICENSE",
+      "revision": "43dce6710b8df69685e3479c1d33a571dda714ea",
+      "bytes": 17987,
+      "sha256": "ab15fd526bd8dd18a9e77ebc139656bf4d33e97fc7238cd11bf60e2b9b8666c6"
+    },
+    {
+      "file": "sources/shared-airtime/wifi-design-3.44.html",
+      "url": "https://www.nsnam.org/docs/release/3.44/models/html/wifi-design.html",
+      "revision": "ns-3.44 official model documentation snapshot",
+      "bytes": 167375,
+      "sha256": "a144b0d958dc7930eea32187546a62b43ca51a27d8cef23c60b10a58074d7d89"
+    }
+  ],
+  "wireless_reference_root": "/Users/boj/book/ai-infra-book/calculations",
+  "wireless_summary": {
+    "attempts_started": 5,
+    "same_pn_retry_attempts": 0,
+    "reserved_service_seconds": "19/4",
+    "observed_reserved_seconds": "19/4",
+    "pending_ap_or_retry_packets": 0,
+    "pending_up_wan_packets": 0,
+    "radio_busy_at_horizon": false
+  }
+}

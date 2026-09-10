@@ -1,0 +1,79 @@
+{
+  "status": "preimplementation independent arithmetic; adapter policy-dependent cases pending contract",
+  "cases": [
+    {
+      "name": "uniform-padded-two-packet-work",
+      "stream_bytes": 1200,
+      "mds": 1200,
+      "stream_overhead_each": 32,
+      "full_payload": 1168,
+      "expected": {
+        "packets": 2,
+        "quic_bytes": 2400,
+        "wire_bytes": 2456,
+        "stream_header_bytes": 64,
+        "padding_bytes": 1136,
+        "flow_credit_consumed": 1200
+      }
+    },
+    {
+      "name": "padded-max-versus-pure-ack",
+      "expected": {
+        "max_packet_flight_bytes": 1200,
+        "max_packet_bbr_packets": 1,
+        "max_wire_bytes": 1228,
+        "ack_flight_bytes": 0,
+        "ack_bbr_delivered_packets": 0,
+        "ack_wire_bytes": 92,
+        "max_stream_credit_consumed": 0
+      }
+    },
+    {
+      "name": "delivery-sample-dominant-send-interval",
+      "prior_delivered": 10,
+      "total_delivered": 12,
+      "send_interval_us": 80000,
+      "ack_interval_us": 50000,
+      "min_rtt_us": 40000,
+      "expected": {
+        "delivered_packets": 2,
+        "interval_us": 80000,
+        "bw_scaled": 419,
+        "gain1_pacing_quic_bytes_per_second": 29669
+      }
+    },
+    {
+      "name": "duplicate-business-distinct-transport",
+      "original_pn": 0,
+      "retransmitted_pn": 2,
+      "stream_offset": 0,
+      "stream_length": 1168,
+      "expected": {
+        "unique_stream_bytes": 1168,
+        "transmitted_data_quic_bytes": 2400,
+        "transmitted_data_wire_bytes": 2456,
+        "transport_delivered_after_both_first_acks": 2,
+        "transport_delivered_after_duplicate_ack": 2
+      },
+      "adapter_policy": "First ACK of each PN including late ACK of previously lost PN counts transport delivery; no repeated flight release or RTT for late lost PN"
+    },
+    {
+      "name": "nonpreemptive-rate-update",
+      "serialization_start": "0",
+      "serialization_end": "1",
+      "rate_update_at": "1/2",
+      "expected": {
+        "first_packet_end": "1",
+        "next_start_at_least": "1"
+      },
+      "pending": "Exact next eligibility depends on declared pacer update/credit contract"
+    },
+    {
+      "name": "cubic-rational-unit-map",
+      "segment_bytes": 1200,
+      "window_segments": "25001/250",
+      "expected_window_quic_bytes": "600024/5",
+      "note": "Pure unit conversion of100.004segments, not another CUBIC growth oracle"
+    }
+  ]
+}

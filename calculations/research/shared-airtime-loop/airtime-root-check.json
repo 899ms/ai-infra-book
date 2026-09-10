@@ -1,0 +1,172 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "case": "DATA PSDU excludes duplicate IP/UDP",
+      "actual": 1264,
+      "expected": 1264
+    },
+    {
+      "case": "transport ACK carrier PSDU",
+      "actual": 128,
+      "expected": 128
+    },
+    {
+      "case": "normal MAC ACK PSDU",
+      "actual": 14,
+      "expected": 14
+    },
+    {
+      "case": "DATA 47 OFDM symbols",
+      "actual": 47,
+      "expected": 47
+    },
+    {
+      "case": "carrier 5 OFDM symbols",
+      "actual": 5,
+      "expected": 5
+    },
+    {
+      "case": "MAC ACK at independent 6 Mbps: 6 symbols",
+      "actual": 6,
+      "expected": 6
+    },
+    {
+      "case": "DATA PPDU 208 us",
+      "actual": "13/62500",
+      "expected": "13/62500"
+    },
+    {
+      "case": "transport ACK PPDU 40 us",
+      "actual": "1/25000",
+      "expected": "1/25000"
+    },
+    {
+      "case": "normal MAC ACK PPDU 44 us",
+      "actual": "11/250000",
+      "expected": "11/250000"
+    },
+    {
+      "case": "DATA reaches receiver at 242 us",
+      "actual": "121/500000",
+      "expected": "121/500000"
+    },
+    {
+      "case": "MAC success known at 302 us",
+      "actual": "151/500000",
+      "expected": "151/500000"
+    },
+    {
+      "case": "transport ACK carrier success at 134 us",
+      "actual": "67/500000",
+      "expected": "67/500000"
+    },
+    {
+      "case": "radio transmit excludes idle and SIFS",
+      "actual": "63/250000",
+      "expected": "63/250000"
+    },
+    {
+      "case": "24B uses one 54 Mbps symbol",
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "25B uses two 54 Mbps symbols",
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "case": "unknown full timeout must not use RXSTART watchdog",
+      "rejected": "failure needs an explicit full-ACK timeout"
+    },
+    {
+      "case": "45us would precede valid 60us full ACK",
+      "rejected": "failure declared before a valid ACK could complete"
+    },
+    {
+      "case": "ACK loss still delivered DATA at 242us",
+      "actual": "121/500000",
+      "expected": "121/500000"
+    },
+    {
+      "case": "ACK loss only known at 322us",
+      "actual": "161/500000",
+      "expected": "161/500000"
+    },
+    {
+      "case": "DATA loss yields no receiver delivery",
+      "actual": null,
+      "expected": null
+    },
+    {
+      "case": "DATA loss emits no MAC ACK",
+      "actual": null,
+      "expected": null
+    },
+    {
+      "case": "DATA loss still waits same declared deadline",
+      "actual": "161/500000",
+      "expected": "161/500000"
+    },
+    {
+      "case": "teaching DATA reception precedes confirmation",
+      "actual": "1",
+      "expected": "1"
+    },
+    {
+      "case": "teaching exchange reserved until confirmation",
+      "actual": "5/4",
+      "expected": "5/4"
+    },
+    {
+      "case": "teaching ACK endpoint reception at 1/4",
+      "actual": "1/4",
+      "expected": "1/4"
+    },
+    {
+      "case": "teaching ACK exchange includes MAC once",
+      "actual": "1/2",
+      "expected": "1/2"
+    },
+    {
+      "case": "two data/two transport ACK static service",
+      "actual": "7/2",
+      "expected": "7/2"
+    },
+    {
+      "case": "two data/one transport ACK static service",
+      "actual": "3",
+      "expected": "3"
+    },
+    {
+      "case": "teaching phases are not claimed RF airtime",
+      "actual": null,
+      "expected": null
+    },
+    {
+      "case": "teaching missing MAC ACK knowledge",
+      "actual": "3/2",
+      "expected": "3/2"
+    },
+    {
+      "case": "boolean packet length",
+      "rejected": "IP packet bytes"
+    },
+    {
+      "case": "negative packet length",
+      "rejected": "IP packet bytes"
+    },
+    {
+      "case": "unknown loss semantics",
+      "rejected": "unknown exchange outcome"
+    },
+    {
+      "case": "pure calculator does not mutate profiles",
+      "passed": true
+    }
+  ],
+  "source_sha256": "131ce04a522e641ece9a851f9e6ab3b1771b7fc83a5417be3b2a52c53a717658",
+  "profile_sha256": "fab1744bbc2f361d976522af8bc7bf6f3745db642247d45f8a8bfa55584a319e",
+  "scope": "Exact one-frame service ledger only; no contention, media network or retry scheduling claim"
+}

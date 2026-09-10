@@ -1,0 +1,74 @@
+{
+  "status": "passed",
+  "scope": "Nine sealed inputs and prewritten arithmetic only; no scan results read or simulator executed",
+  "checks": [
+    {
+      "case": "media-320B-ack1",
+      "only_ack_axis_changed": true,
+      "unit_and_service_arithmetic": "passed",
+      "local_dependency_and_slot_checks": "passed"
+    },
+    {
+      "case": "media-320B-ack2",
+      "only_ack_axis_changed": true,
+      "unit_and_service_arithmetic": "passed",
+      "local_dependency_and_slot_checks": "passed"
+    },
+    {
+      "case": "media-320B-ack4",
+      "only_ack_axis_changed": true,
+      "unit_and_service_arithmetic": "passed",
+      "local_dependency_and_slot_checks": "passed"
+    },
+    {
+      "case": "media-640B-ack1",
+      "only_ack_axis_changed": true,
+      "unit_and_service_arithmetic": "passed",
+      "local_dependency_and_slot_checks": "passed"
+    },
+    {
+      "case": "media-640B-ack2",
+      "only_ack_axis_changed": true,
+      "unit_and_service_arithmetic": "passed",
+      "local_dependency_and_slot_checks": "passed"
+    },
+    {
+      "case": "media-640B-ack4",
+      "only_ack_axis_changed": true,
+      "unit_and_service_arithmetic": "passed",
+      "local_dependency_and_slot_checks": "passed"
+    },
+    {
+      "case": "media-960B-ack1",
+      "only_ack_axis_changed": true,
+      "unit_and_service_arithmetic": "passed",
+      "local_dependency_and_slot_checks": "passed"
+    },
+    {
+      "case": "media-960B-ack2",
+      "only_ack_axis_changed": true,
+      "unit_and_service_arithmetic": "passed",
+      "local_dependency_and_slot_checks": "passed"
+    },
+    {
+      "case": "media-960B-ack4",
+      "only_ack_axis_changed": true,
+      "unit_and_service_arithmetic": "passed",
+      "local_dependency_and_slot_checks": "passed"
+    }
+  ],
+  "source_input_lock_sha256": "33f042495277ff4f0f09930ddaaca5e6330f411a6c206038b171572fec267ddd",
+  "input_hashes": {
+    "/Users/boj/book/ai-infra-book/calculations/research/shared-airtime-scan-inputs/scenarios.json": "5c3abac539957cdd2a147f4dc3150373d7035ba48e339a84a16f09fedef86769",
+    "/Users/boj/book/ai-infra-book/calculations/research/shared-airtime-scan-inputs/hand-oracles.json": "348c6105ce0b28a1ee0a3da75de70f2854a237fb5bb9b299fe961ffee5eccf9d",
+    "/Users/boj/book/ai-infra-book/calculations/research/shared-airtime-scan-inputs/inputs.lock.json": "33f042495277ff4f0f09930ddaaca5e6330f411a6c206038b171572fec267ddd"
+  },
+  "checker_sha256": "801d65ec8dc7df963b9b556f205a0b0a4c37d93596389cf4f6ae5461a4a4d129",
+  "limitations": [
+    "New 300KB/50KB unpadded and unpaced teaching workload, not original 30MB/5MB padded controller experiment",
+    "320/640/960 bytes are declared load variants, not equal-quality codec evidence",
+    "Static threshold-only ACK count is not the actual event count or its lower bound",
+    "All-data service floor is conditional on every offered original message actually sent successfully; horizon3s does not guarantee completion"
+  ],
+  "findings": []
+}

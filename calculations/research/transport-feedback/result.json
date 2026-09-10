@@ -1,0 +1,5615 @@
+{
+  "rtt-duplicate-ack": {
+    "calculation": "rfc9002-confirmed-application-feedback-reference",
+    "inputs": {
+      "max_datagram_size": 1200,
+      "initial_max_data": 100000,
+      "initial_max_stream_data": {
+        "A": 100000
+      },
+      "until": "0.4",
+      "events": [
+        {
+          "type": "sent",
+          "at": 0,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 100
+            }
+          ]
+        },
+        {
+          "type": "ack",
+          "at": "0.1",
+          "ranges": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ack_delay": 0
+        },
+        {
+          "type": "sent",
+          "at": "0.2",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 100,
+              "length": 100
+            }
+          ]
+        },
+        {
+          "type": "ack",
+          "at": "0.32",
+          "ranges": [
+            [
+              1,
+              1
+            ]
+          ],
+          "ack_delay": "0.02"
+        },
+        {
+          "type": "ack",
+          "at": "0.35",
+          "ranges": [
+            [
+              0,
+              1
+            ]
+          ],
+          "ack_delay": 0
+        }
+      ]
+    },
+    "reference_sources": [
+      {
+        "file": "sources/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704012+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704463+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+        "verified_at_utc": "2026-09-09T13:46:10.581233+00:00",
+        "verification": "official RFC Editor HTML downloaded and destination re-read"
+      },
+      {
+        "file": "sources/rfc9221.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9221.txt",
+        "revision": "RFC9221",
+        "bytes": 18624,
+        "sha256": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+        "copied_from": "calculations/research/shared-media-transport/sources/rfc9221.txt",
+        "verified_at_utc": "2026-09-09T13:49:21.119137+00:00",
+        "verification": "official local copy re-read"
+      }
+    ],
+    "events": [
+      {
+        "at": "0",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": 0,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 100
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "0",
+          "smoothed_rtt": "333/1000",
+          "rttvar": "333/2000",
+          "min_rtt": null,
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "128/125"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 100
+          },
+          "max_data_consumed": 100
+        }
+      },
+      {
+        "at": "1/10",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.1",
+          "ranges": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ack_delay": 0
+        },
+        "details": {
+          "newly_acked": [
+            0
+          ],
+          "late_acked": [],
+          "newly_lost": []
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "13200",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "1/20",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 0,
+          "next_timer": null,
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 100
+          },
+          "max_data_consumed": 100
+        }
+      },
+      {
+        "at": "1/5",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "0.2",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 100,
+              "length": 100
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "13200",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "1/20",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 0,
+          "next_timer": {
+            "kind": "pto",
+            "at": "21/40"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 200
+          },
+          "max_data_consumed": 200
+        }
+      },
+      {
+        "at": "8/25",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.32",
+          "ranges": [
+            [
+              1,
+              1
+            ]
+          ],
+          "ack_delay": "0.02"
+        },
+        "details": {
+          "newly_acked": [
+            1
+          ],
+          "late_acked": [],
+          "newly_lost": []
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "14400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "3/25",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 1,
+          "next_timer": null,
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 200
+          },
+          "max_data_consumed": 200
+        }
+      },
+      {
+        "at": "7/20",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.35",
+          "ranges": [
+            [
+              0,
+              1
+            ]
+          ],
+          "ack_delay": 0
+        },
+        "details": {
+          "newly_acked": [],
+          "late_acked": [],
+          "newly_lost": []
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "14400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "3/25",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 1,
+          "next_timer": null,
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 200
+          },
+          "max_data_consumed": 200
+        }
+      }
+    ],
+    "packets": [
+      {
+        "pn": 0,
+        "sent_at": "0",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 100
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "1/10"
+      },
+      {
+        "pn": 1,
+        "sent_at": "1/5",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 100,
+            "length": 100
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "8/25"
+      }
+    ],
+    "loss_events": [],
+    "timer_events": [],
+    "rtt_samples": [
+      {
+        "at": "1/10",
+        "pn": 0,
+        "raw": "1/10",
+        "adjusted": "1/10",
+        "smoothed": "1/10",
+        "rttvar": "1/20"
+      },
+      {
+        "at": "8/25",
+        "pn": 1,
+        "raw": "3/25",
+        "adjusted": "1/10",
+        "smoothed": "1/10",
+        "rttvar": "3/80"
+      }
+    ],
+    "final_state": {
+      "bytes_in_flight": 0,
+      "cwnd": "14400",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "3/25",
+      "smoothed_rtt": "1/10",
+      "rttvar": "3/80",
+      "min_rtt": "1/10",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 1,
+      "next_timer": null,
+      "max_data": 100000,
+      "max_stream_data": {
+        "A": 100000
+      },
+      "stream_highest_sent_offsets": {
+        "A": 200
+      },
+      "max_data_consumed": 200
+    },
+    "sender_confirmed_business": {
+      "stream_intervals": {
+        "A": [
+          [
+            0,
+            200
+          ]
+        ]
+      },
+      "unique_stream_bytes": 200,
+      "acked_datagram_ids": [],
+      "acked_datagram_bytes": 0
+    },
+    "summary": {
+      "sent_udp_payload_bytes": 2400,
+      "stream_payload_transmission_bytes": 200,
+      "datagram_payload_transmission_bytes": 0,
+      "declared_quic_overhead_padding_control_bytes": 2200,
+      "last_processed_event": "7/20",
+      "replay_until": "2/5"
+    },
+    "limitations": [
+      "Single already-confirmed validated path and Application PN space, no ECN/migration/handshake.",
+      "RFC9002 section5.3 corrected by Verified Errata7539 RTT ordering and AppendixB rational NewReno ACK/loss reference; persistent congestion explicitly rejected.",
+      "Explicit sender-observed input trace, no serialization/network/receiver/pacer or automatic retransmission scheduler.",
+      "PTO grants at most two probe opportunities; actual probe sent events must be supplied and still obey absolute flow limits.",
+      "ACK-confirmed byte coverage is sender evidence of transport receipt, not receiver application delivery or playback.",
+      "Lost records retained for late ACK business coverage; late ACK alone does not resample RTT, regrow cwnd or release flight twice."
+    ]
+  },
+  "rtt-verified-errata": {
+    "calculation": "rfc9002-confirmed-application-feedback-reference",
+    "inputs": {
+      "max_datagram_size": 1200,
+      "initial_max_data": 100000,
+      "initial_max_stream_data": {
+        "A": 100000
+      },
+      "until": "0.38",
+      "events": [
+        {
+          "type": "sent",
+          "at": 0,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 100
+            }
+          ]
+        },
+        {
+          "type": "ack",
+          "at": "0.1",
+          "ranges": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ack_delay": 0
+        },
+        {
+          "type": "sent",
+          "at": "0.2",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 100,
+              "length": 100
+            }
+          ]
+        },
+        {
+          "type": "ack",
+          "at": "0.38",
+          "ranges": [
+            [
+              1,
+              1
+            ]
+          ],
+          "ack_delay": "0.02"
+        }
+      ]
+    },
+    "reference_sources": [
+      {
+        "file": "sources/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704012+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704463+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+        "verified_at_utc": "2026-09-09T13:46:10.581233+00:00",
+        "verification": "official RFC Editor HTML downloaded and destination re-read"
+      },
+      {
+        "file": "sources/rfc9221.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9221.txt",
+        "revision": "RFC9221",
+        "bytes": 18624,
+        "sha256": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+        "copied_from": "calculations/research/shared-media-transport/sources/rfc9221.txt",
+        "verified_at_utc": "2026-09-09T13:49:21.119137+00:00",
+        "verification": "official local copy re-read"
+      }
+    ],
+    "events": [
+      {
+        "at": "0",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": 0,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 100
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "0",
+          "smoothed_rtt": "333/1000",
+          "rttvar": "333/2000",
+          "min_rtt": null,
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "128/125"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 100
+          },
+          "max_data_consumed": 100
+        }
+      },
+      {
+        "at": "1/10",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.1",
+          "ranges": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ack_delay": 0
+        },
+        "details": {
+          "newly_acked": [
+            0
+          ],
+          "late_acked": [],
+          "newly_lost": []
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "13200",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "1/20",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 0,
+          "next_timer": null,
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 100
+          },
+          "max_data_consumed": 100
+        }
+      },
+      {
+        "at": "1/5",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "0.2",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 100,
+              "length": 100
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "13200",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "1/20",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 0,
+          "next_timer": {
+            "kind": "pto",
+            "at": "21/40"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 200
+          },
+          "max_data_consumed": 200
+        }
+      },
+      {
+        "at": "19/50",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.38",
+          "ranges": [
+            [
+              1,
+              1
+            ]
+          ],
+          "ack_delay": "0.02"
+        },
+        "details": {
+          "newly_acked": [
+            1
+          ],
+          "late_acked": [],
+          "newly_lost": []
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "14400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "9/50",
+          "smoothed_rtt": "43/400",
+          "rttvar": "21/400",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 1,
+          "next_timer": null,
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 200
+          },
+          "max_data_consumed": 200
+        }
+      }
+    ],
+    "packets": [
+      {
+        "pn": 0,
+        "sent_at": "0",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 100
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "1/10"
+      },
+      {
+        "pn": 1,
+        "sent_at": "1/5",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 100,
+            "length": 100
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "19/50"
+      }
+    ],
+    "loss_events": [],
+    "timer_events": [],
+    "rtt_samples": [
+      {
+        "at": "1/10",
+        "pn": 0,
+        "raw": "1/10",
+        "adjusted": "1/10",
+        "smoothed": "1/10",
+        "rttvar": "1/20"
+      },
+      {
+        "at": "19/50",
+        "pn": 1,
+        "raw": "9/50",
+        "adjusted": "4/25",
+        "smoothed": "43/400",
+        "rttvar": "21/400"
+      }
+    ],
+    "final_state": {
+      "bytes_in_flight": 0,
+      "cwnd": "14400",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "9/50",
+      "smoothed_rtt": "43/400",
+      "rttvar": "21/400",
+      "min_rtt": "1/10",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 1,
+      "next_timer": null,
+      "max_data": 100000,
+      "max_stream_data": {
+        "A": 100000
+      },
+      "stream_highest_sent_offsets": {
+        "A": 200
+      },
+      "max_data_consumed": 200
+    },
+    "sender_confirmed_business": {
+      "stream_intervals": {
+        "A": [
+          [
+            0,
+            200
+          ]
+        ]
+      },
+      "unique_stream_bytes": 200,
+      "acked_datagram_ids": [],
+      "acked_datagram_bytes": 0
+    },
+    "summary": {
+      "sent_udp_payload_bytes": 2400,
+      "stream_payload_transmission_bytes": 200,
+      "datagram_payload_transmission_bytes": 0,
+      "declared_quic_overhead_padding_control_bytes": 2200,
+      "last_processed_event": "19/50",
+      "replay_until": "19/50"
+    },
+    "limitations": [
+      "Single already-confirmed validated path and Application PN space, no ECN/migration/handshake.",
+      "RFC9002 section5.3 corrected by Verified Errata7539 RTT ordering and AppendixB rational NewReno ACK/loss reference; persistent congestion explicitly rejected.",
+      "Explicit sender-observed input trace, no serialization/network/receiver/pacer or automatic retransmission scheduler.",
+      "PTO grants at most two probe opportunities; actual probe sent events must be supplied and still obey absolute flow limits.",
+      "ACK-confirmed byte coverage is sender evidence of transport receipt, not receiver application delivery or playback.",
+      "Lost records retained for late ACK business coverage; late ACK alone does not resample RTT, regrow cwnd or release flight twice."
+    ]
+  },
+  "packet-and-time-threshold": {
+    "calculation": "rfc9002-confirmed-application-feedback-reference",
+    "inputs": {
+      "max_datagram_size": 1200,
+      "initial_max_data": 100000,
+      "initial_max_stream_data": {
+        "A": 100000
+      },
+      "until": "0.115",
+      "events": [
+        {
+          "type": "sent",
+          "at": "0",
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "type": "sent",
+          "at": "1/1000",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 1,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "type": "sent",
+          "at": "1/500",
+          "pn": 2,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 2,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "type": "sent",
+          "at": "3/1000",
+          "pn": 3,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 3,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "type": "ack",
+          "at": "0.103",
+          "ranges": [
+            [
+              3,
+              3
+            ]
+          ],
+          "ack_delay": 0
+        }
+      ],
+      "rtt_seed": {
+        "latest_rtt": "0.1",
+        "smoothed_rtt": "0.1",
+        "rttvar": "0.0375",
+        "min_rtt": "0.1",
+        "first_sample_at": -1
+      }
+    },
+    "reference_sources": [
+      {
+        "file": "sources/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704012+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704463+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+        "verified_at_utc": "2026-09-09T13:46:10.581233+00:00",
+        "verification": "official RFC Editor HTML downloaded and destination re-read"
+      },
+      {
+        "file": "sources/rfc9221.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9221.txt",
+        "revision": "RFC9221",
+        "bytes": 18624,
+        "sha256": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+        "copied_from": "calculations/research/shared-media-transport/sources/rfc9221.txt",
+        "verified_at_utc": "2026-09-09T13:49:21.119137+00:00",
+        "verification": "official local copy re-read"
+      }
+    ],
+    "events": [
+      {
+        "at": "0",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "0",
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 1
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "11/40"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 1
+          },
+          "max_data_consumed": 1
+        }
+      },
+      {
+        "at": "1/1000",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "1/1000",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 1,
+              "length": 1
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 2400,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "69/250"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 2
+          },
+          "max_data_consumed": 2
+        }
+      },
+      {
+        "at": "1/500",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "1/500",
+          "pn": 2,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 2,
+              "length": 1
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 3600,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "277/1000"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 3
+          },
+          "max_data_consumed": 3
+        }
+      },
+      {
+        "at": "3/1000",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "3/1000",
+          "pn": 3,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 3,
+              "length": 1
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 4800,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "139/500"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      },
+      {
+        "at": "103/1000",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.103",
+          "ranges": [
+            [
+              3,
+              3
+            ]
+          ],
+          "ack_delay": 0
+        },
+        "details": {
+          "newly_acked": [
+            3
+          ],
+          "late_acked": [],
+          "newly_lost": [
+            0
+          ]
+        },
+        "state": {
+          "bytes_in_flight": 2400,
+          "cwnd": "6000",
+          "ssthresh": "6000",
+          "recovery_start": "103/1000",
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "9/320",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 3,
+          "next_timer": {
+            "kind": "loss",
+            "at": "227/2000"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      },
+      {
+        "at": "227/2000",
+        "event": "loss_timer",
+        "input": null,
+        "details": {
+          "newly_lost": [
+            1
+          ]
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "6000",
+          "ssthresh": "6000",
+          "recovery_start": "103/1000",
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "9/320",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 3,
+          "next_timer": {
+            "kind": "loss",
+            "at": "229/2000"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      },
+      {
+        "at": "229/2000",
+        "event": "loss_timer",
+        "input": null,
+        "details": {
+          "newly_lost": [
+            2
+          ]
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "6000",
+          "ssthresh": "6000",
+          "recovery_start": "103/1000",
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "9/320",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 3,
+          "next_timer": null,
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      }
+    ],
+    "packets": [
+      {
+        "pn": 0,
+        "sent_at": "0",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "lost",
+        "probe": false,
+        "lost_at": "103/1000"
+      },
+      {
+        "pn": 1,
+        "sent_at": "1/1000",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 1,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "lost",
+        "probe": false,
+        "lost_at": "227/2000"
+      },
+      {
+        "pn": 2,
+        "sent_at": "1/500",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 2,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "lost",
+        "probe": false,
+        "lost_at": "229/2000"
+      },
+      {
+        "pn": 3,
+        "sent_at": "3/1000",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 3,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "103/1000"
+      }
+    ],
+    "loss_events": [
+      {
+        "at": "103/1000",
+        "pn": 0,
+        "packet_threshold": true,
+        "time_threshold": false
+      },
+      {
+        "at": "227/2000",
+        "pn": 1,
+        "packet_threshold": false,
+        "time_threshold": true
+      },
+      {
+        "at": "229/2000",
+        "pn": 2,
+        "packet_threshold": false,
+        "time_threshold": true
+      }
+    ],
+    "timer_events": [
+      {
+        "at": "227/2000",
+        "kind": "loss",
+        "newly_lost": [
+          1
+        ]
+      },
+      {
+        "at": "229/2000",
+        "kind": "loss",
+        "newly_lost": [
+          2
+        ]
+      }
+    ],
+    "rtt_samples": [
+      {
+        "at": "103/1000",
+        "pn": 3,
+        "raw": "1/10",
+        "adjusted": "1/10",
+        "smoothed": "1/10",
+        "rttvar": "9/320"
+      }
+    ],
+    "final_state": {
+      "bytes_in_flight": 0,
+      "cwnd": "6000",
+      "ssthresh": "6000",
+      "recovery_start": "103/1000",
+      "latest_rtt": "1/10",
+      "smoothed_rtt": "1/10",
+      "rttvar": "9/320",
+      "min_rtt": "1/10",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 3,
+      "next_timer": null,
+      "max_data": 100000,
+      "max_stream_data": {
+        "A": 100000
+      },
+      "stream_highest_sent_offsets": {
+        "A": 4
+      },
+      "max_data_consumed": 4
+    },
+    "sender_confirmed_business": {
+      "stream_intervals": {
+        "A": [
+          [
+            3,
+            4
+          ]
+        ]
+      },
+      "unique_stream_bytes": 1,
+      "acked_datagram_ids": [],
+      "acked_datagram_bytes": 0
+    },
+    "summary": {
+      "sent_udp_payload_bytes": 4800,
+      "stream_payload_transmission_bytes": 4,
+      "datagram_payload_transmission_bytes": 0,
+      "declared_quic_overhead_padding_control_bytes": 4796,
+      "last_processed_event": "229/2000",
+      "replay_until": "23/200"
+    },
+    "limitations": [
+      "Single already-confirmed validated path and Application PN space, no ECN/migration/handshake.",
+      "RFC9002 section5.3 corrected by Verified Errata7539 RTT ordering and AppendixB rational NewReno ACK/loss reference; persistent congestion explicitly rejected.",
+      "Explicit sender-observed input trace, no serialization/network/receiver/pacer or automatic retransmission scheduler.",
+      "PTO grants at most two probe opportunities; actual probe sent events must be supplied and still obey absolute flow limits.",
+      "ACK-confirmed byte coverage is sender evidence of transport receipt, not receiver application delivery or playback.",
+      "Lost records retained for late ACK business coverage; late ACK alone does not resample RTT, regrow cwnd or release flight twice."
+    ]
+  },
+  "ack-at-loss-deadline": {
+    "calculation": "rfc9002-confirmed-application-feedback-reference",
+    "inputs": {
+      "max_datagram_size": 1200,
+      "initial_max_data": 100000,
+      "initial_max_stream_data": {
+        "A": 100000
+      },
+      "until": "0.115",
+      "events": [
+        {
+          "type": "sent",
+          "at": "0",
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "type": "sent",
+          "at": "1/1000",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 1,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "type": "sent",
+          "at": "1/500",
+          "pn": 2,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 2,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "type": "sent",
+          "at": "3/1000",
+          "pn": 3,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 3,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "type": "ack",
+          "at": "0.103",
+          "ranges": [
+            [
+              3,
+              3
+            ]
+          ],
+          "ack_delay": 0
+        },
+        {
+          "type": "ack",
+          "at": "0.1135",
+          "ranges": [
+            [
+              1,
+              1
+            ]
+          ],
+          "ack_delay": "0.0125"
+        }
+      ],
+      "rtt_seed": {
+        "latest_rtt": "0.1",
+        "smoothed_rtt": "0.1",
+        "rttvar": "0.0375",
+        "min_rtt": "0.1",
+        "first_sample_at": -1
+      }
+    },
+    "reference_sources": [
+      {
+        "file": "sources/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704012+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704463+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+        "verified_at_utc": "2026-09-09T13:46:10.581233+00:00",
+        "verification": "official RFC Editor HTML downloaded and destination re-read"
+      },
+      {
+        "file": "sources/rfc9221.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9221.txt",
+        "revision": "RFC9221",
+        "bytes": 18624,
+        "sha256": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+        "copied_from": "calculations/research/shared-media-transport/sources/rfc9221.txt",
+        "verified_at_utc": "2026-09-09T13:49:21.119137+00:00",
+        "verification": "official local copy re-read"
+      }
+    ],
+    "events": [
+      {
+        "at": "0",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "0",
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 1
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "11/40"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 1
+          },
+          "max_data_consumed": 1
+        }
+      },
+      {
+        "at": "1/1000",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "1/1000",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 1,
+              "length": 1
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 2400,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "69/250"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 2
+          },
+          "max_data_consumed": 2
+        }
+      },
+      {
+        "at": "1/500",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "1/500",
+          "pn": 2,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 2,
+              "length": 1
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 3600,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "277/1000"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 3
+          },
+          "max_data_consumed": 3
+        }
+      },
+      {
+        "at": "3/1000",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "3/1000",
+          "pn": 3,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 3,
+              "length": 1
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 4800,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "139/500"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      },
+      {
+        "at": "103/1000",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.103",
+          "ranges": [
+            [
+              3,
+              3
+            ]
+          ],
+          "ack_delay": 0
+        },
+        "details": {
+          "newly_acked": [
+            3
+          ],
+          "late_acked": [],
+          "newly_lost": [
+            0
+          ]
+        },
+        "state": {
+          "bytes_in_flight": 2400,
+          "cwnd": "6000",
+          "ssthresh": "6000",
+          "recovery_start": "103/1000",
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "9/320",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 3,
+          "next_timer": {
+            "kind": "loss",
+            "at": "227/2000"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      },
+      {
+        "at": "227/2000",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.1135",
+          "ranges": [
+            [
+              1,
+              1
+            ]
+          ],
+          "ack_delay": "0.0125"
+        },
+        "details": {
+          "newly_acked": [
+            1
+          ],
+          "late_acked": [],
+          "newly_lost": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "6000",
+          "ssthresh": "6000",
+          "recovery_start": "103/1000",
+          "latest_rtt": "9/80",
+          "smoothed_rtt": "1/10",
+          "rttvar": "27/1280",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 3,
+          "next_timer": {
+            "kind": "loss",
+            "at": "2057/16000"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      }
+    ],
+    "packets": [
+      {
+        "pn": 0,
+        "sent_at": "0",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "lost",
+        "probe": false,
+        "lost_at": "103/1000"
+      },
+      {
+        "pn": 1,
+        "sent_at": "1/1000",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 1,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "227/2000"
+      },
+      {
+        "pn": 2,
+        "sent_at": "1/500",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 2,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "sent",
+        "probe": false
+      },
+      {
+        "pn": 3,
+        "sent_at": "3/1000",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 3,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "103/1000"
+      }
+    ],
+    "loss_events": [
+      {
+        "at": "103/1000",
+        "pn": 0,
+        "packet_threshold": true,
+        "time_threshold": false
+      }
+    ],
+    "timer_events": [],
+    "rtt_samples": [
+      {
+        "at": "103/1000",
+        "pn": 3,
+        "raw": "1/10",
+        "adjusted": "1/10",
+        "smoothed": "1/10",
+        "rttvar": "9/320"
+      },
+      {
+        "at": "227/2000",
+        "pn": 1,
+        "raw": "9/80",
+        "adjusted": "1/10",
+        "smoothed": "1/10",
+        "rttvar": "27/1280"
+      }
+    ],
+    "final_state": {
+      "bytes_in_flight": 1200,
+      "cwnd": "6000",
+      "ssthresh": "6000",
+      "recovery_start": "103/1000",
+      "latest_rtt": "9/80",
+      "smoothed_rtt": "1/10",
+      "rttvar": "27/1280",
+      "min_rtt": "1/10",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 3,
+      "next_timer": {
+        "kind": "loss",
+        "at": "2057/16000"
+      },
+      "max_data": 100000,
+      "max_stream_data": {
+        "A": 100000
+      },
+      "stream_highest_sent_offsets": {
+        "A": 4
+      },
+      "max_data_consumed": 4
+    },
+    "sender_confirmed_business": {
+      "stream_intervals": {
+        "A": [
+          [
+            1,
+            2
+          ],
+          [
+            3,
+            4
+          ]
+        ]
+      },
+      "unique_stream_bytes": 2,
+      "acked_datagram_ids": [],
+      "acked_datagram_bytes": 0
+    },
+    "summary": {
+      "sent_udp_payload_bytes": 4800,
+      "stream_payload_transmission_bytes": 4,
+      "datagram_payload_transmission_bytes": 0,
+      "declared_quic_overhead_padding_control_bytes": 4796,
+      "last_processed_event": "227/2000",
+      "replay_until": "23/200"
+    },
+    "limitations": [
+      "Single already-confirmed validated path and Application PN space, no ECN/migration/handshake.",
+      "RFC9002 section5.3 corrected by Verified Errata7539 RTT ordering and AppendixB rational NewReno ACK/loss reference; persistent congestion explicitly rejected.",
+      "Explicit sender-observed input trace, no serialization/network/receiver/pacer or automatic retransmission scheduler.",
+      "PTO grants at most two probe opportunities; actual probe sent events must be supplied and still obey absolute flow limits.",
+      "ACK-confirmed byte coverage is sender evidence of transport receipt, not receiver application delivery or playback.",
+      "Lost records retained for late ACK business coverage; late ACK alone does not resample RTT, regrow cwnd or release flight twice."
+    ]
+  },
+  "tail-no-feedback-pto": {
+    "calculation": "rfc9002-confirmed-application-feedback-reference",
+    "inputs": {
+      "max_datagram_size": 1200,
+      "initial_max_data": 100000,
+      "initial_max_stream_data": {
+        "A": 100000
+      },
+      "until": "1.9",
+      "events": [
+        {
+          "type": "sent",
+          "at": 1,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 10
+            }
+          ]
+        }
+      ],
+      "rtt_seed": {
+        "latest_rtt": "0.1",
+        "smoothed_rtt": "0.1",
+        "rttvar": "0.0375",
+        "min_rtt": "0.1",
+        "first_sample_at": -1
+      }
+    },
+    "reference_sources": [
+      {
+        "file": "sources/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704012+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704463+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+        "verified_at_utc": "2026-09-09T13:46:10.581233+00:00",
+        "verification": "official RFC Editor HTML downloaded and destination re-read"
+      },
+      {
+        "file": "sources/rfc9221.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9221.txt",
+        "revision": "RFC9221",
+        "bytes": 18624,
+        "sha256": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+        "copied_from": "calculations/research/shared-media-transport/sources/rfc9221.txt",
+        "verified_at_utc": "2026-09-09T13:49:21.119137+00:00",
+        "verification": "official local copy re-read"
+      }
+    ],
+    "events": [
+      {
+        "at": "1",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": 1,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 10
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "51/40"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 10
+          },
+          "max_data_consumed": 10
+        }
+      },
+      {
+        "at": "51/40",
+        "event": "pto_timer",
+        "input": null,
+        "details": {
+          "probe_opportunities": 2
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 1,
+          "probe_allowance": 2,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "31/20"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 10
+          },
+          "max_data_consumed": 10
+        }
+      },
+      {
+        "at": "31/20",
+        "event": "pto_timer",
+        "input": null,
+        "details": {
+          "probe_opportunities": 2
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 2,
+          "probe_allowance": 2,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "21/10"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 10
+          },
+          "max_data_consumed": 10
+        }
+      }
+    ],
+    "packets": [
+      {
+        "pn": 0,
+        "sent_at": "1",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 10
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "sent",
+        "probe": false
+      }
+    ],
+    "loss_events": [],
+    "timer_events": [
+      {
+        "at": "51/40",
+        "kind": "pto",
+        "probe_opportunities": 2
+      },
+      {
+        "at": "31/20",
+        "kind": "pto",
+        "probe_opportunities": 2
+      }
+    ],
+    "rtt_samples": [],
+    "final_state": {
+      "bytes_in_flight": 1200,
+      "cwnd": "12000",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "1/10",
+      "smoothed_rtt": "1/10",
+      "rttvar": "3/80",
+      "min_rtt": "1/10",
+      "pto_count": 2,
+      "probe_allowance": 2,
+      "largest_acked": null,
+      "next_timer": {
+        "kind": "pto",
+        "at": "21/10"
+      },
+      "max_data": 100000,
+      "max_stream_data": {
+        "A": 100000
+      },
+      "stream_highest_sent_offsets": {
+        "A": 10
+      },
+      "max_data_consumed": 10
+    },
+    "sender_confirmed_business": {
+      "stream_intervals": {},
+      "unique_stream_bytes": 0,
+      "acked_datagram_ids": [],
+      "acked_datagram_bytes": 0
+    },
+    "summary": {
+      "sent_udp_payload_bytes": 1200,
+      "stream_payload_transmission_bytes": 10,
+      "datagram_payload_transmission_bytes": 0,
+      "declared_quic_overhead_padding_control_bytes": 1190,
+      "last_processed_event": "31/20",
+      "replay_until": "19/10"
+    },
+    "limitations": [
+      "Single already-confirmed validated path and Application PN space, no ECN/migration/handshake.",
+      "RFC9002 section5.3 corrected by Verified Errata7539 RTT ordering and AppendixB rational NewReno ACK/loss reference; persistent congestion explicitly rejected.",
+      "Explicit sender-observed input trace, no serialization/network/receiver/pacer or automatic retransmission scheduler.",
+      "PTO grants at most two probe opportunities; actual probe sent events must be supplied and still obey absolute flow limits.",
+      "ACK-confirmed byte coverage is sender evidence of transport receipt, not receiver application delivery or playback.",
+      "Lost records retained for late ACK business coverage; late ACK alone does not resample RTT, regrow cwnd or release flight twice."
+    ]
+  },
+  "probe-then-ack-reset": {
+    "calculation": "rfc9002-confirmed-application-feedback-reference",
+    "inputs": {
+      "max_datagram_size": 1200,
+      "initial_max_data": 100000,
+      "initial_max_stream_data": {
+        "A": 100000
+      },
+      "until": "1.9",
+      "events": [
+        {
+          "type": "sent",
+          "at": 1,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 10
+            }
+          ]
+        },
+        {
+          "type": "sent",
+          "at": "1.275",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "probe": true,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 10
+            }
+          ]
+        },
+        {
+          "type": "ack",
+          "at": "1.375",
+          "ranges": [
+            [
+              0,
+              1
+            ]
+          ],
+          "ack_delay": 0
+        }
+      ],
+      "rtt_seed": {
+        "latest_rtt": "0.1",
+        "smoothed_rtt": "0.1",
+        "rttvar": "0.0375",
+        "min_rtt": "0.1",
+        "first_sample_at": -1
+      }
+    },
+    "reference_sources": [
+      {
+        "file": "sources/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704012+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704463+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+        "verified_at_utc": "2026-09-09T13:46:10.581233+00:00",
+        "verification": "official RFC Editor HTML downloaded and destination re-read"
+      },
+      {
+        "file": "sources/rfc9221.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9221.txt",
+        "revision": "RFC9221",
+        "bytes": 18624,
+        "sha256": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+        "copied_from": "calculations/research/shared-media-transport/sources/rfc9221.txt",
+        "verified_at_utc": "2026-09-09T13:49:21.119137+00:00",
+        "verification": "official local copy re-read"
+      }
+    ],
+    "events": [
+      {
+        "at": "1",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": 1,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 10
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "51/40"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 10
+          },
+          "max_data_consumed": 10
+        }
+      },
+      {
+        "at": "51/40",
+        "event": "pto_timer",
+        "input": null,
+        "details": {
+          "probe_opportunities": 2
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 1,
+          "probe_allowance": 2,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "31/20"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 10
+          },
+          "max_data_consumed": 10
+        }
+      },
+      {
+        "at": "51/40",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "1.275",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "probe": true,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 10
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 2400,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 1,
+          "probe_allowance": 1,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "73/40"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 10
+          },
+          "max_data_consumed": 10
+        }
+      },
+      {
+        "at": "11/8",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "1.375",
+          "ranges": [
+            [
+              0,
+              1
+            ]
+          ],
+          "ack_delay": 0
+        },
+        "details": {
+          "newly_acked": [
+            0,
+            1
+          ],
+          "late_acked": [],
+          "newly_lost": []
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "14400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "9/320",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 1,
+          "next_timer": null,
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 10
+          },
+          "max_data_consumed": 10
+        }
+      }
+    ],
+    "packets": [
+      {
+        "pn": 0,
+        "sent_at": "1",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 10
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "11/8"
+      },
+      {
+        "pn": 1,
+        "sent_at": "51/40",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 10
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": true,
+        "acked_at": "11/8"
+      }
+    ],
+    "loss_events": [],
+    "timer_events": [
+      {
+        "at": "51/40",
+        "kind": "pto",
+        "probe_opportunities": 2
+      }
+    ],
+    "rtt_samples": [
+      {
+        "at": "11/8",
+        "pn": 1,
+        "raw": "1/10",
+        "adjusted": "1/10",
+        "smoothed": "1/10",
+        "rttvar": "9/320"
+      }
+    ],
+    "final_state": {
+      "bytes_in_flight": 0,
+      "cwnd": "14400",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "1/10",
+      "smoothed_rtt": "1/10",
+      "rttvar": "9/320",
+      "min_rtt": "1/10",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 1,
+      "next_timer": null,
+      "max_data": 100000,
+      "max_stream_data": {
+        "A": 100000
+      },
+      "stream_highest_sent_offsets": {
+        "A": 10
+      },
+      "max_data_consumed": 10
+    },
+    "sender_confirmed_business": {
+      "stream_intervals": {
+        "A": [
+          [
+            0,
+            10
+          ]
+        ]
+      },
+      "unique_stream_bytes": 10,
+      "acked_datagram_ids": [],
+      "acked_datagram_bytes": 0
+    },
+    "summary": {
+      "sent_udp_payload_bytes": 2400,
+      "stream_payload_transmission_bytes": 20,
+      "datagram_payload_transmission_bytes": 0,
+      "declared_quic_overhead_padding_control_bytes": 2380,
+      "last_processed_event": "11/8",
+      "replay_until": "19/10"
+    },
+    "limitations": [
+      "Single already-confirmed validated path and Application PN space, no ECN/migration/handshake.",
+      "RFC9002 section5.3 corrected by Verified Errata7539 RTT ordering and AppendixB rational NewReno ACK/loss reference; persistent congestion explicitly rejected.",
+      "Explicit sender-observed input trace, no serialization/network/receiver/pacer or automatic retransmission scheduler.",
+      "PTO grants at most two probe opportunities; actual probe sent events must be supplied and still obey absolute flow limits.",
+      "ACK-confirmed byte coverage is sender evidence of transport receipt, not receiver application delivery or playback.",
+      "Lost records retained for late ACK business coverage; late ACK alone does not resample RTT, regrow cwnd or release flight twice."
+    ]
+  },
+  "ack-at-pto-deadline": {
+    "calculation": "rfc9002-confirmed-application-feedback-reference",
+    "inputs": {
+      "max_datagram_size": 1200,
+      "initial_max_data": 100000,
+      "initial_max_stream_data": {
+        "A": 100000
+      },
+      "until": "1.275",
+      "events": [
+        {
+          "type": "sent",
+          "at": 1,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": []
+        },
+        {
+          "type": "ack",
+          "at": "1.275",
+          "ranges": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ack_delay": 0
+        }
+      ],
+      "rtt_seed": {
+        "latest_rtt": "0.1",
+        "smoothed_rtt": "0.1",
+        "rttvar": "0.0375",
+        "min_rtt": "0.1",
+        "first_sample_at": -1
+      }
+    },
+    "reference_sources": [
+      {
+        "file": "sources/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704012+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704463+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+        "verified_at_utc": "2026-09-09T13:46:10.581233+00:00",
+        "verification": "official RFC Editor HTML downloaded and destination re-read"
+      },
+      {
+        "file": "sources/rfc9221.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9221.txt",
+        "revision": "RFC9221",
+        "bytes": 18624,
+        "sha256": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+        "copied_from": "calculations/research/shared-media-transport/sources/rfc9221.txt",
+        "verified_at_utc": "2026-09-09T13:49:21.119137+00:00",
+        "verification": "official local copy re-read"
+      }
+    ],
+    "events": [
+      {
+        "at": "1",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": 1,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": []
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "51/40"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {},
+          "max_data_consumed": 0
+        }
+      },
+      {
+        "at": "51/40",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "1.275",
+          "ranges": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ack_delay": 0
+        },
+        "details": {
+          "newly_acked": [
+            0
+          ],
+          "late_acked": [],
+          "newly_lost": []
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "13200",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "11/40",
+          "smoothed_rtt": "39/320",
+          "rttvar": "23/320",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 0,
+          "next_timer": null,
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {},
+          "max_data_consumed": 0
+        }
+      }
+    ],
+    "packets": [
+      {
+        "pn": 0,
+        "sent_at": "1",
+        "sent_bytes": 1200,
+        "frames": [],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "51/40"
+      }
+    ],
+    "loss_events": [],
+    "timer_events": [],
+    "rtt_samples": [
+      {
+        "at": "51/40",
+        "pn": 0,
+        "raw": "11/40",
+        "adjusted": "11/40",
+        "smoothed": "39/320",
+        "rttvar": "23/320"
+      }
+    ],
+    "final_state": {
+      "bytes_in_flight": 0,
+      "cwnd": "13200",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "11/40",
+      "smoothed_rtt": "39/320",
+      "rttvar": "23/320",
+      "min_rtt": "1/10",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 0,
+      "next_timer": null,
+      "max_data": 100000,
+      "max_stream_data": {
+        "A": 100000
+      },
+      "stream_highest_sent_offsets": {},
+      "max_data_consumed": 0
+    },
+    "sender_confirmed_business": {
+      "stream_intervals": {},
+      "unique_stream_bytes": 0,
+      "acked_datagram_ids": [],
+      "acked_datagram_bytes": 0
+    },
+    "summary": {
+      "sent_udp_payload_bytes": 1200,
+      "stream_payload_transmission_bytes": 0,
+      "datagram_payload_transmission_bytes": 0,
+      "declared_quic_overhead_padding_control_bytes": 1200,
+      "last_processed_event": "51/40",
+      "replay_until": "51/40"
+    },
+    "limitations": [
+      "Single already-confirmed validated path and Application PN space, no ECN/migration/handshake.",
+      "RFC9002 section5.3 corrected by Verified Errata7539 RTT ordering and AppendixB rational NewReno ACK/loss reference; persistent congestion explicitly rejected.",
+      "Explicit sender-observed input trace, no serialization/network/receiver/pacer or automatic retransmission scheduler.",
+      "PTO grants at most two probe opportunities; actual probe sent events must be supplied and still obey absolute flow limits.",
+      "ACK-confirmed byte coverage is sender evidence of transport receipt, not receiver application delivery or playback.",
+      "Lost records retained for late ACK business coverage; late ACK alone does not resample RTT, regrow cwnd or release flight twice."
+    ]
+  },
+  "absolute-flow-feedback": {
+    "calculation": "rfc9002-confirmed-application-feedback-reference",
+    "inputs": {
+      "max_datagram_size": 1200,
+      "initial_max_data": 6,
+      "initial_max_stream_data": {
+        "A": 4,
+        "B": 2
+      },
+      "until": 6,
+      "events": [
+        {
+          "type": "sent",
+          "at": 0,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 4
+            }
+          ]
+        },
+        {
+          "type": "sent",
+          "at": "0.001",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "B",
+              "offset": 0,
+              "length": 2
+            }
+          ]
+        },
+        {
+          "type": "ack",
+          "at": "0.1",
+          "ranges": [
+            [
+              0,
+              1
+            ]
+          ],
+          "ack_delay": 0,
+          "flow_limited": true
+        },
+        {
+          "type": "can_send",
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 4,
+              "length": 2
+            }
+          ],
+          "at": 4
+        },
+        {
+          "type": "max_data",
+          "at": 5,
+          "value": 8
+        },
+        {
+          "type": "can_send",
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 4,
+              "length": 2
+            }
+          ],
+          "at": 5
+        },
+        {
+          "type": "max_stream_data",
+          "at": 6,
+          "stream": "A",
+          "value": 6
+        },
+        {
+          "type": "can_send",
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 4,
+              "length": 2
+            }
+          ],
+          "at": 6
+        }
+      ]
+    },
+    "reference_sources": [
+      {
+        "file": "sources/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704012+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704463+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+        "verified_at_utc": "2026-09-09T13:46:10.581233+00:00",
+        "verification": "official RFC Editor HTML downloaded and destination re-read"
+      },
+      {
+        "file": "sources/rfc9221.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9221.txt",
+        "revision": "RFC9221",
+        "bytes": 18624,
+        "sha256": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+        "copied_from": "calculations/research/shared-media-transport/sources/rfc9221.txt",
+        "verified_at_utc": "2026-09-09T13:49:21.119137+00:00",
+        "verification": "official local copy re-read"
+      }
+    ],
+    "events": [
+      {
+        "at": "0",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": 0,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 4
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "0",
+          "smoothed_rtt": "333/1000",
+          "rttvar": "333/2000",
+          "min_rtt": null,
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "128/125"
+          },
+          "max_data": 6,
+          "max_stream_data": {
+            "A": 4,
+            "B": 2
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      },
+      {
+        "at": "1/1000",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "0.001",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "B",
+              "offset": 0,
+              "length": 2
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 2400,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "0",
+          "smoothed_rtt": "333/1000",
+          "rttvar": "333/2000",
+          "min_rtt": null,
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "41/40"
+          },
+          "max_data": 6,
+          "max_stream_data": {
+            "A": 4,
+            "B": 2
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4,
+            "B": 2
+          },
+          "max_data_consumed": 6
+        }
+      },
+      {
+        "at": "1/10",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.1",
+          "ranges": [
+            [
+              0,
+              1
+            ]
+          ],
+          "ack_delay": 0,
+          "flow_limited": true
+        },
+        "details": {
+          "newly_acked": [
+            0,
+            1
+          ],
+          "late_acked": [],
+          "newly_lost": []
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "99/1000",
+          "smoothed_rtt": "99/1000",
+          "rttvar": "99/2000",
+          "min_rtt": "99/1000",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 1,
+          "next_timer": null,
+          "max_data": 6,
+          "max_stream_data": {
+            "A": 4,
+            "B": 2
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4,
+            "B": 2
+          },
+          "max_data_consumed": 6
+        }
+      },
+      {
+        "at": "4",
+        "event": "can_send",
+        "input": {
+          "type": "can_send",
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 4,
+              "length": 2
+            }
+          ],
+          "at": 4
+        },
+        "details": {
+          "can_send": false,
+          "blocked_by": [
+            "MAX_DATA",
+            "MAX_STREAM_DATA:A"
+          ]
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "99/1000",
+          "smoothed_rtt": "99/1000",
+          "rttvar": "99/2000",
+          "min_rtt": "99/1000",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 1,
+          "next_timer": null,
+          "max_data": 6,
+          "max_stream_data": {
+            "A": 4,
+            "B": 2
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4,
+            "B": 2
+          },
+          "max_data_consumed": 6
+        }
+      },
+      {
+        "at": "5",
+        "event": "max_data",
+        "input": {
+          "type": "max_data",
+          "at": 5,
+          "value": 8
+        },
+        "details": {},
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "99/1000",
+          "smoothed_rtt": "99/1000",
+          "rttvar": "99/2000",
+          "min_rtt": "99/1000",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 1,
+          "next_timer": null,
+          "max_data": 8,
+          "max_stream_data": {
+            "A": 4,
+            "B": 2
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4,
+            "B": 2
+          },
+          "max_data_consumed": 6
+        }
+      },
+      {
+        "at": "5",
+        "event": "can_send",
+        "input": {
+          "type": "can_send",
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 4,
+              "length": 2
+            }
+          ],
+          "at": 5
+        },
+        "details": {
+          "can_send": false,
+          "blocked_by": [
+            "MAX_STREAM_DATA:A"
+          ]
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "99/1000",
+          "smoothed_rtt": "99/1000",
+          "rttvar": "99/2000",
+          "min_rtt": "99/1000",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 1,
+          "next_timer": null,
+          "max_data": 8,
+          "max_stream_data": {
+            "A": 4,
+            "B": 2
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4,
+            "B": 2
+          },
+          "max_data_consumed": 6
+        }
+      },
+      {
+        "at": "6",
+        "event": "max_stream_data",
+        "input": {
+          "type": "max_stream_data",
+          "at": 6,
+          "stream": "A",
+          "value": 6
+        },
+        "details": {},
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "99/1000",
+          "smoothed_rtt": "99/1000",
+          "rttvar": "99/2000",
+          "min_rtt": "99/1000",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 1,
+          "next_timer": null,
+          "max_data": 8,
+          "max_stream_data": {
+            "A": 6,
+            "B": 2
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4,
+            "B": 2
+          },
+          "max_data_consumed": 6
+        }
+      },
+      {
+        "at": "6",
+        "event": "can_send",
+        "input": {
+          "type": "can_send",
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 4,
+              "length": 2
+            }
+          ],
+          "at": 6
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "99/1000",
+          "smoothed_rtt": "99/1000",
+          "rttvar": "99/2000",
+          "min_rtt": "99/1000",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 1,
+          "next_timer": null,
+          "max_data": 8,
+          "max_stream_data": {
+            "A": 6,
+            "B": 2
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4,
+            "B": 2
+          },
+          "max_data_consumed": 6
+        }
+      }
+    ],
+    "packets": [
+      {
+        "pn": 0,
+        "sent_at": "0",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 4
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "1/10"
+      },
+      {
+        "pn": 1,
+        "sent_at": "1/1000",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "B",
+            "offset": 0,
+            "length": 2
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "1/10"
+      }
+    ],
+    "loss_events": [],
+    "timer_events": [],
+    "rtt_samples": [
+      {
+        "at": "1/10",
+        "pn": 1,
+        "raw": "99/1000",
+        "adjusted": "99/1000",
+        "smoothed": "99/1000",
+        "rttvar": "99/2000"
+      }
+    ],
+    "final_state": {
+      "bytes_in_flight": 0,
+      "cwnd": "12000",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "99/1000",
+      "smoothed_rtt": "99/1000",
+      "rttvar": "99/2000",
+      "min_rtt": "99/1000",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 1,
+      "next_timer": null,
+      "max_data": 8,
+      "max_stream_data": {
+        "A": 6,
+        "B": 2
+      },
+      "stream_highest_sent_offsets": {
+        "A": 4,
+        "B": 2
+      },
+      "max_data_consumed": 6
+    },
+    "sender_confirmed_business": {
+      "stream_intervals": {
+        "A": [
+          [
+            0,
+            4
+          ]
+        ],
+        "B": [
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      "unique_stream_bytes": 6,
+      "acked_datagram_ids": [],
+      "acked_datagram_bytes": 0
+    },
+    "summary": {
+      "sent_udp_payload_bytes": 2400,
+      "stream_payload_transmission_bytes": 6,
+      "datagram_payload_transmission_bytes": 0,
+      "declared_quic_overhead_padding_control_bytes": 2394,
+      "last_processed_event": "6",
+      "replay_until": "6"
+    },
+    "limitations": [
+      "Single already-confirmed validated path and Application PN space, no ECN/migration/handshake.",
+      "RFC9002 section5.3 corrected by Verified Errata7539 RTT ordering and AppendixB rational NewReno ACK/loss reference; persistent congestion explicitly rejected.",
+      "Explicit sender-observed input trace, no serialization/network/receiver/pacer or automatic retransmission scheduler.",
+      "PTO grants at most two probe opportunities; actual probe sent events must be supplied and still obey absolute flow limits.",
+      "ACK-confirmed byte coverage is sender evidence of transport receipt, not receiver application delivery or playback.",
+      "Lost records retained for late ACK business coverage; late ACK alone does not resample RTT, regrow cwnd or release flight twice."
+    ]
+  },
+  "stream-offset-high-water": {
+    "calculation": "rfc9002-confirmed-application-feedback-reference",
+    "inputs": {
+      "max_datagram_size": 1200,
+      "initial_max_data": 6,
+      "initial_max_stream_data": {
+        "A": 6
+      },
+      "until": "0.3",
+      "events": [
+        {
+          "type": "sent",
+          "at": 0,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 5,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "type": "ack",
+          "at": "0.1",
+          "ranges": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ack_delay": 0
+        },
+        {
+          "type": "sent",
+          "at": "0.2",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 5
+            }
+          ]
+        },
+        {
+          "type": "ack",
+          "at": "0.3",
+          "ranges": [
+            [
+              1,
+              1
+            ]
+          ],
+          "ack_delay": 0
+        }
+      ]
+    },
+    "reference_sources": [
+      {
+        "file": "sources/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704012+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704463+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+        "verified_at_utc": "2026-09-09T13:46:10.581233+00:00",
+        "verification": "official RFC Editor HTML downloaded and destination re-read"
+      },
+      {
+        "file": "sources/rfc9221.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9221.txt",
+        "revision": "RFC9221",
+        "bytes": 18624,
+        "sha256": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+        "copied_from": "calculations/research/shared-media-transport/sources/rfc9221.txt",
+        "verified_at_utc": "2026-09-09T13:49:21.119137+00:00",
+        "verification": "official local copy re-read"
+      }
+    ],
+    "events": [
+      {
+        "at": "0",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": 0,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 5,
+              "length": 1
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "0",
+          "smoothed_rtt": "333/1000",
+          "rttvar": "333/2000",
+          "min_rtt": null,
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "128/125"
+          },
+          "max_data": 6,
+          "max_stream_data": {
+            "A": 6
+          },
+          "stream_highest_sent_offsets": {
+            "A": 6
+          },
+          "max_data_consumed": 6
+        }
+      },
+      {
+        "at": "1/10",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.1",
+          "ranges": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ack_delay": 0
+        },
+        "details": {
+          "newly_acked": [
+            0
+          ],
+          "late_acked": [],
+          "newly_lost": []
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "13200",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "1/20",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 0,
+          "next_timer": null,
+          "max_data": 6,
+          "max_stream_data": {
+            "A": 6
+          },
+          "stream_highest_sent_offsets": {
+            "A": 6
+          },
+          "max_data_consumed": 6
+        }
+      },
+      {
+        "at": "1/5",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "0.2",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 5
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "13200",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "1/20",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 0,
+          "next_timer": {
+            "kind": "pto",
+            "at": "21/40"
+          },
+          "max_data": 6,
+          "max_stream_data": {
+            "A": 6
+          },
+          "stream_highest_sent_offsets": {
+            "A": 6
+          },
+          "max_data_consumed": 6
+        }
+      },
+      {
+        "at": "3/10",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.3",
+          "ranges": [
+            [
+              1,
+              1
+            ]
+          ],
+          "ack_delay": 0
+        },
+        "details": {
+          "newly_acked": [
+            1
+          ],
+          "late_acked": [],
+          "newly_lost": []
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "14400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 1,
+          "next_timer": null,
+          "max_data": 6,
+          "max_stream_data": {
+            "A": 6
+          },
+          "stream_highest_sent_offsets": {
+            "A": 6
+          },
+          "max_data_consumed": 6
+        }
+      }
+    ],
+    "packets": [
+      {
+        "pn": 0,
+        "sent_at": "0",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 5,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "1/10"
+      },
+      {
+        "pn": 1,
+        "sent_at": "1/5",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 5
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "3/10"
+      }
+    ],
+    "loss_events": [],
+    "timer_events": [],
+    "rtt_samples": [
+      {
+        "at": "1/10",
+        "pn": 0,
+        "raw": "1/10",
+        "adjusted": "1/10",
+        "smoothed": "1/10",
+        "rttvar": "1/20"
+      },
+      {
+        "at": "3/10",
+        "pn": 1,
+        "raw": "1/10",
+        "adjusted": "1/10",
+        "smoothed": "1/10",
+        "rttvar": "3/80"
+      }
+    ],
+    "final_state": {
+      "bytes_in_flight": 0,
+      "cwnd": "14400",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "1/10",
+      "smoothed_rtt": "1/10",
+      "rttvar": "3/80",
+      "min_rtt": "1/10",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 1,
+      "next_timer": null,
+      "max_data": 6,
+      "max_stream_data": {
+        "A": 6
+      },
+      "stream_highest_sent_offsets": {
+        "A": 6
+      },
+      "max_data_consumed": 6
+    },
+    "sender_confirmed_business": {
+      "stream_intervals": {
+        "A": [
+          [
+            0,
+            6
+          ]
+        ]
+      },
+      "unique_stream_bytes": 6,
+      "acked_datagram_ids": [],
+      "acked_datagram_bytes": 0
+    },
+    "summary": {
+      "sent_udp_payload_bytes": 2400,
+      "stream_payload_transmission_bytes": 6,
+      "datagram_payload_transmission_bytes": 0,
+      "declared_quic_overhead_padding_control_bytes": 2394,
+      "last_processed_event": "3/10",
+      "replay_until": "3/10"
+    },
+    "limitations": [
+      "Single already-confirmed validated path and Application PN space, no ECN/migration/handshake.",
+      "RFC9002 section5.3 corrected by Verified Errata7539 RTT ordering and AppendixB rational NewReno ACK/loss reference; persistent congestion explicitly rejected.",
+      "Explicit sender-observed input trace, no serialization/network/receiver/pacer or automatic retransmission scheduler.",
+      "PTO grants at most two probe opportunities; actual probe sent events must be supplied and still obey absolute flow limits.",
+      "ACK-confirmed byte coverage is sender evidence of transport receipt, not receiver application delivery or playback.",
+      "Lost records retained for late ACK business coverage; late ACK alone does not resample RTT, regrow cwnd or release flight twice."
+    ]
+  },
+  "datagram-without-stream-credit": {
+    "calculation": "rfc9002-confirmed-application-feedback-reference",
+    "inputs": {
+      "max_datagram_size": 1200,
+      "initial_max_data": 0,
+      "initial_max_stream_data": {
+        "A": 0
+      },
+      "until": "0.1",
+      "events": [
+        {
+          "type": "sent",
+          "at": 0,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "datagram",
+              "id": "audio0",
+              "length": 100
+            }
+          ]
+        },
+        {
+          "type": "ack",
+          "at": "0.1",
+          "ranges": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ack_delay": 0
+        }
+      ]
+    },
+    "reference_sources": [
+      {
+        "file": "sources/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704012+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704463+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+        "verified_at_utc": "2026-09-09T13:46:10.581233+00:00",
+        "verification": "official RFC Editor HTML downloaded and destination re-read"
+      },
+      {
+        "file": "sources/rfc9221.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9221.txt",
+        "revision": "RFC9221",
+        "bytes": 18624,
+        "sha256": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+        "copied_from": "calculations/research/shared-media-transport/sources/rfc9221.txt",
+        "verified_at_utc": "2026-09-09T13:49:21.119137+00:00",
+        "verification": "official local copy re-read"
+      }
+    ],
+    "events": [
+      {
+        "at": "0",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": 0,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "datagram",
+              "id": "audio0",
+              "length": 100
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "0",
+          "smoothed_rtt": "333/1000",
+          "rttvar": "333/2000",
+          "min_rtt": null,
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "128/125"
+          },
+          "max_data": 0,
+          "max_stream_data": {
+            "A": 0
+          },
+          "stream_highest_sent_offsets": {},
+          "max_data_consumed": 0
+        }
+      },
+      {
+        "at": "1/10",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.1",
+          "ranges": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ack_delay": 0
+        },
+        "details": {
+          "newly_acked": [
+            0
+          ],
+          "late_acked": [],
+          "newly_lost": []
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "13200",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "1/20",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 0,
+          "next_timer": null,
+          "max_data": 0,
+          "max_stream_data": {
+            "A": 0
+          },
+          "stream_highest_sent_offsets": {},
+          "max_data_consumed": 0
+        }
+      }
+    ],
+    "packets": [
+      {
+        "pn": 0,
+        "sent_at": "0",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "datagram",
+            "id": "audio0",
+            "length": 100
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "1/10"
+      }
+    ],
+    "loss_events": [],
+    "timer_events": [],
+    "rtt_samples": [
+      {
+        "at": "1/10",
+        "pn": 0,
+        "raw": "1/10",
+        "adjusted": "1/10",
+        "smoothed": "1/10",
+        "rttvar": "1/20"
+      }
+    ],
+    "final_state": {
+      "bytes_in_flight": 0,
+      "cwnd": "13200",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "1/10",
+      "smoothed_rtt": "1/10",
+      "rttvar": "1/20",
+      "min_rtt": "1/10",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 0,
+      "next_timer": null,
+      "max_data": 0,
+      "max_stream_data": {
+        "A": 0
+      },
+      "stream_highest_sent_offsets": {},
+      "max_data_consumed": 0
+    },
+    "sender_confirmed_business": {
+      "stream_intervals": {},
+      "unique_stream_bytes": 0,
+      "acked_datagram_ids": [
+        "audio0"
+      ],
+      "acked_datagram_bytes": 100
+    },
+    "summary": {
+      "sent_udp_payload_bytes": 1200,
+      "stream_payload_transmission_bytes": 0,
+      "datagram_payload_transmission_bytes": 100,
+      "declared_quic_overhead_padding_control_bytes": 1100,
+      "last_processed_event": "1/10",
+      "replay_until": "1/10"
+    },
+    "limitations": [
+      "Single already-confirmed validated path and Application PN space, no ECN/migration/handshake.",
+      "RFC9002 section5.3 corrected by Verified Errata7539 RTT ordering and AppendixB rational NewReno ACK/loss reference; persistent congestion explicitly rejected.",
+      "Explicit sender-observed input trace, no serialization/network/receiver/pacer or automatic retransmission scheduler.",
+      "PTO grants at most two probe opportunities; actual probe sent events must be supplied and still obey absolute flow limits.",
+      "ACK-confirmed byte coverage is sender evidence of transport receipt, not receiver application delivery or playback.",
+      "Lost records retained for late ACK business coverage; late ACK alone does not resample RTT, regrow cwnd or release flight twice."
+    ]
+  },
+  "ack-only": {
+    "calculation": "rfc9002-confirmed-application-feedback-reference",
+    "inputs": {
+      "max_datagram_size": 1200,
+      "initial_max_data": 100000,
+      "initial_max_stream_data": {
+        "A": 100000
+      },
+      "until": "0.5",
+      "events": [
+        {
+          "type": "sent",
+          "at": 0,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "ack_eliciting": false,
+          "in_flight": false,
+          "frames": []
+        }
+      ]
+    },
+    "reference_sources": [
+      {
+        "file": "sources/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704012+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704463+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+        "verified_at_utc": "2026-09-09T13:46:10.581233+00:00",
+        "verification": "official RFC Editor HTML downloaded and destination re-read"
+      },
+      {
+        "file": "sources/rfc9221.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9221.txt",
+        "revision": "RFC9221",
+        "bytes": 18624,
+        "sha256": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+        "copied_from": "calculations/research/shared-media-transport/sources/rfc9221.txt",
+        "verified_at_utc": "2026-09-09T13:49:21.119137+00:00",
+        "verification": "official local copy re-read"
+      }
+    ],
+    "events": [
+      {
+        "at": "0",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": 0,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "ack_eliciting": false,
+          "in_flight": false,
+          "frames": []
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "0",
+          "smoothed_rtt": "333/1000",
+          "rttvar": "333/2000",
+          "min_rtt": null,
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": null,
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {},
+          "max_data_consumed": 0
+        }
+      }
+    ],
+    "packets": [
+      {
+        "pn": 0,
+        "sent_at": "0",
+        "sent_bytes": 1200,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": false,
+        "status": "sent",
+        "probe": false
+      }
+    ],
+    "loss_events": [],
+    "timer_events": [],
+    "rtt_samples": [],
+    "final_state": {
+      "bytes_in_flight": 0,
+      "cwnd": "12000",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "0",
+      "smoothed_rtt": "333/1000",
+      "rttvar": "333/2000",
+      "min_rtt": null,
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": null,
+      "next_timer": null,
+      "max_data": 100000,
+      "max_stream_data": {
+        "A": 100000
+      },
+      "stream_highest_sent_offsets": {},
+      "max_data_consumed": 0
+    },
+    "sender_confirmed_business": {
+      "stream_intervals": {},
+      "unique_stream_bytes": 0,
+      "acked_datagram_ids": [],
+      "acked_datagram_bytes": 0
+    },
+    "summary": {
+      "sent_udp_payload_bytes": 1200,
+      "stream_payload_transmission_bytes": 0,
+      "datagram_payload_transmission_bytes": 0,
+      "declared_quic_overhead_padding_control_bytes": 1200,
+      "last_processed_event": "0",
+      "replay_until": "1/2"
+    },
+    "limitations": [
+      "Single already-confirmed validated path and Application PN space, no ECN/migration/handshake.",
+      "RFC9002 section5.3 corrected by Verified Errata7539 RTT ordering and AppendixB rational NewReno ACK/loss reference; persistent congestion explicitly rejected.",
+      "Explicit sender-observed input trace, no serialization/network/receiver/pacer or automatic retransmission scheduler.",
+      "PTO grants at most two probe opportunities; actual probe sent events must be supplied and still obey absolute flow limits.",
+      "ACK-confirmed byte coverage is sender evidence of transport receipt, not receiver application delivery or playback.",
+      "Lost records retained for late ACK business coverage; late ACK alone does not resample RTT, regrow cwnd or release flight twice."
+    ]
+  },
+  "padding-only": {
+    "calculation": "rfc9002-confirmed-application-feedback-reference",
+    "inputs": {
+      "max_datagram_size": 1200,
+      "initial_max_data": 100000,
+      "initial_max_stream_data": {
+        "A": 100000
+      },
+      "until": "0.5",
+      "events": [
+        {
+          "type": "sent",
+          "at": 0,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "ack_eliciting": false,
+          "in_flight": true,
+          "frames": []
+        }
+      ]
+    },
+    "reference_sources": [
+      {
+        "file": "sources/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704012+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704463+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+        "verified_at_utc": "2026-09-09T13:46:10.581233+00:00",
+        "verification": "official RFC Editor HTML downloaded and destination re-read"
+      },
+      {
+        "file": "sources/rfc9221.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9221.txt",
+        "revision": "RFC9221",
+        "bytes": 18624,
+        "sha256": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+        "copied_from": "calculations/research/shared-media-transport/sources/rfc9221.txt",
+        "verified_at_utc": "2026-09-09T13:49:21.119137+00:00",
+        "verification": "official local copy re-read"
+      }
+    ],
+    "events": [
+      {
+        "at": "0",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": 0,
+          "pn": 0,
+          "sent_bytes": 1200,
+          "ack_eliciting": false,
+          "in_flight": true,
+          "frames": []
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "0",
+          "smoothed_rtt": "333/1000",
+          "rttvar": "333/2000",
+          "min_rtt": null,
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": null,
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {},
+          "max_data_consumed": 0
+        }
+      }
+    ],
+    "packets": [
+      {
+        "pn": 0,
+        "sent_at": "0",
+        "sent_bytes": 1200,
+        "frames": [],
+        "ack_eliciting": false,
+        "in_flight": true,
+        "status": "sent",
+        "probe": false
+      }
+    ],
+    "loss_events": [],
+    "timer_events": [],
+    "rtt_samples": [],
+    "final_state": {
+      "bytes_in_flight": 1200,
+      "cwnd": "12000",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "0",
+      "smoothed_rtt": "333/1000",
+      "rttvar": "333/2000",
+      "min_rtt": null,
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": null,
+      "next_timer": null,
+      "max_data": 100000,
+      "max_stream_data": {
+        "A": 100000
+      },
+      "stream_highest_sent_offsets": {},
+      "max_data_consumed": 0
+    },
+    "sender_confirmed_business": {
+      "stream_intervals": {},
+      "unique_stream_bytes": 0,
+      "acked_datagram_ids": [],
+      "acked_datagram_bytes": 0
+    },
+    "summary": {
+      "sent_udp_payload_bytes": 1200,
+      "stream_payload_transmission_bytes": 0,
+      "datagram_payload_transmission_bytes": 0,
+      "declared_quic_overhead_padding_control_bytes": 1200,
+      "last_processed_event": "0",
+      "replay_until": "1/2"
+    },
+    "limitations": [
+      "Single already-confirmed validated path and Application PN space, no ECN/migration/handshake.",
+      "RFC9002 section5.3 corrected by Verified Errata7539 RTT ordering and AppendixB rational NewReno ACK/loss reference; persistent congestion explicitly rejected.",
+      "Explicit sender-observed input trace, no serialization/network/receiver/pacer or automatic retransmission scheduler.",
+      "PTO grants at most two probe opportunities; actual probe sent events must be supplied and still obey absolute flow limits.",
+      "ACK-confirmed byte coverage is sender evidence of transport receipt, not receiver application delivery or playback.",
+      "Lost records retained for late ACK business coverage; late ACK alone does not resample RTT, regrow cwnd or release flight twice."
+    ]
+  },
+  "new-pn-old-offset-recovery": {
+    "calculation": "rfc9002-confirmed-application-feedback-reference",
+    "inputs": {
+      "max_datagram_size": 1200,
+      "initial_max_data": 100000,
+      "initial_max_stream_data": {
+        "A": 100000
+      },
+      "until": "0.204",
+      "events": [
+        {
+          "type": "sent",
+          "at": "0",
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "type": "sent",
+          "at": "1/1000",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 1,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "type": "sent",
+          "at": "1/500",
+          "pn": 2,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 2,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "type": "sent",
+          "at": "3/1000",
+          "pn": 3,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 3,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "type": "ack",
+          "at": "0.103",
+          "ranges": [
+            [
+              3,
+              3
+            ]
+          ],
+          "ack_delay": 0
+        },
+        {
+          "type": "sent",
+          "at": "0.104",
+          "pn": 4,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "type": "ack",
+          "at": "0.12",
+          "ranges": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ack_delay": 0
+        },
+        {
+          "type": "ack",
+          "at": "0.204",
+          "ranges": [
+            [
+              4,
+              4
+            ]
+          ],
+          "ack_delay": 0
+        }
+      ],
+      "rtt_seed": {
+        "latest_rtt": "0.1",
+        "smoothed_rtt": "0.1",
+        "rttvar": "0.0375",
+        "min_rtt": "0.1",
+        "first_sample_at": -1
+      }
+    },
+    "reference_sources": [
+      {
+        "file": "sources/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704012+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704463+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+        "verified_at_utc": "2026-09-09T13:46:10.581233+00:00",
+        "verification": "official RFC Editor HTML downloaded and destination re-read"
+      },
+      {
+        "file": "sources/rfc9221.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9221.txt",
+        "revision": "RFC9221",
+        "bytes": 18624,
+        "sha256": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+        "copied_from": "calculations/research/shared-media-transport/sources/rfc9221.txt",
+        "verified_at_utc": "2026-09-09T13:49:21.119137+00:00",
+        "verification": "official local copy re-read"
+      }
+    ],
+    "events": [
+      {
+        "at": "0",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "0",
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 1
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "11/40"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 1
+          },
+          "max_data_consumed": 1
+        }
+      },
+      {
+        "at": "1/1000",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "1/1000",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 1,
+              "length": 1
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 2400,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "69/250"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 2
+          },
+          "max_data_consumed": 2
+        }
+      },
+      {
+        "at": "1/500",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "1/500",
+          "pn": 2,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 2,
+              "length": 1
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 3600,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "277/1000"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 3
+          },
+          "max_data_consumed": 3
+        }
+      },
+      {
+        "at": "3/1000",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "3/1000",
+          "pn": 3,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 3,
+              "length": 1
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 4800,
+          "cwnd": "12000",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "139/500"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      },
+      {
+        "at": "103/1000",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.103",
+          "ranges": [
+            [
+              3,
+              3
+            ]
+          ],
+          "ack_delay": 0
+        },
+        "details": {
+          "newly_acked": [
+            3
+          ],
+          "late_acked": [],
+          "newly_lost": [
+            0
+          ]
+        },
+        "state": {
+          "bytes_in_flight": 2400,
+          "cwnd": "6000",
+          "ssthresh": "6000",
+          "recovery_start": "103/1000",
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "9/320",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 3,
+          "next_timer": {
+            "kind": "loss",
+            "at": "227/2000"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      },
+      {
+        "at": "13/125",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "0.104",
+          "pn": 4,
+          "sent_bytes": 1200,
+          "frames": [
+            {
+              "type": "stream",
+              "stream": "A",
+              "offset": 0,
+              "length": 1
+            }
+          ]
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 3600,
+          "cwnd": "6000",
+          "ssthresh": "6000",
+          "recovery_start": "103/1000",
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "9/320",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 3,
+          "next_timer": {
+            "kind": "loss",
+            "at": "227/2000"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      },
+      {
+        "at": "227/2000",
+        "event": "loss_timer",
+        "input": null,
+        "details": {
+          "newly_lost": [
+            1
+          ]
+        },
+        "state": {
+          "bytes_in_flight": 2400,
+          "cwnd": "6000",
+          "ssthresh": "6000",
+          "recovery_start": "103/1000",
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "9/320",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 3,
+          "next_timer": {
+            "kind": "loss",
+            "at": "229/2000"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      },
+      {
+        "at": "229/2000",
+        "event": "loss_timer",
+        "input": null,
+        "details": {
+          "newly_lost": [
+            2
+          ]
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "6000",
+          "ssthresh": "6000",
+          "recovery_start": "103/1000",
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "9/320",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 3,
+          "next_timer": {
+            "kind": "pto",
+            "at": "683/2000"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      },
+      {
+        "at": "3/25",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.12",
+          "ranges": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ack_delay": 0
+        },
+        "details": {
+          "newly_acked": [],
+          "late_acked": [
+            0
+          ],
+          "newly_lost": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "6000",
+          "ssthresh": "6000",
+          "recovery_start": "103/1000",
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "9/320",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 3,
+          "next_timer": {
+            "kind": "pto",
+            "at": "683/2000"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      },
+      {
+        "at": "51/250",
+        "event": "ack",
+        "input": {
+          "type": "ack",
+          "at": "0.204",
+          "ranges": [
+            [
+              4,
+              4
+            ]
+          ],
+          "ack_delay": 0
+        },
+        "details": {
+          "newly_acked": [
+            4
+          ],
+          "late_acked": [],
+          "newly_lost": []
+        },
+        "state": {
+          "bytes_in_flight": 0,
+          "cwnd": "6240",
+          "ssthresh": "6000",
+          "recovery_start": "103/1000",
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "27/1280",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": 4,
+          "next_timer": null,
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {
+            "A": 4
+          },
+          "max_data_consumed": 4
+        }
+      }
+    ],
+    "packets": [
+      {
+        "pn": 0,
+        "sent_at": "0",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "lost_then_acked",
+        "probe": false,
+        "lost_at": "103/1000",
+        "acked_at": "3/25"
+      },
+      {
+        "pn": 1,
+        "sent_at": "1/1000",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 1,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "lost",
+        "probe": false,
+        "lost_at": "227/2000"
+      },
+      {
+        "pn": 2,
+        "sent_at": "1/500",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 2,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "lost",
+        "probe": false,
+        "lost_at": "229/2000"
+      },
+      {
+        "pn": 3,
+        "sent_at": "3/1000",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 3,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "103/1000"
+      },
+      {
+        "pn": 4,
+        "sent_at": "13/125",
+        "sent_bytes": 1200,
+        "frames": [
+          {
+            "type": "stream",
+            "stream": "A",
+            "offset": 0,
+            "length": 1
+          }
+        ],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "acked",
+        "probe": false,
+        "acked_at": "51/250"
+      }
+    ],
+    "loss_events": [
+      {
+        "at": "103/1000",
+        "pn": 0,
+        "packet_threshold": true,
+        "time_threshold": false
+      },
+      {
+        "at": "227/2000",
+        "pn": 1,
+        "packet_threshold": false,
+        "time_threshold": true
+      },
+      {
+        "at": "229/2000",
+        "pn": 2,
+        "packet_threshold": false,
+        "time_threshold": true
+      }
+    ],
+    "timer_events": [
+      {
+        "at": "227/2000",
+        "kind": "loss",
+        "newly_lost": [
+          1
+        ]
+      },
+      {
+        "at": "229/2000",
+        "kind": "loss",
+        "newly_lost": [
+          2
+        ]
+      }
+    ],
+    "rtt_samples": [
+      {
+        "at": "103/1000",
+        "pn": 3,
+        "raw": "1/10",
+        "adjusted": "1/10",
+        "smoothed": "1/10",
+        "rttvar": "9/320"
+      },
+      {
+        "at": "51/250",
+        "pn": 4,
+        "raw": "1/10",
+        "adjusted": "1/10",
+        "smoothed": "1/10",
+        "rttvar": "27/1280"
+      }
+    ],
+    "final_state": {
+      "bytes_in_flight": 0,
+      "cwnd": "6240",
+      "ssthresh": "6000",
+      "recovery_start": "103/1000",
+      "latest_rtt": "1/10",
+      "smoothed_rtt": "1/10",
+      "rttvar": "27/1280",
+      "min_rtt": "1/10",
+      "pto_count": 0,
+      "probe_allowance": 0,
+      "largest_acked": 4,
+      "next_timer": null,
+      "max_data": 100000,
+      "max_stream_data": {
+        "A": 100000
+      },
+      "stream_highest_sent_offsets": {
+        "A": 4
+      },
+      "max_data_consumed": 4
+    },
+    "sender_confirmed_business": {
+      "stream_intervals": {
+        "A": [
+          [
+            0,
+            1
+          ],
+          [
+            3,
+            4
+          ]
+        ]
+      },
+      "unique_stream_bytes": 2,
+      "acked_datagram_ids": [],
+      "acked_datagram_bytes": 0
+    },
+    "summary": {
+      "sent_udp_payload_bytes": 6000,
+      "stream_payload_transmission_bytes": 5,
+      "datagram_payload_transmission_bytes": 0,
+      "declared_quic_overhead_padding_control_bytes": 5995,
+      "last_processed_event": "51/250",
+      "replay_until": "51/250"
+    },
+    "limitations": [
+      "Single already-confirmed validated path and Application PN space, no ECN/migration/handshake.",
+      "RFC9002 section5.3 corrected by Verified Errata7539 RTT ordering and AppendixB rational NewReno ACK/loss reference; persistent congestion explicitly rejected.",
+      "Explicit sender-observed input trace, no serialization/network/receiver/pacer or automatic retransmission scheduler.",
+      "PTO grants at most two probe opportunities; actual probe sent events must be supplied and still obey absolute flow limits.",
+      "ACK-confirmed byte coverage is sender evidence of transport receipt, not receiver application delivery or playback.",
+      "Lost records retained for late ACK business coverage; late ACK alone does not resample RTT, regrow cwnd or release flight twice."
+    ]
+  },
+  "pto-probe-over-cwnd": {
+    "calculation": "rfc9002-confirmed-application-feedback-reference",
+    "inputs": {
+      "max_datagram_size": 1200,
+      "initial_max_data": 100000,
+      "initial_max_stream_data": {
+        "A": 100000
+      },
+      "until": "0.276",
+      "events": [
+        {
+          "type": "sent",
+          "at": "0",
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": []
+        },
+        {
+          "type": "sent",
+          "at": "1/1000",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": []
+        },
+        {
+          "type": "sent",
+          "at": "0.276",
+          "pn": 2,
+          "sent_bytes": 1200,
+          "probe": true,
+          "frames": []
+        }
+      ],
+      "rtt_seed": {
+        "latest_rtt": "0.1",
+        "smoothed_rtt": "0.1",
+        "rttvar": "0.0375",
+        "min_rtt": "0.1",
+        "first_sample_at": -1
+      },
+      "initial_cwnd": 2400
+    },
+    "reference_sources": [
+      {
+        "file": "sources/rfc9000.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+        "revision": "RFC9000",
+        "bytes": 403442,
+        "sha256": "f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9000.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704012+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9002.txt",
+        "revision": "RFC9002",
+        "bytes": 89071,
+        "sha256": "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af",
+        "copied_from": "calculations/sources/protocol-rfc/rfc9002.txt",
+        "verified_at_utc": "2026-09-09T13:43:18.704463+00:00",
+        "verification": "existing official text copied and destination re-read; no new network fetch"
+      },
+      {
+        "file": "sources/rfc9002-errata7539.html",
+        "url": "https://www.rfc-editor.org/errata/eid7539",
+        "revision": "RFC9002 Verified Errata7539",
+        "bytes": 8446,
+        "sha256": "685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a",
+        "verified_at_utc": "2026-09-09T13:46:10.581233+00:00",
+        "verification": "official RFC Editor HTML downloaded and destination re-read"
+      },
+      {
+        "file": "sources/rfc9221.txt",
+        "url": "https://www.rfc-editor.org/rfc/rfc9221.txt",
+        "revision": "RFC9221",
+        "bytes": 18624,
+        "sha256": "ee8c04c5228fd120030ba7a8f6725c2ca609da107ad2ba8c44fdd44f73edb3b4",
+        "copied_from": "calculations/research/shared-media-transport/sources/rfc9221.txt",
+        "verified_at_utc": "2026-09-09T13:49:21.119137+00:00",
+        "verification": "official local copy re-read"
+      }
+    ],
+    "events": [
+      {
+        "at": "0",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "0",
+          "pn": 0,
+          "sent_bytes": 1200,
+          "frames": []
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 1200,
+          "cwnd": "2400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "11/40"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {},
+          "max_data_consumed": 0
+        }
+      },
+      {
+        "at": "1/1000",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "1/1000",
+          "pn": 1,
+          "sent_bytes": 1200,
+          "frames": []
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 2400,
+          "cwnd": "2400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 0,
+          "probe_allowance": 0,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "69/250"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {},
+          "max_data_consumed": 0
+        }
+      },
+      {
+        "at": "69/250",
+        "event": "pto_timer",
+        "input": null,
+        "details": {
+          "probe_opportunities": 2
+        },
+        "state": {
+          "bytes_in_flight": 2400,
+          "cwnd": "2400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 1,
+          "probe_allowance": 2,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "551/1000"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {},
+          "max_data_consumed": 0
+        }
+      },
+      {
+        "at": "69/250",
+        "event": "sent",
+        "input": {
+          "type": "sent",
+          "at": "0.276",
+          "pn": 2,
+          "sent_bytes": 1200,
+          "probe": true,
+          "frames": []
+        },
+        "details": {
+          "can_send": true,
+          "blocked_by": []
+        },
+        "state": {
+          "bytes_in_flight": 3600,
+          "cwnd": "2400",
+          "ssthresh": null,
+          "recovery_start": null,
+          "latest_rtt": "1/10",
+          "smoothed_rtt": "1/10",
+          "rttvar": "3/80",
+          "min_rtt": "1/10",
+          "pto_count": 1,
+          "probe_allowance": 1,
+          "largest_acked": null,
+          "next_timer": {
+            "kind": "pto",
+            "at": "413/500"
+          },
+          "max_data": 100000,
+          "max_stream_data": {
+            "A": 100000
+          },
+          "stream_highest_sent_offsets": {},
+          "max_data_consumed": 0
+        }
+      }
+    ],
+    "packets": [
+      {
+        "pn": 0,
+        "sent_at": "0",
+        "sent_bytes": 1200,
+        "frames": [],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "sent",
+        "probe": false
+      },
+      {
+        "pn": 1,
+        "sent_at": "1/1000",
+        "sent_bytes": 1200,
+        "frames": [],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "sent",
+        "probe": false
+      },
+      {
+        "pn": 2,
+        "sent_at": "69/250",
+        "sent_bytes": 1200,
+        "frames": [],
+        "ack_eliciting": true,
+        "in_flight": true,
+        "status": "sent",
+        "probe": true
+      }
+    ],
+    "loss_events": [],
+    "timer_events": [
+      {
+        "at": "69/250",
+        "kind": "pto",
+        "probe_opportunities": 2
+      }
+    ],
+    "rtt_samples": [],
+    "final_state": {
+      "bytes_in_flight": 3600,
+      "cwnd": "2400",
+      "ssthresh": null,
+      "recovery_start": null,
+      "latest_rtt": "1/10",
+      "smoothed_rtt": "1/10",
+      "rttvar": "3/80",
+      "min_rtt": "1/10",
+      "pto_count": 1,
+      "probe_allowance": 1,
+      "largest_acked": null,
+      "next_timer": {
+        "kind": "pto",
+        "at": "413/500"
+      },
+      "max_data": 100000,
+      "max_stream_data": {
+        "A": 100000
+      },
+      "stream_highest_sent_offsets": {},
+      "max_data_consumed": 0
+    },
+    "sender_confirmed_business": {
+      "stream_intervals": {},
+      "unique_stream_bytes": 0,
+      "acked_datagram_ids": [],
+      "acked_datagram_bytes": 0
+    },
+    "summary": {
+      "sent_udp_payload_bytes": 3600,
+      "stream_payload_transmission_bytes": 0,
+      "datagram_payload_transmission_bytes": 0,
+      "declared_quic_overhead_padding_control_bytes": 3600,
+      "last_processed_event": "69/250",
+      "replay_until": "69/250"
+    },
+    "limitations": [
+      "Single already-confirmed validated path and Application PN space, no ECN/migration/handshake.",
+      "RFC9002 section5.3 corrected by Verified Errata7539 RTT ordering and AppendixB rational NewReno ACK/loss reference; persistent congestion explicitly rejected.",
+      "Explicit sender-observed input trace, no serialization/network/receiver/pacer or automatic retransmission scheduler.",
+      "PTO grants at most two probe opportunities; actual probe sent events must be supplied and still obey absolute flow limits.",
+      "ACK-confirmed byte coverage is sender evidence of transport receipt, not receiver application delivery or playback.",
+      "Lost records retained for late ACK business coverage; late ACK alone does not resample RTT, regrow cwnd or release flight twice."
+    ]
+  }
+}

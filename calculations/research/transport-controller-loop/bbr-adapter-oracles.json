@@ -1,0 +1,121 @@
+{
+  "scope": "Pre-implementation independent arithmetic/identity expectations; no network execution",
+  "clock": {
+    "formula": "1+floor(seconds*1000000)",
+    "zero_seconds_maps_us": 1,
+    "one_tenth_seconds_maps_us": 100001,
+    "delta_us": 100000
+  },
+  "unit_contract": {
+    "mds_quic_bytes": 1200,
+    "ip_udp_bytes": 28,
+    "full_stream_unique_bytes": 1168,
+    "full_packet_wire_bytes": 1228,
+    "pure_ack_quic_bytes": 64,
+    "pure_ack_wire_bytes": 92
+  },
+  "sample_compression": {
+    "prior_delivered": 10,
+    "post_total_delivered": 12,
+    "selected_sent_us": 100001,
+    "selected_first_tx_us": 20001,
+    "selected_prior_delivered_mstamp_us": 100001,
+    "ack_now_us": 150001,
+    "send_interval_us": 80000,
+    "ack_interval_us": 50000,
+    "interval_us": 80000,
+    "delivered_packets": 2,
+    "bw_scaled": 419,
+    "nominal_and_actual_quic_bytes_per_second": "30000",
+    "pacing_gain256_margin_bytes_per_second": 29669
+  },
+  "pacing": {
+    "last_send_seconds": "1/10",
+    "sent_quic_bytes": 1200,
+    "rate_quic_bytes_per_second": 29669,
+    "next_eligible_seconds_exact": "41669/296690",
+    "serialization_seconds_at20mbps": "307/625000",
+    "note": "Pacer charges1200; physical serializer charges1228; next send must satisfy both"
+  },
+  "late_ack": {
+    "sends": [
+      {
+        "pn": 0,
+        "at_seconds": "0",
+        "stream": "A",
+        "offset": 0,
+        "length": 1168
+      },
+      {
+        "pn": 1,
+        "at_seconds": "2/25",
+        "stream": "A",
+        "offset": 0,
+        "length": 1168,
+        "recovery_of": 0
+      }
+    ],
+    "events": [
+      {
+        "at_seconds": "1/20",
+        "event": "loss PN0",
+        "released_flight_bytes": 1200,
+        "delivered_packets": 0
+      },
+      {
+        "at_seconds": "1/10",
+        "event": "ACK PN1",
+        "released_flight_bytes": 1200,
+        "delivered_packets": 1,
+        "unique_sender_acked_stream_bytes": 1168
+      },
+      {
+        "at_seconds": "3/25",
+        "event": "first late ACK PN0",
+        "released_flight_bytes": 0,
+        "delivered_packets": 2,
+        "unique_sender_acked_stream_bytes": 1168,
+        "new_rtt_sample": false
+      },
+      {
+        "at_seconds": "13/100",
+        "event": "duplicate ACK PN0",
+        "released_flight_bytes": 0,
+        "delivered_packets": 2,
+        "unique_sender_acked_stream_bytes": 1168
+      }
+    ],
+    "first_recovery_ack_bw_scaled": 838,
+    "late_original_ack_bw_scaled": 279,
+    "nominal_delivered_quic_bytes": 2400,
+    "epoch_reset_rule": "When sender active transmission set is empty, new actual send resets sampling timestamps; lost tombstones retained solely for late-ACK identity."
+  },
+  "control": {
+    "acked_full_stream_pn_count": 1,
+    "acked_padded_max_pn_count": 1,
+    "pure_ack_pn_count": 1,
+    "bbr_delivered_packets": 2,
+    "bbr_delivered_quic_bytes": 2400,
+    "stream_unique_bytes": 1168,
+    "padding_not_max_data_credit": true
+  },
+  "limited_flags": {
+    "send_snapshot_app_limited": false,
+    "send_snapshot_flow_limited": true,
+    "ack_arrival_application_queue_empty": true,
+    "rate_sample_app_limited": false,
+    "reason": "sample flag comes from selected sent record, not queue state at ACK time"
+  },
+  "source_boundary": "This is per-QUIC-PN transport delivery, not TCP skb/logical-byte deduplication. No external maxBW supplied.",
+  "idle_after_recovery": {
+    "never_acked_lost_pn": 0,
+    "recovery_pn": 1,
+    "recovery_acked_seconds": "1/10",
+    "idle_new_send_seconds": "10",
+    "next_ack_seconds": "101/10",
+    "new_send_snapshot_first_tx_us": 10000001,
+    "new_send_snapshot_delivered_mstamp_us": 10000001,
+    "sample_interval_us": 100000,
+    "sample_bw_scaled": 167
+  }
+}

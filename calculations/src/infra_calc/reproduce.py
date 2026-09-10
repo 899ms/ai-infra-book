@@ -28,7 +28,7 @@ from .topics import image_request_budget
 from .topics import image_request_streaming
 from .topics import connection_window
 from .topics import connection_sequence
-from .topics import protocol_handshake, protocol_early_stream
+from .topics import protocol_handshake, protocol_early_stream, protocol_retry, shared_media_transport, transport_closed_loop
 from .topics import growing_remote_kv
 from .topics import paired_projection_cost
 from .topics import matrix_vector_handoff
@@ -36,6 +36,13 @@ from .topics import v4_copy_coordinates
 from .topics import attention_input_pipeline
 from .topics import fa4_resource_balance
 from .topics import storage_generation_comparison
+from .topics import queqiao_records
+from .topics import region_placement
+from .topics import execution_dag
+from .topics import weight_resident_traffic
+from .topics import iso_resource_comparison
+from .topics import specialization_payback
+from .topics import design_record
 from .topics import granularity_selection
 from .topics import omni_audio_preprocess
 from .topics import v4_optimizer
@@ -63,7 +70,7 @@ def is_source_input(path):
 
 
 def input_hashes() -> list[dict]:
-    paths = [*sorted((PROJECT / "sources/protocol-rfc").glob("*")),*sorted((PROJECT / "sources/connection-window").glob("*")),*sorted((PROJECT / "sources/memory-pool").glob("*")),*sorted(p for p in (PROJECT / "sources/paired-projection-cost").rglob("*") if p.is_file()),*sorted(p for p in (PROJECT / "sources/fa4-resource-balance").glob("*") if p.is_file()),*sorted(p for p in (PROJECT / "sources/trace-resource-bridge").rglob("*") if p.is_file()), *sorted(p for p in (PROJECT / "sources/omni-audio-preprocess").rglob("*") if p.is_file()), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/v4-optimizer-report.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/vision-preprocess.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/scaling-real-points.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/strategy-record-cost.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/workload-profiles.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/vl-position-bridge.lock.json").read_text())), PROJECT / "calc.py", *sorted((PROJECT / "scenarios").glob("reconfiguration-*.json")), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/scaling-law.lock.json").read_text())), *sorted((PROJECT / "scenarios").glob("scaling-law-*.json")), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/training-history.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/ub-scope.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/environment-lifecycle.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/tpu-demand.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/nic-history.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/vision-encoding.lock.json").read_text())), *sorted(p for folder in ("sources/image-generation", "research/generative-audio-analysis", "research/generative-video-analysis", "research/generative-media-candidates") for p in (PROJECT / folder).rglob("*") if p.is_file()), *sorted(p for p in (PROJECT / "sources/environment-resources").rglob("*") if p.is_file()), *sorted((PROJECT / "sources/multimodal-cache").glob("*")), *sorted(p for p in (PROJECT / "sources/checkpoint-resume").rglob("*") if p.is_file()), *sorted(p for p in (PROJECT / "sources/checkpoint-fault").rglob("*") if p.is_file()), *sorted(p for p in (PROJECT / "sources/checkpoint-baseline").rglob("*") if p.is_file()), *sorted((PROJECT / "sources/training-state").glob("*")), *sorted(path for path in (PROJECT / "sources/cache-fault").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/cache-missing").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/cache-restart").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/router-pressure").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/router-trace").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/kv-quality").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/gguf-headers").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/gguf-qwen235").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/service-replay").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/chunk-history").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/dflash-qwen3-8b").glob("*") if path.is_file()), PROJECT / "scenarios/book.json", *sorted((PROJECT / "configs").glob("*.json")),
+    paths = [*sorted(path for path in (PROJECT / "sources/shared-airtime").glob("*") if path.is_file()), *sorted((PROJECT / "scenarios").glob("shared-airtime-*.json")), *sorted(path for path in (PROJECT / "sources/congestion-controllers").glob("*") if path.is_file()), *sorted((PROJECT / "sources/shared-media-rfc").glob("*")), *sorted((PROJECT / "sources/protocol-rfc").glob("*")),*sorted((PROJECT / "sources/connection-window").glob("*")),*sorted((PROJECT / "sources/memory-pool").glob("*")),*sorted(p for p in (PROJECT / "sources/paired-projection-cost").rglob("*") if p.is_file()),*sorted(p for p in (PROJECT / "sources/fa4-resource-balance").glob("*") if p.is_file()),*sorted(p for p in (PROJECT / "sources/queqiao-records").rglob("*") if p.is_file()),*sorted(p for p in (PROJECT / "sources/trace-resource-bridge").rglob("*") if p.is_file()), *sorted(p for p in (PROJECT / "sources/omni-audio-preprocess").rglob("*") if p.is_file()), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/v4-optimizer-report.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/vision-preprocess.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/scaling-real-points.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/strategy-record-cost.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/workload-profiles.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/vl-position-bridge.lock.json").read_text())), PROJECT / "calc.py", *sorted((PROJECT / "scenarios").glob("reconfiguration-*.json")), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/scaling-law.lock.json").read_text())), *sorted((PROJECT / "scenarios").glob("scaling-law-*.json")), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/training-history.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/ub-scope.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/environment-lifecycle.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/tpu-demand.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/nic-history.lock.json").read_text())), *(PROJECT / row["file"] for row in json.loads((PROJECT / "configs/vision-encoding.lock.json").read_text())), *sorted(p for folder in ("sources/image-generation", "research/generative-audio-analysis", "research/generative-video-analysis", "research/generative-media-candidates") for p in (PROJECT / folder).rglob("*") if p.is_file()), *sorted(p for p in (PROJECT / "sources/environment-resources").rglob("*") if p.is_file()), *sorted((PROJECT / "sources/multimodal-cache").glob("*")), *sorted(p for p in (PROJECT / "sources/checkpoint-resume").rglob("*") if p.is_file()), *sorted(p for p in (PROJECT / "sources/checkpoint-fault").rglob("*") if p.is_file()), *sorted(p for p in (PROJECT / "sources/checkpoint-baseline").rglob("*") if p.is_file()), *sorted((PROJECT / "sources/training-state").glob("*")), *sorted(path for path in (PROJECT / "sources/cache-fault").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/cache-missing").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/cache-restart").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/router-pressure").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/router-trace").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/kv-quality").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/gguf-headers").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/gguf-qwen235").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/service-replay").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/chunk-history").rglob("*") if path.is_file()), *sorted(path for path in (PROJECT / "sources/dflash-qwen3-8b").glob("*") if path.is_file()), PROJECT / "scenarios/book.json", *sorted((PROJECT / "configs").glob("*.json")),
              *sorted((PROJECT / "src/infra_calc").rglob("*.py")),
              *sorted((PROJECT / "sources/agent-traces").glob("*/*")),
              *sorted((PROJECT / "sources/cpu-loops").glob("*")),
@@ -114,6 +121,12 @@ def verify_results(include_figures=True) -> dict:
         figures["verified_figures"] += verify_real_scaling()["verified_figures"]
         from .capacity_plot import verify as verify_capacity
         figures["verified_figures"] += verify_capacity()["verified_figures"]
+        from .media_feedback_plot import verify as verify_media_feedback
+        figures["verified_figures"] += verify_media_feedback()["verified_figures"]
+        from .shared_airtime_plot import verify as verify_shared_airtime
+        figures["verified_figures"] += verify_shared_airtime()["verified_figures"]
+        from .shared_media_plot import verify as verify_shared_media
+        figures["verified_figures"] += verify_shared_media()["verified_figures"]
         from .chat_agent_plot import verify as verify_chat_agent
         figures["verified_figures"] += verify_chat_agent()["verified_figures"]
         from .architecture_shape_plot import verify as verify_shapes
@@ -373,6 +386,41 @@ def run() -> dict:
         result = storage_generation_comparison.calculate()
         save(row["id"], result)
         storage_generation_rows.append((row["id"], result))
+    queqiao_record_rows = []
+    for row in scenarios.get("queqiao_records", []):
+        result = queqiao_records.calculate(**{k: v for k, v in row.items() if k != "id"})
+        save(row["id"], result)
+        queqiao_record_rows.append((row["id"], result))
+    region_placement_rows = []
+    for row in scenarios.get("region_placement", []):
+        result = region_placement.calculate(**{k: v for k, v in row.items() if k != "id"})
+        save(row["id"], result)
+        region_placement_rows.append((row["id"], result))
+    execution_dag_rows = []
+    for row in scenarios.get("execution_dag", []):
+        result = execution_dag.calculate(**{k: v for k, v in row.items() if k != "id"})
+        save(row["id"], result)
+        execution_dag_rows.append((row["id"], result))
+    weight_resident_rows = []
+    for row in scenarios.get("weight_resident_traffic", []):
+        result = weight_resident_traffic.calculate(**{k: v for k, v in row.items() if k != "id"})
+        save(row["id"], result)
+        weight_resident_rows.append((row["id"], result))
+    iso_resource_comparison_rows = []
+    for row in scenarios.get("iso_resource_comparison", []):
+        result = iso_resource_comparison.calculate(**{k: v for k, v in row.items() if k != "id"})
+        save(row["id"], result)
+        iso_resource_comparison_rows.append((row["id"], result))
+    specialization_payback_rows = []
+    for row in scenarios.get("specialization_payback", []):
+        result = specialization_payback.calculate(**{k: v for k, v in row.items() if k != "id"})
+        save(row["id"], result)
+        specialization_payback_rows.append((row["id"], result))
+    design_record_rows = []
+    for row in scenarios.get("design_record", []):
+        result = design_record.calculate(**{k: v for k, v in row.items() if k != "id"})
+        save(row["id"], result)
+        design_record_rows.append((row["id"], result))
     granularity_selection_rows = []
     for row in scenarios.get("granularity_selection", []):
         result = granularity_selection.calculate(**{k: v for k, v in row.items() if k != "id"})
@@ -434,7 +482,7 @@ def run() -> dict:
         save(row["id"], result)
         profile_rows.append((row["id"], result))
     protocol_rows = []
-    for group, module in (("protocol_handshake", protocol_handshake), ("protocol_early_stream", protocol_early_stream)):
+    for group, module in (("protocol_handshake", protocol_handshake), ("protocol_early_stream", protocol_early_stream), ("protocol_retry", protocol_retry), ("shared_media_transport", shared_media_transport), ("transport_closed_loop", transport_closed_loop)):
         for row in scenarios.get(group, []):
             result = module.calculate(row["inputs"])
             save(row["id"], result)

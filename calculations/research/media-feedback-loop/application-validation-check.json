@@ -1,0 +1,166 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "case": "hol-connection",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "hol-per_stream",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "schedule-fifo",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "schedule-priority",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "credit-1-streams",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "credit-3-streams",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "playback-reliable",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "playback-slots",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "cancel-running-work",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "mixed-fifo",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "mixed-priority",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "image-30mb-5mb",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "screenshot-complete",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "screenshot-stale",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "mixed-preview-priority",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "unreliable-loss-credit",
+      "result": "accepted unchanged"
+    },
+    {
+      "case": "duplicate identity",
+      "result": "rejected unchanged",
+      "reason": "duplicate application ID"
+    },
+    {
+      "case": "same endpoint",
+      "result": "rejected unchanged",
+      "reason": "messages require distinct client/server endpoints"
+    },
+    {
+      "case": "overlapping stream messages",
+      "result": "rejected unchanged",
+      "reason": "overlapping application messages on one reliable stream"
+    },
+    {
+      "case": "reliable silent expiry",
+      "result": "rejected unchanged",
+      "reason": "reliable STREAM cannot silently expire"
+    },
+    {
+      "case": "boolean bytes",
+      "result": "rejected unchanged",
+      "reason": "message bytes must be an integer >= 1"
+    },
+    {
+      "case": "negative ready",
+      "result": "rejected unchanged",
+      "reason": "message ready must be nonnegative"
+    },
+    {
+      "case": "nonfinite deadline",
+      "result": "rejected unchanged",
+      "reason": "message deadline must be finite nonnegative seconds"
+    },
+    {
+      "case": "false fragmentation metadata",
+      "result": "rejected unchanged",
+      "reason": "packetization metadata disagrees with business bytes"
+    },
+    {
+      "case": "unknown dependency",
+      "result": "rejected unchanged",
+      "reason": "unknown dependency ID"
+    },
+    {
+      "case": "remote delivery used locally",
+      "result": "rejected unchanged",
+      "reason": "dependency needs actual delivery at the consumer endpoint"
+    },
+    {
+      "case": "false local delivery",
+      "result": "rejected unchanged",
+      "reason": "dependency needs actual delivery at the consumer endpoint"
+    },
+    {
+      "case": "datagram stream offset",
+      "result": "rejected unchanged",
+      "reason": "DATAGRAM must not consume STREAM offsets"
+    },
+    {
+      "case": "datagram cannot silently fragment",
+      "result": "rejected unchanged",
+      "reason": "DATAGRAM is an atomic application unit"
+    },
+    {
+      "case": "local compute dependency cycle",
+      "result": "rejected unchanged",
+      "reason": "cyclic application dependencies"
+    },
+    {
+      "case": "unsupported compute preemption",
+      "result": "rejected unchanged",
+      "reason": "unsupported scheduling contract"
+    },
+    {
+      "case": "unsupported compute capacity",
+      "result": "rejected unchanged",
+      "reason": "unsupported scheduling contract"
+    },
+    {
+      "case": "unknown send scheduler",
+      "result": "rejected unchanged",
+      "reason": "unsupported scheduling contract"
+    },
+    {
+      "case": "future remote version shortcut",
+      "result": "rejected unchanged",
+      "reason": "version observation must be local to observer"
+    },
+    {
+      "case": "reliable gap remains allowed, never assumed delivered",
+      "result": "accepted"
+    }
+  ],
+  "input_sha256": "52a5659d68519671d00ac69d59a0891580766f4ed196482182dd5cf8041b9329",
+  "source_sha256": "d4ebb24bbfe734ebb696964f13c16f8ba18064ae306085ea25696adc452712a3",
+  "scope": "Input causality and shape only; no network or business completion claim"
+}

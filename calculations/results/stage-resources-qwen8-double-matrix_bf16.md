@@ -10111,13 +10111,13 @@ Conditional known-work service bounds; full runtime remains unknown.
 | effective_resource_rates.matrix_fp8 | 1978900000000000.0 |
 | effective_resource_rates.vector_fp32 | 66900000000000.01 |
 | effective_resource_rates.interface_bytes | 3350000000000.0 |
-| effective_resource_rates.special:sin | 10000000000.0 |
 | effective_resource_rates.special:compare_max | 10000000000.0 |
 | effective_resource_rates.special:cos | 10000000000.0 |
 | effective_resource_rates.special:exp | 10000000000.0 |
-| effective_resource_rates.special:rsqrt | 10000000000.0 |
 | effective_resource_rates.special:mask_decisions | 10000000000.0 |
 | effective_resource_rates.special:negate | 10000000000.0 |
+| effective_resource_rates.special:rsqrt | 10000000000.0 |
+| effective_resource_rates.special:sin | 10000000000.0 |
 | baseline_work.matrix_flops | 1784230707200 |
 | baseline_work.scalar_flops | 620582016 |
 | baseline_work.special_ops.sin | 16384 |
@@ -10598,9 +10598,9 @@ Conditional known-work service bounds; full runtime remains unknown.
 | resource_bounds.global_resource_seconds.special:compare_max | 0.0009363456 |
 | resource_bounds.global_resource_seconds.special:mask_decisions | 0.0018874368 |
 | resource_bounds.known_global_max_seconds | 0.0068419584 |
-| resource_bounds.known_serial_stage_max_sum_seconds | 0.007215858626865672 |
+| resource_bounds.known_serial_stage_max_sum_seconds | 0.007215858626865678 |
 | resource_bounds.accounted_global_max_seconds | 0.0068419584 |
-| resource_bounds.accounted_serial_stage_lower_bound_seconds | 0.007215858626865672 |
+| resource_bounds.accounted_serial_stage_lower_bound_seconds | 0.007215858626865678 |
 | compute_only_bounds.stages[0].id | input |
 | compute_only_bounds.stages[0].resource_seconds.vector_fp32 | 1.2245142002989536e-10 |
 | compute_only_bounds.stages[0].resource_seconds.special:sin | 1.6384e-06 |
@@ -11032,9 +11032,9 @@ Conditional known-work service bounds; full runtime remains unknown.
 | compute_only_bounds.global_resource_seconds.special:compare_max | 0.0009363456 |
 | compute_only_bounds.global_resource_seconds.special:mask_decisions | 0.0018874368 |
 | compute_only_bounds.known_global_max_seconds | 0.0068419584 |
-| compute_only_bounds.known_serial_stage_max_sum_seconds | 0.006844225797226601 |
+| compute_only_bounds.known_serial_stage_max_sum_seconds | 0.0068442257972266074 |
 | compute_only_bounds.accounted_global_max_seconds | 0.0068419584 |
-| compute_only_bounds.accounted_serial_stage_lower_bound_seconds | 0.006844225797226601 |
+| compute_only_bounds.accounted_serial_stage_lower_bound_seconds | 0.0068442257972266074 |
 | capacity.comparison_bytes | 16400345088 |
 | capacity.applicable_necessary_condition | True |
 | capacity.definition | Declared uniform BF16 weights plus BF16 KV after this call; excludes workspace/activations |
@@ -11044,11 +11044,11 @@ Conditional known-work service bounds; full runtime remains unknown.
 | capacity.full_runtime_feasibility | unknown (null) |
 | coverage_gaps[0] | Sampling/tokenizer/launch/allocator and unexpanded dtype conversions/workspace remain outside the reference. |
 | coverage_gaps[1] | BF16 score/probability materialization is explicitly selected; scalar reductions FP32. No source backend or exact casting cost inferred. |
-| summary.accounted_serial_stage_lower_bound_seconds | 0.007215858626865672 |
+| summary.accounted_serial_stage_lower_bound_seconds | 0.007215858626865678 |
 | summary.accounted_global_max_seconds | 0.0068419584 |
 | summary.full_request_latency_bound_seconds | unknown (null) |
 | summary.measured_latency_seconds | unknown (null) |
-| summary.necessary_capacity_not_failed_accounted_bound_seconds | 0.007215858626865672 |
+| summary.necessary_capacity_not_failed_accounted_bound_seconds | 0.007215858626865678 |
 | assumptions[0] | Stages are complete serial decoder layers, with ideal overlap inside each layer. Sum of stage resource maxima is distinct from a pooled global maximum; neither is a measured runtime. |
 | assumptions[1] | FP32 F.linear is mapped to an explicitly chosen IEEE FP32 vector execution policy, not inferred actual backend dispatch. TF32 is not admitted. Ordinary scalar and FP32 matrix work share one vector budget. The FP32 scalar provider is a declared logical execution policy, not proof of every source elementwise machine dtype. |
 | assumptions[2] | V4 FP4 stored experts execute FP8xFP8 after conversion in the pinned kernel; no native FP4 or structured-sparse peak substitution. BF16/FP8 accumulation requires exact FP32 admission. |

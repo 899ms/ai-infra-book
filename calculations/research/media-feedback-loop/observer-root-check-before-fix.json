@@ -1,0 +1,66 @@
+{
+  "status": "failed",
+  "checks": [
+    {
+      "case": "version selected chronologically at actual result",
+      "passed": false,
+      "observed": {
+        "id": "screen",
+        "kind": "screenshot",
+        "endpoint": "client",
+        "all_required_delivered": true,
+        "complete_at": "3",
+        "complete": true,
+        "missing": [],
+        "version_at_result": "v1",
+        "expected_version": "v1",
+        "usable": true
+      }
+    },
+    {
+      "case": "future reliable playback is not an observed first play",
+      "passed": false,
+      "observed": {
+        "id": "tts",
+        "kind": "tts",
+        "endpoint": "server",
+        "all_required_delivered": true,
+        "complete_at": "1",
+        "complete": false,
+        "missing": [],
+        "blocks": [
+          {
+            "message_ids": [
+              "a0"
+            ],
+            "arrival": "1",
+            "play_start": "10",
+            "play_end": "12"
+          },
+          {
+            "message_ids": [
+              "a1"
+            ],
+            "arrival": "1",
+            "play_start": "12",
+            "play_end": "14"
+          },
+          {
+            "message_ids": [
+              "a2"
+            ],
+            "arrival": "1",
+            "play_start": "14",
+            "play_end": "16"
+          }
+        ],
+        "first_play": "10",
+        "playback_end": "16",
+        "stall_seconds": "0",
+        "missing_audio_seconds": "0"
+      }
+    }
+  ],
+  "application_sha256": "b119f98e100f3fa590bd1a182139cd4660878f225373600a762ecceea9476776",
+  "scope": "Local observation contract only; no claim that network generated these delivery events"
+}

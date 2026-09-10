@@ -1,0 +1,15 @@
+{
+  "scope": "Only effective_resource_rates insertion order differed; all numerical/structural result values equal across seeds before and after",
+  "fix": "for resource in demanded -> for resource in sorted(demanded)",
+  "checker_sha256": "3223279ca1b910a1901f767b8ae4faea8566c559869cb69cf85a56e8541e0bb2",
+  "regression_test": "test_stage_resource_bounds.BoundsTests.test_serialization_is_stable_across_process_hash_seeds",
+  "before_regression": "FAIL: raw JSON + Markdown mismatch for seeds 1 and 2",
+  "after_topic_tests": {
+    "ran": 8,
+    "status": "OK"
+  },
+  "all_scenarios": 25,
+  "command_from_repo_root": "python3 calculations/tests/evidence/stage-resource-determinism/check_hash_seeds.py replay",
+  "checker_output": "/tmp/stage-seed-replay.json",
+  "note": "check_hash_seeds.py is the exact diagnostic code executed before and after the one-line fix; it runs two fresh Python interpreters and compares full output bytes as well as parsed values and nested mapping order. Existing results/ artifacts were not rewritten by this task."
+}

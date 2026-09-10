@@ -1,0 +1,60 @@
+--- calculations/research/hystart-plus-plus/calculate.py
++++ calculations/src/infra_calc/transport/hystart.py
+@@ -1,13 +1,10 @@
+ """RFC9406 HyStart++ startup reference; explicit ACK/RTT/sequence callbacks."""
+ 
+-import argparse
++from .reference_sources import reference_sources
++
+ import copy
+ from fractions import Fraction as F
+-import hashlib
+ import json
+-from pathlib import Path
+-
+-ROOT = Path(__file__).resolve().parent
+ 
+ 
+ def rational(x, positive=True):
+@@ -41,15 +38,7 @@
+ 
+ 
+ def verify_sources():
+-    rows = json.loads((ROOT / "sources.lock.json").read_text())
+-    for row in rows:
+-        data = (ROOT / row["file"]).read_bytes()
+-        if (
+-            len(data) != row["bytes"]
+-            or hashlib.sha256(data).hexdigest() != row["sha256"]
+-        ):
+-            raise ValueError("source hash mismatch")
+-    return rows
++    return reference_sources("hystart")
+ 
+ 
+ class Startup:
+@@ -378,24 +367,3 @@
+         ],
+     )
+     return out
+-
+-
+-def main():
+-    parser = argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument("--inputs", type=Path)
+-    parser.add_argument("--output", type=Path)
+-    a = parser.parse_args()
+-    r = (
+-        calculate(json.loads(a.inputs.read_text()))
+-        if a.inputs
+-        else {k: calculate(v) for k, v in scenarios().items()}
+-    )
+-    text = json.dumps(r, ensure_ascii=False, indent=2) + "\n"
+-    if a.output:
+-        a.output.write_text(text)
+-    else:
+-        print(text, end="")
+-
+-
+-if __name__ == "__main__":
+-    main()

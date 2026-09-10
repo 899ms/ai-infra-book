@@ -1,0 +1,61 @@
+{
+  "status": "passed",
+  "code_hashes": {
+    "calculate.py": "58718e22f3e29cba582f7ce2fdaf5f701b9bbb45acf8e71cd22a0253c64e6ae2",
+    "receiver.py": "a8a44b09c95d76501821a20a4737fdc352d564de706f98082b2c5f7f55949378"
+  },
+  "big_checks": [
+    {
+      "scenario": "newreno",
+      "status": "passed",
+      "rtt_samples": {
+        "up": 12846,
+        "down": 2144
+      },
+      "comparison": {
+        "scalars": 83,
+        "list_items": 291645
+      },
+      "old_sha256": "e2da1c2c1e62654e2aa182f3df008d9f569296c1e8f8cdc183c9020af3b55f76",
+      "new_sha256": "8d391dc59c52b33f30457ee5317f873aa97eecfa0a677682f754483ddfaf69a9"
+    },
+    {
+      "scenario": "cubic_hystart",
+      "status": "passed",
+      "rtt_samples": {
+        "up": 12846,
+        "down": 2144
+      },
+      "comparison": {
+        "scalars": 99,
+        "list_items": 371514
+      },
+      "old_sha256": "e60c31568bbc2a75b531119fde418278ab4b144df54c3233b6065e980a07c0a3",
+      "new_sha256": "9c65a41704e8cf3a892b46c632f9505a4e6eafe3bfce1c88dce59db476f9f77a"
+    },
+    {
+      "scenario": "bbr",
+      "status": "passed",
+      "rtt_samples": {
+        "up": 12843,
+        "down": 2141
+      },
+      "comparison": {
+        "scalars": 99,
+        "list_items": 449357
+      },
+      "old_sha256": "8dcb415126d37cd19c6ad4ce0e5f89c1b831e8cf554e863380347e80237a6ccb",
+      "new_sha256": "a91336ab97420c3680ba3ffd86c0a0ea2a0742b96f65d79330072d4d7ce1dfec"
+    }
+  ],
+  "small_cases": [
+    "count-two",
+    "tail-deadline",
+    "same-time-arrival-deadline",
+    "lost-first-ack",
+    "max-flow-control",
+    "queued-snapshot-refresh",
+    "queued-deadline-overrun"
+  ],
+  "excluded_added_field": "rtt_samples"
+}

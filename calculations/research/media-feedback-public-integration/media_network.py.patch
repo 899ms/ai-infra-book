@@ -1,0 +1,64 @@
+--- calculations/research/media-feedback-loop/calculate.py
++++ calculations/src/infra_calc/transport/media_network.py
+@@ -1,35 +1,16 @@
+ """Research media DAG with real single-path feedback; declared QUIC packet layout."""
+ 
+-from pathlib import Path
+ from fractions import Fraction as F
+ from collections import defaultdict, deque
+ import heapq
+ import copy
+-import json
+-import argparse
+-import sys
+-import importlib.util
+-
+-ROOT = Path(__file__).resolve().parent
+-sys.path.insert(0, str(ROOT.parents[2] / "calculations/src"))
+-from infra_calc.transport.ack_receiver import Receiver
+-from infra_calc.transport.pacer import Pacer
+-from infra_calc.transport.reference_sources import reference_sources
+-
+-
+-def local_module(filename):
+-    spec = importlib.util.spec_from_file_location(
+-        "media_feedback_" + filename[:-3], ROOT / filename
+-    )
+-    module = importlib.util.module_from_spec(spec)
+-    spec.loader.exec_module(module)
+-    return module
+-
+-
+-Application = local_module("application.py").Application
+-validate_application = local_module("application_validation.py").validate_application
+-sender = local_module("sender.py")
+-validate_network = local_module("network_validation.py").validate_network
++from .ack_receiver import Receiver
++from .pacer import Pacer
++from .reference_sources import reference_sources
++from .media_application import Application
++from .media_application_validation import validate_application
++from .media_network_validation import validate_network
++from . import media_sender as sender
+ 
+ DIRECTIONS = ("up", "down")
+ OTHER = {"up": "down", "down": "up"}
+@@ -762,18 +743,3 @@
+     return Network(inputs).run()
+ 
+ 
+-def main():
+-    ap = argparse.ArgumentParser(description=__doc__)
+-    ap.add_argument("--inputs", type=Path, required=True)
+-    ap.add_argument("--output", type=Path)
+-    a = ap.parse_args()
+-    result = calculate(json.loads(a.inputs.read_text()))
+-    text = json.dumps(result, indent=2) + "\n"
+-    if a.output:
+-        a.output.write_text(text)
+-    else:
+-        print(text, end="")
+-
+-
+-if __name__ == "__main__":
+-    main()

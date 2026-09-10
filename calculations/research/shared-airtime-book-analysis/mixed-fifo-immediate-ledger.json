@@ -1,0 +1,193 @@
+{
+  "case": "mixed-fifo-immediate",
+  "scope": "Aggregated complete successful OFDM exchanges; requires separate independent trace acceptance.",
+  "manifest_sha256": "59080012919b48877fe102e73e246ed0b9b90387887dc9899e67453a5af9c7c9",
+  "result_sha256": "29180921f9e1323dc9446144cd52e9eb7e5f8851840e1878db6fdf3cb348dbcb",
+  "script_sha256": "451e9da875d9ebafdc36208803eafd106ce74cd404acfc55e4bec210443f9b33",
+  "packet_counts": {
+    "up.data": 26412,
+    "same_pn_retries": 0,
+    "down.ack": 26412,
+    "down.data": 4401,
+    "up.ack": 4401
+  },
+  "radio_octets": {
+    "ip_bytes_in_radio_attempts": 40673160,
+    "data_psdu_bytes": 42891696,
+    "mac_ack_psdu_bytes": 862764,
+    "all_psdu_bytes": 43754460,
+    "mac_llc_fcs_over_ip": 2218536
+  },
+  "air_seconds_exact": {
+    "reserved": "3358617/250000",
+    "radio_transmit": "647073/62500",
+    "access_idle": "523821/250000",
+    "group_reserved.up.data": "997053/125000",
+    "group_reserved.down.ack": "442401/125000",
+    "group_reserved.down.data": "664551/500000",
+    "group_reserved.up.ack": "294867/500000",
+    "non_transmit_reserved": "30813/10000",
+    "remaining_non_transmit_after_access": "30813/31250"
+  },
+  "air_seconds_decimal": {
+    "reserved": 13.434468,
+    "radio_transmit": 10.353168,
+    "access_idle": 2.095284,
+    "group_reserved.up.data": 7.976424,
+    "group_reserved.down.ack": 3.539208,
+    "group_reserved.down.data": 1.329102,
+    "group_reserved.up.ack": 0.589734,
+    "non_transmit_reserved": 3.0813,
+    "remaining_non_transmit_after_access": 0.986016
+  },
+  "end_to_end_summary": {
+    "wire_bytes": 40673160,
+    "serialized_wire_bytes_by_horizon": null,
+    "delivered_application_bytes": 35008659,
+    "unique_received_application_bytes": 35008659,
+    "complete": false,
+    "all_messages_delivered": false,
+    "pending_packets": {
+      "up": 0,
+      "down": 0
+    },
+    "wan_serialized_ip_bytes_by_horizon": "40673160"
+  },
+  "businesses": [
+    {
+      "id": "image",
+      "kind": "image",
+      "endpoint": "client",
+      "all_required_delivered": true,
+      "complete_at": "7996940933/500000000",
+      "complete": true,
+      "missing": []
+    },
+    {
+      "id": "asr",
+      "kind": "asr",
+      "endpoint": "client",
+      "all_required_delivered": true,
+      "complete_at": "7997091933/500000000",
+      "complete": true,
+      "missing": []
+    },
+    {
+      "id": "tts",
+      "kind": "tts",
+      "endpoint": "client",
+      "all_required_delivered": false,
+      "complete_at": null,
+      "complete": false,
+      "missing": [
+        "tts-0",
+        "tts-1",
+        "tts-2",
+        "tts-3",
+        "tts-4",
+        "tts-5",
+        "tts-6",
+        "tts-7"
+      ],
+      "blocks": [
+        {
+          "message_ids": [
+            "tts-0"
+          ],
+          "arrival": null,
+          "play_start": null,
+          "scheduled_play_end": null,
+          "play_end": null
+        },
+        {
+          "message_ids": [
+            "tts-1"
+          ],
+          "arrival": null,
+          "play_start": null,
+          "scheduled_play_end": null,
+          "play_end": null
+        },
+        {
+          "message_ids": [
+            "tts-2"
+          ],
+          "arrival": null,
+          "play_start": null,
+          "scheduled_play_end": null,
+          "play_end": null
+        },
+        {
+          "message_ids": [
+            "tts-3"
+          ],
+          "arrival": null,
+          "play_start": null,
+          "scheduled_play_end": null,
+          "play_end": null
+        },
+        {
+          "message_ids": [
+            "tts-4"
+          ],
+          "arrival": null,
+          "play_start": null,
+          "scheduled_play_end": null,
+          "play_end": null
+        },
+        {
+          "message_ids": [
+            "tts-5"
+          ],
+          "arrival": null,
+          "play_start": null,
+          "scheduled_play_end": null,
+          "play_end": null
+        },
+        {
+          "message_ids": [
+            "tts-6"
+          ],
+          "arrival": null,
+          "play_start": null,
+          "scheduled_play_end": null,
+          "play_end": null
+        },
+        {
+          "message_ids": [
+            "tts-7"
+          ],
+          "arrival": null,
+          "play_start": null,
+          "scheduled_play_end": null,
+          "play_end": null
+        }
+      ],
+      "first_play": null,
+      "playback_end": null,
+      "stall_seconds": "0",
+      "missing_audio_seconds": "4/25"
+    },
+    {
+      "id": "computer-use",
+      "kind": "screenshot",
+      "endpoint": "client",
+      "all_required_delivered": false,
+      "complete_at": null,
+      "complete": false,
+      "missing": [
+        "screen-action"
+      ],
+      "version_at_result": "v1",
+      "expected_version": "v1",
+      "usable": false
+    }
+  ],
+  "notes": [
+    "PSDU bytes exclude PHY preamble and symbol timing; time intervals are never converted into fabricated bytes.",
+    "IP bytes repeated in radio attempts are not unique application bytes.",
+    "Radio transmit time excludes access idle, SIFS and propagation; reserved time includes the declared service phases.",
+    "WAN and radio can overlap. Their service sums are not an end-to-end completion-time prediction.",
+    "This reference uses declared global FIFO with no random contention, aggregation, encryption or measured device behavior."
+  ]
+}

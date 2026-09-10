@@ -1,0 +1,100 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "case": "mixed-fifo-immediate",
+      "result_sha256": "f724db23ec9820da7d7c55d5849802f586752e611b7b94acd3d14db8426ff00a",
+      "image_complete_exact": "74419679/5000000",
+      "image_label": "14.883936 s",
+      "played_exact": "0",
+      "missing_exact": "4/25",
+      "first_play_exact": null,
+      "early_marker_counts": {
+        "up": {
+          "ack": 0,
+          "non_ack": 189
+        },
+        "down": {
+          "ack": 133,
+          "non_ack": 0
+        }
+      },
+      "screenshot_usable": false
+    },
+    {
+      "case": "mixed-fifo-aggregate",
+      "result_sha256": "00ab34f50a7ef2fc810972932c0c3c4046281fc926a174cd487a2bfc7ad85d3a",
+      "image_complete_exact": "3731839589/250000000",
+      "image_label": "14.927358 s",
+      "played_exact": "0",
+      "missing_exact": "4/25",
+      "first_play_exact": null,
+      "early_marker_counts": {
+        "up": {
+          "ack": 0,
+          "non_ack": 163
+        },
+        "down": {
+          "ack": 60,
+          "non_ack": 0
+        }
+      },
+      "screenshot_usable": false
+    },
+    {
+      "case": "mixed-priority-immediate",
+      "result_sha256": "acadfa4949f094b15b7963685601ac276bc5167a2bf11c3b002d293947a5bd07",
+      "image_complete_exact": "7404728503/500000000",
+      "image_label": "14.809457 s",
+      "played_exact": "4/25",
+      "missing_exact": "0",
+      "first_play_exact": "2/5",
+      "early_marker_counts": {
+        "up": {
+          "ack": 9,
+          "non_ack": 189
+        },
+        "down": {
+          "ack": 133,
+          "non_ack": 9
+        }
+      },
+      "screenshot_usable": false
+    },
+    {
+      "case": "mixed-priority-aggregate",
+      "result_sha256": "a9662bc9a65440b4096db84b92877423704bfb6a50fafb3c74c6511209223ebe",
+      "image_complete_exact": "927692833/62500000",
+      "image_label": "14.843085 s",
+      "played_exact": "4/25",
+      "missing_exact": "0",
+      "first_play_exact": "2/5",
+      "early_marker_counts": {
+        "up": {
+          "ack": 7,
+          "non_ack": 163
+        },
+        "down": {
+          "ack": 60,
+          "non_ack": 9
+        }
+      },
+      "screenshot_usable": false
+    }
+  ],
+  "plot_source_sha256": "077e4b22d689fc06fa571741b59841a5645ee60802123f03c5bd54a296ae9054",
+  "saved_png_sha256": "5959f31d246ce459ea03b089d44e7d041325da348bd27f4494db2f519601dc6a",
+  "saved_data_sha256": "a6096a4cb2590c3fb60447c59ff3b57e829603c3f58ad66e27a9f7e608d7d446",
+  "checker_sha256": "c35966699ae9533fc11f8239c53864c34fc827ee8028301bcbde360fbc598758",
+  "visual_review": "Saved first PNG inspected. Known old x-label swaps directions; current source already says upper download/lower upload. No additional visible error found.",
+  "semantics": {
+    "panel_A": "Required final-image messages fully delivered at client; rounded6-decimal labels",
+    "panel_B": "Independent slot eligibility reproduces all played/missing durations; full-horizon cases have no partial playback",
+    "panel_C": "Only send_start<=.5 included; bars are actual non-ACK serializer intervals, gray vertical ticks ACK start only. Inverted y makes negative offset/down upper and positive offset/up lower."
+  },
+  "limits": [
+    "ACK ticks do not draw ACK service width and cannot be read as occupancy.",
+    "Current played formula sums completed blocks; do not generalize to a horizon truncating a currently-playing block without updating extraction.",
+    "No render, verify, public edit, or stale manifest bypass was performed."
+  ]
+}

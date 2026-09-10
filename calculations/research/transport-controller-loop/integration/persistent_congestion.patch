@@ -1,0 +1,142 @@
+--- calculations/research/transport-controller-loop/persistent_congestion.py
++++ calculations/src/infra_calc/transport/persistent_congestion.py
+@@ -3,12 +3,10 @@
+ This is a pure predicate over sender history, not a loss detector. The caller
+ supplies complete packet history and separately tracks loss reports/episodes.
+ """
++
+ from fractions import Fraction
+-import hashlib
+-from pathlib import Path
+ 
+-RFC = Path(__file__).resolve().parents[1] / "transport-feedback/sources/rfc9002.txt"
+-RFC_SHA = "3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af"
++from .reference_sources import reference_sources
+ 
+ 
+ def rational(value):
+@@ -17,8 +15,16 @@
+     return Fraction(str(value))
+ 
+ 
+-def evaluate(packets, *, smoothed_rtt, rttvar, max_ack_delay, granularity,
+-             max_datagram_size=1200, trigger="ack"):
++def evaluate(
++    packets,
++    *,
++    smoothed_rtt,
++    rttvar,
++    max_ack_delay,
++    granularity,
++    max_datagram_size=1200,
++    trigger="ack",
++):
+     """Return loss-span evidence; only ACK receipt may establish congestion.
+ 
+     Each record contains pn, sent_at, status, ack_eliciting and the explicit
+@@ -26,9 +32,10 @@
+     sample and a packet send share a timestamp. All ACKed packets split a span,
+     including retained late ACKs and non-ack-eliciting packets.
+     """
+-    if hashlib.sha256(RFC.read_bytes()).hexdigest() != RFC_SHA:
+-        raise ValueError("RFC9002 source mismatch")
+-    smoothed, variance, delay, tick = map(rational, (smoothed_rtt, rttvar, max_ack_delay, granularity))
++    reference_sources("quic")
++    smoothed, variance, delay, tick = map(
++        rational, (smoothed_rtt, rttvar, max_ack_delay, granularity)
++    )
+     if smoothed <= 0 or variance < 0 or delay < 0 or tick <= 0:
+         raise ValueError("Invalid RTT parameters")
+     if type(max_datagram_size) is not int or max_datagram_size < 1200:
+@@ -39,16 +46,29 @@
+     records = []
+     seen = set()
+     for packet in packets:
+-        if set(packet) != {"pn", "sent_at", "status", "ack_eliciting", "rtt_known_at_send"}:
++        if set(packet) != {
++            "pn",
++            "sent_at",
++            "status",
++            "ack_eliciting",
++            "rtt_known_at_send",
++        }:
+             raise ValueError("Packet evidence must use the declared fields")
+         pn = packet["pn"]
+         if type(pn) is not int or pn < 0 or pn in seen:
+             raise ValueError("Packet identity must be unique")
+         seen.add(pn)
+         at = rational(packet["sent_at"])
+-        if at < 0 or packet["status"] not in ("sent", "lost", "acked", "lost_then_acked"):
++        if at < 0 or packet["status"] not in (
++            "sent",
++            "lost",
++            "acked",
++            "lost_then_acked",
++        ):
+             raise ValueError("Invalid packet time/status")
+-        if any(type(packet[k]) is not bool for k in ("ack_eliciting", "rtt_known_at_send")):
++        if any(
++            type(packet[k]) is not bool for k in ("ack_eliciting", "rtt_known_at_send")
++        ):
+             raise ValueError("Packet flags must be booleans")
+         records.append((at, pn, packet))
+     records.sort()
+@@ -57,7 +77,9 @@
+     prior_seen = False
+     for _, _, packet in records:
+         if prior_seen and not packet["rtt_known_at_send"]:
+-            raise ValueError("Prior RTT knowledge cannot disappear on the confirmed path")
++            raise ValueError(
++                "Prior RTT knowledge cannot disappear on the confirmed path"
++            )
+         prior_seen |= packet["rtt_known_at_send"]
+ 
+     evidence = []
+@@ -65,21 +87,37 @@
+ 
+     def finish_span():
+         if first is not None and last is not None and last[0] - first[0] > duration:
+-            evidence.append(dict(first_pn=first[1], last_pn=last[1],
+-                                 start=str(first[0]), end=str(last[0]),
+-                                 duration=str(last[0] - first[0]),
+-                                 evidence_key=f"{first[1]}:{last[1]}"))
++            evidence.append(
++                dict(
++                    first_pn=first[1],
++                    last_pn=last[1],
++                    start=str(first[0]),
++                    end=str(last[0]),
++                    duration=str(last[0] - first[0]),
++                    evidence_key=f"{first[1]}:{last[1]}",
++                )
++            )
+ 
+     for at, pn, packet in records:
+         if packet["status"] in ("acked", "lost_then_acked"):
+             finish_span()
+             first = last = None
+-        elif packet["status"] == "lost" and packet["ack_eliciting"] and packet["rtt_known_at_send"]:
++        elif (
++            packet["status"] == "lost"
++            and packet["ack_eliciting"]
++            and packet["rtt_known_at_send"]
++        ):
+             first = first or (at, pn)
+             last = (at, pn)
+     finish_span()
+-    return dict(established=bool(evidence) and trigger == "ack", trigger=trigger,
+-                threshold_duration=str(duration), qualifying_spans=evidence,
+-                required_cwnd_bytes=2 * max_datagram_size if evidence and trigger == "ack" else None,
+-                scope="Confirmed single Application PN space; RTT state supplied at this observation; no PTO exponential factor.",
+-                integration="Caller must track unconsumed loss declarations and persistent episodes before applying minimum cwnd. evidence_key describes a span but is not sufficient for deduplication: late ACK can split old spans without new loss. Late ACKs do not automatically undo a prior action.")
++    return dict(
++        established=bool(evidence) and trigger == "ack",
++        trigger=trigger,
++        threshold_duration=str(duration),
++        qualifying_spans=evidence,
++        required_cwnd_bytes=(
++            2 * max_datagram_size if evidence and trigger == "ack" else None
++        ),
++        scope="Confirmed single Application PN space; RTT state supplied at this observation; no PTO exponential factor.",
++        integration="Caller must track unconsumed loss declarations and persistent episodes before applying minimum cwnd. evidence_key describes a span but is not sufficient for deduplication: late ACK can split old spans without new loss. Late ACKs do not automatically undo a prior action.",
++    )

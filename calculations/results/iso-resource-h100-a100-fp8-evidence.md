@@ -1,0 +1,1272 @@
+# 同上限下的两侧独立选择
+
+共享上限：5600 W。One cap, spent as each side likes. It does not require every device to sit in one synchronous domain, so replicas are allowed.
+
+## 先比较两套固定配置（BF16/tp1）
+
+| 设备 | 可用 | 副本 | 设备数 | 下界延迟 s | 吞吐 tok/s | 每 token 成本 | 限制资源 |
+|---|---|---:|---:|---:|---:|---:|---|
+| h100-sxm | 是 | 8 | 8 | 0.016057 | 15943.0 | 0.000000418 | memory |
+| a100-80gb-sxm | 是 | 14 | 14 | 0.026381 | 16981.7 | 0.000000344 | memory |
+
+固定配置下更便宜的一侧：a100-80gb-sxm。
+
+## 再让两侧各自调优
+
+### h100-sxm
+
+- 可用候选：BF16/tp1、BF16/tp2、BF16/tp4、BF16/tp8、FP8/tp1、FP8/tp2、FP8/tp4、FP8/tp8
+- 因质量证据搁置：无
+- 最低延迟：FP8/tp8（0.004401 s）
+- SLO 内最高吞吐：FP8/tp1
+- 最低每 token 成本：FP8/tp1（0.000000359）
+
+### a100-80gb-sxm
+
+- 可用候选：BF16/tp1、BF16/tp2、BF16/tp4、BF16/tp8
+- 因质量证据搁置：无
+- 最低延迟：BF16/tp8（0.005974 s）
+- SLO 内最高吞吐：BF16/tp1
+- 最低每 token 成本：BF16/tp1（0.000000344）
+
+被拒绝的候选：
+- FP8/tp1：a100-80gb-sxm publishes no dense FP8 tensor rate
+- FP8/tp2：a100-80gb-sxm publishes no dense FP8 tensor rate
+- FP8/tp4：a100-80gb-sxm publishes no dense FP8 tensor rate
+- FP8/tp8：a100-80gb-sxm publishes no dense FP8 tensor rate
+
+## 逐目标对比
+
+| 目标 | 胜方 | 胜方配置 | 负方 | 负方配置 | 比值 |
+|---|---|---|---|---|---:|
+| lowest_latency | h100-sxm | FP8/tp8 | a100-80gb-sxm | BF16/tp8 | 1.357 |
+| highest_throughput_within_slo | h100-sxm | FP8/tp1 | a100-80gb-sxm | BF16/tp1 | 1.093 |
+| lowest_cost_per_token | a100-80gb-sxm | BF16/tp1 | h100-sxm | FP8/tp1 | 1.046 |
+
+## 翻转条件
+
+- 价格比：×1.046。Multiplying a100-80gb-sxm's declared price by more than this ratio, with everything else held, makes h100-sxm the cheaper side per token。
+- 固定配置与调优后结论是否不同：否。两套固定配置的比较回答的不是同一个问题。
+
+### 仅因质量证据而翻转的目标
+
+本组输入下没有目标因质量证据而改变胜方。
+
+## 口径与限制
+
+- Device capacity, bandwidth, board power and tensor rates are published catalog figures with locators.
+- A precision the vendor publishes no dense rate for is refused, never assumed to run at the next width's rate.
+- Model work comes from the pinned official config; the step is one decode position behind the stated context.
+- Latency is max(compute, memory) plus the serial collective, an ideal-overlap lower bound rather than a measured latency.
+- Tensor-parallel compute and capacity are assumed to divide evenly, which no implementation achieves exactly.
+- Session state stays at BF16 whatever the weight width, so a narrower weight never shrinks the state term.
+- A width that changes numerics is ranked only where quality evidence is declared; otherwise it is listed and set aside.
+- Prices are declared teaching inputs, and the flip is reported as a ratio rather than as a market claim.
+
+## 完整输入、来源与结果
+
+```json
+{
+  "calculation": "iso-resource-two-sided-comparison",
+  "inputs": {
+    "model": "qwen3-8b",
+    "left_device": "h100-sxm",
+    "right_device": "a100-80gb-sxm",
+    "batch": 32,
+    "context": 8192,
+    "power_cap_watts": 5600,
+    "link_bytes_per_second": 50000000000,
+    "left_price_per_device_hour": "3.0",
+    "right_price_per_device_hour": "1.5",
+    "slo_seconds": "0.05",
+    "quality_evidence": {
+      "BF16": true,
+      "FP8": true
+    },
+    "fixed_precision": "BF16",
+    "fixed_tensor_parallel": 1
+  },
+  "sources": [
+    {
+      "file": "configs/models/qwen3-8b/config.json",
+      "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+    },
+    {
+      "file": "sources/qwen3-8b/model.safetensors.index.json",
+      "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+    },
+    {
+      "file": "sources/qwen3/modeling_qwen3.py",
+      "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+      "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+      "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+    },
+    {
+      "file": "sources/qwen3/modeling_qwen3_moe.py",
+      "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+      "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+      "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+    }
+  ],
+  "shared_cap": {
+    "power_cap_watts": 5600,
+    "note": "One cap, spent as each side likes. It does not require every device to sit in one synchronous domain, so replicas are allowed."
+  },
+  "fixed_configuration_comparison": {
+    "configuration": "BF16/tp1",
+    "rows": [
+      {
+        "device": "h100-sxm",
+        "precision": "BF16",
+        "tensor_parallel": 1,
+        "batch": 32,
+        "context": 8192,
+        "admissible": true,
+        "reason": "within capacity, power and published rates",
+        "peak": {
+          "tera_ops_per_second": 989.4,
+          "source_id": "nvidia-h100",
+          "locator": "Table 3, physical pages 39–40, including clock rows and sparsity footnote 1",
+          "clock_basis": "GPU Boost 1830 MHz for FP8/FP16/BF16/TF32; published rounded peak"
+        },
+        "power_watts": 700,
+        "replicas": 8,
+        "devices": 8,
+        "per_device_bytes": 53791516672,
+        "device_capacity_bytes": 80000000000,
+        "state_shards": 1,
+        "compute_seconds": {
+          "numerator": 156004864,
+          "denominator": 241552734375
+        },
+        "memory_seconds": {
+          "numerator": 52530778,
+          "denominator": 3271484375
+        },
+        "collective_seconds": {
+          "numerator": 0,
+          "denominator": 1
+        },
+        "limiting_resource": "memory",
+        "latency_seconds": {
+          "numerator": 52530778,
+          "denominator": 3271484375
+        },
+        "throughput_tokens_per_second": {
+          "numerator": 418750000000,
+          "denominator": 26265389
+        },
+        "cost_per_token": {
+          "numerator": 26265389,
+          "denominator": 62812500000000
+        },
+        "changes_numerics": false,
+        "quality_evidence_declared": true,
+        "rankable_at_fixed_quality": true
+      },
+      {
+        "device": "a100-80gb-sxm",
+        "precision": "BF16",
+        "tensor_parallel": 1,
+        "batch": 32,
+        "context": 8192,
+        "admissible": true,
+        "reason": "within capacity, power and published rates",
+        "peak": {
+          "tera_ops_per_second": 312,
+          "source_id": "nvidia-a100",
+          "locator": "Table 1 and Appendix A Table 4; accumulator and sparsity notes",
+          "clock_basis": "official peak; sustained performance not measured"
+        },
+        "power_watts": 400,
+        "replicas": 14,
+        "devices": 14,
+        "per_device_bytes": 53791516672,
+        "device_capacity_bytes": 80000000000,
+        "state_shards": 1,
+        "compute_seconds": {
+          "numerator": 19500608,
+          "denominator": 9521484375
+        },
+        "memory_seconds": {
+          "numerator": 105061556,
+          "denominator": 3982421875
+        },
+        "collective_seconds": {
+          "numerator": 0,
+          "denominator": 1
+        },
+        "limiting_resource": "memory",
+        "latency_seconds": {
+          "numerator": 105061556,
+          "denominator": 3982421875
+        },
+        "throughput_tokens_per_second": {
+          "numerator": 446031250000,
+          "denominator": 26265389
+        },
+        "cost_per_token": {
+          "numerator": 26265389,
+          "denominator": 76462500000000
+        },
+        "changes_numerics": false,
+        "quality_evidence_declared": true,
+        "rankable_at_fixed_quality": true
+      }
+    ],
+    "cheaper_side": "a100-80gb-sxm"
+  },
+  "left": {
+    "device": "h100-sxm",
+    "candidates": [
+      {
+        "device": "h100-sxm",
+        "precision": "BF16",
+        "tensor_parallel": 1,
+        "batch": 32,
+        "context": 8192,
+        "admissible": true,
+        "reason": "within capacity, power and published rates",
+        "peak": {
+          "tera_ops_per_second": 989.4,
+          "source_id": "nvidia-h100",
+          "locator": "Table 3, physical pages 39–40, including clock rows and sparsity footnote 1",
+          "clock_basis": "GPU Boost 1830 MHz for FP8/FP16/BF16/TF32; published rounded peak"
+        },
+        "power_watts": 700,
+        "replicas": 8,
+        "devices": 8,
+        "per_device_bytes": 53791516672,
+        "device_capacity_bytes": 80000000000,
+        "state_shards": 1,
+        "compute_seconds": {
+          "numerator": 156004864,
+          "denominator": 241552734375
+        },
+        "memory_seconds": {
+          "numerator": 52530778,
+          "denominator": 3271484375
+        },
+        "collective_seconds": {
+          "numerator": 0,
+          "denominator": 1
+        },
+        "limiting_resource": "memory",
+        "latency_seconds": {
+          "numerator": 52530778,
+          "denominator": 3271484375
+        },
+        "throughput_tokens_per_second": {
+          "numerator": 418750000000,
+          "denominator": 26265389
+        },
+        "cost_per_token": {
+          "numerator": 26265389,
+          "denominator": 62812500000000
+        },
+        "changes_numerics": false,
+        "quality_evidence_declared": true,
+        "rankable_at_fixed_quality": true
+      },
+      {
+        "device": "h100-sxm",
+        "precision": "BF16",
+        "tensor_parallel": 2,
+        "batch": 32,
+        "context": 8192,
+        "admissible": true,
+        "reason": "within capacity, power and published rates",
+        "peak": {
+          "tera_ops_per_second": 989.4,
+          "source_id": "nvidia-h100",
+          "locator": "Table 3, physical pages 39–40, including clock rows and sparsity footnote 1",
+          "clock_basis": "GPU Boost 1830 MHz for FP8/FP16/BF16/TF32; published rounded peak"
+        },
+        "power_watts": 700,
+        "replicas": 4,
+        "devices": 8,
+        "per_device_bytes": 26895758336,
+        "device_capacity_bytes": 80000000000,
+        "state_shards": 2,
+        "compute_seconds": {
+          "numerator": 78002432,
+          "denominator": 241552734375
+        },
+        "memory_seconds": {
+          "numerator": 26265389,
+          "denominator": 3271484375
+        },
+        "collective_seconds": {
+          "numerator": 64989,
+          "denominator": 97656250
+        },
+        "limiting_resource": "memory",
+        "latency_seconds": {
+          "numerator": 56885041,
+          "denominator": 6542968750
+        },
+        "throughput_tokens_per_second": {
+          "numerator": 837500000000,
+          "denominator": 56885041
+        },
+        "cost_per_token": {
+          "numerator": 56885041,
+          "denominator": 125625000000000
+        },
+        "changes_numerics": false,
+        "quality_evidence_declared": true,
+        "rankable_at_fixed_quality": true
+      },
+      {
+        "device": "h100-sxm",
+        "precision": "BF16",
+        "tensor_parallel": 4,
+        "batch": 32,
+        "context": 8192,
+        "admissible": true,
+        "reason": "within capacity, power and published rates",
+        "peak": {
+          "tera_ops_per_second": 989.4,
+          "source_id": "nvidia-h100",
+          "locator": "Table 3, physical pages 39–40, including clock rows and sparsity footnote 1",
+          "clock_basis": "GPU Boost 1830 MHz for FP8/FP16/BF16/TF32; published rounded peak"
+        },
+        "power_watts": 700,
+        "replicas": 2,
+        "devices": 8,
+        "per_device_bytes": 13447879168,
+        "device_capacity_bytes": 80000000000,
+        "state_shards": 4,
+        "compute_seconds": {
+          "numerator": 39001216,
+          "denominator": 241552734375
+        },
+        "memory_seconds": {
+          "numerator": 26265389,
+          "denominator": 6542968750
+        },
+        "collective_seconds": {
+          "numerator": 139671,
+          "denominator": 97656250
+        },
+        "limiting_resource": "memory",
+        "latency_seconds": {
+          "numerator": 17811673,
+          "denominator": 3271484375
+        },
+        "throughput_tokens_per_second": {
+          "numerator": 209375000000,
+          "denominator": 17811673
+        },
+        "cost_per_token": {
+          "numerator": 17811673,
+          "denominator": 31406250000000
+        },
+        "changes_numerics": false,
+        "quality_evidence_declared": true,
+        "rankable_at_fixed_quality": true
+      },
+      {
+        "device": "h100-sxm",
+        "precision": "BF16",
+        "tensor_parallel": 8,
+        "batch": 32,
+        "context": 8192,
+        "admissible": true,
+        "reason": "within capacity, power and published rates",
+        "peak": {
+          "tera_ops_per_second": 989.4,
+          "source_id": "nvidia-h100",
+          "locator": "Table 3, physical pages 39–40, including clock rows and sparsity footnote 1",
+          "clock_basis": "GPU Boost 1830 MHz for FP8/FP16/BF16/TF32; published rounded peak"
+        },
+        "power_watts": 700,
+        "replicas": 1,
+        "devices": 8,
+        "per_device_bytes": 6723939584,
+        "device_capacity_bytes": 80000000000,
+        "state_shards": 8,
+        "compute_seconds": {
+          "numerator": 19500608,
+          "denominator": 241552734375
+        },
+        "memory_seconds": {
+          "numerator": 26265389,
+          "denominator": 13085937500
+        },
+        "collective_seconds": {
+          "numerator": 261387,
+          "denominator": 97656250
+        },
+        "limiting_resource": "memory",
+        "latency_seconds": {
+          "numerator": 61291247,
+          "denominator": 13085937500
+        },
+        "throughput_tokens_per_second": {
+          "numerator": 418750000000,
+          "denominator": 61291247
+        },
+        "cost_per_token": {
+          "numerator": 61291247,
+          "denominator": 62812500000000
+        },
+        "changes_numerics": false,
+        "quality_evidence_declared": true,
+        "rankable_at_fixed_quality": true
+      },
+      {
+        "device": "h100-sxm",
+        "precision": "FP8",
+        "tensor_parallel": 1,
+        "batch": 32,
+        "context": 8192,
+        "admissible": true,
+        "reason": "within capacity, power and published rates",
+        "peak": {
+          "tera_ops_per_second": 1978.9,
+          "source_id": "nvidia-h100",
+          "locator": "Table 3, physical pages 39–40, including clock rows and sparsity footnote 1",
+          "clock_basis": "GPU Boost 1830 MHz for FP8/FP16/BF16/TF32; published rounded peak"
+        },
+        "power_watts": 700,
+        "replicas": 8,
+        "devices": 8,
+        "per_device_bytes": 46223111168,
+        "device_capacity_bytes": 80000000000,
+        "state_shards": 1,
+        "compute_seconds": {
+          "numerator": 312009728,
+          "denominator": 966259765625
+        },
+        "memory_seconds": {
+          "numerator": 45139757,
+          "denominator": 3271484375
+        },
+        "collective_seconds": {
+          "numerator": 0,
+          "denominator": 1
+        },
+        "limiting_resource": "memory",
+        "latency_seconds": {
+          "numerator": 45139757,
+          "denominator": 3271484375
+        },
+        "throughput_tokens_per_second": {
+          "numerator": 837500000000,
+          "denominator": 45139757
+        },
+        "cost_per_token": {
+          "numerator": 45139757,
+          "denominator": 125625000000000
+        },
+        "changes_numerics": true,
+        "quality_evidence_declared": true,
+        "rankable_at_fixed_quality": true
+      },
+      {
+        "device": "h100-sxm",
+        "precision": "FP8",
+        "tensor_parallel": 2,
+        "batch": 32,
+        "context": 8192,
+        "admissible": true,
+        "reason": "within capacity, power and published rates",
+        "peak": {
+          "tera_ops_per_second": 1978.9,
+          "source_id": "nvidia-h100",
+          "locator": "Table 3, physical pages 39–40, including clock rows and sparsity footnote 1",
+          "clock_basis": "GPU Boost 1830 MHz for FP8/FP16/BF16/TF32; published rounded peak"
+        },
+        "power_watts": 700,
+        "replicas": 4,
+        "devices": 8,
+        "per_device_bytes": 23111555584,
+        "device_capacity_bytes": 80000000000,
+        "state_shards": 2,
+        "compute_seconds": {
+          "numerator": 156004864,
+          "denominator": 966259765625
+        },
+        "memory_seconds": {
+          "numerator": 45139757,
+          "denominator": 6542968750
+        },
+        "collective_seconds": {
+          "numerator": 64989,
+          "denominator": 97656250
+        },
+        "limiting_resource": "memory",
+        "latency_seconds": {
+          "numerator": 4949402,
+          "denominator": 654296875
+        },
+        "throughput_tokens_per_second": {
+          "numerator": 41875000000,
+          "denominator": 2474701
+        },
+        "cost_per_token": {
+          "numerator": 2474701,
+          "denominator": 6281250000000
+        },
+        "changes_numerics": true,
+        "quality_evidence_declared": true,
+        "rankable_at_fixed_quality": true
+      },
+      {
+        "device": "h100-sxm",
+        "precision": "FP8",
+        "tensor_parallel": 4,
+        "batch": 32,
+        "context": 8192,
+        "admissible": true,
+        "reason": "within capacity, power and published rates",
+        "peak": {
+          "tera_ops_per_second": 1978.9,
+          "source_id": "nvidia-h100",
+          "locator": "Table 3, physical pages 39–40, including clock rows and sparsity footnote 1",
+          "clock_basis": "GPU Boost 1830 MHz for FP8/FP16/BF16/TF32; published rounded peak"
+        },
+        "power_watts": 700,
+        "replicas": 2,
+        "devices": 8,
+        "per_device_bytes": 11555777792,
+        "device_capacity_bytes": 80000000000,
+        "state_shards": 4,
+        "compute_seconds": {
+          "numerator": 78002432,
+          "denominator": 966259765625
+        },
+        "memory_seconds": {
+          "numerator": 45139757,
+          "denominator": 13085937500
+        },
+        "collective_seconds": {
+          "numerator": 139671,
+          "denominator": 97656250
+        },
+        "limiting_resource": "memory",
+        "latency_seconds": {
+          "numerator": 63855671,
+          "denominator": 13085937500
+        },
+        "throughput_tokens_per_second": {
+          "numerator": 837500000000,
+          "denominator": 63855671
+        },
+        "cost_per_token": {
+          "numerator": 63855671,
+          "denominator": 125625000000000
+        },
+        "changes_numerics": true,
+        "quality_evidence_declared": true,
+        "rankable_at_fixed_quality": true
+      },
+      {
+        "device": "h100-sxm",
+        "precision": "FP8",
+        "tensor_parallel": 8,
+        "batch": 32,
+        "context": 8192,
+        "admissible": true,
+        "reason": "within capacity, power and published rates",
+        "peak": {
+          "tera_ops_per_second": 1978.9,
+          "source_id": "nvidia-h100",
+          "locator": "Table 3, physical pages 39–40, including clock rows and sparsity footnote 1",
+          "clock_basis": "GPU Boost 1830 MHz for FP8/FP16/BF16/TF32; published rounded peak"
+        },
+        "power_watts": 700,
+        "replicas": 1,
+        "devices": 8,
+        "per_device_bytes": 5777888896,
+        "device_capacity_bytes": 80000000000,
+        "state_shards": 8,
+        "compute_seconds": {
+          "numerator": 39001216,
+          "denominator": 966259765625
+        },
+        "memory_seconds": {
+          "numerator": 45139757,
+          "denominator": 26171875000
+        },
+        "collective_seconds": {
+          "numerator": 261387,
+          "denominator": 97656250
+        },
+        "limiting_resource": "memory",
+        "latency_seconds": {
+          "numerator": 115191473,
+          "denominator": 26171875000
+        },
+        "throughput_tokens_per_second": {
+          "numerator": 837500000000,
+          "denominator": 115191473
+        },
+        "cost_per_token": {
+          "numerator": 115191473,
+          "denominator": 125625000000000
+        },
+        "changes_numerics": true,
+        "quality_evidence_declared": true,
+        "rankable_at_fixed_quality": true
+      }
+    ],
+    "admissible": [
+      "BF16/tp1",
+      "BF16/tp2",
+      "BF16/tp4",
+      "BF16/tp8",
+      "FP8/tp1",
+      "FP8/tp2",
+      "FP8/tp4",
+      "FP8/tp8"
+    ],
+    "refused": [],
+    "excluded_for_quality": [],
+    "lowest_latency": {
+      "device": "h100-sxm",
+      "precision": "FP8",
+      "tensor_parallel": 8,
+      "batch": 32,
+      "context": 8192,
+      "admissible": true,
+      "reason": "within capacity, power and published rates",
+      "peak": {
+        "tera_ops_per_second": 1978.9,
+        "source_id": "nvidia-h100",
+        "locator": "Table 3, physical pages 39–40, including clock rows and sparsity footnote 1",
+        "clock_basis": "GPU Boost 1830 MHz for FP8/FP16/BF16/TF32; published rounded peak"
+      },
+      "power_watts": 700,
+      "replicas": 1,
+      "devices": 8,
+      "per_device_bytes": 5777888896,
+      "device_capacity_bytes": 80000000000,
+      "state_shards": 8,
+      "compute_seconds": {
+        "numerator": 39001216,
+        "denominator": 966259765625
+      },
+      "memory_seconds": {
+        "numerator": 45139757,
+        "denominator": 26171875000
+      },
+      "collective_seconds": {
+        "numerator": 261387,
+        "denominator": 97656250
+      },
+      "limiting_resource": "memory",
+      "latency_seconds": {
+        "numerator": 115191473,
+        "denominator": 26171875000
+      },
+      "throughput_tokens_per_second": {
+        "numerator": 837500000000,
+        "denominator": 115191473
+      },
+      "cost_per_token": {
+        "numerator": 115191473,
+        "denominator": 125625000000000
+      },
+      "changes_numerics": true,
+      "quality_evidence_declared": true,
+      "rankable_at_fixed_quality": true
+    },
+    "highest_throughput_within_slo": {
+      "device": "h100-sxm",
+      "precision": "FP8",
+      "tensor_parallel": 1,
+      "batch": 32,
+      "context": 8192,
+      "admissible": true,
+      "reason": "within capacity, power and published rates",
+      "peak": {
+        "tera_ops_per_second": 1978.9,
+        "source_id": "nvidia-h100",
+        "locator": "Table 3, physical pages 39–40, including clock rows and sparsity footnote 1",
+        "clock_basis": "GPU Boost 1830 MHz for FP8/FP16/BF16/TF32; published rounded peak"
+      },
+      "power_watts": 700,
+      "replicas": 8,
+      "devices": 8,
+      "per_device_bytes": 46223111168,
+      "device_capacity_bytes": 80000000000,
+      "state_shards": 1,
+      "compute_seconds": {
+        "numerator": 312009728,
+        "denominator": 966259765625
+      },
+      "memory_seconds": {
+        "numerator": 45139757,
+        "denominator": 3271484375
+      },
+      "collective_seconds": {
+        "numerator": 0,
+        "denominator": 1
+      },
+      "limiting_resource": "memory",
+      "latency_seconds": {
+        "numerator": 45139757,
+        "denominator": 3271484375
+      },
+      "throughput_tokens_per_second": {
+        "numerator": 837500000000,
+        "denominator": 45139757
+      },
+      "cost_per_token": {
+        "numerator": 45139757,
+        "denominator": 125625000000000
+      },
+      "changes_numerics": true,
+      "quality_evidence_declared": true,
+      "rankable_at_fixed_quality": true
+    },
+    "lowest_cost_per_token": {
+      "device": "h100-sxm",
+      "precision": "FP8",
+      "tensor_parallel": 1,
+      "batch": 32,
+      "context": 8192,
+      "admissible": true,
+      "reason": "within capacity, power and published rates",
+      "peak": {
+        "tera_ops_per_second": 1978.9,
+        "source_id": "nvidia-h100",
+        "locator": "Table 3, physical pages 39–40, including clock rows and sparsity footnote 1",
+        "clock_basis": "GPU Boost 1830 MHz for FP8/FP16/BF16/TF32; published rounded peak"
+      },
+      "power_watts": 700,
+      "replicas": 8,
+      "devices": 8,
+      "per_device_bytes": 46223111168,
+      "device_capacity_bytes": 80000000000,
+      "state_shards": 1,
+      "compute_seconds": {
+        "numerator": 312009728,
+        "denominator": 966259765625
+      },
+      "memory_seconds": {
+        "numerator": 45139757,
+        "denominator": 3271484375
+      },
+      "collective_seconds": {
+        "numerator": 0,
+        "denominator": 1
+      },
+      "limiting_resource": "memory",
+      "latency_seconds": {
+        "numerator": 45139757,
+        "denominator": 3271484375
+      },
+      "throughput_tokens_per_second": {
+        "numerator": 837500000000,
+        "denominator": 45139757
+      },
+      "cost_per_token": {
+        "numerator": 45139757,
+        "denominator": 125625000000000
+      },
+      "changes_numerics": true,
+      "quality_evidence_declared": true,
+      "rankable_at_fixed_quality": true
+    },
+    "meets_slo": true
+  },
+  "right": {
+    "device": "a100-80gb-sxm",
+    "candidates": [
+      {
+        "device": "a100-80gb-sxm",
+        "precision": "BF16",
+        "tensor_parallel": 1,
+        "batch": 32,
+        "context": 8192,
+        "admissible": true,
+        "reason": "within capacity, power and published rates",
+        "peak": {
+          "tera_ops_per_second": 312,
+          "source_id": "nvidia-a100",
+          "locator": "Table 1 and Appendix A Table 4; accumulator and sparsity notes",
+          "clock_basis": "official peak; sustained performance not measured"
+        },
+        "power_watts": 400,
+        "replicas": 14,
+        "devices": 14,
+        "per_device_bytes": 53791516672,
+        "device_capacity_bytes": 80000000000,
+        "state_shards": 1,
+        "compute_seconds": {
+          "numerator": 19500608,
+          "denominator": 9521484375
+        },
+        "memory_seconds": {
+          "numerator": 105061556,
+          "denominator": 3982421875
+        },
+        "collective_seconds": {
+          "numerator": 0,
+          "denominator": 1
+        },
+        "limiting_resource": "memory",
+        "latency_seconds": {
+          "numerator": 105061556,
+          "denominator": 3982421875
+        },
+        "throughput_tokens_per_second": {
+          "numerator": 446031250000,
+          "denominator": 26265389
+        },
+        "cost_per_token": {
+          "numerator": 26265389,
+          "denominator": 76462500000000
+        },
+        "changes_numerics": false,
+        "quality_evidence_declared": true,
+        "rankable_at_fixed_quality": true
+      },
+      {
+        "device": "a100-80gb-sxm",
+        "precision": "BF16",
+        "tensor_parallel": 2,
+        "batch": 32,
+        "context": 8192,
+        "admissible": true,
+        "reason": "within capacity, power and published rates",
+        "peak": {
+          "tera_ops_per_second": 312,
+          "source_id": "nvidia-a100",
+          "locator": "Table 1 and Appendix A Table 4; accumulator and sparsity notes",
+          "clock_basis": "official peak; sustained performance not measured"
+        },
+        "power_watts": 400,
+        "replicas": 7,
+        "devices": 14,
+        "per_device_bytes": 26895758336,
+        "device_capacity_bytes": 80000000000,
+        "state_shards": 2,
+        "compute_seconds": {
+          "numerator": 9750304,
+          "denominator": 9521484375
+        },
+        "memory_seconds": {
+          "numerator": 52530778,
+          "denominator": 3982421875
+        },
+        "collective_seconds": {
+          "numerator": 64989,
+          "denominator": 97656250
+        },
+        "limiting_resource": "memory",
+        "latency_seconds": {
+          "numerator": 2759051471,
+          "denominator": 199121093750
+        },
+        "throughput_tokens_per_second": {
+          "numerator": 44603125000000,
+          "denominator": 2759051471
+        },
+        "cost_per_token": {
+          "numerator": 2759051471,
+          "denominator": 7646250000000000
+        },
+        "changes_numerics": false,
+        "quality_evidence_declared": true,
+        "rankable_at_fixed_quality": true
+      },
+      {
+        "device": "a100-80gb-sxm",
+        "precision": "BF16",
+        "tensor_parallel": 4,
+        "batch": 32,
+        "context": 8192,
+        "admissible": true,
+        "reason": "within capacity, power and published rates",
+        "peak": {
+          "tera_ops_per_second": 312,
+          "source_id": "nvidia-a100",
+          "locator": "Table 1 and Appendix A Table 4; accumulator and sparsity notes",
+          "clock_basis": "official peak; sustained performance not measured"
+        },
+        "power_watts": 400,
+        "replicas": 3,
+        "devices": 12,
+        "per_device_bytes": 13447879168,
+        "device_capacity_bytes": 80000000000,
+        "state_shards": 4,
+        "compute_seconds": {
+          "numerator": 4875152,
+          "denominator": 9521484375
+        },
+        "memory_seconds": {
+          "numerator": 26265389,
+          "denominator": 3982421875
+        },
+        "collective_seconds": {
+          "numerator": 139671,
+          "denominator": 97656250
+        },
+        "limiting_resource": "memory",
+        "latency_seconds": {
+          "numerator": 1598058619,
+          "denominator": 199121093750
+        },
+        "throughput_tokens_per_second": {
+          "numerator": 19115625000000,
+          "denominator": 1598058619
+        },
+        "cost_per_token": {
+          "numerator": 1598058619,
+          "denominator": 3823125000000000
+        },
+        "changes_numerics": false,
+        "quality_evidence_declared": true,
+        "rankable_at_fixed_quality": true
+      },
+      {
+        "device": "a100-80gb-sxm",
+        "precision": "BF16",
+        "tensor_parallel": 8,
+        "batch": 32,
+        "context": 8192,
+        "admissible": true,
+        "reason": "within capacity, power and published rates",
+        "peak": {
+          "tera_ops_per_second": 312,
+          "source_id": "nvidia-a100",
+          "locator": "Table 1 and Appendix A Table 4; accumulator and sparsity notes",
+          "clock_basis": "official peak; sustained performance not measured"
+        },
+        "power_watts": 400,
+        "replicas": 1,
+        "devices": 8,
+        "per_device_bytes": 6723939584,
+        "device_capacity_bytes": 80000000000,
+        "state_shards": 8,
+        "compute_seconds": {
+          "numerator": 2437576,
+          "denominator": 9521484375
+        },
+        "memory_seconds": {
+          "numerator": 26265389,
+          "denominator": 7964843750
+        },
+        "collective_seconds": {
+          "numerator": 261387,
+          "denominator": 97656250
+        },
+        "limiting_resource": "memory",
+        "latency_seconds": {
+          "numerator": 594801409,
+          "denominator": 99560546875
+        },
+        "throughput_tokens_per_second": {
+          "numerator": 3185937500000,
+          "denominator": 594801409
+        },
+        "cost_per_token": {
+          "numerator": 594801409,
+          "denominator": 955781250000000
+        },
+        "changes_numerics": false,
+        "quality_evidence_declared": true,
+        "rankable_at_fixed_quality": true
+      },
+      {
+        "device": "a100-80gb-sxm",
+        "precision": "FP8",
+        "tensor_parallel": 1,
+        "batch": 32,
+        "context": 8192,
+        "admissible": false,
+        "reason": "a100-80gb-sxm publishes no dense FP8 tensor rate"
+      },
+      {
+        "device": "a100-80gb-sxm",
+        "precision": "FP8",
+        "tensor_parallel": 2,
+        "batch": 32,
+        "context": 8192,
+        "admissible": false,
+        "reason": "a100-80gb-sxm publishes no dense FP8 tensor rate"
+      },
+      {
+        "device": "a100-80gb-sxm",
+        "precision": "FP8",
+        "tensor_parallel": 4,
+        "batch": 32,
+        "context": 8192,
+        "admissible": false,
+        "reason": "a100-80gb-sxm publishes no dense FP8 tensor rate"
+      },
+      {
+        "device": "a100-80gb-sxm",
+        "precision": "FP8",
+        "tensor_parallel": 8,
+        "batch": 32,
+        "context": 8192,
+        "admissible": false,
+        "reason": "a100-80gb-sxm publishes no dense FP8 tensor rate"
+      }
+    ],
+    "admissible": [
+      "BF16/tp1",
+      "BF16/tp2",
+      "BF16/tp4",
+      "BF16/tp8"
+    ],
+    "refused": [
+      {
+        "candidate": "FP8/tp1",
+        "reason": "a100-80gb-sxm publishes no dense FP8 tensor rate"
+      },
+      {
+        "candidate": "FP8/tp2",
+        "reason": "a100-80gb-sxm publishes no dense FP8 tensor rate"
+      },
+      {
+        "candidate": "FP8/tp4",
+        "reason": "a100-80gb-sxm publishes no dense FP8 tensor rate"
+      },
+      {
+        "candidate": "FP8/tp8",
+        "reason": "a100-80gb-sxm publishes no dense FP8 tensor rate"
+      }
+    ],
+    "excluded_for_quality": [],
+    "lowest_latency": {
+      "device": "a100-80gb-sxm",
+      "precision": "BF16",
+      "tensor_parallel": 8,
+      "batch": 32,
+      "context": 8192,
+      "admissible": true,
+      "reason": "within capacity, power and published rates",
+      "peak": {
+        "tera_ops_per_second": 312,
+        "source_id": "nvidia-a100",
+        "locator": "Table 1 and Appendix A Table 4; accumulator and sparsity notes",
+        "clock_basis": "official peak; sustained performance not measured"
+      },
+      "power_watts": 400,
+      "replicas": 1,
+      "devices": 8,
+      "per_device_bytes": 6723939584,
+      "device_capacity_bytes": 80000000000,
+      "state_shards": 8,
+      "compute_seconds": {
+        "numerator": 2437576,
+        "denominator": 9521484375
+      },
+      "memory_seconds": {
+        "numerator": 26265389,
+        "denominator": 7964843750
+      },
+      "collective_seconds": {
+        "numerator": 261387,
+        "denominator": 97656250
+      },
+      "limiting_resource": "memory",
+      "latency_seconds": {
+        "numerator": 594801409,
+        "denominator": 99560546875
+      },
+      "throughput_tokens_per_second": {
+        "numerator": 3185937500000,
+        "denominator": 594801409
+      },
+      "cost_per_token": {
+        "numerator": 594801409,
+        "denominator": 955781250000000
+      },
+      "changes_numerics": false,
+      "quality_evidence_declared": true,
+      "rankable_at_fixed_quality": true
+    },
+    "highest_throughput_within_slo": {
+      "device": "a100-80gb-sxm",
+      "precision": "BF16",
+      "tensor_parallel": 1,
+      "batch": 32,
+      "context": 8192,
+      "admissible": true,
+      "reason": "within capacity, power and published rates",
+      "peak": {
+        "tera_ops_per_second": 312,
+        "source_id": "nvidia-a100",
+        "locator": "Table 1 and Appendix A Table 4; accumulator and sparsity notes",
+        "clock_basis": "official peak; sustained performance not measured"
+      },
+      "power_watts": 400,
+      "replicas": 14,
+      "devices": 14,
+      "per_device_bytes": 53791516672,
+      "device_capacity_bytes": 80000000000,
+      "state_shards": 1,
+      "compute_seconds": {
+        "numerator": 19500608,
+        "denominator": 9521484375
+      },
+      "memory_seconds": {
+        "numerator": 105061556,
+        "denominator": 3982421875
+      },
+      "collective_seconds": {
+        "numerator": 0,
+        "denominator": 1
+      },
+      "limiting_resource": "memory",
+      "latency_seconds": {
+        "numerator": 105061556,
+        "denominator": 3982421875
+      },
+      "throughput_tokens_per_second": {
+        "numerator": 446031250000,
+        "denominator": 26265389
+      },
+      "cost_per_token": {
+        "numerator": 26265389,
+        "denominator": 76462500000000
+      },
+      "changes_numerics": false,
+      "quality_evidence_declared": true,
+      "rankable_at_fixed_quality": true
+    },
+    "lowest_cost_per_token": {
+      "device": "a100-80gb-sxm",
+      "precision": "BF16",
+      "tensor_parallel": 1,
+      "batch": 32,
+      "context": 8192,
+      "admissible": true,
+      "reason": "within capacity, power and published rates",
+      "peak": {
+        "tera_ops_per_second": 312,
+        "source_id": "nvidia-a100",
+        "locator": "Table 1 and Appendix A Table 4; accumulator and sparsity notes",
+        "clock_basis": "official peak; sustained performance not measured"
+      },
+      "power_watts": 400,
+      "replicas": 14,
+      "devices": 14,
+      "per_device_bytes": 53791516672,
+      "device_capacity_bytes": 80000000000,
+      "state_shards": 1,
+      "compute_seconds": {
+        "numerator": 19500608,
+        "denominator": 9521484375
+      },
+      "memory_seconds": {
+        "numerator": 105061556,
+        "denominator": 3982421875
+      },
+      "collective_seconds": {
+        "numerator": 0,
+        "denominator": 1
+      },
+      "limiting_resource": "memory",
+      "latency_seconds": {
+        "numerator": 105061556,
+        "denominator": 3982421875
+      },
+      "throughput_tokens_per_second": {
+        "numerator": 446031250000,
+        "denominator": 26265389
+      },
+      "cost_per_token": {
+        "numerator": 26265389,
+        "denominator": 76462500000000
+      },
+      "changes_numerics": false,
+      "quality_evidence_declared": true,
+      "rankable_at_fixed_quality": true
+    },
+    "meets_slo": true
+  },
+  "head_to_head": [
+    {
+      "objective": "lowest_latency",
+      "winner": "h100-sxm",
+      "loser": "a100-80gb-sxm",
+      "winning_configuration": "FP8/tp8",
+      "losing_configuration": "BF16/tp8",
+      "winner_value": {
+        "numerator": 115191473,
+        "denominator": 26171875000
+      },
+      "loser_value": {
+        "numerator": 594801409,
+        "denominator": 99560546875
+      },
+      "ratio": {
+        "numerator": 318813555224,
+        "denominator": 234875413447
+      }
+    },
+    {
+      "objective": "highest_throughput_within_slo",
+      "winner": "h100-sxm",
+      "loser": "a100-80gb-sxm",
+      "winning_configuration": "FP8/tp1",
+      "losing_configuration": "BF16/tp1",
+      "winner_value": {
+        "numerator": 837500000000,
+        "denominator": 45139757
+      },
+      "loser_value": {
+        "numerator": 446031250000,
+        "denominator": 26265389
+      },
+      "ratio": {
+        "numerator": 703912425200,
+        "denominator": 644279751661
+      }
+    },
+    {
+      "objective": "lowest_cost_per_token",
+      "winner": "a100-80gb-sxm",
+      "loser": "h100-sxm",
+      "winning_configuration": "BF16/tp1",
+      "losing_configuration": "FP8/tp1",
+      "winner_value": {
+        "numerator": 26265389,
+        "denominator": 76462500000000
+      },
+      "loser_value": {
+        "numerator": 45139757,
+        "denominator": 125625000000000
+      },
+      "ratio": {
+        "numerator": 92039964523,
+        "denominator": 87989053150
+      }
+    }
+  ],
+  "price_flip": {
+    "cheaper_side": "a100-80gb-sxm",
+    "dearer_side": "h100-sxm",
+    "ratio": {
+      "numerator": 92039964523,
+      "denominator": 87989053150
+    },
+    "reason": "Multiplying a100-80gb-sxm's declared price by more than this ratio, with everything else held, makes h100-sxm the cheaper side per token"
+  },
+  "quality_evidence_sensitivity": {},
+  "objectives_that_flip_on_quality_evidence": [],
+  "fixed_and_tuned_disagree": false,
+  "assumptions": [
+    "Device capacity, bandwidth, board power and tensor rates are published catalog figures with locators.",
+    "A precision the vendor publishes no dense rate for is refused, never assumed to run at the next width's rate.",
+    "Model work comes from the pinned official config; the step is one decode position behind the stated context.",
+    "Latency is max(compute, memory) plus the serial collective, an ideal-overlap lower bound rather than a measured latency.",
+    "Tensor-parallel compute and capacity are assumed to divide evenly, which no implementation achieves exactly.",
+    "Session state stays at BF16 whatever the weight width, so a narrower weight never shrinks the state term.",
+    "A width that changes numerics is ranked only where quality evidence is declared; otherwise it is listed and set aside.",
+    "Prices are declared teaching inputs, and the flip is reported as a ratio rather than as a market claim."
+  ]
+}
+```

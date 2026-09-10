@@ -1,0 +1,61 @@
+--- calculations/research/congestion-controllers/cubic.py
++++ calculations/src/infra_calc/transport/cubic.py
+@@ -1,13 +1,11 @@
+ """RFC9438 pure controller event replay; explicitly selected Reno startup."""
+ 
+-import argparse
++from .reference_sources import reference_sources
++
+ import copy
+-import hashlib
+ import json
+ from fractions import Fraction as F
+-from pathlib import Path
+-
+-ROOT = Path(__file__).resolve().parent
++
+ SCALE = 10**30
+ 
+ 
+@@ -63,15 +61,7 @@
+ 
+ 
+ def sources():
+-    lock = json.loads((ROOT / "sources.lock.json").read_text())
+-    for row in lock:
+-        data = (ROOT / row["file"]).read_bytes()
+-        if (
+-            len(data) != row["bytes"]
+-            or hashlib.sha256(data).hexdigest() != row["sha256"]
+-        ):
+-            raise ValueError("source hash mismatch")
+-    return lock
++    return reference_sources("cubic")
+ 
+ 
+ class Controller:
+@@ -421,24 +411,3 @@
+         dict(at="1", type="congestion", event_id="small", flight_size="1")
+     ]
+     return result
+-
+-
+-def main():
+-    parser = argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument("--inputs", type=Path)
+-    parser.add_argument("--output", type=Path)
+-    args = parser.parse_args()
+-    result = (
+-        calculate(json.loads(args.inputs.read_text()))
+-        if args.inputs
+-        else {k: calculate(v) for k, v in scenarios().items()}
+-    )
+-    text = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
+-    if args.output:
+-        args.output.write_text(text)
+-    else:
+-        print(text, end="")
+-
+-
+-if __name__ == "__main__":
+-    main()

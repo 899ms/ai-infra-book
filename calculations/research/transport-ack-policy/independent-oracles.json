@@ -1,0 +1,253 @@
+{
+  "status": "Independent arithmetic expectations; not execution evidence",
+  "scope": "Selected finite confirmed-Application ACK policy, not browser defaults",
+  "cases": [
+    {
+      "id": "count",
+      "units": "ms",
+      "arrivals": [
+        [
+          0,
+          0,
+          true
+        ],
+        [
+          1,
+          5,
+          true
+        ]
+      ],
+      "every": 2,
+      "max_delay": 25,
+      "send": 5,
+      "ranges": [
+        [
+          0,
+          1
+        ]
+      ],
+      "raw_delay": 0
+    },
+    {
+      "id": "tail",
+      "units": "ms",
+      "arrivals": [
+        [
+          0,
+          0,
+          true
+        ]
+      ],
+      "every": 2,
+      "max_delay": 25,
+      "send": 25,
+      "raw_delay": 25,
+      "exponent": 3,
+      "encoded": 3125
+    },
+    {
+      "id": "queued-refresh",
+      "units": "ms",
+      "arrivals": [
+        [
+          0,
+          0,
+          true
+        ],
+        [
+          1,
+          29,
+          true
+        ]
+      ],
+      "every": 2,
+      "max_delay": 25,
+      "expire_at": 25,
+      "send": 30,
+      "ranges": [
+        [
+          0,
+          1
+        ]
+      ],
+      "raw_delay": 1,
+      "encoded": 125
+    },
+    {
+      "id": "largest-not-latest-arrival",
+      "units": "ms",
+      "arrivals": [
+        [
+          2,
+          20,
+          true
+        ],
+        [
+          0,
+          29,
+          true
+        ]
+      ],
+      "send": 30,
+      "ranges": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "raw_delay": 10,
+      "encoded": 1250
+    },
+    {
+      "id": "duplicate-original-time",
+      "units": "ms",
+      "arrivals": [
+        [
+          7,
+          10,
+          true
+        ],
+        [
+          7,
+          20,
+          true
+        ]
+      ],
+      "first_send": 10,
+      "second_send": 21,
+      "second_raw_delay": 11
+    },
+    {
+      "id": "floor-encoding",
+      "units": "us",
+      "raw_delay": 1003,
+      "exponent": 3,
+      "encoded": 125,
+      "decoded": 1000,
+      "residual": 3
+    },
+    {
+      "id": "capacity-256-singletons",
+      "pns": "0,2,...,510",
+      "raw_delay": 0,
+      "frame_bytes": 517,
+      "header_tag_bytes": 24,
+      "minimum_quic_bytes": 541,
+      "reject_quic_bytes": 64
+    },
+    {
+      "id": "variance-old-srtt",
+      "units": "ms",
+      "seed": {
+        "min_rtt": 80,
+        "srtt": 100,
+        "rttvar": 50
+      },
+      "latest": 180,
+      "decoded_ack_delay": 20,
+      "max_ack_delay": 25,
+      "adjusted": 160,
+      "srtt": "215/2",
+      "rttvar": "105/2"
+    },
+    {
+      "id": "delay-cap",
+      "units": "ms",
+      "seed": {
+        "min_rtt": 80,
+        "srtt": 100,
+        "rttvar": 50
+      },
+      "latest": 180,
+      "decoded_ack_delay": 40,
+      "max_ack_delay": 25,
+      "adjusted": 155,
+      "srtt": "855/8",
+      "rttvar": "205/4"
+    },
+    {
+      "id": "min-guard",
+      "units": "ms",
+      "seed": {
+        "min_rtt": 80,
+        "srtt": 100,
+        "rttvar": 50
+      },
+      "latest": 90,
+      "decoded_ack_delay": 20,
+      "max_ack_delay": 25,
+      "adjusted": 90,
+      "srtt": "395/4",
+      "rttvar": 40
+    },
+    {
+      "id": "pure-ack-largest-sample",
+      "sent": [
+        {
+          "pn": 0,
+          "at": 0,
+          "ack_eliciting": true
+        },
+        {
+          "pn": 1,
+          "at": 1,
+          "ack_eliciting": false
+        }
+      ],
+      "ack_at": 5,
+      "ranges": [
+        [
+          0,
+          1
+        ]
+      ],
+      "sample_pn": 1,
+      "raw_rtt": 4,
+      "first_sample_ignores_delay": true
+    },
+    {
+      "id": "old-largest-new-lower",
+      "already_acked": [
+        2
+      ],
+      "fresh_acked": [
+        0
+      ],
+      "largest": 2,
+      "new_rtt_sample": false
+    },
+    {
+      "id": "same-time",
+      "units": "ms",
+      "arrivals": [
+        [
+          0,
+          0,
+          true
+        ],
+        [
+          1,
+          25,
+          true
+        ]
+      ],
+      "timer": 25,
+      "every": 2,
+      "max_delay": 25,
+      "ack_count": 1,
+      "send": 25,
+      "raw_delay": 0
+    },
+    {
+      "id": "frozen-send",
+      "first_snapshot_at": 1,
+      "arrival_during_serialization": 2,
+      "new_pn_in_first_snapshot": false,
+      "new_pending": true
+    }
+  ]
+}

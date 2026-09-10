@@ -1,0 +1,332 @@
+{
+  "schema_version": 1,
+  "status": "prewritten-before-candidate-output",
+  "scope": "Exact arithmetic and causal obligations, not a simulated-network result",
+  "profiles": {
+    "unit_asymmetric": {
+      "up_rate_bps": 9824,
+      "down_rate_bps": 736,
+      "propagation_each_seconds": "1",
+      "flight_udp_bytes": 1200,
+      "flight_wire_bytes": 1228,
+      "ack_udp_bytes": 64,
+      "ack_wire_bytes": 92,
+      "initial_cwnd_bytes": 2400,
+      "ack_policy": "immediate_each_packet",
+      "pacing": "none",
+      "rtt_seed": {
+        "latest_rtt": "4",
+        "smoothed_rtt": "4",
+        "rttvar": "2",
+        "min_rtt": "4"
+      },
+      "flow_credit": "Pregranted enough for all declared STREAM bytes; no credit extension advertisements needed",
+      "loss": "none unless explicitly specified",
+      "consume_delay": null,
+      "receive_memory_bytes": 100000
+    }
+  },
+  "cases": [
+    {
+      "id": "shared-cwnd-three-streams",
+      "level": "conditional complete network timeline",
+      "profile": "unit_asymmetric",
+      "messages": [
+        {
+          "id": "A",
+          "stream": "A",
+          "bytes": 1168,
+          "ready": "0",
+          "direction": "up"
+        },
+        {
+          "id": "B",
+          "stream": "B",
+          "bytes": 1168,
+          "ready": "0",
+          "direction": "up"
+        },
+        {
+          "id": "C",
+          "stream": "C",
+          "bytes": 1168,
+          "ready": "0",
+          "direction": "up"
+        }
+      ],
+      "expected": {
+        "data_send_starts": [
+          "0",
+          "1",
+          "4"
+        ],
+        "data_arrivals": [
+          "2",
+          "3",
+          "6"
+        ],
+        "ack_send_starts": [
+          "2",
+          "3",
+          "6"
+        ],
+        "ack_arrivals": [
+          "4",
+          "5",
+          "8"
+        ],
+        "initial_credit_block_interval": [
+          "2",
+          "4"
+        ],
+        "maximum_flight_bytes": 2400,
+        "unique_application_bytes": 3504,
+        "total_wire_bytes": 3960
+      },
+      "invariant": "Splitting one flow into three does not multiply the connection's initial flight allowance; bytes=actual UDP payload, not application length. After real ACK, NewReno may grow cwnd normally."
+    },
+    {
+      "id": "stream-and-connection-credit-independent",
+      "level": "sender-local event obligations; MAX arrival timestamps must be backed by actual network packets",
+      "initial_max_data": 1168,
+      "initial_max_stream_data": {
+        "A": 0,
+        "B": 1168
+      },
+      "expected": {
+        "B_offset0_length1168_admitted": true,
+        "A_offset0_length1168_admitted_initially": false,
+        "after_ACK_B_A_still_blocked": true,
+        "after_MAX_STREAM_DATA_A_1168_only_A_still_blocked": true,
+        "after_MAX_DATA_2336_A_admitted": true,
+        "highest_offsets_after_both": {
+          "A": 1168,
+          "B": 1168
+        },
+        "max_data_consumed_after_both": 2336,
+        "retransmit_B_same_range_additional_flow_credit": 0
+      },
+      "invariant": "B's ACK affects congestion credit, not A's flow limit. MAX becomes effective on its actual arrival; neither its generation nor its later ACK is the authorization point."
+    },
+    {
+      "id": "datagram-loss-without-retransmission",
+      "level": "all-trace identity/credit obligations plus explicit padded-byte arithmetic",
+      "messages": [
+        {
+          "id": "voice-0",
+          "transport": "datagram",
+          "bytes": 960
+        },
+        {
+          "id": "voice-1",
+          "transport": "datagram",
+          "bytes": 960
+        }
+      ],
+      "loss_selector": "Drop the first actual PN carrying voice-0; identify that PN from an actual-send record",
+      "expected": {
+        "voice_0_actual_transmission_count": 1,
+        "voice_0_application_delivery_count": 0,
+        "voice_1_application_delivery_count": 1,
+        "stream_credit_consumed": 0,
+        "data_only_wire_bytes_excluding_ACK_and_probe": 2456,
+        "declared_application_bytes": 1920,
+        "delivered_application_bytes": 960,
+        "lost_application_bytes": 960
+      },
+      "invariant": "All 1200 UDP bytes remain in sender flight until actual ACK or sender loss declaration. A later PTO may send a separate PING/probe, never another voice-0 unit. No recovery_ready timestamp is supplied."
+    },
+    {
+      "id": "reliable-cancel-stream-gap-and-endpoint",
+      "level": "receiver/application event oracle with supplied observations, not a claimed loss-recovery timeline",
+      "observations": [
+        {
+          "at": "0",
+          "event": "server task running",
+          "tag": "v1",
+          "finish": "5"
+        },
+        {
+          "at": "2",
+          "event": "server receives cancel message bytes",
+          "stream": "ctl",
+          "offset": 1,
+          "bytes": 1,
+          "tag": "v1"
+        },
+        {
+          "at": "3",
+          "event": "server task waiting",
+          "tag": "v1"
+        },
+        {
+          "at": "4",
+          "event": "server receives missing prefix",
+          "stream": "ctl",
+          "offset": 0,
+          "bytes": 1
+        }
+      ],
+      "expected": {
+        "cancel_transport_received_at": "2",
+        "cancel_application_delivered_at": "4",
+        "running_task_finish_at": "5",
+        "waiting_task_suppressed_at": "4",
+        "client_tasks_with_same_tag_cancelled": false,
+        "started_packet_preempted": false,
+        "sender_flight_freed_on_cancel_delivery": false
+      },
+      "invariant": "The gap holds reliable cancel semantics until contiguous delivery. Incoming cancellation affects only the receiver's waiting work/outgoing unsent slices. Already sent reliable ranges still need recovery.",
+      "compute_resource": {
+        "endpoint": "server",
+        "resource": "server",
+        "capacity_tasks": 1,
+        "preemptive": false
+      }
+    },
+    {
+      "id": "cancelled-unsent-stream-gap-not-silent-completion",
+      "level": "ordered STREAM and highest-offset accounting obligation",
+      "stream": "result",
+      "ranges": [
+        {
+          "offset": 0,
+          "length": 100,
+          "status": "sent"
+        },
+        {
+          "offset": 100,
+          "length": 100,
+          "status": "cancelled before send"
+        },
+        {
+          "offset": 200,
+          "length": 100,
+          "status": "later sent"
+        }
+      ],
+      "expected": {
+        "highest_sent_offset": 300,
+        "stream_max_data_consumed": 300,
+        "actual_unique_sent_application_bytes": 200,
+        "maximum_contiguous_delivered_prefix_without_reset": 100,
+        "later_message_complete": false
+      },
+      "invariant": "There is no RESET_STREAM in this first scope. Cancellation cannot silently shift offsets, refund previously consumed credit, or deliver a later message over the gap."
+    },
+    {
+      "id": "fifo-priority-nonpreemptive",
+      "level": "conditional initial data timeline through first three sends",
+      "profile": "unit_asymmetric",
+      "override": {
+        "initial_cwnd_bytes": 3600
+      },
+      "messages": [
+        {
+          "id": "bulk-0",
+          "ready": "0",
+          "priority": 0
+        },
+        {
+          "id": "bulk-1",
+          "ready": "0",
+          "priority": 0
+        },
+        {
+          "id": "voice",
+          "ready": "1/2",
+          "priority": 100
+        }
+      ],
+      "expected": {
+        "fifo_start_order": [
+          "bulk-0",
+          "bulk-1",
+          "voice"
+        ],
+        "priority_start_order": [
+          "bulk-0",
+          "voice",
+          "bulk-1"
+        ],
+        "start_times": [
+          "0",
+          "1",
+          "2"
+        ],
+        "voice_arrives_fifo": "4",
+        "voice_arrives_priority": "3",
+        "bulk_0_serialization_unchanged": [
+          "0",
+          "1"
+        ],
+        "compute_scheduler_changed": false
+      },
+      "invariant": "Priority chooses only at serializer start; voice ready at .5 cannot interrupt bulk-0. Control packets and already-started bytes retain their own defined ordering."
+    },
+    {
+      "id": "reverse-data-blocks-ACK",
+      "level": "conditional actual serializer arithmetic",
+      "profile": "unit_asymmetric",
+      "observations": {
+        "reverse_full_data_start": "0",
+        "up_data_start": "0",
+        "up_data_arrival": "2",
+        "ACK_trigger_at": "2"
+      },
+      "expected": {
+        "reverse_full_data_end": "307/23",
+        "ACK_send_start": "307/23",
+        "ACK_arrival_at_sender": "353/23",
+        "ACK_raw_delay": "261/23",
+        "ACK_delay_exponent": 3,
+        "ACK_encoded_delay": 1418478,
+        "ACK_decoded_delay": "709239/62500",
+        "ACK_encoding_residual": "-3/1437500"
+      },
+      "invariant": "Pure ACK bypasses pacing, not a busy reverse serializer. Delay measured at actual send uses largest PN's receive time. Other reverse traffic/credit advertisements must be absent in this isolated case.",
+      "override": {
+        "rtt_seed": {
+          "latest_rtt": "4",
+          "smoothed_rtt": "4",
+          "rttvar": "20",
+          "min_rtt": "4"
+        },
+        "explanation": "Observed prior variance20 keeps PTO later than the expected queued ACK; not a synthetic recovery time."
+      }
+    },
+    {
+      "id": "screenshot-local-version",
+      "level": "endpoint-local business-use oracle",
+      "observations": [
+        {
+          "at": "0",
+          "event": "client current version",
+          "version": "v1"
+        },
+        {
+          "at": "1/25",
+          "event": "client screenshot v1 ready",
+          "bytes": 3443
+        },
+        {
+          "at": "2/25",
+          "event": "client local version change",
+          "version": "v2"
+        }
+      ],
+      "expected": {
+        "v1_action_arrives_at_7_over_100_usable": true,
+        "v1_action_arrives_at_9_over_100_usable": false,
+        "server_reads_client_version_change_without_message": false,
+        "PNG_slices": [
+          1168,
+          1168,
+          1107
+        ],
+        "action_payload_bytes": 64
+      },
+      "invariant": "Both actions may be transported successfully; only local client version at use decides staleness. Equality at exactly .08 is reserved until local-event priority is explicit."
+    }
+  ]
+}

@@ -420,13 +420,13 @@
 
   <section id="chapter-details">
 <h2>章节安排</h2><p class="col">展开各节可查看小节说明，以及紧随内容的实验与配图计划。正式扩写以对应 Markdown 为基础。</p>
-<article class="card" id="ch-1"><span class="tag">第 1 章</span><h3>初识 AI Infra</h3><p>一次模型请求经过哪些系统？生成一个 token 又要花多少时间？本章先用一张全景图认识 AI Infra，再借助几个关键数字完成一次纸笔估算，最后看这些资源约束怎样推动真实架构的选择。</p>
+<article class="card" id="ch-1"><span class="tag">第 1 章</span><h3>初识 AI Infra</h3><p>开篇动机：传统系统课程解释程序所依赖的抽象及其实现；开发者无需亲自实现操作系统、编译器或芯片，也需要理解这些原理。基于模型开发 Agent 同样需要两方面基础：模型能力及其接口，以及模型的底层执行系统。前者在学习路径上类似操作系统，后者类似计算机体系结构。本书研究后者，模型结构只展开到理解计算、存储与通信需求所必需的程度。本章先从文档问答和代码修复说明：应用行为开始由代码、模型与上下文共同决定，运行系统必须处理模型计算、状态和工具执行之间的新关系。随后认识六层分工，沿请求建立资源模型，最后分析需求如何推动架构选择。</p>
 <p><strong>本章判断：</strong> 运行时间既取决于需要完成的工作，也取决于资源的供给能力。模型放得下以后，计算和数据读取仍可能形成不同限制；改变计算能力、带宽或复用方式，收益也会不同。</p>
 <p><strong>前置与交付：</strong> 使用基本代数与单位换算。读完能在全景图上定位主要组件，并对一个给定模型估算容量、计算与读取的时间下界。第 2 章继续解释模型的计算量和数据量从哪里来。</p>
 <p><strong>阅读安排：</strong> 正文练习为实验 1-1 至 1-4，其中 1-2、1-3、1-4 为核心。历史案例的深入推演及完整记录留在<a href="outlines/extensions/01-%E5%88%9D%E8%AF%86%20AI%20Infra.md">扩写资料</a>，保留实验 1-5 至 1-8 的配套编号。</p>
 <p>正文初稿与六幅配图已完成：<a href="manuscripts/01-%E5%88%9D%E8%AF%86%20AI%20Infra.html">阅读版</a>、<a href="manuscripts/01-%E5%88%9D%E8%AF%86%20AI%20Infra.md">Markdown</a>。</p>
-<details class="outline-section" id="sec-1-1" open><summary>1.1 AI Infra 全景</summary><div class="outline-section-body">
-<section class="outline-subsection" id="sec-1-1-1"><h4>1.1.1 一张六层图认识系统</h4>
+<details class="outline-section" id="sec-1-1" open><summary>1.1 为什么需要 AI Infra</summary><div class="outline-section-body">
+<section class="outline-subsection" id="sec-1-1-1"><h4>1.1.1 应用行为如何由代码、模型与上下文共同决定</h4>
 <figure class="infra-map" id="infra-panorama" aria-labelledby="infra-panorama-title">
         <h4 id="infra-panorama-title">图 1-1 · AI Infra 六层全景</h4>
         <div class="infra-layout">
@@ -448,11 +448,13 @@
         <p class="infra-foundation">共同约束：工艺与封装、供电与散热、容量、可靠性和费用。<a href="#ch-4">第 4 章</a>检查芯片供给与专用化，<a href="#ch-11">第 11 章</a>比较资源采购与任务成本。</p>
         <figcaption>从上向下追踪需求与实现依赖，从下向上检查能力与约束；右侧平台能力管理多个层次。互联连接分布式组件，图中的上下关系不表示每次请求依次穿过所有方框，也不要求每层独立部署。</figcaption>
       </figure>
-<p>开篇直接展示六层全景：应用与任务提出要完成什么；模型与负载决定计算和数据需求；训练与推理系统组织请求、作业和设备；算子与编译运行时把模型变成可执行工作；处理器与存储提供计算和数据驻留；互联与数据中心组织多设备资源。每层只标少量代表对象，让读者先找到模型、框架、GPU 和网络的位置。</p>
+<p>先定义上下文与可编程性，用文档问答和代码修复说明同一模型怎样承担不同任务，再说明代码、模型、工具和操作系统的分工。图 1-1 对照两种执行路径，设备明确标为“加速器、内存与互联”。由此引出批处理、状态管理、模型与硬件相互影响以及质量、时间、成本的联合设计。</p></section>
+<section class="outline-subsection" id="sec-1-1-2"><h4>1.1.2 从任务到设备的六层分工</h4>
+<p>在学习动机之后展示六层全景：应用与任务提出要完成什么；模型与负载决定计算和数据需求；训练与推理系统组织请求、作业和设备；算子与编译运行时把模型变成可执行工作；处理器与存储提供计算和数据驻留；互联与数据中心组织多设备资源。每层只标少量代表对象，让读者先找到模型、框架、GPU 和网络的位置。</p>
 <p>六层是本书的教学分组。资源调度、运行环境与观测画在侧面，供电、散热与工艺画为共同条件；互联连接需要协作的组件，塔的上下关系表示需求与实现的联系。用廖恒“十八层宝塔”的全栈视角交代背景，具体出处留在<a href="outlines/extensions/01-%E5%88%9D%E8%AF%86%20AI%20Infra.md#detail-1.1">扩写资料</a>。</p>
-<aside class="outline-callout figure-plan"><p><strong>图 1-1：AI Infra 六层全景（已配正文图）</strong></p><p>以六层塔形自绘图作开篇，侧栏标平台能力，底栏标物理条件。各层连到本书对应章节；请求路由与物理拓扑分别在图 1-2、图 1-3 展开。</p><p>已制作：<a href="manuscripts/ch01/figure-1-1-panorama.svg">SVG</a>／<a href="manuscripts/ch01/figure-1-1-panorama.png">PNG</a>。</p></aside>
+<aside class="outline-callout figure-plan"><p><strong>图 1-2：AI Infra 六层全景（已配正文图）</strong></p><p>以六层塔形自绘图说明组件分工，侧栏标平台能力，底栏标物理条件。各层连到本书对应章节；请求路由与物理拓扑分别在图 1-2、图 1-3 展开。</p><p>已制作：<a href="manuscripts/ch01/figure-1-1-panorama.svg">SVG</a>／<a href="manuscripts/ch01/figure-1-1-panorama.png">PNG</a>。</p></aside>
 <p>六层图之后恢复通用云与大模型系统的关系：传统云通过 OS、虚拟机与容器承载多样程序，LLM 应用通过 context、工具和 Agent 组织任务，模型执行部分围绕共同负载协作。比较相对松耦合的服务组织与紧耦合的模型设备组，说明网络进入计算依赖链；将抽象上移限定为设计重心变化，保留 OS、隔离与通用环境需求。此处建立主线，后文用请求与物理路径具体化，不重复展开概念。</p></section>
-<section class="outline-subsection" id="sec-1-1-2"><h4>1.1.2 一次生成请求怎样经过这些组件</h4>
+<section class="outline-subsection" id="sec-1-1-3"><h4>1.1.3 一次生成请求怎样经过这些组件</h4>
 <p>沿应用组织上下文、服务入口、请求路由、输入处理、实例队列与调度、CPU 运行时、GPU 执行、状态访问和流式返回展开。区分请求选择副本与模型分片交换数据，解释 prefill／decode 循环和工具反馈再次调用。</p>
 <aside class="outline-callout figure-plan"><p><strong>图 1-2：一次生成请求的路由与执行（已配正文图）</strong></p><p>实线表示请求与执行，虚线表示启动或切换模型时的加载；示意 prefill 与 decode 共用实例，保留多卡协作和输出返回。</p><p>已制作：<a href="manuscripts/ch01/figure-1-2-request.svg">SVG</a>／<a href="manuscripts/ch01/figure-1-2-request.png">PNG</a>。</p></aside>
 <aside class="outline-callout figure-plan"><p><strong>图 1-3：从数据中心到超节点与设备（已配正文图）</strong></p><p>先展示 CPU 服务、存储和多个超节点，再放大服务器／计算托盘内的 CPU、主存、GPU、HBM 与 NIC。区分主机接口、内部 scale-up 与跨超节点 scale-out；不把超节点固定等同于服务器或机柜。</p><p>已制作：<a href="manuscripts/ch01/figure-1-3-datacenter.svg">SVG</a>／<a href="manuscripts/ch01/figure-1-3-datacenter.png">PNG</a>。</p></aside>
@@ -490,7 +492,8 @@
 <aside class="outline-callout experiment"><p><strong>实验 1-4 ★〔核心〕：检查初算漏掉了什么</strong></p><p>使用一组配置完整的原始记录，或在可运行的小模型上测量；按该模型重做容量与读取估算，再改变长度或并发。找出一项足以解释差异的遗漏工作，区分每请求等待与全机吞吐。</p><p>条件：基础·配套数据分析；可选单设备实测。计数器与访存并发分析留作延伸。</p></aside>
 <p><strong>实测结果（1-4）：</strong> 同一 Qwen3-8B／vLLM 路径上，短输入 batch 从 1 增至 64，吞吐约从 37 升到 1,165 token/s，客户端 TPOT 从约 26.5 增至 40.5 ms。统一关闭前缀缓存后重测，长输入并发 16 的满批 decode 步长中位数 23.3 ms，与同组请求 TPOT 35.3 ms 明显不同：权重复用近似不变并不能推出 decode 时长不变，遗漏的是随并发增长的历史状态与额外工作。<a href="experiments/ch01/01-04/README.md">记录、补测与限制</a>。</p>
 <aside class="outline-callout figure-plan"><p><strong>图 1-5：资源下界与条件变化（已配正文图）</strong></p><p>教学面板展示同一模型的算力、带宽和 batch 变化；实测面板使用独立且标明配置的批量扫描，分别画吞吐与每请求时间。只有模型和计时边界匹配时才叠加预测与实测。</p><p>已制作：<a href="manuscripts/ch01/figure-1-5-budget.svg">SVG</a>／<a href="manuscripts/ch01/figure-1-5-budget.png">PNG</a>。</p></aside>
-<p>回看刚才的估算，可以把过程整理为五问：搬什么、搬多少、搬几次、经过哪里、谁在等待。它们帮助读者区分驻留容量、访问流量和执行依赖；完整记录格式见<a href="outlines/writing-support.md">阅读配套</a>。下一节看这些资源约束怎样改变设计。</p></section>
+<p>回看刚才的估算，可以把过程整理为五问：搬什么、搬多少、搬几次、经过哪里、谁在等待。它们帮助读者区分驻留容量、访问流量和执行依赖；完整记录格式见<a href="outlines/writing-support.md">阅读配套</a>。下一节看这些资源约束怎样改变设计。</p>
+<p><strong>计算结果（1.3）：</strong> 把这五问画成一张完整的执行图，就能得到一份可以逐项检查的账。用 Qwen3-8B 在 H100 SXM 上走通一遍：38 个节点的关键路径给出 6.707 ms 的资源下界，节点标运算与位置、边标接口字节，状态按产生／复用／更新／释放分列为权重 16,381,470,720 B、KV 622,854,144 B 和只供下一阶段的激活。四种候选改写各自登记去掉什么、又新增什么——缓存前缀降到 4.720 ms 但要在两次调用之间占住容量，压缩状态把容量从 17,004,324,864 B 降到 16,692,897,792 B 但改变数值，批量放大到 22.018 ms 却拿到最低的每 token 成本，分离把整份 622,854,144 B 会话状态推过接口后反而升到 6.892 ms。按容量、功率与面积上限先排除再比较，分离被基线和压缩状态双重支配，是&quot;多加一台设备什么都没换来&quot;的反例。官方未公布这些部件的裸片面积，因此面积轴只在声明占地时参与筛选；special 类算子未公布速率，逐项列为缺口而不并入下界。<a href="calculations/results/execution-dag-qwen8-h100.md">完整图、改写与筛选</a>，功率上限收紧到单卡的变体见<a href="calculations/results/execution-dag-qwen8-h100-power-capped.md">同一图的重筛</a>。</p></section>
 </div></details>
 <details class="outline-section" id="sec-1-4"><summary>1.4 从资源约束到架构选择</summary><div class="outline-section-body">
 <section class="outline-subsection" id="sec-1-4-1"><h4>1.4.1 TPU：需求规模改变资源选择</h4>
@@ -502,8 +505,11 @@
 <aside class="outline-callout figure-plan"><p><strong>图 1-6：三种资源约束怎样改变设计（已配正文图）</strong></p><p>一幅三栏图分别画 TPU 的专用资源、SmartNIC 的处理位置和 UB 的协作范围，并标回开篇全景图；每栏只保留一项动机、一处路径变化和一个后续限制。历史需求曲线及详细路径图留在扩写资料。</p><p>已制作：<a href="manuscripts/ch01/figure-1-6-designs.svg">SVG</a>／<a href="manuscripts/ch01/figure-1-6-designs.png">PNG</a>。</p></aside>
 <p>三个案例共同回到全景图：需求增长、处理位置和协作范围会改变计算与数据移动的组织。全书沿这些具体约束解释“数据搬移塑造了 AI Infra 的架构”。接下来先回答估算中尚未推导的问题：模型究竟要做多少计算、保存和读取多少数据？</p></section>
 </div></details>
-<div class="chapter-decision"><h4>本章的设计决定</h4><p>保留实验 1-3 的一页预算：纯权重能否放下，计算与读取各需多久，哪项资源变化会改变当前判断。将排除的状态与辅助工作列在旁边，第 2 章从模型结构补齐；设备选型等候更多负载与实现条件后再做。</p></div>
-<p class="chapter-end"><a href="outlines/01-%E5%88%9D%E8%AF%86%20AI%20Infra.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/01-%E5%88%9D%E8%AF%86%20AI%20Infra.md">扩写资料</a> · 4 节／11 小节 · 4 项练习（3 项核心） · 6 项配图计划</p></article>
+<div class="chapter-decision"><h4>本章的设计决定</h4><p><strong>V4／V4.1 会话案例：</strong> DeepSeek V4 到 V4.1 Flash 的演进提供了一条可以沿全书追踪的线索。模型团队从长上下文 Agent 的输入处理、KV 保存与迁移成本出发，改变了上下文表示、层间共享和缓存恢复方式。 我们将沿同一类会话展开：Agent 等待工具返回，恢复此前上下文，处理新增输入，再继续生成。第 2 章核算状态，第 3 章分解负载，第 4 至第 7 章追踪设备执行和数据路径，第 8、9 章决定怎样缓存与分配服务，最后回到完整任务。Qwen3 的基础算例继续用于建立计算方法，V4／V4.1 用于检验模型与系统怎样共同改变。</p>
+<p><strong>三条主线的落实：</strong> 传统基础设施的一个核心任务，是在通用硬件上支持许多不同程序。操作系统提供进程、内存、文件和网络等接口，应用开发者通过代码规定执行步骤；数据库、Web 服务和编译器产生不同的负载。以大语言模型为中心的 AI Infra 则出现了另一种组织重心：许多上层任务可以调用同一个模型，通过上下文改变它要完成的工作。对本书研究的系统而言，LLM 执行成为最重要的一类负载，底层因而有机会围绕重复出现的模型计算专门设计。</p>
+<p>配图与定量推导以本章正文为准；新增图沿用统一浅色填充、矢量箭头和外置图注。先固定任务改变单一约束，再比较重新选择后的方案。</p>
+<p>保留实验 1-3 的一页预算：纯权重能否放下，计算与读取各需多久，哪项资源变化会改变当前判断。将排除的状态与辅助工作列在旁边，第 2 章从模型结构补齐；设备选型等候更多负载与实现条件后再做。</p></div>
+<p class="chapter-end"><a href="outlines/01-%E5%88%9D%E8%AF%86%20AI%20Infra.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/01-%E5%88%9D%E8%AF%86%20AI%20Infra.md">扩写资料</a> · 4 节／12 小节 · 4 项练习（3 项核心） · 6 项配图计划</p></article>
 <article class="card" id="ch-2"><span class="tag">第 2 章</span><h3>模型架构</h3><p>第一章用参数量和关键资源数字估算模型执行，本章进一步解释这些需求的结构来源。先沿 Qwen3-8B 建立单次前向与完整生成的基线，再分别考察历史状态表示、专家权重选择以及网络形状与连接的变化，最后将各部件合成给定请求下的整模型需求。真实模型作为机制与组合的具体案例，学习能力和任务质量是比较成立的条件。</p>
 <p><strong>本章判断：</strong> 模型架构规定需要使用的权重、历史的保存与访问方式，以及计算的必要依赖；参数量或激活 FLOPs 相近的模型仍可提出不同的系统需求。驻留容量、逻辑访问与物理读写分别核算，状态或激活工作减少后，索引、解压、更新和连接计算可能成为新的限制。</p>
 <p><strong>前置与交付：</strong> 依赖第 1 章的单位与资源模型；交付代表层数据流、完整生成的需求表，以及各类架构变化对计算、容量、访问和依赖的影响。第 3 章加入请求分布与训练负载，第 4、5 章接续资源供给与实际执行。</p>
@@ -589,7 +595,7 @@
 <p><strong>扩写资料：</strong> <a href="outlines/extensions/02-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84.md#detail-2.4">本节完整计算、版本与实验变体</a>。</p></section>
 </div></details>
 <details class="outline-section" id="sec-2-5"><summary>2.5 网络形状与计算组织</summary><div class="outline-section-body"><p>在历史状态和专家计算之外，考察网络的形状、连接及辅助预测模块。相近的参数或 FLOPs 总量可以对应不同的矩阵形状、临时状态与串行依赖；本节把这些差异接回执行图。</p>
-<section class="outline-subsection" id="sec-2-5-1"><h4>2.5.1 深度、宽度与专家颗粒度</h4>
+<section class="outline-subsection" id="sec-2-5-1"><h4>2.5.1 深度、宽度与专家粒度</h4>
 <p>固定近似总参数预算，分别改变深度、隐藏宽度、FFN 比例、注意力头和专家数量。更深的模型增加逐层依赖与 KV 层数，更宽的矩阵改变分块与 Tensor Core 利用，更多更小的专家改变每专家 token 数、路由和 EP 的通信；较少激活专家也会改变能力和训练行为，不能只追求最小 FLOPs。</p>
 <p>沿 Qwen3-8B 和 235B 的实际配置手算候选：128 个专家可以均匀分到八卡，但四个 KV 头不能在 TP=8 时继续无复制地均分为完整 KV 头，常见实现需要复制或改并行组合。整数可分只是起点，再用第 1 章方法比较逐卡峰值、矩阵形状、带宽、延迟与质量；完整 TP／PP／EP 方案在第 6 章展开。</p>
 <p>正文保留一组专家形状对照：Qwen3-235B 的 128 个宽度 1536 专家、每 token 选 8 个，与教学变体的 64 个宽度 3072 专家、选 4 个，具有相同专家参数预算和激活专家矩阵工作。矩阵形状与 router 却变了，因此既不严格等总参数，也不保证相同质量或速度。用<a href="calculations/figures/architecture-shapes/figure.svg">形状图</a>把变化画清楚；逐专家、逐卡和 tile 扫描分别在本节扩写、第 6 章及第 5 章展开。</p></section>
@@ -629,7 +635,12 @@
 <aside class="outline-callout figure-plan"><p><strong>图 2-8：请求输入与计算状态映射（配图计划）</strong></p><p>沿实验 2-8、实验 2-9 的一条请求，画前缀、新输入、首输出及后续 decode，并在对应位置标出计算与状态增量。完整长度分布、工具时序与 reasoning 画像归第 3 章；现有六面板图保留为素材，不在两章重复呈现。</p></aside>
 <p><strong>扩写资料：</strong> <a href="outlines/extensions/02-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84.md#detail-2.6">本节完整计算、版本与实验变体</a>。</p></section>
 </div></details>
-<div class="chapter-decision"><h4>本章的设计决定</h4><p>以 Qwen3-8B 的单次前向和完整生成为共同基线，将历史状态、专家选择和网络组织的变化逐项写回需求表。先核对各部件及调用次数，再记录计算、权重与状态容量、逻辑读取、状态更新、临时缓冲和必要依赖；物理读写与实测时延的未知量单列。模型比较同时记录任务质量、节省项、新增代价与成立条件。第 3 章在这张表上加入长度分布、到达和复用间隔；预测、证据与修正填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
+<div class="chapter-decision"><h4>本章的设计决定</h4><p><strong>V4／V4.1 会话案例：</strong> 长上下文的成本还取决于同一段信息在多少层中重复保存。V4.1 的技术报告直接把 HBM、SSD 与主机内存容量，以及 KV 迁移带宽列为设计约束。它没有继续提高 V4 的序列压缩比：V4 使用 4:1 的 CSA 和 128:1 的 HCA，V4.1 取消 HCA，编码器的全局条目按 2:1 压缩，解码器按 1:1 保留。更小的缓存主要来自跨层共享与更低精度，同时保留了更细的历史位置粒度。</p>
+<p><strong>三条主线的落实：</strong> KV 共享也展示了基础设施怎样进入模型设计。MQA 的原论文直接把增量推理中的内存带宽开销作为动机；GQA 则在 MHA 的质量与 MQA 的速度之间寻找折中。[^codesign] 减少 KV 头数既改变模型可表达的注意力关系，也减少服务端必须保存和读取的状态。因此，比较结构不能只看参数和精度，还应在目标上下文长度、并发和设备上比较实际服务能力。</p>
+<p>稀疏激活把总参数容量与每 token 的激活计算分开，使模型可以用较少计算访问较大的参数集合。不过，服务效率取决于专家怎样被访问：少量 token 分散到很多专家，会产生许多小矩阵和低复用读取；跨设备专家还要传递激活。稀疏结构提供了一种系统折中，不能仅凭激活参数较少就断言其部署更便宜。设计者需要同时选择专家数量、每次选中的专家数、专家粒度和路由约束，再用质量实验与目标硬件上的执行结果筛选。</p>
+<p>还可以反过来问：给定设备和服务目标，留给模型多少空间？设每卡可用容量为 $C$，固定预留工作区为 $M_0$，每条请求的 KV 为 $K$，并发为 $B$，每参数占 $b_w$ 字节。忽略其他驻留对象，单卡容量给出的参数上界为</p>
+<p>配图与定量推导以本章正文为准；新增图沿用统一浅色填充、矢量箭头和外置图注。先固定任务改变单一约束，再比较重新选择后的方案。</p>
+<p>以 Qwen3-8B 的单次前向和完整生成为共同基线，将历史状态、专家选择和网络组织的变化逐项写回需求表。先核对各部件及调用次数，再记录计算、权重与状态容量、逻辑读取、状态更新、临时缓冲和必要依赖；物理读写与实测时延的未知量单列。模型比较同时记录任务质量、节省项、新增代价与成立条件。第 3 章在这张表上加入长度分布、到达和复用间隔；预测、证据与修正填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
 <p class="chapter-end"><a href="outlines/02-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/02-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84.md">扩写资料</a> · 6 节／21 小节 · 9 项练习（3 项核心） · 8 项配图计划</p></article>
 <article class="card" id="ch-3"><span class="tag">第 3 章</span><h3>推理与训练负载</h3><p>第一章建立资源估算方法，第二章从模型结构给出一次执行与完整生成的需求。本章把执行放入时间和完整任务：同一模型被多少请求使用、多久重用一次状态、哪里产生新数据、哪些阶段必须等待。先建立负载的共同描述，再从多轮交互走向多模态与实时任务，随后补上训练与 RL，最后将任务目标转成训练和长期服务预算。</p>
 <p><strong>本章判断：</strong> 模型结构给出单次执行的需求；任务的阶段组成、到达与依赖关系，以及状态寿命，决定这些需求如何在时间上叠加。比较系统方案时，还必须保持任务质量和完成目标一致。</p>
@@ -679,7 +690,7 @@
 <p><strong>扩写资料：</strong> <a href="outlines/extensions/03-%E6%8E%A8%E7%90%86%E4%B8%8E%E8%AE%AD%E7%BB%83%E8%B4%9F%E8%BD%BD.md#detail-3.2">本节完整计算、版本与实验变体</a>。</p></section>
 </div></details>
 <details class="outline-section" id="sec-3-3"><summary>3.3 多模态与实时交互</summary><div class="outline-section-body"><p>先数清非文本任务的执行阶段、数据和状态，再加入持续供给与截止时间。多模态描述工作的组成，实时性描述时间约束；两者可以与 3.2 的 Agent 循环组合。视觉与工具负载在这里提供最小完整输入，后文分别研究其执行与位置。</p>
-<section class="outline-subsection" id="sec-3-3-1"><h4>3.3.1 视觉 E→P→D 与 EC／KV</h4>
+<section class="outline-subsection" id="sec-3-3-1"><h4>3.3.1 视觉编码、语言生成与状态</h4>
 <p>以语音、持续视频感知和截图请求定义非文本输入的阶段。图像编码记为 E，语言 prefill 为 P，decode 为 D；E 产生的编码结果 EC 与 P／D 产生的 KV 在身份、位置依赖和可复用范围上分别记录。编码、传输和生成的顺序由实际模型决定，后文单实例调度和 EPD 直接使用这里的定义。</p>
 <p>视觉贯穿变体固定 Qwen3-VL-4B：预处理后 640×640 图片形成 400 个视觉位置，含 DeepStack 的完整 BF16 EC 为 7.8125 MiB，对应逻辑语言 KV 另为 56.25 MiB。用实际张量计数核对；原始截图采用 0.8 MB 教学输入，文件字节、编码特征和语言状态不能互相替代。来源与格式见<a href="case-studies/multimodal-stage-placement.md">阶段放置笔记</a>。第 8 章研究同卡调度，第 9 章研究数据中心内交接，第 12 章才加入端侧链路。</p></section>
 <section class="outline-subsection" id="sec-3-3-2"><h4>3.3.2 音频与图像生成的工作单位</h4>
@@ -738,7 +749,7 @@
 <aside class="outline-callout experiment"><p><strong>实验 3-10 ★★〔延伸〕：GPU 小时与系统预算</strong></p><p>核对 Llama 1／2／3.1、Qwen2.5／3／3.5、DeepSeek-V3／V4 的公开字段；对卡数已知的案例估算日历时间，对其他案例给条件区间。将长期服务费用加入比较，说明哪些数据缺失会改变选择。</p><p>条件：进阶·资料复算／综合计算。</p></aside>
 <p><strong>计算结果（3-10）：</strong> 13 个案例中只有 3 个同时公开 GPU 小时与卡数：Llama-1 65B 20.8 天、DeepSeek-V3 预训练 54.2 天、Llama-3.1 405B ≥78.4 天。只给 GPU 小时时，日历时间在 1,024–16,384 卡的假设区间内跨度 16 倍（Llama-3.1 70B 为 284.8–17.8 天）——总投入与交付周期需要的字段不同。Llama-3.1 8B 的 1.46M GPU 小时已接近 Llama-2 70B 的 1.72M。<a href="experiments/ch03/03-10/README.md">逐案核对与缺失清单</a>。</p>
 <aside class="outline-callout figure-plan"><p><strong>图 3-9：公开 GPU 小时与训练阶段（配图计划）</strong></p><p>实验 3-10 生成分硬件、分阶段图；未披露值留空，不画成零，用条件区间表示日历时间估计。</p></aside></section>
-<section class="outline-subsection" id="sec-3-6-3"><h4>3.6.3 质量约束下的生命周期预算与交付</h4>
+<section class="outline-subsection" id="sec-3-6-3"><h4>3.6.3 质量约束下的生命周期成本与负载汇总</h4>
 <p>章末决定是在既定质量和调用量下怎样分配训练与服务投入，并指出最需要补测的量。第 4 章据此选择计算、存储与通路配比。</p>
 <p>将候选的前期训练投入与预期调用量乘以每任务服务成本分别列出，比较在同一质量目标和请求分布下的总费用。更长训练、蒸馏或更多推理时计算可以改变未来需求；收益交叉点依赖模型寿命、成功率和调用组成。当前章节只建立条件式预算，真实设备能力与执行效率由第 4–10 章逐步校准。</p>
 <p>章末保留一页共同字段的负载表，使用以下三组固定输入：</p>
@@ -748,11 +759,15 @@
 <p>三组输入共用字段定义，分别保留模型、版本、实测与教学假设。每组都交付逐资源需求、阶段依赖图、状态寿命和最需要补测的量，不要求用同一模型承担全部任务。</p>
 <p><strong>扩写资料：</strong> <a href="outlines/extensions/03-%E6%8E%A8%E7%90%86%E4%B8%8E%E8%AE%AD%E7%BB%83%E8%B4%9F%E8%BD%BD.md#detail-3.6">本节完整计算、版本与实验变体</a>。</p></section>
 </div></details>
-<div class="chapter-decision"><h4>本章的设计决定</h4><p>固定一组 Chat／Agent／视觉轨迹和一项训练目标，保留长度相关性、阶段需求与复用间隔。记录改变均值之外的哪个量会翻转配置，交付第 4 章的资源需求与需测范围。 将预测、证据和修改分别填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
+<div class="chapter-decision"><h4>本章的设计决定</h4><p><strong>V4／V4.1 会话案例：</strong> 把同一条会话换成 V4.1，可以看到负载如何推动模型结构。设 Agent 已有一段公共上下文，工具随后返回新材料；如果前缀未命中，服务要重新处理较多输入，而本轮输出可能很短。为这样的输入密集场景降低 Prefill 成本，比只优化单步生成更有价值。V4.1 因而使用 20 层因果编码器和 20 层解码器：大部分输入只执行编码器主体，解码器全局 KV 从编码器末层表示投影得到；局部 SWA 则通过最近 128 个 token 的有界重放近似恢复。输出 token 继续经过全部 40 层。</p>
+<p><strong>三条主线的落实：</strong> 从应用看，上下文是编排任务的接口；从系统看，它会展开为工作量与状态寿命。追加一次工具返回，会增加输入处理和后续每步读取；替换早期内容，可能使该位置之后的前缀缓存失效；分出多个候选，会让共享历史之后出现独立状态。因此，负载描述除了输入、输出长度，还应记录哪些位置不变、哪些位置被重写、分支何时合并，以及工具等待期间保留什么。第 8 章将比较三种具体的上下文更新方式。应用的编排选择由此直接进入基础设施预算。</p>
+<p>训练预算下的最优规模与长期服务的最优规模，也可能不同。固定训练计算量时，参数与训练 token 之间存在折中；若模型还要服务大量请求，多训练一个较小模型，可能用一次性训练投入换取持续较低的推理成本。Llama 3 报告说明小模型会为推理预算训练更久。计算生命周期成本时，应将训练投入、预期服务量、每次任务成本和模型有效寿命分别列出。专用硬件若需要较长部署周期，模型版本能使用多久也会成为这一选择的条件。</p>
+<p>配图与定量推导以本章正文为准；新增图沿用统一浅色填充、矢量箭头和外置图注。先固定任务改变单一约束，再比较重新选择后的方案。</p>
+<p>固定一组 Chat／Agent／视觉轨迹和一项训练目标，保留长度相关性、阶段需求与复用间隔。记录改变均值之外的哪个量会翻转配置，交付第 4 章的资源需求与需测范围。 将预测、证据和修改分别填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
 <p class="chapter-end"><a href="outlines/03-%E6%8E%A8%E7%90%86%E4%B8%8E%E8%AE%AD%E7%BB%83%E8%B4%9F%E8%BD%BD.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/03-%E6%8E%A8%E7%90%86%E4%B8%8E%E8%AE%AD%E7%BB%83%E8%B4%9F%E8%BD%BD.md">扩写资料</a> · 6 节／19 小节 · 10 项练习（3 项核心） · 9 项配图计划</p></article>
 <article class="card" id="ch-4"><span class="tag">第 4 章</span><h3>加速器架构</h3><p>第 3 章给出了模型执行需要多少计算、存储和数据访问。本章把这些需求放到真实硬件上：先认识加速器的组成，再依次解释谁来计算、数据放在哪里、怎样搬运与衔接，以及如何扩展和专用化，最后判断不同架构适合什么负载。</p>
 <p><strong>本章判断：</strong> 加速器的实际速度既取决于计算能力，也取决于数据能否及时到达，以及各类计算能否顺利衔接。容量、功耗与成本共同决定一个设计是否适用。</p>
-<p><strong>前置与交付：</strong> 依赖第 2、3 章；交付同一任务的容量需求、时间下界、候选架构及最值得验证的性能差距。第 5 章用真实实现与执行轨迹检查预测，第 6 章展开多芯片并行。</p>
+<p><strong>前置与交付：</strong> 依赖第 2、3 章；交付同一任务的容量需求、时间下界、可选的硬件架构及最值得验证的性能差距。第 5 章用真实实现与执行轨迹检查预测，第 6 章展开多芯片并行。</p>
 <p><strong>阅读安排：</strong> 用 Qwen3-8B 的 Q 投影建立共同例子，再以注意力与 V4-Flash 专家矩阵补充复杂性。每节先解释机制，再比较 NVIDIA、昇腾和 Apple；代际细节及完整证据放入<a href="outlines/extensions/04-%E5%8A%A0%E9%80%9F%E5%99%A8%E6%9E%B6%E6%9E%84.md">扩写资料</a>。核心练习为实验 4-1、4-4、4-5；其余为延伸。实验编号沿用，配图按新阅读顺序编号。章末更新<a href="outlines/decision-record.md">跨章设计决定</a>。</p>
 <details class="outline-section" id="sec-4-1"><summary>4.1 从模型计算到加速器组成</summary><div class="outline-section-body"><p>先跟踪一次矩阵乘法，认识加速器的主要组成，再讨论为什么不同芯片会有不同的资源配比。</p>
 <section class="outline-subsection" id="sec-4-1-1"><h4>4.1.1 一个贯穿例子：矩阵乘法需要哪些计算与数据</h4>
@@ -861,147 +876,82 @@
 <aside class="outline-callout figure-plan"><p><strong>图 4-8：同一算子的性能上界、预测与测量（配图计划）</strong></p><p>用实验 4-5、4-6 的绘图脚本生成 SVG／PDF，按阶段并列并标明精度、缓存与后端条件。</p></aside></section>
 <section class="outline-subsection" id="sec-4-7-4"><h4>4.7.4 在容量、速度、功耗与成本之间做选择</h4>
 <p>先排除容量或任务目标不满足的配置，再比较完成同一有效任务所需的时间、能耗与费用。用 H100／4090 历史问题和 M2 Max／RTX PRO 6000 配对说明按卡、整机与任务比较的区别。</p>
-<p>将 4.6 的专用化方案加入候选：用增量固定投入除以单位有效产出节省求回本量，再加入利用率、交付期、真实需求、模型寿命和迁移费。改变负载或部署量后，允许选择继续、修改或停止。</p>
+<p>把 4.6 的专用架构也纳入比较：用增量固定投入除以单位有效产出节省求回本量，再加入利用率、交付期、真实需求、模型寿命和迁移费。改变负载或部署量后，允许选择继续、修改或停止。</p>
 <p><strong>计算结果（4.7.4，权重驻留）：</strong> 先问权重不再占用 HBM 之后还剩什么。按固定 Qwen3-8B 配置重建：完整 checkpoint 16,381,470,720 B，一步活跃权重读取 15,136,811,008 B，两者之差恰好是 decode 只取一行、不必流式读取的 embedding 查找表。每历史 token 的 KV 为 147,456 B，8,192 上下文下每序列每步读 1,207,959,552 B，权重与 KV 的交叉点落在 batch 12.53，即从 13 起 KV 读取超过权重读取；把权重移出这一接口，仅此内存服务的理想加速比在 B=1 时为 13.53、B=16 时降到 1.78，它不是整机加速比。上下文换成 32,768 时交叉点前移到 3.13。倒推供给：单用户 10,000 tok/s 仅 KV 读就需 12.08 TB/s，按每 stack 1.2 TB/s 至少 11 个 stack，按情景密度仅这段状态就要约 401 mm²。<a href="calculations/results/weight-resident-qwen8-8k.md">逐项账与明确未计入的七条约束</a>；长上下文变体见<a href="calculations/results/weight-resident-qwen8-32k.md">32K 的同一账</a>。</p>
 <p><strong>计算结果（4.7.4，回本）：</strong> 按案例的教学金额，增量固定投入 2,000 万美元、每百万有效输出 token 节省 0.50 美元，回本量为 4×10¹³ token；100 台各 10,000 tok/s、利用率 50%、寿命一年只交付 1.5768×10¹³ token，覆盖率 0.394，需要 254 台同等产出的全年有效流量。三类风险各自把这个数推得更远：寿命减半要 508 台，交付滑 26 周要 506 台（交付期从寿命里扣掉而不是往后加），有效速率掉到 6,000 tok/s 要 423 台。整站费用要单独进账：散热系数只乘电费、不乘网络与备份，标称情形站点合计 1,311,040 美元、折合每百万 token 0.0831 美元，吃掉所声称节省的 16.6%，净节省 0.4169 仍不足以回本；有效速率下降时同一设施摊到更少 token，站点成本升到 0.1386。机器数只是产出折算，还要有真实需求消化它。<a href="calculations/results/specialization-payback-baseline.md">四种情形与站点分项</a>，刚好够回本的机队见<a href="calculations/results/specialization-payback-fleet-254.md">254 台变体</a>。</p>
 <aside class="outline-callout experiment"><p><strong>实验 4-7 ★★〔延伸〕：负载变化与芯片资源分配</strong></p><p>选 Ampere→Hopper、Hopper→Blackwell、Blackwell→Rubin 或一条昇腾／Apple 演进线。先用前代代表负载提出资源分配，再换成大 Transformer、长上下文或稀疏专家，重新计算瓶颈并选择一次硬件改动。与公开设计对照，说明动机依据、预期收益、代价及最需要的验证；不要求复述所有新特性。</p><p>条件：进阶·历史与反事实推演。</p></aside>
 <p><strong>推演结果（4-7）：</strong> 官方规格证实设计重心移动过：A100→H100 是矩阵 3.17× 对带宽 1.64×、容量不变；H100→B200 三项同步；B200→Rubin 反过来是带宽 2.40× 对矩阵 1.78×。四类负载中，大 Transformer prefill 仍计算受限，长上下文 decode 与稀疏专家 decode 跨到访存侧，后者的标量／矩阵比还是前代负载的 56 倍。据此选择把一次改动用在显存带宽与容量上；最需要的验证是目标分布里 decode 的实际时间占比与批内专家并集的真实分布。<a href="experiments/ch04/04-07/README.md">逐代规格、瓶颈表与对照</a>。</p>
 <p><strong>扩写资料：</strong> <a href="outlines/extensions/04-%E5%8A%A0%E9%80%9F%E5%99%A8%E6%9E%B6%E6%9E%84.md#detail-4.7">本节完整计算、版本与实验变体</a>。</p></section>
 </div></details>
-<div class="chapter-decision"><h4>本章的设计决定</h4><p>针对同一 prefill、decode 和专家矩阵选出两种可行架构，列出容量需求、时间下界、数据路径与主要瓶颈。结合功耗和成本说明选择理由，并标明哪些预测最需要实测。将预测、证据和修改分别填入<a href="outlines/decision-record.md">跨章设计决定</a>，交给第 5 章检查实现。</p></div>
+<div class="chapter-decision"><h4>本章的设计决定</h4><p><strong>V4／V4.1 会话案例：</strong> 沿 V4.1 会话继续向设备看，低位宽首先改变的是哪条通路？主 KV 的 512 个值及分组 scale 共占 288 B；局部 SWA 采用 FP8 加 scale，每条为 528 B。主 KV 在注意力前反量化，压缩主要减少缓存存储和传输，不能把 FP4 缓存直接解释为所有注意力乘法都用 FP4 执行。主通路降低位宽、局部通路保留更高精度，是按数据敏感性分别选择。</p>
+<p><strong>三条主线的落实：</strong> 模型与芯片之间的影响具有时间顺序。当前设备先约束模型的状态大小、矩阵形状和通信方式，软件通过压缩、融合和并行来适应；当某种负载持续占据重要份额，芯片设计者才有理由为它增加专用能力。下一代器件落地后，又会改变模型候选的代价排序。设计和制造存在周期，因此硬件响应的是此前已经观察到、并预计会延续的需求。</p>
+<p>把上述实验的假设再拆开，可以看清上层究竟失去了什么。独立存储的容量固定，只限制能放多少权重；内容不可修改，才限制权重更新；计算图固定，则进一步限制算子和形状。OpenTallas 的掩模 ROM 设想涉及不可变权重，不能把它等同于普通 RAM 容量不变。这里引用的是项目设计与解析估算，并非目标芯片的实测吞吐。[^opentallas]</p>
+<p>配图与定量推导以本章正文为准；新增图沿用统一浅色填充、矢量箭头和外置图注。先固定任务改变单一约束，再比较重新选择后的方案。</p>
+<p>针对同一 prefill、decode 和专家矩阵选出两种可行架构，列出容量需求、时间下界、数据路径与主要瓶颈。结合功耗和成本说明选择理由，并标明哪些预测最需要实测。将预测、证据和修改分别填入<a href="outlines/decision-record.md">跨章设计决定</a>，交给第 5 章检查实现。</p></div>
 <p class="chapter-end"><a href="outlines/04-%E5%8A%A0%E9%80%9F%E5%99%A8%E6%9E%B6%E6%9E%84.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/04-%E5%8A%A0%E9%80%9F%E5%99%A8%E6%9E%B6%E6%9E%84.md">扩写资料</a> · 7 节／23 小节 · 7 项练习（3 项核心） · 8 项配图计划</p></article>
-<article class="card" id="ch-5"><span class="tag">第 5 章</span><h3>算子与运行时</h3><p>本章从 Qwen3 的 FFN 投影—激活—量化片段出发，先解释主机提交、输入输出复制和完成顺序，再依次选择分块、融合、编译与运行方式，最后把优化放回固定请求。注意力链作为第二个代表案例，用 FlashAttention 解释归约状态、分块与流水如何共同改变 IO。</p>
-<p><strong>本章判断：</strong> 少一次写回、少一个 kernel 或更快的独占内核都要接受整条链的检验；复用、并发和缓冲寿命共同决定搬移代价。</p>
-<p><strong>前置与交付：</strong> 依赖第 4 章的资源、存储层次与布局知识；交付实际读写、融合边界、缓冲寿命、执行时间与准备成本。第 6 章扩大到多卡，第 8 章加入动态请求与服务目标。</p>
-<p><strong>阅读安排：</strong> 核心练习为实验 5-2、实验 5-8、实验 5-9，分别检查融合、运行时与完整请求；其余练习为延伸。核心路径可用配套计算与轨迹独立完成，实验 5-9 不要求先做 Agent 优化。完整参数、实现版本与实验变体见<a href="outlines/extensions/05-%E7%AE%97%E5%AD%90%E4%B8%8E%E8%BF%90%E8%A1%8C%E6%97%B6.md">扩写资料</a>。</p>
-<p><strong>从模型算子到实际执行：</strong> 章首先给两张小表和执行简图：FFN 的 gate/up 投影—SiLU/Mul—输入量化—down 投影，以及 QKV—QK Norm—RoPE—注意力。量化节点按选定的低精度实现标出，不视为所有模型路径的必经步骤。固定配置后列形状、中间张量字节与生产／消费关系，沿第 2 章模型定义建立独立执行基线。</p>
-<p>逻辑算子、库调用、设备 kernel 与主机提交分别标记，它们并非一一对应。每节在同一基线图上修改循环、数据边或执行时间线；正文保留一笔主要计算、一个改变选择的反例与必要实测，完整模型清单放入扩写资料。</p>
-<details class="outline-section" id="sec-5-1"><summary>5.1 一次设备执行：提交、搬运与同步</summary><div class="outline-section-body"><p>从 CPU 准备输入、H2D、设备计算、D2H 到 CPU 使用结果，先建立完整执行过程，再进入优化。术语第一次出现时解释含义，用同一张时间线区分提交、开始和完成。</p>
+<article class="card" id="ch-5"><span class="tag">第 5 章</span><h3>算子与运行时</h3><p>以 Qwen3-8B 单支 FFN 投影为主线，依次引入两支激活链、注意力归约、编译与运行时，最后分析完整请求。开篇只保留理解当前问题所需的形状；新对象在相应机制出现时引入。</p>
+<p><strong>本章方法：</strong> 从重复工作、数据复用和完成顺序解释性能。主要例题按设定、推导、条件变化、设计判断展开；条件在推导前给出，正文段末用于解释结论，不追加自我辩护或范围提醒。版本、完整数值与实验执行要求放注释和配套资料。</p>
+<p><strong>体例：</strong> 六节、22 个小节、12 道带解例题、九幅图。九项原编号实验集中到章末，按复算、敏感性、设计与实测解释逐步加深。核心实验仍为 5-2、5-8、5-9。AKG 使用循环与依赖的直观方式解释多面体编译。</p>
+<details class="outline-section" id="sec-5-1"><summary>5.1 一次设备执行：提交、搬运与同步</summary><div class="outline-section-body"><p>从输入和输出均在 CPU 的矩阵乘建立执行链。CPU 与 GPU 各自推进，复制、计算和结果使用由完成关系连接。</p>
 <section class="outline-subsection" id="sec-5-1-1"><h4>5.1.1 从框架调用到 kernel launch</h4>
-<p>解释框架分派、运行时提交与设备执行的关系，区分算子、kernel 和 launch。简述 CUDA 的 thread、thread block、grid，说明数据分块与线程块的对应由程序决定。异步调用返回不代表设备完成，小算子可能等主机提交。</p></section>
+<p>解释框架分派、kernel 与 launch，简述线程块和 grid；用主机准备并提交、设备执行任务解释小算子的提交等待。</p></section>
 <section class="outline-subsection" id="sec-5-1-2"><h4>5.1.2 数据在哪里：H2D、D2H 与 D2D</h4>
-<p>按方向和实际对象解释复制，区分权重加载、每批输入、设备内中间结果和输出回传。模型与 KV 可以常驻，GPU 读取显存不等于 H2D。用 64 MiB／24 GiB/s 的已有教学算例解释传输时间，补充小传输的固定开销、pageable/pinned memory 和临时锁页的成本。</p></section>
+<p>区分 H2D、D2H、D2D 与设备常驻数据。例 5-1 用 64 MiB／24 GiB/s 推出 2.6 ms，再将输入二分，引出提前到达与重叠。锁页内存解释中转复制的来源。</p></section>
 <section class="outline-subsection" id="sec-5-1-3"><h4>5.1.3 stream、event 与完成顺序</h4>
-<p>先讲同流顺序，再讲跨流事件依赖和 CPU 等待。分别说明 H2D 源、设备输入、D2H 源和主机目标的复用或读取时刻。异步 API 不保证设备重叠；需要独立工作、复制引擎、带宽与缓冲。默认流语义依配置说明。</p></section>
-<section class="outline-subsection" id="sec-5-1-4"><h4>5.1.4 怎样读时间线和测量时间</h4>
-<p>用 CPU 提交 3 μs、H2D 8 μs、kernel 20 μs、D2H 4 μs 的串行教学时序区分提交时间、内核时间与结果可用时间。说明 CPU 时钟、CUDA event 和 profiler 各自测什么，首轮准备与预热分开。随文练习不新增实验编号；原有九个实验继续使用已有记录。</p>
-<p><strong>扩写资料：</strong> <a href="outlines/extensions/05-算子与运行时.md#detail-5.1">执行基础与官方文档</a>。</p></section>
+<p>从同流顺序走到跨流 event，再按最后使用者推导四种缓冲的复用时刻，为双缓冲建立依赖基础。</p></section>
+<section class="outline-subsection" id="sec-5-1-4"><h4>5.1.4 从提交时间到结果可用时间</h4>
+<p>例 5-2 先设定完整时间线，求提交 3 μs、kernel 20 μs、结果可用 35 μs；kernel 缩至 5 μs 后总时间为 20 μs。解释 CPU 时钟、event 与 profiler 的观察位置，最后引出首次准备的摊销。</p></section>
 </div></details>
-<details class="outline-section" id="sec-5-2"><summary>5.2 单算子：分块、布局与实际访存</summary><div class="outline-section-body"><p>沿 FFN 的矩阵投影，从数学上必需的数据走到实现中的重复访问。承接第 4 章的存储层次与资源预算，本节选择循环、分块和布局，不重复硬件结构介绍。</p>
+<details class="outline-section" id="sec-5-2"><summary>5.2 单算子：分块、布局与实际访存</summary><div class="outline-section-body"><p>固定一支 FFN 投影，解释重复访问、局部存储与并行执行的关系。</p>
 <section class="outline-subsection" id="sec-5-2-1"><h4>5.2.1 矩阵形状与重复读取</h4>
-<p>用朴素矩阵乘展示反复读取、循环顺序和数据复用，先把实际访问与第 4 章的预测对上。区别数学工作量与实现产生的流量。</p>
-<p>沿章首 FFN 投影固定矩阵形状，先数输入、权重和输出各读写一次的逻辑字节，再按朴素循环数重读。源码访问、L2 服务的访问和 HBM 流量分别标记，后续优化始终注明统计接口。</p></section>
+<p>先推导约 103 GFLOPs 与 128 MiB，再从 i-j-k 循环找到 A/W 重读。交换循环改善连续性，同时改变累加器保存范围，由此引出分块。计数沿工作缓冲、下一层、L2 和显存逐级解释。</p></section>
 <section class="outline-subsection" id="sec-5-2-2"><h4>5.2.2 容量约束下的分块复用</h4>
-<p>由片上容量推出 tiling，再比较三种硬件怎样分配工作。用块太小、太大和边界不齐的例子说明为什么没有通用的最佳块形状。</p>
-<p>先给一个可手算的片上预算：三个矩阵块至少占 <code>b(mk + kn + mn)</code> 字节，再加入累加格式和双缓冲。枚举少数可行块，比较复用与并发；自动调优在这一步之后出现。</p>
-<p>沿 Qwen3-8B 的 <code>[1024,4096] × [4096,12288]</code> 单支投影继续算：128 MiB 是输入输出各走一次的最低流量；在给定循环下，64×64 与 128×128 输出块分别需要 24／80 KiB 活动空间，产生 3,096／1,560 MiB 的下一层访问。用 Orojenesis 引出容量约束下的复用，再区分某个方案的计数、搜索所得最好结果和流量下界；L2 能服务的重读不应全部记成 HBM 流量。<a href="case-studies/buffer-capacity-and-data-movement.md">计算条件</a>留作扩写依据。</p></section>
+<p>例 5-3 从三份活动数组推导容量与访问。完整展开 64×64 的 3096 MiB 和 128×128 的 1560 MiB。用 T=V/B 推出约一半有效带宽的翻转临界值，再由 96 KiB 预算解释并行度。图 5-2 只画容量与重读。</p></section>
 <section class="outline-subsection" id="sec-5-2-3"><h4>5.2.3 布局与归约的并行代价</h4>
-<p>先用相同逻辑矩阵的行／列访问说明连续访问与布局的关系；bank 映射作为第 4 章布局知识的应用，完整 padding 枚举放入延伸。再用 RMSNorm 的 <code>[M,4096]</code> 行归约，比较单 token decode 与多 token prefill：行数决定可并行的组数，行宽决定组内工作。</p>
-<p>扩大行宽后比较一组一行与拆分归约，计算增加的 partial buffer、输入重读、同步与第二次归约。此处先回答并行度是否值得；浮点累加顺序改变的反例到 5.4.3 统一解释。</p>
-<aside class="outline-callout experiment"><p><strong>实验 5-1 ★〔延伸〕：矩阵分块与访存计数</strong></p><p>块多大才划算？ 实现小矩阵的两种循环与分块，先数访问再测量；报告最佳块随形状改变的原因。 归约延伸沿同节 RMSNorm：固定行宽改变行数，再扩大归约宽度，比较一组一行与拆分归约的并行度、额外缓冲及第二次归约。</p><p>条件：基础·CPU；可选单设备。</p></aside>
-<p><strong>实测结果（5-1）：</strong> M2 Max 改排连续访问快约5.3–9.1倍，细分块反而更慢。<a href="experiments/ch05/05-01/gpu-tiles/README.md">GPU分块</a>的最佳候选随行数改变，L2重读不能全部算在显存上。<a href="experiments/ch05/05-01/rmsnorm-split/README.md">归约对照</a>显示宽行实现的寄存器溢出会混入拆分收益；通过误差容限也不代表逐位相同。<a href="experiments/ch05/05-01/README.md">代码、数据与图</a>。</p>
-<aside class="outline-callout figure-plan"><p><strong>图 5-1：循环顺序与分块改变了哪些访问（配图计划）</strong></p><p>自绘 SVG；配实验 5-1 的计数与测量。用同一 Qwen3 矩阵画容量与流量的关系，分别标出最低逻辑字节、已枚举方案与实测点，存储层次写在坐标旁。增加局部 bank 映射示意，让相同请求的集中与分散可直接对照。</p></aside>
-<p><strong>扩写资料：</strong> <a href="outlines/extensions/05-%E7%AE%97%E5%AD%90%E4%B8%8E%E8%BF%90%E8%A1%8C%E6%97%B6.md#detail-5.2">本节完整计算、版本与实验变体</a>。</p></section>
+<p>bank padding 说明相同请求怎样并行服务。RMSNorm 从一行归约拆成局部和、合并、应用三阶段，解释并行组数、输入重读和寄存器状态。24 MiB 基线由输入、逐行 gamma 读取、输出组成，拆分后为 32.1 MiB。</p></section>
 </div></details>
-<details class="outline-section" id="sec-5-3"><summary>5.3 算子链：融合、缓冲与流水</summary><div class="outline-section-body"><p>从单个内核扩大到相邻算子。先计算取消中间写回的收益，再检查布局交接和缓冲寿命，最后用 FlashAttention 综合这些机制。</p>
+<details class="outline-section" id="sec-5-3"><summary>5.3 算子链：融合、缓冲与流水</summary><div class="outline-section-body"><p>将局部复用扩展到相邻算子的数据传递，逐元素链、流水和归约链依次增加条件。</p>
 <section class="outline-subsection" id="sec-5-3-1"><h4>5.3.1 中间张量与融合边界</h4>
-<p>从矩阵乘后接逐元素运算进入融合，计算写回与读取；随后加入寄存器、缓冲占用和并发，解释融合收益为什么会有转折。</p>
-<p>先算最容易看见的收益：若中间张量有 X 字节，取消一次写回和读取，理想上少走约 <code>2X</code> 字节；再问这些数据能否留在片上、会不会挤掉并行工作。本节先在 FFN 激活链上算清这一取舍，5.3.3 再扩大到注意力。</p>
-<aside class="outline-callout experiment"><p><strong>实验 5-2 ★〔核心〕：融合的流量与资源占用</strong></p><p>融合省下的流量够不够抵消资源占用？ 对同一算子链比较融合前后，记录字节、缓冲和时间；无加速器时做容量模型。</p><p>选做变体用五个 16 KiB 块的生产／消费时刻求 FIFO 峰值，再加入重排缓冲，比较保持进度、允许背压和统一布局三个选择，见<a href="case-studies/stream-order-and-buffer.md">流式交接算例</a>。</p><p>条件：基础·编程／计算。</p></aside>
-<p><strong>实测结果（5-2）：</strong> RTX PRO 6000 上，1,024-token 的 SwiGLU 激活链融合后从 14.20 μs 降至 7.68 μs，省去 24 MiB 中间张量；块更大未必更快。此为共享 GPU、热缓存与图重放下的局部测量。<a href="experiments/ch05/05-02/README.md">实验、原始数据与图</a>。</p></section>
-<section class="outline-subsection" id="sec-5-3-2"><h4>5.3.2 布局交接、缓冲寿命与双缓冲</h4>
-<p>布局也沿整条链计价：分别选出两个最快的独立内核后，还要加上中间转换；比较接受同一布局、另做重排和由生产者直接写出消费方布局。沿前节投影的 24 MiB BF16 输出，另行物化一份完整重排结果要增加一次读和一次写，再判断能否在现有交接中完成。</p>
-<p>用双缓冲时序解释重叠条件；在 NVIDIA、昇腾、Apple 的对应机制上标出缓冲寿命和同步。矩阵与向量交接同第 4 章连接起来。</p>
-<p>用生产／消费时间线标出每块数据产生、就绪、最后消费与复用的时刻；双缓冲必须同时满足容量与依赖。相同形状若访问顺序不同，还需要排队或重排。正文保留一次容量不足导致背压的反例，FIFO 完整推算和主机锁页／异步复制变体见扩写资料。</p></section>
+<p>此处才引入 FFN 两支投影和完整激活链。例 5-4 推导 120→72 MiB 与约 1.7 倍带宽模型预期，再加固定尺度转换，得到 156／108／60 MiB。图区分每个中间结果的写回产生的 48 MiB；峰值容量由生命周期单独推导。</p></section>
+<section class="outline-subsection" id="sec-5-3-2"><h4>5.3.2 布局转换、缓冲复用与双缓冲</h4>
+<p>先解释独立重排与改变前一个算子的输出布局，再用例 5-5 逐时刻推进四块双缓冲。20→14 μs 后推导 n 块流水公式，解释第三个槽为何不再提速，容量不足如何产生背压。</p></section>
 <section class="outline-subsection" id="sec-5-3-3"><h4>5.3.3 FlashAttention：分块与在线 Softmax</h4>
-<p>从完整注意力分数矩阵的容量问题出发，依次讲分块、在线 Softmax 的局部状态与合并、减少中间写回及训练时重计算，再讨论 FA2／FA3 的调度和异步流水。版本演进紧随其解决的问题出现。</p>
-<p>先呈现完整注意力矩阵的存储问题，再讲分块、在线 Softmax 和重计算。取 Qwen3 的单个头、8192 token、head_dim=128，在明确的 128 KiB 混合精度预算中，推算 Q/O 驻留与 K/V 重读：K/V 块从 64 行缩至 1 行，选定接口流量由 304 MiB 降至 204 MiB，但循环更新与输出缩放增加。借 AttenIO 的分块思路和 FA2 的实际实现，解释块形状还要匹配计算单元与流水；<a href="case-studies/attention-tiles-and-io.md">计算条件</a>区分抽象访问、实际缓存和 GPU 时间。</p>
-<aside class="outline-callout experiment"><p><strong>实验 5-3 ★〔延伸〕：分块 Softmax 与注意力 IO</strong></p><p>FlashAttention 为什么能少访问内存？ 小张量验证分块 Softmax 的结果，再逐项列出 Q、K/V、部分输出与统计量的容量，比较三种块形状的重读和缩放次数。加入预取槽后重新求可行块大小；有设备时对照实际后端的流量与时间，不用 CPU 时间代替 GPU 加速比。</p><p>条件：基础·Python。</p></aside>
-<p><strong>实测结果（5-3）：</strong> RTX 热缓存下，8192-token 单头注意力的数学与 Flash 后端分别为 2.64 ms、79.5 μs，新增分配峰值分别约 848、22.2 MiB。实际 DRAM 与 L2 计数分开记录。<a href="experiments/ch05/05-03/README.md">代码、原始计数与图</a>。</p>
-<aside class="outline-callout figure-plan"><p><strong>图 5-2：融合、缓冲与注意力分块（配图计划）</strong></p><p>采用三个独立面板，分别随 5.3.1、5.3.2、5.3.3 阅读：FFN 中间写回前后对照；两个 tile 的生产、消费与缓冲复用时间线；FlashAttention 的 Q/O 驻留、K/V 扫描及在线状态。主机搬运与 FIFO 累计曲线保留在扩写资料，不叠加到同一张主图。</p></aside>
-<p><strong>扩写资料：</strong> <a href="outlines/extensions/05-%E7%AE%97%E5%AD%90%E4%B8%8E%E8%BF%90%E8%A1%8C%E6%97%B6.md#detail-5.3">本节完整计算、版本与实验变体</a>。</p></section>
+<p>把注意力作为归约扩展案例。先比较 8 MiB 输入输出与 1 GiB 中间访问，再从指数基准推导 m、l、u 更新。例 5-6 验算两个元素；然后逐项解释 128 KiB 状态预算、Q 行数、K/V 扫描与块对更新。FA2／FA3 随其改善的执行机制出现。</p></section>
 </div></details>
-<details class="outline-section" id="sec-5-4"><summary>5.4 编译器：表达、变换与选择</summary><div class="outline-section-body"><p>把前两节的手工选择交给编译器表达与检查。AKG 的核心技术多面体编译通过可读的循环变换进入正文，再分别判断依赖、数值和性能。</p>
-<section class="outline-subsection" id="sec-5-4-1"><h4>5.4.1 AKG：为什么需要跨算子选择</h4>
-<p>沿作者参与的 AKG 工作，先讲一个独立算子已经优化、整条模型链仍反复写回的设计问题。重建当时可考虑的接口保留、手工融合和编译选择，说明形状、布局及维护组合为什么让局部判断不够；亲历细节依据原有材料，未记录的失败过程由作者补充。</p>
-<p>正文只沿 Qwen3 的注意力链和激活量化链推进：先算中间字节，再算片上活动空间和合法依赖。含 k 个算子的线性链仅相邻边界就有 2^(k−1) 种形式划分；合法性和硬件预算筛掉一部分后，再用成本估计与实测选择。Korch 中 kernel 数增加却整链更快的子图作为反例，检验真正影响时间的量。</p>
-<p>章首两条链的基线图在这里补上候选融合边界和布局，复用已有形状与字节，不重新展开模型目录。V4 压缩、索引与专家链作为迁移检验，完整模型清单留在扩写资料。</p></section>
-<section class="outline-subsection" id="sec-5-4-2"><h4>5.4.2 Polyhedral Compilation：用循环变换表达优化</h4>
-<p>以 FFN 的矩阵乘接逐元素激活为贯穿例，先写出 i、j、k 三层循环和后续激活循环，再用 Halide／TVM 风格的 schedule 逐步改变执行方式。每一步并排画变换前后的循环、访问位置和临时缓冲，让读者能用第 5.2、5.3 节的方法复算。</p>
-<p>依次演示：split／tile 把输出行列拆成外层块与块内循环；reorder 把同一 tile 的工作放在一起以复用输入；在所选循环层级安排生产者计算与缓存，把中间结果留在局部；输出 tile 完成全部 k 归约后，接上激活以省去完整中间张量。用 Halide 的 compute_at、TVM 的 compute_at／reverse_compute_at 等概念解释计算位置，具体 API 方向与合法条件随所选版本核对。循环 fuse 表示合并迭代维度，与算子融合分别说明。</p>
-<p>在读者看懂上述动作后，明确介绍 AKG 的核心技术 <strong>Polyhedral Compilation（多面体编译）</strong>：编译器表示循环中有哪些计算、每步读写哪些元素，以及哪些计算必须先完成，再在保持依赖的前提下组织循环、分块、融合与数据搬运，生成适配硬件的代码。用依赖箭头和循环伪代码解释“允许怎样移动”，不以 affine transformation 的矩阵、集合或证明作为正文入口；多面体表示与 isl 的形式细节留作延伸。</p>
-<p>Halide／TVM 的算法与 schedule 分离用于帮助读者理解“算什么”与“按什么顺序、在哪里算”。它们是讲解循环变换的直观入口，不将 AKG 描述成几个 schedule API 的包装，也不把 Halide、TVM 和 AKG 的内部表示与自动化能力混同。AKG PLDI 2021 的机制按原论文说明，当前 TensorIR 的接口另固定版本。</p>
-<p>对照 CUDA、Triton、Ascend C 与 Metal 时，只选同一个 tile，标出工作分配、布局、同步与边界由谁控制。作者从 HLS 接口封装转向识别原语和读写依赖的经历作为短例，来源见<a href="case-studies/author-context-and-design.md">作者材料</a>；完整代码和其他后端进入扩写资料。</p></section>
-<section class="outline-subsection" id="sec-5-4-3"><h4>5.4.3 变换合法性与数值正确性</h4>
-<p>先在上一节的循环例中画一个合法变换和一个非法变换：独立输出可调整遍历顺序；一个输出尚未完成 k 维累加时，通常不能直接做 SiLU 并把各块激活结果相加。是否允许拆分归约，需要说明保留什么局部状态、怎样合并，以及允许怎样的数值误差。</p>
-<p>把三个判断分开：依赖分析检查必要先后关系；数值检查覆盖累加顺序、cast 舍入与量化尺度；性能检查再计完整流量、资源占用与并发。多面体依赖分析不会自动保证任意浮点重关联逐位等价，也不直接给出最快方案。</p>
-<p>沿 RMSNorm 的拆分归约比较固定形状重复运行与不同 batch 下的结果，区分误差容限和逐位一致；给第 8、10 章的可复现性留下明确接口。接在线 Softmax 和 FP8 融合，各保留一个会改变选择的反例。</p>
-<p>接续在线 Softmax，用 RedFuser 说明编译器怎样从归约依赖推导可合并的局部状态，再生成顺序或分段执行。随后给量化链加入 FP8 cast，检查分块是否改变舍入；沿 Qwen3 专家投影计算取消中间张量后，各输出块是否反复读取更宽的输入。让读者分别判断变换合法性、精度与完整流量，<a href="case-studies/fusion-legality-and-precision.md">推算与来源</a>留作扩写依据。</p>
-<p>接回当前 vLLM 的 SiLU+Mul→量化路径：从 v0.6.0 的手工激活算子，走到编译 pass 对跨算子模式的匹配。以 Qwen3 的 <code>[1024,24576]</code> gate-up 输出计算省掉的 48 MiB 中间读写，再单独推算活动张量峰值。编译器可见的表达也可能被 Inductor 自行融合，因此比较实际图和 trace；禁用某个自定义融合 pass 不等于恢复了两个独立 kernel。</p>
-<aside class="outline-callout experiment"><p><strong>实验 5-4 ★〔延伸〕：模型算子与融合组合</strong></p><p>按固定模型配置和实现生成算子表；对 Qwen3-8B 与 V4-Flash 各选一条链，计算独立执行与两种合法融合的中间字节、片上占用和启动边界。先预测收益，有设备时对照实际 trace；其他模型用报告与实现补全逻辑清单，缺失项保留。</p><p>选做 Qwen3 专家投影的 FP8 变体：比较整行尺度与前缀尺度，先找出数值不同的输入，再按相同输出块数计读取。将误差合同与缓存条件写清后，才比较实际时间。</p><p>条件：基础·代码阅读／计算；可选设备。</p></aside>
-<p><strong>实测结果（5-4）：</strong> Qwen 形状的 SwiGLU→FP8 链融合后确实减少 kernel，但默认编译路径改变了中间舍入与尺度；显式保留 RNE 舍入后尺度归零一致，仍有少量 FP8 位差。同轮 Graph 与 eager 交错 132 批次表明，提交间隙与算子内部成本必须分开看，少一个 kernel 不保证更快。V4 专家激活子链保留裁剪与路由权重的先后关系后，实际执行从 8 个 kernel 降到 2 个或 1 个；这不代表完整专家推理获得同等加速。<a href="experiments/ch05/05-04/README.md">记录、数值差异与 V4 子链</a>。</p>
-<aside class="outline-callout figure-plan"><p><strong>部分实测</strong>：Qwen形状的SwiGLU→FP8链可减少kernel，但默认编译路径改变了中间舍入和尺度；显式保留舍入后尺度一致，仍有少量FP8位差，同轮Graph对照表明，提交间隙与算子内部成本须分开看，单kernel也不保证相同速度。<a href="experiments/ch05/05-04/README.md">记录与数值差异</a>。</p></aside>
-<aside class="outline-callout figure-plan"><p>V4专家激活子链保留裁剪与路由权重的先后关系后，实际执行从8个kernel降至2个或1个；这不代表完整专家推理获得同等加速。<a href="experiments/ch05/05-04/v4/README.md">子链实测</a>。</p></aside>
-<aside class="outline-callout figure-plan"><p>指定RedFuser量化生成核的实际运行确认：改变块顺序可将输出从1变为0.98193359375，全零输入还会产生NaN；必须先明确数值合同。<a href="experiments/ch05/05-04/redfuser/README.md">后端复核</a>。</p></aside>
-<aside class="outline-callout figure-plan"><p><strong>图 5-3：算子接口与图算融合的边界（配图计划）</strong></p><p>自绘 SVG；用同一条计算链显示独立优化后的写回、重新分块后的融合与保留边界。模型—算子对照表由实验 5-4 的固定输入生成，逻辑节点与内核启动分别标注；激活量化链另画张量生存期，区分消除的中间张量、峰值容量下降和读写量减少。</p><p>自动归约变体标出局部状态与合并位置；量化变体标出 cast 前后的位宽、尺度生效时间和输出块的重复读取。由同一计算记录生成 SVG。</p></aside></section>
-<section class="outline-subsection" id="sec-5-4-4"><h4>5.4.4 成本估计、自动调优与实测反馈</h4>
-<p>先沿 5.4.2 的同一个循环变换检查生成代码，再比较规则 schedule、测量驱动搜索和允许修改实现的 Agent。成本模型筛选候选，实际 profiling 校准缓存、寄存器溢出与并发；预测失准不等于依赖分析失效。调优成本在 5.5.3 与执行复用次数一起核算。</p>
-<aside class="outline-callout experiment"><p><strong>实验 5-5 ★〔延伸〕：编译变换与硬件代码</strong></p><p>编译器替程序员做了什么？ 对同一分块程序查看指定后端的生成表示／代码，记录隐式变换与仍需调优的部分。</p><p>条件：基础·编译工具／配套记录。</p></aside>
-<p><strong>实测结果（5-5）：</strong> 同一转置程序随输入步长生成不同的共享内存与指令路径；RTX 上把 16×16 块改为 32×32 后，一组连续输入从 7.87 μs 降至 2.92 μs，继续增大未改善。<a href="experiments/ch05/05-05/README.md">生成代码、数据与图</a>。</p>
-<aside class="outline-callout figure-plan"><p><strong>图 5-4：一次优化如何在几种编程方式中表达（配图计划）</strong></p><p>沿 5.4.2 的矩阵乘接激活，画原始循环、split／tile、reorder、局部缓存与 tile 完成后融合的五个面板；用读写依赖箭头说明可移动范围。Halide／TVM 风格的 schedule 与前后循环并排排版，另标一个提前执行激活的非法反例；形式化 affine transformation 不进入主图。</p></aside>
-<p>用同一热点比较规则 schedule、测量驱动搜索和允许修改实现的 Agent。三种方法都先固定语义与资源，再提出候选、验证正确性、计时及撤回退化项；Agent 的特点是候选空间与验证成本变化，传统自动调优已经使用实际测量反馈。</p>
-<p>核心论证保留一次预测失准后的修正：独占更快的候选可能挤慢并发 attention 或通信。记录改变的字节、寄存器、布局与等待，再回到实验 5-9 检查完整请求。KernelAgent、FlashInfer-Bench、CUDA Agent 及考核版本的具体入口和完整迭代记录放入延伸材料。</p>
-<p>借 LOOPRAG 与 FlashInfer-Bench 比较候选成绩和部署收益：正确性参考、性能基线、超时与容差分别固定；用两个形状说明加速比平均更高，按实际调用频数计算却可能更慢。再加入分派与回退成本，沿<a href="case-studies/optimization-evaluation-and-deployment.md">评测与部署算例</a>检查候选是否真的被引擎使用。</p>
-<aside class="outline-callout experiment"><p><strong>实验 5-6 ★★〔延伸〕：自动 profile 与算子优化</strong></p><p>用固定 KernelAgent 或一个小型工具调用 Agent，优化从 Qwen3-8B 的 vLLM／SGLang trace 提取的 RMSNorm／SwiGLU 热点。比较默认编译、等预算的 schedule 搜索和带 profiler 反馈的 Agent；限定候选数及 GPU 时间，由 Agent 修改内核，读者负责给出问题和判断结果。每次先对固定参考实现校验，再在独占计时窗口预热与重复测量；对原路径存在并发的热点，补测同一并发片段的资源争用。保留未参与搜索的形状、边界输入和退化案例，固定独立验证入口、参考实现与设备资源；优化后的候选不能自行降低校验条件。报告优化花费、稳态收益与摊销次数，最后回到实验 5-9 检查请求是否变快。</p><p>条件：进阶·单 GPU＋模型 API／本地模型；无设备时分析配套完整迭代记录。</p><p>同时报告形状平均分数与按实际频数汇总的时间；验证失败项计入回退，分派和准备花费计入部署预算。固定模型算子定义，不能直接移用 B200 比赛的 MoE／DSA／GDN 容差。</p></aside>
-<p><strong>实测结果（5-6）：</strong> 从真实 Qwen3-8B trace 定位 72 次 SwiGLU 并捕获 36 层输入输出；默认编译与 6 个 schedule 候选通过冻结参考与 5 项留出检查，132 批随机交错完成。两轮真实工具调用 Agent 各 6 次<strong>均未产出可用的新内核</strong>（复制 AST 或重复候选被拒），负结果按协议完整保留。等 GPU 预算的独占窗口、并发争用与 profiler 反馈回路仍未覆盖，不用已有微基准替代。<a href="experiments/ch05/05-06/README.md">迭代记录、候选与负结果</a>。</p>
-<p><strong>实测（部分）：</strong> <a href="experiments/ch05/05-06/README.md">固定验证与真实Agent记录</a>保留两轮各6次调用：首轮反复提交相同代码，次轮重复提交被拒绝，未发现新优化。计时波动不作为收益，完整请求验证仍待。</p>
-<aside class="outline-callout figure-plan"><p><strong>图 5-5：算子优化的反馈过程（配图计划）</strong></p><p>自绘 SVG 连接假设、候选、校验与 profiling；实验 5-6 生成逐轮耗时及瓶颈变化，失败候选保留可见。</p><p>同一份记录分别生成候选分数和含回退的部署时间，标出调用频数改变后的选择。</p></aside>
-<p><strong>扩写资料：</strong> <a href="outlines/extensions/05-%E7%AE%97%E5%AD%90%E4%B8%8E%E8%BF%90%E8%A1%8C%E6%97%B6.md#detail-5.4">本节完整计算、版本与实验变体</a>。</p></section>
+<details class="outline-section" id="sec-5-4"><summary>5.4 编译器：表达、变换与选择</summary><div class="outline-section-body"><p>按实现方式的表示、循环变换、依赖与舍入、AKG、多面体调度与成本选择的顺序展开。</p>
+<section class="outline-subsection" id="sec-5-4-1"><h4>5.4.1 为什么要比较多种实现</h4>
+<p>用三算子四种划分、十算子 512 种划分提出组合选择问题。建立表达、合法性、成本三个步骤。</p></section>
+<section class="outline-subsection" id="sec-5-4-2"><h4>5.4.2 用循环变换表达分块与融合</h4>
+<p>沿同一 FFN 矩阵接激活，以 Halide／TVM 风格依次解释 split、tile、reorder、缓存和计算位置。伪代码缩进与图 5-9 共同展示输入块在 ko 内替换、累加器跨 ko 保留、激活在 ko 后执行。解释 compute_at 的复用／重算交换。</p></section>
+<section class="outline-subsection" id="sec-5-4-3"><h4>5.4.3 依赖与舍入怎样限制变换</h4>
+<p>先用正负部分和解释激活的归约依赖，再从在线 Softmax 说明足够状态。保留 BF16 cast；例 5-7 逐项推导 FP8 整行尺度与前缀尺度的 55/56、1 差异。</p></section>
+<section class="outline-subsection" id="sec-5-4-4"><h4>5.4.4 AKG：用多面体编译组织循环与存储</h4>
+<p>明确 AKG 核心 polyhedral compilation：规则迭代、数组访问与依赖形成可分析表示，由调度推导块区域、搬运和寿命。例 5-8 完整推导 444／620 MiB，说明融合位置改变宽输入重读，回扣分块容量。</p></section>
+<section class="outline-subsection" id="sec-5-4-5"><h4>5.4.5 成本估计与实测选择</h4>
+<p>容量和静态成本筛选实现方案，硬件测量提供处理率。例 5-9 从 A/B 两种调用频数推导 p&gt;2/3 的选择临界值。Agent 搜索作为生成内核代码的工具，搜索记录放配套，准备摊销接 5.5.3。</p></section>
 </div></details>
-<details class="outline-section" id="sec-5-5"><summary>5.5 运行时：提交、重放与动态形状</summary><div class="outline-section-body"><p>内核确定之后，主机准备、提交和设备等待仍影响完成时间。先读执行时间线，再讲图重放，最后加入动态形状与准备成本。</p>
-<section class="outline-subsection" id="sec-5-5-1"><h4>5.5.1 主机提交与设备执行</h4>
-<p>从一次小算子的执行轨迹引入任务队列、提交、事件和等待，把 CPU 准备和 GPU 时间放入同一依赖图。把主机开销放回关键路径，而不按 API 个数估算执行时间。随后用 vLLM v0.6.0 的分进程、GIL 与异步执行案例作对照；版本总收益仅说明该组合，单项贡献需要同条件消融。依据：<a href="research/token-cost-2023-2026/report.md#runtime">成本下降调研</a>。</p>
-<p><strong>后端对照〔延伸〕：</strong> Ollama 的加载、runner、Metal／CUDA／MLX 内核与命令提交用于核对硬件到执行的映射；完整版本与精度条件见扩写资料。章末固定使用同一 vLLM／SGLang 路径完成前后比较。</p></section>
-<section class="outline-subsection" id="sec-5-5-2"><h4>5.5.2 CUDA Graph 的捕获与重放</h4>
-<p>沿同一条计算链比较 eager、分段图和完整重放。图执行减少重复提交，仍需满足地址、数据就绪与形状条件；准备时间、padding、固定缓冲与 KV 争用一起计入。先用 trace 找暴露的提交间隙，再决定哪些段值得捕获。</p>
-<p>给两种边界：生产者直接写入固定缓冲，或每次复制外部输入后重放。按张量字节求额外拷贝时间，与可消除的等待比较；同一个模型可以保留一部分 eager。FlashInfer plan/run、vLLM 图分派、SGLang BCG 与 GraCE 提供不同实现证据，完整版本与支持组合放入本节延伸材料。</p>
-<p>释放显存但保留虚拟地址可以减少重新准备，内容有效性仍需恢复。第 10 章权重交接用同一缓冲寿命规则解释这个边界。</p>
-<p>用 256／2048 个 BF16 token 的 2／16 MiB 输入比较图重放：在同一组教学开销下，小输入的复制仍能被提交收益覆盖，大输入则可能抵消收益。沿<a href="calculations/results/graph-small-input.md">计算记录</a>求交点，再改变输入来源和调用次数；第 8 章承接这笔账，加入真实请求的形状分布。</p>
-<p>实验 5-8 的轨迹用于区分两种收益：三次执行从 18 次主机启动降到 3 次，设备仍有 18 个 kernel；融合后才降到 15 个。保留<a href="calculations/results/runtime-ffn-token32.md">原始轨迹的复核</a>，用这组观测解释减少提交与减少设备工作为何不能混为一谈；具体时间线随实验展示。</p></section>
+<details class="outline-section" id="sec-5-5"><summary>5.5 运行时：提交、重放与动态形状</summary><div class="outline-section-body"><p>把设备程序接回主机准备、图重放、形状复用和任务之间的等待。</p>
+<section class="outline-subsection" id="sec-5-5-1"><h4>5.5.1 主机准备与设备计算的重叠</h4>
+<p>例 5-10 从 100 段配置／计算推导串行、流水、仅加速设备、同时缩短配置的差别。主机工作减少与隐藏分别解释，自回归依赖提供真实执行入口。</p></section>
+<section class="outline-subsection" id="sec-5-5-2"><h4>5.5.2 CUDA Graph：提交收益与输入复制开销</h4>
+<p>图 5-12 紧邻三次 FFN 的 launch／kernel 计数。例 5-11 依次比较 2 MiB 与 16 MiB 边界输入，推导 14.3 MiB 临界值和生产者直接写图缓冲的设计。FlashInfer 计划复用作为准备复用的实例。</p></section>
 <section class="outline-subsection" id="sec-5-5-3"><h4>5.5.3 动态形状、分桶与特化摊销</h4>
-<p>对比卷积训练的常见形状与 LLM 的长度、并发和专家负载变化，解释 mask、运行时 tiling、分桶与特化为何出现。</p>
-<p>比较第一次执行、稳定复用和偶发形状；核算编译摊销、缓存和回退。以 CloudMatrix384 的 MTP／MLA 实现与 GPU 服务路径作例子。</p>
-<p>用同一 Qwen3 FFN 比较通用、分桶与逐形状特化：短寿命调用可能来不及收回编译成本，频繁复用才值得更深特化。保留一组形状分布，计算“准备成本＋重复次数×每次执行成本”的交点；<a href="calculations/results/specialization-medium.md">完整扫描</a>用于实验 5-7，服务率和准备时间均为教学输入。</p>
-<p>图 5-6 使用<a href="calculations/figures/specialization/figure.svg">已生成的总时间曲线</a>，让通用、分桶和特化三种选择随复用次数发生变化；输入、精确交点与重绘命令保存在本节扩写资料。</p>
-<aside class="outline-callout experiment"><p><strong>实验 5-7 ★〔延伸〕：形状特化的复用阈值</strong></p><p>为每种长度编译一份程序值不值？ 给定形状分布，先手算通用、分桶和特化的编译加执行总时间，再用短脚本扫描复用阈值。</p><p>条件：基础·计算／短脚本。</p></aside>
-<p><strong>计算结果（5-7）：</strong> 在给定形状分布上有两个交点：约 60 次复用时通用程序输给分桶，约 100 次时分桶输给逐形状特化。短寿命调用来不及收回编译成本，只有频繁复用才值得更深特化。分桶胜出的中间区间靠的是准备与执行都居中，代价是把 256 的调用 pad 到 512 执行。编译成本翻倍会把阈值整体右移退回通用；特化产物已缓存则让特化立刻胜出——缓存把“为每种长度编译一份”从投资问题变成查表问题。<a href="experiments/ch05/05-07/README.md">扫描、变体与限制</a>。</p>
-<aside class="outline-callout figure-plan"><p><strong>图 5-6：不同形状策略的总时间如何交叉（配图计划）</strong></p><p>实验 5-7 脚本生成 SVG，包含编译成本。</p></aside>
-<p><strong>运行时综合练习：</strong> 完成提交、重放与形状选择后做实验 5-8；下面的 persistent 专题为进阶选读。</p>
-<aside class="outline-callout experiment"><p><strong>实验 5-8 ★★〔核心〕：图重放与算子融合</strong></p><p>对 Qwen3 的代表算子链比较普通提交、融合、CUDA Graph 与组合执行，使用 Nsight Systems 记录主机与设备间隙，计入捕获、padding 和缓冲容量。以 MPK 的匹配模型／硬件案例补充 persistent 路径，不能把独立论文的加速比相乘；说明增加微批何时会使启动开销更大。</p><p>核心部分分析配套的普通提交、融合、图重放与组合执行四组轨迹，无设备可直接完成；自行采集与 persistent 路径为延伸。</p><p>条件：基础·配套轨迹分析；进阶·单设备实跑。</p></aside>
-<p><strong>实测结果（5-8）：</strong> RTX 的完整 FFN 链中，图重放把三次执行的主机启动从 18 次减到 3 次，设备仍执行 18 个 kernel；融合后才降到 15 个。整链耗时并未同比缩短，补齐与顺序微批还会增加代价。<a href="experiments/ch05/05-08/README.md">实跑、时间线与论文对照</a>。 <a href="experiments/ch05/05-08/flashinfer-plan/README.md">FlashInfer计划复用实测</a>中，相同36层调用由逐层规划改为一次规划，两组中位从2.04／2.35降至0.72／0.75 ms，kernel数不变；元数据变化仍需更新计划。</p>
-<aside class="outline-callout figure-plan"><p><strong>图 5-7：普通提交、融合和图重放的执行差异（配图计划）</strong></p><p>从实验 5-8 轨迹生成 SVG，保留主机与设备两条时间线。</p></aside></section>
-<section class="outline-subsection" id="sec-5-5-4"><h4>5.5.4 Persistent Kernel 与细粒度调度〔进阶〕</h4>
-<p>用 Mirage Persistent Kernel／MPK（2025 初稿、2026 修订）把一个算子拆成 SM 级任务，解释为什么“每个算子一个 kernel”的边界会阻碍 tile 就绪后立即开始通信。设备内任务与事件可以表达跨算子流水，但也增加调度、同步和资源驻留开销。</p>
-<p>比较 CUDA Graph、融合、persistent kernel 与 pipelining 各自省掉什么。增大 batch 可以摊薄单 token 启动成本；切微批有助于重叠，却也可能增加启动次数和小矩阵损失。下一章继续讨论跨卡数据，8.1 和 9.4 再用真实服务判断这些方法的适用条件。</p>
-<p>用 up 投影接 SiLU 的八块教学任务比较整算子屏障与按块就绪：一次主机启动仍有 16 个设备任务，需要分派和依赖通知。逐步增加调度成本，找到流水收益被抵消的条件；<a href="calculations/results/persistent-tiles-base.md">任务与缓冲计算</a>留作延伸，供给速率属于教学输入。</p>
-<p><strong>扩写资料：</strong> <a href="outlines/extensions/05-%E7%AE%97%E5%AD%90%E4%B8%8E%E8%BF%90%E8%A1%8C%E6%97%B6.md#detail-5.5">本节完整计算、版本与实验变体</a>。</p></section>
+<p>例 5-12 先从真实行数与补齐行数得到每组执行，再加入准备成本。图 5-14 展示 65／90 组交点，70 组与已有缓存是两种条件变化。把调优搜索费纳入相同的复用分析。</p></section>
+<section class="outline-subsection" id="sec-5-5-4"><h4>5.5.4 Persistent Kernel：按数据块调度任务</h4>
+<p>从整算子依赖细化到 tile，引入 persistent 任务领取与就绪事件。八块投影与激活的 582→358 μs 推导回扣双缓冲，解释任务管理、并行资源与缓冲回收。</p></section>
 </div></details>
-<details class="outline-section" id="sec-5-6"><summary>5.6 从局部优化到完整请求</summary><div class="outline-section-body"><p>回到同一模型、引擎、精度和固定请求，确认候选实际生效并解释局部收益。第 8 章再加入排队、连续批处理与服务目标。</p>
-<section class="outline-subsection" id="sec-5-6-1"><h4>5.6.1 确认优化进入实际执行路径</h4>
-<p>沿章首 FFN 激活链，在固定模型、引擎、精度、输入和图模式下接入已验证候选。用算子分派、编译图与同路径 trace 确认替换生效，记录回退、准备工作和实际 kernel；不能只凭自定义 pass 开关判断执行方式。</p>
-<p>核心练习直接使用实验 5-9 配套的已验证候选与替换前后记录，不依赖读者完成实验 5-6。完成 Agent 延伸练习的读者可以替换为自己的候选，但必须经过相同验证。</p></section>
-<section class="outline-subsection" id="sec-5-6-2"><h4>5.6.2 热点占比、依赖与关键路径</h4>
-<p>先用固定请求的依赖图定位关键路径，区分 kernel 时间之和、采集区间占比与请求墙钟时间。热点变快之后，其他分支、提交等待和共享资源可能成为新限制，不能把热点占比直接套成必然的端到端收益。</p>
-<p>保留一组教学时间说明关键路径切换，再用实际 trace 核对；完整依赖图、微批重叠与资源争用计算见扩写资料。优化候选要在原有并发片段中复测，局部独占更快也可能挤慢其他工作。</p></section>
-<section class="outline-subsection" id="sec-5-6-3"><h4>5.6.3 固定请求的前后对照与设计决定</h4>
-<aside class="outline-callout experiment"><p><strong>实验 5-9 ★★〔核心〕：内核优化与请求加速</strong></p><p>使用配套已验证候选与替换记录，在同一模型、引擎、精度与输入下检查候选内核；完成实验 5-6 者可选用自己的已验证候选，比较热点占比推算的上限与完整请求的变化。固定图模式、缓存状态与并发，确认替换实际生效，再解释 TTFT、逐 token 延迟与吞吐的变化；若候选没有收益，沿原始 trace 说明限制。无设备时分析同一组替换前后记录。</p><p>条件：进阶·固定 vLLM／SGLang 与 GPU／配套运行记录。</p></aside>
-<p><strong>实测结果（5-9）：</strong> 同一 eager 引擎上实际替换 36 层 SwiGLU，原生与选定 schedule 共 11 对固定 7,239／32 token 请求，全部输出一致；TTFT 未改善，总时延只有微小波动，不作为稳定收益。两份同口径完整 Nsight 显示该热点只占 1.597%，decode 局部缩短而 prefill 不变，热点与其他内核的并发交集为 0——条件上限由此明确：即使把热点清零，完整请求也快不了多少。其他形状、并发与稳态摊销仍待。<a href="experiments/ch05/05-09/README.md">替换审计、trace 与限制</a>。</p>
-<p><strong>实测（部分）：</strong> <a href="experiments/ch05/05-09/README.md">36层实际替换记录</a>中，11对固定请求输出一致，TTFT未见改善，总时延配对中位数仅缩短1.34ms（基线约817ms），不足以认定稳定收益。局部Graph加速不能直接移用到eager请求。 同口径完整trace中，原生热点仅占采集区间约1.60%，候选主要缩短decode激活，prefill几乎不变。</p>
-<aside class="outline-callout figure-plan"><p><strong>图 5-8：同一引擎内优化前后的完整请求（配图计划）</strong></p><p>用实验 5-9 的同条件记录展示候选进入执行路径的证据、prefill／decode 时间分解与请求完成时间；教学关键路径另作面板并标明输入性质。Ollama 后端图随 5.5.1 的延伸材料阅读。</p></aside>
-<p><strong>扩写资料：</strong> <a href="outlines/extensions/05-%E7%AE%97%E5%AD%90%E4%B8%8E%E8%BF%90%E8%A1%8C%E6%97%B6.md#detail-5.6">本节完整计算、版本与实验变体</a>。</p></section>
+<details class="outline-section" id="sec-5-6"><summary>5.6 从局部优化到完整请求</summary><div class="outline-section-body"><p>先建立占比与关键路径方法，再完整展开请求综合案例。</p>
+<section class="outline-subsection" id="sec-5-6-1"><h4>5.6.1 热点占比决定加速空间</h4>
+<p>推导 Amdahl 关系，从 20% 热点的两倍、十倍与无限加速理解递减收益和优化优先级。</p></section>
+<section class="outline-subsection" id="sec-5-6-2"><h4>5.6.2 并行分支与关键路径切换</h4>
+<p>用两分支依赖图解释 80→60 μs，指出热点缩至 40 μs 后继续单独优化的收益为零；再加入 90 μs 争用分支解释代价转移。</p></section>
+<section class="outline-subsection" id="sec-5-6-3"><h4>5.6.3 综合案例：一次 Qwen3 请求的优化选择</h4>
+<p>Qwen3-8B 7239／32 token 请求：先算 36 次 prefill 和 1116 次 decode，再解释阶段时间、1.6% 热点占比、约 1.5 ms 预期节省，最后读 11 对约 1.3 ms 配对收益。由此形成改善当前 TTFT 和研究更长 decode 的两项决定。</p></section>
 </div></details>
-<div class="chapter-decision"><h4>本章的设计决定</h4><p>为两条主算子链保存分块、布局、融合边界及缓冲生命周期，对照预测和完整请求 trace。明确局部收益在哪个并发条件下失效；将真实状态和交接需求交给第 6 章。 将预测、证据和修改分别填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
-<p class="chapter-end"><a href="outlines/05-%E7%AE%97%E5%AD%90%E4%B8%8E%E8%BF%90%E8%A1%8C%E6%97%B6.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/05-%E7%AE%97%E5%AD%90%E4%B8%8E%E8%BF%90%E8%A1%8C%E6%97%B6.md">扩写资料</a> · 6 节／21 小节 · 9 项练习（3 项核心） · 8 项配图计划</p></article>
+<div class="chapter-decision"><h4>本章的设计决定</h4><p><strong>V4／V4.1 会话案例：</strong> 第二章的 V4.1 会话说明，同一份数据的保存量与执行访问量可以明显不同。8K 条件下，V4 Flash 全局 KV 为 27.455 MiB，V4.1 为 6.953 MiB；但计入局部窗口与索引的逐层逻辑读取为 12.556 与 11.375 MiB。共享状态不必为每层复制一份容量，各使用层仍需要访问它。若能在片上缓存中保留共享条目，实际 HBM 读取可以进一步减少；若分块使条目被重复装载，实际流量又可能增加。</p>
+<p>如果专用设备把模型执行从 100 μs 缩短到 10 μs，而主机每轮准备仍需 20 μs，在可重叠、无其他依赖的稳定流水中，步间隔的下界就从 100 μs 变为 20 μs，收益只有 5 倍。设备越快，动态批次准备、地址更新和提交越值得重新测量。应用上下文不断变化，并不意味着每次都要重建算子程序：可以复用执行骨架，更新输入内容、长度和地址；当新形状或新的控制分支越出已有骨架时，才需要选择另一实现。上下文的可编程性与执行图的复用由不同层负责。</p>
+<p>配图与定量推导以本章正文为准；新增图沿用统一浅色填充、矢量箭头和外置图注。先固定任务改变单一约束，再比较重新选择后的方案。</p></div>
+<p class="chapter-end"><a href="outlines/05-%E7%AE%97%E5%AD%90%E4%B8%8E%E8%BF%90%E8%A1%8C%E6%97%B6.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/05-%E7%AE%97%E5%AD%90%E4%B8%8E%E8%BF%90%E8%A1%8C%E6%97%B6.md">扩写资料</a> · 6 节／22 小节 · 0 项练习（3 项核心） · 0 项配图计划</p></article>
 <article class="card" id="ch-6"><span class="tag">第 6 章</span><h3>超节点</h3><p>第 5 章在芯片内组织数据复用，本章把计算和状态切到多张卡。由逐卡需求推出 TP、PP、DP、EP 及组合，再决定需要多大的紧密协作范围；拓扑与产品在具体限制出现时引入。</p>
 <p><strong>本章判断：</strong> 并行换来容量或处理能力，也增加交接与同步。总容量足够时仍要检查最忙设备；同一组卡应扩大协作还是增加推理实例数量，取决于负载和时限。</p>
 <p><strong>前置与交付：</strong> 依赖第 3、5 章；交付逐卡状态与跨边界流量，第 7 章沿实际路径继续计算。</p>
@@ -1137,7 +1087,10 @@
 <p>下一章继续处理跨超节点的训练集合通信，以及仅有八卡服务器时的大模型推理。当单个超节点的容量、计算能力或已有部署条件不足时，标出必须跨越其边界的数据与依赖。第 7 章沿主机、网卡和交换链路展开跨超节点路径、访问与完成语义及拥塞约束，继续修正这里的候选。</p>
 <p><strong>扩写资料：</strong> <a href="outlines/extensions/06-%E8%B6%85%E8%8A%82%E7%82%B9.md#detail-6.7">本节完整计算、版本与实验变体</a>。</p></section>
 </div></details>
-<div class="chapter-decision"><h4>本章的设计决定</h4><p>为同一任务保留“更大协作组”和“更多推理实例”两类候选，输出逐卡峰值、逐边界字节、集合轮次及最忙设备。总量相同而放置不同的结果并列，供第 7 章映射到实际网络。 将预测、证据和修改分别填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
+<div class="chapter-decision"><h4>本章的设计决定</h4><p><strong>V4／V4.1 会话案例：</strong> V4.1 也不能只按 890 B/token 推断需要几张设备。该数把跨层共享状态只计一份；如果模型各层被放在不同设备上，后续层仍须访问拥有层产生的状态。可以把相关层放近、在目标设备复制状态，或建立远程访问路径。第一种限制放置灵活性，第二种增加容量与更新，第三种增加通信依赖，原来的单份逻辑容量并不能替代逐设备预算。</p>
+<p><strong>三条主线的落实：</strong> 沿用第 4 章的固定权重实验，多设备需求应按来源重新分开。为容纳权重而切分模型的需求可能减少；为保存更多 KV 而扩容的需求仍然存在；为缩短单请求计算而采用 TP，需要证明节省的计算超过新增同步；为提高总吞吐而复制实例，则仍由请求量决定。权重容量、状态容量、单请求时延和总吞吐分别给出四种扩容理由，不能只根据模型参数量推算超节点大小。</p>
+<p>配图与定量推导以本章正文为准；新增图沿用统一浅色填充、矢量箭头和外置图注。先固定任务改变单一约束，再比较重新选择后的方案。</p>
+<p>为同一任务保留“更大协作组”和“更多推理实例”两类候选，输出逐卡峰值、逐边界字节、集合轮次及最忙设备。总量相同而放置不同的结果并列，供第 7 章映射到实际网络。 将预测、证据和修改分别填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
 <p class="chapter-end"><a href="outlines/06-%E8%B6%85%E8%8A%82%E7%82%B9.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/06-%E8%B6%85%E8%8A%82%E7%82%B9.md">扩写资料</a> · 7 节／25 小节 · 10 项练习（3 项核心） · 9 项配图计划</p></article>
 <article class="card" id="ch-7"><span class="tag">第 7 章</span><h3>数据中心网络</h3><p>第 6 章已经形成多卡放置与超节点规模的候选。本章沿必须跨边界的数据追踪主机、网卡和交换网络，并借作者 KV-Direct、1Pipe 与 UB 的设计经历，推导访问、通知、顺序和共享分别应该由谁负责。</p>
 <p><strong>本章判断：</strong> 网络设计既要利用并行与共享降低搬移代价，也要界定必要的顺序、资源寿命和故障范围；最终收益取决于这些选择能否减少任务关键路径上的等待。</p>
@@ -1261,7 +1214,10 @@
 <aside class="outline-callout figure-plan"><p><strong>图 7-9：单次通信的改进怎样传到模型任务（配图计划）</strong></p><p>实验 7-10 生成任务时序和完成时间分布，保留不同实验条件。</p></aside>
 <p><strong>扩写资料：</strong> <a href="outlines/extensions/07-数据中心网络.md#detail-7.6">本节完整计算、版本与实验变体</a>。</p></section>
 </div></details>
-<div class="chapter-decision"><h4>本章的设计决定</h4><p>交付训练与跨服务器推理两类候选的逐路径流量、启动与在途窗口、发布与回收时序、就绪偏差和故障预算；指出应该修改切分、通路、责任划分还是顺序保证，并记录选择会在什么条件下翻转。第 8 章建立单实例服务基线，第 9 章沿用交接契约，第 10 章继续训练恢复。将预测、证据和修改填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
+<div class="chapter-decision"><h4>本章的设计决定</h4><p><strong>V4／V4.1 会话案例：</strong> 沿同一条 V4.1 会话，设请求被迁移到没有其全局 KV 的实例。只为比较传输下界，假设搬运一份 128K 全局历史、有效带宽为 25 GB/s，忽略分页元数据、复制与其他状态。V4 Flash 的 439.281 MiB 需要约 18.424 ms，V4.1 的 111.250 MiB 需要约 4.666 ms。容量压缩在这条路径上确实减少了约 13.758 ms 的传输服务时间。</p>
+<p><strong>三条主线的落实：</strong> 可以用一次小消息实验区分“带宽更高”和“交接更快”。设某串行通信步骤固定启动时间为 5 μs，需要传输 1 MB，有效带宽为 100 GB/s；不含排队时共需 15 μs。带宽翻倍后为 10 μs，只有 1.5 倍加速。若消息缩至 10 KB，同样改动只把 5.1 μs 缩至 5.05 μs。减小消息之后，启动、通知和同步比继续扩带宽更值得关注。</p>
+<p>配图与定量推导以本章正文为准；新增图沿用统一浅色填充、矢量箭头和外置图注。先固定任务改变单一约束，再比较重新选择后的方案。</p>
+<p>交付训练与跨服务器推理两类候选的逐路径流量、启动与在途窗口、发布与回收时序、就绪偏差和故障预算；指出应该修改切分、通路、责任划分还是顺序保证，并记录选择会在什么条件下翻转。第 8 章建立单实例服务基线，第 9 章沿用交接契约，第 10 章继续训练恢复。将预测、证据和修改填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
 <p class="chapter-end"><a href="outlines/07-%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E7%BD%91%E7%BB%9C.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/07-%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E7%BD%91%E7%BB%9C.md">扩写资料</a> · 6 节／23 小节 · 10 项练习（3 项核心） · 9 项配图计划</p></article>
 <article class="card" id="ch-8"><span class="tag">第 8 章</span><h3>推理优化</h3><aside class="outline-callout figure-plan"><p>写作大纲 · 执行基线、状态生命周期与服务验证六节重组 · 2026-09-10</p></aside>
 <p>固定设备与并行配置，从一次请求建立执行和容量基线，再依次组织批处理、管理 KV、调整压缩与卸载、引入草稿验证。最后回到同一组 Chat／Agent 到达轨迹，检查这些选择怎样影响质量、等待和有效产出。</p>
@@ -1370,7 +1326,12 @@
 <aside class="outline-callout figure-plan"><p><strong>图 8-8：不同服务条件下设备比较怎样改变（配图计划）</strong></p><p>实验 8-9 脚本生成多面板图，将第 1 章的资源估算扩展为本章设备选择。</p></aside>
 <p><strong>扩写资料：</strong> <a href="outlines/extensions/08-单实例推理.md#detail-8.6">完整推导、实现版本与实验变体</a>。</p></section>
 </div></details>
-<div class="chapter-decision"><h4>本章的设计决定</h4><p>提交固定模型、精度、采样、并行配置与到达轨迹，列出调度、缓存、压缩／卸载及草稿预算的候选和选择。报告质量与 SLO 内的有效服务率、状态峰值、主要等待来源、取消和重试浪费；改变历史长度或到达率，使至少一项选择翻转。将预测、证据、未测项和修正写入<a href="outlines/decision-record.md">跨章设计决定</a>。</p>
+<div class="chapter-decision"><h4>本章的设计决定</h4><p><strong>V4／V4.1 会话案例：</strong> V4.1 让“复用一个前缀”变成多类状态的联合判断。同一条 Agent 会话暂停等待工具时，全局 KV 与局部 SWA 的复用寿命可能不同：全局前缀可在较长时间后再次使用，局部窗口通常更快失去价值。其部署把长期全局缓存与分钟级的 SWA 分开管理，短期 SWA 仍保存在主机 DRAM 池中，并非完全不保存。</p>
+<p><strong>三条主线的落实：</strong> 权重读取变得便宜后，批处理的收益需要重新计算。沿用第 4 章的 8K 示例，传统 HBM 每输出 token 摊到的读取为 $W/B+K$；权重由足够快的独立 ROM 提供时，HBM 每输出仍需读取 $K$。图中两条曲线的距离随 batch 缩小，说明原先依靠 batch 摊薄权重读取的收益正在消失。</p>
+<p>上下文编排还可以主动改变复用机会。假设已有 8K token 的上下文，下一轮追加 1K 工具结果，最多可复用原来的 8K 前缀，新增部分需处理；如果改写最前面的指令，后续 token 即使文字相同，产生 KV 时依赖的历史已经变化，不能继续把整段当作相同前缀。另一种方案是把历史总结为 2K，再追加 1K，后续状态会更短，却要支付总结与重新处理的成本，并检验信息损失。</p>
+<p>固定权重实验也会改变推测解码的比较。若目标模型普通解码已经很快，原本合算的草稿生成和验证轮次可能不再节约时间。第二轮应重新代入普通解码时间、每轮草稿与验证时间，以及有效接受数量，并与新的 batch 竞争关系一起比较。量化、批处理、推测解码各自的旧加速比不能相乘：它们可能在重复消除同一段权重读取时间。</p>
+<p>配图与定量推导以本章正文为准；新增图沿用统一浅色填充、矢量箭头和外置图注。先固定任务改变单一约束，再比较重新选择后的方案。</p>
+<p>提交固定模型、精度、采样、并行配置与到达轨迹，列出调度、缓存、压缩／卸载及草稿预算的候选和选择。报告质量与 SLO 内的有效服务率、状态峰值、主要等待来源、取消和重试浪费；改变历史长度或到达率，使至少一项选择翻转。将预测、证据、未测项和修正写入<a href="outlines/decision-record.md">跨章设计决定</a>。</p>
 <p>这份共置基线交给第 9 章：实例内部调整仍不能满足目标时，再检验改变 prefill、decode 或状态放置的收益能否覆盖交接、缓冲和新排队。</p></div>
 <p class="chapter-end"><a href="outlines/08-%E5%8D%95%E5%AE%9E%E4%BE%8B%E6%8E%A8%E7%90%86.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/08-%E5%8D%95%E5%AE%9E%E4%BE%8B%E6%8E%A8%E7%90%86.md">扩写资料</a> · 6 节／22 小节 · 9 项练习（3 项核心） · 8 项配图计划</p></article>
 <article class="card" id="ch-9"><span class="tag">第 9 章</span><h3>分布式推理</h3><p>第 8 章在给定设备组合下优化请求执行，本章进一步决定计算与状态的执行位置，比较完整副本、PD、AF、专家负载均衡与共享 KV。计算分工和状态复用分别闭合后，加入启动、重配置与恢复，最终选择完整部署。贯穿比较的是交接的数据、频次和寿命，以及它们换来的资源匹配与复用收益。</p>
@@ -1521,7 +1482,11 @@
 <p><strong>现有证据：</strong> 启动补测显示文件读取成功不保证当前请求形成有效缓存命中；完整部署应以实际复用、请求完成与队列消退验证。完整记录见<a href="outlines/extensions/09-%E5%88%86%E5%B8%83%E5%BC%8F%E6%8E%A8%E7%90%86.md#detail-9.7.3">本节扩写资料</a>。</p>
 <p><strong>扩写资料：</strong> <a href="outlines/extensions/09-%E5%88%86%E5%B8%83%E5%BC%8F%E6%8E%A8%E7%90%86.md#detail-9.7">本节完整计算、版本与实验变体</a>。</p></section>
 </div></details>
-<div class="chapter-decision"><h4>本章的设计决定</h4><p>在同一请求与状态图上比较共置、完整副本、PD、AF 和 KV 池，列出新增交接、双份缓冲、阶段配比、命中、启动、重配置与恢复。保留一个值得分离和一个应重新共置的条件；第 10 章使用这些阶段能力组织 RL。 将预测、证据和修改分别填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
+<div class="chapter-decision"><h4>本章的设计决定</h4><p><strong>V4／V4.1 会话案例：</strong> 对第 3 章的 V4.1 会话，P 与 D 处理能力必须分别测量。CED 让大部分输入跳过解码器主体，但生成仍执行完整主干；8B／16B 激活参数标签描述不同阶段，不能据此断言 P 快两倍或 P/D 实例数应为 1:2。新增输入长度、前缀命中与 SWA 恢复概率改变 P 的工作分布，输出长度决定 D 的持续占用。</p>
+<p><strong>三条主线的落实：</strong> 权重固定在不可修改介质上时，增加该型号设备仍能扩展同版本服务，但发布新权重不能再简单地解释为从存储加载新文件。路由器需要识别设备支持的模型版本，容量规划要计入新旧版本并存与替换周期。上下文和工具仍可更新，权重升级则取决于实际可重配置能力。固定权重设备因而更适合在预计使用期内稳定且需求足够大的版本；这一判断需要服务量与版本寿命的证据。</p>
+<p>对第 4 章的实验，还应做一次阶段配比复算。设每个 P 实例每秒能处理 20 条请求，每个 D 实例能完成 5 条相同请求，忽略传输与排队，1P 配 4D 才能平衡。若只有 D 阶段加速 4 倍，第一轮保留设备数量，系统仍受 P 的每秒 20 条限制；第二轮重新分配资源，1P 配 1D 已能达到这一上限。该例只用于说明配比，不能把权重通路改善假定为所有阶段等比例加速。</p>
+<p>配图与定量推导以本章正文为准；新增图沿用统一浅色填充、矢量箭头和外置图注。先固定任务改变单一约束，再比较重新选择后的方案。</p>
+<p>在同一请求与状态图上比较共置、完整副本、PD、AF 和 KV 池，列出新增交接、双份缓冲、阶段配比、命中、启动、重配置与恢复。保留一个值得分离和一个应重新共置的条件；第 10 章使用这些阶段能力组织 RL。 将预测、证据和修改分别填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
 <p class="chapter-end"><a href="outlines/09-%E5%88%86%E5%B8%83%E5%BC%8F%E6%8E%A8%E7%90%86.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/09-%E5%88%86%E5%B8%83%E5%BC%8F%E6%8E%A8%E7%90%86.md">扩写资料</a> · 7 节／24 小节 · 10 项练习（3 项核心） · 17 项配图计划</p></article>
 <article class="card" id="ch-10"><span class="tag">第 10 章</span><h3>训练系统</h3><p>训练反复使用参数、激活和优化器状态，RL 又把生成、验证、学习与权重交接连接起来。本章沿“任务预算 → 状态放置 → 单步执行 → 持续运行 → RL 闭环 → 期限复核”推进，逐步计算按期取得并保留训练进展所需的资源。</p>
 <p><strong>本章判断：</strong> 省容量可能增加通信或重算；提高生成吞吐也可能改变样本选择。执行优化要同时保持所声明的更新语义、质量和有效进展。</p>
@@ -1623,11 +1588,11 @@
 <section class="outline-subsection" id="sec-10-5-3"><h4>10.5.3 异步供给、策略版本与长轨迹恢复</h4>
 <p>依据 V4 的 token 级 WAL、抢占时 KV 保存及故障后重做 prefill，比较从断点继续与从头重采样。用长短轨迹的不同存活概率解释后者可能引入长度偏差，恢复同时影响系统成本与训练样本分布。同步／异步供给作为部署选择分析，只把报告明确披露的机制归于 V4。</p>
 <p>再以 AReaL 的部分 rollout 区分“恢复同一策略”与“换权重后继续”：token、环境与行为 logprob 可以保留，新权重所需 KV 要重新验证或重建。给同一轨迹的不同段标出实际权重版本，比较版本滞后、暂停交接和有效样本供给；Qwen3-8B 的 8K KV 虽为 1.125 GiB，重建成本仍要回到 prefill 计算。沿<a href="case-studies/rl-state-and-reproducibility.md">状态与版本算例</a>解释扩大 rollout 池何时只会积压待验证或过期样本。</p></section>
-<section class="outline-subsection" id="sec-10-5-4"><h4>10.5.4 MoE Routing Replay 与训练一致性</h4>
+<section class="outline-subsection" id="sec-10-5-4"><h4>10.5.4 MoE Routing Replay 与训推一致性</h4>
 <p>先固定相同权重和 token，比较推理与训练引擎重算的专家选择及 logprob：不同精度、kernel 和 batch 形状产生的微小数值差异，可能翻转接近边界的 top-k，逐层积累成与策略更新无关的差异。由这个问题引出 Rollout Routing Replay／R3（2025），再用 NeMo RL 的 vLLM rollout＋Megatron 训练路径说明落地。</p>
 <p>记录生成时每层、每 token 的专家 ID，在训练前向重放离散选择，同时以当前权重重新计算路由分数和专家输出，保留梯度。它不是重放旧输出，也不是省掉整个 router 计算；不能因此认为策略滞后、数值误差或 RL 收敛问题全部解决。与第 9 章 EPLB 区分：逻辑专家 ID 不随物理副本位置改变。</p>
 <p>按 <code>有效 token 数 × MoE 层数 × top-k × ID 字节数</code> 先算路由记录，再加入多轮前缀、打包、上下文切分、传输与保存。例用 8,192 token、48 层、top-8、uint16 得 6 MiB；这是编码假设，真实后端若用 int32 则翻倍。缓存 KV 时要能找到同前缀的路由记录；采样、logprob、训练和激活重计算都要对齐 token 身份与权重版本。</p>
-<aside class="outline-callout experiment"><p><strong>实验 10-8 ★★〔延伸〕：Routing Replay 与训练一致性</strong></p><p>沿固定 NeMo RL 的 Qwen3-30B-A3B R3 配方或其配套 trace，关闭／开启 replay 比较专家集合不一致率、同权重 logprob 差异、记录容量与阶段时间，再比较相同任务下的训练曲线。加入多轮缓存命中、样本 packing 和缺失路由检查，验证 token 对齐；小批检查只证明被覆盖路径，不冒充完整收敛结论。</p><p>条件：进阶·官方受支持配置／配套记录；完整训练作为可选扩展。</p></aside>
+<aside class="outline-callout experiment"><p><strong>实验 10-8 ★★〔延伸〕：Routing Replay 与训推一致性</strong></p><p>沿固定 NeMo RL 的 Qwen3-30B-A3B R3 配方或其配套 trace，关闭／开启 replay 比较专家集合不一致率、同权重 logprob 差异、记录容量与阶段时间，再比较相同任务下的训练曲线。加入多轮缓存命中、样本 packing 和缺失路由检查，验证 token 对齐；小批检查只证明被覆盖路径，不冒充完整收敛结论。</p><p>条件：进阶·官方受支持配置／配套记录；完整训练作为可选扩展。</p></aside>
 <p><strong>实测结果（10-8）：</strong> 固定 verl 与 Qwen2.5-0.5B 完成官方 rollout → reward/advantage → FSDP backward/AdamW → CUDA IPC 权重交接 → 再次 rollout 的最小真实闭环。主任务（精确奖励、GRPO）两步梯度范数都是 0——advantage 全零，FP32 的变化逐项吻合 AdamW weight decay，BF16 完全不变，<strong>不算策略学习</strong>；预登记的控制任务（固定符号奖励、REINFORCE++）两步梯度 1.618／0.050，参数与 Adam 状态实际变化，接收端权重版本 1／2 实测确认。零梯度与非零更新<strong>都不能直接证明质量提升</strong>。单卡 NO_SHARD 不承担多机归约结论。<a href="experiments/ch10/10-08/README.md">闭环记录与科学负结果</a>。</p>
 <p>同权重下先核对专家选择与 logprob，再检查阶段时间和训练曲线。公开 R3 日志的误差下降没有对应一致的 reward 改善，逐 token 独立核验与完整统计见扩写资料。</p>
 <aside class="outline-callout figure-plan"><p><strong>图 10-7：Rollout 路由怎样进入训练前向（配图计划）</strong></p><p>自绘 SVG，区分 token、逻辑专家 ID、当前路由权重与物理放置；实验 10-8 生成不一致率、额外字节与阶段时间。</p></aside>
@@ -1656,7 +1621,10 @@
 <aside class="outline-callout figure-plan"><p><strong>图 10-9：模型、数据和期限共同决定的训练范围（配图计划）</strong></p><p>实验 10-10 生成可行范围与敏感性曲线；Dense 教学情景和实际 MoE 分开标明。</p></aside>
 <p><strong>扩写资料：</strong> <a href="outlines/extensions/10-%E8%AE%AD%E7%BB%83%E7%B3%BB%E7%BB%9F.md#detail-10.6">本节完整计算、版本与实验变体</a>。</p></section>
 </div></details>
-<div class="chapter-decision"><h4>本章的设计决定</h4><p>提交贯穿任务的逐卡状态表、训练步时间线、供数与恢复预算，以及可满足期限的候选方案；列出仍需实测的量和会改变选择的条件。RL 另交付阶段配比、权重交接峰值及样本／策略版本约束，供第 11 章配置环境、资源池与备用资源。将预测、证据和修正填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
+<div class="chapter-decision"><h4>本章的设计决定</h4><p><strong>V4／V4.1 会话案例：</strong> V4.1 的结构限制还进入了训练过程。报告说明稀疏注意力从头在 64K 序列上训练，层级候选限制在后训练中加入，训练和推理使用相同的候选搜索域；FP4 主 KV 也通过后训练中的量化感知训练适应。模型因此学习在受约束的表示与访问方式下完成任务。训练能适应限制，不等于所有被舍弃的信息都可恢复。</p>
+<p><strong>三条主线的落实：</strong> 固定权重设备还会遇到训练特有的边界。推理中的 KV 必须可写，训练中的策略权重也必须随更新改变；只读权重通路无法直接承接频繁发布的新策略。固定版本的教师、参考模型或奖励模型可能适合这样的设备，但必须分别核对算法中哪些模型保持不变、哪些模型需要更新，以及所需算子是否支持。</p>
+<p>配图与定量推导以本章正文为准；新增图沿用统一浅色填充、矢量箭头和外置图注。先固定任务改变单一约束，再比较重新选择后的方案。</p>
+<p>提交贯穿任务的逐卡状态表、训练步时间线、供数与恢复预算，以及可满足期限的候选方案；列出仍需实测的量和会改变选择的条件。RL 另交付阶段配比、权重交接峰值及样本／策略版本约束，供第 11 章配置环境、资源池与备用资源。将预测、证据和修正填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
 <p class="chapter-end"><a href="outlines/10-%E8%AE%AD%E7%BB%83%E7%B3%BB%E7%BB%9F.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/10-%E8%AE%AD%E7%BB%83%E7%B3%BB%E7%BB%9F.md">扩写资料</a> · 6 节／23 小节 · 10 项练习（3 项核心） · 9 项配图计划</p></article>
 <article class="card" id="ch-11"><span class="tag">第 11 章</span><h3>资源调度与运行环境</h3><p>沿一项代码 Agent 修复任务，从执行与等待推导资源需求，比较环境驻留、暂停与预热，再安排共享资源和模型服务，最后核算失败恢复与成功任务成本。RL 案例用于增加阶段配比、环境重置和批次长尾约束。</p>
 <p><strong>本章判断：</strong> 计算空闲时状态仍可能驻留；释放、复用和迁移状态都要支付准备或恢复代价。资源与模型服务的选择，以满足质量和期限的完整任务及其全部成本评价。</p>
@@ -1683,7 +1651,7 @@
 <p>以 E2B 的 Serverless 沙箱为例，跟随代码 Agent 创建环境、写入文件、执行测试、读取输出并继续下一轮。模型通过工具接口使用环境，计算发生在环境中的 CPU 或另行配置的设备上；SDK 仅展示帮助理解调用关系的步骤。</p>
 <p>沿本章模型与工具的分工展开抽象边界：模型接口承接上层任务表达，工具执行仍承载用户的通用代码。分别定义模型请求共享、GPU 作业隔离与工具环境隔离，再讨论多租户和状态生命周期。 依据：<a href="research/system-abstraction-boundary/report.md#environments">系统抽象边界调研</a>。</p>
 <p>从工具代码所需的隔离边界，引入进程、容器、完整虚拟机和 microVM。沙箱可由多种机制实现；E2B 公开实现使用 Firecracker microVM，容器镜像可以作为模板构建输入。</p>
-<aside class="outline-callout figure-plan"><p><strong>图 11-2：Agent 到 E2B 沙箱的执行路径（配图计划）</strong></p><p>自绘 SVG，显示 Agent、平台调度、节点上的 microVM 与环境内工具；旁图比较容器与虚拟机的内核边界。</p></aside></section>
+<aside class="outline-callout figure-plan"><p><strong>图 11-3：Agent 到 E2B 沙箱的执行路径（配图计划）</strong></p><p>自绘 SVG，显示 Agent、平台调度、节点上的 microVM 与环境内工具；旁图比较容器与虚拟机的内核边界。</p></aside></section>
 <section class="outline-subsection" id="sec-11-2-2"><h4>11.2.2 资源交付与环境创建</h4>
 <p>将第 11.1 节预算落实到 CPU 配额、内存限额、文件与网络需求。CUDA 验证和普通 CPU 工具环境分别配置，不把普通 E2B 沙箱视为默认带 GPU。设备直通用 UB OS 的 QEMU／VFIO 作补充，说明设备怎样交给任务。</p>
 <p>从反复下载镜像、启动系统和安装依赖，引出预制模板与快照恢复。E2B 固定实现中的按需内存页和文件读取，用来解释创建返回后为何仍有首次访问等待；先估算所需字节，再看首个工具可用的时间。</p></section>
@@ -1693,7 +1661,7 @@
 <aside class="outline-callout experiment"><p><strong>实验 11-2 ★〔核心〕：E2B 环境的创建与恢复</strong></p><p>先算容量和启动预算，再使用可用 E2B 环境或配套记录，比较模板创建、暂停后恢复、快照派生与干净重建。检查文件、进程、连接恢复和首个工具完成时间，判断 Agent 与 RL 验证各适合哪种。</p><p>条件：基础·估算／记录分析；有账号时可选实测，不要求付费部署。</p></aside>
 <p><strong>记录结果（11-2）：</strong> 当前环境无 E2B 凭据，因此五条路径（模板创建、暂停恢复、快照派生、干净重建、冷启动）的实测字段全部保持 null，不填造。官方两份文档已按 SHA 封存并核对六项契约：envd ≥ 0.5.0、<strong>快照会断开连接</strong>、文件系统仅保存会重启，以及区域灰度与之分开。这些契约本身已足以判断适用性：Agent 的多轮任务需要连接保持，因此更适合暂停恢复；RL 验证每次都是干净输入，快照派生的断连代价可以接受。<a href="experiments/ch11/11-02/README.md">契约核对与未测字段</a>。</p>
 <aside class="outline-callout figure-plan"><p><strong>记录核对（未实测）：</strong> 文件与内存保留不代表活动连接恢复；四条路径的原始计时仍待补齐。<a href="experiments/ch11/11-02/README.md">契约及待测项</a>。</p></aside>
-<aside class="outline-callout figure-plan"><p><strong>图 11-3：环境生命周期与资源占用（配图计划）</strong></p><p>自绘状态 SVG，连接创建、运行、暂停、恢复、快照派生与终止，由实验 11-2 加入时间和内存数据。</p></aside></section>
+<aside class="outline-callout figure-plan"><p><strong>图 11-7：环境生命周期与资源占用（配图计划）</strong></p><p>自绘状态 SVG，连接创建、运行、暂停、恢复、快照派生与终止，由实验 11-2 加入时间和内存数据。</p></aside></section>
 <section class="outline-subsection" id="sec-11-2-4"><h4>11.2.4 始终驻留、按需创建与提前准备</h4>
 <p>在已知创建、暂停和恢复代价后，对同一条代码 Agent 轨迹比较始终驻留、按需创建、暂停恢复与提前准备。先计算等待模型期间能够释放的 GiB·秒，再核算恢复等待、额外读写和准备工作；预热池按准备时间与到达过程配置，平均值之外另查突发和尾延迟。</p>
 <p>从等待工具调用后才创建环境，推到利用模型生成期间的空隙提前准备。以 SpecBox（2026 年 8 月 v2 预印本）解释按流式意图与历史工具顺序预热。先算可重叠时间，再扣除猜错环境带来的内存驻留与创建工作。</p>
@@ -1701,7 +1669,7 @@
 <aside class="outline-callout experiment"><p><strong>实验 11-3 ★★〔延伸〕：环境预热的收益与浪费</strong></p><p>对同一组多轮任务比较始终驻留、按需创建与提前准备。按预测准确率、提前量、环境内存和工具切换频率计算任务时间与 GiB·秒，找出预热过多开始得不偿失的位置。</p><p>条件：进阶·计算／轨迹分析。</p></aside>
 <p><strong>实测结果（11-3）：</strong> 用 3-4 的真实工具序列在 Mac 上重放，4 种生命周期策略 × 3 轮共 144 次调用、126 个 worker 退出，结果与文件逐项一致。常驻、按需创建、提前 50 ms 准备、整段提前四条路径的实际 RSS 与就绪／调用／销毁时刻完整记录。模型间隔来自重放而非实时推理，且不是 Docker／E2B／SpecBox 环境，因此完整的预测准确率、环境大小与工具切换频率扫描仍待。<a href="experiments/ch11/11-06/README.md">四策略重放与限制</a>。</p>
 <aside class="outline-callout figure-plan"><p><strong>局部实测：</strong> 扩大提前准备窗口没有降低本次调用延迟中位，却增加了进程驻留；该结果来自本地工具进程与模型间隔重放，不代表云沙箱。<a href="experiments/ch11/11-06/README.md">144 次工具调用</a>。</p></aside>
-<p>沿图 11-3 增加策略对照：逐项列出驻留成本、首个工具可用时间、状态恢复条件与适用任务，并用一条模型生成与准备工作的时间线展示可重叠区间。</p>
+<p>沿图 11-7 增加策略对照：逐项列出驻留成本、首个工具可用时间、状态恢复条件与适用任务，并用一条模型生成与准备工作的时间线展示可重叠区间。</p>
 <p><strong>扩写资料：</strong> <a href="outlines/extensions/11-资源调度与运行环境.md#detail-11.2">本节完整推导、版本与实验记录</a>。</p></section>
 </div></details>
 <details class="outline-section" id="sec-11-3"><summary>11.3 共享资源池的分配与调度</summary><div class="outline-section-body"><p>从单任务环境扩大到多任务共享：先判断能否放下，再安排运行顺序和资源回收，最后加入 RL 阶段与批次依赖。</p>
@@ -1709,7 +1677,7 @@
 <p>接回第 6、7 章算出的并行方案：一个作业需要的不是任意若干张卡，还包括卡型、主机内存、CPU 和网络位置。用 ASI 的生产集群研究（OSDI 2026）解释空闲设备为何仍分配不出去，再比较打包放置、迁移整理和跨交换机放置，权衡等待完整一组设备与立即开跑之后的通信代价。</p>
 <aside class="outline-callout experiment"><p><strong>实验 11-4 ★〔延伸〕：异构集群中的成组作业</strong></p><p>使用前文具体模型的设备需求，在含两类 GPU、不同 CPU 余量和两级网络的资源图上安排在线推理、训练和离线任务。比较等待、迁移与跨机器启动的预计完成时间，指出哪种约束使空闲卡无法使用。</p><p>条件：基础·手工放置／短脚本；运行时间与通信输入沿用前章估算。</p></aside>
 <p><strong>计算结果（11-4）：</strong> 在两机架异构资源图上放置四类作业后，仍有 <strong>32 张 L40S 完全空闲</strong>，而只要 2 张卡的验证服务却放不进去——缺的是 CPU（要 48 核，剩余主机只有 24 或 4 核）。使空闲卡不可用的约束依次是：逐卡容量把异构集群切成互不相通的两块；CPU 余量让 GPU 空闲不等于主机可用；成组语义使零散空闲卡拼不成 16 卡训练；同主机约束让跨主机的空闲卡对 TP 推理没有意义。跨机架启动比同机架贵 2.3 倍（420 对 180 s），这也是调度器宁可让卡闲着也不迁移在线服务的原因。<a href="experiments/ch11/11-03/README.md">资源图、放置过程与约束</a>。</p>
-<aside class="outline-callout figure-plan"><p><strong>图 11-4：空闲设备与可用设备的差别（配图计划）</strong></p><p>自绘资源分布 SVG，标注 CPU、卡型、整组需求与网络条件，用实验 11-4 展示调整前后的可行方案；共享链路旁附通信阶段，检查各链路的局部安排能否同时实现。</p></aside></section>
+<aside class="outline-callout figure-plan"><p><strong>图 11-8：空闲设备与可用设备的差别（配图计划）</strong></p><p>自绘资源分布 SVG，标注 CPU、卡型、整组需求与网络条件，用实验 11-4 展示调整前后的可行方案；共享链路旁附通信阶段，检查各链路的局部安排能否同时实现。</p></aside></section>
 <section class="outline-subsection" id="sec-11-3-2"><h4>11.3.2 队列、优先级与抢占代价</h4>
 <p>在同一资源图上加入在线服务预留、队列和低优先级任务。先判断整组资源是否可用，再用等待上限、完成进度和抢占损失安排准入与优先级；说明提高某类任务优先级会推迟哪些工作。DRF、Gavel、Pollux 只作为公平分配与异构调度的背景。</p>
 <p>资源分配比例、实际忙碌时间和有效任务进展分别计量，异构设备不能按卡数等价替换。抢占前核对第 11.1 节的状态表，将保存、迁移、加载与重做计入代价。自建模型副本还需预留权重加载和初始化时间；多 adapter 仅在共用基座时节省对应权重。接下来用 RL 的阶段变化与批次反馈检验这些规则。</p>
@@ -1728,7 +1696,7 @@
 <aside class="outline-callout experiment"><p><strong>实验 11-6 ★★〔延伸〕：验证资源与训练等待</strong></p><p>给定两批代码的生成时刻、编译与执行时间，手算最早完成点，再比较固定配额、先到先服务与按批次目标分配。加入长尾与超时样本，分别记录排队、执行、反馈返回和资源释放，核算资源节省是否抵得上训练组的额外等待。</p><p>条件：进阶·时间线计算／记录回放。</p></aside>
 <p><strong>实测结果（11-6）：</strong> 受控 CPU 超时、线程完成、子进程终止回收与宽限额复验三轮已完成；另有 54 个真实子进程、两批固定工作、三种策略各三轮的对照。结果是一个清晰的权衡：<strong>A 优先策略让 A 的反馈提前，却延后了 B 以及全部资源回收</strong>——资源节省与训练组的额外等待落在不同的账上。逐任务的编译、执行、反馈与回收时刻及策略核验完整封存。仍非 DistRS／verl 的真实模型候选。<a href="experiments/ch11/11-05/README.md">三策略时间线与回收</a>。</p>
 <aside class="outline-callout figure-plan"><p><strong>部分实测：</strong> 超时反馈后线程仍继续工作，终止子进程才观察到资源释放；优先完成一批也会推迟另一批，应连同全部释放时间评价。<a href="experiments/ch11/11-05/README.md">超时与释放</a>、<a href="experiments/ch11/11-05/batch-scheduling/README.md">双批次记录</a>。</p></aside>
-<aside class="outline-callout figure-plan"><p><strong>图 11-5：阶段调度与任务完成时间（配图计划）</strong></p><p>实验 11-5 与实验 11-6 生成两幅时间线 SVG，分别显示 rollout 与训练、验证批次；前者标出权重加载和抢占恢复，后者标出反馈与实际资源释放。环境准备时间线并入图 11-3。</p></aside>
+<aside class="outline-callout figure-plan"><p><strong>图 11-12：阶段调度与任务完成时间（配图计划）</strong></p><p>实验 11-5 与实验 11-6 生成两幅时间线 SVG，分别显示 rollout 与训练、验证批次；前者标出权重加载和抢占恢复，后者标出反馈与实际资源释放。环境准备时间线并入图 11-7。</p></aside>
 <p><strong>扩写资料：</strong> <a href="outlines/extensions/11-资源调度与运行环境.md#detail-11.3">本节完整推导、版本与实验记录</a>。</p></section>
 </div></details>
 <details class="outline-section" id="sec-11-4"><summary>11.4 模型服务的选择与调用成本</summary><div class="outline-section-body"><p>先确定合格模型与实际用量，再加入服务等待和路由，最后比较满足同一需求的容量采购方式。</p>
@@ -1740,7 +1708,7 @@
 <p>沿任务→入口→后端→返回画清鉴权、路由、排队、限流、缓存与计量。换后端之前先检查模型版本、质量、reasoning 设置及状态复用条件，再判断价格与吞吐。</p>
 <p>把第 8、9 章的 KV 复用接到 API 选择：重复系统提示、工具定义、仓库内容和多轮历史能命中多少前缀，多久再次访问，换后端会丢掉多少复用。分别计算未缓存输入、缓存创建、命中读取和按时长计费的存储；比较请求命中率与 token 加权命中率。</p>
 <p>安排 10 轮代码 Agent 算例，固定公共前缀，再改变新增上下文、命中比例、轮间间隔和 TTL，算缓存费用的交点。结合最低缓存长度、前缀变化与工作区边界解释命中条件。API 缓存 token 是计费和复用证据，不能直接反推出 KV 在哪级存储或读取多少字节；资源模型回到第 2、9 章。</p>
-<aside class="outline-callout figure-plan"><p><strong>图 11-6：模型调用的请求路径与计费位置（配图计划）</strong></p><p>自绘 SVG，连接客户端、中转层与不同上游，标明排队、缓存、计量及付费位置；订阅入口按实际产品边界单独标出。</p></aside></section>
+<aside class="outline-callout figure-plan"><p><strong>图 11-14：模型调用的请求路径与计费位置（配图计划）</strong></p><p>自绘 SVG，连接客户端、中转层与不同上游，标明排队、缓存、计量及付费位置；订阅入口按实际产品边界单独标出。</p></aside></section>
 <section class="outline-subsection" id="sec-11-4-3"><h4>11.4.3 排队、限流与模型路由</h4>
 <p>在同一任务质量下绘制模型选择的成本与完成时间范围，再加入缓存与思考预算。API 售价决定使用者账单，生产成本用于供应侧分析，两者分别取证。 依据：<a href="research/token-cost-2023-2026/report.md#economics">成本下降调研</a>。</p>
 <p>将候选写成“模型版本＋服务商／副本＋思考预算＋缓存条件”，先排除不满足质量、上下文和功能的选项，再比较完成时间和成功任务成本。限流区分请求数、输入／生成 token 及并发槽位；长 reasoning 会占用更久的槽位，也可能降低有效请求吞吐。</p>
@@ -1748,7 +1716,7 @@
 <aside class="outline-callout experiment"><p><strong>实验 11-7 ★★〔延伸〕：思考预算、缓存与模型选择</strong></p><p>使用含实际用量字段的配套任务记录，改变 reasoning 预算、缓存命中和后端排队，比较固定路由、最低 token 单价与质量约束下的完成成本。提交成功任务费用、首段可用结果时间、总完成时间和失败率；加入“100 对 1,000 个思考 token”与“缓存命中但有队列”两组手算，解释选择何时变化。</p><p>条件：进阶·先估算再离线回放；扩写时提供记录和版本，不用虚构结果代替测量。</p></aside>
 <p><strong>实测结果（11-7）：</strong> 同一已知修复任务的三条件两轮真实请求：thinking 总 cap 100 与 1,000 <strong>都被截断</strong>；no-thinking 用 84 token 自然结束却只通过 3/6 测试；把总 cap 提到 4,000 后两次自然结束、用 2,524 token，通过 4/6。六次失败与原始用量、事件、质量全部保留，费用为 null。<strong>总 cap 不等于纯思考配额</strong>——它同时包含思考与最终输出，这一点直接改变“100 对 1,000 个思考 token”这组手算的前提。<a href="experiments/ch11/11-08/README.md">三条件记录与手算对照</a>。</p>
 <aside class="outline-callout figure-plan"><p><strong>部分实测：</strong> 放宽生成预算后请求自然结束，修复仍未通过输入不变检查；现有候选不能用于比较合格任务成本。<a href="experiments/ch11/11-08/README.md">原始用量</a>、<a href="experiments/ch11/11-08/wide-budget/README.md">宽预算检查</a>。</p></aside>
-<aside class="outline-callout figure-plan"><p><strong>图 11-7：模型选择的成本与延迟（配图计划）</strong></p><p>实验 11-7 脚本生成 SVG／PDF，以同一质量门槛比较任务成本和时间；子图改变 reasoning 长度、token 命中率与排队。在手算变体中标出两条成本曲线的交点与满足完成时限的区间。假设曲线和实测点分别标明。</p></aside></section>
+<aside class="outline-callout figure-plan"><p><strong>图 11-15：模型选择的成本与延迟（配图计划）</strong></p><p>实验 11-7 脚本生成 SVG／PDF，以同一质量门槛比较任务成本和时间；子图改变 reasoning 长度、token 命中率与排队。在手算变体中标出两条成本曲线的交点与满足完成时限的区间。假设曲线和实测点分别标明。</p></aside></section>
 <section class="outline-subsection" id="sec-11-4-4"><h4>11.4.4 自建容量、按量 API 与订阅的成本比较</h4>
 <p>沿前面确定的质量、速度、缓存和用量条件，比较自建推理容量、按量 API 与产品允许入口下的订阅。自建服务需分配设备，外部服务受配额、并发与限流约束；先筛除无法满足任务量和完成期限的方案，再比较费用。</p>
 <p>以<a href="case-studies/single-agent-serving-cost.md">单 Agent、24×7 serving 成本题</a>为已解算例：先按上下文容量和至少 30 token/s 的单员工速度筛选 GPU 组，再按相同月输出量比较租金与 API 账单。独占速度、共享池吞吐、闲置预留及缓存用量分别计算；完整 GPU／API 情景矩阵、官方时段费率和版本快照留在<a href="experiments/ch13/13-06/single-agent-serving/COMPARISON-RESULTS.md">配套估算</a>，结果属于分析估算。</p>
@@ -1774,10 +1742,14 @@
 <aside class="outline-callout experiment"><p><strong>实验 11-10 ★★〔核心〕：资源池的扩容选择</strong></p><p>给定任务轨迹、资源价格与服务目标，比较扩充 CPU、GPU、内存、API 容量与预热池；提交一页估算、选择及验证计划，说明增加哪种资源不会改善当前瓶颈。</p><p>条件：进阶·方案研究。</p></aside>
 <p><strong>实测结果（11-10）：</strong> 基于已封存的原始记录完成离线分析与一页选择／验证计划：77 组分组记录、8 份文件 manifest 与 228 个来源 SHA 的主复核、7,053 项检查；主 Agent 12 轮的时间、CPU 与 token 独立核对。模型请求占整段 96.128% 而最终只有 2/6 通过——<strong>占比高不等于该资源饱和</strong>，不能据此推断 GPU 饱和并去扩容 GPU。本地路径之外的外部 API 容量与预热池仍需按计划验证。<a href="experiments/ch11/11-10/README.md">一页计划与核对记录</a>。</p>
 <p><a href="experiments/ch11/11-10/DECISION.md">资源池选择记录</a>中，一次真实Agent尝试约96%的墙钟落在模型请求区间，但输出仍未达质量门槛；这不足以证明GPU饱和。该路径调用本地引擎，增加未使用的外部API配额不会改变它。下一步先补服务时间与质量验证，实际扩容收益和成本仍待。</p>
-<aside class="outline-callout figure-plan"><p><strong>图 11-8：一次成功任务的成本是怎样累积的（配图计划）</strong></p><p>实验 11-9、实验 11-10 脚本生成 SVG／PDF，显示模型、环境、失败与闲置成本，并连接相应完成时间；用尝试身份标明重复消息去重后的一次逻辑完成，真实重执行仍计资源消耗。</p></aside>
+<aside class="outline-callout figure-plan"><p><strong>图 11-18：一次成功任务的成本是怎样累积的（配图计划）</strong></p><p>实验 11-9、实验 11-10 脚本生成 SVG／PDF，显示模型、环境、失败与闲置成本，并连接相应完成时间；用尝试身份标明重复消息去重后的一次逻辑完成，真实重执行仍计资源消耗。</p></aside>
 <p><strong>扩写资料：</strong> <a href="outlines/extensions/11-资源调度与运行环境.md#detail-11.5">本节完整推导、版本与实验记录</a>。</p></section>
 </div></details>
-<div class="chapter-decision"><h4>本章的设计决定</h4><p>提交同一任务的执行图、状态与恢复条件表，以及环境、调度、模型服务和扩容方案。明确节省的等待或资源、增加的搬移与重做、改变选择的条件和待补测量；失败尝试与未完成需求保持可见。第 12 章沿用任务质量、资源能力和恢复边界，比较不同执行位置。将预测、证据和修改分别填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
+<div class="chapter-decision"><h4>本章的设计决定</h4><p><strong>V4／V4.1 会话案例：</strong> 沿 V4.1 会话回到完整任务，工具运行和模型状态是两种不同资源。工具等待期间，进程、文件与环境由操作系统管理，全局 KV 和局部 SWA 由模型服务管理；暂停环境不必然释放 KV，保留 KV 也不能恢复丢失的文件与工具副作用。应分别规定两种状态的保存、过期和恢复条件。</p>
+<p><strong>三条主线的落实：</strong> 这里可以补全第 1 章的可编程性边界。模型根据上下文选择动作，工具接口把动作交给真实程序；文件、进程、网络连接和权限最终仍由操作系统及运行环境管理。同一个固定模型可以通过不同上下文完成多种任务，也可以调用不同工具，但模型输出不会自动赋予执行权限。AI Infra 因而同时承接集中而重复的模型计算，以及多样、动态的工具程序。前者适合专门优化，后者继续需要通用运行环境。</p>
+<p>模型变快以后，环境准备可能从可隐藏的后台工作变成关键路径。假设下一次工具调用必然发生，模型还需 10 秒思考，环境创建需 6 秒，从模型开始时提前创建即可隐藏这 6 秒。若模型阶段缩短至 1 秒，同样时机开始创建仍要再等 5 秒。第一轮只更换模型设备，保持准备策略；第二轮比较更早准备、保留热环境和按需等待，核算提前占用资源及最终未调用工具的浪费。</p>
+<p>配图与定量推导以本章正文为准；新增图沿用统一浅色填充、矢量箭头和外置图注。先固定任务改变单一约束，再比较重新选择后的方案。</p>
+<p>提交同一任务的执行图、状态与恢复条件表，以及环境、调度、模型服务和扩容方案。明确节省的等待或资源、增加的搬移与重做、改变选择的条件和待补测量；失败尝试与未完成需求保持可见。第 12 章沿用任务质量、资源能力和恢复边界，比较不同执行位置。将预测、证据和修改分别填入<a href="outlines/decision-record.md">跨章设计决定</a>。</p></div>
 <p class="chapter-end"><a href="outlines/11-%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E4%B8%8E%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/11-%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E4%B8%8E%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83.md">扩写资料</a> · 5 节／18 小节 · 10 项练习（3 项核心） · 8 项配图计划</p></article>
 <article class="card" id="ch-12"><span class="tag">第 12 章</span><h3>端边云协同</h3><p>前文已经确定模型服务和任务环境，本章改变它们的物理位置。先估算任务放在哪里，再用分工、实际传输和无线条件修正预算，用 Queqiao 检验归因，最后形成完整部署决定。</p>
 <p><strong>本章判断：</strong> 执行位置要按相同质量下的完整交互选择；计算收益必须覆盖新增传输、准备与恢复代价。字节表示、往返次数和复用条件可能使选择翻转，优化收益由充分调优后的基线验证。</p>
@@ -1897,9 +1869,15 @@
 <p>为同一任务填一张部署决策表：候选执行位置、传输内容与频次、质量与时限、完整费用、恢复方式、证据与未知量、选择翻转条件。沿“12.1 初选—12.2 分工—12.3–12.4 校正—12.5 验证”的顺序保留判断变化，并用第 11 章的调度、路由与恢复机制落实方案。</p>
 <p>改变一个未在前文直接计算的带宽、RTT、调用次数或故障条件，说明选择是否翻转。允许得到没有可行方案的结论，并指出需要改变的服务能力或任务条件。回看第 1 章资源估算，说明哪些下界仍能排除方案，哪些必须加入交互与恢复信息才能决定部署。</p>
 <p><strong>扩写资料：</strong> <a href="outlines/extensions/12-端边云协同.md#detail-12.6">本节完整计算、版本与实验变体</a>。</p></section>
+<section class="outline-subsection" id="sec-12-6-4"><h4>12.6.4 约束改变后，重新选择完整系统</h4>
+<p>先保持任务轨迹不变，比较模型 8 秒、其他串行阶段 2 秒的执行时间；模型整体快 10 倍后总时间为 2.8 秒。再比较本地执行、热环境与上下文总结，在同质量目标下计入新增成本，最后分别检查可写状态的供给和固定权重版本的寿命。新增完整任务对照图见正文。</p></section>
 </div></details>
-<div class="chapter-decision"><h4>本章的设计决定</h4><p>为同一任务提交部署决策表，记录执行位置、跨设备字节与频次、质量与时限、完整费用、恢复方式和选择翻转条件。保留初选、传输校正、实测归因与最终决定的差异；证据不足的候选标出待测量。将预测、证据和修改分别填入<a href="outlines/decision-record.md">跨章设计决定</a>，完成从第 1 章资源下界到完整任务部署的推导。</p></div>
-<p class="chapter-end"><a href="outlines/12-%E7%AB%AF%E8%BE%B9%E4%BA%91%E5%8D%8F%E5%90%8C.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/12-%E7%AB%AF%E8%BE%B9%E4%BA%91%E5%8D%8F%E5%90%8C.md">扩写资料</a> · 6 节／20 小节 · 8 项练习（3 项核心） · 7 项配图计划</p></article>
+<div class="chapter-decision"><h4>本章的设计决定</h4><p><strong>V4／V4.1 会话案例：</strong> V4／V4.1 与固定权重实验可以放在同一条会话中检验。若权重供给几乎免费，而可写 KV 仍昂贵，跨层共享、低精度状态和缓存恢复仍有价值；但 CED 省去的是一部分输入计算，其收益应按改变后的计算与访存比例重算。若进一步令 KV 容量和带宽都很便宜，第二轮可以考虑更多独立全局 KV、更高精度或更大的候选池，却仍须支付注意力计算、Prefill、网络启动和工具执行的代价，不能预言模型一定恢复全注意力。</p>
+<p><strong>三条主线的落实：</strong></p>
+<p>### 12.6.4 约束改变后，重新选择完整系统</p>
+<p>配图与定量推导以本章正文为准；新增图沿用统一浅色填充、矢量箭头和外置图注。先固定任务改变单一约束，再比较重新选择后的方案。</p>
+<p>为同一任务提交部署决策表，记录执行位置、跨设备字节与频次、质量与时限、完整费用、恢复方式和选择翻转条件。保留初选、传输校正、实测归因与最终决定的差异；证据不足的候选标出待测量。将预测、证据和修改分别填入<a href="outlines/decision-record.md">跨章设计决定</a>，完成从第 1 章资源下界到完整任务部署的推导。</p></div>
+<p class="chapter-end"><a href="outlines/12-%E7%AB%AF%E8%BE%B9%E4%BA%91%E5%8D%8F%E5%90%8C.md">本章 Markdown 大纲</a> · <a href="outlines/extensions/12-%E7%AB%AF%E8%BE%B9%E4%BA%91%E5%8D%8F%E5%90%8C.md">扩写资料</a> · 6 节／21 小节 · 8 项练习（3 项核心） · 7 项配图计划</p></article>
 </section>
 
   <section id="shared-cases">
@@ -1931,7 +1909,7 @@
       <li><a href="case-studies/opentallas.md">OpenTallas案例</a></li>
       <li><a href="case-studies/pd-af-heterogeneous.md">异构 PD／AF案例</a></li>
     </ul>
-    <p class="col">十二章共 72 节、251 个小节、97 项实验与计算、98 项配图计划。当前交付是写作安排；配套程序、数据包、本书实测和正式图片随后制作。原参考库的归档与阅读深度见核对记录。</p>
+    <p class="col">十二章共 72 节、253 个小节、97 项实验与计算、98 项配图计划。当前交付是写作安排；配套程序、数据包、本书实测和正式图片随后制作。原参考库的归档与阅读深度见核对记录。</p>
   </section>
 
   <footer class="foot">草案 22 · 2026-09-08。十二章以降低数据搬移代价组织主张、依赖、作者案例与核心练习；<a href="research/outline-revision-2026-09-08/README.md">改动记录</a>保留新旧映射与修订前快照。</footer>

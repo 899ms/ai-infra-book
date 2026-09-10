@@ -17,6 +17,12 @@
 
 论文和较大的计算输入、测量记录使用 Git LFS 保存。需要复算或读取原始记录时，克隆仓库后先运行 `git lfs install` 和 `git lfs pull`，再按对应项目的说明执行校验。
 
+## PDF 阅读与编译
+
+[全书 PDF](book/AI-Infra-Book.pdf) · [第二章排版样张](book/AI-Infra-Book-Chapter-02.pdf) · [封面预览](book/AI-Infra-Book-Cover.png)
+
+沿用 AI Agent Book 的 ElegantBook / XeLaTeX 模板。运行 `bash book/build_pdf.sh` 编译全书，或加 `--chapter 2` 只编译第二章；依赖和模板来源见 [PDF 编译说明](book/README.md)。
+
 ## 这本书怎样讲
 
 首章从六层全景与关键数字开始，估算一次模型生成，再用 TPU、SmartNIC 和 UB 的短例解释架构选择。模型与负载给出必须处理的数据；芯片、执行与互联改变复用、放置和等待；推理训练把这些机制组成有效服务；环境与端边云把服务放回完整任务。OpenTallas 的供数与通信修正融入芯片和超节点，Queqiao 的基线修正留在端边云；各章用具体证据修正选择。
@@ -46,7 +52,7 @@
 
 每章三项核心练习，共 36 项，其余就地标为延伸。练习先预测，再计算或测量，最后改变条件并修改选择；完整变体见扩写资料。公式、练习与图共用输入，机制图自绘 SVG，数据图由原始记录与脚本生成 SVG／PDF。
 
-十二章共 72 节、251 个小节、97 项实验与计算、98 项配图计划。[统一计算项目](calculations/README.md)交付官方配置、可复现代码与分析结果；[独立实验项目](experiments/README.md)为这 106 项各建一个可独立运行的目录（程序、README 与结果），正文在每个实验块之后回填一段简洁结果并链接到对应目录。计算类实验复用统一计算项目的结果，不重复实现公式；实跑类保留完整原始记录、哈希与失败尝试，仍未覆盖的部分逐项写在 `experiments/inventory.json` 的 `remaining` 字段。本书实测 M2 Max 38 核 GPU／96 GB 与 RTX PRO 6000 Blackwell Workstation Edition；H100／4090 保留为历史判断，昇腾使用已有公开证据，配置不同的结果分别使用。
+十二章共 72 节、253 个小节、97 项实验与计算、98 项配图计划。[统一计算项目](calculations/README.md)交付官方配置、可复现代码与分析结果；[独立实验项目](experiments/README.md)为这 106 项各建一个可独立运行的目录（程序、README 与结果），正文在每个实验块之后回填一段简洁结果并链接到对应目录。计算类实验复用统一计算项目的结果，不重复实现公式；实跑类保留完整原始记录、哈希与失败尝试，仍未覆盖的部分逐项写在 `experiments/inventory.json` 的 `remaining` 字段。本书实测 M2 Max 38 核 GPU／96 GB 与 RTX PRO 6000 Blackwell Workstation Edition；H100／4090 保留为历史判断，昇腾使用已有公开证据，配置不同的结果分别使用。
 
 ## 材料入口
 

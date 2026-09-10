@@ -1,0 +1,54 @@
+# AI Infra Book · LaTeX 排版
+
+沿用 AI Agent Book 的 ElegantBook 系列模板，生成真正由 XeLaTeX 排版的 PDF。正文读取 `manuscripts/01-*.md` 至 `12-*.md`，不维护另一套章节副本。
+
+- [全书 PDF](AI-Infra-Book.pdf)
+- [第二章 PDF](AI-Infra-Book-Chapter-02.pdf)
+- [封面 PDF](AI-Infra-Book-Cover.pdf)
+- [封面预览](AI-Infra-Book-Cover.png)
+
+## 编译
+
+在仓库根目录执行：
+
+```bash
+# 十二章、封面和目录
+bash book/build_pdf.sh
+
+# 只看第二章，保留原来的第 2 章及 2.x 编号
+bash book/build_pdf.sh --chapter 2
+```
+
+依赖为 Python 3.9+、Pandoc 3.x 和含 XeLaTeX 的 TeX Live/MacTeX。普通正文保留 AI Agent Book 的 Songti SC（宋体），代码使用 Menlo；中文粗体与章节标题使用项目自带的思源黑体 Bold，图注和图表也统一使用思源黑体。字体文件与 OFL 许可证见 `manuscripts/figure_style/fonts/`，无需另行安装思源黑体。没有 Songti SC 时保留原模板的 Noto Sans CJK SC 回退。可选的 Poppler（`pdfseparate`、`pdftoppm`）用于从全书导出独立封面 PDF 和 PNG；若安装 Ghostscript（`gs`），封面 PDF 只保留本页使用的字体和资源。当前机器已安装这些依赖。封面和章节 PDF 中的日期是编译日期。
+
+`build_pdf.py` 先调用 Pandoc 生成 LaTeX，再执行三遍 XeLaTeX，稳定目录、交叉引用和跨页表格。各次日志、中间 Markdown、LaTeX 和辅助文件保存在 `book/build/`，不会覆盖正文。输出与构建记录保存在 `book/AI-Infra-Book*.pdf` 和 `*-build.json`。
+
+图表使用正文对应的 PDF 矢量文件，缺少 PDF 时使用 PNG；编译前如修改过图表，应先运行相应章节的图表构建脚本。构建器会合并图片说明与紧随其后的图注，避免重复显示，保留原有手工图号。所有表格保持竖向页面，第二章末的矩阵查阅表连续排版。Markdown 脚注保留为 PDF 页脚注，各章脚注互不冲突。指向计算记录和参考材料的文件链接相对于本仓库目录保留，因此这些附件需随仓库一起访问。
+
+## 模板与封面
+
+`template/agent-book-preamble.tex`、`template/agent-book-cover.tex` 和 `template/agent-book-build_pdf.sh` 直接复制自相邻仓库 `ai-agent-book/book/`，原件保持不变。`template/provenance.json` 记录来源与哈希。`elegantbook.cls` 固定使用本机已有的 ElegantBook 4.6，保留原始版权及 LPPL 许可声明。
+
+`preamble.tex` 加载原模板并追加本书需要的适配：中文无衬线字体按正常字号显示、原生数学排版、图表浮动、长链接换行和竖向矩阵表。正文继续使用原系列的深蓝标题与页眉、宋体正文、浅色代码框和引文框。
+
+`cover.tex` 是本书的新封面：保留原系列的白底、深蓝色带、标题和作者排布，中心图案改成“芯片—互联—计算集群”。标题固定在距页顶 5.2 cm 处，副标题为 7.05 cm，版本日期距页底 3.95 cm，留白不再受正文段落高度影响。图案完全由 TikZ 绘制，文字与线条均为矢量，可直接修改颜色、标题和几何形状，无需外部图片服务。书名、副标题和作者沿用本仓库 README。
+
+## 校验
+
+运行 `python3 book/verify_pdf.py` 检查全书和第二章的书名、章节、200K 图表数据、字体嵌入、页面文字边界与 LaTeX 关键警告。结果保存到 [pdf-validation.json](pdf-validation.json)。已检查封面、正文、长上下文图及连续横向矩阵表的实际渲染。
+
+## 紧凑图文排版
+
+正文配图等比缩放，宽度上限为正文行宽的 68%，高度上限为正文区高度的 38%。较高的图保留足够空间，让小字仍可阅读；标题、图注不随图片缩放。图片采用 `!htbp` 浮动，优先放在引用处，放不下时移至页顶、页底或浮动页，让文字继续排下去。浮动页中的图采用正常间距，不把空白拉伸到整页。
+
+所有表格按正常正文页宽排版：列间距缩小为 2.5 pt，表格宽度控制在行宽以内，中文及长公式可在单元格中换行。表格直接接排正文，长表按需跨页并重复表头；不使用旋转页面或强制单表独占一页。短表标题随表体一起排版；进入长表前处理待排图片，避免分页冲突。
+
+公式直接交给 Pandoc / LaTeX 的原生数学环境，保持正文对应的数学字号及正常上下标，不经过 `adjustbox`、`resizebox` 或图片宽度设置。全局图形宽高均已清空，尺寸限制只作用于真正的图片。构建产物采用原子替换，打开 PDF 时不会读到编译中的半份文件。
+
+可选运行 `python3 book/check_layout.py`（需安装 PyMuPDF），直接检查 PDF 中的数学字体大小与封面标题位置，并保存代表页面的渲染。2026-09-10 的紧凑排版复核见 [修订记录](../reviews/pdf-flow-revision-2026-09-10/README.md)。
+
+## 中文字体体例
+
+普通正文维持宋体；中文粗体（包括 Markdown 粗体、章标题和各级小节标题）映射到真正的思源黑体 Bold，不再对宋体做合成加粗。图注与所有章节配图也统一为思源黑体。拉丁字母与原生公式保留原模板字体。
+
+字体随项目提供并嵌入 PDF；SVG 图中文字转为矢量轮廓，避免阅读端缺少字体时回退。可运行 `python3 book/check_typography.py`（需 PyMuPDF）核对所有正文引用的配图及成书字体，并输出第二章字体预览。字体来源和许可证见 [字体说明](../manuscripts/figure_style/fonts/README.md)。

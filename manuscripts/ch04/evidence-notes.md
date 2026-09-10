@@ -81,7 +81,7 @@ Jouppi 等，*In-Datacenter Performance Analysis of a Tensor Processing Unit*，
 [OpenTallas 案例](../../case-studies/opentallas.md)，采用锁定的 `39b96158d35b24bd2bcd49061a689aea6893d2ed` 分析版本及案例 A、C、F。作者与项目的关系在正文披露；性能、lane 和回本例子分别使用自己的输入范围。
 ### stage
 
-[逐阶段资源界建模说明](../../calculations/research/stage-resource-bounds/README.md)；实际模型算子范围见[Qwen3-8B prefill128 资源结果](../../calculations/results/stage-resources-qwen8-b1-prefill128.md)。默认缺少速率时不填造完整时间。
+[各阶段耗时下界的建模说明](../../calculations/research/stage-resource-bounds/README.md)；实际模型算子范围见[Qwen3-8B prefill128 资源结果](../../calculations/results/stage-resources-qwen8-b1-prefill128.md)。默认缺少速率时不填造完整时间。
 ### hardware
 
 [硬件来源与精度审查](../../calculations/HARDWARE-AUDIT.md)及[官方基础表](../../calculations/results/hardware.md)。4090 的累加条件反例来自官方 RTX 架构白皮书附录；字段未公开不代表硬件缺失该能力。

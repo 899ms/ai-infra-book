@@ -11,7 +11,7 @@
 | 文件 | 内容 |
 | --- | --- |
 | figure-9-1-organization | 多卡协作完整副本和计算分工 |
-| figure-9-2-state | 请求阶段、实例分工与状态寿命 |
+| figure-9-2-state | 请求阶段、实例分工与状态保存时间 |
 | figure-9-3-pd | 阶段配比与请求率 |
 | figure-9-4-allocation | 不同请求下八个执行单元的分工 |
 | figure-9-5-local | 专家权重搬运与CPU就地计算 |
@@ -91,7 +91,7 @@ CPU 专家先用低复用、高复用数值解释选择翻转，再给出路径�
 | 9-2 | 每个副本都能完成整次推理，可以分别接收独立请求。副本自身也可以由多张卡组成。 | [SVG](figure-9-organization-1.svg) | [PNG](figure-9-organization-1.png) | [PDF](figure-9-organization-1.pdf) |
 | 9-3 | P 处理输入，D 继续生成。两个服务池分别调度，上下文 KV 从 P 交给 D。 | [SVG](figure-9-organization-2.svg) | [PNG](figure-9-organization-2.png) | [PDF](figure-9-organization-2.pdf) |
 | 9-4 | 注意力与 FFN／专家分别执行，隐状态作为激活在两侧往返。每层都需要这次交接。 | [SVG](figure-9-organization-3.svg) | [PNG](figure-9-organization-3.png) | [PDF](figure-9-organization-3.pdf) |
-| 9-5 | 计算暂停期间，状态仍需保留。示意同一请求从 prefill、decode 到工具等待和下一轮的状态寿命；横轴按阶段排列，不表示相等时长，EC 仅在有视觉输入时出现。 | [SVG](figure-9-2-state.svg) | [PNG](figure-9-2-state.png) | [PDF](figure-9-2-state.pdf) |
+| 9-5 | 计算暂停期间，状态仍需保留。示意同一请求从 prefill、decode 到工具等待和下一轮的状态保存时间；横轴按阶段排列，不表示相等时长，EC 仅在有视觉输入时出现。 | [SVG](figure-9-2-state.svg) | [PNG](figure-9-2-state.png) | [PDF](figure-9-2-state.pdf) |
 | 9-6 | 源 P 保留完整 1.125 GiB 状态，目的 D 同时分配 1.125 GiB 接收空间。传输过程共占 2.25 GiB。 | [SVG](figure-9-kv-residency.svg) | [PNG](figure-9-kv-residency.png) | [PDF](figure-9-kv-residency.pdf) |
 | 9-7 | 数据到齐并满足可见性条件后，完成标记允许 D 读取状态。标记指示使用顺序，完整载荷已经写到目的端。 | [SVG](figure-9-kv-publish.svg) | [PNG](figure-9-kv-publish.png) | [PDF](figure-9-kv-publish.pdf) |
 | 9-8 | 本算例将执行权交给 D 后释放 P 的源缓冲，D 保留上下文并继续生成。源端空间用于后续请求。 | [SVG](figure-9-kv-release.svg) | [PNG](figure-9-kv-release.png) | [PDF](figure-9-kv-release.pdf) |
@@ -106,7 +106,7 @@ CPU 专家先用低复用、高复用数值解释选择翻转，再给出路径�
 | 9-17 | 相同总载荷下，消息数放大启动开销。两条曲线总载荷均为 1.125 GiB、有效带宽均为 25 GB/s，分别串行发送 1 次和 72 次；差值为 $71\alpha$，纵轴从48.2 ms起以显示差异。这样保持总字节数不变，只比较消息数量的影响，实际一步 AF 仅传 576 KiB。 | [SVG](figure-9-8-handoff.svg) | [PNG](figure-9-8-handoff.png) | [PDF](figure-9-8-handoff.pdf) |
 | 9-18 | 总计 512 次专家分派均分到八张卡，每卡 64 次；虚线表示全部计算结束、可以汇合的时刻。 | [SVG](figure-9-9-balance.svg) | [PNG](figure-9-9-balance.png) | [PDF](figure-9-9-balance.pdf) |
 | 9-19 | 512 次全部落在卡 0，其他卡空闲。相同总计算量，需要等待卡 0 完成；两图使用相同时间尺度。 | [SVG](figure-9-balance-hotspot.svg) | [PNG](figure-9-balance-hotspot.png) | [PDF](figure-9-balance-hotspot.pdf) |
-| 9-20 | 热点持续多久，专家复制才值得。一次准备约 10.6 ms，每批节省约 0.40 ms；曲线使用例 9.5 未舍入时间计算，第 27 批开始净获益。七张接收卡各需额外 36 MiB，假设容量足够且热点不变。 | [SVG](figure-9-10-experts.svg) | [PNG](figure-9-10-experts.png) | [PDF](figure-9-10-experts.pdf) |
+| 9-20 | 热点持续多久，专家复制才值得。一次准备约 10.6 ms，每批节省约 0.40 ms；曲线使用例 9.5 中未经四舍五入的时间计算，第 27 批开始净获益。七张接收卡各需额外 36 MiB，假设容量足够且热点不变。 | [SVG](figure-9-10-experts.svg) | [PNG](figure-9-10-experts.png) | [PDF](figure-9-10-experts.pdf) |
 | 9-21 | 整批依次分派 0.2 ms、计算 0.6 ms、合并 0.2 ms，总时间 1 ms。 | [SVG](figure-9-11-overlap.svg) | [PNG](figure-9-11-overlap.png) | [PDF](figure-9-11-overlap.pdf) |
 | 9-22 | 每微批次各阶段时间减半，三条轨道使用独立资源。第一微批次计算时可以分派第二微批次，总时间降到 0.8 ms。 | [SVG](figure-9-overlap-pipeline.svg) | [PNG](figure-9-overlap-pipeline.png) | [PDF](figure-9-overlap-pipeline.pdf) |
 | 9-23 | 虚线表示按标识查找对象位置。目录用于定位，实际 KV 对象用于恢复计算；路由前还需确认对象版本与可用性。 | [SVG](figure-9-cache-directory.svg) | [PNG](figure-9-cache-directory.png) | [PDF](figure-9-cache-directory.pdf) |
@@ -118,8 +118,8 @@ CPU 专家先用低复用、高复用数值解释选择翻转，再给出路径�
 | 9-29 | 服务余量决定启动积压的消退速度。连续流量模型，每秒到达四请求，启动 10 秒后积压 40 个。就绪后服务率为八或五请求/s，净排空率分别为四或一请求/s，从开始启动算起在第 20 或 50 秒排空。例 9.7 的排空期限为第 25 秒。 | [SVG](figure-9-17-service.svg) | [PNG](figure-9-17-service.png) | [PDF](figure-9-17-service.pdf) |
 | 9-30 | 后台复制需要赶上仍在增长的状态。开始时待复制状态为 1 GiB，源端以 0.5 GiB/s 生成新状态，目标以 2 GiB/s 复制；两条曲线相交前，垂直距离就是尚未复制的数据量。相交后，目标只需跟随源端的新增状态。 | [SVG](figure-9-14-migration.svg) | [PNG](figure-9-14-migration.png) | [PDF](figure-9-14-migration.pdf) |
 | 9-31 | 输出记录决定继续哪条序列，KV 检查点决定从哪里补算。假定 129 个输出均已可靠记录，但 KV 只保存了原输入。下方按输入、前 128 个输出和第 129 个输出分段示意，宽度不按 token 数量比例绘制。 | [SVG](figure-9-15-recovery.svg) | [PNG](figure-9-15-recovery.png) | [PDF](figure-9-15-recovery.pdf) |
-| 9-32 | P 直接向 D 交接 1.125 GiB 上下文 KV 缓存，只经过一条数据边。 | [SVG](figure-9-16-composition.svg) | [PNG](figure-9-16-composition.png) | [PDF](figure-9-16-composition.pdf) |
-| 9-33 | P 先向池写入完整 1.125 GiB 并发布，D 再取回同一对象，共经过两条边。后续实例还可以复用池中对象。 | [SVG](figure-9-composition-pool.svg) | [PNG](figure-9-composition-pool.png) | [PDF](figure-9-composition-pool.pdf) |
+| 9-32 | P 直接向 D 交接 1.125 GiB 上下文 KV 缓存，只经过一次直接传输。 | [SVG](figure-9-16-composition.svg) | [PNG](figure-9-16-composition.png) | [PDF](figure-9-16-composition.pdf) |
+| 9-33 | P 先向池写入完整 1.125 GiB 并发布，D 再取回同一对象，共经过写入和取回两次传输。后续实例还可以复用池中对象。 | [SVG](figure-9-composition-pool.svg) | [PNG](figure-9-composition-pool.png) | [PDF](figure-9-composition-pool.pdf) |
 
 
 ## V4／V4.1 会话修订后的当前图表
@@ -132,7 +132,7 @@ CPU 专家先用低复用、高复用数值解释选择翻转，再给出路径�
 | 9-2 | 每个副本都能完成整次推理，可以分别接收独立请求。副本自身也可以由多张卡组成。 | [SVG](figure-9-organization-1.svg) |
 | 9-3 | P 处理输入，D 继续生成。两个服务池分别调度，上下文 KV 从 P 交给 D。 | [SVG](figure-9-organization-2.svg) |
 | 9-4 | 注意力与 FFN／专家分别执行，隐状态作为激活在两侧往返。每层都需要这次交接。 | [SVG](figure-9-organization-3.svg) |
-| 9-5 | 计算暂停期间，状态仍需保留。示意同一请求从 prefill、decode 到工具等待和下一轮的状态寿命；横轴按阶段排列，不表示相等时长，EC 仅在有视觉输入时出现。 | [SVG](figure-9-2-state.svg) |
+| 9-5 | 计算暂停期间，状态仍需保留。示意同一请求从 prefill、decode 到工具等待和下一轮的状态保存时间；横轴按阶段排列，不表示相等时长，EC 仅在有视觉输入时出现。 | [SVG](figure-9-2-state.svg) |
 | 9-6 | 源 P 保留完整 1.125 GiB 状态，目的 D 同时分配 1.125 GiB 接收空间。传输过程共占 2.25 GiB。 | [SVG](figure-9-kv-residency.svg) |
 | 9-7 | 数据到齐并满足可见性条件后，完成标记允许 D 读取状态。标记指示使用顺序，完整载荷已经写到目的端。 | [SVG](figure-9-kv-publish.svg) |
 | 9-8 | 本算例将执行权交给 D 后释放 P 的源缓冲，D 保留上下文并继续生成。源端空间用于后续请求。 | [SVG](figure-9-kv-release.svg) |
@@ -147,7 +147,7 @@ CPU 专家先用低复用、高复用数值解释选择翻转，再给出路径�
 | 9-17 | 相同总载荷下，消息数放大启动开销。两条曲线总载荷均为 1.125 GiB、有效带宽均为 25 GB/s，分别串行发送 1 次和 72 次；差值为 $71\alpha$，纵轴从48.2 ms起以显示差异。这样保持总字节数不变，只比较消息数量的影响，实际一步 AF 仅传 576 KiB。 | [SVG](figure-9-8-handoff.svg) |
 | 9-18 | 总计 512 次专家分派均分到八张卡，每卡 64 次；虚线表示全部计算结束、可以汇合的时刻。 | [SVG](figure-9-9-balance.svg) |
 | 9-19 | 512 次全部落在卡 0，其他卡空闲。相同总计算量，需要等待卡 0 完成；两图使用相同时间尺度。 | [SVG](figure-9-balance-hotspot.svg) |
-| 9-20 | 热点持续多久，专家复制才值得。一次准备约 10.6 ms，每批节省约 0.40 ms；曲线使用例 9.5 未舍入时间计算，第 27 批开始净获益。七张接收卡各需额外 36 MiB，假设容量足够且热点不变。 | [SVG](figure-9-10-experts.svg) |
+| 9-20 | 热点持续多久，专家复制才值得。一次准备约 10.6 ms，每批节省约 0.40 ms；曲线使用例 9.5 中未经四舍五入的时间计算，第 27 批开始净获益。七张接收卡各需额外 36 MiB，假设容量足够且热点不变。 | [SVG](figure-9-10-experts.svg) |
 | 9-21 | 整批依次分派 0.2 ms、计算 0.6 ms、合并 0.2 ms，总时间 1 ms。 | [SVG](figure-9-11-overlap.svg) |
 | 9-22 | 每微批次各阶段时间减半，三条轨道使用独立资源。第一微批次计算时可以分派第二微批次，总时间降到 0.8 ms。 | [SVG](figure-9-overlap-pipeline.svg) |
 | 9-23 | 虚线表示按标识查找对象位置。目录用于定位，实际 KV 对象用于恢复计算；路由前还需确认对象版本与可用性。 | [SVG](figure-9-cache-directory.svg) |
@@ -160,5 +160,5 @@ CPU 专家先用低复用、高复用数值解释选择翻转，再给出路径�
 | 9-30 | 服务余量决定启动积压的消退速度。连续流量模型，每秒到达四请求，启动 10 秒后积压 40 个。就绪后服务率为八或五请求/s，净排空率分别为四或一请求/s，从开始启动算起在第 20 或 50 秒排空。例 9.7 的排空期限为第 25 秒。 | [SVG](figure-9-17-service.svg) |
 | 9-31 | 后台复制需要赶上仍在增长的状态。开始时待复制状态为 1 GiB，源端以 0.5 GiB/s 生成新状态，目标以 2 GiB/s 复制；两条曲线相交前，垂直距离就是尚未复制的数据量。相交后，目标只需跟随源端的新增状态。 | [SVG](figure-9-14-migration.svg) |
 | 9-32 | 输出记录决定继续哪条序列，KV 检查点决定从哪里补算。假定 129 个输出均已可靠记录，但 KV 只保存了原输入。下方按输入、前 128 个输出和第 129 个输出分段示意，宽度不按 token 数量比例绘制。 | [SVG](figure-9-15-recovery.svg) |
-| 9-33 | P 直接向 D 交接 1.125 GiB 上下文 KV 缓存，只经过一条数据边。 | [SVG](figure-9-16-composition.svg) |
-| 9-34 | P 先向池写入完整 1.125 GiB 并发布，D 再取回同一对象，共经过两条边。后续实例还可以复用池中对象。 | [SVG](figure-9-composition-pool.svg) |
+| 9-33 | P 直接向 D 交接 1.125 GiB 上下文 KV 缓存，只经过一次直接传输。 | [SVG](figure-9-16-composition.svg) |
+| 9-34 | P 先向池写入完整 1.125 GiB 并发布，D 再取回同一对象，共经过写入和取回两次传输。后续实例还可以复用池中对象。 | [SVG](figure-9-composition-pool.svg) |

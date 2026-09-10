@@ -125,7 +125,7 @@ for ys,label,col in [(restore,'先恢复权重和 KV，再释放训练状态','r
 ax.axhline(64,ls='--',color=C['muted']);ax.text(2.82,65.5,'64 GiB',ha='right',fontsize=11)
 for yy,dy in [(restore[1]/2**30,3),(staged[1]/2**30,-6)]:ax.annotate(f'{yy:.1f} GiB',(1,yy),xytext=(12,dy),textcoords='offset points',fontsize=12)
 ax.annotate('',xy=(1.63,restore[1]/2**30),xytext=(1.63,staged[1]/2**30),arrowprops={'arrowstyle':'<->','color':C['orange'],'lw':1.5});ax.text(1.7,73,'24 GiB\n一份 KV 池',fontsize=11,color=C['orange'],va='center')
-ax.set(xticks=x,xticklabels=['训练迭代结束','装载生成权重','释放训练状态','开始生成'],ylabel='显存占用 / GiB',ylim=(0,103),yticks=[0,20,40,60,80,100],xlim=(-.1,3.15));ax.legend(frameon=False,fontsize=11,loc='upper left');ax.grid(axis='y',alpha=.15)
+ax.set(xticks=x,xticklabels=['训练迭代结束','加载生成权重','释放训练状态','开始生成'],ylabel='显存占用 / GiB',ylim=(0,103),yticks=[0,20,40,60,80,100],xlim=(-.1,3.15));ax.legend(frameon=False,fontsize=11,loc='upper left');ax.grid(axis='y',alpha=.15)
 save(f,'figure-10-6-rl');data['10-6']={'phase_live_bytes':v,'net_budget_gib':64,'restore_bytes':restore,'staged_bytes':staged,'x_unit':'ordered steps, not elapsed time'}
 
 # 7. One relation: preserve discrete choices, recompute current values.

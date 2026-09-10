@@ -75,7 +75,7 @@ python3 -m venv /tmp/ch07-book-venv
 | 7-12 | 主机 RPC 的参数从 CPU A 所在主机出发，经网卡和网络到达 CPU B 所在主机，由远端执行请求。箭头表示参数数据路径，返回结果沿反方向传送。 | [SVG](figure-7-7-access.svg) | [PNG](figure-7-7-access.png) | [PDF](figure-7-7-access.pdf) |
 | 7-13 | 数据从 GPU 内存直接经过网卡到达远端 GPU 内存；虚线表示 CPU 提交请求，数据载荷无需经过 CPU 内存。映射和访问权限预先建立。 | [SVG](figure-7-access-1.svg) | [PNG](figure-7-access-1.png) | [PDF](figure-7-access-1.pdf) |
 | 7-14 | GPU 通过 NVLink 访问对端 GPU 内存，由发起设备执行已授权的访问。 | [SVG](figure-7-access-2.svg) | [PNG](figure-7-access-2.png) | [PDF](figure-7-access-2.pdf) |
-| 7-15 | 设备通过 URMA 提交异步读写，载荷经过 UB 互联到达目标设备；请求完成后按接口定义观察结果。 | [SVG](figure-7-access-3.svg) | [PNG](figure-7-access-3.png) | [PDF](figure-7-access-3.pdf) |
+| 7-15 | 设备通过 URMA 提交异步读写，载荷经过 UB 互联到达目标设备；请求完成后按接口规定检查完成状态和结果。 | [SVG](figure-7-access-3.svg) | [PNG](figure-7-access-3.png) | [PDF](figure-7-access-3.pdf) |
 | 7-16 | 每次使用都访问远端，会重复传送同一份数据；下一图先搬回本地，再进行多次复用。两种路径处理同一份不变快照。 | [SVG](figure-7-snapshot-paths.svg) | [PNG](figure-7-snapshot-paths.png) | [PDF](figure-7-snapshot-paths.pdf) |
 | 7-17 | 每次读取完整 144 MiB 快照时，两种方法的累计耗时。先搬回本地需要一次固定成本，从第二次复用开始节省时间。 | [SVG](figure-7-8-snapshot.svg) | [PNG](figure-7-8-snapshot.png) | [PDF](figure-7-8-snapshot.pdf) |
 | 7-18 | 每次远程读取和本地读取都只访问 10%，但搬回时仍复制全部快照；因此需要更多复用才能抵消固定成本。 | [SVG](figure-7-snapshot-partial.svg) | [PNG](figure-7-snapshot-partial.png) | [PDF](figure-7-snapshot-partial.pdf) |

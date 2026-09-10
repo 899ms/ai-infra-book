@@ -108,7 +108,7 @@ python manuscripts/ch11/check_reading.py
 | 11-29 | 两次调用的输入和可见输出相同，只改变思考长度。橙色成本缩短到原来的十分之一，蓝色和绿色成本保持不变，所以总成本由 0.032 降到 0.023，减少约 28%。价格和 token 数见例 11-5。 | [SVG](figure-11-thinking.svg) | [PNG](figure-11-thinking.png) | [PDF](figure-11-thinking.pdf) |
 | 11-30 | 同一任务的模型服务与成本路径。外部应用程序接口（API）按调用用量收费，自建副本按设备预留及运行支出计价；两条路径都将成本归到任务及尝试。输入拆分为普通处理、缓存创建和缓存读取，生成单独计量。 | [SVG](figure-11-6-service.svg) | [PNG](figure-11-6-service.png) | [PDF](figure-11-6-service.pdf) |
 | 11-31 | B 的成功任务成本随命中率提高而下降，在约 84.9% 处等于 A。两者的成本先按各自成功数归一化；本图只比较成本，下一图单独加入期限。 | [SVG](figure-11-7-routing.svg) | [PNG](figure-11-7-routing.png) | [PDF](figure-11-7-routing.pdf) |
-| 11-32 | 只有 B 命中的 4 s 路径满足 6 s 期限；再乘 98% 质量概率，按时成功比例为 0.98h。达到 90% 目标要求 h 至少约 91.8%。 | [SVG](figure-11-routing-deadline.svg) | [PNG](figure-11-routing-deadline.png) | [PDF](figure-11-routing-deadline.pdf) |
+| 11-32 | 只有 B 命中的 4 s 路径满足 6 s 期限；再乘 98% 的验收通过率，按时成功比例为 0.98h。达到 90% 目标要求 h 至少约 91.8%。 | [SVG](figure-11-routing-deadline.svg) | [PNG](figure-11-routing-deadline.png) | [PDF](figure-11-routing-deadline.pdf) |
 | 11-33 | 自建总成本为 1,000＋0.002N，API 为 0.012N，其中 N 为提交任务数。两者成功率相同，并有足够能力满足期限。自建曲线起点较高、斜率较小，在 100,000 项时与 API 相交。 | [SVG](figure-11-purchase.svg) | [PNG](figure-11-purchase.png) | [PDF](figure-11-purchase.pdf) |
 | 11-34 | 外部系统已执行并提交操作 K，确认却丢失。恢复环境不会撤回外部操作的结果；控制器按同一操作 ID 查询结果后接续任务。实线表示请求与执行，虚线表示确认及恢复查询。 | [SVG](figure-11-commit-ack.svg) | [PNG](figure-11-commit-ack.png) | [PDF](figure-11-commit-ack.pdf) |
 | 11-35 | 首次尝试在 10 s 后分为成功、局部修复、直接升级三类。框内比例以全部提交为分母；下一图展开修复的条件分支。 | [SVG](figure-11-retry-tree.svg) | [PNG](figure-11-retry-tree.png) | [PDF](figure-11-retry-tree.pdf) |

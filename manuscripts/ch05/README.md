@@ -80,22 +80,22 @@ python3 -m venv /tmp/ch05-book-venv
 | 5-12 | 上半图保存完整 S、P，两份 FP32 矩阵各占 256 MiB，写出与读回合计 1 GiB。下半图只传递已处理部分的最大值 m、指数和 ℓ、加权值 u；每处理完一个块，其分数缓冲即可复用。箭头概括处理顺序，完整计算还需读入 Q、K、V。 | [SVG](figure-5-attention-storage.svg) | [PNG](figure-5-attention-storage.png) | [PDF](figure-5-attention-storage.pdf) |
 | 5-13 | 两个块的分数分别为 0、ln 2，值分别为 1、3。最大值增大后，将旧指数和与旧加权值同时乘以 1/2，再加上新块的贡献，最后才做除法。箭头传递的是统计量，旧分数无需保留。 | [SVG](figure-5-7-online-softmax.svg) | [PNG](figure-5-7-online-softmax.png) | [PDF](figure-5-7-online-softmax.pdf) |
 | 5-14 | 快速缓冲为 128 KiB，序列长 8192、头维度 128，无掩码；每个点对应正文表格的一种 K/V 块大小。横轴为缓冲与下一级存储之间的访问量，纵轴为在线更新次数，采用对数刻度。从 b=64 的点移到 b=1 的点，读取减少，更新次数却约增至 43 倍。 | [SVG](figure-5-8-attention-tradeoff.svg) | [PNG](figure-5-8-attention-tradeoff.png) | [PDF](figure-5-8-attention-tradeoff.pdf) |
-| 5-15 | 循环层次确定存储寿命。外层选输出块，创建十六 KiB 累加器；内层 ko 反复读取 A、W 块，全部归约结束后再舍入并激活。 | [SVG](figure-5-9-polyhedral.svg) | [PNG](figure-5-9-polyhedral.png) | [PDF](figure-5-9-polyhedral.pdf) |
+| 5-15 | 循环层次决定临时数据需要保存多久。外层选输出块，创建十六 KiB 累加器；内层 ko 反复读取 A、W 块，全部归约结束后再舍入并激活。 | [SVG](figure-5-9-polyhedral.svg) | [PNG](figure-5-9-polyhedral.png) | [PDF](figure-5-9-polyhedral.pdf) |
 | 5-16 | 同样两个部分和，先相加得到零，再做 SiLU 仍为零；先对各部分做 SiLU 再相加，得到约 0.4621。两个数说明把激活计算移到求和之前会改变结果。 | [SVG](figure-5-activation-order.svg) | [PNG](figure-5-activation-order.png) | [PDF](figure-5-activation-order.pdf) |
 | 5-17 | 一行分成两个块，后一块中的十决定整行尺度。第一项要先按这一尺度映射，再舍入到格式允许的值，最后反量化。 | [SVG](figure-5-quantization-scale.svg) | [PNG](figure-5-quantization-scale.png) | [PDF](figure-5-quantization-scale.pdf) |
 | 5-18 | 两种方案都先读完整输入以确定行尺度。保存 FP8 结果后十二列块合计重读 192 MiB；融合方案重读 FP16 输入 384 MiB。权重与输出另有相同的 204 MiB。 | [SVG](figure-5-10-quantization.svg) | [PNG](figure-5-10-quantization.png) | [PDF](figure-5-10-quantization.pdf) |
 | 5-19 | 形状 A 占比超过 2/3 时，新实现的总执行时间更短。A、B 原耗时均为 10 μs，新实现分别为 5、20 μs；调用串行，图中比较稳态执行。交点由两种实现的平均时间相等确定。 | [SVG](figure-5-11-feedback.svg) | [PNG](figure-5-11-feedback.png) | [PDF](figure-5-11-feedback.pdf) |
 | 5-20 | 普通提交的三次 FFN 实测。上行为主机内核启动 API，下行为设备 kernel；横轴从本段标记起点计时。十八次内核启动对应十八个设备 kernel。 | [SVG](figure-5-12-runtime.svg) | [PNG](figure-5-12-runtime.png) | [PDF](figure-5-12-runtime.pdf) |
-| 5-21 | 三次 FFN 融合激活链后，主机与设备各有十五次启动和内核执行。数据来自与前图相同实验的独立标记范围。 | [SVG](figure-5-runtime-1.svg) | [PNG](figure-5-runtime-1.png) | [PDF](figure-5-runtime-1.pdf) |
+| 5-21 | 三次 FFN 融合激活链后，主机与设备各有十五次启动和内核执行。数据来自与前图相同实验的单独标记的采集区间。 | [SVG](figure-5-runtime-1.svg) | [PNG](figure-5-runtime-1.png) | [PDF](figure-5-runtime-1.pdf) |
 | 5-22 | 三次 graph launch 对应十八个设备 kernel。图重放减少主机提交次数，设备仍执行原图各节点；本图按自身采集范围标出真实时间。 | [SVG](figure-5-runtime-2.svg) | [PNG](figure-5-runtime-2.png) | [PDF](figure-5-runtime-2.pdf) |
 | 5-23 | 先融合再重放，主机发起三次图执行，设备执行十五个 kernel。融合与图重放分别改变设备边界和主机提交。 | [SVG](figure-5-runtime-3.svg) | [PNG](figure-5-runtime-3.png) | [PDF](figure-5-runtime-3.pdf) |
 | 5-24 | 图执行时读取记录的地址 G。新输入位于 X 时先复制到 G；上游直接写 G 时沿用同一缓冲，省去中间复制。 | [SVG](figure-5-graph-address.svg) | [PNG](figure-5-graph-address.png) | [PDF](figure-5-graph-address.pdf) |
 | 5-25 | 橙色为准备，蓝色为额外输入复制，绿色为设备计算。普通方式四十微秒；图的两 MiB 输入约二十七微秒，十六 MiB 输入约四十二微秒。 | [SVG](figure-5-13-graph-copy.svg) | [PNG](figure-5-13-graph-copy.png) | [PDF](figure-5-13-graph-copy.pdf) |
-| 5-26 | 同一组调用反复执行时，最省时的策略随复用次数变化。曲线采用例 5-12 的形状、处理率和准备时间，整数选择边界使用未舍入数值计算。 | [SVG](figure-5-14-specialization.svg) | [PNG](figure-5-14-specialization.png) | [PDF](figure-5-14-specialization.pdf) |
+| 5-26 | 同一组调用反复执行时，最省时的策略随复用次数变化。曲线采用例 5-12 的形状、处理率和准备时间，不同策略适用的整数调用次数范围使用未经四舍五入的数值计算。 | [SVG](figure-5-14-specialization.svg) | [PNG](figure-5-14-specialization.png) | [PDF](figure-5-14-specialization.pdf) |
 | 5-27 | 粗粒度执行先完成八块投影，再启动八块激活。每块投影约 32.2 μs、激活约 39.3 μs，两次主机启动各五微秒；竖线为激活开始。 | [SVG](figure-5-15-persistent.svg) | [PNG](figure-5-15-persistent.png) | [PDF](figure-5-15-persistent.pdf) |
 | 5-28 | 矩阵与向量资源独立、缓冲充足。每个任务另计 0.7 μs 调度与通知，首块投影完成后即可激活，八块流水约三百五十八微秒结束。 | [SVG](figure-5-persistent-blocks.svg) | [PNG](figure-5-persistent-blocks.png) | [PDF](figure-5-persistent-blocks.pdf) |
 | 5-29 | 收尾等待 A、B 两条分支。A 从 60 μs 缩短至 15 μs 后，较慢分支由 A 切换为 B，请求从 80 μs 降至 60 μs。准备和收尾各为 10 μs，两条分支使用独立资源。 | [SVG](figure-5-16-critical-path.svg) | [PNG](figure-5-16-critical-path.png) | [PDF](figure-5-16-critical-path.pdf) |
-| 5-30 | 同轮替换前的请求时间减去替换后的请求时间，正值表示替换后更快。Qwen3-8B，7239-token 输入、强制 32-token 输出，并发 1，BF16、eager，关闭前缀缓存；11 对交错计时，轮内顺序随机，期间有其他驻留服务。虚线为配对时间差的中位数约 1.3 ms。阶段表来自独立 profile。 | [SVG](figure-5-17-request.svg) | [PNG](figure-5-17-request.png) | [PDF](figure-5-17-request.pdf) |
+| 5-30 | 同轮替换前的请求时间减去替换后的请求时间，正值表示替换后更快。Qwen3-8B，7239-token 输入、强制 32-token 输出，并发 1，BF16、eager，关闭前缀缓存；11 对交错计时，轮内顺序随机，期间有其他驻留服务。虚线为配对时间差的中位数约 1.3 ms。阶段表来自单独采集的性能分析记录。 | [SVG](figure-5-17-request.svg) | [PNG](figure-5-17-request.png) | [PDF](figure-5-17-request.pdf) |
 
 
 ## V4／V4.1 会话修订后的当前图表
@@ -118,20 +118,20 @@ python3 -m venv /tmp/ch05-book-venv
 | 5-12 | 上半图保存完整 S、P，两份 FP32 矩阵各占 256 MiB，写出与读回合计 1 GiB。下半图只传递已处理部分的最大值 m、指数和 ℓ、加权值 u；每处理完一个块，其分数缓冲即可复用。箭头概括处理顺序，完整计算还需读入 Q、K、V。 | [SVG](figure-5-attention-storage.svg) |
 | 5-13 | 两个块的分数分别为 0、ln 2，值分别为 1、3。最大值增大后，将旧指数和与旧加权值同时乘以 1/2，再加上新块的贡献，最后才做除法。箭头传递的是统计量，旧分数无需保留。 | [SVG](figure-5-7-online-softmax.svg) |
 | 5-14 | 快速缓冲为 128 KiB，序列长 8192、头维度 128，无掩码；每个点对应正文表格的一种 K/V 块大小。横轴为缓冲与下一级存储之间的访问量，纵轴为在线更新次数，采用对数刻度。从 b=64 的点移到 b=1 的点，读取减少，更新次数却约增至 43 倍。 | [SVG](figure-5-8-attention-tradeoff.svg) |
-| 5-15 | 循环层次确定存储寿命。外层选输出块，创建十六 KiB 累加器；内层 ko 反复读取 A、W 块，全部归约结束后再舍入并激活。 | [SVG](figure-5-9-polyhedral.svg) |
+| 5-15 | 循环层次决定临时数据需要保存多久。外层选输出块，创建十六 KiB 累加器；内层 ko 反复读取 A、W 块，全部归约结束后再舍入并激活。 | [SVG](figure-5-9-polyhedral.svg) |
 | 5-16 | 同样两个部分和，先相加得到零，再做 SiLU 仍为零；先对各部分做 SiLU 再相加，得到约 0.4621。两个数说明把激活计算移到求和之前会改变结果。 | [SVG](figure-5-activation-order.svg) |
 | 5-17 | 一行分成两个块，后一块中的十决定整行尺度。第一项要先按这一尺度映射，再舍入到格式允许的值，最后反量化。 | [SVG](figure-5-quantization-scale.svg) |
 | 5-18 | 两种方案都先读完整输入以确定行尺度。保存 FP8 结果后十二列块合计重读 192 MiB；融合方案重读 FP16 输入 384 MiB。权重与输出另有相同的 204 MiB。 | [SVG](figure-5-10-quantization.svg) |
 | 5-19 | 形状 A 占比超过 2/3 时，新实现的总执行时间更短。A、B 原耗时均为 10 μs，新实现分别为 5、20 μs；调用串行，图中比较稳态执行。交点由两种实现的平均时间相等确定。 | [SVG](figure-5-11-feedback.svg) |
 | 5-20 | 普通提交的三次 FFN 实测。上行为主机内核启动 API，下行为设备 kernel；横轴从本段标记起点计时。十八次内核启动对应十八个设备 kernel。 | [SVG](figure-5-12-runtime.svg) |
-| 5-21 | 三次 FFN 融合激活链后，主机与设备各有十五次启动和内核执行。数据来自与前图相同实验的独立标记范围。 | [SVG](figure-5-runtime-1.svg) |
+| 5-21 | 三次 FFN 融合激活链后，主机与设备各有十五次启动和内核执行。数据来自与前图相同实验的单独标记的采集区间。 | [SVG](figure-5-runtime-1.svg) |
 | 5-22 | 三次 graph launch 对应十八个设备 kernel。图重放减少主机提交次数，设备仍执行原图各节点；本图按自身采集范围标出真实时间。 | [SVG](figure-5-runtime-2.svg) |
 | 5-23 | 先融合再重放，主机发起三次图执行，设备执行十五个 kernel。融合与图重放分别改变设备边界和主机提交。 | [SVG](figure-5-runtime-3.svg) |
 | 5-24 | 图执行时读取记录的地址 G。新输入位于 X 时先复制到 G；上游直接写 G 时沿用同一缓冲，省去中间复制。 | [SVG](figure-5-graph-address.svg) |
 | 5-25 | 橙色为准备，蓝色为额外输入复制，绿色为设备计算。普通方式四十微秒；图的两 MiB 输入约二十七微秒，十六 MiB 输入约四十二微秒。 | [SVG](figure-5-13-graph-copy.svg) |
-| 5-26 | 同一组调用反复执行时，最省时的策略随复用次数变化。曲线采用例 5-12 的形状、处理率和准备时间，整数选择边界使用未舍入数值计算。 | [SVG](figure-5-14-specialization.svg) |
+| 5-26 | 同一组调用反复执行时，最省时的策略随复用次数变化。曲线采用例 5-12 的形状、处理率和准备时间，不同策略适用的整数调用次数范围使用未经四舍五入的数值计算。 | [SVG](figure-5-14-specialization.svg) |
 | 5-27 | 粗粒度执行先完成八块投影，再启动八块激活。每块投影约 32.2 μs、激活约 39.3 μs，两次主机启动各五微秒；竖线为激活开始。 | [SVG](figure-5-15-persistent.svg) |
 | 5-28 | 矩阵与向量资源独立、缓冲充足。每个任务另计 0.7 μs 调度与通知，首块投影完成后即可激活，八块流水约三百五十八微秒结束。 | [SVG](figure-5-persistent-blocks.svg) |
 | 5-29 | 收尾等待 A、B 两条分支。A 从 60 μs 缩短至 15 μs 后，较慢分支由 A 切换为 B，请求从 80 μs 降至 60 μs。准备和收尾各为 10 μs，两条分支使用独立资源。 | [SVG](figure-5-16-critical-path.svg) |
 | 5-30 | 全局驻留与逐层逻辑读取分开比较。上方仅计全局 KV 容量，下方读取包含全局条目、局部窗口和索引；两栏各自采用相同横轴尺度。数值为生产布局的逻辑载荷，不是实测 HBM 流量。 | [SVG](figure-5-v41-traffic.svg) |
-| 5-31 | 同轮替换前的请求时间减去替换后的请求时间，正值表示替换后更快。Qwen3-8B，7239-token 输入、强制 32-token 输出，并发 1，BF16、eager，关闭前缀缓存；11 对交错计时，轮内顺序随机，期间有其他驻留服务。虚线为配对时间差的中位数约 1.3 ms。阶段表来自独立 profile。 | [SVG](figure-5-17-request.svg) |
+| 5-31 | 同轮替换前的请求时间减去替换后的请求时间，正值表示替换后更快。Qwen3-8B，7239-token 输入、强制 32-token 输出，并发 1，BF16、eager，关闭前缀缓存；11 对交错计时，轮内顺序随机，期间有其他驻留服务。虚线为配对时间差的中位数约 1.3 ms。阶段表来自单独采集的性能分析记录。 | [SVG](figure-5-17-request.svg) |

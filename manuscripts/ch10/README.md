@@ -96,14 +96,14 @@ python3 manuscripts/ch10/verify.py
 | 10-23 | 两条 4096-token 序列的因果注意力配对。查询位置读取本序列中不晚于自己的位置，形成两个三角形；两序列互不注意，总配对数为 16781312。 | [SVG](figure-10-9-attention-area.svg) | [PNG](figure-10-9-attention-area.png) | [PDF](figure-10-9-attention-area.pdf) |
 | 10-24 | 相同 8192 个 token 改分为 7168 与 1024，总因果配对数增至 26218496。长三角形的面积增长超过短三角形的面积减少。 | [SVG](figure-10-attention-unequal.svg) | [PNG](figure-10-attention-unequal.png) | [PDF](figure-10-attention-unequal.pdf) |
 | 10-25 | 训练已完成批次 100，预取任务已安排到 108。中间八个批次仍需训练，其中一部分已经准备好，另一部分还在处理。虚线框示意尚在处理的批次。恢复时应保留这些数据或重新准备它们，从批次 101 继续。 | [SVG](figure-10-10-input-queue.svg) | [PNG](figure-10-10-input-queue.png) | [PDF](figure-10-10-input-queue.pdf) |
-| 10-26 | 横向位置对应原矩阵的行号，颜色表示旧分片。每份旧分片分成前后两半后，分别装入两个新分片。模型权重的内容和顺序保持相同，改变的是各设备负责的行范围；BF16 权重总量始终为 96 MiB。 | [SVG](figure-10-11-resharding.svg) | [PNG](figure-10-11-resharding.png) | [PDF](figure-10-11-resharding.pdf) |
+| 10-26 | 横向位置对应原矩阵的行号，颜色表示旧分片。每份旧分片分成前后两半后，分别存入两个新分片。模型权重的内容和顺序保持相同，改变的是各设备负责的行范围；BF16 权重总量始终为 96 MiB。 | [SVG](figure-10-11-resharding.svg) | [PNG](figure-10-11-resharding.png) | [PDF](figure-10-11-resharding.pdf) |
 | 10-27 | 捕获一致的训练状态，复制到独立缓冲后允许训练继续；后台写完数据并提交完整快照后，恢复程序才使用这份检查点。箭头表示先后依赖。 | [SVG](figure-10-checkpoint-commit.svg) | [PNG](figure-10-checkpoint-commit.png) | [PDF](figure-10-checkpoint-commit.pdf) |
 | 10-28 | 两份 112 GB 快照以 8 GB/s 写入，各先花 0.5 s 复制到缓冲（橙色），随后上传（蓝色）。50 s 故障时第一份已提交，第二份尚未提交；斜线为无故障时剩余上传，空心点为原定提交时刻。 | [SVG](figure-10-12-recovery.svg) | [PNG](figure-10-12-recovery.png) | [PDF](figure-10-12-recovery.pdf) |
 | 10-29 | 相同快照以 16 GB/s 写入，于 27.5、47.5 s 提交。50 s 故障时可以恢复到 40 s 的训练状态，只需重做 10 s。 | [SVG](figure-10-recovery-fast.svg) | [PNG](figure-10-recovery-fast.png) | [PDF](figure-10-recovery-fast.pdf) |
 | 10-30 | 蓝线为保存耗时占比，橙线为故障重做耗时占比，绿线为两者加上恢复耗时后的合计。使用 1024 卡、单卡平均故障间隔（MTBF）365 天、保存约 14.3 s 和恢复 120 s 的一阶模型。最低点出现在两项随间隔变化的代价相互平衡处。 | [SVG](figure-10-13-save-interval.svg) | [PNG](figure-10-13-save-interval.png) | [PDF](figure-10-13-save-interval.pdf) |
 | 10-31 | 三阶段分别最多处理 12、6、8 条等长轨迹/s。验证后保留 75%，所以只有 4.5 条/s 进入学习。返回箭头表示学习产生的新权重影响后续生成；其同步耗时在后面的阶段切换与异步算例中展开。 | [SVG](figure-10-14-rl-flow.svg) | [PNG](figure-10-14-rl-flow.png) | [PDF](figure-10-14-rl-flow.pdf) |
-| 10-32 | 先装载生成权重和 KV 池，再释放训练状态，峰值约为 83.3 GiB，超过 64 GiB 预算。横轴按操作顺序排列。 | [SVG](figure-10-15-rl.svg) | [PNG](figure-10-15-rl.png) | [PDF](figure-10-15-rl.pdf) |
-| 10-33 | 先装载生成权重，再释放训练状态，最后分配 KV 池。峰值降为约 59.3 GiB；两图共用 64 GiB 预算线和同一纵轴。 | [SVG](figure-10-rl-staged.svg) | [PNG](figure-10-rl-staged.png) | [PDF](figure-10-rl-staged.pdf) |
+| 10-32 | 先加载生成权重并分配 KV 池，再释放训练状态，峰值约为 83.3 GiB，超过 64 GiB 预算。横轴按操作顺序排列。 | [SVG](figure-10-15-rl.svg) | [PNG](figure-10-15-rl.png) | [PDF](figure-10-15-rl.pdf) |
+| 10-33 | 先加载生成权重，再释放训练状态，最后分配 KV 池。峰值降为约 59.3 GiB；两图共用 64 GiB 预算线和同一纵轴。 | [SVG](figure-10-rl-staged.svg) | [PNG](figure-10-rl-staged.png) | [PDF](figure-10-rl-staged.pdf) |
 | 10-34 | 固定版本服务与策略训练的权重生命周期。上方 ROM 重复提供同一版本；下方训练产生新版本并发布给生成端。可写 KV 不能替代权重更新通路。 | [SVG](figure-10-weight-update.svg) | [PNG](figure-10-weight-update.png) | [PDF](figure-10-weight-update.pdf) |
 | 10-35 | μ 产生训练样本，πold 标识本轮优化的起点，πθ 随本轮更新变化。虚线表示版本演进顺序。三个概率必须针对同一前缀与同一 token 计算。 | [SVG](figure-10-policy-versions.svg) | [PNG](figure-10-policy-versions.png) | [PDF](figure-10-policy-versions.pdf) |
 | 10-36 | 同步循环依次生成本批样本、学习本批样本、同步权重，分别用时 40、16、4 s，共 60 s。 | [SVG](figure-10-16-async-cycle.svg) | [PNG](figure-10-16-async-cycle.png) | [PDF](figure-10-16-async-cycle.pdf) |

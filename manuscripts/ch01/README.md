@@ -50,7 +50,7 @@ python manuscripts/ch01/build.py
 | 1-9 | 保持运算量与读取量不变，分别把算力或带宽翻倍。蓝条是权重读取下界，橙条是矩阵计算下界；较长的读取项决定这组条件下的优化方向。 | [SVG](figure-1-5-budget.svg) | [PNG](figure-1-5-budget.png) | [PDF](figure-1-5-budget.pdf) |
 | 1-10 | 一批八个请求共享一次权重读取，各产生一个输出。整批读取仍需约 20.90 ms，除以八得到每输出分摊的服务时间；每个请求经历整批执行。 | [SVG](figure-1-batch-reuse.svg) | [PNG](figure-1-batch-reuse.png) | [PDF](figure-1-batch-reuse.pdf) |
 | 1-11 | 批内请求增加时，矩阵运算量按 $2BN$ 增长，权重读取保持每批 70 GB。约 148 个请求处两项下界相等，随后计算项主导。 | [SVG](figure-1-batch-transition.svg) | [PNG](figure-1-batch-transition.png) | [PDF](figure-1-batch-transition.pdf) |
-| 1-12 | 同一批量模型的理想输出吞吐。每批输出数除以时间下界得到曲线；竖虚线与前图对应同一个约 148 请求的转折点。 | [SVG](figure-1-batch-throughput.svg) | [PNG](figure-1-batch-throughput.png) | [PDF](figure-1-batch-throughput.pdf) |
+| 1-12 | 上述批处理模型的理想输出吞吐率。每批输出数除以时间下界得到曲线；竖虚线与前图对应同一个约 148 请求的转折点。 | [SVG](figure-1-batch-throughput.svg) | [PNG](figure-1-batch-throughput.png) | [PDF](figure-1-batch-throughput.pdf) |
 | 1-13 | Qwen3-8B 实测的整批输出吞吐。四档请求数等距排列，纵轴从零开始；模型、精度、输入输出长度和计时范围保持一致。 | [SVG](figure-1-measured-throughput.svg) | [PNG](figure-1-measured-throughput.png) | [PDF](figure-1-measured-throughput.pdf) |
 | 1-14 | 同一组实测中的每请求输出间隔。吞吐增加的同时，单个请求的平均间隔也在增大；两张图分别说明设备的输出速度和用户的等待时间。 | [SVG](figure-1-measured-tpot.svg) | [PNG](figure-1-measured-tpot.png) | [PDF](figure-1-measured-tpot.pdf) |
 | 1-15 | 专用处理器围绕反复出现的矩阵运算组织计算阵列和输入输出缓冲。缓冲是临时保存待计算或已算完数据的存储区域；三个方框及其箭头展示数据搬运方向。 | [SVG](figure-1-design-tpu.svg) | [PNG](figure-1-design-tpu.png) | [PDF](figure-1-design-tpu.pdf) |

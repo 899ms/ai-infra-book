@@ -48,7 +48,7 @@ def draw(here,data):
             else:box(a,.61,.65,.35,.20,'CPU：BF16\n96 MiB','blue');arrow(a,(.39,.75),(.61,.75));arrow(a,(.785,.65),(.785,.43));text(a,.5,.52,'链路传 96 MiB',11,ha='center')
             text(a,.5,.08,'GPU 转换时同时占用 288 MiB' if gpu else '格式转换在 CPU 完成',12,ha='center');save(f,name)
         d=data['10-6'];f,a=plot(4.2)
-        for k,l,c in [('total_gib','分片＋10 GiB 临时量','#267398'),('persistent_gib','训练状态分片','#388768')]:a.plot(d['participants'],d[k],label=l,color=c)
+        for k,l,c in [('total_gib','分片＋10 GiB 临时缓冲','#267398'),('persistent_gib','训练状态分片','#388768')]:a.plot(d['participants'],d[k],label=l,color=c)
         a.axhline(24,ls='--',color='#a56c28',label='可用 24 GiB');a.set(xlabel='分片参与者数',ylabel='每卡容量（GiB）',ylim=(0,47));a.legend(frameon=False);save(f,'6-candidates')
         for i,(label,d) in enumerate(data['10-7'].items()):
             f,a=plot(4.1,left=.18)
@@ -99,7 +99,7 @@ def draw(here,data):
         for x in [.28,.62]:arrow(a,(x,.60),(x+.10,.60))
         text(a,.70,.34,'保留 75% → 4.5 条/s',11,ha='center');arrow(a,(.84,.48),(.84,.16),'control');arrow(a,(.84,.16),(.16,.16),'control');arrow(a,(.16,.16),(.16,.48),'control');text(a,.5,.08,'新权重用于后续生成',12,ha='center');save(f,'14-rl-flow')
         for i,key in enumerate(['restore_bytes','staged_bytes']):
-            f,a=plot(4.1,bottom=.26);v=np.array(data['10-15'][key])/2**30;a.step(range(4),v,where='post',color='#267398');a.plot(range(4),v,'o',color='#267398');a.axhline(64,ls='--',color='#a56c28');a.set(xticks=range(4),xticklabels=['训练\n结束','装载\n生成状态' if i==0 else '只装载\n权重','释放\n训练状态','开始\n生成'],ylabel='显存占用（GiB）',ylim=(0,100));a.text(1,v[1]+4,f'峰值 {v[1]:.1f} GiB',fontsize=12,ha='center');save(f,'15-rl' if i==0 else 'rl-staged')
+            f,a=plot(4.1,bottom=.26);v=np.array(data['10-15'][key])/2**30;a.step(range(4),v,where='post',color='#267398');a.plot(range(4),v,'o',color='#267398');a.axhline(64,ls='--',color='#a56c28');a.set(xticks=range(4),xticklabels=['训练\n结束','加载权重\n分配 KV' if i==0 else '只加载\n权重','释放\n训练状态','开始\n生成'],ylabel='显存占用（GiB）',ylim=(0,100));a.text(1,v[1]+4,f'峰值 {v[1]:.1f} GiB',fontsize=12,ha='center');save(f,'15-rl' if i==0 else 'rl-staged')
         f,a=canvas(4.5)
         for row,(l,c) in enumerate([('μ：实际生成样本的策略','blue'),('πold：本轮优化开始时的策略','orange'),('πθ：本轮更新中的当前策略','green')]):
             y=.70-row*.28;box(a,.04,y,.92,.18,l,c)

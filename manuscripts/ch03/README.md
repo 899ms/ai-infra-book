@@ -16,7 +16,7 @@
 | 图 3-2 请求组成与阶段积压 | [SVG](figure-3-2-workload-budget.svg) | [PNG](figure-3-2-workload-budget.png) |
 | 图 3-3 每次尝试的费用与每个成功任务的费用 | [SVG](figure-3-success-cost.svg) | [PNG](figure-3-success-cost.png) |
 | 图 3-4 Agent 轨迹与 KV 生命周期 | [SVG](figure-3-3-agent.svg) | [PNG](figure-3-3-agent.png) |
-| 图 3-5 工具依赖决定关键路径与状态寿命 | [SVG](figure-3-tool-dependency.svg) | [PNG](figure-3-tool-dependency.png) |
+| 图 3-5 工具依赖决定关键路径与状态保存时间 | [SVG](figure-3-tool-dependency.svg) | [PNG](figure-3-tool-dependency.png) |
 | 图 3-6 图像位置合并与特征宽度的变化 | [SVG](figure-3-vision-shapes.svg) | [PNG](figure-3-vision-shapes.png) |
 | 图 3-7 实时交互的端到端时序 | [SVG](figure-3-4-realtime.svg) | [PNG](figure-3-4-realtime.png) |
 | 图 3-8 推理与各训练阶段的计算和状态 | [SVG](figure-3-5-training.svg) | [PNG](figure-3-5-training.png) |
@@ -45,7 +45,7 @@ python manuscripts/ch03/build.py
 | --- | --- | --- | --- | --- |
 | 3-1 | 恢复 6144 个上下文位置，处理 2048 个新输入并生成四个输出。首输出来自 prefill，后续三次 decode 各追加一个位置；纵向表示调用次序，间距用于示意。 | [SVG](figure-3-1-stages.svg) | [PNG](figure-3-1-stages.png) | [PDF](figure-3-1-stages.pdf) |
 | 3-2 | 请求到达、首输出与末输出决定三个计时区间。首响应包含开始生成前的等待，输出间隔描述生成过程，完整请求时间从到达累计到结束。 | [SVG](figure-3-request-clocks.svg) | [PNG](figure-3-request-clocks.png) | [PDF](figure-3-request-clocks.pdf) |
-| 3-3 | 1 GiB 状态持续占用空间十秒，对应面积为 10 GiB·s。横轴为状态存活时间，纵轴为占用空间；面积描述这段等待消耗的空间时间。 | [SVG](figure-3-state-time-area.svg) | [PNG](figure-3-state-time-area.png) | [PDF](figure-3-state-time-area.pdf) |
+| 3-3 | 1 GiB 状态持续占用空间十秒，对应面积为 10 GiB·s。横轴为状态保存时间，纵轴为占用空间；面积描述这段等待消耗的空间时间。 | [SVG](figure-3-state-time-area.svg) | [PNG](figure-3-state-time-area.png) | [PDF](figure-3-state-time-area.pdf) |
 | 3-4 | 相同两分钟总量的三种窗口组成。长输入类为 8192 输入、256 输出，长输出类为 1024 输入、2048 输出；两类混合比例改变阶段需求。 | [SVG](figure-3-2-workload-budget.svg) | [PNG](figure-3-2-workload-budget.png) | [PDF](figure-3-2-workload-budget.pdf) |
 | 3-5 | 三种窗口组成对应的输入与后续生成需求。输入数按 token 计，后续生成按每请求的一次 decode 步计；每请求首输出已计入 prefill。 | [SVG](figure-3-stage-demand.svg) | [PNG](figure-3-stage-demand.png) | [PDF](figure-3-stage-demand.pdf) |
 | 3-6 | 工作先进入队列，再由处理资源完成。到来快于处理时差额留在队列中；处理快于到来时，资源逐步消化已有积压。 | [SVG](figure-3-queue-mechanism.svg) | [PNG](figure-3-queue-mechanism.png) | [PDF](figure-3-queue-mechanism.pdf) |
@@ -61,7 +61,7 @@ python manuscripts/ch03/build.py
 | 3-16 | 可组合的多模态阶段。编码形成模型输入，语言模型生成回复，声学模块将回复转成音频，接收端缓冲与播放设备决定何时真正发声。 | [SVG](figure-3-4-realtime.svg) | [PNG](figure-3-4-realtime.png) | [PDF](figure-3-4-realtime.pdf) |
 | 3-17 | 八块音频的教学播放时间线。每块长二十毫秒，圆点标到达，短竖线标原定播放时刻，色条标实际播放；第三块晚到五毫秒，后续播放随之顺延。 | [SVG](figure-3-audio-timing.svg) | [PNG](figure-3-audio-timing.png) | [PDF](figure-3-audio-timing.pdf) |
 | 3-18 | 同一教学场景中的本地打断。123 ms 发出操作，130 ms 设备静音；远端计算是否停止属于另一条控制路径。 | [SVG](figure-3-audio-interrupt.svg) | [PNG](figure-3-audio-interrupt.png) | [PDF](figure-3-audio-interrupt.pdf) |
-| 3-19 | 一层激活从前向完成后保留到相应反向用完。横轴按事件排列，间距表示过程顺序；反向需要的前向输入决定这段存活区间。 | [SVG](figure-3-activation-lifetime.svg) | [PNG](figure-3-activation-lifetime.png) | [PDF](figure-3-activation-lifetime.pdf) |
+| 3-19 | 一层激活从前向完成后保留到相应反向用完。横轴按事件排列，间距表示过程顺序；反向需要的前向输入决定这段保存时间。 | [SVG](figure-3-activation-lifetime.svg) | [PNG](figure-3-activation-lifetime.png) | [PDF](figure-3-activation-lifetime.pdf) |
 | 3-20 | 训练沿前向依赖计算输出，再沿反向依赖传递梯度。当前层既向前层传输入梯度，也计算自己的权重梯度，供优化器更新。 | [SVG](figure-3-5-training.svg) | [PNG](figure-3-5-training.png) | [PDF](figure-3-5-training.pdf) |
 | 3-21 | Qwen3-8B 全参数训练的参数相关状态。每参数包括两字节计算权重和四组四字节状态，共十八字节；激活和工作区由各自寿命另行核算。 | [SVG](figure-3-training-states.svg) | [PNG](figure-3-training-states.png) | [PDF](figure-3-training-states.pdf) |
 | 3-22 | Qwen3-8B 的 8192 输入全参数训练。全部位置执行词表头、没有重计算；按矩阵逐项累计，前向加反向为 431.368 TFLOPs。 | [SVG](figure-3-training-flops.svg) | [PNG](figure-3-training-flops.png) | [PDF](figure-3-training-flops.pdf) |
@@ -85,7 +85,7 @@ python manuscripts/ch03/build.py
 | --- | --- | --- |
 | 3-1 | 恢复 6144 个上下文位置，处理 2048 个新输入并生成四个输出。首输出来自 prefill，后续三次 decode 各追加一个位置；纵向表示调用次序，间距用于示意。 | [SVG](figure-3-1-stages.svg) |
 | 3-2 | 请求到达、首输出与末输出决定三个计时区间。首响应包含开始生成前的等待，输出间隔描述生成过程，完整请求时间从到达累计到结束。 | [SVG](figure-3-request-clocks.svg) |
-| 3-3 | 1 GiB 状态持续占用空间十秒，对应面积为 10 GiB·s。横轴为状态存活时间，纵轴为占用空间；面积描述这段等待消耗的空间时间。 | [SVG](figure-3-state-time-area.svg) |
+| 3-3 | 1 GiB 状态持续占用空间十秒，对应面积为 10 GiB·s。横轴为状态保存时间，纵轴为占用空间；面积描述这段等待消耗的空间时间。 | [SVG](figure-3-state-time-area.svg) |
 | 3-4 | 相同两分钟总量的三种窗口组成。长输入类为 8192 输入、256 输出，长输出类为 1024 输入、2048 输出；两类混合比例改变阶段需求。 | [SVG](figure-3-2-workload-budget.svg) |
 | 3-5 | 三种窗口组成对应的输入与后续生成需求。输入数按 token 计，后续生成按每请求的一次 decode 步计；每请求首输出已计入 prefill。 | [SVG](figure-3-stage-demand.svg) |
 | 3-6 | 工作先进入队列，再由处理资源完成。到来快于处理时差额留在队列中；处理快于到来时，资源逐步消化已有积压。 | [SVG](figure-3-queue-mechanism.svg) |
@@ -102,7 +102,7 @@ python manuscripts/ch03/build.py
 | 3-17 | 可组合的多模态阶段。编码形成模型输入，语言模型生成回复，声学模块将回复转成音频，接收端缓冲与播放设备决定何时真正发声。 | [SVG](figure-3-4-realtime.svg) |
 | 3-18 | 八块音频的教学播放时间线。每块长二十毫秒，圆点标到达，短竖线标原定播放时刻，色条标实际播放；第三块晚到五毫秒，后续播放随之顺延。 | [SVG](figure-3-audio-timing.svg) |
 | 3-19 | 同一教学场景中的本地打断。123 ms 发出操作，130 ms 设备静音；远端计算是否停止属于另一条控制路径。 | [SVG](figure-3-audio-interrupt.svg) |
-| 3-20 | 一层激活从前向完成后保留到相应反向用完。横轴按事件排列，间距表示过程顺序；反向需要的前向输入决定这段存活区间。 | [SVG](figure-3-activation-lifetime.svg) |
+| 3-20 | 一层激活从前向完成后保留到相应反向用完。横轴按事件排列，间距表示过程顺序；反向需要的前向输入决定这段保存时间。 | [SVG](figure-3-activation-lifetime.svg) |
 | 3-21 | 训练沿前向依赖计算输出，再沿反向依赖传递梯度。当前层既向前层传输入梯度，也计算自己的权重梯度，供优化器更新。 | [SVG](figure-3-5-training.svg) |
 | 3-22 | Qwen3-8B 全参数训练的参数相关状态。每参数包括两字节计算权重和四组四字节状态，共十八字节；激活和工作区由各自寿命另行核算。 | [SVG](figure-3-training-states.svg) |
 | 3-23 | Qwen3-8B 的 8192 输入全参数训练。全部位置执行词表头、没有重计算；按矩阵逐项累计，前向加反向为 431.368 TFLOPs。 | [SVG](figure-3-training-flops.svg) |

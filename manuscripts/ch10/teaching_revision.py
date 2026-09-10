@@ -123,4 +123,6 @@ def draw(here,data):
         f,a=plot(4.2)
         for (key,d),l,c in zip(data['10-20'].items(),['A100','H100','B200'],['#267398','#388768','#a56c28']):a.plot(np.array(d['parameters'])/1e12,np.array(d['continuous_required_devices'])/1e4,color=c,label=l)
         a.axhline(1.6384,ls='--',color='#666');a.set(yscale='log',xlabel='稠密模型参数量（万亿）',ylabel='90 天所需设备（万张）');a.legend(frameon=False);save(f,'20-scale')
+    from core_principles_figures import draw as draw_principles
+    draw_principles(10, out)
     out.finish();return out.outputs,out.checks

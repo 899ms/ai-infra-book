@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Verify chapter text, source-driven figures, formula rendering and local links."""
 from pathlib import Path
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+from svg_labels import svg_labels
 from fractions import Fraction
 from urllib.parse import unquote,urlsplit
 import hashlib,json,re,math,xml.etree.ElementTree as ET
@@ -12,9 +15,12 @@ def calc(n):return json.loads((ROOT/'calculations/results'/f'{n}.json').read_tex
 figure_count=len(json.loads((HERE/'figure-index.json').read_text()))
 heads=re.findall(r'^### (10\.\d+\.\d+)',s,re.M);expected=re.findall(r'^### (10\.\d+\.\d+)',(ROOT/'outlines/10-训练系统.md').read_text(),re.M)
 check(heads==expected,'outline subsection alignment')
+check('训练一致性' not in s and '训练一致性' not in page, 'obsolete RL consistency terminology')
+for marker in ['专家路由重放与训推一致性', '前缀分布偏移', 'on-policy distillation', '温度缩放', '冻结同一份权重']:
+ check(marker in s and marker in page, 'RL consistency coverage: '+marker)
 check(re.findall(r'^> \*\*习题 (10-\d+)',s,re.M)==[f'10-{i}' for i in range(1,11)],'exercise sequence')
 check(re.findall(r'^> \*\*习题 (10-\d+) · 综合设计',s,re.M)==['10-3','10-7','10-10'],'integrative design exercises')
-check(re.findall(r'^\*图 (10-\d+)：',s,re.M)==[f'10-{i}' for i in range(1,figure_count+1)],'external caption sequence')
+check(re.findall(r'^\*图 (10-\d+)(?:：|　)',s,re.M)==[f'10-{i}' for i in range(1,figure_count+1)],'external caption sequence')
 check(len(re.findall(r'!\[',s))==figure_count,'active figures')
 for rec in json.loads((HERE/'sources.json').read_text())['sources']:
  check(hashlib.sha256((ROOT/rec['path']).read_bytes()).hexdigest()==rec['sha256'],'source hash: '+rec['path'])
@@ -24,9 +30,9 @@ for rec in manifest['outputs']:
 for rec in manifest['outputs']:
  p=ROOT/rec['path']
  if p.suffix!='.svg':continue
- root=ET.fromstring(p.read_text());texts=[''.join(n.itertext()) for n in root.iter() if n.tag.endswith('}text')]
+ texts=svg_labels(p)
  check(not any(re.search(r'图\s*\d+[-—]\d+',t) for t in texts),'figure number inside '+p.name)
- check(bool(texts),'SVG has readable vector text: '+p.name)
+ check(bool(texts),'SVG has text or outlined glyph labels: '+p.name)
 for u in re.findall(r'\]\(([^)]+)\)',s):
  parts=urlsplit(u)
  if parts.scheme:continue

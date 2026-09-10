@@ -15,7 +15,7 @@
 \usepackage{xurl}
 \urlstyle{same}
 \setlength{\emergencystretch}{3em}
-\providecommand{\BookEdition}{全书审阅版}
+\providecommand{\BookEdition}{v0.1}
 % Size only actual images: never let graphics dimensions affect formula boxes.
 \setkeys{Gin}{width=!,height=!,keepaspectratio}
 \newcommand{\infragraphic}[1]{\includegraphics[width=.68\linewidth,height=.38\textheight,keepaspectratio]{#1}}
@@ -66,9 +66,9 @@
 
 % Preserve regular body typography; Chinese bold uses a real sans bold face.
 \IfFontExistsTF{Songti SC}{
-  \setCJKmainfont[Scale=1,BoldFont={../manuscripts/figure_style/fonts/SourceHanSansCN-Bold.otf}]{Songti SC}
+  \setCJKmainfont[Scale=1,BoldFont=SourceHanSansCN-Bold.otf,BoldFeatures={Path=../manuscripts/figure_style/fonts/}]{Songti SC}
 }{
-  \setCJKmainfont[Scale=1,BoldFont={../manuscripts/figure_style/fonts/SourceHanSansCN-Bold.otf}]{Noto Sans CJK SC}
+  \setCJKmainfont[Scale=1,BoldFont=SourceHanSansCN-Bold.otf,BoldFeatures={Path=../manuscripts/figure_style/fonts/}]{Noto Sans CJK SC}
 }
 % Use repository-pinned fonts, independent of fonts installed on the reader's system.
 \setCJKsansfont[Path=../manuscripts/figure_style/fonts/,Scale=1,BoldFont=SourceHanSansCN-Bold.otf]{SourceHanSansCN-Regular.otf}

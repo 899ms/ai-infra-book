@@ -121,8 +121,8 @@
     "Resident cache excludes weights, compressor/allocator/candidate buffers, workspaces and parallel replication.",
     "CED counts expert-matrix token-layers for cold input; global KV projection and other components excluded.",
     "25 GB/s is a teaching effective bandwidth, global cache only; transfer is serialized for the routing example.",
-    "8 ms local-state replay and 10/20 ms queue times are teaching assumptions, not V4.1 measurements.",
-    "Routing holds subsequent input processing and generation cost equal and compares only preparation time."
+    "8 ms encoder SWA replay and 10/20 ms queue times are teaching assumptions, not V4.1 measurements.",
+    "Routing holds subsequent input processing, mandatory decoder replay and generation cost equal and compares only preparation time."
   ],
   "sources": [
     {
@@ -147,7 +147,7 @@
     },
     {
       "path": "calculations/v41_throughline.py",
-      "sha256": "5d90929ad759a3fb4f1bd92415065dc317221bc87d1e3215b766e8d863b756b0"
+      "sha256": "99320960054a824b50125a1b0aac792ac5f45ffb1e70f3e0d899e84e735a4265"
     }
   ]
 }

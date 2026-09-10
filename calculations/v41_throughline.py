@@ -25,8 +25,8 @@ def calculate():
           'Resident cache excludes weights, compressor/allocator/candidate buffers, workspaces and parallel replication.',
           'CED counts expert-matrix token-layers for cold input; global KV projection and other components excluded.',
           '25 GB/s is a teaching effective bandwidth, global cache only; transfer is serialized for the routing example.',
-          '8 ms local-state replay and 10/20 ms queue times are teaching assumptions, not V4.1 measurements.',
-          'Routing holds subsequent input processing and generation cost equal and compares only preparation time.'],sources=[])
+          '8 ms encoder SWA replay and 10/20 ms queue times are teaching assumptions, not V4.1 measurements.',
+          'Routing holds subsequent input processing, mandatory decoder replay and generation cost equal and compares only preparation time.'],sources=[])
     paths=['calculations/src/infra_calc/topics/kv_comparison.py','calculations/configs/models/deepseek-v4-flash/config.json','calculations/configs/models/deepseek-v4.1-flash/config.json','calculations/sources/deepseek-v4.1-flash/FlashMLA-README.md','calculations/sources/deepseek-v4.1-flash/DeepSeek_V41_Tech_Report.pdf','calculations/v41_throughline.py']
     for name in paths:r['sources'].append(dict(path=name,sha256=hashlib.sha256((ROOT/name).read_bytes()).hexdigest()))
     assert rows[0]['models'][1]['global_history_bytes']==7290880

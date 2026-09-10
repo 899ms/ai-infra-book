@@ -17,6 +17,20 @@ python3 -m unittest discover -s calculations/tests -v
 
 也可以在 `calculations/` 下创建自己的虚拟环境后执行 `python -m pip install -e .`，使用 `infra-calc` 命令。数据目前随书仓库存放，使用源码 checkout／editable 安装，不将 wheel 当成脱离仓库的数据包。
 
+## 第二章五模型比较与 V4.1 Flash
+
+`v41-forward` 按固定配置、全部 checkpoint 分片头和参考源码核对完整文本矩阵图，分别提供参考全层与 CED＋窗口重放路径。参数包括 Engram；视觉和 DSpark 属于独立调用。矩阵工作、非矩阵分项、状态布局与实际设备性能分别记录。
+
+```bash
+python3 calculations/calc.py v41-forward --tokens 8192 --execution ced --format md
+python3 calculations/calc.py v41-forward --tokens 8192 --execution reference --format md
+python3 calculations/calc.py v41-forward --tokens 1 --history 1048575 --format md
+python3 calculations/reproduce_ch02.py
+python3 -m unittest discover -s calculations/tests -p 'test_v41*.py' -v
+```
+
+[统一比较结果](results/chapter2-model-comparison.json)包含五个模型的参数组成、8K 调用、8K／200K／1M decode、状态增长与 P128/G4 请求。V4.1 Flash 的参考全层和 CED 分别保存逐层计算记录。各模型上下文上限、外推行和 CED 近似重放的解释见[写作与复核记录](../research/ch02-five-models-2026-09-10/README.md)。
+
 ## 模型支持范围
 
 | 模型 | 官方配置 | 当前可计算 | 仍待完成 |

@@ -1,7 +1,7 @@
 from pathlib import Path
 import json,re
 H=Path(__file__).resolve().parent;R=H.parents[1]
-md=(H.parent/'02-模型架构.md').read_text();models=[['qwen3-8b-prefill-8192'],['qwen36-prefill-8192'],['v3-forward-prefill'],['attention-deepseek-v4-flash-b1-t8192-s0','experts-deepseek-v4-flash-b64-balanced'],['k3-kda-b1-t1-s8192','k3-mla-compact-b1-t8192-s0','experts-kimi-k3-b64-balanced']]
+md=(H.parent/'02-模型架构.md').read_text();models=[['qwen3-8b-prefill-8192'],['qwen36-prefill-8192'],['v3-forward-prefill'],['attention-deepseek-v4-flash-b1-t8192-s0','experts-deepseek-v4-flash-b64-balanced'],['k3-kda-b1-t1-s8192','k3-mla-compact-b1-t8192-s0','experts-kimi-k3-b64-balanced'],['v41-forward-decode-8192-ced']]
 report=[]
 for num,names in enumerate(models,1):
  dims=set()
@@ -26,12 +26,16 @@ for num,names in enumerate(models,1):
   assert total%hidden==0
   dims.add((hidden,total//hidden))
   names=names+[name]
+ if num==6:
+  for op in d['operations']:
+   if op['name'].endswith('attn.wo_a.weight'):
+    width,total=op['weight_math'];dims.add((width,total//8))
  segment=md.split(f'**表 2-{num}')[1]
  segment=re.split(r'\n(?:\*\*表 2-|### |<!-- MODEL-COMPARISON)',segment,maxsplit=1)[0]
  blocks=re.findall(r'\| 模块及作用.*?(?=\n\n)',segment,re.S)
  rows=[row for block in blocks for row in block.splitlines()[2:]]
  for row in rows:
-  weight=row.split('|')[3]
+  weight=row.split('|')[2 if num==6 else 3]
   for k,n in re.findall(r'\$(\d+)\\times(\d+)\$',weight):
    pair=(int(k),int(n));report.append({'table':num,'shape':pair,'matched':(pair in dims or ('词嵌入查行' in row and pair[::-1] in dims)),'sources':names})
 (H/'table-validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');print('Table checks',len(report),'unmatched',[x for x in report if not x['matched']])

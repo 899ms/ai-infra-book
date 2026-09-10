@@ -261,18 +261,21 @@
   "teaching_diagrams": {
     "architecture": {
       "layers": [
+        40,
         36,
         40,
         43,
         93
       ],
       "hidden": [
+        5120,
         4096,
         2048,
         4096,
         7168
       ],
       "experts": [
+        384,
         0,
         256,
         256,
@@ -323,15 +326,35 @@
       "source": "manuscripts/ch02/model-comparison.json",
       "models": [
         {
+          "model": "V4.1 Flash",
+          "model_id": "deepseek-v4.1-flash",
+          "total_parameters": 748494684784,
+          "parameter_groups": {
+            "embedding_head": 1323827200,
+            "other": 118489200,
+            "attention_projection": 5126488064,
+            "dense_shared_ffn": 1415577600,
+            "routed_experts": 543581798400,
+            "engram": 196928504320
+          },
+          "uniform_bf16_bytes": 1496989369568,
+          "prefill_matrix_flops": 143946626891776,
+          "decode_matrix_flops": 35917045760,
+          "state_8192_bytes": 31547392,
+          "selected_routed_expert_bf16_bytes": 16986931200
+        },
+        {
           "model": "Qwen3-8B",
+          "model_id": "qwen3-8b",
           "total_parameters": 8190735360,
-          "parameter_groups": [
-            1244659712,
-            1509949440,
-            5435817984,
-            0,
-            308224
-          ],
+          "parameter_groups": {
+            "embedding_head": 1244659712,
+            "attention_projection": 1509949440,
+            "dense_shared_ffn": 5435817984,
+            "routed_experts": 0,
+            "engram": 0,
+            "other": 308224
+          },
           "uniform_bf16_bytes": 16381470720,
           "prefill_matrix_flops": 133594323353600,
           "decode_matrix_flops": 19968622592,
@@ -340,14 +363,16 @@
         },
         {
           "model": "Qwen3.6",
+          "model_id": "qwen3.6-35b-a3b",
           "total_parameters": 34660610688,
-          "parameter_groups": [
-            1017118720,
-            1283194880,
-            125829120,
-            32212254720,
-            22213248
-          ],
+          "parameter_groups": {
+            "embedding_head": 1017118720,
+            "attention_projection": 1283194880,
+            "dense_shared_ffn": 125829120,
+            "routed_experts": 32212254720,
+            "engram": 0,
+            "other": 22213248
+          },
           "uniform_bf16_bytes": 69321221376,
           "prefill_matrix_flops": 52094951358464,
           "decode_matrix_flops": 7331184832,
@@ -356,14 +381,16 @@
         },
         {
           "model": "V4-Flash",
+          "model_id": "deepseek-v4-flash",
           "total_parameters": 284332240471,
-          "parameter_groups": [
-            1059061760,
-            5084807168,
-            1082130432,
-            277025390592,
-            80850519
-          ],
+          "parameter_groups": {
+            "embedding_head": 1059061760,
+            "attention_projection": 5084807168,
+            "dense_shared_ffn": 1082130432,
+            "routed_experts": 277025390592,
+            "engram": 0,
+            "other": 80850519
+          },
           "uniform_bf16_bytes": 568664480942,
           "prefill_matrix_flops": 231125253357568,
           "decode_matrix_flops": 29539565568,
@@ -371,15 +398,17 @@
           "selected_routed_expert_bf16_bytes": 12985565184
         },
         {
-          "model": "K3（紧凑 MLA）",
+          "model": "Kimi K3（紧凑 MLA）",
+          "model_id": "kimi-k3",
           "total_parameters": 2779484476000,
-          "parameter_groups": [
-            2348810240,
-            36179705856,
-            12881756160,
-            2722740830208,
-            5333373536
-          ],
+          "parameter_groups": {
+            "embedding_head": 2348810240,
+            "attention_projection": 36179705856,
+            "dense_shared_ffn": 12881756160,
+            "routed_experts": 2722740830208,
+            "engram": 0,
+            "other": 5333373536
+          },
           "uniform_bf16_bytes": 5558968952000,
           "prefill_matrix_flops": 1863462762315776,
           "decode_matrix_flops": 249438187520,

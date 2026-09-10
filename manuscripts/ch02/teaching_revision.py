@@ -11,7 +11,7 @@ def draw(here,data):
         for j in range(count):
             box(a,x+j*w/count,y,w/count-.006,h,labels[j] if labels else str(j+1),colors[j] if colors else 'blue',11)
     def bars(name,labels,values,xlabel,colors=None):
-        f,a=plot(3.4,left=.28)
+        f,a=plot(4.1 if len(values)>4 else 3.4,left=.31)
         a.barh(range(len(values)),values,color=colors or COL['blue'],edgecolor=COL['line'],height=.55)
         a.set(yticks=range(len(values)),yticklabels=labels,xlim=(0,max(values)*1.28),xlabel=xlabel);a.invert_yaxis()
         for i,v in enumerate(values):a.text(v+max(values)*.025,i,f'{v:,.2f}',va='center',fontsize=11)
@@ -130,11 +130,16 @@ def draw(here,data):
         arrow(a,(.25,.62),(.4,.47));arrow(a,(.75,.62),(.6,.47))
         box(a,.06,.07,.41,.16,'路由专家：256 选 8','orange',11);box(a,.57,.07,.37,.16,'共享专家','purple')
         arrow(a,(.4,.34),(.27,.23));arrow(a,(.6,.34),(.76,.23));save(f,'6-hybrid')
-        d=data['figure_2_7'];names={'qwen':'Qwen3-8B','v4':'DeepSeek\nV4-Flash','k3':'Kimi K3\n紧凑'}
-        for field,name,ylabel in [('resident_bytes','7-state-growth','状态容量（GiB）'),('accounted_access_bytes','state-access','每步计入的访问量（GiB）')]:
-            f,a=plot(3.8)
-            for key,col in zip(names,['#267398','#388768','#a56c28']):a.plot(np.array(d['lengths'])/1024,np.array(d[field][key])/2**30,'o-',label=names[key],color=col)
-            a.set(xscale='log',yscale='log',xlabel='上下文长度（千个位置，对数轴）',ylabel=ylabel+'，对数轴');a.legend(frameon=False);save(f,name)
+        import json
+        comparison=json.loads((here/'model-comparison.json').read_text())
+        d=comparison['state_curves']
+        names=dict(zip([x['model_id'] for x in comparison['models']],['V4.1 Flash','Qwen3-8B','Qwen3.6','V4-Flash','Kimi K3']))
+        for field,name,ylabel in [('resident_bytes','7-state-growth','状态容量（GiB）'),('accounted_access_bytes','state-access','已计访问量（GiB）')]:
+            f,a=plot(4.4,left=.19,bottom=.18)
+            for key,col in zip(names,['#965466','#267398','#72558c','#388768','#a56c28']):
+                a.plot(np.array(d['lengths'])/1024,np.array(d[field][key])/2**30,'o-',label=names[key],color=col)
+            a.set(xscale='log',yscale='log',xlabel='上下文长度（千个位置，对数轴）',ylabel=ylabel+'，对数轴')
+            a.legend(frameon=False,fontsize=11,loc='upper left');save(f,name)
 
         f,a=canvas(4.0);text(a,.04,.94,'分派次数相同，访问到的专家可以不同',14)
         for y,title,n,c in [(.58,'分散：覆盖 256 个专家',256,'blue'),(.17,'集中：覆盖 8 个专家',8,'orange')]:
@@ -153,26 +158,25 @@ def draw(here,data):
         save(f,'8-residual')
 
         arch=data['teaching_diagrams']['architecture']
-        for key,label,name in [('layers','主干层数','architecture'),('hidden','主干隐藏维度','architecture-width'),('experts','每个 MoE 层的路由专家数','architecture-experts')]:bars(name,['Qwen3-8B','Qwen3.6','DeepSeek\nV4-Flash','Kimi K3'],arch[key],label)
+        for key,label,name in [('layers','主干层数','architecture'),('hidden','主干隐藏维度','architecture-width'),('experts','每个 MoE 层的路由专家数','architecture-experts')]:bars(name,['DeepSeek\nV4.1 Flash','Qwen3-8B','Qwen3.6','DeepSeek\nV4-Flash','Kimi K3'],arch[key],label)
         models=data['teaching_diagrams']['resource_comparison']['models']
-        for key,div,label,name in [('uniform_bf16_bytes',1e9,'完整 BF16 权重（GB）','resources'),('decode_matrix_flops',1e9,'8K 上下文单步矩阵运算（GFLOPs）','resources-compute'),('state_8192_bytes',2**20,'8K 上下文状态（MiB）','resources-state')]:bars(name,['Qwen3-8B','Qwen3.6','DeepSeek\nV4-Flash','Kimi K3\n紧凑'],[m[key]/div for m in models],label)
+        for key,div,label,name in [('uniform_bf16_bytes',1e9,'完整 BF16 权重（GB）','resources'),('decode_matrix_flops',1e9,'8K 上下文单步矩阵运算（GFLOPs）','resources-compute'),('state_8192_bytes',2**20,'8K 上下文状态（MiB）','resources-state')]:bars(name,['DeepSeek\nV4.1 Flash','Qwen3-8B','Qwen3.6','DeepSeek\nV4-Flash','Kimi K3\n紧凑'],[m[key]/div for m in models],label)
 
-        # Pair lengths within each model; logarithmic axis keeps all four readable.
-        import json
+        # Compare 8K with exactly 1M visible positions; retain 200K in JSON.
         long_data=json.loads((here/'long-context-comparison.json').read_text())
-        f,a=plot(5.3,left=.30,bottom=.17)
+        f,a=plot(6.0,left=.32,bottom=.17)
         f.subplots_adjust(top=.84)
-        labels=['Qwen3-8B*','Qwen3.6','DeepSeek\nV4-Flash','Kimi K3\n紧凑']
-        for j,(offset,color,label) in enumerate([(-.18,COL['blue'],'8K 上下文'),(.18,COL['orange'],'200K 上下文')]):
-            vals=[r['matrix_flops']/1e9 for r in long_data['models'][j*4:(j+1)*4]]
-            yy=np.arange(4)+offset
+        labels=['DeepSeek\nV4.1 Flash','Qwen3-8B','Qwen3.6','DeepSeek\nV4-Flash','Kimi K3\n紧凑']
+        for start,offset,color,label in [(0,-.18,COL['blue'],'8K 上下文'),(10,.18,COL['orange'],'1M 可见位置')]:
+            vals=[r['matrix_flops']/1e9 for r in long_data['models'][start:start+5]]
+            yy=np.arange(5)+offset
             a.barh(yy,np.array(vals)-1,left=1,height=.30,color=color,edgecolor=COL['line'],label=label)
             for y,value in zip(yy,vals):a.text(value*1.08,y,f'{value:,.2f}',va='center',fontsize=11)
-        a.set(yticks=range(4),yticklabels=labels,xscale='log',xlim=(1,4000),
-              xlabel='单步矩阵运算（GFLOPs，对数轴）',ylim=(3.65,-.65))
-        a.set_xticks([1,10,100,1000],['1','10','100','1000'])
+        a.set(yticks=range(5),yticklabels=labels,xscale='log',xlim=(1,19000),
+              xlabel='单步矩阵运算（GFLOPs，对数轴）',ylim=(4.65,-.65))
+        a.set_xticks([1,10,100,1000,10000],['1','10','100','1000','10000'])
         a.minorticks_off()
-        a.legend(loc='upper left',bbox_to_anchor=(0,1.16),ncol=2,frameon=False)
+        a.legend(loc='upper left',bbox_to_anchor=(0,1.16),ncol=1,frameon=False)
         a.grid(axis='x',alpha=.15)
         save(f,'long-context-compute')
 
@@ -192,7 +196,7 @@ def draw(here,data):
             arrow(a,(.27,y+.07),(.36,y+.07));arrow(a,(.63,y+.07),(.72,y+.07))
             text(a,.49,y-.045,f'已保留 {128+i} 个位置',11,ha='center')
         save(f,'10-request')
-        bars('request-compute',['Qwen3-8B','DeepSeek\nV4-Flash','DeepSeek\nV4-Pro','Kimi K3\n展开'],data['figure_2_10']['matrix_tflops'],'完整请求矩阵运算（TFLOPs）')
+        bars('request-compute',['DeepSeek\nV4.1 Flash','Qwen3-8B','Qwen3.6','DeepSeek\nV4-Flash','Kimi K3\n紧凑'],[r['matrix_flops']/1e12 for r in comparison['requests']],'完整请求矩阵运算（TFLOPs）')
     from core_principles_figures import draw as draw_principles
     draw_principles(2, out)
     from v41_case_figures import draw as draw_v41

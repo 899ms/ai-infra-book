@@ -39,12 +39,12 @@ def draw(ch,save,root):
   save(f,'figure-1-batch-transition');meta['batch_transition']={'parameters':N,'bytes_per_weight':1,'compute_flops_s':989.4e12,'bandwidth_bytes_s':3.35e12,'crossing_batch':cross,'batch':batches.tolist(),'compute_seconds':compute.tolist(),'read_seconds':read.tolist(),'lower_seconds':lower.tolist(),'throughput':(batches/lower).tolist()}
  if ch==2:
   f,axs=plt.subplots(1,3,figsize=(14,8));f.subplots_adjust(left=.10,right=.95,wspace=.60,top=.9,bottom=.15)
-  names=['Qwen3-8B','Qwen3.6','V4-Flash','K3']; colors=[BLUE,TEAL,ORANGE,'#786295']
-  for a,vals,title in zip(axs,[[36,40,43,93],[4096,2048,4096,7168],[0,256,256,896]],['层数','隐藏维度','每层路由专家数']):
+  names=['V4.1 Flash','Qwen3-8B','Qwen3.6','V4-Flash','K3']; colors=['#965466',BLUE,TEAL,ORANGE,'#786295']
+  for a,vals,title in zip(axs,[[40,36,40,43,93],[5120,4096,2048,4096,7168],[384,0,256,256,896]],['层数','隐藏维度','每层路由专家数']):
    a.barh(names,vals,color=colors,height=.55);a.invert_yaxis();a.set_title(title,fontsize=15,pad=20);a.set_xlim(0,max(vals)*1.3)
    for i,v in enumerate(vals):a.text(v+max(vals)*.035,i,str(v) if v else '稠密 FFN',va='center',fontsize=12)
    a.spines[['top','right']].set_visible(False)
-  save(f,'figure-2-architecture');meta['architecture']={'layers':[36,40,43,93],'hidden':[4096,2048,4096,7168],'experts':[0,256,256,896]}
+  save(f,'figure-2-architecture');meta['architecture']={'layers':[40,36,40,43,93],'hidden':[5120,4096,2048,4096,7168],'experts':[384,0,256,256,896]}
   f,axs=plt.subplots(1,2,figsize=(14,8));f.subplots_adjust(left=.07,right=.96,wspace=.3,top=.88,bottom=.17)
   a=axs[0];a.set_title('A  一行对应一次 decode 读取',loc='left',fontsize=15,pad=18)
   for j in range(4):

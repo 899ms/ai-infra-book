@@ -11,7 +11,7 @@ def draw(here,data):
         f,a=canvas(5.0)
         for x,y,w,l,c in [(.04,.70,.25,'输入样本','blue'),(.38,.70,.25,'前向计算','blue'),(.72,.70,.24,'损失','orange'),(.38,.39,.25,'反向计算','green'),(.04,.08,.25,'参数梯度','green'),(.38,.08,.25,'Adam 更新','purple'),(.72,.08,.24,'新权重','blue')]:box(a,x,y,w,.17,l,c)
         for p,q in [((.29,.785),(.38,.785)),((.63,.785),(.72,.785)),((.84,.70),(.63,.475)),((.38,.475),(.165,.25)),((.29,.165),(.38,.165)),((.63,.165),(.72,.165))]:arrow(a,p,q)
-        text(a,.04,.95,'一次迭代：由预测误差得到下一份权重',13);text(a,.50,.63,'保存激活',11,ha='center');text(a,.75,.39,'更新时读取\n主权重与两份矩状态',11);save(f,'update-cycle')
+        text(a,.04,.95,'一次迭代：由预测误差得到下一份权重',13);text(a,.50,.63,'保留激活供反向使用',11,ha='center');text(a,.75,.39,'更新时读取\n主权重与两份矩状态',11);save(f,'update-cycle')
         f,a=plot(4.7,left=.20,bottom=.16);vals=np.array(data['10-1']['allocations_bytes'])/1e9;left=np.zeros(2)
         for j,(l,c) in enumerate([('BF16 权重','blue'),('BF16 梯度','green'),('FP32 主权重','orange'),('一阶矩','purple'),('二阶矩','gray')]):a.barh([1,0],vals[:,j],left=left,height=.45,color=COL[c],edgecolor=COL['line'],label=l);left+=vals[:,j]
         a.set(yticks=[1,0],yticklabels=['推理权重','训练状态'],xlabel='容量（GB）',xlim=(0,145),ylim=(-.5,2.8));a.legend(frameon=False,ncol=2,loc='upper left');save(f,'1-state')
@@ -36,7 +36,7 @@ def draw(here,data):
         box(a,.04,.18,.39,.20,'dX：传给前一层','green');box(a,.57,.18,.39,.20,'dW：更新本层参数','purple')
         arrow(a,(.70,.59),(.235,.38));arrow(a,(.83,.59),(.765,.38));save(f,'gradient-branches')
         for rebuild,name in [(False,'4-recompute'),(True,'recompute-rebuild')]:
-            f,a=canvas(3.8);text(a,.04,.92,'反向前重建乘积' if rebuild else '从前向保存乘积',14)
+            f,a=canvas(3.8);text(a,.04,.92,'反向前重建乘积' if rebuild else '保留前向计算的乘积',14)
             for i,l in enumerate(['前向相乘','等待反向','下投影反向']):text(a,.17+i*.33,.71,l,11,ha='center')
             box(a,.04,.41,.92,.14,'一直保留 a、u','blue')
             box(a,.71 if rebuild else .04,.18,.25 if rebuild else .92,.14,'h：6 MiB','orange',11)

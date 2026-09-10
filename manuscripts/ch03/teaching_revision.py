@@ -90,7 +90,7 @@ def draw(here,data):
         arrow(a,(.72,.48),(.62,.48));arrow(a,(.38,.48),(.28,.48));text(a,.5,.39,'反向：后一层梯度 → 前一层梯度',12,ha='center')
         box(a,.23,.10,.54,.14,'当前层另算权重梯度，用于更新','purple',11);arrow(a,(.5,.45),(.5,.24));save(f,'5-training')
         f,a=plot(3.2,left=.20)
-        for y,start,duration,label,c in [(0,0,1,'前向','blue'),(0,3,1,'反向','orange'),(1,1,3,'保存激活','green')]:
+        for y,start,duration,label,c in [(0,0,1,'前向','blue'),(0,3,1,'反向','orange'),(1,1,3,'激活的生命周期','green')]:
             a.barh(y,duration,left=start,height=.5,color=COL[c],edgecolor=COL['line']);a.text(start+duration/2,y,label,fontsize=12,ha='center',va='center')
         a.set(yticks=[0,1],yticklabels=['该层计算','该层激活'],xlim=(-.1,4.3),ylim=(-.7,1.7),xticks=[0,1,3,4],xticklabels=['开始','前向完成','反向开始','反向完成'],xlabel='事件次序（间距仅作示意）');a.invert_yaxis();save(f,'activation-lifetime')
         t=data['3-5'];bars('training-flops',['前向','反向','前向加反向','总参数 6ND'],[t['summary'][k]/1e12 for k in ['forward_matrix_flops','backward_matrix_flops','training_matrix_flops','six_nd_flops']],'矩阵运算量（TFLOPs）')

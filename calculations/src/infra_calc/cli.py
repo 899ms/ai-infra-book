@@ -26,7 +26,7 @@ from .topics import trace_resource_bridge
 from .topics import request_hardware_bridge
 from .topics import v4_mtp_forward
 from .topics import trace_cache_lifecycle
-from .topics import v41_flash, kv_comparison
+from .topics import v41_flash, kv_comparison, v41_forward, chapter2_models
 from .topics import qwen36_forward, qwen36_capacity, memory_pool_access
 from .topics import supernode_cohort_cost
 from .topics import hierarchical_gradient
@@ -318,6 +318,17 @@ def parser() -> argparse.ArgumentParser:
     profiles = sub.add_parser("workload-profiles", help="Archived 02-08 request distributions and nearest-rank p95")
     profiles.add_argument("--format", choices=("json", "md"), default="json")
     profiles.add_argument("--output", type=Path)
+    chapter2 = sub.add_parser("chapter2-models", help="Recompute five-model chapter 2 comparisons")
+    chapter2.add_argument("--format", choices=("json",), default="json")
+    chapter2.add_argument("--output", type=Path)
+    v41 = sub.add_parser("v41-forward", help="V4.1 complete text matrix graph and CED schedule")
+    v41.add_argument("--batch", type=int, default=1)
+    v41.add_argument("--tokens", type=int, default=8192)
+    v41.add_argument("--history", type=int, default=0)
+    v41.add_argument("--execution", choices=("reference", "ced"), default="ced")
+    v41.add_argument("--index-algorithm", choices=("reference", "candidate"))
+    v41.add_argument("--format", choices=("json", "md"), default="json")
+    v41.add_argument("--output", type=Path)
     for name in ("v41-flash", "kv-comparison"):
         cache_parser = sub.add_parser(name, help="Pinned checkpoint/cache metrics with explicit layout and decode scope")
         cache_parser.add_argument("--length", type=int, default=8192)
@@ -996,7 +1007,7 @@ def model_list() -> list[dict]:
                 or upstream == 'config.json' or upstream.endswith('/config.json')):
             configurations.setdefault(row['model'], []).append(row)
     stage_commands = {
-        'deepseek-v4.1-flash': ['v41-flash', 'kv-comparison'],
+        'deepseek-v4.1-flash': ['v41-forward', 'v41-flash', 'kv-comparison'],
         'qwen3-vl-4b': ['vision-encoding', 'vl-request', 'multimodal-cache'],
         'qwen3-omni-30b-a3b-instruct': ['omni-understanding', 'omni-vision-encoding', 'omni-audio-encoder', 'omni-audio'],
         'fish-audio-s2-pro': ['omni-audio'],
@@ -1005,7 +1016,7 @@ def model_list() -> list[dict]:
         'qwen-image-2512': ['image-generation'],
         'flux2-klein-4b': ['image-generation'],
     }
-    base_commands = {'kimi-k3': 'k3-forward', 'deepseek-v4-flash': 'v4-forward',
+    base_commands = {'deepseek-v4.1-flash': 'v41-forward', 'kimi-k3': 'k3-forward', 'deepseek-v4-flash': 'v4-forward',
                      'deepseek-v4-pro': 'v4-forward', 'deepseek-v3': 'v3-forward', 'qwen3.5-397b-a17b': 'qwen35-forward', 'qwen3.6-35b-a3b': 'qwen36-forward'}
     result = []
     for model, sources in sorted(configurations.items()):
@@ -1276,6 +1287,10 @@ def main(argv: list[str] | None = None) -> None:
             result = growing_remote_kv.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
         elif args.command == "memory-pool-access":
             result = memory_pool_access.calculate(copies=args.copies)
+        elif args.command == "chapter2-models":
+            result = chapter2_models.calculate()
+        elif args.command == "v41-forward":
+            result = v41_forward.calculate(args.batch, args.tokens, args.history, args.execution, args.index_algorithm)
         elif args.command in ("v41-flash", "kv-comparison"):
             result = (v41_flash if args.command == "v41-flash" else kv_comparison).calculate(args.length, args.batch)
         elif args.command == "qwen36-forward":

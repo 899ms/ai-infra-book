@@ -39,6 +39,10 @@ function Pandoc(doc)
         out:insert(block)
         raw('\\end{infratable}')
       end
+    elseif block.t == 'Figure' and pandoc.write(pandoc.Pandoc({block}), 'latex'):find('figure-1-4-numbers', 1, true) then
+      -- Keep the historical latency plot before the following Amdahl example.
+      out:insert(block)
+      raw('\\FloatBarrier')
     else out:insert(block) end
   end
   doc.blocks=out

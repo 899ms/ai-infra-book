@@ -2,7 +2,13 @@
 \makeatletter
 \@ifundefined{Shaded}{\newenvironment{Shaded}{}{}}{}
 \makeatother
+% The imported series template selects Menlo. Substitute it only when unavailable.
+\NewCommandCopy\InfraOriginalSetMonoFont\setmonofont
+\RenewDocumentCommand{\setmonofont}{O{} m}{%
+  \IfFontExistsTF{#2}{\InfraOriginalSetMonoFont[#1]{#2}}{%
+    \InfraOriginalSetMonoFont[#1]{DejaVu Sans Mono}}}
 \input{template/agent-book-preamble.tex}
+\RenewCommandCopy\setmonofont\InfraOriginalSetMonoFont
 % Infrastructure-specific additions; keep the imported template unchanged.
 \usepackage{placeins}
 \usepackage{longtable,booktabs,array,calc}

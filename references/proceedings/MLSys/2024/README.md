@@ -2,7 +2,7 @@
 
 官方目录共 37 项；下载与阅读状态分别记录。
 
-[原目录](https://proceedings.mlsys.org/paper_files/paper/2024) · [归档目录](index.html) · [校验清单](manifest.json) · [来源表](sources.tsv)
+[原目录](https://proceedings.mlsys.org/paper_files/paper/2024) · [归档目录](index.md) · [校验清单](manifest.json) · [来源表](sources.tsv)
 
 - Punica: Multi-Tenant LoRA Serving — [PDF](papers/mlsys2024-054de805fcceb78a201f5e9d53c85908.pdf)
 - ACROBAT: Optimizing Auto-batching of Dynamic Deep Learning at Compile Time — [PDF](papers/mlsys2024-096b1019463f34eb241e87cfce8dfe16.pdf)

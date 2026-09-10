@@ -4,15 +4,15 @@
 
 | 原件 | 实际读取范围 |
 | --- | --- |
-| [vLLM 2025 文章](vllm-structured-2025.html)、[文本](vllm-structured-2025.txt) | 文本 77–150 行：V0 限制、XGrammar 接入与当时 V1 计划；没有采用图中成绩，未读完整历史引言 |
-| [Ollama 2024 文章](ollama-structured-2024.html)、[文本](ollama-structured-2024.txt) | 文本 1–61 行：2024-12-06 公告、schema 与初始示例 |
+| [vLLM 2025 文章](vllm-structured-2025.md)、[文本](vllm-structured-2025.txt) | 文本 77–150 行：V0 限制、XGrammar 接入与当时 V1 计划；没有采用图中成绩，未读完整历史引言 |
+| [Ollama 2024 文章](ollama-structured-2024.md)、[文本](ollama-structured-2024.txt) | 文本 1–61 行：2024-12-06 公告、schema 与初始示例 |
 | [vLLM 当前指南](vllm-current-guide.md) | 1–65、170–218 行：新 API、后端选择与 reasoning 例子；文档支持描述和完整验证链分开 |
 | [vLLM manager](vllm-current-manager.py) | 35–98、115–202、220–391 行：编译线程、external_launcher 例外、按请求创建、填 mask、推测推进／回滚、reasoning 边界；未审计完整 scheduler／runner |
 | [vLLM XGrammar backend](vllm-current-xgrammar.py) | 33–137、150–214 行：编译缓存、schema／grammar／tag、mask 分配及验证回滚；底层库未完整审计 |
 | [SGLang 当前指南](sglang-current-guide.mdx) | 1–24、177–333 行：后端与 structural tag 的两种格式；示例只静态阅读 |
 | [SGLang reasoning 指南](sglang-current-reasoning.mdx) | 1–45 行：自由思考与受约束输出的边界和示例；旧模型示例不作为全部当前支持清单 |
 | [SGLang XGrammar backend](sglang-current-xgrammar.py) | 30–144 行：CPU mask、可用时 pinned memory、设备传输／应用、accept 与 rollback；其余编译器、调度与推测调用链未读 |
-| [Ollama 当前指南](ollama-current-guide.html)、[文本](ollama-current-guide.txt) | 文本 1–57、85–125、424–433 行：本地 JSON／schema、Cloud 边界与消费端验证 |
+| [Ollama 当前指南](ollama-current-guide.md)、[文本](ollama-current-guide.txt) | 文本 1–57、85–125、424–433 行：本地 JSON／schema、Cloud 边界与消费端验证 |
 
 [SGLang v0.4 原件](../../../outline-checks/2026-09-07/framework-evolution/sglang-v04.txt)复读 132–145 行。历史文章、当前文档和固定源码是代表时点，不以 2026 的采集日期当作所有机制的首发日。
 

@@ -147,8 +147,8 @@
     },
     {
       "source_id": "memory-tiering-linux-v69-numa-policy-html",
-      "file": "references/framework-history/2026-09-09/memory-tiering/linux-v69-numa-policy.html",
-      "sha256": "7ae5b922bc062fdbdb3350056b4863b642103c8a6fb446e6afbecc3efd392385",
+      "file": "references/framework-history/2026-09-09/memory-tiering/linux-v69-numa-policy.md",
+      "sha256": "ab6199c3feefbb8fc27389de8c711bd06b9d1020997a04d6b2cbf5e7fbe5a115",
       "mode": "html_sections",
       "sections": [
         {
@@ -161,12 +161,13 @@
           "text": "Memory Policy APIs ¶ Linux supports 4 system calls for controlling memory policy.  These APIS\nalways affect only the calling task, the calling task’s address space, or\nsome shared object mapped into the calling task’s address space. Note the headers that define these APIs and the parameter data types for\nuser space applications reside in a package that is not part of the\nLinux kernel.  The kernel system call interfaces, with the ‘sys_’\nprefix, are defined in <linux/syscalls.h>; the mode and flag\ndefinitions are defined in <linux/mempolicy.h>. Set [Task] Memory Policy: long set_mempolicy(int mode, const unsigned long *nmask,\n                                unsigned long maxnode); Set’s the calling task’s “task/process memory policy” to mode\nspecified by the ‘mode’ argument and the set of nodes defined by\n‘nmask’.  ‘nmask’ points to a bit mask of node ids containing at least\n‘maxnode’ ids.  Optional mode flags may be passed by combining the\n‘mode’ argument with the flag (for example: MPOL_INTERLEAVE |\nMPOL_F_STATIC_NODES). See the set_mempolicy(2) man page for more details Get [Task] Memory Policy or Related Information: long get_mempolicy(int *mode,\n                   const unsigned long *nmask, unsigned long maxnode,\n                   void *addr, int flags); Queries the “task/process memory policy” of the calling task, or the\npolicy or location of a specified virtual address, depending on the\n‘flags’ argument. See the get_mempolicy(2) man page for more details Install VMA/Shared Policy for a Range of Task’s Address Space: long mbind(void *start, unsigned long len, int mode,\n           const unsigned long *nmask, unsigned long maxnode,\n           unsigned flags); mbind() installs the policy specified by (mode, nmask, maxnodes) as a\nVMA policy for the range of the calling task’s address space specified\nby the ‘start’ and ‘len’ arguments.  Additional actions may be\nrequested via the ‘flags’ argument. See the mbind(2) man page for more details. Set home node for a Range of Task’s Address Spacec: long sys_set_mempolicy_home_node(unsigned long start, unsigned long len,\n                                 unsigned long home_node,\n                                 unsigned long flags); sys_set_mempolicy_home_node set the home node for a VMA policy present in the\ntask’s address range. The system call updates the home node only for the existing\nmempolicy range. Other address ranges are ignored. A home node is the NUMA node\nclosest to which page allocation will come from. Specifying the home node override\nthe default allocation policy to allocate memory close to the local node for an\nexecuting CPU.\n",
           "sha256": "f6ccc9b5992bb03087e44b4d4138e176435305821b6f5b7dbc7fe6da4637e3fd"
         }
-      ]
+      ],
+      "original_html_sha256": "7ae5b922bc062fdbdb3350056b4863b642103c8a6fb446e6afbecc3efd392385"
     },
     {
       "source_id": "memory-tiering-linux-v69-pin-user-pages-html",
-      "file": "references/framework-history/2026-09-09/memory-tiering/linux-v69-pin-user-pages.html",
-      "sha256": "9b222b36a667f530c5deb4dbb6e8c82ea4adecbf7fbb58f300b8a7e7853ff65d",
+      "file": "references/framework-history/2026-09-09/memory-tiering/linux-v69-pin-user-pages.md",
+      "sha256": "d3b28595ed51ca929d110537b61375de614eabe35fb07ff86f718c5d182ee932",
       "mode": "html_sections",
       "sections": [
         {
@@ -189,7 +190,8 @@
           "text": "page_maybe_dma_pinned(): the whole point of pinning ¶ The whole point of marking pages as “DMA-pinned” or “gup-pinned” is to be able\nto query, “is this page DMA-pinned?” That allows code such as page_mkclean()\n(and file system writeback code in general) to make informed decisions about\nwhat to do when a page cannot be unmapped due to such pins. What to do in those cases is the subject of a years-long series of discussions\nand debates (see the References at the end of this document). It’s a TODO item\nhere: fill in the details once that’s worked out. Meanwhile, it’s safe to say\nthat having this available: static inline bool page_maybe_dma_pinned(struct page *page) ...is a prerequisite to solving the long-running gup+DMA problem.\n",
           "sha256": "a20dc387fcd0dc8b6aa501a4f00dec558e24ee13e995e5d2b6d2111459079b8d"
         }
-      ]
+      ],
+      "original_html_sha256": "9b222b36a667f530c5deb4dbb6e8c82ea4adecbf7fbb58f300b8a7e7853ff65d"
     },
     {
       "source_id": "memory-tiering-intel-optimization-v050",

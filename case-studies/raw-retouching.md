@@ -6,9 +6,9 @@
 
 路径为拍摄 → 原图上传 → AI 精修 → 成片编码 → 下载显示。调整阴影、高光和白平衡需要输入保留相应信息；已经完成色调映射、裁剪和有损压缩的图像，与传感器或较早阶段的数据有不同的编辑余地。不能保证恢复传感器饱和或已经丢弃的信息。
 
-[华为专业模式说明](../references/outline-checks/2026-09-07/edge-media/huawei-pro-raw.html)确认 RAW／DNG 保留更多后期处理信息且占用更多空间；[Adobe Indigo](../references/outline-checks/2026-09-07/edge-media/adobe-indigo.html)说明色调映射前后的像素与编辑差异。两份资料不证明作者历史服务的云端模型、上传格式或传输协议。
+[华为专业模式说明](../references/outline-checks/2026-09-07/edge-media/huawei-pro-raw.md)确认 RAW／DNG 保留更多后期处理信息且占用更多空间；[Adobe Indigo](../references/outline-checks/2026-09-07/edge-media/adobe-indigo.md)说明色调映射前后的像素与编辑差异。两份资料不证明作者历史服务的云端模型、上传格式或传输协议。
 
-RAW 不必是完全未压缩的数据。[Adobe 的 DNG 说明](../references/outline-checks/2026-09-07/edge-media/adobe-dng-compression.html)讨论无损压缩；计算时读取实际文件字节，检查压缩方式与图像管线，不能按扩展名假定固定比例。已经压缩的数据再次压缩能省多少也需要实测。
+RAW 不必是完全未压缩的数据。[Adobe 的 DNG 说明](../references/outline-checks/2026-09-07/edge-media/adobe-dng-compression.md)讨论无损压缩；计算时读取实际文件字节，检查压缩方式与图像管线，不能按扩展名假定固定比例。已经压缩的数据再次压缩能省多少也需要实测。
 
 ## 一次完整成片的教学预算
 

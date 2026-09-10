@@ -4,9 +4,9 @@
 
 | 版本或快照 | 固定提交与已读位置 | 观察 |
 | --- | --- | --- |
-| v0.4.2 | `c7f2cf2b7f67bce5842fedfdba508440fe257375`；[scheduler](vllm-v042-scheduler.py) 第 797–895、1140–1168 行；[当时文档](vllm-v042-tuning.html) | 已有实验性分块 prefill，独立调度路径先处理运行及换回请求，再接纳新的 prefill；默认路径与分块路径分别组织。运行队列也含尚未完成的 prefill。 |
+| v0.4.2 | `c7f2cf2b7f67bce5842fedfdba508440fe257375`；[scheduler](vllm-v042-scheduler.py) 第 797–895、1140–1168 行；[当时文档](vllm-v042-tuning.md) | 已有实验性分块 prefill，独立调度路径先处理运行及换回请求，再接纳新的 prefill；默认路径与分块路径分别组织。运行队列也含尚未完成的 prefill。 |
 | v0.8.0 | `966f933ee1cd7c9a41db60de5c7ff98657005251`；[V1 scheduler](vllm-v080-scheduler.py) 第 100–270 行 | 用已计算与待计算 token 的进度统一请求；分配预算时同时检查 KV 空间和编码工作，必要时抢占。 |
-| 当前 V1 固定提交 | `51da0ca66c8065619c79e35dff97aa99aeaf5644`；[scheduler](vllm-current-scheduler.py) 第 535–654、987–1102 行；[当前文档快照](vllm-current-tuning.html) | 统一预算之外还受远端 KV 就绪、推测占位、图形状、多模态编码和状态对齐约束；请求状态影响本步可执行工作。 |
+| 当前 V1 固定提交 | `51da0ca66c8065619c79e35dff97aa99aeaf5644`；[scheduler](vllm-current-scheduler.py) 第 535–654、987–1102 行；[当前文档快照](vllm-current-tuning.md) | 统一预算之外还受远端 KV 就绪、推测占位、图形状、多模态编码和状态对齐约束；请求状态影响本步可执行工作。 |
 
 两个 tag 对应提交的时间分别为 2024-05-05 和 2025-03-18，记录见 [v0.4.2 元数据](vllm-v042-commit.json)与 [v0.8.0 元数据](vllm-v080-commit.json)；这是提交时间，不冒充 GitHub Release 发布时间或特性首次合入时间。2024 的样本早于原笔记的两年窗口，用来避免把已有机制误记为 V1 首创。
 

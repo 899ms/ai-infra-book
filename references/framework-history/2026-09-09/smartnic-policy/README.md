@@ -5,7 +5,7 @@
 | 材料 | 实际阅读范围 | 能支持的判断 |
 | --- | --- | --- |
 | [Wave 作者 PDF](../../../proceedings/ASPLOS/2026/paper-168.pdf) | 物理页 2–14 的动机、设计、评估与结论；实际查看页 6、10、11、12、14 | 决策跨 PCIe 后的延迟、提前准备与预取条件；固定工作核心和使用释放核心是两种比较。第 15 页参考条目另看过，不计入十三页正文范围。 |
-| [作者主页](wave-author.html)、[Google 论文页](wave-google.html) | 主页源码／可见正文；Google 的题名与摘要容器 | 作者主页的 Wave 条目仅链接论文／演讲，而 ghOSt 条目明确另链代码。Google 摘要复核身份，不增加一篇摘要计数。 |
+| [作者主页](wave-author.md)、[Google 论文页](wave-google.md) | 主页源码／可见正文；Google 的题名与摘要容器 | 作者主页的 Wave 条目仅链接论文／演讲，而 ghOSt 条目明确另链代码。Google 摘要复核身份，不增加一篇摘要计数。 |
 | [ghOSt README](ghost-README.md) | 完整文件 | 用户态调度必须配套 ghOSt 内核；失效后的 CFS 回退和 rebootless upgrade 是不同操作。此库不是 Wave 工件。 |
 | [enclave.h](ghost-enclave.h) | 237–370 行 | barrier 的任务／agent 范围；agent barrier 只在本地提交检查。`committed` 包括失败终态。 |
 | [enclave.cc](ghost-enclave.cc) | 559–635、757–797 行 | 发布 READY、等待终态、返回成功或各类预期失败；未审计内核校验实现。 |

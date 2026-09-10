@@ -7,7 +7,7 @@ TCCL 固定提交为 `351d064856e322ec6e4546808e7d1e433d24f941`（2025-07-08）�
 | 原件 | 本次实际读取与用途 |
 | --- | --- |
 | [TCCL README](tccl-README.md)、[AE](tccl-AE.md) | 完整文件；路径搜索与历史依赖。NCCL 2.18.3、PyTorch 2.0.1 等条件不能代表当前安装 |
-| [作者文章](tccl-author.html)、[提取正文](tccl-author-body.txt) | 完整文章文本；缓冲放置与并发测量。未数字化图中测点，未采用性能数字或最优性证明 |
+| [作者文章](tccl-author.md)、[提取正文](tccl-author-body.txt) | 完整文章文本；缓冲放置与并发测量。未数字化图中测点，未采用性能数字或最优性证明 |
 | [TCCL SHM](tccl-shm.cc)、[分配入口](tccl-shmutils.cc) | 声明行段；所选 NUMA 编号传到分配调用。未追读 `tcclSetNuma` 全部实现 |
 | [搜索入口](tccl-search.cpp)、[benchmark](tccl-benchmark.cpp) | 声明行段；默认数据量、迭代、候选开关、计时与搜索。未通读所有候选生成和调用链 |
 | [kernel wrapper](tccl-kernels.cu) | 完整文件；复制启动和完成同步。名为 single_channel 的 wrapper 实际启动 10 个 block，不能凭函数名推断资源量 |

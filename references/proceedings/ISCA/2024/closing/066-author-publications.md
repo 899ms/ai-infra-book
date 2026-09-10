@@ -1,0 +1,116 @@
+<!-- 从 066-author-publications.html 迁移的资料快照；原始 HTML SHA-256: 3609369c1c36a6f1e8a5f16629f0ba021024852cd6b6648ffea627cc9ad4915c。 -->
+
+![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iVjRZUjJjIiB2aWV3Ym94PSIwIDAgMjQgMjQiIGZvY3VzYWJsZT0iZmFsc2UiPjxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiIC8+PHBhdGggZD0iTTIwIDExSDcuODNsNS41OS01LjU5TDEyIDRsLTggOCA4IDggMS40MS0xLjQxTDcuODMgMTNIMjB2LTJ6IiAvPjwvc3ZnPg==)
+
+![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0idnU4UHdlIiB2aWV3Ym94PSIwIDAgMjQgMjQiIGZvY3VzYWJsZT0iZmFsc2UiPjxwYXRoIGQ9Ik0xNS41IDE0aC0uNzlsLS4yOC0uMjdDMTUuNDEgMTIuNTkgMTYgMTEuMTEgMTYgOS41IDE2IDUuOTEgMTMuMDkgMyA5LjUgM1MzIDUuOTEgMyA5LjUgNS45MSAxNiA5LjUgMTZjMS42MSAwIDMuMDktLjU5IDQuMjMtMS41N2wuMjcuMjh2Ljc5bDUgNC45OUwyMC40OSAxOWwtNC45OS01em0tNiAwQzcuMDEgMTQgNSAxMS45OSA1IDkuNVM3LjAxIDUgOS41IDUgMTQgNy4wMSAxNCA5LjUgMTEuOTkgMTQgOS41IDE0eiIgLz48cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIiAvPjwvc3ZnPg==)
+
+![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iVjRZUjJjIiB2aWV3Ym94PSIwIDAgMjQgMjQiIGZvY3VzYWJsZT0iZmFsc2UiPjxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiIC8+PHBhdGggZD0iTTIwIDExSDcuODNsNS41OS01LjU5TDEyIDRsLTggOCA4IDggMS40MS0xLjQxTDcuODMgMTNIMjB2LTJ6IiAvPjwvc3ZnPg==)
+
+Search this site
+
+![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZkFVRVVkIiB2aWV3Ym94PSIwIDAgMjQgMjQiIGZvY3VzYWJsZT0iZmFsc2UiPjxwYXRoIGQ9Ik0xOSA2LjQxTDE3LjU5IDUgMTIgMTAuNTkgNi40MSA1IDUgNi40MSAxMC41OSAxMiA1IDE3LjU5IDYuNDEgMTkgMTIgMTMuNDEgMTcuNTkgMTkgMTkgMTcuNTkgMTMuNDEgMTJ6IiAvPjxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiIC8+PC9zdmc+)
+
+![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0idnU4UHdlIEtZTEN3IiB2aWV3Ym94PSIwIDAgMjQgMjQiIGZvY3VzYWJsZT0iZmFsc2UiPjxwYXRoIGQ9Ik0xNS41IDE0aC0uNzlsLS4yOC0uMjdDMTUuNDEgMTIuNTkgMTYgMTEuMTEgMTYgOS41IDE2IDUuOTEgMTMuMDkgMyA5LjUgM1MzIDUuOTEgMyA5LjUgNS45MSAxNiA5LjUgMTZjMS42MSAwIDMuMDktLjU5IDQuMjMtMS41N2wuMjcuMjh2Ljc5bDUgNC45OUwyMC40OSAxOWwtNC45OS01em0tNiAwQzcuMDEgMTQgNSAxMS45OSA1IDkuNVM3LjAxIDUgOS41IDUgMTQgNy4wMSAxNCA5LjUgMTEuOTkgMTQgOS41IDE0eiIgLz48cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIiAvPjwvc3ZnPg==)Embedded Files
+
+Skip to main content
+
+Skip to navigation
+
+![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0id0ZDV25lIiB2aWV3Ym94PSIwIDAgMjQgMjQiIHN0cm9rZT0iY3VycmVudENvbG9yIiBqc25hbWU9IkIxbjl1YiIgZm9jdXNhYmxlPSJmYWxzZSI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTIsMTIpIj48cGF0aCBjbGFzcz0iaGxKSDAiIGQ9Ik0tOSAtNSBMOSAtNSIgZmlsbD0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIyIiAvPjxwYXRoIGNsYXNzPSJIQnU2TiIgZD0iTS05IDAgTDkgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIyIiAvPjxwYXRoIGNsYXNzPSJjTEFHUWUiIGQ9Ik0tOSA1IEw5IDUiIGZpbGw9Im5vbmUiIHN0cm9rZS13aWR0aD0iMiIgLz48L2c+PC9zdmc+)
+
+[![](https://lh3.googleusercontent.com/sitesv/AG8ngQXbXpp848D2XUJ20gw8QNu1BN8h68XzXkFDAHVwGgN3z4xOTWbCPogmvOFdOvPW69GDvBHUTTV4y64oxt6RHYc5XknvXV588kePKntKUIXQKuu7kS37A42OcWXC7E1zXIHmTIFYyE302d2sk9OEpEAMy2JRzWRP6fjVUgh3gQXM5OeBhUQ-P9e1IOKm=w16383)](/ucsd.edu/yufeiding/home)[PICASSO LAB](/ucsd.edu/yufeiding/home)
+
+- [Home](/ucsd.edu/yufeiding/home)
+
+- ![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZHZtUnciIHZpZXdib3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIGpzbmFtZT0iSElIMlYiIGZvY3VzYWJsZT0iZmFsc2UiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDkuNywxMikgcm90YXRlKDQ1KSI+PHBhdGggY2xhc3M9Iks0QjhZIiBkPSJNLTQuMiAwIEw0LjIgMCIgc3Ryb2tlLXdpZHRoPSIyIiAvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNC4zLDEyKSByb3RhdGUoLTQ1KSI+PHBhdGggY2xhc3M9Ik1yWU14IiBkPSJNLTQuMiAwIEw0LjIgMCIgc3Ryb2tlLXdpZHRoPSIyIiAvPjwvZz48L3N2Zz4=)
+
+  People
+
+  - [Prof. Yufei Ding](/ucsd.edu/yufeiding/people/prof-yufei-ding)
+
+  - [Team](/ucsd.edu/yufeiding/people/team)
+
+- [Publications](/ucsd.edu/yufeiding/publications)
+
+- ![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZHZtUnciIHZpZXdib3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIGpzbmFtZT0iSElIMlYiIGZvY3VzYWJsZT0iZmFsc2UiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDkuNywxMikgcm90YXRlKDQ1KSI+PHBhdGggY2xhc3M9Iks0QjhZIiBkPSJNLTQuMiAwIEw0LjIgMCIgc3Ryb2tlLXdpZHRoPSIyIiAvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNC4zLDEyKSByb3RhdGUoLTQ1KSI+PHBhdGggY2xhc3M9Ik1yWU14IiBkPSJNLTQuMiAwIEw0LjIgMCIgc3Ryb2tlLXdpZHRoPSIyIiAvPjwvZz48L3N2Zz4=)
+
+  [Teaching](/ucsd.edu/yufeiding/teaching)
+
+  - [CSE291P W26](/ucsd.edu/yufeiding/teaching/cse291p-w26)
+
+- [Blogs](/ucsd.edu/yufeiding/blogs)
+
+- [Projects](/ucsd.edu/yufeiding/projects)
+
+- [Events](/ucsd.edu/yufeiding/events)
+
+- [Sponsors](/ucsd.edu/yufeiding/sponsors)
+
+[![](https://lh3.googleusercontent.com/sitesv/AG8ngQXbXpp848D2XUJ20gw8QNu1BN8h68XzXkFDAHVwGgN3z4xOTWbCPogmvOFdOvPW69GDvBHUTTV4y64oxt6RHYc5XknvXV588kePKntKUIXQKuu7kS37A42OcWXC7E1zXIHmTIFYyE302d2sk9OEpEAMy2JRzWRP6fjVUgh3gQXM5OeBhUQ-P9e1IOKm=w16383)PICASSO LAB](/ucsd.edu/yufeiding/home)
+
+- [Home](/ucsd.edu/yufeiding/home)
+
+- People
+  ![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZHZtUnciIHZpZXdib3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIGpzbmFtZT0iSElIMlYiIGZvY3VzYWJsZT0iZmFsc2UiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDkuNywxMikgcm90YXRlKDQ1KSI+PHBhdGggY2xhc3M9Iks0QjhZIiBkPSJNLTQuMiAwIEw0LjIgMCIgc3Ryb2tlLXdpZHRoPSIyIiAvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNC4zLDEyKSByb3RhdGUoLTQ1KSI+PHBhdGggY2xhc3M9Ik1yWU14IiBkPSJNLTQuMiAwIEw0LjIgMCIgc3Ryb2tlLXdpZHRoPSIyIiAvPjwvZz48L3N2Zz4=)
+
+  - [Prof. Yufei Ding](/ucsd.edu/yufeiding/people/prof-yufei-ding)
+
+  - [Team](/ucsd.edu/yufeiding/people/team)
+
+- [Publications](/ucsd.edu/yufeiding/publications)
+
+- [Teaching](/ucsd.edu/yufeiding/teaching)
+  ![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZHZtUnciIHZpZXdib3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIGpzbmFtZT0iSElIMlYiIGZvY3VzYWJsZT0iZmFsc2UiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDkuNywxMikgcm90YXRlKDQ1KSI+PHBhdGggY2xhc3M9Iks0QjhZIiBkPSJNLTQuMiAwIEw0LjIgMCIgc3Ryb2tlLXdpZHRoPSIyIiAvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNC4zLDEyKSByb3RhdGUoLTQ1KSI+PHBhdGggY2xhc3M9Ik1yWU14IiBkPSJNLTQuMiAwIEw0LjIgMCIgc3Ryb2tlLXdpZHRoPSIyIiAvPjwvZz48L3N2Zz4=)
+
+  - [CSE291P W26](/ucsd.edu/yufeiding/teaching/cse291p-w26)
+
+- [Blogs](/ucsd.edu/yufeiding/blogs)
+
+- [Projects](/ucsd.edu/yufeiding/projects)
+
+- [Events](/ucsd.edu/yufeiding/events)
+
+- [Sponsors](/ucsd.edu/yufeiding/sponsors)
+
+- More
+  ![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZHZtUnciIHZpZXdib3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIGpzbmFtZT0iSElIMlYiIGZvY3VzYWJsZT0iZmFsc2UiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDkuNywxMikgcm90YXRlKDQ1KSI+PHBhdGggY2xhc3M9Iks0QjhZIiBkPSJNLTQuMiAwIEw0LjIgMCIgc3Ryb2tlLXdpZHRoPSIyIiAvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNC4zLDEyKSByb3RhdGUoLTQ1KSI+PHBhdGggY2xhc3M9Ik1yWU14IiBkPSJNLTQuMiAwIEw0LjIgMCIgc3Ryb2tlLXdpZHRoPSIyIiAvPjwvZz48L3N2Zz4=)
+
+  - [Home](/ucsd.edu/yufeiding/home)
+
+  - ![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZHZtUnciIHZpZXdib3g9IjAgMCAyNCAyNCIganNuYW1lPSJISUgyViIgZm9jdXNhYmxlPSJmYWxzZSI+PHBhdGggZD0iTTcgMTBsNSA1IDUtNXoiIGZpbGw9ImN1cnJlbnRDb2xvciIgLz48cGF0aCBkPSJNNCA0aDE2djE2SDR6IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgLz48cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIiAvPjwvc3ZnPg==)
+
+    People
+
+    - [Prof. Yufei Ding](/ucsd.edu/yufeiding/people/prof-yufei-ding)
+
+    - [Team](/ucsd.edu/yufeiding/people/team)
+
+  - [Publications](/ucsd.edu/yufeiding/publications)
+
+  - ![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZHZtUnciIHZpZXdib3g9IjAgMCAyNCAyNCIganNuYW1lPSJISUgyViIgZm9jdXNhYmxlPSJmYWxzZSI+PHBhdGggZD0iTTcgMTBsNSA1IDUtNXoiIGZpbGw9ImN1cnJlbnRDb2xvciIgLz48cGF0aCBkPSJNNCA0aDE2djE2SDR6IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgLz48cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIiAvPjwvc3ZnPg==)
+
+    [Teaching](/ucsd.edu/yufeiding/teaching)
+
+    - [CSE291P W26](/ucsd.edu/yufeiding/teaching/cse291p-w26)
+
+  - [Blogs](/ucsd.edu/yufeiding/blogs)
+
+  - [Projects](/ucsd.edu/yufeiding/projects)
+
+  - [Events](/ucsd.edu/yufeiding/events)
+
+  - [Sponsors](/ucsd.edu/yufeiding/sponsors)
+
+![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0idnU4UHdlIHRDSFhEYyBZU0g5SiIgdmlld2JveD0iMCAwIDI0IDI0IiBmb2N1c2FibGU9ImZhbHNlIj48cGF0aCBkPSJNMTUuNSAxNGgtLjc5bC0uMjgtLjI3QzE1LjQxIDEyLjU5IDE2IDExLjExIDE2IDkuNSAxNiA1LjkxIDEzLjA5IDMgOS41IDNTMyA1LjkxIDMgOS41IDUuOTEgMTYgOS41IDE2YzEuNjEgMCAzLjA5LS41OSA0LjIzLTEuNTdsLjI3LjI4di43OWw1IDQuOTlMMjAuNDkgMTlsLTQuOTktNXptLTYgMEM3LjAxIDE0IDUgMTEuOTkgNSA5LjVTNy4wMSA1IDkuNSA1IDE0IDcuMDEgMTQgOS41IDExLjk5IDE0IDkuNSAxNHoiIC8+PHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIgLz48L3N2Zz4=)
+
+![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdib3g9IjAgMCAyNCAyNCIgZm9jdXNhYmxlPSJmYWxzZSIgY2xhc3M9IiBOTW01TSI+PHBhdGggZD0iTTExIDE3aDJ2LTZoLTJ2NnptMS0xNUM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptMCAxOGMtNC40MSAwLTgtMy41OS04LThzMy41OS04IDgtOCA4IDMuNTkgOCA4LTMuNTkgOC04IDh6TTExIDloMlY3aC0ydjJ6IiAvPjwvc3ZnPg==)
+
+Report abuse
+
+Page details
+
+![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdib3g9IjAgMCAyNCAyNCIgZm9jdXNhYmxlPSJmYWxzZSIgY2xhc3M9IiBOTW01TSI+PHBhdGggZD0iTTExIDE3aDJ2LTZoLTJ2NnptMS0xNUM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptMCAxOGMtNC40MSAwLTgtMy41OS04LThzMy41OS04IDgtOCA4IDMuNTkgOCA4LTMuNTkgOC04IDh6TTExIDloMlY3aC0ydjJ6IiAvPjwvc3ZnPg==)
+
+Page updated
+
+Report abuse

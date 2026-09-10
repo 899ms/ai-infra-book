@@ -2,7 +2,7 @@
 
 官方目录共 61 项；下载与阅读状态分别记录。
 
-[原目录](https://proceedings.mlsys.org/paper_files/paper/2025) · [归档目录](index.html) · [校验清单](manifest.json) · [来源表](sources.tsv)
+[原目录](https://proceedings.mlsys.org/paper_files/paper/2025) · [归档目录](index.md) · [校验清单](manifest.json) · [来源表](sources.tsv)
 
 - Graph Learning at Scale: Characterizing and Optimizing Pre-Propagation GNNs — [PDF](papers/mlsys2025-0badcb4e95306df76a719409155e46e8.pdf)
 - SwiftVI: Time-Efficient Planning and Learning with MDPs — [PDF](papers/mlsys2025-0f8426558905746fc38da5e335700aec.pdf)

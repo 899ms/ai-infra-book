@@ -245,9 +245,9 @@
 ## 原有写作资料
 
 - 1.1 的原始主线、概念边界与第 11 章衔接：[系统抽象边界调研](../../research/system-abstraction-boundary/report.md)；[旧版 skeleton 原件与一手资料](../../references/outline-checks/2026-09-08/system-abstraction/README.md)。
-- 1.1、1.6 的全栈视角与作者经历：[Unified Bus 背后的思考](../../references/files/documents/ub-reflection.html)；[计算机网络的新黄金时代（一）](../../references/files/documents/network-golden-1.html)。
+- 1.1、1.6 的全栈视角与作者经历：[Unified Bus 背后的思考](../../references/files/documents/ub-reflection.md)；[计算机网络的新黄金时代（一）](../../references/files/documents/network-golden-1.md)。
 - 1.2 的估算方法与历史数字：[Jeff Dean，LADIS 2009 演讲原件（哥伦比亚大学镜像）](../../references/outline-checks/2026-09-07/scaling-history/jeff-dean-ladis2009.pdf)，查阅 “Numbers Everyone Should Know” 及其前后的设计估算说明。
-- 1.2–1.3 的设备数字：[NVIDIA H100 官方规格](../../references/files/specs/nvidia-h100-spec.html)；[Roofline 论文](../../references/files/papers/roofline.pdf)；[A100/H100 太贵，何不用 4090？](../../references/files/documents/h100-vs-4090.html)。
+- 1.2–1.3 的设备数字：[NVIDIA H100 官方规格](../../references/files/specs/nvidia-h100-spec.md)；[Roofline 论文](../../references/files/papers/roofline.pdf)；[A100/H100 太贵，何不用 4090？](../../references/files/documents/h100-vs-4090.md)。
 - 1.4 的需求与定位：[TPU v1 论文](../../references/files/papers/tpu-v1.pdf)。
 - 1.5 的卸载与量化实例：[基于可编程网卡的高性能数据中心系统](../../references/files/papers/bojieli-phd-thesis.pdf)。
 

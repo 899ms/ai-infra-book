@@ -1,0 +1,141 @@
+<!-- 从 rl-x-primary.html 迁移的资料快照；原始 HTML SHA-256: 25cbbf255fb50959ee7ff68e91332cb26501fa6667f4b62a48c39fd92ca7df8a。 -->
+
+![](data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgY2xhc3M9ImFuaW1hdGUtc3BpbiBzaXplLTQgdGV4dC1bY29sb3I6aW5oZXJpdF0iIGZpbGw9Im5vbmUiIHZpZXdib3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjbGFzcz0ib3BhY2l0eS0yNSIgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSI0Ij48L2NpcmNsZT48cGF0aCBjbGFzcz0ib3BhY2l0eS03NSIgZD0iTTQgMTJhOCA4IDAgMDE4LThWMEM1LjM3MyAwIDAgNS4zNzMgMCAxMmg0eiIgZmlsbD0iY3VycmVudENvbG9yIiAvPjwvc3ZnPg==)![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9ImN1cnJlbnRDb2xvciIgZGF0YS1pY29uPSJpY29uLWFycm93LWxlZnQiIHZpZXdib3g9IjAgMCAyNCAyNCIgd2lkdGg9IjFlbSIgaGVpZ2h0PSIxZW0iIGRpc3BsYXk9ImZsZXgiIHJvbGU9ImltZyIgYXJpYS1oaWRkZW49InRydWUiPjxwYXRoIGQ9Ik03LjQxNCAxM2w1LjA0MyA1LjA0LTEuNDE0IDEuNDJMMy41ODYgMTJsNy40NTctNy40NiAxLjQxNCAxLjQyTDcuNDE0IDExSDIxdjJINy40MTR6IiAvPjwvc3ZnPg==)
+
+## Post
+
+[Log in](/i/jf/onboarding/web?mode=login&redirect_after_login=%2Fsheriyuo%2Fstatus%2F2063295181131247674)[Sign up](/i/jf/onboarding/web?mode=signup&redirect_after_login=%2Fsheriyuo%2Fstatus%2F2063295181131247674)
+
+![](data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgY2xhc3M9ImFuaW1hdGUtc3BpbiBzaXplLTQgdGV4dC1bY29sb3I6aW5oZXJpdF0iIGZpbGw9Im5vbmUiIHZpZXdib3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjbGFzcz0ib3BhY2l0eS0yNSIgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSI0Ij48L2NpcmNsZT48cGF0aCBjbGFzcz0ib3BhY2l0eS03NSIgZD0iTTQgMTJhOCA4IDAgMDE4LThWMEM1LjM3MyAwIDAgNS4zNzMgMCAxMmg0eiIgZmlsbD0iY3VycmVudENvbG9yIiAvPjwvc3ZnPg==)![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9ImN1cnJlbnRDb2xvciIgZGF0YS1pY29uPSJpY29uLWFycm93LWxlZnQiIHZpZXdib3g9IjAgMCAyNCAyNCIgd2lkdGg9IjFlbSIgaGVpZ2h0PSIxZW0iIGRpc3BsYXk9ImZsZXgiIHJvbGU9ImltZyIgYXJpYS1oaWRkZW49InRydWUiPjxwYXRoIGQ9Ik03LjQxNCAxM2w1LjA0MyA1LjA0LTEuNDE0IDEuNDJMMy41ODYgMTJsNy40NTctNy40NiAxLjQxNCAxLjQyTDcuNDE0IDExSDIxdjJINy40MTR6IiAvPjwvc3ZnPg==)
+
+## Post
+
+[](/sheriyuo)
+
+![@sheriyuo](https://pbs.twimg.com/profile_images/2018976441795502081/bpw974ir_normal.jpg)
+
+[Xiuyu Li](https://x.com/sheriyuo)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9ImN1cnJlbnRDb2xvciIgZGF0YS1pY29uPSJpY29uLXZlcmlmaWVkIiB2aWV3Ym94PSIwIDAgMjIgMjIiIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiBkaXNwbGF5PSJmbGV4IiByb2xlPSJpbWciIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0iZmlsbC1iYWRnZSI+PHBhdGggZD0iTTIwLjM5NiAxMWMtLjAxOC0uNjQ2LS4yMTUtMS4yNzUtLjU3LTEuODE2LS4zNTQtLjU0LS44NTItLjk3Mi0xLjQzOC0xLjI0Ni4yMjMtLjYwNy4yNy0xLjI2NC4xNC0xLjg5Ny0uMTMxLS42MzQtLjQzNy0xLjIxOC0uODgyLTEuNjg3LS40Ny0uNDQ1LTEuMDUzLS43NS0xLjY4Ny0uODgyLS42MzMtLjEzLTEuMjktLjA4My0xLjg5Ny4xNC0uMjczLS41ODctLjcwNC0xLjA4Ni0xLjI0NS0xLjQ0UzExLjY0NyAxLjYyIDExIDEuNjA0Yy0uNjQ2LjAxNy0xLjI3My4yMTMtMS44MTMuNTY4cy0uOTY5Ljg1NC0xLjI0IDEuNDRjLS42MDgtLjIyMy0xLjI2Ny0uMjcyLTEuOTAyLS4xNC0uNjM1LjEzLTEuMjIuNDM2LTEuNjkuODgyLS40NDUuNDctLjc0OSAxLjA1NS0uODc4IDEuNjg4LS4xMy42MzMtLjA4IDEuMjkuMTQ0IDEuODk2LS41ODcuMjc0LTEuMDg3LjcwNS0xLjQ0MyAxLjI0NS0uMzU2LjU0LS41NTUgMS4xNy0uNTc0IDEuODE3LjAyLjY0Ny4yMTggMS4yNzYuNTc0IDEuODE3LjM1Ni41NC44NTYuOTcyIDEuNDQzIDEuMjQ1LS4yMjQuNjA2LS4yNzQgMS4yNjMtLjE0NCAxLjg5Ni4xMy42MzQuNDMzIDEuMjE4Ljg3NyAxLjY4OC40Ny40NDMgMS4wNTQuNzQ3IDEuNjg3Ljg3OC42MzMuMTMyIDEuMjkuMDg0IDEuODk3LS4xMzYuMjc0LjU4Ni43MDUgMS4wODQgMS4yNDYgMS40MzkuNTQuMzU0IDEuMTcuNTUxIDEuODE2LjU2OS42NDctLjAxNiAxLjI3Ni0uMjEzIDEuODE3LS41NjdzLjk3Mi0uODU0IDEuMjQ1LTEuNDRjLjYwNC4yMzkgMS4yNjYuMjk2IDEuOTAzLjE2NC42MzYtLjEzMiAxLjIyLS40NDcgMS42OC0uOTA3LjQ2LS40Ni43NzYtMS4wNDQuOTA4LTEuNjgxcy4wNzUtMS4yOTktLjE2NS0xLjkwM2MuNTg2LS4yNzQgMS4wODQtLjcwNSAxLjQzOS0xLjI0Ni4zNTQtLjU0LjU1MS0xLjE3LjU2OS0xLjgxNnpNOS42NjIgMTQuODVsLTMuNDI5LTMuNDI4IDEuMjkzLTEuMzAyIDIuMDcyIDIuMDcyIDQuNC00Ljc5NCAxLjM0NyAxLjI0NnoiIC8+PC9zdmc+)[](https://twitter.com/StepFun_ai)
+
+![StepFun](https://pbs.twimg.com/profile_images/2039888251322834944/miWrK2nt_normal.jpg)
+
+[@sheriyuo](https://x.com/sheriyuo)
+
+![](data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgY2xhc3M9ImFuaW1hdGUtc3BpbiBzaXplLTQgdGV4dC1bY29sb3I6aW5oZXJpdF0iIGZpbGw9Im5vbmUiIHZpZXdib3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjbGFzcz0ib3BhY2l0eS0yNSIgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSI0Ij48L2NpcmNsZT48cGF0aCBjbGFzcz0ib3BhY2l0eS03NSIgZD0iTTQgMTJhOCA4IDAgMDE4LThWMEM1LjM3MyAwIDAgNS4zNzMgMCAxMmg0eiIgZmlsbD0iY3VycmVudENvbG9yIiAvPjwvc3ZnPg==)![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9ImN1cnJlbnRDb2xvciIgZGF0YS1pY29uPSJpY29uLW1vcmUiIHZpZXdib3g9IjAgMCAyNCAyNCIgd2lkdGg9IjFlbSIgaGVpZ2h0PSIxZW0iIGRpc3BsYXk9ImZsZXgiIHJvbGU9ImltZyIgYXJpYS1oaWRkZW49InRydWUiPjxwYXRoIGQ9Ik0zIDEyYzAtMS4xLjktMiAyLTJzMiAuOSAyIDItLjkgMi0yIDItMi0uOS0yLTJ6bTkgMmMxLjEgMCAyLS45IDItMnMtLjktMi0yLTItMiAuOS0yIDIgLjkgMiAyIDJ6bTcgMGMxLjEgMCAyLS45IDItMnMtLjktMi0yLTItMiAuOS0yIDIgLjkgMiAyIDJ6IiAvPjwvc3ZnPg==)
+
+![Article cover image](https://pbs.twimg.com/media/HKJL6BVa0AASyoA.jpg)
+
+# RL Interview Questions 2026
+
+After seeing several people receive PhD offers and then immediately land highly paid industry positions during spring recruiting, I started wondering whether going straight into industry might actually be the better move.
+
+So I went through essentially every RL-related interview experience I could find on Zhihu, combined them with recent discussions and my own observations, and distilled everything into 35 of the most interesting questions.
+
+Think of it as an RL interview benchmark.
+
+CN version in Zhihu: [https://zhuanlan.zhihu.com/p/2046740446353811230](https://zhuanlan.zhihu.com/p/2046740446353811230)
+
+A few notes:
+
+• The list does not strictly separate LLM RL from Agentic RL. Some questions have very different answers depending on the setting.
+
+• Nearly every question can be extended much further. No reference answers are provided. If you use an LLM, keep asking follow-up questions and search extensively.
+
+• Modern RL hiring increasingly expects full-stack understanding. If you are an algorithm researcher, people will still ask infrastructure questions. The reverse is also true.
+
+• Data-related questions are not included. Those are almost impossible to memorize and depend heavily on your actual experience.
+
+• Memorizing interview questions is not enough. Deep understanding matters far more.
+
+Algorithm
+
+Why use Actor-Critic instead of a pure Critic approach?
+
+What is the relationship between KL divergence, cross entropy, and MLE?
+
+How should rewards be designed in different RL scenarios?
+
+How do importance sampling, rejection sampling, and other Monte Carlo methods fit into RL?
+
+How is advantage computed in PPO and GRPO? Why subtract a baseline? Is standard deviation normalization really necessary?
+
+How do RL training and test-time scaling perform exploration differently?
+
+How does PPO clipping work? Why take the minimum objective? What happens without clipping? How does CISPO differ?
+
+Why does GRPO include a KL penalty? How is the KL computed? Why do methods such as DAPO and GSPO remove it?
+
+During LLM training, what happens if loss is accidentally All Reduced multiple times?
+
+What is the reward function in DPO? Can reward hacking occur? How can it be mitigated?
+
+What methods address train-inference mismatch in MoE models, and how do they work?
+
+How should group size, learning rate, PPO epochs, and generation length be selected during RL training?
+
+Compared with GRPO, how do Dr.GRPO, DAPO, GSPO, CISPO, SAPO, DPPO, MaxRL, and SimKO improve the training process? What are their limitations?
+
+How do TRPO, DPPO, and AReaL enforce trust-region constraints on RL objectives?
+
+Can RL fundamentally expand the capability frontier of LLMs?
+
+Based on works such as ProRL, how should we think about scaling the boundaries of RL training?
+
+What improvements does OPD introduce over traditional RL and SFT? What are its applications?
+
+At which stage of training does reasoning ability emerge in LLMs?
+
+From DeepSeek R1 to V3.2 and future V4 systems, what RL-related improvements have been introduced? How is RL different in MoE models?
+
+Infrastructure
+
+Ignoring CPU offload, how many model copies exist in memory during GRPO training? How much memory can various optimizations save?
+
+Distributed inference: KV cache transfer optimization and multi-GPU communication strategies.
+
+INT8 versus FP8. What are the tradeoffs? Which precisions are preferred for training and inference?
+
+What is the long-tail problem in RL rollouts, and how can it be addressed?
+
+What issues does continuous batching introduce in RL training? How do vLLM and SGLang differ?
+
+How do you measure utilization in vLLM and SGLang? How do you evaluate KV cache utilization during training?
+
+How is backpropagation implemented in large-scale multi-node RL training?
+
+What asynchronous RL frameworks exist, and what synchronization bottlenecks do they solve?
+
+In AReaL or other partially rollout frameworks, are KV caches from previous policies preserved?
+
+How does Expert Parallelism affect MoE throughput?
+
+In long-context training, how should compute-communication overlap be designed? How do Megatron and FSDP differ in parallelism strategies?
+
+How do you enable deterministic execution? What is batch invariance? What causes it? Is atomic add involved? Can atomic add solve the issue?
+
+How do AReaL and slime differ in their understanding of the RL rollout bottleneck?
+
+How should we think about staleness in fully asynchronous RL training? What are typical values in practice?
+
+How does data flow through slime? How is it integrated with Megatron? How is the loss computed?
+
+If you had to choose among VeRL, TRL, Unsloth, AReaL, and slime, which one would you use and why?
+
+Good luck.
+
+And remember: interview preparation helps, but genuine understanding scales much further than memorized answers.
+
+[4:21 PM · Jun 6, 2026](/sheriyuo/status/2063295181131247674)
+
+[379.4KViews](/sheriyuo/status/2063295181131247674)
+
+[![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9ImN1cnJlbnRDb2xvciIgZGF0YS1pY29uPSJpY29uLXJlcGx5LXN0cm9rZSIgdmlld2JveD0iMCAwIDI0IDI0IiB3aWR0aD0iMWVtIiBoZWlnaHQ9IjFlbSIgZGlzcGxheT0iZmxleCIgcm9sZT0iaW1nIiBhcmlhLWhpZGRlbj0idHJ1ZSI+PHBhdGggZD0iTTEuNzUxIDEwYzAtNC40MiAzLjU4NC04IDguMDA1LThoNC4zNjZjNC40OSAwIDguMTI5IDMuNjQgOC4xMjkgOC4xMyAwIDIuOTYtMS42MDcgNS42OC00LjE5NiA3LjExbC04LjA1NCA0LjQ2di0zLjY5aC0uMDY3Yy00LjQ5LjEtOC4xODMtMy41MS04LjE4My04LjAxem04LjAwNS02Yy0zLjMxNyAwLTYuMDA1IDIuNjktNi4wMDUgNiAwIDMuMzcgMi43NyA2LjA4IDYuMTM4IDYuMDFsLjM1MS0uMDFoMS43NjF2Mi4zbDUuMDg3LTIuODFjMS45NTEtMS4wOCAzLjE2My0zLjEzIDMuMTYzLTUuMzYgMC0zLjM5LTIuNzQ0LTYuMTMtNi4xMjktNi4xM0g5Ljc1NnoiIC8+PC9zdmc+)17](/i/status/2063295181131247674)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9ImN1cnJlbnRDb2xvciIgZGF0YS1pY29uPSJpY29uLXJldHdlZXQtc3Ryb2tlIiB2aWV3Ym94PSIwIDAgMjQgMjQiIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiBkaXNwbGF5PSJmbGV4IiByb2xlPSJpbWciIGFyaWEtaGlkZGVuPSJ0cnVlIj48cGF0aCBkPSJNNC41IDMuODhsNC40MzIgNC4xNC0xLjM2NCAxLjQ2TDUuNSA3LjU1VjE2YzAgMS4xLjg5NiAyIDIgMkgxM3YySDcuNWMtMi4yMDkgMC00LTEuNzktNC00VjcuNTVMMS40MzIgOS40OC4wNjggOC4wMiA0LjUgMy44OHpNMTYuNSA2SDExVjRoNS41YzIuMjA5IDAgNCAxLjc5IDQgNHY4LjQ1bDIuMDY4LTEuOTMgMS4zNjQgMS40Ni00LjQzMiA0LjE0LTQuNDMyLTQuMTQgMS4zNjQtMS40NiAyLjA2OCAxLjkzVjhjMC0xLjEtLjg5Ni0yLTItMnoiIC8+PC9zdmc+)193
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9ImN1cnJlbnRDb2xvciIgZGF0YS1pY29uPSJpY29uLWhlYXJ0LXN0cm9rZSIgdmlld2JveD0iMCAwIDI0IDI0IiB3aWR0aD0iMWVtIiBoZWlnaHQ9IjFlbSIgZGlzcGxheT0iZmxleCIgcm9sZT0iaW1nIiBhcmlhLWhpZGRlbj0idHJ1ZSI+PHBhdGggZD0iTTE2LjY5NyA1LjVjLTEuMjIyLS4wNi0yLjY3OS41MS0zLjg5IDIuMTZsLS44MDUgMS4wOS0uODA2LTEuMDlDOS45ODQgNi4wMSA4LjUyNiA1LjQ0IDcuMzA0IDUuNWMtMS4yNDMuMDctMi4zNDkuNzgtMi45MSAxLjkxLS41NTIgMS4xMi0uNjMzIDIuNzguNDc5IDQuODIgMS4wNzQgMS45NyAzLjI1NyA0LjI3IDcuMTI5IDYuNjEgMy44Ny0yLjM0IDYuMDUyLTQuNjQgNy4xMjYtNi42MSAxLjExMS0yLjA0IDEuMDMtMy43LjQ3Ny00LjgyLS41NjEtMS4xMy0xLjY2Ni0xLjg0LTIuOTA4LTEuOTF6bTQuMTg3IDcuNjljLTEuMzUxIDIuNDgtNC4wMDEgNS4xMi04LjM3OSA3LjY3bC0uNTAzLjMtLjUwNC0uM2MtNC4zNzktMi41NS03LjAyOS01LjE5LTguMzgyLTcuNjctMS4zNi0yLjUtMS40MS00Ljg2LS41MTQtNi42Ny44ODctMS43OSAyLjY0Ny0yLjkxIDQuNjAxLTMuMDEgMS42NTEtLjA5IDMuMzY4LjU2IDQuNzk4IDIuMDEgMS40MjktMS40NSAzLjE0Ni0yLjEgNC43OTYtMi4wMSAxLjk1NC4xIDMuNzE0IDEuMjIgNC42MDEgMy4wMS44OTYgMS44MS44NDYgNC4xNy0uNTE0IDYuNjd6IiAvPjwvc3ZnPg==)2K
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9ImN1cnJlbnRDb2xvciIgZGF0YS1pY29uPSJpY29uLWJvb2ttYXJrLXN0cm9rZSIgdmlld2JveD0iMCAwIDI0IDI0IiB3aWR0aD0iMWVtIiBoZWlnaHQ9IjFlbSIgZGlzcGxheT0iZmxleCIgcm9sZT0iaW1nIiBhcmlhLWhpZGRlbj0idHJ1ZSI+PHBhdGggZD0iTTQgNC41QzQgMy4xMiA1LjExOSAyIDYuNSAyaDExQzE4Ljg4MSAyIDIwIDMuMTIgMjAgNC41djE4LjQ0bC04LTUuNzEtOCA1LjcxVjQuNXpNNi41IDRjLS4yNzYgMC0uNS4yMi0uNS41djE0LjU2bDYtNC4yOSA2IDQuMjlWNC41YzAtLjI4LS4yMjQtLjUtLjUtLjVoLTExeiIgLz48L3N2Zz4=)4.9K
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9ImN1cnJlbnRDb2xvciIgZGF0YS1pY29uPSJpY29uLW91dGdvaW5nIiB2aWV3Ym94PSIwIDAgMjQgMjQiIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiBkaXNwbGF5PSJmbGV4IiByb2xlPSJpbWciIGFyaWEtaGlkZGVuPSJ0cnVlIj48cGF0aCBkPSJNMTIgMi41OWw1LjcgNS43LTEuNDEgMS40MkwxMyA2LjQxVjE2aC0yVjYuNDFsLTMuMyAzLjMtMS40MS0xLjQyTDEyIDIuNTl6TTIxIDE1bC0uMDIgMy41MWMwIDEuMzgtMS4xMiAyLjQ5LTIuNSAyLjQ5SDUuNUM0LjExIDIxIDMgMTkuODggMyAxOC41VjE1aDJ2My41YzAgLjI4LjIyLjUuNS41aDEyLjk4Yy4yOCAwIC41LS4yMi41LS41TDE5IDE1aDJ6IiAvPjwvc3ZnPg==)

@@ -8,7 +8,7 @@
 
 [响应记录](selected-sources.json)保留原件与哈希，包含一次 429 和两次 404。OpenAlex 的 87 项查询只用于位置发现；随后通过作者、机构及 arXiv 取得更多公开稿，前 70 篇摘要阅读依据 PDF 本身；新增 7 篇的机构原始记录与抽取位置见[摘要证明](institutional-abstracts.json)。机构封面计入物理页数，作者版本保留修订号，不假定与出版稿逐页相同。
 
-LLMCompass 当前归档的是 2023 年 arXiv v1，题为 *A Hardware Evaluation Framework for Large Language Model Inference*；[Princeton 出版页](isca24-llmcompass-institution.html)用于核对其会议身份，不能把 14 页早稿说成 17 页正式稿。ALISA 与 PID-Comm 也保留各自早稿；PID-Comm 的 PDF 摘要与搜索摘要报告的速度不同，本轮没有采用速度数字。Orojenesis 的旧 MIT 链接返回 404，改用[作者列出的公开稿](isca24-orojenesis-author-index.html)；其原文问题及选读范围见[记录](orojenesis-reading.json)。
+LLMCompass 当前归档的是 2023 年 arXiv v1，题为 *A Hardware Evaluation Framework for Large Language Model Inference*；[Princeton 出版页](isca24-llmcompass-institution.md)用于核对其会议身份，不能把 14 页早稿说成 17 页正式稿。ALISA 与 PID-Comm 也保留各自早稿；PID-Comm 的 PDF 摘要与搜索摘要报告的速度不同，本轮没有采用速度数字。Orojenesis 的旧 MIT 链接返回 404，改用[作者列出的公开稿](isca24-orojenesis-author-index.md)；其原文问题及选读范围见[记录](orojenesis-reading.json)。
 
 Princeton 的首次 PDF 请求连接中断，没有取得 HTTP 响应体，未计为一份 PDF 或 HTTP 失败响应；后续使用 arXiv 公开版。一次临时采集器的元数据覆盖遗漏了 Orojenesis 响应行，已重新请求并确认 PDF 逐字节相同后恢复记录；其时间戳明确记为这次复核。
 

@@ -57,7 +57,7 @@ TriInfer 的请求 SLO 先检查 TTFT 与该请求 90% 的 TBT，再要求至少
 
 ## vLLM-Omni 的生成卸载：保留研究对照
 
-上一轮只读开头的 [DLO 文章](../references/framework-history/2026-09-08/offload-execution/vllm-omni-dlo-2026.html)本轮已读正文、表格及限制，并核对固定 backend 的分片、复制／AllGather 事件和共享缓冲。它解决 DiT 反复执行时的权重容量，与 E→P 传图像特征是不同对象。除两份完整 block 缓冲，还要计 AllGather 输入分片、激活和其余常驻模块；跨 DP 的权重集合操作也要求请求具有相容控制流。
+上一轮只读开头的 [DLO 文章](../references/framework-history/2026-09-08/offload-execution/vllm-omni-dlo-2026.md)本轮已读正文、表格及限制，并核对固定 backend 的分片、复制／AllGather 事件和共享缓冲。它解决 DiT 反复执行时的权重容量，与 E→P 传图像特征是不同对象。除两份完整 block 缓冲，还要计 AllGather 输入分片、激活和其余常驻模块；跨 DP 的权重集合操作也要求请求具有相容控制流。
 
 B300 的 1024² T2I 表中，四输出 43.69 s 对一输出 15.19 s，聚合吞吐约为 1.39 倍，每轮等待却更长。200B 规模只作主存容量外推，没有实际运行该规模模型。Ascend 的 cgroup 与 CUDA 的 PSS 统计范围不同；MiniMax-H3 拓扑实验还包含本地补丁及关闭图执行。暂不为这些结果新增生成模型小节，以免扩大背景和实验规模；保留用于扩写时检验容量、吞吐、延迟及版本口径。
 

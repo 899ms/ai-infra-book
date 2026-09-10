@@ -1,0 +1,348 @@
+<!-- 从 sglang-ep.html 迁移的资料快照；原始 HTML SHA-256: 5a14133c6a8a0e5fa1eac27e93170a42476009a2d3742ec460d213c327870e90。 -->
+
+## ![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNMi43NSAxNC4yNUgxNS4yNSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTIuNzUgMy43NUgxNS4yNSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTIuNzUgOUg4LjI1IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)On this page
+
+- [Supported Backends and Selection Guidance](#supported-backends-and-selection-guidance)
+  - [Backends for All-to-All Communication](#backends-for-all-to-all-communication)
+  - [Backends for MoE Computation](#backends-for-moe-computation)
+  - [Examples](#examples)
+- [Extensible EP Framework](#extensible-ep-framework)
+  - [Framework Overview](#framework-overview)
+  - [Implementing New Backends](#implementing-new-backends)
+  - [Examples](#examples-2)
+- [Computation and Communication Overlap](#computation-and-communication-overlap)
+  - [Two-Batch Overlap (TBO)](#two-batch-overlap-tbo)
+  - [Single-Batch Overlap (SBO)](#single-batch-overlap-sbo)
+- [Workload Balancer](#workload-balancer)
+- [Ascend NPU Guidance](#ascend-npu-guidance)
+  - [Guidance on SGLang configuration in Ascend NPU](#guidance-on-sglang-configuration-in-ascend-npu)
+  - [DeepEP Ascend Introduction](#deepep-ascend-introduction)
+
+Advanced Features
+
+# Expert Parallelism
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgYXJpYS1oaWRkZW49InRydWUiIGNsYXNzPSJzaXplLTQgc2hyaW5rLTAiPjxwYXRoIGQ9Ik0xNC4yNSA1LjI1SDcuMjVDNi4xNDU0MyA1LjI1IDUuMjUgNi4xNDU0MyA1LjI1IDcuMjVWMTQuMjVDNS4yNSAxNS4zNTQ2IDYuMTQ1NDMgMTYuMjUgNy4yNSAxNi4yNUgxNC4yNUMxNS4zNTQ2IDE2LjI1IDE2LjI1IDE1LjM1NDYgMTYuMjUgMTQuMjVWNy4yNUMxNi4yNSA2LjE0NTQzIDE1LjM1NDYgNS4yNSAxNC4yNSA1LjI1WiIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTIuODAxMDMgMTEuOTk4TDEuNzcyMDMgNS4wNzM5N0MxLjYxMDAzIDMuOTgwOTcgMi4zNjQwMyAyLjk2Mzk3IDMuNDU2MDMgMi44MDE5N0wxMC4zOCAxLjc3Mjk3QzExLjMxMyAxLjYzMzk3IDEyLjE5IDIuMTYyOTcgMTIuNTI4IDMuMDAwOTciIHN0cm9rZT0iY3VycmVudENvbG9yIiB3aWR0aD0iMS41IiBsaW5lY2FwPSJyb3VuZCIgbGluZWpvaW49InJvdW5kIiAvPjwvc3ZnPg==)Copy pageCopy page
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBmb2N1c2FibGU9ImZhbHNlIiBjbGFzcz0ic2l6ZS0zIHRyYW5zaXRpb24tdHJhbnNmb3JtIHRleHQtZ3JheS00MDAgZ3JvdXAtaG92ZXI6dGV4dC1ncmF5LTYwMCBkYXJrOnRleHQtZ3JheS02MDAgZGFyazpncm91cC1ob3Zlcjp0ZXh0LWdyYXktNDAwIHNocmluay0wIHJvdGF0ZS05MCI+PHBhdGggZD0iTTYuNSAyLjc1TDEyLjc1IDlMNi41IDE1LjI1IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgYXJpYS1oaWRkZW49InRydWUiIGNsYXNzPSJzaXplLTQgc2hyaW5rLTAiPjxwYXRoIGQ9Ik0xNC4yNSA1LjI1SDcuMjVDNi4xNDU0MyA1LjI1IDUuMjUgNi4xNDU0MyA1LjI1IDcuMjVWMTQuMjVDNS4yNSAxNS4zNTQ2IDYuMTQ1NDMgMTYuMjUgNy4yNSAxNi4yNUgxNC4yNUMxNS4zNTQ2IDE2LjI1IDE2LjI1IDE1LjM1NDYgMTYuMjUgMTQuMjVWNy4yNUMxNi4yNSA2LjE0NTQzIDE1LjM1NDYgNS4yNSAxNC4yNSA1LjI1WiIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTIuODAxMDMgMTEuOTk4TDEuNzcyMDMgNS4wNzM5N0MxLjYxMDAzIDMuOTgwOTcgMi4zNjQwMyAyLjk2Mzk3IDMuNDU2MDMgMi44MDE5N0wxMC4zOCAxLjc3Mjk3QzExLjMxMyAxLjYzMzk3IDEyLjE5IDIuMTYyOTcgMTIuNTI4IDMuMDAwOTciIHN0cm9rZT0iY3VycmVudENvbG9yIiB3aWR0aD0iMS41IiBsaW5lY2FwPSJyb3VuZCIgbGluZWpvaW49InJvdW5kIiAvPjwvc3ZnPg==)Copy pageCopy page
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBmb2N1c2FibGU9ImZhbHNlIiBjbGFzcz0ic2l6ZS0zIHRyYW5zaXRpb24tdHJhbnNmb3JtIHRleHQtZ3JheS00MDAgZ3JvdXAtaG92ZXI6dGV4dC1ncmF5LTYwMCBkYXJrOnRleHQtZ3JheS02MDAgZGFyazpncm91cC1ob3Zlcjp0ZXh0LWdyYXktNDAwIHNocmluay0wIHJvdGF0ZS05MCI+PHBhdGggZD0iTTYuNSAyLjc1TDEyLjc1IDlMNi41IDE1LjI1IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Expert Parallelism (EP) in SGLang distributes expert weights across multiple devices in Mixture-of-Experts (MoE) models, addressing memory bottlenecks and enabling efficient scaling for high-performance inference. It is particularly vital for serving large-scale MoE models where tokens are dynamically routed to specialized experts across GPUs. By leveraging optimized all-to-all communication and grouped matrix multiplications (GEMMs), EP reduces latency, boosts throughput, and minimizes idle GPU time. SGLang’s EP offers strong extensibility through its modular framework, allowing seamless integration of custom kernels, backends, and optimizations without refactoring core logic, supporting diverse hardware and quantization schemes.
+
+## 
+
+[​](#supported-backends-and-selection-guidance)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Supported Backends and Selection Guidance
+
+SGLang’s EP integrates diverse, highly efficient backends for different use cases, allowing fine-grained control over performance trade-offs. Users specify backends via command-line flags:
+
+- `--moe-a2a-backend`: Selects the backend for all-to-all communication.
+- `--moe-runner-backend`: Selects the backend for MoE computation.
+
+### 
+
+[​](#backends-for-all-to-all-communication)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Backends for All-to-All Communication
+
+| Backend | Description | Use Cases |
+|----|----|----|
+| **`none` (default)** | Disables all-to-all for EP. Uses All-Reduce or All-Gather for token dispatch. | Hybrid EP and TP setups. |
+| `deepep` | DeepEP, a communication library for efficient token shuffling in MoE models. | Large-scale EP deployments. |
+| `mooncake` | An extension of DeepEP for elastic inference, leveraging RDMA for high-performance data transfers. | Elastic EP serving. |
+| `nixl` | [NIXL-EP](https://github.com/ai-dynamo/nixl/tree/main/examples/device/ep), an elastic EP communication library built on NVIDIA’s [NIXL](https://github.com/ai-dynamo/nixl) framework with native RDMA and NVLink support. | Elastic EP serving with fault tolerance and dynamic scaling. |
+| `mori` | MORI-EP, AMD’s native all-to-all communication implementation optimized for ROCm. | AMD GPU deployments. |
+| `flashinfer` | Flashinfer implementation of all-to-all. | Large-scale EP deployments. |
+| `ascend_fuseep` | Ascend NPU native fused all-to-all communication. | Ascend NPU deployments. |
+| `pplx` | [pplx-kernels](https://github.com/perplexityai/pplx-kernels), Perplexity’s NVSHMEM-based all-to-all dispatch/combine kernels. Low-latency (masked) only; targets FP8 (DeepGEMM) MoE models on Hopper. Requires NVSHMEM 3.2.5, `nvshmem4py`, `cuda-python`, and a prebuilt `libpplx_kernels.so` (`sm_90a`). | Low-latency decode EP on Hopper. |
+
+DeepEP and Mooncake backends support two modes for token dispatch: `normal` mode (optimized for prefill workloads with high throughput) and `low_latency` mode (optimized for decode workloads with low latency and CUDA Graph compatibility). MORI backend only supports `normal` mode now. NIXL-EP and PPLX currently operate in low-latency mode with CUDA Graph support (PPLX reuses the DeepEP low-latency masked expert-compute path). Users are recommended to set `--deepep-mode auto` to enable automatic dispatch mode switching during runtime. Setting `--deepep-mode normal` or `--deepep-mode low_latency` is useful for debugging or development purposes. Currently, DeepEP, Mooncake, NIXL-EP, `ascend_fuseep`, `pplx` and MORI only support cases where `ep_size = tp_size`. For hybrid EP and TP (i.e., `ep_size < tp_size`), only the `none` backend (All-Reduce or All-Gather-based dispatching) is supported. Note that `pplx` additionally requires `--enable-dp-attention` with at least 2 DP groups (i.e., `tp_size / attention_tp_size > 1`); otherwise pplx-kernels’ AllToAll cannot be constructed.
+
+### 
+
+[​](#backends-for-moe-computation)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Backends for MoE Computation
+
+| Backend | Description | Use Cases |
+|----|----|----|
+| **`auto` (default)** | Automatically selects the optimal backend based on model architecture, hardware (e.g., NVIDIA architecture like Ampere, Hopper, Blackwell), quantization scheme (e.g., FP8, FP4), and runtime conditions. | General-purpose deployments; ensures compatibility and performance without user intervention. |
+| `triton` | Triton-based implementation for grouped GEMMs. To achieve higher performance, it’s highly recommended to create [tuned configurations](https://github.com/sgl-project/sglang/blob/main/benchmark/kernels/fused_moe_triton/README.md). | Custom kernel development or scenarios requiring high extensibility with Torch compilation support. |
+| `deep_gemm` | DeepGEMM backend optimized for MoE matrix multiplications, supporting contiguous layouts for prefill and masked layouts for decode; often JIT-compiled for performance. | Large-scale EP deployments with FP8 block-wise quantization. |
+| `cutlass` | CUTLASS-based backend for efficient GEMMs. | NVIDIA architectures with CUTLASS support. |
+| `flashinfer_trtllm` | FlashInfer integrated with TensorRT-LLM for accelerated MoE computations, supporting FP4 communication operators and high-performance GEMMs. | Blackwell with TRT-LLM. |
+| `flashinfer_trtllm_routed` | FlashInfer integrated with TensorRT-LLM for accelerated routed MoE computations, consuming SGLang-computed top-k expert assignments and weights. Compatible with flashinfer all-to-all. | Blackwell with TRT-LLM. |
+| `flashinfer_cutlass` | FlashInfer combined with CUTLASS for high-performance grouped GEMMs in MoE layers, handling FP4/FP8 quantization efficiently. Compatible with flashinfer all-to-all. | Blackwell with FP4/FP8 models. |
+| `flashinfer_mxfp4` | FlashInfer variant optimized for MXFP4 (mixed FP4) quantization in MoE runners, focusing on memory-efficient low-precision inference. | Low-precision models with MXFP4. |
+| `flashinfer_cutedsl` | FlashInfer with a custom DSL for flexible and efficient MoE kernel generation, integrated with ModelOpt FP4 quantization. Compatible with flashinfer all-to-all. | Low-precision models with NVFP4. |
+
+### 
+
+[​](#examples)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Examples
+
+Launch with DeepEP and DeepGEMM for DeepSeek-V3:
+
+Command
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgYXJpYS1oaWRkZW49InRydWUiIGNsYXNzPSJzaXplLTQgc2hyaW5rLTAgdGV4dC1ncmF5LTQwMCBncm91cC1ob3Zlci9jb3B5LWJ1dHRvbjp0ZXh0LWdyYXktNTAwIGRhcms6dGV4dC13aGl0ZS80MCBkYXJrOmdyb3VwLWhvdmVyL2NvcHktYnV0dG9uOnRleHQtd2hpdGUvNjAiPjxwYXRoIGQ9Ik0xNC4yNSA1LjI1SDcuMjVDNi4xNDU0MyA1LjI1IDUuMjUgNi4xNDU0MyA1LjI1IDcuMjVWMTQuMjVDNS4yNSAxNS4zNTQ2IDYuMTQ1NDMgMTYuMjUgNy4yNSAxNi4yNUgxNC4yNUMxNS4zNTQ2IDE2LjI1IDE2LjI1IDE1LjM1NDYgMTYuMjUgMTQuMjVWNy4yNUMxNi4yNSA2LjE0NTQzIDE1LjM1NDYgNS4yNSAxNC4yNSA1LjI1WiIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTIuODAxMDMgMTEuOTk4TDEuNzcyMDMgNS4wNzM5N0MxLjYxMDAzIDMuOTgwOTcgMi4zNjQwMyAyLjk2Mzk3IDMuNDU2MDMgMi44MDE5N0wxMC4zOCAxLjc3Mjk3QzExLjMxMyAxLjYzMzk3IDEyLjE5IDIuMTYyOTcgMTIuNTI4IDMuMDAwOTciIHN0cm9rZT0iY3VycmVudENvbG9yIiB3aWR0aD0iMS41IiBsaW5lY2FwPSJyb3VuZCIgbGluZWpvaW49InJvdW5kIiAvPjwvc3ZnPg==)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgYXJpYS1oaWRkZW49InRydWUiIGNsYXNzPSJzaXplLTQgc2hyaW5rLTAgdGV4dC1ncmF5LTQwMCBncm91cC1ob3Zlci9hc2stYXNzaXN0YW50LWJ1dHRvbjp0ZXh0LWdyYXktNTAwIGRhcms6dGV4dC13aGl0ZS80MCBkYXJrOmdyb3VwLWhvdmVyL2Fzay1hc3Npc3RhbnQtYnV0dG9uOnRleHQtd2hpdGUvNjAiPjxwYXRoIGQ9Ik01LjY1Nzk5IDIuOTlMNC4zOTQ5OSAyLjU2OUwzLjk3Mzk5IDEuMzA2QzMuODM2OTkgMC44OTggMy4xNjE5OSAwLjg5OCAzLjAyNDk5IDEuMzA2TDIuNjAzOTkgMi41NjlMMS4zNDA5OSAyLjk5QzEuMTM2OTkgMy4wNTggMC45OTg5OTMgMy4yNDkgMC45OTg5OTMgMy40NjRDMC45OTg5OTMgMy42NzkgMS4xMzY5OSAzLjg3IDEuMzQwOTkgMy45MzhMMi42MDM5OSA0LjM1OUwzLjAyNDk5IDUuNjIyQzMuMDkyOTkgNS44MjYgMy4yODQ5OSA1Ljk2NCAzLjQ5OTk5IDUuOTY0QzMuNzE0OTkgNS45NjQgMy45MDU5OSA1LjgyNiAzLjk3NDk5IDUuNjIyTDQuMzk1OTkgNC4zNTlMNS42NTg5OSAzLjkzOEM1Ljg2Mjk5IDMuODcgNi4wMDA5OSAzLjY3OSA2LjAwMDk5IDMuNDY0QzYuMDAwOTkgMy4yNDkgNS44NjE5OSAzLjA1OCA1LjY1Nzk5IDIuOTlaIiBmaWxsPSJjdXJyZW50Q29sb3IiIHN0cm9rZT0ibm9uZSIgLz48cGF0aCBkPSJNOS41IDIuNzVMMTEuNDEyIDcuNTg3TDE2LjI1IDkuNUwxMS40MTIgMTEuNDEzTDkuNSAxNi4yNUw3LjU4NyAxMS40MTNMMi43NSA5LjVMNy41ODcgNy41ODdMOS41IDIuNzVaIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+``` shiki
+python -m sglang.launch_server --model-path deepseek-ai/DeepSeek-V3 --moe-a2a-backend deepep --moe-runner-backend deep_gemm --tp 8 --ep 8
+```
+
+## 
+
+[​](#extensible-ep-framework)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Extensible EP Framework
+
+SGLang’s EP framework provides modular abstractions for easy integration of custom kernels, backends, and optimizations. It decouples the MoE forward pass into stages (dispatch → pre-permute → core runner → post-permute → combine), enabling seamless extensions without refactoring core logic.
+
+### 
+
+[​](#framework-overview)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Framework Overview
+
+The framework centers on `FusedMoE` as the unified entry point for a single, extensible structure. Key components include:
+
+- **Dispatcher**: Manages dispatch/combine for backends like DeepEP (implements `BaseDispatcher` subclasses).
+- **MoeRunner**: Orchestrates grouped-GEMM execution via `MoeRunnerCore` implementations (e.g., `TritonRunnerCore`).
+- **PermuteMethodPool**: Auto-registers layout conversions (e.g., pre/post-permute via `register_pre_permute` and `register_post_permute` for dynamic modes, or `register_fused_func` for static, torch.compile-compatible fused operations).
+- **TopK Router**: Backend-agnostic expert selection.
+
+This design supports multiple backends via `--moe-a2a-backend` and `--moe-runner-backend`, with quantization integrated through a standardized `apply()` method. The computation flow ensures modularity:
+
+Output
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgYXJpYS1oaWRkZW49InRydWUiIGNsYXNzPSJzaXplLTQgc2hyaW5rLTAgdGV4dC1ncmF5LTQwMCBncm91cC1ob3Zlci9jb3B5LWJ1dHRvbjp0ZXh0LWdyYXktNTAwIGRhcms6dGV4dC13aGl0ZS80MCBkYXJrOmdyb3VwLWhvdmVyL2NvcHktYnV0dG9uOnRleHQtd2hpdGUvNjAiPjxwYXRoIGQ9Ik0xNC4yNSA1LjI1SDcuMjVDNi4xNDU0MyA1LjI1IDUuMjUgNi4xNDU0MyA1LjI1IDcuMjVWMTQuMjVDNS4yNSAxNS4zNTQ2IDYuMTQ1NDMgMTYuMjUgNy4yNSAxNi4yNUgxNC4yNUMxNS4zNTQ2IDE2LjI1IDE2LjI1IDE1LjM1NDYgMTYuMjUgMTQuMjVWNy4yNUMxNi4yNSA2LjE0NTQzIDE1LjM1NDYgNS4yNSAxNC4yNSA1LjI1WiIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTIuODAxMDMgMTEuOTk4TDEuNzcyMDMgNS4wNzM5N0MxLjYxMDAzIDMuOTgwOTcgMi4zNjQwMyAyLjk2Mzk3IDMuNDU2MDMgMi44MDE5N0wxMC4zOCAxLjc3Mjk3QzExLjMxMyAxLjYzMzk3IDEyLjE5IDIuMTYyOTcgMTIuNTI4IDMuMDAwOTciIHN0cm9rZT0iY3VycmVudENvbG9yIiB3aWR0aD0iMS41IiBsaW5lY2FwPSJyb3VuZCIgbGluZWpvaW49InJvdW5kIiAvPjwvc3ZnPg==)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgYXJpYS1oaWRkZW49InRydWUiIGNsYXNzPSJzaXplLTQgc2hyaW5rLTAgdGV4dC1ncmF5LTQwMCBncm91cC1ob3Zlci9hc2stYXNzaXN0YW50LWJ1dHRvbjp0ZXh0LWdyYXktNTAwIGRhcms6dGV4dC13aGl0ZS80MCBkYXJrOmdyb3VwLWhvdmVyL2Fzay1hc3Npc3RhbnQtYnV0dG9uOnRleHQtd2hpdGUvNjAiPjxwYXRoIGQ9Ik01LjY1Nzk5IDIuOTlMNC4zOTQ5OSAyLjU2OUwzLjk3Mzk5IDEuMzA2QzMuODM2OTkgMC44OTggMy4xNjE5OSAwLjg5OCAzLjAyNDk5IDEuMzA2TDIuNjAzOTkgMi41NjlMMS4zNDA5OSAyLjk5QzEuMTM2OTkgMy4wNTggMC45OTg5OTMgMy4yNDkgMC45OTg5OTMgMy40NjRDMC45OTg5OTMgMy42NzkgMS4xMzY5OSAzLjg3IDEuMzQwOTkgMy45MzhMMi42MDM5OSA0LjM1OUwzLjAyNDk5IDUuNjIyQzMuMDkyOTkgNS44MjYgMy4yODQ5OSA1Ljk2NCAzLjQ5OTk5IDUuOTY0QzMuNzE0OTkgNS45NjQgMy45MDU5OSA1LjgyNiAzLjk3NDk5IDUuNjIyTDQuMzk1OTkgNC4zNTlMNS42NTg5OSAzLjkzOEM1Ljg2Mjk5IDMuODcgNi4wMDA5OSAzLjY3OSA2LjAwMDk5IDMuNDY0QzYuMDAwOTkgMy4yNDkgNS44NjE5OSAzLjA1OCA1LjY1Nzk5IDIuOTlaIiBmaWxsPSJjdXJyZW50Q29sb3IiIHN0cm9rZT0ibm9uZSIgLz48cGF0aCBkPSJNOS41IDIuNzVMMTEuNDEyIDcuNTg3TDE2LjI1IDkuNUwxMS40MTIgMTEuNDEzTDkuNSAxNi4yNUw3LjU4NyAxMS40MTNMMi43NSA5LjVMNy41ODcgNy41ODdMOS41IDIuNzVaIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+``` shiki
+[input_hidden_states]
+          |
+          v
+     TopK.forward -> select_experts / triton_kernels.routing / bypass
+          |
+          v
+     [TopKOutput]
+          |
+          v
+   FusedMoE.forward -> Dispatcher.dispatch -> DeepEP / bypass
+          |                     |
+          |                     v
+          |              [DispatchOutput]
+          |                     |
+          |                     v
+          |             quant_method.apply -> MoeRunner.forward
+          |                     |              |
+          |                     |              v
+          |                     | pre-permute + grouped_gemm + post-permute
+          |                     |              |
+          |                     |--------------
+          |                     v
+          |               [CombineInput]
+          |                     |
+          |                     v
+          |            Dispatcher.combine -> DeepEP / bypass
+          |                     |
+          |---------------------
+          v
+[final_hidden_states]
+```
+
+For details, see the [MoE Refactor Roadmap](https://github.com/sgl-project/sglang/issues/8715).
+
+### 
+
+[​](#implementing-new-backends)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Implementing New Backends
+
+To add a new backend:
+
+1.  For a new all-to-all dispatcher, implement a `BaseDispatcher` subclass with `dispatch` and `combine` methods.
+2.  For a new MoE runner backend, define a `MoeRunnerCore` subclass for core operations (e.g., grouped GEMMs).
+3.  Define new input/output formats for the dispatcher or model runner (e.g., `RunnerInput`, `RunnerOutput`).
+4.  Register permute/unpermute methods to ensure compatibility:
+    - **Fused Mode** (static, torch.compile-compatible): Use `register_fused_func` for end-to-end operations.
+    - **Permute Mode** (dynamic): Register `register_pre_permute` and `register_post_permute` for flexible layouts.
+
+See the [MoE Refactor Implementation PR](https://github.com/sgl-project/sglang/pull/9269) for full changes, including type hints and config expansions.
+
+### 
+
+[​](#examples-2)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Examples
+
+For an example implementation, see [moe_runner/triton.py](https://github.com/sgl-project/sglang/blob/main/python/sglang/srt/layers/moe/moe_runner/triton.py), which demonstrates Triton-based grouped GEMMs with registered fused and permutation functions.
+
+## 
+
+[​](#computation-and-communication-overlap)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Computation and Communication Overlap
+
+SGLang’s EP employs advanced overlap techniques to hide communication latency behind computation, maximizing GPU utilization in MoE layers.
+
+### 
+
+[​](#two-batch-overlap-tbo)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Two-Batch Overlap (TBO)
+
+TBO splits requests into micro-batches, interleaving attention computation with dispatch/combine operations. Yield points in the execution graph allow pausing for overlaps, increasing overall throughput without peak memory spikes:
+
+Example
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgYXJpYS1oaWRkZW49InRydWUiIGNsYXNzPSJzaXplLTQgc2hyaW5rLTAgdGV4dC1ncmF5LTQwMCBncm91cC1ob3Zlci9jb3B5LWJ1dHRvbjp0ZXh0LWdyYXktNTAwIGRhcms6dGV4dC13aGl0ZS80MCBkYXJrOmdyb3VwLWhvdmVyL2NvcHktYnV0dG9uOnRleHQtd2hpdGUvNjAiPjxwYXRoIGQ9Ik0xNC4yNSA1LjI1SDcuMjVDNi4xNDU0MyA1LjI1IDUuMjUgNi4xNDU0MyA1LjI1IDcuMjVWMTQuMjVDNS4yNSAxNS4zNTQ2IDYuMTQ1NDMgMTYuMjUgNy4yNSAxNi4yNUgxNC4yNUMxNS4zNTQ2IDE2LjI1IDE2LjI1IDE1LjM1NDYgMTYuMjUgMTQuMjVWNy4yNUMxNi4yNSA2LjE0NTQzIDE1LjM1NDYgNS4yNSAxNC4yNSA1LjI1WiIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTIuODAxMDMgMTEuOTk4TDEuNzcyMDMgNS4wNzM5N0MxLjYxMDAzIDMuOTgwOTcgMi4zNjQwMyAyLjk2Mzk3IDMuNDU2MDMgMi44MDE5N0wxMC4zOCAxLjc3Mjk3QzExLjMxMyAxLjYzMzk3IDEyLjE5IDIuMTYyOTcgMTIuNTI4IDMuMDAwOTciIHN0cm9rZT0iY3VycmVudENvbG9yIiB3aWR0aD0iMS41IiBsaW5lY2FwPSJyb3VuZCIgbGluZWpvaW49InJvdW5kIiAvPjwvc3ZnPg==)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgYXJpYS1oaWRkZW49InRydWUiIGNsYXNzPSJzaXplLTQgc2hyaW5rLTAgdGV4dC1ncmF5LTQwMCBncm91cC1ob3Zlci9hc2stYXNzaXN0YW50LWJ1dHRvbjp0ZXh0LWdyYXktNTAwIGRhcms6dGV4dC13aGl0ZS80MCBkYXJrOmdyb3VwLWhvdmVyL2Fzay1hc3Npc3RhbnQtYnV0dG9uOnRleHQtd2hpdGUvNjAiPjxwYXRoIGQ9Ik01LjY1Nzk5IDIuOTlMNC4zOTQ5OSAyLjU2OUwzLjk3Mzk5IDEuMzA2QzMuODM2OTkgMC44OTggMy4xNjE5OSAwLjg5OCAzLjAyNDk5IDEuMzA2TDIuNjAzOTkgMi41NjlMMS4zNDA5OSAyLjk5QzEuMTM2OTkgMy4wNTggMC45OTg5OTMgMy4yNDkgMC45OTg5OTMgMy40NjRDMC45OTg5OTMgMy42NzkgMS4xMzY5OSAzLjg3IDEuMzQwOTkgMy45MzhMMi42MDM5OSA0LjM1OUwzLjAyNDk5IDUuNjIyQzMuMDkyOTkgNS44MjYgMy4yODQ5OSA1Ljk2NCAzLjQ5OTk5IDUuOTY0QzMuNzE0OTkgNS45NjQgMy45MDU5OSA1LjgyNiAzLjk3NDk5IDUuNjIyTDQuMzk1OTkgNC4zNTlMNS42NTg5OSAzLjkzOEM1Ljg2Mjk5IDMuODcgNi4wMDA5OSAzLjY3OSA2LjAwMDk5IDMuNDY0QzYuMDAwOTkgMy4yNDkgNS44NjE5OSAzLjA1OCA1LjY1Nzk5IDIuOTlaIiBmaWxsPSJjdXJyZW50Q29sb3IiIHN0cm9rZT0ibm9uZSIgLz48cGF0aCBkPSJNOS41IDIuNzVMMTEuNDEyIDcuNTg3TDE2LjI1IDkuNUwxMS40MTIgMTEuNDEzTDkuNSAxNi4yNUw3LjU4NyAxMS40MTNMMi43NSA5LjVMNy41ODcgNy41ODdMOS41IDIuNzVaIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+``` shiki
+operations = [
+    self._forward_attn,
+    YieldOperation(),  # Overlap with dispatch of prior micro-batch
+    self._forward_dispatch,
+    self._forward_mlp,
+    YieldOperation(),  # Overlap with combine
+    self._forward_combine,
+]
+```
+
+Users need to specify `--enable-two-batch-overlap` to unlock up to 2x throughput. For details, see the [Large-Scale EP Blog](https://lmsys.org/blog/2025-05-05-large-scale-ep/#two-batch-overlap).
+
+### 
+
+[​](#single-batch-overlap-sbo)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Single-Batch Overlap (SBO)
+
+SGLang introduces a dispatcher-hook system for Single-Batch Overlap (SBO), enabling the overlap of operations within a single batch—such as shared experts computation with communication—while decentralizing logic to enhance modularity. These hooks execute before and after the `dispatch` and `combine` operations without modifying core MoE modules. This design simplifies interfaces, reduces coupling, and improves extensibility. For implementation details and an example of overlapping shared experts with DeepEP’s combine operation, refer to [PR \#13327](https://github.com/sgl-project/sglang/pull/13327). Users can set `--enable-single-batch-overlap` to enable this feature.
+
+## 
+
+[​](#workload-balancer)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Workload Balancer
+
+SGLang integrates the [Expert Parallelism Load Balancer (EPLB)](https://github.com/deepseek-ai/EPLB) from DeepSeek to address routing imbalances in MoE models. By analyzing expert activation statistics, EPLB computes an optimal expert arrangement, strategically placing or replicating experts to minimize GPU utilization variance, reduce idle cycles, and enhance scalability. To enable EPLB, use the flags `--enable-eplb`. For optimal performance, increase batch sizes to stabilize activation statistics and configure periodic rebalancing (e.g., every 1000 requests) to adapt to evolving workloads. Simulations demonstrate significant improvements in load balancedness (ratio of mean to max computation time), correlating strongly with throughput gains. For more details, refer to the [EPLB Section in the Large-Scale EP Blog](https://lmsys.org/blog/2025-05-05-large-scale-ep/#expert-parallelism-load-balancer) and the [EPLB Repository](https://github.com/deepseek-ai/eplb).
+
+## 
+
+[​](#ascend-npu-guidance)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Ascend NPU Guidance
+
+### 
+
+[​](#guidance-on-sglang-configuration-in-ascend-npu)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+Guidance on SGLang configuration in Ascend NPU
+
+- `--moe-a2a-backend` only supports `deepep` and `ascend_fuseep` backends,
+  - `deepep`: The mechanism is consistent with the above description.
+  - `ascend_fuseep`: Offer a large fused operator which integrates all operations between dispatch and combine to boost MoE computation. Only used for decode stage in PD Disaggregation Mode.
+- `--moe-runner-backend` parameter does not need to be configured.
+- `--deepep-mode`:
+  - In PD mixed mode, please set `--deepep-mode auto`.
+  - In PD Disaggregation Mode, prefill instance sets `--deepep-mode normal`, and decode instance sets `--deepep-mode low_latency`.
+
+### 
+
+[​](#deepep-ascend-introduction)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0zIHNocmluay0wIj48cGF0aCBkPSJNOC41MDAwMSA2LjgyN0M4LjE0ODAxIDYuOTk1IDcuODE4MDEgNy4yMjUgNy41MjcwMSA3LjUxN0w3LjUxNzAxIDcuNTI3QzYuMTM2MDEgOC45MDggNi4xMzYwMSAxMS4xNDYgNy41MTcwMSAxMi41MjdMOS42OTIwMSAxNC43MDJDMTEuMDczIDE2LjA4MyAxMy4zMTEgMTYuMDgzIDE0LjY5MiAxNC43MDJMMTQuNzAyIDE0LjY5MkMxNi4wODMgMTMuMzExIDE2LjA4MyAxMS4wNzMgMTQuNzAyIDkuNjkyTDEzLjc3MSA4Ljc2MSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTkuNTAwMDIgMTEuMTczQzkuODUyMDIgMTEuMDA1IDEwLjE4MiAxMC43NzUgMTAuNDczIDEwLjQ4M0wxMC40ODMgMTAuNDczQzExLjg2NCA5LjA5MiAxMS44NjQgNi44NTQgMTAuNDgzIDUuNDczTDguMzA4MDIgMy4yOThDNi45MjcwMiAxLjkxNyA0LjY4OTAyIDEuOTE3IDMuMzA4MDIgMy4yOThMMy4yOTgwMiAzLjMwOEMxLjkxNzAyIDQuNjg5IDEuOTE3MDIgNi45MjcgMy4yOTgwMiA4LjMwOEw0LjIyOTAyIDkuMjM5IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+DeepEP Ascend Introduction
+
+DeepEP Ascend is the adapted version of the DeepEP communication library for Huawei Ascend NPUs, specifically designed for Mixture-of-Experts (MoE) model Expert Parallelism (EP). It supports the Ant-moving Function (Split the sequence length into rounds for streaming batch transmission) to optimize the buffer size occupied during collective communication in prefill stage, especially for long sequences. Ant-moving Function can be enabled for both the dispatch and combine phases via the following environment variables:
+
+- `DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS`: Enable ant-moving function in dispatch stage. Indicates the number of tokens transmitted per round on each rank, default 8192.
+- `DEEPEP_NORMAL_LONG_SEQ_ROUND`: Enable ant-moving function in dispatch stage. Indicates the number of rounds transmitted on each rank, default 1.
+- `DEEPEP_NORMAL_COMBINE_ENABLE_LONG_SEQ`: Enable ant-moving function in combine stage, default 0 (means disabled).
+
+`DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS * DEEPEP_NORMAL_LONG_SEQ_ROUND` means input sequence length. When the input sequence length exceeds 8192, it is recommended to enable the ant-moving function in both dispatch and combine phase. The environment variable `HCCL_BUFFSIZE` is used to configure the buffer size (MB) actually allocated. Its calculation formula is as follows:
+
+Output
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgYXJpYS1oaWRkZW49InRydWUiIGNsYXNzPSJzaXplLTQgc2hyaW5rLTAgdGV4dC1ncmF5LTQwMCBncm91cC1ob3Zlci9jb3B5LWJ1dHRvbjp0ZXh0LWdyYXktNTAwIGRhcms6dGV4dC13aGl0ZS80MCBkYXJrOmdyb3VwLWhvdmVyL2NvcHktYnV0dG9uOnRleHQtd2hpdGUvNjAiPjxwYXRoIGQ9Ik0xNC4yNSA1LjI1SDcuMjVDNi4xNDU0MyA1LjI1IDUuMjUgNi4xNDU0MyA1LjI1IDcuMjVWMTQuMjVDNS4yNSAxNS4zNTQ2IDYuMTQ1NDMgMTYuMjUgNy4yNSAxNi4yNUgxNC4yNUMxNS4zNTQ2IDE2LjI1IDE2LjI1IDE1LjM1NDYgMTYuMjUgMTQuMjVWNy4yNUMxNi4yNSA2LjE0NTQzIDE1LjM1NDYgNS4yNSAxNC4yNSA1LjI1WiIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTIuODAxMDMgMTEuOTk4TDEuNzcyMDMgNS4wNzM5N0MxLjYxMDAzIDMuOTgwOTcgMi4zNjQwMyAyLjk2Mzk3IDMuNDU2MDMgMi44MDE5N0wxMC4zOCAxLjc3Mjk3QzExLjMxMyAxLjYzMzk3IDEyLjE5IDIuMTYyOTcgMTIuNTI4IDMuMDAwOTciIHN0cm9rZT0iY3VycmVudENvbG9yIiB3aWR0aD0iMS41IiBsaW5lY2FwPSJyb3VuZCIgbGluZWpvaW49InJvdW5kIiAvPjwvc3ZnPg==)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgYXJpYS1oaWRkZW49InRydWUiIGNsYXNzPSJzaXplLTQgc2hyaW5rLTAgdGV4dC1ncmF5LTQwMCBncm91cC1ob3Zlci9hc2stYXNzaXN0YW50LWJ1dHRvbjp0ZXh0LWdyYXktNTAwIGRhcms6dGV4dC13aGl0ZS80MCBkYXJrOmdyb3VwLWhvdmVyL2Fzay1hc3Npc3RhbnQtYnV0dG9uOnRleHQtd2hpdGUvNjAiPjxwYXRoIGQ9Ik01LjY1Nzk5IDIuOTlMNC4zOTQ5OSAyLjU2OUwzLjk3Mzk5IDEuMzA2QzMuODM2OTkgMC44OTggMy4xNjE5OSAwLjg5OCAzLjAyNDk5IDEuMzA2TDIuNjAzOTkgMi41NjlMMS4zNDA5OSAyLjk5QzEuMTM2OTkgMy4wNTggMC45OTg5OTMgMy4yNDkgMC45OTg5OTMgMy40NjRDMC45OTg5OTMgMy42NzkgMS4xMzY5OSAzLjg3IDEuMzQwOTkgMy45MzhMMi42MDM5OSA0LjM1OUwzLjAyNDk5IDUuNjIyQzMuMDkyOTkgNS44MjYgMy4yODQ5OSA1Ljk2NCAzLjQ5OTk5IDUuOTY0QzMuNzE0OTkgNS45NjQgMy45MDU5OSA1LjgyNiAzLjk3NDk5IDUuNjIyTDQuMzk1OTkgNC4zNTlMNS42NTg5OSAzLjkzOEM1Ljg2Mjk5IDMuODcgNi4wMDA5OSAzLjY3OSA2LjAwMDk5IDMuNDY0QzYuMDAwOTkgMy4yNDkgNS44NjE5OSAzLjA1OCA1LjY1Nzk5IDIuOTlaIiBmaWxsPSJjdXJyZW50Q29sb3IiIHN0cm9rZT0ibm9uZSIgLz48cGF0aCBkPSJNOS41IDIuNzVMMTEuNDEyIDcuNTg3TDE2LjI1IDkuNUwxMS40MTIgMTEuNDEzTDkuNSAxNi4yNUw3LjU4NyAxMS40MTNMMi43NSA5LjVMNy41ODcgNy41ODdMOS41IDIuNzVaIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)
+
+``` shiki
+# Enable Ant-moving Function
+HCCL_BUFFSIZE >= 2 * (102MB + 4MB + DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS * (hidden_size + hidden_size + hidden_size) * topk) + PADDING_BUFFSIZE
+
+# Disable Ant-moving Function
+HCCL_BUFFSIZE >= 2 * (102MB + 4MB + TOTAL_SEQ_LEN * (hidden_size + hidden_size) * topk) + PADDING_BUFFSIZE
+```
+
+Wherein the parameters are described as follows:
+
+- `hidden_size`: hidden size in model config.
+- `topk`: The number of selected routing experts.
+- `TOTAL_SEQ_LEN`: input sequence length.
+- `PADDING_BUFFSIZE`: A value of 20 or greater is recommended.
+
+Was this page helpful?
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgYXJpYS1oaWRkZW49InRydWUiIGNsYXNzPSJzaXplLTQgc2hyaW5rLTAgdGV4dC1jdXJyZW50Ij48cGF0aCBkPSJNNS4yNSA3LjQ5NEM1LjI1IDcuMDE0IDUuNDIzIDYuNTUgNS43MzYgNi4xODdMMTAgMS4yNUMxMC44NTQgMS42NzcgMTEuMjUgMi42NzggMTAuOTIgMy41NzRMOS43NSA2Ljc1SDE0LjE1MkMxNS40NjUgNi43NSAxNi40MjEgNy45OTMgMTYuMDg1IDkuMjYyTDE0Ljg5NCAxMy43NjJDMTQuNjYyIDE0LjYzOSAxMy44NjggMTUuMjUgMTIuOTYxIDE1LjI1SDcuMjVDNi4xNDUgMTUuMjUgNS4yNSAxNC4zNTUgNS4yNSAxMy4yNSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PHBhdGggZD0iTTQuMjUgNi43NUgyLjc1QzIuMTk3NzIgNi43NSAxLjc1IDcuMTk3NzIgMS43NSA3Ljc1VjE0LjI1QzEuNzUgMTQuODAyMyAyLjE5NzcyIDE1LjI1IDIuNzUgMTUuMjVINC4yNUM0LjgwMjI4IDE1LjI1IDUuMjUgMTQuODAyMyA1LjI1IDE0LjI1VjcuNzVDNS4yNSA3LjE5NzcyIDQuODAyMjggNi43NSA0LjI1IDYuNzVaIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)Yes
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgYXJpYS1oaWRkZW49InRydWUiIGNsYXNzPSJzaXplLTQgc2hyaW5rLTAgdGV4dC1jdXJyZW50Ij48cGF0aCBkPSJNNS4yNSAxMC41MDZDNS4yNSAxMC45ODYgNS40MjMgMTEuNDUgNS43MzYgMTEuODEzTDEwIDE2Ljc1QzEwLjg1NCAxNi4zMjMgMTEuMjUgMTUuMzIyIDEwLjkyIDE0LjQyNkw5Ljc1IDExLjI1SDE0LjE1MkMxNS40NjUgMTEuMjUgMTYuNDIxIDEwLjAwNyAxNi4wODUgOC43MzhMMTQuODk0IDQuMjM4QzE0LjY2MiAzLjM2MSAxMy44NjggMi43NSAxMi45NjEgMi43NUg3LjI1QzYuMTQ1IDIuNzUgNS4yNSAzLjY0NSA1LjI1IDQuNzUiIHN0cm9rZT0iY3VycmVudENvbG9yIiB3aWR0aD0iMS41IiBsaW5lY2FwPSJyb3VuZCIgbGluZWpvaW49InJvdW5kIiAvPjxwYXRoIGQ9Ik00LjI1IDIuNzVIMi43NUMyLjE5NzcyIDIuNzUgMS43NSAzLjE5NzcyIDEuNzUgMy43NVYxMC4yNUMxLjc1IDEwLjgwMjMgMi4xOTc3MiAxMS4yNSAyLjc1IDExLjI1SDQuMjVDNC44MDIyOCAxMS4yNSA1LjI1IDEwLjgwMjMgNS4yNSAxMC4yNVYzLjc1QzUuMjUgMy4xOTc3MiA0LjgwMjI4IDIuNzUgNC4yNSAyLjc1WiIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PC9zdmc+)No
+
+[](/docs/advanced_features/dcp)
+
+Decode Context Parallelism
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0yLjUgc2hyaW5rLTAgdGV4dC1ncmF5LTQwMCBkYXJrOnRleHQtZ3JheS02MDAgZ3JvdXAtaG92ZXI6dGV4dC1ncmF5LTUwMCBkYXJrOmdyb3VwLWhvdmVyOnRleHQtZ3JheS01MDAiIGRhdGEtY29tcG9uZW50LXBhcnQ9InBhZ2luYXRpb24tY2hldnJvbiI+PHBhdGggZD0iTTExLjUgMTUuMjVMNS4yNSA5TDExLjUgMi43NSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHdpZHRoPSIxLjUiIGxpbmVjYXA9InJvdW5kIiBsaW5lam9pbj0icm91bmQiIC8+PC9zdmc+)Previous
+
+[](/docs/advanced_features/lora)
+
+LoRA Serving
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0yLjUgc2hyaW5rLTAgdGV4dC1ncmF5LTQwMCBkYXJrOnRleHQtZ3JheS02MDAgZ3JvdXAtaG92ZXI6dGV4dC1ncmF5LTUwMCBkYXJrOmdyb3VwLWhvdmVyOnRleHQtZ3JheS01MDAiIGRhdGEtY29tcG9uZW50LXBhcnQ9InBhZ2luYXRpb24tY2hldnJvbiI+PHBhdGggZD0iTTYuNSAyLjc1TDEyLjc1IDlMNi41IDE1LjI1IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48L3N2Zz4=)Next
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld2JveD0iMCAwIDE4IDE4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGFyaWEtaGlkZGVuPSJ0cnVlIiBjbGFzcz0ic2l6ZS0yLjUgc2hyaW5rLTAgdGV4dC13aGl0ZSBkYXJrOnRleHQtd2hpdGUiPjxwYXRoIGQ9Ik05LjAgMS41NzU0TDguOTk5OSAxNi40MTcxIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgd2lkdGg9IjEuNSIgbGluZWNhcD0icm91bmQiIGxpbmVqb2luPSJyb3VuZCIgLz48cGF0aCBkPSJNMi4yNTYzIDguMzE5TDguOTk5OSAxLjU3NTRMMTUuNzQzNSA4LjMxOTEiIHN0cm9rZT0iY3VycmVudENvbG9yIiB3aWR0aD0iMS41IiBsaW5lY2FwPSJyb3VuZCIgbGluZWpvaW49InJvdW5kIiAvPjwvc3ZnPg==)
+
+[github![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZm9yY2VkLWNvbG9yczpmb3JjZWQtY29sb3ItYWRqdXN0LW5vbmUgZm9yY2VkLWNvbG9yczpiZy1bY29sb3I6Q2FudmFzVGV4dF0hIHctNSBoLTUgYmctZ3JheS00MDAgZGFyazpiZy1ncmF5LTUwMCBob3ZlcjpiZy1ncmF5LTUwMCBkYXJrOmhvdmVyOmJnLWdyYXktNDAwIiBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgc3R5bGU9Ii13ZWJraXQtbWFzay1pbWFnZTp1cmwoJnF1b3Q7aHR0cHM6Ly9kM2drMmM1eGltMWplMi5jbG91ZGZyb250Lm5ldC9mb250YXdlc29tZS92Ny4yLjAvYnJhbmRzL2dpdGh1Yi5zdmcmcXVvdDspOy13ZWJraXQtbWFzay1yZXBlYXQ6bm8tcmVwZWF0Oy13ZWJraXQtbWFzay1wb3NpdGlvbjpjZW50ZXI7bWFzay1pbWFnZTp1cmwoJnF1b3Q7aHR0cHM6Ly9kM2drMmM1eGltMWplMi5jbG91ZGZyb250Lm5ldC9mb250YXdlc29tZS92Ny4yLjAvYnJhbmRzL2dpdGh1Yi5zdmcmcXVvdDspO21hc2stcmVwZWF0Om5vLXJlcGVhdDttYXNrLXBvc2l0aW9uOmNlbnRlciI+PC9zdmc+)](https://github.com/sgl-project/sglang)[x![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZm9yY2VkLWNvbG9yczpmb3JjZWQtY29sb3ItYWRqdXN0LW5vbmUgZm9yY2VkLWNvbG9yczpiZy1bY29sb3I6Q2FudmFzVGV4dF0hIHctNSBoLTUgYmctZ3JheS00MDAgZGFyazpiZy1ncmF5LTUwMCBob3ZlcjpiZy1ncmF5LTUwMCBkYXJrOmhvdmVyOmJnLWdyYXktNDAwIiBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgc3R5bGU9Ii13ZWJraXQtbWFzay1pbWFnZTp1cmwoJnF1b3Q7aHR0cHM6Ly9kM2drMmM1eGltMWplMi5jbG91ZGZyb250Lm5ldC9mb250YXdlc29tZS92Ny4yLjAvYnJhbmRzL3gtdHdpdHRlci5zdmcmcXVvdDspOy13ZWJraXQtbWFzay1yZXBlYXQ6bm8tcmVwZWF0Oy13ZWJraXQtbWFzay1wb3NpdGlvbjpjZW50ZXI7bWFzay1pbWFnZTp1cmwoJnF1b3Q7aHR0cHM6Ly9kM2drMmM1eGltMWplMi5jbG91ZGZyb250Lm5ldC9mb250YXdlc29tZS92Ny4yLjAvYnJhbmRzL3gtdHdpdHRlci5zdmcmcXVvdDspO21hc2stcmVwZWF0Om5vLXJlcGVhdDttYXNrLXBvc2l0aW9uOmNlbnRlciI+PC9zdmc+)](https://x.com/lmsysorg)[linkedin![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZm9yY2VkLWNvbG9yczpmb3JjZWQtY29sb3ItYWRqdXN0LW5vbmUgZm9yY2VkLWNvbG9yczpiZy1bY29sb3I6Q2FudmFzVGV4dF0hIHctNSBoLTUgYmctZ3JheS00MDAgZGFyazpiZy1ncmF5LTUwMCBob3ZlcjpiZy1ncmF5LTUwMCBkYXJrOmhvdmVyOmJnLWdyYXktNDAwIiBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgc3R5bGU9Ii13ZWJraXQtbWFzay1pbWFnZTp1cmwoJnF1b3Q7aHR0cHM6Ly9kM2drMmM1eGltMWplMi5jbG91ZGZyb250Lm5ldC9mb250YXdlc29tZS92Ny4yLjAvYnJhbmRzL2xpbmtlZGluLnN2ZyZxdW90Oyk7LXdlYmtpdC1tYXNrLXJlcGVhdDpuby1yZXBlYXQ7LXdlYmtpdC1tYXNrLXBvc2l0aW9uOmNlbnRlcjttYXNrLWltYWdlOnVybCgmcXVvdDtodHRwczovL2QzZ2syYzV4aW0xamUyLmNsb3VkZnJvbnQubmV0L2ZvbnRhd2Vzb21lL3Y3LjIuMC9icmFuZHMvbGlua2VkaW4uc3ZnJnF1b3Q7KTttYXNrLXJlcGVhdDpuby1yZXBlYXQ7bWFzay1wb3NpdGlvbjpjZW50ZXIiPjwvc3ZnPg==)](https://www.linkedin.com/company/sgl-project/posts?feedView=all)[slack![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZm9yY2VkLWNvbG9yczpmb3JjZWQtY29sb3ItYWRqdXN0LW5vbmUgZm9yY2VkLWNvbG9yczpiZy1bY29sb3I6Q2FudmFzVGV4dF0hIHctNSBoLTUgYmctZ3JheS00MDAgZGFyazpiZy1ncmF5LTUwMCBob3ZlcjpiZy1ncmF5LTUwMCBkYXJrOmhvdmVyOmJnLWdyYXktNDAwIiBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgc3R5bGU9Ii13ZWJraXQtbWFzay1pbWFnZTp1cmwoJnF1b3Q7aHR0cHM6Ly9kM2drMmM1eGltMWplMi5jbG91ZGZyb250Lm5ldC9mb250YXdlc29tZS92Ny4yLjAvYnJhbmRzL3NsYWNrLnN2ZyZxdW90Oyk7LXdlYmtpdC1tYXNrLXJlcGVhdDpuby1yZXBlYXQ7LXdlYmtpdC1tYXNrLXBvc2l0aW9uOmNlbnRlcjttYXNrLWltYWdlOnVybCgmcXVvdDtodHRwczovL2QzZ2syYzV4aW0xamUyLmNsb3VkZnJvbnQubmV0L2ZvbnRhd2Vzb21lL3Y3LjIuMC9icmFuZHMvc2xhY2suc3ZnJnF1b3Q7KTttYXNrLXJlcGVhdDpuby1yZXBlYXQ7bWFzay1wb3NpdGlvbjpjZW50ZXIiPjwvc3ZnPg==)](https://slack.sglang.io/)[discord![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZm9yY2VkLWNvbG9yczpmb3JjZWQtY29sb3ItYWRqdXN0LW5vbmUgZm9yY2VkLWNvbG9yczpiZy1bY29sb3I6Q2FudmFzVGV4dF0hIHctNSBoLTUgYmctZ3JheS00MDAgZGFyazpiZy1ncmF5LTUwMCBob3ZlcjpiZy1ncmF5LTUwMCBkYXJrOmhvdmVyOmJnLWdyYXktNDAwIiBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgc3R5bGU9Ii13ZWJraXQtbWFzay1pbWFnZTp1cmwoJnF1b3Q7aHR0cHM6Ly9kM2drMmM1eGltMWplMi5jbG91ZGZyb250Lm5ldC9mb250YXdlc29tZS92Ny4yLjAvYnJhbmRzL2Rpc2NvcmQuc3ZnJnF1b3Q7KTstd2Via2l0LW1hc2stcmVwZWF0Om5vLXJlcGVhdDstd2Via2l0LW1hc2stcG9zaXRpb246Y2VudGVyO21hc2staW1hZ2U6dXJsKCZxdW90O2h0dHBzOi8vZDNnazJjNXhpbTFqZTIuY2xvdWRmcm9udC5uZXQvZm9udGF3ZXNvbWUvdjcuMi4wL2JyYW5kcy9kaXNjb3JkLnN2ZyZxdW90Oyk7bWFzay1yZXBlYXQ6bm8tcmVwZWF0O21hc2stcG9zaXRpb246Y2VudGVyIj48L3N2Zz4=)](https://discord.gg/4ugb2t6YY2)
+
+[Powered by![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI3NCIgaGVpZ2h0PSIzNjciIHZpZXdib3g9IjAgMCAxMjc0IDM2NyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBjbGFzcz0iaC0zLjUgdy1hdXRvIHRyYW5zbGF0ZS15LTAuNzUiPjxwYXRoIGQ9Ik0xMTU0LjM4IDM2Ni4wMzhIMTA5Ny44NkwxMTM3LjY5IDI3Ni4xNEwxMDU4LjA0IDk3LjEwNDZIMTExNC45M0wxMTYxLjM1IDIwOS4zMzdDMTE2Mi45NyAyMTMuMjYgMTE2OC41MyAyMTMuMjUzIDExNzAuMTQgMjA5LjMyNUwxMjE2LjIxIDk3LjEwNDZIMTI3My40OUwxMTU0LjM4IDM2Ni4wMzhaIiBmaWxsPSJjdXJyZW50Q29sb3IiIC8+PHBhdGggZD0iTTk4Mi43MTQgMjg2Ljc2MVYxNDIuNjIySDk0NC40MDNWOTcuMTA0MUg5ODIuNzE0VjcyLjQ0ODhDOTgyLjcxNCA0OS45NDI5IDk4OS41NDIgMzIuMjQxNiAxMDAzLjIgMTkuMzQ1QzEwMTYuODUgNi40NDgzMiAxMDM0LjE3IDAgMTA1NS4xNiAwQzEwNjguMDYgMCAxMDc5LjA2IDEuMzkwODEgMTA4OC4xNiA0LjE3MjQ0VjUwLjA2OTNDMTA4Mi4wOSA0Ny43OTM0IDEwNzUuMDEgNDYuNjU1NSAxMDY2LjkyIDQ2LjY1NTVDMTA1NS41NCA0Ni42NTU1IDEwNDcuMzIgNDkuMTg0MyAxMDQyLjI3IDU0LjI0MThDMTAzNy4yMSA1OS4wNDY0IDEwMzQuNjggNjcuMjY0OCAxMDM0LjY4IDc4Ljg5NzFWOTcuMTA0MUgxMDg4LjE2VjE0Mi42MjJIMTAzNC42OFYyODYuNzYxSDk4Mi43MTRaIiBmaWxsPSJjdXJyZW50Q29sb3IiIC8+PHBhdGggZD0iTTg5Ny45MTYgNjYuMDAwNUM4ODkuMDY2IDY2LjAwMDUgODgxLjM1MyA2Mi44Mzk1IDg3NC43NzggNTYuNTE3NkM4NjguMjAzIDQ5Ljk0MjkgODY0LjkxNiA0Mi4xMDM3IDg2NC45MTYgMzMuMDAwMkM4NjQuOTE2IDIzLjg5NjcgODY4LjIwMyAxNi4xODQgODc0Ljc3OCA5Ljg2MjE1Qzg4MS4zNTMgMy4yODczOCA4ODkuMDY2IDAgODk3LjkxNiAwQzkwNy4yNzMgMCA5MTUuMTEyIDMuMjg3MzggOTIxLjQzNCA5Ljg2MjE1QzkyOC4wMDggMTYuMTg0IDkzMS4yOTYgMjMuODk2NyA5MzEuMjk2IDMzLjAwMDJDOTMxLjI5NiA0Mi4xMDM3IDkyOC4wMDggNDkuOTQyOSA5MjEuNDM0IDU2LjUxNzZDOTE1LjExMiA2Mi44Mzk1IDkwNy4yNzMgNjYuMDAwNSA4OTcuOTE2IDY2LjAwMDVaTTg3Mi4xMjMgMjg2Ljc2MVY5Ny4xMDQxSDkyNC4wODlWMjg2Ljc2MUg4NzIuMTIzWiIgZmlsbD0iY3VycmVudENvbG9yIiAvPjxwYXRoIGQ9Ik03ODEuNjM4IDI4Ni43NjFWMi4yNzYwOUg4MzMuNjA0VjI4Ni43NjFINzgxLjYzOFoiIGZpbGw9ImN1cnJlbnRDb2xvciIgLz48cGF0aCBkPSJNNzIyLjkzNCAyODkuMDM3QzcwMS42OTMgMjg5LjAzNyA2ODQuMjQ0IDI4My4yMjEgNjcwLjU4OSAyNzEuNTg4QzY1Ny4xODcgMjU5LjcwMyA2NTAuNDg1IDI0Mi42MzQgNjUwLjQ4NSAyMjAuMzgxVjE0Mi42MjJINjEyLjE3NVY5Ny4xMDQ0SDY1MC40ODVWNDQuMzc5OUg3MDIuNDUxVjk3LjEwNDRINzU1LjkzNFYxNDIuNjIySDcwMi40NTFWMjEwLjE0QzcwMi40NTEgMjIxLjc3MiA3MDQuOTggMjMwLjExNyA3MTAuMDM4IDIzNS4xNzRDNzE1LjA5NSAyMzkuOTc5IDcyMy4zMTMgMjQyLjM4MSA3MzQuNjkzIDI0Mi4zODFDNzQyLjc4NSAyNDIuMzgxIDc0OS44NjUgMjQxLjI0MyA3NTUuOTM0IDIzOC45NjdWMjg0Ljg2NEM3NDYuODMxIDI4Ny42NDYgNzM1LjgzMSAyODkuMDM3IDcyMi45MzQgMjg5LjAzN1oiIGZpbGw9ImN1cnJlbnRDb2xvciIgLz48cGF0aCBkPSJNNDE3LjY3NCAyODYuNzYxVjk3LjEwNDFINDY5LjY0VjExMC45NjdDNDY5LjY0IDExMy4zMTEgNDcyLjgzIDExNC4zNDcgNDc0LjM4MiAxMTIuNTkxQzQ4NS45NjcgOTkuNDg0OCA1MDIuNDY3IDkyLjkzMTcgNTIzLjg4MSA5Mi45MzE3QzU0Ni42NCA5Mi45MzE3IDU2NC40NjggMTAwLjUxOCA1NzcuMzY1IDExNS42OUM1OTAuNTE0IDEzMC42MSA1OTcuMDg5IDE1MC41ODcgNTk3LjA4OSAxNzUuNjIyVjI4Ni43NjFINTQ1LjEyM1YxODQuMzQ2QzU0NS4xMjMgMTcwLjQzOCA1NDIuMjE1IDE1OS42OTEgNTM2LjM5OSAxNTIuMTA1QzUzMC41ODMgMTQ0LjI2NSA1MjIuMzY0IDE0MC4zNDYgNTExLjc0MyAxNDAuMzQ2QzQ5OS4xIDE0MC4zNDYgNDg4Ljg1OCAxNDQuODk4IDQ4MS4wMTkgMTU0LjAwMUM0NzMuNDMzIDE2My4xMDUgNDY5LjY0IDE3Ni41MDcgNDY5LjY0IDE5NC4yMDhWMjg2Ljc2MUg0MTcuNjc0WiIgZmlsbD0iY3VycmVudENvbG9yIiAvPjxwYXRoIGQ9Ik0zNTIuOTgxIDY2LjAwMDVDMzQ0LjEzIDY2LjAwMDUgMzM2LjQxNyA2Mi44Mzk1IDMyOS44NDMgNTYuNTE3NkMzMjMuMjY4IDQ5Ljk0MjkgMzE5Ljk4IDQyLjEwMzcgMzE5Ljk4IDMzLjAwMDJDMzE5Ljk4IDIzLjg5NjcgMzIzLjI2OCAxNi4xODQgMzI5Ljg0MyA5Ljg2MjE1QzMzNi40MTcgMy4yODczOCAzNDQuMTMgMCAzNTIuOTgxIDBDMzYyLjMzNyAwIDM3MC4xNzYgMy4yODczOCAzNzYuNDk4IDkuODYyMTVDMzgzLjA3MyAxNi4xODQgMzg2LjM2IDIzLjg5NjcgMzg2LjM2IDMzLjAwMDJDMzg2LjM2IDQyLjEwMzcgMzgzLjA3MyA0OS45NDI5IDM3Ni40OTggNTYuNTE3NkMzNzAuMTc2IDYyLjgzOTUgMzYyLjMzNyA2Ni4wMDA1IDM1Mi45ODEgNjYuMDAwNVpNMzI3LjE4NyAyODYuNzYxVjk3LjEwNDFIMzc5LjE1M1YyODYuNzYxSDMyNy4xODdaIiBmaWxsPSJjdXJyZW50Q29sb3IiIC8+PHBhdGggZD0iTTIzOC45NjcgMjg2Ljc2MVYxODUuNDg0QzIzOC45NjcgMTU1LjM5MiAyMjkuMTA1IDE0MC4zNDYgMjA5LjM4MSAxNDAuMzQ2QzE5OC4wMDEgMTQwLjM0NiAxODguODk4IDE0NC42NDUgMTgyLjA3IDE1My4yNDJDMTc1LjQ5NSAxNjEuODQgMTcxLjk1NSAxNzQuNjEgMTcxLjQ0OSAxOTEuNTUzVjI4Ni43NjFIMTE5LjQ4NFYxODUuNDg0QzExOS40ODQgMTU1LjM5MiAxMDkuNjIxIDE0MC4zNDYgODkuODk3MiAxNDAuMzQ2Qzc4LjI2NDkgMTQwLjM0NiA2OS4wMzUgMTQ0Ljg5OCA2Mi4yMDczIDE1NC4wMDFDNTUuMzc5NyAxNjMuMTA1IDUxLjk2NTkgMTc2LjUwNyA1MS45NjU5IDE5NC4yMDhWMjg2Ljc2MUgwVjk3LjEwNDFINTEuOTY1OVYxMTEuMTAzQzUxLjk2NTkgMTEzLjQzNSA1NS4xMDE0IDExNC40NjIgNTYuNjMzIDExMi43MDRDNjguMTEzNiA5OS41MjIzIDgzLjM3NDEgOTIuOTMxNyAxMDIuNDE1IDkyLjkzMTdDMTI3LjQzNiA5Mi45MzE3IDE0Ni4yODMgMTAzLjI2MiAxNTguOTUzIDEyMy45MjNDMTU5Ljk1MyAxMjUuNTUzIDE2Mi40MTIgMTI1LjUyNyAxNjMuNDA2IDEyMy44OTRDMTY4Ljg4NCAxMTQuODkxIDE3Ni40OTYgMTA3LjczMSAxODYuMjQzIDEwMi40MTVDMTk3LjM2OSA5Ni4wOTI2IDIwOC42MjIgOTIuOTMxNyAyMjAuMDAyIDkyLjkzMTdDMjQyLjUwNyA5Mi45MzE3IDI1OS45NTYgMTAwLjM5MiAyNzIuMzQ3IDExNS4zMTFDMjg0LjczOCAxMzAuMjMxIDI5MC45MzMgMTUwLjcxNCAyOTAuOTMzIDE3Ni43NlYyODYuNzYxSDIzOC45NjdaIiBmaWxsPSJjdXJyZW50Q29sb3IiIC8+PC9zdmc+)This documentation is built and hosted on Mintlify, a developer documentation platform](https://www.mintlify.com?utm_campaign=poweredBy&utm_medium=referral&utm_source=lmsysorg)

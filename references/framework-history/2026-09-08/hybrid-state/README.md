@@ -6,7 +6,7 @@
 
 [v0.5.5 APC](vllm-055-apc.txt)全文核读，以全前缀链标识不可变 KV 块；2024-08-23 的发布身份已在[量化资料](../kv-quantization/vllm-055-release.json)核对。历史文档中的感知图像哈希是设想，未采用为安全的精确复用规则。
 
-[K3 预览文章](vllm-k3-preview.html)选读前缀缓存节，[正式文章](vllm-k3-release.html)选读部分块、多级复用和保留策略。文章展示时间分别为 2026-07-22／27；现存正文按获取日保存，PR 日期独立核对：
+[K3 预览文章](vllm-k3-preview.md)选读前缀缓存节，[正式文章](vllm-k3-release.md)选读部分块、多级复用和保留策略。文章展示时间分别为 2026-07-22／27；现存正文按获取日保存，PR 日期独立核对：
 
 | PR | 合入日期（UTC） | 本书采用的范围 |
 | --- | --- | --- |
@@ -20,11 +20,11 @@
 
 [混合缓存设计文档](vllm-hybrid-design.txt)全文已读，但它显式基于较早的 `458e74eb907f96069e6d8a4f3c9f457001fef2ea`，仍有 Mamba WIP 等早期措辞。文件存在于当前树不意味着其中的限制仍是当前实现上限。该文仅支持分组、对齐和页大小权衡。
 
-[2026-04-21 混合 SSM 分离文章](vllm-hybrid-disagg.html)选读状态布局、传输、评估文字与限制。其 Mamba2 三段卷积传输、当时 GDN 路线图、HMA 异构块长限制均保留历史语境；8×H200／Nemotron 的 PD 比较关闭了前缀缓存，不能与 K3 快照命中拼成一项收益。本轮不采用其性能曲线。
+[2026-04-21 混合 SSM 分离文章](vllm-hybrid-disagg.md)选读状态布局、传输、评估文字与限制。其 Mamba2 三段卷积传输、当时 GDN 路线图、HMA 异构块长限制均保留历史语境；8×H200／Nemotron 的 PD 比较关闭了前缀缓存，不能与 K3 快照命中拼成一项收益。本轮不采用其性能曲线。
 
 ## SGLang：共同前缀上的不同状态
 
-复用[2026-08-11 Unified Radix Cache 原文](../../../outline-checks/2026-09-07/framework-evolution/sglang-unified-cache.html)，本轮精读组件和可恢复边界两节：遍历深度可以超过安全复用深度，候选位置需所有活动组件同意；一次拒绝也不能直接结束遍历。K3 的 MAMBA 组件表示 KDA 状态的恢复规则，不是把模型名称改成 Mamba。
+复用[2026-08-11 Unified Radix Cache 原文](../../../outline-checks/2026-09-07/framework-evolution/sglang-unified-cache.md)，本轮精读组件和可恢复边界两节：遍历深度可以超过安全复用深度，候选位置需所有活动组件同意；一次拒绝也不能直接结束遍历。K3 的 MAMBA 组件表示 KDA 状态的恢复规则，不是把模型名称改成 Mamba。
 
 固定 SHA `5aab054ec8ce6b6100fbfb7aafe67d632a7df3aa`，身份见[响应](../kv-quantization/sglang-commit.json)。[统一缓存](sglang-unified.txt)只读 515–541 的入口、动作与 finalizer，遍历原理由上述文章支持，没有冒充整套树核心审查。[K3 计算器](sglang-k3-ratio.txt)读 1–195，明确 69／24 层、FP32 循环状态、BF16 卷积和注意力 TP 内复制的紧凑 MLA。算例再与[模型固定配置](../../../outline-checks/2026-09-07/model-accounting/kimi-k3-config.json)核对。
 
@@ -32,7 +32,7 @@
 
 ## Ollama：可恢复边界与本地执行
 
-复用并重读 [2026-06-11 MLX 文章](../speculative-execution/ollama-mlx-performance-2026.html)的既有完整正文抽取，采用 Agent 分支、reasoning 删除与选择性快照，不采用速度或质量图。固定 SHA `83ed7d9965b1ee07e0f0b29fd46e47c31f0fcab8`，身份见[响应](../kv-quantization/ollama-commit.json)。
+复用并重读 [2026-06-11 MLX 文章](../speculative-execution/ollama-mlx-performance-2026.md)的既有完整正文抽取，采用 Agent 分支、reasoning 删除与选择性快照，不采用速度或质量图。固定 SHA `83ed7d9965b1ee07e0f0b29fd46e47c31f0fcab8`，身份见[响应](../kv-quantization/ollama-commit.json)。
 
 [recurrent cache](ollama-recurrent.txt)与 [cache trie](ollama-cache-trie.txt)全文已读：递推状态是 FP32，恢复要求精确 offset；中间快照依赖执行到相应位置，切分 trie 不能凭空恢复一个未保存的位置；每个有状态层均须具备快照。该 recurrent 路径明确 batch=1。Clone／Pin 的底层实现与调用方全部恢复流程未审，不把 API 调用直接换算成立刻复制两份物理容量，也不从这段通用代码推出 Ollama 支持完整 K3。
 

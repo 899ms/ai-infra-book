@@ -21,7 +21,7 @@
 
 项目文件、全部提交与 reflog 未发现独立草案 15；`git fsck --no-reflogs --unreachable` 也未返回可恢复的未引用对象。这个结果只说明当前仓库没有找到原件，不证明作者没有在其他位置保存过它。
 
-本次已复制 [11](sources/skeleton-draft11-12fc723.html)、[14](sources/skeleton-draft14-d9199ca.html)、[16](sources/skeleton-draft16-e524afe.html) 的原始 HTML，并核对与对应 Git blob 字节一致。另存完整提取文本、[11→14 文本差异](draft11-draft14.diff)、[14→16 文本差异](draft14-draft16.diff)、两份审阅和修改前的当前章节快照。路径、版本及 SHA-256 见[清单](source-manifest.json)。
+本次已复制 [11](sources/skeleton-draft11-12fc723.md)、[14](sources/skeleton-draft14-d9199ca.md)、[16](sources/skeleton-draft16-e524afe.md) 的原始 HTML，并核对与对应 Git blob 字节一致。另存完整提取文本、[11→14 文本差异](draft11-draft14.diff)、[14→16 文本差异](draft14-draft16.diff)、两份审阅和修改前的当前章节快照。路径、版本及 SHA-256 见[清单](source-manifest.json)。
 
 本报告中的“当前已保留”先查修改前快照；“本轮 D11 已补”则明确指刚完成的草案 11 审计，不把它冒充此前一直存在。逐项证据见[新增内容决定表](decision-matrix.md)。
 
@@ -54,7 +54,7 @@
 
 **判断：部分泛化，补明确边界；不是上下文切分完全消失。** 草案 14 在训练需求、训练系统和长上下文推理中明确补了 CP。当前 11.2.3 有“序列切分”，11.3.3 有“上下文切分”，6.4.4 也提到 SP／GEMM 重叠，但没有清楚区分这些名称与切分对象。
 
-在 11.2.3 放一个占位，借具体实现区分 SP 与 CP，并把权重归属、激活峰值和跨分片注意力通信算清。Megatron 的官方说明区分其 SP 与 CP：前者切分部分非张量并行区域的序列激活，后者沿序列分割输入和激活，需要注意力跨分片交换；不同论文中的命名并不总一致，书里应给实际实现定义。[官方文档](https://docs.nvidia.com/megatron-core/developer-guide/latest/user-guide/features/context_parallel.html)已保存[网页快照](sources/megatron-context-parallel.html)。
+在 11.2.3 放一个占位，借具体实现区分 SP 与 CP，并把权重归属、激活峰值和跨分片注意力通信算清。Megatron 的官方说明区分其 SP 与 CP：前者切分部分非张量并行区域的序列激活，后者沿序列分割输入和激活，需要注意力跨分片交换；不同论文中的命名并不总一致，书里应给实际实现定义。[官方文档](https://docs.nvidia.com/megatron-core/developer-guide/latest/user-guide/features/context_parallel.html)已保存[网页快照](sources/megatron-context-parallel.md)。
 
 推理侧的长上下文 prefill／decode 要另数实际状态与通信，不能把训练 CP 的收益直接复制过去。占位要求回指第 9 章的长上下文问题，不新增一个并行缩写目录，也不承诺所有现有后端都支持相同组合。
 

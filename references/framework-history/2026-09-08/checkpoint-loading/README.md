@@ -8,10 +8,10 @@
 | [vLLM v0.9.2 loader](vllm-092-loader.py) | 完整文件；2025 版本中的 S3、Run:ai 与本地文件分支。 |
 | [vLLM 固定主线 loader](vllm-current-loader.py) | 完整文件，提交 `51da0ca66c8065619c79e35dff97aa99aeaf5644`；未审其依赖及所有量化布局。 |
 | [固定主线内存文档](vllm-current-memory.md) | 完整文档；采用 TP／预分片段。实际磁盘读取仍需区分页缓存和共享存储。 |
-| [PyTorch 2024 公告](pytorch-2024-blog.html) | article 全文及页首日期；页面显示 2024-06-12 与 2024-11-13，正文比较线程异步保存，图曲线／代码截图未独立读取。 |
-| [PyTorch 2025 公告](pytorch-2025-blog.html) | article 全文及页首日期；页面显示 2025-04-30 与 2025-05-03，进程与计划缓存组合结果，未独立量化曲线。 |
-| [stable 重定向](pytorch-current-doc.html) | 只包含版本重定向，不当 API 文档正文。 |
-| [PyTorch 2.14 API](pytorch-214-doc.html) | AsyncSaveResponse、async_save、AsyncStager、DefaultStager 的完整 API 项；其余文档未读。 |
+| [PyTorch 2024 公告](pytorch-2024-blog.md) | article 全文及页首日期；页面显示 2024-06-12 与 2024-11-13，正文比较线程异步保存，图曲线／代码截图未独立读取。 |
+| [PyTorch 2025 公告](pytorch-2025-blog.md) | article 全文及页首日期；页面显示 2025-04-30 与 2025-05-03，进程与计划缓存组合结果，未独立量化曲线。 |
+| [stable 重定向](pytorch-current-doc.md) | 只包含版本重定向，不当 API 文档正文。 |
+| [PyTorch 2.14 API](pytorch-214-doc.md) | AsyncSaveResponse、async_save、AsyncStager、DefaultStager 的完整 API 项；其余文档未读。 |
 | [2.14 saver 源码](pytorch-214-saver.py) | 195–414 行，确认条件返回对象、默认线程及内部 stager 配置；未审 StorageWriter 与各执行器。 |
 
 vLLM 三个取样点说明某个版本已存在的行为，不证明功能首次引入日期。预分片 state_dict 的 rank／布局绑定与 ByteCheckpoint 的全局张量表示不同；不能直接跨 TP 复用文件，不能将推理权重文件视为完整训练状态。

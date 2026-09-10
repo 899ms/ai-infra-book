@@ -71,7 +71,7 @@ V4-Flash 路由专家单个为 `3×4096×2048=25,165,824` 参数；单 token 6 �
 
 类比用于画清时间轴与深度轴：RNN 有时间方向的状态依赖；Transformer 已知输入的位置可以在层内并行，深度仍逐层推进，同时增加了内容相关的历史访问。参数共享、访问边和状态形状都变了，不能通过旋转图形证明两种网络等价。
 
-[Linear Transformers 作者说明](../references/outline-checks/2026-09-07/edge-media/linear-transformers.html)给出特定线性注意力的有限状态递推形式。这支持讨论注意力与递推的联系，不支持将任意 softmax Transformer 都改写成同一固定状态 RNN。K3 的 KDA 又有自己的门控和 delta 更新，具体代数按其报告，而不套用早期线性注意力的全部公式。
+[Linear Transformers 作者说明](../references/outline-checks/2026-09-07/edge-media/linear-transformers.md)给出特定线性注意力的有限状态递推形式。这支持讨论注意力与递推的联系，不支持将任意 softmax Transformer 都改写成同一固定状态 RNN。K3 的 KDA 又有自己的门控和 delta 更新，具体代数按其报告，而不套用早期线性注意力的全部公式。
 
 代表算式的独立复算见[算术记录](../references/outline-checks/2026-09-07/model-accounting/arithmetic.json)，输入与来源见[校验清单](../references/outline-checks/2026-09-07/model-accounting/sources.json)。
 

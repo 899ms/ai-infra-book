@@ -338,6 +338,6 @@ prefill 用分块并行形式计算块内工作和块间状态，decode 用单�
 - 2.5 的专家演进：[Switch Transformer](../../references/files/papers/switch-transformer.pdf)；[DeepSeekMoE](../../references/files/papers/deepseek-moe.pdf)。
 - 2.6 的规模与预算：[Llama 1 原始报告](../../references/outline-checks/2026-09-07/scaling-history/llama1-v1.pdf)，引言与模型规模表；[Qwen3 报告 §2](../../references/files/papers/qwen3.pdf)与[235B 固定配置](../../references/outline-checks/2026-09-07/scaling-history/qwen3-235b-config.json)。部署容量是本书按条件推算，不冒充论文给出的设计动机。
 - 2.6 的请求分析与后续计算：[模型与算子核对笔记](../../case-studies/model-operator-examples.md)；具体任务轨迹在扩写时配套，不能以模型卡的最大上下文长度替代请求分布。
-- 递推类比与计算细节：[Linear Transformers 作者说明](../../references/outline-checks/2026-09-07/edge-media/linear-transformers.html)；[模型资源计算笔记](../../case-studies/model-resource-accounting.md)。
+- 递推类比与计算细节：[Linear Transformers 作者说明](../../references/outline-checks/2026-09-07/edge-media/linear-transformers.md)；[模型资源计算笔记](../../case-studies/model-resource-accounting.md)。
 
 原文版本、参数差异与扩写时需补的材料见[编辑笔记](../editorial-notes.md#ch-02)。

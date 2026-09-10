@@ -24,7 +24,7 @@ import sys
 sys.path.insert(0,str(HERE.parent))
 from teaching_reading import readable_diagrams
 page=readable_diagrams(page)
-hp=md.with_suffix('.html');hp.write_text(page)
+hp=preview_path(md);hp.write_text(page)
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')
 from book_assets import sync_figure_index
 active_assets=sync_figure_index(HERE)

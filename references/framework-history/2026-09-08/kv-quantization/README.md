@@ -8,7 +8,7 @@
 
 [v0.18.0 文档](vllm-018-kv-raw.txt)与[当前固定文档](vllm-current-kv.txt)作完整文本及差异比较：支持静态 per-head 校准，但后端有限制；当前文档删除 warmup 随机 token 校准示例，增加跳过指定层。这里仅描述文档变化，不据此断言所有旧代码已经删除。当前文本仍写“三种”校准方式而实际列两种，这一编辑残留没有沿用。
 
-[2026-04-22 官方文章](vllm-2026-blog.html)的正文、文本表和图注已读，图像未独立查看／数字化。它比较 v0.10.2 与 v0.19.1，讨论 FA3 两级累加的精度／寄存器压力、查询量化融合、tile 调整和跳过短窗口层；FA3 路径还量化 Q 并做低精度 Attention，不能泛指所有 FP8 KV 后端。长 head 的 prefill、短窗口和不同硬件后端分别看。
+[2026-04-22 官方文章](vllm-2026-blog.md)的正文、文本表和图注已读，图像未独立查看／数字化。它比较 v0.10.2 与 v0.19.1，讨论 FA3 两级累加的精度／寄存器压力、查询量化融合、tile 调整和跳过短窗口层；FA3 路径还量化 Q 并做低精度 Attention，不能泛指所有 FP8 KV 后端。长 head 的 prefill、短窗口和不同硬件后端分别看。
 
 文章的单并发 H100／Llama 拟合用于解释固定开销与斜率，不推广约 7k 的交点。吞吐实验固定并发 8，不能将收益归因于实际并发翻倍。未校准结果不是所有校准方案的数学下界，聚合 AUC 接近也不证明每个任务无损。历史模型保留原名，未替换为 V4／K3。
 
@@ -28,6 +28,6 @@
 
 [v0.5.0 FAQ](ollama-050-faq.txt)只读第 290–312 行；[发布身份](ollama-050-release.json)为 2024-12-04。它已提供 f16／q8_0／q4_0，要求 Flash Attention。2025 的 [v0.9.6 GGML](ollama-096-blocks.txt)只读 half 类型与两种 block 声明：每 32 个值额外 2 B scale，对应 8.5／4.5 bit/value。
 
-[当前 FAQ](ollama-faq.html)只取 Flash Attention 与 KV 类型两节；相容设备与后端可自动启用 Flash Attention。[当前客户端](ollama-llama-server.txt)只读说明与启动参数：将同一种缓存类型传给 llama-server 的 K、V 选项，按上下文和并行槽位组织启动。固定 Ollama SHA 为 `83ed7d9965b1ee07e0f0b29fd46e47c31f0fcab8`，但没有核完该二进制内的全部上游实现；历史 GGML block 定义只支持格式计算，不能冒充当前实测内存，也不能推广到 MLX。
+[当前 FAQ](ollama-faq.md)只取 Flash Attention 与 KV 类型两节；相容设备与后端可自动启用 Flash Attention。[当前客户端](ollama-llama-server.txt)只读说明与启动参数：将同一种缓存类型传给 llama-server 的 K、V 选项，按上下文和并行槽位组织启动。固定 Ollama SHA 为 `83ed7d9965b1ee07e0f0b29fd46e47c31f0fcab8`，但没有核完该二进制内的全部上游实现；历史 GGML block 定义只支持格式计算，不能冒充当前实测内存，也不能推广到 MLX。
 
 正文与实验落点见[Qwen3 算例](../../../../case-studies/kv-quantization-and-execution.md)。本轮只深化 9.4.4、实验 9-8 与图 9-7，不增加章节或要求读者安装所有框架。

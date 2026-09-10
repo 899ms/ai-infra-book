@@ -8,7 +8,7 @@
 
 实现固定为 [Ollama commit 83ed7d9965b1ee07e0f0b29fd46e47c31f0fcab8](https://github.com/ollama/ollama/commit/83ed7d9965b1ee07e0f0b29fd46e47c31f0fcab8)，归档 commit 的 committer 时间为 2026-09-05 00:48:55 UTC。14 份新归档原始 Go 文件均来自该提交的 raw URL，HTTP 200，逐一核对归档 Git tree 的 blob SHA-1；不是只相信文件名或本报告的匹配声明。[sources.json](sources.json) 保留 URL、响应日期、HTTP 状态、响应头、字节数、SHA-256 与 Git blob；[provenance](provenance/reuse.json) 另记复用的 commit/tree 与六月公告原件。原始字节没有规范化换行。
 
-**历史公告与固定实现是两份证据。** [六月公告](https://ollama.com/blog/faster-gemma-4-mlx-mtp)记载 Ollama 0.31、Gemma 4 12B nvfp4、M5 Max 和 Aider polyglot 条件；其实现说明不能自动成为九月代码的逐语句描述。本批未定位六月发布标签的同一实现，不能据九月代码断言这些机制首次出现于六月。公告保留[原始 HTML](provenance/ollama-mtp.html)与[原有文本提取](provenance/ollama-mtp.txt)，全文 42 行已读；HTML 只保全原件，没有重跑原提取器。
+**历史公告与固定实现是两份证据。** [六月公告](https://ollama.com/blog/faster-gemma-4-mlx-mtp)记载 Ollama 0.31、Gemma 4 12B nvfp4、M5 Max 和 Aider polyglot 条件；其实现说明不能自动成为九月代码的逐语句描述。本批未定位六月发布标签的同一实现，不能据九月代码断言这些机制首次出现于六月。公告保留[原始 HTML](provenance/ollama-mtp.md)与[原有文本提取](provenance/ollama-mtp.txt)，全文 42 行已读；HTML 只保全原件，没有重跑原提取器。
 
 读取：14 个源文件，6 个全文、8 个选段，合计 3,578 个不重复源码行；论文正文 0 页、论文图 0 页。测试文件只静态阅读，不能记作测试通过。逐文件范围和段落哈希见 [reading.json](reading.json)，文末列出完整范围。
 

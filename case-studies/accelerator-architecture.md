@@ -29,7 +29,7 @@
 | 910C／CloudMatrix384 | 论文 v2 §3.3.1 明确为双 die；每 die 24 AIC、48 AIV；§4.2.2 展开 MLA 融合、NZ 格式 KV 和 MTP 动态 tiling | 分别比较封装扩展、矩阵／向量协作、布局转换和小算子启动；从 Transformer 实现暴露的约束理解后续演进 | v3 将称谓改为“Ascend 910”并删减部分规格，保留双 die 与每 die 核数。两版分开引用；核数不是单核吞吐，也不能据此推断全部向量指令与 stride 能力的变化 |
 | 950 | 一个 AI 子系统由一个 Cube Core 和两个 Vector Core 组成；寄存器式向量执行、SIMD／SIMT、CV 直连、NDDMA、BufferID 同步 | 沿 FlashAttention 分析矩阵与向量交换；沿布局变换分析地址生成；沿流水分析缓冲占用与同步责任 | 950PR／DT 与裁剪配置分开；白皮书的代际性能声明保留精度、比较对象与厂商测量属性，不能写成已复现的系统收益 |
 
-早期论文 [A Scalable and Unified AI Architecture 所在期](../references/files/specs/ascend-davinci.pdf)的 §3.1–3.4、图 9–15（PDF 页序 108–111，印刷页 104–107）讨论 Cube、数据通路、同步及资源配比，并同时分析 BERT、MobileNet、ResNet-50。它支持“按典型负载配比资源”的论述，但不足以证明“910A 只为 ResNet 定制”。2019 年[官方公告](../references/files/documents/ascend-910-launch.html)证明相关训练基准被采用；最初设计阶段的取舍应补充作者的时间、角色和具体决策记录。
+早期论文 [A Scalable and Unified AI Architecture 所在期](../references/files/specs/ascend-davinci.pdf)的 §3.1–3.4、图 9–15（PDF 页序 108–111，印刷页 104–107）讨论 Cube、数据通路、同步及资源配比，并同时分析 BERT、MobileNet、ResNet-50。它支持“按典型负载配比资源”的论述，但不足以证明“910A 只为 ResNet 定制”。2019 年[官方公告](../references/files/documents/ascend-910-launch.md)证明相关训练基准被采用；最初设计阶段的取舍应补充作者的时间、角色和具体决策记录。
 
 [CANN 8.1.RC1.alpha002 指南](../references/files/specs/ascend-c-guide.pdf)第 4 章（PDF 页序 30 起）提供耦合／分离架构、存储和典型通路；第 7 章的多核 tiling（PDF 页序 83 起）说明运行时 shape 如何进入 host tiling 与 kernel。芯片内部的 Unified Buffer 在本文写作“片上 UB 缓冲”，与超节点的 Unified Bus 分开。
 
@@ -51,9 +51,9 @@ Triton 是语言与编译器，其意义是把许多线程映射、存储安排�
 | 矩阵与向量交换 | 早期同核通路、分离架构交换、950 CV 直接通路各自分析 | 矩阵与通用指令间的寄存器／共享存储及同步方式按代际、指令明确 | 每个中间张量实际跨过的存储接口和依赖 |
 | 编程抽象 | Ascend C 的 tiling、局部张量、队列与搬运；高层库和编译器也可承担部分工作 | CUDA 底层实现可以显式管理布局与流水；Triton 自动组织其中许多细节 | 相同算子、相近抽象层次下的手工决策、代码维护、调优工作与性能覆盖 |
 
-NVIDIA 并非没有显式搬运。已归档的 [Hopper Tuning Guide](../references/files/documents/nvidia-hopper-tuning.html)说明 TMA 沿用并扩展 Ampere 的异步拷贝，支持 1–5 维张量在全局内存与 shared memory 间搬运。[CUDA 13.2.1 异步拷贝文档](../references/files/documents/nvidia-async-copies.html)进一步定义描述符、stride、对齐及完成同步。这与 950 NDDMA 都体现了硬件承担更多地址生成工作，但两者的存储端点、转换能力和同步语义不能直接画等号。
+NVIDIA 并非没有显式搬运。已归档的 [Hopper Tuning Guide](../references/files/documents/nvidia-hopper-tuning.md)说明 TMA 沿用并扩展 Ampere 的异步拷贝，支持 1–5 维张量在全局内存与 shared memory 间搬运。[CUDA 13.2.1 异步拷贝文档](../references/files/documents/nvidia-async-copies.md)进一步定义描述符、stride、对齐及完成同步。这与 950 NDDMA 都体现了硬件承担更多地址生成工作，但两者的存储端点、转换能力和同步语义不能直接画等号。
 
-[Triton 编程模型](../references/files/documents/triton-introduction.html)解释块级数据流分析如何自动组织布局、共享存储、同步和异步搬运；[矩阵乘教程](../references/files/documents/triton-matmul.html)仍要求程序表达尺寸、stride、分块和边界处理。由此可以讨论软件抽象降低哪些成本；若要断言某平台“难很多”，还须比较开发者经验、库覆盖、目标性能和维护范围。
+[Triton 编程模型](../references/files/documents/triton-introduction.md)解释块级数据流分析如何自动组织布局、共享存储、同步和异步搬运；[矩阵乘教程](../references/files/documents/triton-matmul.md)仍要求程序表达尺寸、stride、分块和边界处理。由此可以讨论软件抽象降低哪些成本；若要断言某平台“难很多”，还须比较开发者经验、库覆盖、目标性能和维护范围。
 
 ## 动态 shape 必须拆开比较
 
@@ -81,7 +81,7 @@ Ascend C 已有 host tiling 和运行时参数机制。CloudMatrix384 的 MLA �
 
 用同一段计算比较普通执行、仅融合、仅图重放及二者组合。分别记录 CPU 派发、设备启动、kernel 运算、同步、编译／捕获时间和显存；不把全部启动时间简单乘 kernel 数后加到设备时间上。
 
-[CUDA Graph 文档](../references/files/documents/cuda-graphs.html)说明定义、实例化与重复执行；[vLLM 设计](../references/files/documents/vllm-cuda-graphs.html)说明按批次选择整图、分段图或普通执行，并权衡捕获时间、内存和兼容性。CloudMatrix384 §4.2.2 明确区分图捕获对 CPU 派发的摊销与设备端每算子启动成本，因此不能把融合和重放的收益合并成一个不加解释的加速比。
+[CUDA Graph 文档](../references/files/documents/cuda-graphs.md)说明定义、实例化与重复执行；[vLLM 设计](../references/files/documents/vllm-cuda-graphs.md)说明按批次选择整图、分段图或普通执行，并权衡捕获时间、内存和兼容性。CloudMatrix384 §4.2.2 明确区分图捕获对 CPU 派发的摊销与设备端每算子启动成本，因此不能把融合和重放的收益合并成一个不加解释的加速比。
 
 ## 写作时必须完成的交付
 

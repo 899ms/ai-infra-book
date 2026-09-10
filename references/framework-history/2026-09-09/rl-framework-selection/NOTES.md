@@ -7,7 +7,7 @@
 - TRL v0.28.0 GRPOTrainer 官方文档：已读归档 `trl.txt` 第 2090–2200 行，重点为 vLLM server、colocate、sleep 与训练/生成数值差异。原始 HTML 和提取文本均保留。
 - verl v0.4.1 配置文档：已读 `verl.rst` 第 210–235、290–325 行，确认 actor 的 FSDP/Megatron 与 rollout 的 hf/vLLM/SGLang 是不同配置维度。这是历史版本，不能把其中某个后端的功能限制当成 2026 年全部现状。
 - Unsloth RL 官方指南：直接下载 HTML 与 Markdown 均返回 HTTP 403；通过网页工具取得正文，保存为 `web-open.json`，不是原始网页镜像。选型依据限于工具正文第 155–242 行的 LoRA/QLoRA、示例与生成后端说明；没有运行 notebook，也不采纳其显存和效果宣传为本书实测。
-- AReaL 与 slime 复用[异步指南档案](../../2026-09-08/rl-consistency/areal-async-current.html)及[固定 slime 源码阅读](../slime-dataflow/NOTES.md)。
+- AReaL 与 slime 复用[异步指南档案](../../2026-09-08/rl-consistency/areal-async-current.md)及[固定 slime 源码阅读](../slime-dataflow/NOTES.md)。
 
 文件 SHA-256 见 `sources.json`。本次是选型所需的局部正文阅读，不是这些框架的完整实现审计。
 

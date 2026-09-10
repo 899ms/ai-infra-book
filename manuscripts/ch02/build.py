@@ -247,8 +247,9 @@ page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewpo
 import sys
 sys.path.insert(0,str(HERE.parent))
 from teaching_reading import readable_diagrams
+from preview_output import preview_path
 page=readable_diagrams(page)
-html_path=HERE.parent/'02-模型架构.html';html_path.write_text(page)
+html_path=preview_path(HERE.parent/'02-模型架构.html');html_path.write_text(page)
 from book_assets import sync_figure_index
 active_assets=sync_figure_index(HERE)
 artifacts=out+[HERE/'figure-data.json',HERE/'model-comparison.json',HERE/'model-comparison.md',HERE/'comparison-v4-decode.json',HERE/'long-context-comparison.json',HERE/'compare_long_context.py',html_path,md]+active_assets

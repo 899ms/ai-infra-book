@@ -1,6 +1,6 @@
 # 第1章正文与配图
 
-[Markdown 正文](../01-初识 AI Infra.md) · [HTML 阅读版](../01-初识 AI Infra.html)
+[Markdown 正文](../01-初识 AI Infra.md) · [HTML 阅读版](../01-初识%20AI%20Infra.md)
 
 本章按逐节设计组织概念、推导、例题与练习。当前共 8 幅配图，均提供 SVG 和 PNG；正文、图表中的数学表达采用 LaTeX，HTML 使用本地 KaTeX 渲染并嵌入图片与字体。
 

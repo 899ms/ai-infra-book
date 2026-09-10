@@ -2,7 +2,7 @@
 
 官方目录共 135 项；全部摘要已筛选，六篇按声明范围重点阅读，下载与阅读状态分别记录。
 
-[原目录](https://proceedings.mlsys.org/paper_files/paper/2026) · [归档目录](index.html) · [校验清单](manifest.json) · [来源表](sources.tsv)
+[原目录](https://proceedings.mlsys.org/paper_files/paper/2026) · [归档目录](index.md) · [校验清单](manifest.json) · [来源表](sources.tsv)
 
 - ProfInfer: An eBPF-based Fine-Grained LLM Inference Profiler — [PDF](papers/mlsys2026-03dbc11a22e79cd38bea53cf518c2371.pdf)
 - SpecDiff-2: Scaling Diffusion Drafter Alignment For Faster Speculative Decoding — [PDF](papers/mlsys2026-041dad5ed2191b44ba3ed0e00cdc3187.pdf)

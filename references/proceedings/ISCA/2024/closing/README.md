@@ -6,13 +6,13 @@
 
 | 日程序号 | 原始记录 | 身份与阅读范围 |
 | --- | --- | --- |
-| 4 DS-GL | [PNNL](004-pnnl.html)；[合著者列表](004-author.html) | PNNL 完整摘要、DOI、六位作者、会议及页码；机构使用较早题名，合著者列表列出正式题名。摘要倍率排版保留原值，未采用。 |
-| 5 ReAIM | [NYCU](005-institution.html) | 完整摘要及 citation 元数据；不纳入本书 Ising 专题。 |
+| 4 DS-GL | [PNNL](004-pnnl.md)；[合著者列表](004-author.md) | PNNL 完整摘要、DOI、六位作者、会议及页码；机构使用较早题名，合著者列表列出正式题名。摘要倍率排版保留原值，未采用。 |
+| 5 ReAIM | [NYCU](005-institution.md) | 完整摘要及 citation 元数据；不纳入本书 Ising 专题。 |
 | 33 AIO | [NVA 原始 JSON](033-related-1.json) | 完整摘要、作者、DOI、2024 年份及开放作者稿元数据；保留正文候选，未采用性能或误差数字。 |
-| 39 BLESS | [KAIST](039-institution.html) | 完整摘要及 citation 元数据；DNA SMEM seeding 不当作 LLM 检索案例。 |
-| 61 Flagger | [KAIST](061-institution.html)；[作者页](061-author.html) | 机构完整摘要、citation 元数据，另核作者叙述与 IEEE 入口；按一篇计算。 |
-| 76 Native DRAM Cache | [SKKU](076-institution.html) | 完整摘要及 citation 元数据；面向 CPU LLC 的 Caching-In-Memory，不是 KV 缓存池。 |
-| 87 GameStreamSR | [PSU](087-institution.html) | 完整摘要及 citation 元数据；依赖游戏渲染深度信息，未读评估，不移用到普通截图上传。 |
+| 39 BLESS | [KAIST](039-institution.md) | 完整摘要及 citation 元数据；DNA SMEM seeding 不当作 LLM 检索案例。 |
+| 61 Flagger | [KAIST](061-institution.md)；[作者页](061-author.md) | 机构完整摘要、citation 元数据，另核作者叙述与 IEEE 入口；按一篇计算。 |
+| 76 Native DRAM Cache | [SKKU](076-institution.md) | 完整摘要及 citation 元数据；面向 CPU LLC 的 Caching-In-Memory，不是 KV 缓存池。 |
+| 87 GameStreamSR | [PSU](087-institution.md) | 完整摘要及 citation 元数据；依赖游戏渲染深度信息，未读评估，不移用到普通截图上传。 |
 
 原有 70 份 PDF／1,081 页维持不变；加上本次 7 篇机构摘要，共 77 篇完整摘要已筛，仍有 10 篇待补。Orojenesis、FEATHER、MAD-Max 的三个正文范围维持不变。本次 7 篇不能算成 7 份 PDF，也不能算作正文阅读。
 
@@ -24,7 +24,7 @@
 
 AIO 记录明确列出 `aio-isca24-author-copy.pdf`、AcceptedVersion、OpenFile、593172 字节及允许 download。机构作者名 Joseph Charles Pandl Rogers 对应出版记录的 Joseph Rogers。会议年份 2024、记录迁移 2025、文件开放 2026 含义不同，保留原字段。
 
-静态阅读[下载服务 README](033-download-readme.html)和[模板匿名 GET 路由](033-download-template.html)后，普通公开下载请求仍返回 [HTTP 403](033-public-download.json)。只说明这次入口未成功，不说明 PDF 不存在；没有使用认证信息或执行下载仓库代码。[Swagger 壳](033-api-docs.html)、[initializer](033-swagger-initializer.html)和[OpenAPI](033-openapi.html)也只是入口调查，文件扩展名沿采集器保留，实际内容分别为 HTML、JavaScript 和 YAML。
+静态阅读[下载服务 README](033-download-readme.md)和[模板匿名 GET 路由](033-download-template.md)后，普通公开下载请求仍返回 [HTTP 403](033-public-download.json)。只说明这次入口未成功，不说明 PDF 不存在；没有使用认证信息或执行下载仓库代码。[Swagger 壳](033-api-docs.md)、[initializer](033-swagger-initializer.md)和[OpenAPI](033-openapi.md)也只是入口调查，文件扩展名沿采集器保留，实际内容分别为 HTML、JavaScript 和 YAML。
 
 ## 尚缺的十篇
 
@@ -33,11 +33,11 @@ AIO 记录明确列出 `aio-isca24-author-copy.pdf`、AcceptedVersion、OpenFile
 | 2 AVM-BTB | 只有出版书目与检索线索，未取得原始完整摘要。 |
 | 26 Near-CXL recommendation training | 出版书目与作者线索待继续核对；未取得完整摘要。 |
 | 27 Hybrid bonding | 会议有幻灯片入口，尚未取得论文摘要；幻灯片不代替论文。 |
-| 43 UM-PIM | [作者出版列表](043-author-publications.html)给出 slides、BibTeX 和 IEEE 入口；[机构新闻](043-institution-news.html)只读开头与线索，未当作原始摘要。 |
-| 56 Intel Accelerator Ecosystem | [作者页](056-author.html)的 Abstract 为 TBD，PDF 按钮指向 IEEE 页面；没有完整摘要。 |
+| 43 UM-PIM | [作者出版列表](043-author-publications.md)给出 slides、BibTeX 和 IEEE 入口；[机构新闻](043-institution-news.md)只读开头与线索，未当作原始摘要。 |
+| 56 Intel Accelerator Ecosystem | [作者页](056-author.md)的 Abstract 为 TBD，PDF 按钮指向 IEEE 页面；没有完整摘要。 |
 | 57 Circular Reconfigurable Processor | 当前只有书目及检索入口，未取得原始完整摘要。 |
 | 60 Cambricon-D | 当前只有书目及检索入口，未取得原始完整摘要。 |
-| 66 Soter | IEEE 返回 202 空响应；[机构作者页](066-institution-profile.html)仅有书目，作者 publications 页面未发现对应公开稿。 |
+| 66 Soter | IEEE 返回 202 空响应；[机构作者页](066-institution-profile.md)仅有书目，作者 publications 页面未发现对应公开稿。 |
 | 69 MECLA | IEEE 返回 202 空响应；检索返回的摘要片段未计作归档原始摘要。 |
 | 85 BitNN | Zenodo artifact API 返回 403；artifact 元数据与论文摘要／正文分开。 |
 

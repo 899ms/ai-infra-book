@@ -105,7 +105,7 @@ MAD-Max 已读[物理页 5–8 的建模与验证](../../references/proceedings/
 - 利用率与有效集合通信带宽需要校准。分别核对串行执行和重叠执行，才能分清工作量误差与调度误差；图 9 的预取时序不能代表任何框架版本都达到同样的重叠率。
 - 误差要对应具体指标、形状和规模。图 8 的部分预测明显偏离测量，原文平均 modeling accuracy 不构成每个点的误差保证；图中数值未做数字化提取。表 III 的系统合计带宽不可用来除单 rank 字节，且 TB/s 与 Tbps 分开。
 
-原文的 compute utilization／SM utilization／occupancy 并列表述、表 I 与正文的 DLRM-B 小数差异，以及 LLaMA 型号标签差异都保留在阅读记录。假想 1.8T MoE 不当作当前公开模型。AMD 论文的公开首页显示 13 位作者，出版元数据把 Mark Fowler 与 Nathan Kalyanasundharam 合成一条；[合著者出版页](../../references/proceedings/ISCA/2024/isca24-amd-author-publication.html)也明确列出 13 位作者。原始元数据保留，另存编辑核对说明。该批次未改动书的提纲结构或引入新的性能结论。
+原文的 compute utilization／SM utilization／occupancy 并列表述、表 I 与正文的 DLRM-B 小数差异，以及 LLaMA 型号标签差异都保留在阅读记录。假想 1.8T MoE 不当作当前公开模型。AMD 论文的公开首页显示 13 位作者，出版元数据把 Mark Fowler 与 Nathan Kalyanasundharam 合成一条；[合著者出版页](../../references/proceedings/ISCA/2024/isca24-amd-author-publication.md)也明确列出 13 位作者。原始元数据保留，另存编辑核对说明。该批次未改动书的提纲结构或引入新的性能结论。
 
 本次补齐其余公开稿中的 19 篇／299 页，逐篇筛读完整原始摘要：12 篇备查、7 篇不纳入，没有新增正文候选。CPU 前端、存内纠错、同态加密与机器人规划等方向暂不扩展书的范围；sNPU、懒复制、神经预取等保留可供核对的适用边界。现有第 4、5、8、11、12、13 章已经有相应的负载、数据搬移或恢复分析方法，仅读摘要不足以采用新的实现或性能结论。见[本批记录](../../references/proceedings/ISCA/2024/screening-batch-remainder-2026-09-08.json)。
 

@@ -18,9 +18,10 @@
         "Wang, Ying"
       ],
       "source": {
-        "file": "references/proceedings/ASPLOS/2025/serving-113-117/114-arxiv.html",
+        "file": "references/proceedings/ASPLOS/2025/serving-113-117/114-arxiv.md",
         "bytes": 43308,
-        "sha256": "0d7b3672319c73a82ae4edf8a31ffc82f8338bdfb586ecf20d566b61749e5c11"
+        "sha256": "e1e163d1070a47982bd5e94b3f260836de501591d7bbf2e01a86cade2915a2a0",
+        "original_html_sha256": "0d7b3672319c73a82ae4edf8a31ffc82f8338bdfb586ecf20d566b61749e5c11"
       },
       "history": "Submission history From: Lian Liu [ view email ] [v1] Wed, 16 Oct 2024 02:16:53 UTC (596 KB)",
       "abstract": "Quantization is a widely-used compression technology to reduce the overhead of serving large language models (LLMs) on terminal devices and in cloud data centers. However, prevalent quantization methods, such as 8-bit weight-activation or 4-bit weight-only quantization, achieve limited performance improvements due to poor support for low-precision (e.g., 4-bit) activation. This work, for the first time, realizes practical W4A4KV4 serving for LLMs, fully utilizing the INT4 tensor cores on modern GPUs and reducing the memory bottleneck caused by the KV cache. Specifically, we propose a novel fine-grained mixed-precision quantization algorithm (FMPQ) that compresses most activations into 4-bit with negligible accuracy loss. To support mixed-precision matrix multiplication for W4A4 and W4A8, we develop a highly optimized W4Ax kernel. Our approach introduces a novel mixed-precision data layout to facilitate access and fast dequantization for activation and weight tensors, utilizing the GPU's software pipeline to hide the overhead of data loading and conversion. Additionally, we propose fine-grained streaming multiprocessor (SM) scheduling to achieve load balance across different SMs. We integrate the optimized W4Ax kernel into our inference framework, COMET, and provide efficient management to support popular LLMs such as LLaMA-3-70B. Extensive evaluations demonstrate that, when running LLaMA family models on a single A100-80G-SMX4, COMET achieves a kernel-level speedup of \\textbf{$2.88\\times$} over cuBLAS and a \\textbf{$2.02 \\times$} throughput improvement compared to TensorRT-LLM from an end-to-end framework perspective.",
@@ -83,9 +84,10 @@
         "Panwar, Ashish"
       ],
       "source": {
-        "file": "references/proceedings/ASPLOS/2025/serving-113-117/116-arxiv.html",
+        "file": "references/proceedings/ASPLOS/2025/serving-113-117/116-arxiv.md",
         "bytes": 44357,
-        "sha256": "2cb4becd45229aa318a80bf5f1cd6c11d86493cfddb29762b7c353fbfc7a4640"
+        "sha256": "c70bd3e72faa32470f58405ab0cab23e3d6ac3c503049d342a3c3105a1232dab",
+        "original_html_sha256": "2cb4becd45229aa318a80bf5f1cd6c11d86493cfddb29762b7c353fbfc7a4640"
       },
       "history": "Submission history From: Aditya Kamath [ view email ] [v1] Wed, 23 Oct 2024 17:06:56 UTC (7,321 KB) [v2] Sun, 16 Feb 2025 18:09:25 UTC (7,357 KB)",
       "abstract": "Each request in LLM inference goes through two phases: compute-bound prefill and memory-bandwidth-bound decode. To improve GPU utilization, recent systems use hybrid batching that combines the prefill and decode phases of different requests into the same batch. This approach optimizes linear operations but remains inefficient for attention computation because existing attention kernels specialize execution independently for the prefill and decode phases. In this paper, we present POD-Attention - the first GPU kernel that efficiently computes attention for hybrid batches. POD-Attention aims to maximize the utilization of both compute and memory bandwidth by carefully allocating the GPU's resources such that prefill and decode operations happen concurrently on the same multiprocessor. POD-Attention speeds up attention computation by up to $59\\%$ (mean $28\\%$), enabling higher throughput and lower latency LLM inference compared to the use of independently optimized prefill and decode attention kernels.",
@@ -148,9 +150,10 @@
         "Bianchini, Ricardo"
       ],
       "source": {
-        "file": "references/proceedings/ASPLOS/2025/serving-113-117/117-arxiv.html",
+        "file": "references/proceedings/ASPLOS/2025/serving-113-117/117-arxiv.md",
         "bytes": 42817,
-        "sha256": "b833065e9828e12eee5579d4fe1ed8f6ad6dd08ac59c6114bf1e272b75ecb072"
+        "sha256": "b14396875cd1b0fe3864a63aeace38231898bce252d63fbe2b73f32807b74a62",
+        "original_html_sha256": "b833065e9828e12eee5579d4fe1ed8f6ad6dd08ac59c6114bf1e272b75ecb072"
       },
       "history": "Submission history From: Jovan Stojkovic [ view email ] [v1] Sun, 5 Jan 2025 16:51:17 UTC (1,640 KB)",
       "abstract": "The rising demand for generative large language models (LLMs) poses challenges for thermal and power management in cloud datacenters. Traditional techniques often are inadequate for LLM inference due to the fine-grained, millisecond-scale execution phases, each with distinct performance, thermal, and power profiles. Additionally, LLM inference workloads are sensitive to various configuration parameters (e.g., model parallelism, size, and quantization) that involve trade-offs between performance, temperature, power, and output quality. Moreover, clouds often co-locate SaaS and IaaS workloads, each with different levels of visibility and flexibility. We propose TAPAS, a thermal- and power-aware framework designed for LLM inference clusters in the cloud. TAPAS enhances cooling and power oversubscription capabilities, reducing the total cost of ownership (TCO) while effectively handling emergencies (e.g., cooling and power failures). The system leverages historical temperature and power data, along with the adaptability of SaaS workloads, to: (1) efficiently place new GPU workload VMs within cooling and power constraints, (2) route LLM inference requests across SaaS VMs, and (3) reconfigure SaaS VMs to manage load spikes and emergency situations. Our evaluation on a large GPU cluster demonstrates significant reductions in thermal and power throttling events, boosting system efficiency.",

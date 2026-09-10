@@ -29,7 +29,7 @@ r_behavior = r_update × w
 
 沿原例保留 `log μ=−3、log π_θ=−3、log π_old=−3.25`，则三个数为 `1、1.2840254、0.7788008`。其中 1.284 可以是定义清楚的 `r_update`；只有本来要计算 `r_behavior`，却把行为记录覆盖成旧训练值时，才是原例所批评的分母替换。没有权重更新也不能跳过数值路径与分布定义的检查。
 
-固定 [AReaL 异步指南](../../references/framework-history/2026-09-08/rl-consistency/areal-async-current.html)的 **Decoupled PPO Objective** 明确列出 `use_decoupled_loss` 与 `recompute_logprobs`，并要求前者开启时后者为 true；关闭重算时则复用推理后端 logprob。因此，“保存行为概率”与“训练端另行重算”可以同时需要。这份指南支持上述边界判断，但本次没有追到 loss 源码，不将上面示意符号宣称为当前 AReaL 的完整目标公式。
+固定 [AReaL 异步指南](../../references/framework-history/2026-09-08/rl-consistency/areal-async-current.md)的 **Decoupled PPO Objective** 明确列出 `use_decoupled_loss` 与 `recompute_logprobs`，并要求前者开启时后者为 true；关闭重算时则复用推理后端 logprob。因此，“保存行为概率”与“训练端另行重算”可以同时需要。这份指南支持上述边界判断，但本次没有追到 loss 源码，不将上面示意符号宣称为当前 AReaL 的完整目标公式。
 
 **可执行修改。** 只需在原案例第 17 行前加一句：“下面先检查当前策略相对实际行为分布的 `r_behavior`；PPO 更新比与采样修正比另按所用 loss 定义。”将题表对应提示收紧为：“分别标明每个概率比的分子、分母、生成／重算位置与 clip 位置，行为记录不被另一份值覆盖。”保留原来的 −3／−3.25 算例，无须增加新题或额外算法小节。
 
@@ -40,7 +40,7 @@ r_behavior = r_update × w
 直接回答见[题表](interview-directions.md)第 56 行；恢复和采样追问在第 69、87 行。
 
 - [RL 状态案例](../../case-studies/rl-state-and-reproducibility.md)第 23–27 行：生成／验证／学习为 12／6／8 条每秒，25% 在验证后按版本准入过滤，`min(8,min(12,6)×0.75)=4.5` 正确。改变过滤位置、轨迹长度分布或准入规则后需要重算，原文已经限定；4.5 是输出上界，不代表以 12 条／秒持续向容量 6 的验证器提交仍能保持有限队列。
-- [固定 AReaL 流程](../../references/framework-history/2026-09-08/rl-consistency/areal-grpo-current.html)明确保存每 token 的 logprob／版本，交接时暂停生成、同步权重、更新版本，然后重算 KV 并恢复。它支持保留 token 与复用旧 KV 是两件事；不是对任意后端或任意跨版本训练的保证。
+- [固定 AReaL 流程](../../references/framework-history/2026-09-08/rl-consistency/areal-grpo-current.md)明确保存每 token 的 logprob／版本，交接时暂停生成、同步权重、更新版本，然后重算 KV 并恢复。它支持保留 token 与复用旧 KV 是两件事；不是对任意后端或任意跨版本训练的保证。
 - [长尾与流式案例](../../case-studies/rollout-tail-and-sampling.md)第 15–17 行：两个独立槽只取先完成回答，长回答概率从 1/2 降至 1/4；期望墙钟 13/4＝3.25 秒，合计槽时间 13/2＝6.5 秒，均正确。第 31 行按样本数加权得到梯度 2.5、直接平均为 2，也正确，并已要求 token 归一化时更换分母。
 - [恢复案例](../../case-studies/rl-scheduling-and-recovery.md)第 30–39 行：790／490 秒相差一次 300 秒 rollout，依赖轨迹保存在故障角色外、更新尚未提交及可恢复检查点，条件已写明。实际恢复后仍要核对行为版本、优化器、数据位置和准入；不同角色的 GPU·秒未冒充墙钟时间。
 
@@ -56,7 +56,7 @@ r_behavior = r_update × w
 
 `0.98h≥0.90` 使用命中与质量独立的教学模型，已经在原文标明。它不保证实际 1000 次回放必然达到该联合比例，也不能用两个实测边际比例相乘替代逐任务联合计数。真实服务仍需记录命中、通过与完成时刻；原案例已要求联合记录，因此本次不将该条件判为缺失。
 
-从原始归档重新选读的 [Claude 缓存文档](../../references/outline-checks/2026-09-07/platform-routing/claude-prompt-cache.html)确实将输入分成 cache read、cache creation 与剩余 input；[Gemini 价格页](../../references/outline-checks/2026-09-07/platform-routing/gemini-api-pricing.html)确实标明生成计价包含 thinking。二者只支持字段去重方法，不能推导出相同 usage schema，案例也没有这样外推。价格、缓存预热／写入／存储和工具费在真实合同下仍须另补。
+从原始归档重新选读的 [Claude 缓存文档](../../references/outline-checks/2026-09-07/platform-routing/claude-prompt-cache.md)确实将输入分成 cache read、cache creation 与剩余 input；[Gemini 价格页](../../references/outline-checks/2026-09-07/platform-routing/gemini-api-pricing.md)确实标明生成计价包含 thinking。二者只支持字段去重方法，不能推导出相同 usage schema，案例也没有这样外推。价格、缓存预热／写入／存储和工具费在真实合同下仍须另补。
 
 ## 阅读范围与复算记录
 

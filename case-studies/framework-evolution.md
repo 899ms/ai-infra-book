@@ -73,7 +73,7 @@ HiSparse 公布的支持路径是 DSA（含 V3.2 与 GLM-5.1），不能直接�
 | 容量规划：2024 预测、2025 分阶段分配反馈、2026 主线 runner 分工 | 上下文、并发和图缓冲怎样改变装入层数；实际路径与容量预测分别核实 | 5.5、8.4，实验 8-5；[三期源码](../references/framework-history/2026-09-08/overlap-placement/README.md) |
 | v0.30 GGUF：2026-05 release／06 月公告，当前层放置与内存报告 | llama-server 自动 GPU 层、projector 单独放置、mmap 计量；驻留比例不能代替阶段耗时 | 8.4，实验 8-5；[发布与源码](../references/framework-history/2026-09-08/offload-execution/README.md) |
 | MLX 预览：2026 年 3 月 | Apple 后端与量化格式改变了访存和执行路径 | 5.5、8.4，实验 8-5 的后端对照 |
-| MLX 选择性状态快照：2026 年 6 月 | Agent 分支、删除旧 reasoning 后的续接与滑窗／循环状态恢复边界 | 8.3.3，实验 8-4；[公告原件](../references/framework-history/2026-09-08/speculative-execution/ollama-mlx-performance-2026.html) |
+| MLX 选择性状态快照：2026 年 6 月 | Agent 分支、删除旧 reasoning 后的续接与滑窗／循环状态恢复边界 | 8.3.3，实验 8-4；[公告原件](../references/framework-history/2026-09-08/speculative-execution/ollama-mlx-performance-2026.md) |
 | Ollama 0.31 的 Gemma 4／MLX MTP：2026 年 6 月 | 动态草稿长度、状态回滚、2–8 token 验证时的权重复用 | 8.5，实验 8-7、8-8 的本地对照 |
 
 依据：[多模态引擎](https://ollama.com/blog/multimodal-models)、[流式工具](https://ollama.com/blog/streaming-tool)、[内存调度](https://ollama.com/blog/new-model-scheduling)、[MLX 预览](https://ollama.com/blog/mlx)、[本地 MTP](https://ollama.com/blog/faster-gemma-4-mlx-mtp)。

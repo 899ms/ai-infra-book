@@ -18,7 +18,7 @@ Qwen3-8B 固定配置、张量索引与模型实现见[模型配置](../../calcu
 Jouppi 等，*In-Datacenter Performance Analysis of a Tensor Processing Unit*，ISCA 2017，[归档论文](../../references/files/papers/tpu-v1.pdf)，§2—4，特别是结构图、存储及版图面积说明。
 ### nvidia
 
-[A100 架构白皮书](../../references/files/specs/nvidia-a100.pdf)、[H100 架构白皮书](../../references/files/specs/nvidia-h100.pdf)、[Hopper Tuning Guide](../../references/files/documents/nvidia-hopper-tuning.html)、[Blackwell 技术简报](../../references/files/specs/nvidia-blackwell-brief.pdf)与[CUTLASS Blackwell 功能](../../references/outline-checks/2026-09-07/systems-cases/cutlass-blackwell.html)。SM100／SM120 与具体产品形态分开使用。
+[A100 架构白皮书](../../references/files/specs/nvidia-a100.pdf)、[H100 架构白皮书](../../references/files/specs/nvidia-h100.pdf)、[Hopper Tuning Guide](../../references/files/documents/nvidia-hopper-tuning.md)、[Blackwell 技术简报](../../references/files/specs/nvidia-blackwell-brief.pdf)与[CUTLASS Blackwell 功能](../../references/outline-checks/2026-09-07/systems-cases/cutlass-blackwell.md)。SM100／SM120 与具体产品形态分开使用。
 ### ascend
 
 [昇腾 950 官方架构白皮书](../../references/files/specs/ascend-950-official.pdf)，§4.1—4.1.6；早期 DaVinci 与 CANN 分离架构的页级定位见[比较笔记](../../case-studies/accelerator-architecture.md)。未执行本书昇腾实机实验。
@@ -27,7 +27,7 @@ Jouppi 等，*In-Datacenter Performance Analysis of a Tensor Processing Unit*，
 [从算子利用率到执行中的等待](../../case-studies/component-utilization-and-overlap.md)，采用 ASPLOS 2025 昇腾算子优化与 PICACHU 的声明正文范围，并对照已固定框架版本；[论文阅读记录](../../references/proceedings/ASPLOS/2025/ascend-components-reading.json)。活动时间分解和 RoPE 工作量是限定条件推算。
 ### apple
 
-[M2 Pro／Max 官方规格](../../references/files/specs/apple-m2-pro-max.html)、[Apple GPU 架构说明](../../references/files/documents/apple-gpu-architecture.html)、[Metal 存储模式](../../references/files/documents/apple-metal-memory.json)、[M5 GPU Neural Accelerator 官方说明](../../references/outline-checks/2026-09-07/systems-cases/apple-m5-evolution.html)。
+[M2 Pro／Max 官方规格](../../references/files/specs/apple-m2-pro-max.md)、[Apple GPU 架构说明](../../references/files/documents/apple-gpu-architecture.md)、[Metal 存储模式](../../references/files/documents/apple-metal-memory.json)、[M5 GPU Neural Accelerator 官方说明](../../references/outline-checks/2026-09-07/systems-cases/apple-m5-evolution.md)。
 ### fa4
 
 *FlashAttention-4*，MLSys 2026，[论文](../../references/proceedings/MLSys/2026/papers/mlsys2026-ae8b0b5838ba510daff1198474e7b984.pdf)，§2.2、§3.1.1、公式 1—3 与表 1；[单 SM 独立复算](../../calculations/results/fa4-qwen8-resource-balance.md)。
@@ -57,7 +57,7 @@ Jouppi 等，*In-Datacenter Performance Analysis of a Tensor Processing Unit*，
 [V4 共享专家搬运坐标结果](../../calculations/results/v4-copy-coordinates-m32.md)与[源级计数说明](../../calculations/research/v4-copy-coordinates/README.md)。未采集所分析内核的最终地址指令、描述符或 HBM 计数器。
 ### transfer
 
-[Hopper Tuning Guide](../../references/files/documents/nvidia-hopper-tuning.html)、[昇腾 950 白皮书](../../references/files/specs/ascend-950-official.pdf)、[Rubin 官方架构说明](../../references/outline-checks/2026-09-07/systems-cases/rubin-rechecked.html)。采用已归档的机制描述；未将官方平台倍率用于本章定量时间线。
+[Hopper Tuning Guide](../../references/files/documents/nvidia-hopper-tuning.md)、[昇腾 950 白皮书](../../references/files/specs/ascend-950-official.pdf)、[Rubin 官方架构说明](../../references/outline-checks/2026-09-07/systems-cases/rubin-rechecked.md)。采用已归档的机制描述；未将官方平台倍率用于本章定量时间线。
 ### pipeline
 
 [Qwen 注意力输入流水基线](../../calculations/results/attention-input-base.md)、[矩阵速率翻倍](../../calculations/results/attention-input-matrix-double.md)、[建模与独立检查](../../calculations/research/attention-input-pipeline/README.md)。完成点是 QK 累加器，未含 Softmax、PV 与最终写回。
@@ -66,13 +66,13 @@ Jouppi 等，*In-Datacenter Performance Analysis of a Tensor Processing Unit*，
 [矩阵—向量交接说明](../../calculations/research/matrix-vector-handoff/README.md)、[32 行两槽直接路径](../../calculations/results/matrix-vector-direct-rows32-slots2.md)。结果来自声明的非抢占调度，不声称全局最优。
 ### package
 
-[Blackwell 技术简报](../../references/files/specs/nvidia-blackwell-brief.pdf)、[CloudMatrix384 v2](../../references/files/papers/cloudmatrix384-v2.pdf)，§3.3.1 与 §4.2.2、[Vera Rubin 平台](../../references/files/specs/nvidia-rubin-system.html)、[UB 与昇腾核对](../../references/UB-ASCEND-NOTES.md)。CloudMatrix v2 与 v3 的删改在比较笔记中分别保留。
+[Blackwell 技术简报](../../references/files/specs/nvidia-blackwell-brief.pdf)、[CloudMatrix384 v2](../../references/files/papers/cloudmatrix384-v2.pdf)，§3.3.1 与 §4.2.2、[Vera Rubin 平台](../../references/files/specs/nvidia-rubin-system.md)、[UB 与昇腾核对](../../references/UB-ASCEND-NOTES.md)。CloudMatrix v2 与 v3 的删改在比较笔记中分别保留。
 ### tpu8
 
-[Inside the Eighth-Generation TPU: An Architecture Deep Dive](../../references/files/specs/google-tpu8.html)，采用归档官方文章对 8t／8i 的任务分工及资源组织说明。
+[Inside the Eighth-Generation TPU: An Architecture Deep Dive](../../references/files/specs/google-tpu8.md)，采用归档官方文章对 8t／8i 的任务分工及资源组织说明。
 ### special
 
-[Groq TSP 论文](../../references/files/papers/groq-tsp.pdf)、[IPU Programming Model](../../references/files/documents/graphcore-programming.html)、[Cerebras WSE-3 数据表](../../references/files/specs/cerebras-wse3-spec.pdf)、[SambaNova SN40L 论文](../../references/files/papers/sambanova-sn40l-paper.pdf)。各产品的容量、聚合带宽与局部访问能力不可互换。
+[Groq TSP 论文](../../references/files/papers/groq-tsp.pdf)、[IPU Programming Model](../../references/files/documents/graphcore-programming.md)、[Cerebras WSE-3 数据表](../../references/files/specs/cerebras-wse3-spec.pdf)、[SambaNova SN40L 论文](../../references/files/papers/sambanova-sn40l-paper.pdf)。各产品的容量、聚合带宽与局部访问能力不可互换。
 ### author
 
 [作者材料与技术判断](../../case-studies/author-context-and-design.md)。Groq 的历史容量观察与专用化经验按各自写作时点使用，历史售价假设不作为现价。

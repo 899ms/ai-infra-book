@@ -1,6 +1,6 @@
 # 第 8 章六节重组 · 2026-09-10
 
-按用户确认的可读性与逻辑结构建议，将本章组织为“执行基线 → 批处理 → KV 生命周期 → 压缩与卸载 → 推测解码 → 服务验证”。当前入口：[主大纲](../../outlines/08-单实例推理.md)、[扩写资料](../../outlines/extensions/08-单实例推理.md)、[网页](../../skeleton.html#ch-8)。
+按用户确认的可读性与逻辑结构建议，将本章组织为“执行基线 → 批处理 → KV 生命周期 → 压缩与卸载 → 推测解码 → 服务验证”。当前入口：[主大纲](../../outlines/08-单实例推理.md)、[扩写资料](../../outlines/extensions/08-单实例推理.md)、[网页](../../outlines/README.md#ch-8)。
 
 本轮开始时的工作区原文保存为 [outline-before.txt](outline-before.txt) 和 [extension-before.txt](extension-before.txt)，不以 Git HEAD 替代已有修改。原 5 节、20 个小节调整为 6 节、22 个小节，9 项实验、8 项配图及 3 项核心练习保留。机器映射见 [section-mapping.json](section-mapping.json)。
 

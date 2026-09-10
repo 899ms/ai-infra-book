@@ -23,7 +23,7 @@ def run(command, *, cwd=HERE, log=None):
         subprocess.run(command, cwd=cwd, check=True)
 
 
-def prepare(source, dest, assets):
+def prepare(source, dest, assets, source_ref=None):
     text = source.read_text()
     number = int(source.name[:2])
     text = re.sub(r'^# 第\s*\d+\s*章\s*(.*)$', rf'# \1 {{#chapter-{number}}}', text, flags=re.M)
@@ -38,6 +38,8 @@ def prepare(source, dest, assets):
         selected = original.with_suffix('.pdf') if original.with_suffix('.pdf').exists() else original.with_suffix('.png')
         if not selected.exists():
             raise FileNotFoundError(original)
+        if selected.read_bytes().startswith(b'version https://git-lfs.github.com/spec/v1'):
+            raise ValueError(f'Figure is an LFS pointer; run git lfs pull: {selected}')
         assets.append(selected)
         return f'![{match[1]}]({selected.as_posix()})'
     text = re.sub(r'!\[([^\n]*)\]\(([^)]+)\)', image, text)
@@ -50,7 +52,11 @@ def prepare(source, dest, assets):
         resolved = (source.parent / unquote(target.split('#')[0])).resolve()
         if resolved.is_relative_to(ROOT):
             fragment = '#' + target.split('#',1)[1] if '#' in target else ''
-            return f'[{match[1]}](../{resolved.relative_to(ROOT).as_posix()}{fragment})'
+            relative = resolved.relative_to(ROOT).as_posix()
+            if source_ref:
+                from urllib.parse import quote
+                return f'[{match[1]}](https://github.com/bojieli/ai-infra-book/blob/{quote(source_ref, safe="")}/{quote(relative, safe="/")}{fragment})'
+            return f'[{match[1]}](../{relative}{fragment})'
         return match[0]
     text = re.sub(r'(?<!!)\[([^\]]*)\]\(([^)]+)\)', link, text)
     dest.write_text(text)
@@ -59,7 +65,11 @@ def prepare(source, dest, assets):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--chapter', type=int, choices=range(1,13), help='Build one chapter with its original chapter number')
+    parser.add_argument('--output-dir', type=Path, default=HERE, help='Output directory relative to book/ (default: book/)')
+    parser.add_argument('--source-ref', help='Git commit for portable GitHub links in released PDFs')
     args = parser.parse_args()
+    output_dir = (HERE / args.output_dir).resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
     name = f'AI-Infra-Book-Chapter-{args.chapter:02}' if args.chapter else 'AI-Infra-Book'
     work = HERE / 'build' / name
     work.mkdir(parents=True, exist_ok=True)
@@ -68,7 +78,7 @@ def main():
     inputs, assets = [], []
     for source in sources:
         target = work / source.name
-        prepare(source,target,assets)
+        prepare(source,target,assets,args.source_ref)
         inputs.append(target)
     before = work / 'frontmatter.tex'
     edition = f'第 {args.chapter} 章排版样张' if args.chapter else '全书审阅版'
@@ -94,25 +104,25 @@ def main():
     for iteration in range(1,4):
         run(['xelatex','-interaction=nonstopmode','-halt-on-error', '-file-line-error',
              '-output-directory='+str(work),str(tex)],log=work/f'xelatex-{iteration}.log')
-    output = HERE / f'{name}.pdf'
+    output = output_dir / f'{name}.pdf'
     staged_output = output.with_suffix('.pdf.tmp')
     shutil.copy2(work/'book.pdf',staged_output)
     staged_output.replace(output)
     log = (work/'book.log').read_text(errors='replace')
     warnings = [line for line in log.splitlines() if any(x in line for x in ['Overfull','Missing character:','undefined references','LaTeX Warning:'])]
-    report = dict(output=str(output.relative_to(ROOT)), chapters=[int(s.name[:2]) for s in sources],
+    report = dict(output=str(output), source_ref=args.source_ref, chapters=[int(s.name[:2]) for s in sources],
                   engine='Pandoc + XeLaTeX / ElegantBook (AI Agent Book series template)',
                   sources=[dict(path=str(p.relative_to(ROOT)),sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in sources],
                   figure_count=len(assets),warnings=warnings)
-    (HERE/f'{name}-build.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+    (output_dir/f'{name}-build.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
     if not args.chapter and shutil.which('pdfseparate') and shutil.which('pdftoppm'):
         if shutil.which('gs'):
             run(['gs','-q','-dBATCH','-dNOPAUSE','-sDEVICE=pdfwrite','-dFirstPage=1','-dLastPage=1',
-                 '-sOutputFile='+str(HERE/'AI-Infra-Book-Cover.pdf'),str(output)])
+                 '-sOutputFile='+str(output_dir/'AI-Infra-Book-Cover.pdf'),str(output)])
         else:
-            run(['pdfseparate','-f','1','-l','1',str(output),str(HERE/'AI-Infra-Book-Cover.pdf')])
+            run(['pdfseparate','-f','1','-l','1',str(output),str(output_dir/'AI-Infra-Book-Cover.pdf')])
         run(['pdftoppm','-f','1','-l','1','-scale-to','1600','-png','-singlefile',
-             str(output),str(HERE/'AI-Infra-Book-Cover')])
+             str(output),str(output_dir/'AI-Infra-Book-Cover')])
     print(output)
     print(f'{len(sources)} chapters, {len(assets)} figures; {len(warnings)} layout/font warnings; details: {work}/book.log')
 

@@ -6,8 +6,8 @@ vLLM 固定为 `537af2c3a4ba7462ddc9bc94ec7a4ea496da6d2e`，SGLang 固定为 `c9
 
 | 来源 | 实际读取与用途 |
 | --- | --- |
-| [vLLM Elastic EP 文章](vllm-elastic-2026.html)、[抽取正文](vllm-elastic-2026.txt) | 完整正文，标题与 2026-05-14 日期；解释扩／缩容状态交接及文章当时的限制。未读取 NIXL 实现、全部调用链或故障恢复协议 |
-| [SGLang Waterfill／LPLB 文章](sglang-waterfill-lplb-2026.html)、[抽取正文](sglang-waterfill-lplb-2026.txt) | 完整正文，标题与 2026-06-26 日期；分派机制、实验表的任务条件。未查看文章图片或 benchmark artifact；不引用加速比为当前服务承诺 |
+| [vLLM Elastic EP 文章](vllm-elastic-2026.md)、[抽取正文](vllm-elastic-2026.txt) | 完整正文，标题与 2026-05-14 日期；解释扩／缩容状态交接及文章当时的限制。未读取 NIXL 实现、全部调用链或故障恢复协议 |
+| [SGLang Waterfill／LPLB 文章](sglang-waterfill-lplb-2026.md)、[抽取正文](sglang-waterfill-lplb-2026.txt) | 完整正文，标题与 2026-06-26 日期；分派机制、实验表的任务条件。未查看文章图片或 benchmark artifact；不引用加速比为当前服务承诺 |
 | [vLLM guide](vllm-current-ep-guide.md) | 136–189 行；窗口单位与冗余容量。表中 per-rank 描述与下方全局冗余公式存在歧义，“overhead”公式也包含原有专家；教学直接从矩阵与明确全局副本数算，不照抄该公式标签 |
 | [SGLang guide](sglang-current-ep-guide.mdx) | 240–246 行；与 manager 的迭代计数比较。文中 requests 例子不等同 engine steps |
 | [SGLang dispatch](sglang-expert-location-dispatch.py)、[LPLB solver](sglang-lplb-solver.py) | 两文件全文；合法物理副本、概率分派、空 rank 归约、支持架构检查和求解状态。未读取 CUDA 内部求解／采样内核，不能声称数值解或有限 batch 精确最优 |

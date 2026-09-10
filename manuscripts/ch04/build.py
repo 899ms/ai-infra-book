@@ -170,8 +170,9 @@ page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewpo
 import sys
 sys.path.insert(0,str(HERE.parent))
 from teaching_reading import readable_diagrams
+from preview_output import preview_path
 page=readable_diagrams(page)
-html_path=HERE.parent/'04-加速器架构.html';html_path.write_text(page)
+html_path=preview_path(HERE.parent/'04-加速器架构.html');html_path.write_text(page)
 from book_assets import sync_figure_index
 active_assets=sync_figure_index(HERE)
 artifacts=outputs+[HERE/'figure-data.json',HERE/'teaching-data.json',html_path,md]+active_assets

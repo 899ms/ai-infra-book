@@ -1,6 +1,6 @@
 # OSDI 2026 公开论文集
 
-[官方日程](https://www.usenix.org/conference/osdi26/technical-sessions) · [原始页面](index.html) · [清单](manifest.json)
+[官方日程](https://www.usenix.org/conference/osdi26/technical-sessions) · [原始页面](index.md) · [清单](manifest.json)
 
 已归档整卷、目录及官方页面列出的勘误。官方目录 136 篇与日程和整卷正文首页逐项核对；另有 1 场 keynote 不计入论文数。已按日程顺序读完 136 篇完整摘要，并补读 Weave／RobustRL／GraCE 所列正文；其余候选继续按与既有章节的比较决定是否补读。
 

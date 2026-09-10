@@ -4,8 +4,8 @@
 
 | 原件 | 阅读范围与采用 |
 | --- | --- |
-| [2025-07-22 调优文章](nccl-2025-tuning-blog-retry.html) | 正文、代码及图注文；成本模型、动态资源分配、局部覆盖和并发争用。另存[正文文本](nccl-2025-tuning-blog-retry.txt)，排除网页的 AI 摘要，未独立量化曲线。 |
-| [2025-11-10 的 2.28 公告](nccl-2025-device-blog.html) | 正文、代码与图注文；设备 API、CE、窗口、profiling 和插件；图中峰值不作本书测量。另存[文本](nccl-2025-device-blog.txt)。 |
+| [2025-07-22 调优文章](nccl-2025-tuning-blog-retry.md) | 正文、代码及图注文；成本模型、动态资源分配、局部覆盖和并发争用。另存[正文文本](nccl-2025-tuning-blog-retry.txt)，排除网页的 AI 摘要，未独立量化曲线。 |
+| [2025-11-10 的 2.28 公告](nccl-2025-device-blog.md) | 正文、代码与图注文；设备 API、CE、窗口、profiling 和插件；图中峰值不作本书测量。另存[文本](nccl-2025-device-blog.txt)。 |
 | [AutoCCL README](autoccl-fixed-readme.md) | 全文件；需要修改后的 NCCL 库与 tuner，未审构建或实验脚本。固定 `63acb15c124400f94f1201127c1d06b35f90e757`，由 [HEAD 元数据](autoccl-head-commit.json)定位；其提交日期不是论文发表日。 |
 | [2.31.2 注册文档](nccl-2312-bufferreg.rst) | 全文件；采用窗口、NVLink／网络零 CTA 的操作、驱动与策略条件；不把注册后所有操作都视作 CE。 |
 | [tuner 定义](nccl-2312-tuner.h)与 [v6 接口](nccl-2312-tuner-v6.h) | 两个完整头文件；操作／协议成本、通道、chunk 回调、缓冲约束与回退声明；没有审全部 dispatch 实现。 |

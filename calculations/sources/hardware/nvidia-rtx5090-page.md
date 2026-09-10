@@ -1,0 +1,2374 @@
+<!-- 从 nvidia-rtx5090-page.html 迁移的资料快照；原始 HTML SHA-256: a410457b78a6f180fea6beff799e36a6d66ee002c8408761bc3228c76c767d19。 -->
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJoaWRlIiBzdHlsZT0iZGlzcGxheTogbm9uZTsiPgogICAgICAgIAogICAgICAgIDxzeW1ib2wgaWQ9Im4yNC1udmlkaWEtbG9nbyIgdmlld2JveD0iMCAwIDEwOC40NzIgMjAiPgogICAgICAgICAgICA8dGl0bGUgaWQ9Im52aWRpYV9sb2dvX2Rlc2t0b3AiPk5WSURJQSBIb21lPC90aXRsZT4KICAgICAgICAgICAgPGRlc2M+TlZJRElBIEhvbWU8L2Rlc2M+CiAgICAgICAgICAgIDxwYXRoIGlkPSJudmlkaWEtbG9nby1yZWciIGQ9Ik0xMDcyLjYyOCwyNTMuOTE4di0uM2guMTkyYy4xMDUsMCwuMjQ4LjAwOC4yNDguMTM2cy0uMDczLjE2My0uMi4xNjNoLS4yNDNtMCwuMjExaC4xMjlsLjMuNTI0aC4zMjdsLS4zMy0uNTQ1YS4zLjMsMCwwLDAsLjMxMS0uMzIzYzAtLjI4NS0uMi0uMzc3LS41My0uMzc3aC0uNDgydjEuMjQ1aC4yNzZ2LS41MjRtMS40LS4xYTEuMiwxLjIsMCwxLDAtMS4yLDEuMTU3LDEuMTQsMS4xNCwwLDAsMCwxLjItMS4xNTdtLS4zNDcsMGEuODU0Ljg1NCwwLDAsMS0uODU1Ljg5MXYwYS44ODkuODg5LDAsMSwxLC44NTUtLjg4N1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC05NjUuNTU3IC0yMzcuODc4KSIgLz4KICAgICAgICAgICAgPHBhdGggaWQ9Im52aWRpYS1sb2dvLU5WSURJQSIgZD0iTTQ2My45LDE1MS45MzR2MTMuMTI3aDMuNzA3VjE1MS45MzRabS0yOS4xNjQtLjAxOHYxMy4xNDVoMy43NHYtMTAuMmwyLjkxOC4wMWEyLjY3NCwyLjY3NCwwLDAsMSwyLjA4Ni43MjRjLjU4Ni42MjUuODI2LDEuNjMyLjgyNiwzLjQ3NnY1Ljk5NWgzLjYyNFYxNTcuOGMwLTUuMTgzLTMuMy01Ljg4Mi02LjUzNi01Ljg4MlptMzUuMTM0LjAxOHYxMy4xMjdoNi4wMTNjMy4yLDAsNC4yNDktLjUzMyw1LjM4LTEuNzI3YTcuMzUyLDcuMzUyLDAsMCwwLDEuMzE2LTQuNjkyLDcuNzg5LDcuNzg5LDAsMCwwLTEuMi00LjUxNmMtMS4zNzMtMS44MzMtMy4zNTItMi4xOTEtNi4zMDYtMi4xOTFabTMuNjc3LDIuODU4aDEuNTk0YzIuMzEyLDAsMy44MDgsMS4wMzksMy44MDgsMy43MzNzLTEuNSwzLjczNC0zLjgwOCwzLjczNGgtMS41OTRabS0xNC45OTItMi44NTgtMy4wOTQsMTAuNC0yLjk2NS0xMC40aC00bDQuMjM0LDEzLjEyN2g1LjM0M2w0LjI2Ny0xMy4xMjdabTI1Ljc0OSwxMy4xMjdoMy43MDhWMTUxLjkzNWgtMy43MDlaTTQ5NC43LDE1MS45MzlsLTUuMTc3LDEzLjExN2gzLjY1NmwuODE5LTIuMzE4aDYuMTI2bC43NzUsMi4zMThoMy45NjlsLTUuMjE2LTEzLjExOFptMi40MDcsMi4zOTMsMi4yNDYsNi4xNDVoLTQuNTYyWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTM5OS41NTEgLTE0OC4xNTUpIiAvPgogICAgICAgICAgICA8cGF0aCBpZD0ibnZpZGlhLWxvZ28tZXllLW1hcmsiIGRhdGEtbmFtZT0iRXllIE1hcmsiIGQ9Ik0xMjkuODMyLDEyNC4wODV2LTEuODA3Yy4xNzUtLjAxMy4zNTMtLjAyMi41MzMtLjAyOCw0Ljk0MS0uMTU1LDguMTgzLDQuMjQ2LDguMTgzLDQuMjQ2cy0zLjUsNC44NjMtNy4yNTUsNC44NjNhNC41NTMsNC41NTMsMCwwLDEtMS40NjEtLjIzNHYtNS40NzhjMS45MjQuMjMyLDIuMzEsMS4wODIsMy40NjcsMy4wMWwyLjU3Mi0yLjE2OWE2LjgxLDYuODEsMCwwLDAtNS4wNDItMi40NjIsOS4zMjgsOS4zMjgsMCwwLDAtMSwuMDU5bTAtNS45Njh2Mi43Yy4xNzctLjAxNC4zNTUtLjAyNS41MzMtLjAzMiw2Ljg3MS0uMjMyLDExLjM0OCw1LjYzNSwxMS4zNDgsNS42MzVzLTUuMTQyLDYuMjUzLTEwLjUsNi4yNTNhNy45MDYsNy45MDYsMCwwLDEtMS4zODMtLjEyMnYxLjY2OGE5LjEsOS4xLDAsMCwwLDEuMTUxLjA3NWM0Ljk4NSwwLDguNTktMi41NDYsMTIuMDgxLTUuNTU5LjU3OC40NjMsMi45NDgsMS41OTEsMy40MzUsMi4wODUtMy4zMTksMi43NzgtMTEuMDU1LDUuMDE4LTE1LjQ0LDUuMDE4LS40MjMsMC0uODI5LS4wMjYtMS4yMjgtLjA2NHYyLjM0NGgxOC45NDd2LTIwWm0wLDEzLjAwOXYxLjQyNGMtNC42MTEtLjgyMi01Ljg5LTUuNjE1LTUuODktNS42MTVhOS45NjcsOS45NjcsMCwwLDEsNS44OS0yLjg1djEuNTYzaC0uMDA3YTQuNDI0LDQuNDI0LDAsMCwwLTMuNDM3LDEuNTcxcy44NDUsMy4wMzUsMy40NDQsMy45MDhtLTguMTg5LTQuNGExMS40MTksMTEuNDE5LDAsMCwxLDguMTg5LTQuNDQ5di0xLjQ2M2MtNi4wNDMuNDg1LTExLjI3Nyw1LjYtMTEuMjc3LDUuNnMyLjk2NCw4LjU2OSwxMS4yNzcsOS4zNTR2LTEuNTU1QzEyMy43MzEsMTMzLjQ1MSwxMjEuNjQzLDEyNi43MjgsMTIxLjY0MywxMjYuNzI4WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTExOC41NTUgLTExOC4xMTcpIiBmaWxsPSIjNzRiNzFiIiAvPgogICAgICAgIDwvc3ltYm9sPgogICAgICAgIAogICAgICAgIDxzeW1ib2wgaWQ9Im4yNC1tZW51IiB2aWV3Ym94PSIwIDAgMjQgMjQiPgogICAgICAgICAgICA8dGl0bGU+TWVudTwvdGl0bGU+CiAgICAgICAgICAgIDxkZXNjPk1lbnUgaWNvbjwvZGVzYz4KICAgICAgICAgICAgPGRlZnM+CiAgICA8c3R5bGU+Ci5uMjQtaWNvbi1tZW51LWJnIHsKICAgIG9wYWNpdHk6IDA7Cn0KCi5uMjQtaWNvbi1tZW51LXN0cm9rZSB7CiAgICBmaWxsOiBub25lOwogICAgc3Ryb2tlOiAjNjY2OwogICAgc3Ryb2tlLW1pdGVybGltaXQ6IDEwOwogICAgc3Ryb2tlLXdpZHRoOiAxLjVweDsKfQo8L3N0eWxlPjwvZGVmcz4KICAgICAgICAgICAgPGcgaWQ9Im4yNC1pY29uLW1lbnUtZ3JvdXAiPgogICAgICAgICAgICAgICAgPGcgaWQ9Im4yNC1pY29uLW1lbnUtYm91bmRhcnkiIGNsYXNzPSJuMjQtaWNvbi1tZW51LWJnIj4KICAgIDxwYXRoIGQ9Ik0yMi41LDEuNXYyMUgxLjVWMS41aDIxTTI0LDBIMFYyNEgyNFYwWiIgLz48L2c+CiAgICAgICAgICAgICAgICA8bGluZSBjbGFzcz0ibjI0LWljb24tbWVudS1zdHJva2UiIHgxPSI0LjUiIHkxPSI3LjUiIHgyPSIxOS41IiB5Mj0iNy41Ij48L2xpbmU+CiAgICAgICAgICAgICAgICA8bGluZSBjbGFzcz0ibjI0LWljb24tbWVudS1zdHJva2UiIHgxPSI0LjUiIHkxPSIxMiIgeDI9IjE5LjUiIHkyPSIxMiI+PC9saW5lPgogICAgICAgICAgICAgICAgPGxpbmUgY2xhc3M9Im4yNC1pY29uLW1lbnUtc3Ryb2tlIiB4MT0iNC41IiB5MT0iMTYuNSIgeDI9IjE5LjUiIHkyPSIxNi41Ij48L2xpbmU+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L3N5bWJvbD4KICAgICAgICAKICAgICAgICA8c3ltYm9sIGlkPSJuMzItbWVudSIgdmlld2JveD0iMCAwIDMyIDMyIj4KICAgICAgICAgICAgPHRpdGxlPk1lbnU8L3RpdGxlPgogICAgICAgICAgICA8ZGVzYz5NZW51IGljb248L2Rlc2M+CiAgICAgICAgICAgIDxkZWZzPgogICAgPHN0eWxlPgoubjMyLWljb24tbWVudS1jbHMtMSwgLm4zMi1pY29uLW1lbnUtY2xzLTMsIC5uMzItaWNvbi1tZW51LWNscy00IHsKICAgIGZpbGw6IG5vbmU7Cn0KCi5uMzItaWNvbi1tZW51LWNscy0xLCAubjMyLWljb24tbWVudS1jbHMtNCB7CiAgICBzdHJva2U6ICM2NjY7CiAgICBzdHJva2Utd2lkdGg6IDJweDsKfQoKLm4zMi1pY29uLW1lbnUtY2xzLTEgewogICAgc3Ryb2tlLW1pdGVybGltaXQ6IDEwOwp9CgoubjMyLWljb24tbWVudS1jbHMtMiB7CiAgICBvcGFjaXR5OiAwOwp9Cjwvc3R5bGU+PC9kZWZzPgogICAgICAgICAgICA8bGluZSBpZD0ibjMyLWljb24tbWVudS1saW5lLTNiIiBkYXRhLW5hbWU9IkxpbmUgM2IiIGNsYXNzPSJuMzItaWNvbi1tZW51LWNscy0xIiB4MT0iMTYiIHkxPSIyMyIgeDI9IjI0IiB5Mj0iMjMiPjwvbGluZT4KICAgICAgICAgICAgPGxpbmUgaWQ9Im4zMi1pY29uLW1lbnUtbGluZS0zYSIgZGF0YS1uYW1lPSJMaW5lIDNhIiBjbGFzcz0ibjMyLWljb24tbWVudS1jbHMtMSIgeDE9IjgiIHkxPSIyMyIgeDI9IjE2IiB5Mj0iMjMiPjwvbGluZT4KICAgICAgICAgICAgPGxpbmUgaWQ9Im4zMi1pY29uLW1lbnUtbGluZS0yYiIgZGF0YS1uYW1lPSJMaW5lIDJiIiBjbGFzcz0ibjMyLWljb24tbWVudS1jbHMtMSIgeDE9IjE2IiB5MT0iMTYiIHgyPSIyNCIgeTI9IjE2Ij48L2xpbmU+CiAgICAgICAgICAgIDxsaW5lIGlkPSJuMzItaWNvbi1tZW51LWxpbmUtMmEiIGRhdGEtbmFtZT0iTGluZSAyYSIgY2xhc3M9Im4zMi1pY29uLW1lbnUtY2xzLTEiIHgxPSI4IiB5MT0iMTYiIHgyPSIxNiIgeTI9IjE2Ij48L2xpbmU+CiAgICAgICAgICAgIDxsaW5lIGlkPSJuMzItaWNvbi1tZW51LWxpbmUtMWIiIGRhdGEtbmFtZT0iTGluZSAxYiIgY2xhc3M9Im4zMi1pY29uLW1lbnUtY2xzLTEiIHgxPSIxNiIgeTE9IjkiIHgyPSIyNCIgeTI9IjkiPjwvbGluZT4KICAgICAgICAgICAgPGxpbmUgaWQ9Im4zMi1pY29uLW1lbnUtbGluZS0xYSIgZGF0YS1uYW1lPSJMaW5lIDFhIiBjbGFzcz0ibjMyLWljb24tbWVudS1jbHMtMSIgeDE9IjgiIHkxPSI5IiB4Mj0iMTYiIHkyPSI5Ij48L2xpbmU+CiAgICAgICAgICAgIDxnIGlkPSJDb250YWluZXIiIGNsYXNzPSJuMzItaWNvbi1tZW51LWNscy0yIj4KICAgICAgICAgICAgICAgIDxyZWN0IGNsYXNzPSJuMzItaWNvbi1tZW51LWNscy0zIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIC8+CiAgICAgICAgICAgICAgICA8cmVjdCBjbGFzcz0ibjMyLWljb24tbWVudS1jbHMtNCIgeD0iMSIgeT0iMSIgd2lkdGg9IjMwIiBoZWlnaHQ9IjMwIiAvPgogICAgICAgICAgICA8L2c+CiAgICAgICAgPC9zeW1ib2w+CiAgICAgICAgCiAgICAgICAgPHN5bWJvbCBpZD0ibjI0LWNsb3NlLXNtYWxsIiB2aWV3Ym94PSIwIDAgMjQgMjQiPgogICAgICAgICAgICA8dGl0bGU+Q2xvc2U8L3RpdGxlPgogICAgICAgICAgICA8ZGVzYz5DbG9zZSBpY29uPC9kZXNjPgogICAgICAgICAgICA8ZGVmcz4KICAgIDxzdHlsZT4KLm4yNC1pY29uLWNsb3NlLXNtYWxsLWNscy0xIHsKICAgIG9wYWNpdHk6IDA7Cn0KCi5uMjQtaWNvbi1jbG9zZS1zbWFsbC1jbHMtMiB7CiAgICBmaWxsOiBub25lOwogICAgc3Ryb2tlOiAjNjY2OwogICAgc3Ryb2tlLW1pdGVybGltaXQ6IDEwOwogICAgc3Ryb2tlLXdpZHRoOiAxLjVweDsKfQo8L3N0eWxlPjwvZGVmcz4KICAgICAgICAgICAgPGcgaWQ9Im4yNC1pY29uLWNsb3NlLXNtYWxsIj4KICAgICAgICAgICAgICAgIDxnIGlkPSJib3VuZGFyeSI+CiAgICAgICAgICAgICAgICAgICAgPGcgY2xhc3M9Im4yNC1pY29uLWNsb3NlLXNtYWxsLWNscy0xIj4KICAgICAgICAgICAgICAgICAgICAgICAgPHBhdGggZD0iTTIyLjUsMS41djIxSDEuNVYxLjVoMjFNMjQsMEgwVjI0SDI0VjBaIiAvPgogICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDxsaW5lIGNsYXNzPSJuMjQtaWNvbi1jbG9zZS1zbWFsbC1jbHMtMiIgeDE9IjcuNTAwMDUiIHkxPSI3LjUwMDAyIiB4Mj0iMTYuNTAwMDUiIHkyPSIxNi41MDAwMiI+PC9saW5lPgogICAgICAgICAgICAgICAgPGxpbmUgY2xhc3M9Im4yNC1pY29uLWNsb3NlLXNtYWxsLWNscy0yIiB4MT0iNy41MDAwNSIgeTE9IjE2LjUwMDAyIiB4Mj0iMTYuNTAwMDUiIHkyPSI3LjUwMDAyIj48L2xpbmU+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L3N5bWJvbD4KICAgICAgICAKICAgICAgICA8c3ltYm9sIGlkPSJuMjQtY2xvc2UiIHZpZXdib3g9IjAgMCAyNCAyNCI+CiAgICAgICAgICAgIDx0aXRsZT5DbG9zZTwvdGl0bGU+CiAgICAgICAgICAgIDxkZXNjPkNsb3NlIGljb248L2Rlc2M+CiAgICAgICAgICAgIDxkZWZzPgogICAgPHN0eWxlPgoubjI0LWljb24tY2xvc2UtY2xzLTEgewogICAgb3BhY2l0eTogMDsKfQoKLm4yNC1pY29uLWNsb3NlLWNscy0yIHsKICAgIGZpbGw6IG5vbmU7CiAgICBzdHJva2U6ICM2NjY7CiAgICBzdHJva2UtbWl0ZXJsaW1pdDogMTA7CiAgICBzdHJva2Utd2lkdGg6IDEuNXB4Owp9Cjwvc3R5bGU+PC9kZWZzPgogICAgICAgICAgICA8ZyBpZD0ibjI0LWljb24tY2xvc2UiPgogICAgICAgICAgICAgICAgPGcgaWQ9ImJvdW5kYXJ5Ij4KICAgICAgICAgICAgICAgICAgICA8ZyBjbGFzcz0ibjI0LWljb24tY2xvc2UtY2xzLTEiPgogICAgICAgICAgICAgICAgICAgICAgICA8cGF0aCBkPSJNMjIuNSwxLjV2MjFIMS41VjEuNWgyMU0yNCwwSDBWMjRIMjRWMFoiIC8+CiAgICAgICAgICAgICAgICAgICAgPC9nPgogICAgICAgICAgICAgICAgPC9nPgogICAgICAgICAgICAgICAgPGxpbmUgY2xhc3M9Im4yNC1pY29uLWNsb3NlLWNscy0yIiB4MT0iNC41IiB5MT0iNC41IiB4Mj0iMTkuNSIgeTI9IjE5LjUiPjwvbGluZT4KICAgICAgICAgICAgICAgIDxsaW5lIGNsYXNzPSJuMjQtaWNvbi1jbG9zZS1jbHMtMiIgeDE9IjQuNSIgeTE9IjE5LjUiIHgyPSIxOS41IiB5Mj0iNC41Ij48L2xpbmU+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L3N5bWJvbD4KICAgICAgICAKICAgICAgICA8c3ltYm9sIGlkPSJuMzItY2xvc2UiIHZpZXdib3g9IjAgMCAzMiAzMiI+CiAgICAgICAgICAgIDx0aXRsZT5DbG9zZTwvdGl0bGU+CiAgICAgICAgICAgIDxkZXNjPkNsb3NlIGljb248L2Rlc2M+CiAgICAgICAgICAgIDxkZWZzPgogICAgPHN0eWxlPgouY2xvc2UtaWNvbiB7CiAgICBmaWxsOiAjNjY2OwogICAgZmlsbC1ydWxlOiBldmVub2RkOwp9Cjwvc3R5bGU+PC9kZWZzPgogICAgICAgICAgICA8cGF0aCBpZD0ibjMyLWljb24tY2xvc2UtcGF0aCIgZGF0YS1uYW1lPSJDbG9zZSBpY29uIHBhdGgiIGNsYXNzPSJjbG9zZS1pY29uIiBkPSJNMjUsOC44MiwyMy4xOCw3LDE2LDE0LjE4LDguODIsNyw3LDguODIsMTQuMTgsMTYsNywyMy4xOCw4LjgyLDI1LDE2LDE3LjgyLDIzLjE4LDI1LDI1LDIzLjE4LDE3LjgyLDE2WiIgLz4KICAgICAgICA8L3N5bWJvbD4KICAgICAgICAKICAgICAgICA8c3ltYm9sIGlkPSJuMjQtY2FyZXQtZG93biIgdmlld2JveD0iMCAwIDI0IDI0Ij4KICAgICAgICAgICAgPHRpdGxlPkNhcmV0IGRvd24gaWNvbjwvdGl0bGU+CiAgICAgICAgICAgIDxkZXNjPkFjY29yZGlvbiBpcyBjbG9zZWQsIGNsaWNrIHRvIG9wZW4uPC9kZXNjPgogICAgICAgICAgICA8ZGVmcz4KICAgIDxzdHlsZT4KLm4yNC1pY29uLWNhcmV0LWRvd24tY2xzLTEgewogICAgb3BhY2l0eTogMDsKfQoKLm4yNC1pY29uLWNhcmV0LWRvd24tY2xzLTIgewogICAgZmlsbDogbm9uZTsKICAgIHN0cm9rZTogIzY2NjsKICAgIHN0cm9rZS1taXRlcmxpbWl0OiAxMDsKICAgIHN0cm9rZS13aWR0aDogMS41cHg7Cn0KPC9zdHlsZT48L2RlZnM+CiAgICAgICAgICAgIDxnIGlkPSJuMjQtaWNvbi1jYXJldC1kb3duIj4KICAgICAgICAgICAgICAgIDxnIGlkPSJuMjQtaWNvbi1jYXJldC1kb3duLWJvdW5kYXJ5Ij4KICAgICAgICAgICAgICAgICAgICA8ZyBjbGFzcz0ibjI0LWljb24tY2FyZXQtZG93bi1jbHMtMSI+CiAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0yMi41LDEuNXYyMUgxLjVWMS41aDIxTTI0LDBIMFYyNEgyNFYwWiIgLz4KICAgICAgICAgICAgICAgICAgICA8L2c+CiAgICAgICAgICAgICAgICA8L2c+CiAgICAgICAgICAgICAgICA8cG9seWxpbmUgY2xhc3M9Im4yNC1pY29uLWNhcmV0LWRvd24tY2xzLTIiIHBvaW50cz0iNC41IDguMjUgMTIgMTUuNzUgMTkuNSA4LjI1Ij48L3BvbHlsaW5lPgogICAgICAgICAgICA8L2c+CiAgICAgICAgPC9zeW1ib2w+CiAgICAgICAgCiAgICAgICAgPHN5bWJvbCBpZD0ibjMyLWNhcmV0LWRvd24iIHZpZXdib3g9IjAgMCAzMiAzMiI+CiAgICAgICAgICAgIDx0aXRsZT5DYXJldCBkb3duIGljb248L3RpdGxlPgogICAgICAgICAgICA8ZGVzYz5BY2NvcmRpb24gaXMgY2xvc2VkLCBjbGljayB0byBvcGVuLjwvZGVzYz4KICAgICAgICAgICAgPHBhdGggaWQ9Im4zMi1pY29uLWNhcmV0LWRvd24tbGluZS0xIiBkYXRhLW5hbWU9IkxpbmUgMSIgZD0iTTEsMCw4LDcsMSwxNCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjIuNSAxMS41KSByb3RhdGUoOTApIiBmaWxsPSJub25lIiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMiIgLz4KICAgICAgICAgICAgPGcgaWQ9Im4zMi1pY29uLWNhcmV0LWRvd24tY29udGFpbmVyIiBmaWxsPSJub25lIiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMCI+CiAgICAgICAgICAgICAgICA8cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHN0cm9rZT0ibm9uZSIgLz4KICAgICAgICAgICAgICAgIDxyZWN0IHg9IjEiIHk9IjEiIHdpZHRoPSIzMCIgaGVpZ2h0PSIzMCIgZmlsbD0ibm9uZSIgLz4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvc3ltYm9sPgogICAgICAgIAogICAgICAgIDxzeW1ib2wgaWQ9Im4zMi1jYXJldC11cCIgdmlld2JveD0iMCAwIDMyIDMyIj4KICAgICAgICAgICAgPHRpdGxlPkNhcmV0IHVwIGljb248L3RpdGxlPgogICAgICAgICAgICA8ZGVzYz5BY2NvcmRpb24gaXMgb3BlbiwgY2xpY2sgdG8gY2xvc2UuPC9kZXNjPgogICAgICAgICAgICA8cGF0aCBpZD0ibjMyLWljb24tY2FyZXQtdXAtbGluZS0xIiBkYXRhLW5hbWU9IkxpbmUgMSIgZD0iTTEsMCw4LDcsMSwxNCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOC41IDIwLjUpIHJvdGF0ZSgtOTApIiBmaWxsPSJub25lIiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMiIgLz4KICAgICAgICAgICAgPGcgaWQ9Im4zMi1pY29uLWNhcmV0LXVwLWNvbnRhaW5lciIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiIG9wYWNpdHk9IjAiPgogICAgICAgICAgICAgICAgPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBzdHJva2U9Im5vbmUiIC8+CiAgICAgICAgICAgICAgICA8cmVjdCB4PSIxIiB5PSIxIiB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIGZpbGw9Im5vbmUiIC8+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L3N5bWJvbD4KICAgICAgICAKICAgICAgICA8c3ltYm9sIGlkPSJuMjQtY2FyZXQtcmlnaHQtc21hbGwiIHZpZXdib3g9IjAgMCAyNCAyNCI+CiAgICAgICAgICAgIDx0aXRsZT5DYXJldCByaWdodCBpY29uPC90aXRsZT4KICAgICAgICAgICAgPGRlc2M+Q2xpY2sgdG8gZXhwYW5kPC9kZXNjPgogICAgICAgICAgICA8ZGVmcz4KICAgIDxzdHlsZT4KLm4yNC1pY29uLWNhcmV0LXJpZ2h0LXNtYWxsLWNscy0xIHsKICAgIGZpbGw6IG5vbmU7CiAgICBzdHJva2U6ICM2NjY7CiAgICBzdHJva2UtbWl0ZXJsaW1pdDogMTA7CiAgICBzdHJva2Utd2lkdGg6IDEuNXB4Owp9CgoubjI0LWljb24tY2FyZXQtcmlnaHQtc21hbGwtY2xzLTIgewogICAgb3BhY2l0eTogMDsKfQo8L3N0eWxlPjwvZGVmcz4KICAgICAgICAgICAgPGcgaWQ9Im4yNC1pY29uLWNhcmV0LXJpZ2h0LXNtYWxsIj4KICAgICAgICAgICAgICAgIDxnIGNsYXNzPSJuMjQtaWNvbi1jYXJldC1yaWdodC1zbWFsbC1jbHMtMiI+CiAgICAgICAgICAgICAgICAgICAgPHBhdGggZD0iTTIyLjUsMS41djIxSDEuNVYxLjVoMjFNMjQsMEgwVjI0SDI0VjBaIiAvPgogICAgICAgICAgICAgICAgPC9nPgogICAgICAgICAgICAgICAgPHBvbHlsaW5lIGNsYXNzPSJuMjQtaWNvbi1jYXJldC1yaWdodC1zbWFsbC1jbHMtMSIgcG9pbnRzPSI5Ljc1IDE2LjUgMTQuMjUgMTIgOS43NSA3LjUiPjwvcG9seWxpbmU+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L3N5bWJvbD4KICAgICAgICAKICAgICAgICA8c3ltYm9sIGlkPSJuMjQtY2FyZXQtcmlnaHQiIHZpZXdib3g9IjAgMCAyNCAyNCI+CiAgICAgICAgICAgIDx0aXRsZT5DYXJldCByaWdodCBpY29uPC90aXRsZT4KICAgICAgICAgICAgPGRlc2M+Q2xpY2sgdG8gZXhwYW5kPC9kZXNjPgogICAgICAgICAgICA8ZGVmcz4KICAgIDxzdHlsZT4KLm4yNC1pY29uLWNhcmV0LXJpZ2h0LWJnIHsKICAgIG9wYWNpdHk6IDA7Cn0KCi5uMjQtaWNvbi1jYXJldC1yaWdodC1zdHJva2UgewogICAgZmlsbDogbm9uZTsKICAgIHN0cm9rZTogIzY2NjsKICAgIHN0cm9rZS1taXRlcmxpbWl0OiAxMDsKICAgIHN0cm9rZS13aWR0aDogMS41cHg7Cn0KPC9zdHlsZT48L2RlZnM+CiAgICAgICAgICAgIDxnIGlkPSJuMjQtaWNvbi1jYXJldC1yaWdodC1pY29uIj4KICAgICAgICAgICAgICAgIDxnIGlkPSJuMjQtaWNvbi1jYXJldC1ib3VuZGFyeSIgY2xhc3M9Im4yNC1pY29uLWNhcmV0LXJpZ2h0LWJnIj4KICAgIDxwYXRoIGQ9Ik0yMi41LDEuNXYyMUgxLjVWMS41aDIxTTI0LDBIMFYyNEgyNFYwWiIgLz48L2c+CiAgICAgICAgICAgICAgICA8cG9seWxpbmUgY2xhc3M9Im4yNC1pY29uLWNhcmV0LXJpZ2h0LXN0cm9rZSIgcG9pbnRzPSI4LjI1IDE5LjUgMTUuNzUgMTIgOC4yNSA0LjUiPjwvcG9seWxpbmU+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L3N5bWJvbD4KICAgICAgICAKICAgICAgICA8c3ltYm9sIGlkPSJuMzItY2FyZXQtcmlnaHQiIHZpZXdib3g9IjAgMCAzMiAzMiI+CiAgICAgICAgICAgIDx0aXRsZT5DYXJldCByaWdodCBpY29uPC90aXRsZT4KICAgICAgICAgICAgPGRlc2M+Q2xpY2sgdG8gZXhwYW5kIG1lbnUuPC9kZXNjPgogICAgICAgICAgICA8ZyBpZD0ibjMyLWljb24tY2FyZXQtcmlnaHQtYmciIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIyIiBvcGFjaXR5PSIwIj4KICAgICAgICAgICAgICAgIDxyZWN0IHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgc3Ryb2tlPSJub25lIiAvPgogICAgICAgICAgICAgICAgPHJlY3QgeD0iMSIgeT0iMSIgd2lkdGg9IjMwIiBoZWlnaHQ9IjMwIiBmaWxsPSJub25lIiAvPgogICAgICAgICAgICA8L2c+CiAgICAgICAgICAgIDxwYXRoIGlkPSJuMzItaWNvbi1jYXJldC1yaWdodC1saW5lLTEiIGQ9Ik0xLDAsOCw3LDEsMTQiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDExLjUgOSkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIyIiAvPgogICAgICAgIDwvc3ltYm9sPgogICAgICAgIAogICAgICAgIDxzeW1ib2wgaWQ9Im4yNC1jYXJldC1sZWZ0LXNtYWxsIiB2aWV3Ym94PSIwIDAgMjQgMjQiPgogICAgICAgICAgICA8dGl0bGU+Q2FyZXQgbGVmdCBpY29uPC90aXRsZT4KICAgICAgICAgICAgPGRlc2M+Q2xpY2sgdG8gY29sbGFwc2UgbWVudS48L2Rlc2M+CiAgICAgICAgICAgIDxkZWZzPgogICAgPHN0eWxlPgoubjI0LWNhcmV0LWxlZnQtc21hbGwtY2xzLTEgewogICAgZmlsbDogbm9uZTsKICAgIHN0cm9rZTogIzY2NjsKICAgIHN0cm9rZS1taXRlcmxpbWl0OiAxMDsKICAgIHN0cm9rZS13aWR0aDogMS41cHg7Cn0KCi5uMjQtY2FyZXQtbGVmdC1zbWFsbC1jbHMtMiB7CiAgICBvcGFjaXR5OiAwOwp9Cjwvc3R5bGU+PC9kZWZzPgogICAgICAgICAgICA8ZyBpZD0ibjI0LWljb24tY2FyZXQtbGVmdC1zbWFsbCI+CiAgICAgICAgICAgICAgICA8cG9seWxpbmUgY2xhc3M9Im4yNC1jYXJldC1sZWZ0LXNtYWxsLWNscy0xIiBwb2ludHM9IjE0LjI1IDcuNSA5Ljc1IDEyIDE0LjI1IDE2LjUiPjwvcG9seWxpbmU+CiAgICAgICAgICAgICAgICA8ZyBjbGFzcz0ibjI0LWNhcmV0LWxlZnQtc21hbGwtY2xzLTIiPgogICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0yMi41LDEuNXYyMUgxLjVWMS41aDIxTTI0LDBIMFYyNEgyNFYwWiIgLz4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvc3ltYm9sPgogICAgICAgIAogICAgICAgIDxzeW1ib2wgaWQ9Im4yNC1jYXJldC1sZWZ0IiB2aWV3Ym94PSIwIDAgMjQgMjQiPgogICAgICAgICAgICA8dGl0bGU+Q2FyZXQgbGVmdCBpY29uPC90aXRsZT4KICAgICAgICAgICAgPGRlc2M+Q2xpY2sgdG8gY29sbGFwc2UgbWVudS48L2Rlc2M+CiAgICAgICAgICAgIDxkZWZzPgogICAgPHN0eWxlPgoubjI0LWljb24tY2FyZXQtbGVmdC1iZyB7CiAgICBvcGFjaXR5OiAwOwp9CgoubjI0LWljb24tY2FyZXQtbGVmdC1zdHJva2UgewogICAgZmlsbDogbm9uZTsKICAgIHN0cm9rZTogIzY2NjsKICAgIHN0cm9rZS1taXRlcmxpbWl0OiAxMDsKICAgIHN0cm9rZS13aWR0aDogMS41cHg7Cn0KPC9zdHlsZT48L2RlZnM+CiAgICAgICAgICAgIDxnIGlkPSJuMjQtaWNvbi1jYXJldC1sZWZ0Ij4KICAgICAgICAgICAgICAgIDxnIGlkPSJib3VuZGFyeSIgY2xhc3M9Im4yNC1pY29uLWNhcmV0LWxlZnQtYmciPgogICAgPHBhdGggZD0iTTIyLjUsMS41djIxSDEuNVYxLjVoMjFNMjQsMEgwVjI0SDI0VjBaIiAvPjwvZz4KICAgICAgICAgICAgICAgIDxwb2x5bGluZSBjbGFzcz0ibjI0LWljb24tY2FyZXQtbGVmdC1zdHJva2UiIHBvaW50cz0iMTUuNzUgNC41IDguMjUgMTIgMTUuNzUgMTkuNSI+PC9wb2x5bGluZT4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvc3ltYm9sPgogICAgICAgIAogICAgICAgIDxzeW1ib2wgaWQ9Im4zMi1jYXJldC1sZWZ0IiB2aWV3Ym94PSIwIDAgMzIgMzIiPgogICAgICAgICAgICA8dGl0bGU+Q2FyZXQgbGVmdCBpY29uPC90aXRsZT4KICAgICAgICAgICAgPGRlc2M+Q2xpY2sgdG8gY29sbGFwc2UgbWVudS48L2Rlc2M+CiAgICAgICAgICAgIDxwYXRoIGlkPSJuMzItY2FyZXQtbGVmdC1saW5lLTEiIGRhdGEtbmFtZT0ibGluZSAxIiBkPSJNMSwwLDgsNywxLDE0IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMC41IDIzKSByb3RhdGUoMTgwKSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiIC8+CiAgICAgICAgICAgIDxnIGlkPSJuMzItY2FyZXQtbGVmdC1jb250YWluZXIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIyIiBvcGFjaXR5PSIwIj4KICAgICAgICAgICAgICAgIDxyZWN0IHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgc3Ryb2tlPSJub25lIiAvPgogICAgICAgICAgICAgICAgPHJlY3QgeD0iMSIgeT0iMSIgd2lkdGg9IjMwIiBoZWlnaHQ9IjMwIiBmaWxsPSJub25lIiAvPgogICAgICAgICAgICA8L2c+CiAgICAgICAgPC9zeW1ib2w+CiAgICAgICAgCiAgICAgICAgPHN5bWJvbCBpZD0ibjI0LWNhcnQiIHZpZXdib3g9IjAgMCAyNCAyNCI+CiAgICAgICAgICAgIDx0aXRsZSBpZD0ic2hvcHBpbmdfY2FydCI+U2hvcHBpbmcgQ2FydDwvdGl0bGU+CiAgICAgICAgICAgIDxkZXNjPkNsaWNrIHRvIHNlZSBjYXJ0IGl0ZW1zPC9kZXNjPgogICAgICAgICAgICA8ZGVmcz4KICAgIDxzdHlsZT4KLm4yNC1pY29uLWNhcnQtYmcgewogICAgb3BhY2l0eTogMDsKfQoKLm4yNC1pY29uLWNhcnQtc3Ryb2tlIHsKICAgIGZpbGw6IG5vbmU7CiAgICBzdHJva2U6ICM2NjY7CiAgICBzdHJva2UtbWl0ZXJsaW1pdDogMTA7CiAgICBzdHJva2Utd2lkdGg6IDEuNXB4Owp9Cjwvc3R5bGU+PC9kZWZzPgogICAgICAgICAgICA8ZyBpZD0ibjI0LWljb24tY2FydC1pY29uIj4KICAgICAgICAgICAgICAgIDxnIGlkPSJuMjQtaWNvbi1jYXJ0LWJvdW5kYXJ5IiBjbGFzcz0ibjI0LWljb24tY2FydC1iZyI+CiAgICA8cGF0aCBkPSJNMjIuNSwxLjV2MjFIMS41VjEuNWgyMU0yNCwwSDBWMjRIMjRWMFoiIC8+PC9nPgogICAgICAgICAgICAgICAgPHBvbHlsaW5lIGNsYXNzPSJuMjQtaWNvbi1jYXJ0LXN0cm9rZSIgcG9pbnRzPSIxLjUgMy43NSA0Ljg5NCAzLjc1IDcuNzA3IDE0LjI1IDE2LjUgMTQuMjUiPjwvcG9seWxpbmU+CiAgICAgICAgICAgICAgICA8Y2lyY2xlIGNsYXNzPSJuMjQtaWNvbi1jYXJ0LXN0cm9rZSIgY3g9IjguMjUiIGN5PSIxOC43NTAwMSIgcj0iMS41Ij48L2NpcmNsZT4KICAgICAgICAgICAgICAgIDxjaXJjbGUgY2xhc3M9Im4yNC1pY29uLWNhcnQtc3Ryb2tlIiBjeD0iMTUuNzUiIGN5PSIxOC43NTAwMSIgcj0iMS41Ij48L2NpcmNsZT4KICAgICAgICAgICAgICAgIDxwb2x5bGluZSBjbGFzcz0ibjI0LWljb24tY2FydC1zdHJva2UiIHBvaW50cz0iNS4yOTUgNS4yNSAxOC43MTQgNS4yNSAxNy4xNDIgMTEuMjUgNi45MDMgMTEuMjUiPjwvcG9seWxpbmU+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L3N5bWJvbD4KICAgICAgICAKICAgICAgICA8c3ltYm9sIGlkPSJuMjQtc2VhcmNoIiB2aWV3Ym94PSIwIDAgMjQgMjQiPgogICAgICAgICAgICA8dGl0bGUgaWQ9InNlYXJjaCI+U2VhcmNoIGljb248L3RpdGxlPgogICAgICAgICAgICA8ZGVzYz5DbGljayB0byBzZWFyY2g8L2Rlc2M+CiAgICAgICAgICAgIDxkZWZzPgogICAgPHN0eWxlPgoubjI0LWljb24tc2VhcmNoLWJnIHsKICAgIG9wYWNpdHk6IDA7Cn0KCi5uMjQtaWNvbi1zZWFyY2gtZmlsbCB7CiAgICBmaWxsOiAjNjY2Owp9CgoubjI0LWljb24tc2VhcmNoLXN0cm9rZSB7CiAgICBmaWxsOiBub25lOwogICAgc3Ryb2tlOiAjNjY2OwogICAgc3Ryb2tlLW1pdGVybGltaXQ6IDEwOwogICAgc3Ryb2tlLXdpZHRoOiAxLjVweDsKfQo8L3N0eWxlPjwvZGVmcz4KICAgICAgICAgICAgPGcgaWQ9Im4yNC1pY29uLXNlYXJjaC1pY29uIj4KICAgICAgICAgICAgICAgIDxnIGlkPSJuMjQtaWNvbi1zZWFyY2gtYm91bmRhcnkiIGNsYXNzPSJuMjQtaWNvbi1zZWFyY2gtYmciPgogICAgPHBhdGggZD0iTTIyLjUsMS41djIxSDEuNVYxLjVoMjFNMjQsMEgwVjI0SDI0VjBaIiAvPjwvZz4KICAgICAgICAgICAgICAgIDxwYXRoIGNsYXNzPSJuMjQtaWNvbi1zZWFyY2gtZmlsbCIgZD0iTTkuOSw0LjA1QTUuODUsNS44NSwwLDEsMSw0LjA1LDkuOSw1Ljg1NjYsNS44NTY2LDAsMCwxLDkuOSw0LjA1bTAtMS41QTcuMzUsNy4zNSwwLDEsMCwxNy4yNSw5LjksNy4zNSw3LjM1LDAsMCwwLDkuOSwyLjU1WiIgLz4KICAgICAgICAgICAgICAgIDxsaW5lIGNsYXNzPSJuMjQtaWNvbi1zZWFyY2gtc3Ryb2tlIiB4MT0iMTUiIHkxPSIxNSIgeDI9IjE5Ljg3NSIgeTI9IjE5Ljg3NSI+PC9saW5lPgogICAgICAgICAgICA8L2c+CiAgICAgICAgPC9zeW1ib2w+CiAgICAgICAgCiAgICAgICAgPHN5bWJvbCBpZD0ibjI0LXVzZXItY2lyY2xlIiB2aWV3Ym94PSIwIDAgMjQgMjQiPgogICAgICAgICAgICA8ZGVmcz4KICAgIDxzdHlsZT4KLm4yNC11c2VyLWNpcmNsZS1jbHMtMSB7CiAgICBmaWxsOiBub25lOwogICAgc3Ryb2tlOiAjNjY2OwogICAgc3Ryb2tlLW1pdGVybGltaXQ6IDEwOwogICAgc3Ryb2tlLXdpZHRoOiAxLjVweDsKfQoKLm4yNC1ib3VuZHMgewogICAgZmlsbDogbm9uZTsKfQo8L3N0eWxlPjwvZGVmcz4KICAgICAgICAgICAgPHJlY3QgaWQ9Im4yNC1pY29uLXVzZXItY2lyY2xlLWJvdW5kcyIgY2xhc3M9Im4yNC1ib3VuZHMiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgLz4KICAgICAgICAgICAgPGcgaWQ9Im4yNC1pY29uLXVzZXItY2lyY2xlIj4KICAgICAgICAgICAgICAgIDxjaXJjbGUgaWQ9InVzZXItY2lyY2xlIiBjbGFzcz0ibjI0LXVzZXItY2lyY2xlLWNscy0xIiBjeD0iMTIiIGN5PSIxMiIgcj0iOS43NSI+PC9jaXJjbGU+CiAgICAgICAgICAgICAgICA8cG9seWxpbmUgaWQ9InVzZXItYm9keSIgY2xhc3M9Im4yNC11c2VyLWNpcmNsZS1jbHMtMSIgcG9pbnRzPSIxNy41NSAyMC4wMSAxNi4zNCAxNS40OCA3LjY2IDE1LjQ4IDYuNDUgMjAuMDEiPjwvcG9seWxpbmU+CiAgICAgICAgICAgICAgICA8Y2lyY2xlIGlkPSJ1c2VyLWhlYWQiIGNsYXNzPSJuMjQtdXNlci1jaXJjbGUtY2xzLTEiIGN4PSIxMiIgY3k9IjkuOTEiIHI9IjMuNDgiPjwvY2lyY2xlPgogICAgICAgICAgICA8L2c+CiAgICAgICAgPC9zeW1ib2w+CiAgICAgICAgCiAgICA8L3N2Zz4=)
+
+Visit your regional NVIDIA website for local content, pricing, and where to buy partners specific to your country.
+
+Argentina Australia België (Belgium) Belgique (Belgium) Brasil (Brazil) Canada Česká Republika (Czech Republic) Chile Colombia Danmark (Denmark) Deutschland (Germany) España (Spain) France India Italia (Italy) México (Mexico) Middle East Nederland (Netherlands) Norge (Norway) Österreich (Austria) Peru Polska (Poland) Rest of Europe România (Romania) Singapore Suomi (Finland) Sverige (Sweden) Türkiye (Turkey) United Kingdom United States 대한민국 (South Korea) 中国大陆 (Mainland China) 台灣 (Taiwan) 日本 (Japan)
+
+[Continue](https://www.nvidia.com)
+
+[Skip to main content](#page-content)
+
+[![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMTciIGhlaWdodD0iMzUiIHZpZXdib3g9IjAgMCAxMTcgMzUiIGZpbGw9Im5vbmUiPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDx0aXRsZT5BcnRpZmljaWFsIEludGVsbGlnZW5jZSBDb21wdXRpbmcgTGVhZGVyc2hpcCBmcm9tIE5WSURJQTwvdGl0bGU+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHBhdGggZD0iTTY2LjQyMDEgMTUuNDc2VjI5LjIzOEg3MC4yNDM3VjE1LjQ3Nkg2Ni40MjAxWk0zNi4zNDc3IDE1LjQ1NzNWMjkuMjM4SDQwLjIwNDVWMTguNTQwOEw0My4yMTM0IDE4LjU1MTNDNDQuMjAyNiAxOC41NTEzIDQ0Ljg4NzcgMTguNzkyOCA0NS4zNjM5IDE5LjMwOTdDNDUuOTY4NiAxOS45NjUzIDQ2LjIxNTQgMjEuMDIxMiA0Ni4yMTU0IDIyLjk1MzJWMjkuMjM4SDQ5Ljk1MThWMjEuNjI0M0M0OS45NTE4IDE2LjE5IDQ2LjU0NDcgMTUuNDU3MyA0My4yMTIyIDE1LjQ1NzNIMzYuMzQ3N1pNNzIuNTc1NSAxNS40NzZWMjkuMjM2OEg3OC43NzU3QzgyLjA3OTUgMjkuMjM2OCA4My4xNTcgMjguNjc4IDg0LjMyNDEgMjcuNDI2MkM4NS4xNDggMjYuNTQ2NSA4NS42ODA0IDI0LjYxNjggODUuNjgwNCAyMi41MDc1Qzg1LjY4MDQgMjAuNTczMiA4NS4yMjk1IDE4Ljg0NzcgODQuNDQzNCAxNy43NzMyQzgzLjAyNzMgMTUuODUxNyA4MC45ODcgMTUuNDc2IDc3Ljk0MDMgMTUuNDc2SDcyLjU3NTVaTTc2LjM2NyAxOC40NzJINzguMDEwM0M4MC4zOTQ5IDE4LjQ3MiA4MS45MzcyIDE5LjU2MDUgODEuOTM3MiAyMi4zODVDODEuOTM3MiAyNS4yMDk1IDgwLjM5NDkgMjYuMjk5MiA3OC4wMTAzIDI2LjI5OTJINzYuMzY3VjE4LjQ3MlpNNjAuOTA4NSAxNS40NzZMNTcuNzE4MyAyNi4zODJMNTQuNjYxMyAxNS40NzZINTAuNTM0N0w1NC45MDExIDI5LjIzNjhINjAuNDEwNEw2NC44MTEzIDE1LjQ3Nkg2MC45MDk2SDYwLjkwODVaTTg3LjQ1OTEgMjkuMjM2OEg5MS4yODI3VjE1LjQ3Nkg4Ny40NThWMjkuMjM2OEg4Ny40NTkxWk05OC4xNzYgMTUuNDgwN0w5Mi44Mzc3IDI5LjIzMjJIOTYuNjA3M0w5Ny40NTE5IDI2LjgwMkgxMDMuNzY5TDEwNC41NjkgMjkuMjMyMkgxMDguNjYxTDEwMy4yODMgMTUuNDc5NUg5OC4xNzZWMTUuNDgwN1pNMTAwLjY1NyAxNy45OTAyTDEwMi45NzMgMjQuNDMyNUg5OC4yNjc4TDEwMC42NTcgMTcuOTkwMloiIGZpbGw9ImJsYWNrIiAvPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMS42OTI1IDE3Ljc2OTdWMTUuODc2MkMxMS44NzM4IDE1Ljg2MzMgMTIuMDU2MyAxNS44NTI4IDEyLjI0MjIgMTUuODQ3QzE3LjMzNzIgMTUuNjgzNyAyMC42OCAyMC4yOTc4IDIwLjY4IDIwLjI5NzhDMjAuNjggMjAuMjk3OCAxNy4wNjk5IDI1LjM5NjIgMTMuMTk5MiAyNS4zOTYyQzEyLjY0MTUgMjUuMzk2MiAxMi4xNDIzIDI1LjMwNTIgMTEuNjkyNSAyNS4xNTExVjE5LjQwNzdDMTMuNjc2NiAxOS42NTE1IDE0LjA3NDggMjAuNTQxNyAxNS4yNjcxIDIyLjU2MjNMMTcuOTE5IDIwLjI4ODVDMTcuOTE5IDIwLjI4ODUgMTUuOTgzMSAxNy43MDY3IDEyLjcxOTUgMTcuNzA2N0MxMi4zNjQ5IDE3LjcwNjcgMTIuMDI1MyAxNy43MzIzIDExLjY5MTMgMTcuNzY4NUwxMS42OTI1IDE3Ljc2OTdaTTExLjY5MTMgMTEuNTEyOFYxNC4zNDJDMTEuODczOCAxNC4zMjY4IDEyLjA1NzQgMTQuMzE1MiAxMi4yNDEgMTQuMzA4MkMxOS4zMjU5IDE0LjA2NTUgMjMuOTQyNSAyMC4yMTYyIDIzLjk0MjUgMjAuMjE2MkMyMy45NDI1IDIwLjIxNjIgMTguNjQwOCAyNi43NzA1IDEzLjExNjYgMjYuNzcwNUMxMi42MTA1IDI2Ljc3MDUgMTIuMTM2NiAyNi43MjI3IDExLjY5MTMgMjYuNjQzM1YyOC4zOTIyQzEyLjA3MjMgMjguNDQxMiAxMi40NjcxIDI4LjQ3MDMgMTIuODc3OSAyOC40NzAzQzE4LjAxNzcgMjguNDcwMyAyMS43MzU4IDI1LjgwMjEgMjUuMzM1NiAyMi42NDI4QzI1LjkzMjMgMjMuMTI4MSAyOC4zNzU0IDI0LjMxIDI4Ljg3ODEgMjQuODI4QzI1LjQ1NDkgMjcuNzQxMiAxNy40Nzk1IDMwLjA4ODUgMTIuOTU3MSAzMC4wODg1QzEyLjUyMSAzMC4wODg1IDEyLjEwMjIgMzAuMDYxNyAxMS42OTEzIDMwLjAyMlYzMi40NzlIMzEuMjI4MlYxMS41MTRIMTEuNjkyNUwxMS42OTEzIDExLjUxMjhaTTExLjY5MTMgMjUuMTVWMjYuNjQzM0M2LjkzNzA4IDI1Ljc4MTIgNS42MTc0IDIwLjc1NzUgNS42MTc0IDIwLjc1NzVDNS42MTc0IDIwLjc1NzUgNy44OTk4NiAxOC4xODYyIDExLjY5MTMgMTcuNzY5N1YxOS40MDc3QzExLjY5MTMgMTkuNDA3NyAxMS42ODY3IDE5LjQwNzcgMTEuNjg0NSAxOS40MDc3QzkuNjk0NjIgMTkuMTY1IDguMTQwODUgMjEuMDU1IDguMTQwODUgMjEuMDU1QzguMTQwODUgMjEuMDU1IDkuMDExODMgMjQuMjM2NSAxMS42OTI1IDI1LjE1MjNMMTEuNjkxMyAyNS4xNVpNMy4yNDg4OCAyMC41NDE3QzMuMjQ4ODggMjAuNTQxNyA2LjA2NjA5IDE2LjMxNDggMTEuNjkyNSAxNS44NzczVjE0LjM0NDNDNS40NjEzNCAxNC44NTMgMC4wNjQ0NTMxIDIwLjIxODUgMC4wNjQ0NTMxIDIwLjIxODVDMC4wNjQ0NTMxIDIwLjIxODUgMy4xMjAzNiAyOS4yMDE4IDExLjY5MjUgMzAuMDI0M1YyOC4zOTQ1QzUuNDAxNjcgMjcuNTg5NSAzLjI0ODg4IDIwLjU0MTcgMy4yNDg4OCAyMC41NDE3WiIgZmlsbD0iIzc2QjkwMCIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvc3ZnPg==)](https://www.nvidia.com/en-us/ "Artificial Intelligence Computing Leadership from NVIDIA")
+
+![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ibjI0LWljb24gbWVudS1idXR0b24gY2FyZXQtcmlnaHQiIGFyaWEtbGFiZWw9Im1lbnUgZXhwYW5kIiBhcmlhLWNvbnRyb2xzPSJtYWluLW1lbnUtbmF2aWdhdGlvbiI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI24yNC1jYXJldC1yaWdodC1zbWFsbCIgLz48L3N2Zz4=) Main Menu
+
+![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ibjI0LWljb24gbWVudS1idXR0b24gY2FyZXQtbGVmdCI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI24yNC1jYXJldC1sZWZ0LXNtYWxsIiAvPjwvc3ZnPg==)
+
+![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ibjI0LWljb24gbWVudS1idXR0b24gY2xvc2UiPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8dXNlIHhsaW5rOmhyZWY9IiNuMjQtY2xvc2Utc21hbGwiIC8+PC9zdmc+)
+
+- Products
+  Cloud Services
+  Creating
+  Data Center
+  Embedded Systems
+  Gaming
+  Graphics Cards and Desktops
+  Laptops
+  Networking
+  Professional Workstations
+  Software
+  Tools
+
+  Cloud Services
+  [](https://www.nvidia.com/en-us/data-center/dgx-cloud/)
+  DGX Cloud
+
+  NVIDIA’s AI factory in the cloud
+
+  [](https://build.nvidia.com/)
+  NVIDIA APIs
+
+  Explore, test, and deploy AI models and agents
+
+  [](https://docs.nvidia.com/ngc/latest/ngc-private-registry-user-guide.html)
+  Private Registry
+
+  Guide for using NVIDIA NGC private registry with GPU cloud
+
+  [](https://www.nvidia.com/en-us/gpu-cloud/)
+  NVIDIA NGC
+
+  Accelerated, containerized AI models and SDKs
+
+  [](https://www.nvidia.com/en-us/data-center/products/dsx/)
+  DSX Platform
+
+  Build AI factories optimized for lowest cost tokens per megawatt
+
+  [](https://www.nvidia.com/en-us/data-center/virtual-solutions/)
+  Virtual GPU
+
+  Virtual solutions for scalable, high-performance computing
+
+  Creating
+  [](https://www.nvidia.com/en-us/studio/)
+  NVIDIA Studio
+
+  High performance GeForce RTX PCs, purpose-built for creators
+
+  [](https://www.nvidia.com/en-us/geforce/broadcasting/)
+  NVIDIA Broadcast App
+
+  AI-enhanced voice and video for next-level streams, videos, and calls
+
+  [](https://www.nvidia.com/en-us/software/nvidia-app/)
+  NVIDIA App and Studio Drivers
+
+  Optimize gaming, streaming, and AI-powered creativity
+
+  [](https://www.nvidia.com/en-us/ai-on-rtx/)
+  RTX AI PCs
+
+  AI PCs for gaming, creating, productivity and development
+
+  [](https://www.nvidia.com/en-us/geforce/rtx-remix/)
+  RTX Remix
+
+  Create RTX remasters of classic games with open-source AI
+
+  [](https://www.nvidia.com/en-us/software/nvidia-app/g-assist/)
+  Project G-Assist
+
+  AI assistant to optimize and control your GeForce RTX PC
+
+  Data Center
+  [](https://www.nvidia.com/en-us/data-center/products/)
+  Overview
+
+  Modernizing data centers with AI and accelerated computing
+
+  [](https://www.nvidia.com/en-us/data-center/dgx-platform/)
+  DGX Platform
+
+  Enterprise AI factory for model development and deployment
+
+  [](https://www.nvidia.com/en-us/data-center/grace-cpu/)
+  Grace CPU
+
+  Architecture for data centers that transform data into intelligence
+
+  [](https://www.nvidia.com/en-us/data-center/hgx/)
+  HGX Platform
+
+  A supercomputer purpose-built for AI and HPC
+
+  [](https://www.nvidia.com/en-us/edge-computing/products/igx/)
+  IGX Platform
+
+  Advanced functional safety and security for edge AI
+
+  [](https://www.nvidia.com/en-us/data-center/products/mgx/)
+  MGX Platform
+
+  Accelerated computing with modular servers
+
+  [](https://www.nvidia.com/en-us/data-center/products/ovx/)
+  OVX Systems
+
+  Scalable data center infrastructure for high-performance AI
+
+  [](https://www.nvidia.com/en-us/data-center/products/dsx/)
+  DSX Platform
+
+  Build AI factories optimized for lowest cost tokens per megawatt
+
+  Embedded Systems
+  [](https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/)
+  Jetson
+
+  Leading platform for autonomous machines and embedded applications
+
+  [](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/in-vehicle-computing/)
+  DRIVE AGX
+
+  Powerful in-vehicle computing for AI-driven autonomous vehicle systems
+
+  [](https://www.nvidia.com/en-us/edge-computing/products/igx/)
+  IGX Platform
+
+  Advanced functional safety and security for edge AI
+
+  Gaming
+  [](https://www.nvidia.com/en-us/geforce/)
+  GeForce
+
+  Explore graphics cards, gaming solutions, AI technology, and more
+
+  [](https://www.nvidia.com/en-us/geforce/graphics-cards/)
+  GeForce Graphics Cards
+
+  RTX graphics cards bring game-changing AI capabilities
+
+  [](https://www.nvidia.com/en-us/geforce/laptops/)
+  Gaming Laptops
+
+  Thinnest and longest lasting RTX laptops, optimized by Max-Q
+
+  [](https://www.nvidia.com/en-us/geforce/products/g-sync-monitors/)
+  G-SYNC Monitors
+
+  Smooth, tear-free gaming with NVIDIA G-SYNC monitors
+
+  [](https://www.nvidia.com/en-us/geforce/technologies/dlss/)
+  DLSS
+
+  Neural rendering tech boosts FPS and enhances image quality
+
+  [](https://www.nvidia.com/en-us/geforce/technologies/reflex/)
+  Reflex
+
+  Ultimate responsiveness for faster reactions and better aim
+
+  [](https://www.nvidia.com/en-us/geforce/rtx-remix/)
+  RTX Remix
+
+  Create RTX remasters of classic games with open-source AI
+
+  [](https://www.nvidia.com/en-us/software/nvidia-app/g-assist/)
+  Project G-Assist
+
+  AI assistant to optimize and control your GeForce RTX PC
+
+  [](https://www.nvidia.com/en-us/geforce-now/)
+  GeForce NOW Cloud Gaming
+
+  RTX-powered cloud gaming. Choose from 3 memberships
+
+  [](https://www.nvidia.com/en-us/software/nvidia-app/)
+  NVIDIA App and Game Ready Drivers
+
+  Optimize gaming, streaming, and AI-powered creativity
+
+  [](https://www.nvidia.com/en-us/geforce/broadcasting/)
+  NVIDIA Broadcast App
+
+  AI-enhanced voice and video for next-level streams, videos, and calls
+
+  [](https://www.nvidia.com/en-us/shield/)
+  SHIELD TV
+
+  World-class streaming media performance
+
+  Graphics Cards and Desktops
+  [](https://www.nvidia.com/en-us/geforce/graphics-cards/)
+  GeForce RTX
+
+  RTX graphics cards and desktops bring game-changing AI capabilities
+
+  [](https://www.nvidia.com/en-us/products/workstations/)
+  RTX PRO
+
+  Accelerating professional AI, graphics, rendering and compute workloads
+
+  [](https://www.nvidia.com/en-us/products/rtx-spark/)
+  RTX Spark
+
+  Compact PCs with NVIDIA AI and RTX graphics
+
+  [](https://www.nvidia.com/en-us/ai-on-rtx/)
+  RTX AI PCs
+
+  AI PCs for gaming, creating, productivity and development
+
+  [](https://www.nvidia.com/en-us/products/workstations/dgx-spark/)
+  DGX Spark
+
+  A Grace Blackwell AI supercomputer on your desk
+
+  Laptops
+  [](https://www.nvidia.com/en-us/geforce/laptops/)
+  GeForce Laptops
+
+  GPU-powered laptops for gamers and creators
+
+  [](https://www.nvidia.com/en-us/products/rtx-spark/)
+  RTX Spark Laptops
+
+  Slim laptops and small desktops with NVIDIA AI and RTX graphics
+
+  [](https://www.nvidia.com/en-us/studio/help-me-choose/)
+  Studio Laptops
+
+  High performance laptops purpose-built for creators
+
+  [](https://www.nvidia.com/en-us/products/workstations/professional-laptops/)
+  RTX PRO Laptops
+
+  Accelerate professional AI and visual computing from anywhere
+
+  [](https://www.nvidia.com/en-us/ai-on-rtx/)
+  RTX AI PCs
+
+  AI PCs for gaming, creating, productivity and development
+
+  Networking
+  [](https://www.nvidia.com/en-us/networking/)
+  Overview
+
+  Accelerated networks for modern workloads
+
+  [](https://www.nvidia.com/en-us/networking/products/data-processing-unit/)
+  DPUs
+
+  Software-defined hardware accelerators for networking, storage, and security
+
+  [](https://www.nvidia.com/en-us/networking/products/ethernet/)
+  Ethernet
+
+  Ethernet performance, availability, and ease of use across a wide range of applications
+
+  [](https://www.nvidia.com/en-us/networking/products/infiniband/)
+  InfiniBand
+
+  High-performance networking for super computers, AI, and cloud data centers
+
+  [](https://www.nvidia.com/en-us/networking/products/software/)
+  Networking Software
+
+  Networking software for optimized performance and scalability
+
+  [](https://www.nvidia.com/en-us/data-center/magnum-io/)
+  Network Acceleration
+
+  IO subsystem for modern, GPU-accelerated data centers
+
+  Professional Workstations
+  [](https://www.nvidia.com/en-us/products/workstations/)
+  Overview
+
+  Accelerating professional AI, graphics, rendering, and compute workloads
+
+  [](https://www.nvidia.com/en-us/products/workstations/dgx-spark/)
+  DGX Spark
+
+  A Grace Blackwell AI Supercomputer on your desk
+
+  [](https://www.nvidia.com/en-us/products/workstations/dgx-station/)
+  DGX Station
+
+  The ultimate deskside AI supercomputer powered by NVIDIA Grace Blackwell
+
+  [](https://www.nvidia.com/en-us/products/workstations/dgx-station-for-windows/)
+  DGX Station for Windows
+
+  The world’s most powerful deskside AI supercomputer for Windows
+
+  [](https://www.nvidia.com/en-us/products/workstations/professional-desktop-gpus/)
+  NVIDIA RTX PRO Desktops
+
+  Powerful AI, graphics, rendering, and compute workloads
+
+  [](https://www.nvidia.com/en-us/products/workstations/professional-laptops/)
+  NVIDIA RTX PRO Laptops
+
+  Accelerate professional AI and visual computing from anywhere
+
+  Software
+  [](https://www.nvidia.com/en-us/ai-data-science/foundation-models/nemotron/)
+  Agentic AI Models - Nemotron
+
+  [](https://www.nvidia.com/en-us/ai-data-science/products/nemo/)
+  AI Agents - NeMo
+
+  [](https://build.nvidia.com/blueprints)
+  AI Blueprints
+
+  [](https://www.nvidia.com/en-us/ai/dynamo/)
+  AI Inference - Dynamo
+
+  [](https://www.nvidia.com/en-us/ai-data-science/products/nim-microservices/)
+  AI Inference - NIM
+
+  [](https://www.nvidia.com/en-us/technologies/cuda-x/)
+  AI Microservices - CUDA-X
+
+  [](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/in-vehicle-computing/)
+  Automotive - DRIVE
+
+  [](https://www.nvidia.com/en-us/deep-learning-ai/solutions/data-science/apache-spark-3/)
+  Data Science - Apache Spark
+
+  [](https://developer.nvidia.com/rapids/)
+  Data Science - RAPIDS
+
+  [](https://www.nvidia.com/en-us/ai-data-science/products/cuopt/)
+  Decision Optimization - cuOpt
+
+  [](https://www.nvidia.com/en-us/industries/healthcare-life-sciences/)
+  Healthcare Platforms
+
+  [](https://www.nvidia.com/en-us/omniverse/)
+  Industrial AI - Omniverse
+
+  [](https://www.nvidia.com/en-us/autonomous-machines/intelligent-video-analytics-platform/)
+  Intelligent Video Analytics - Metropolis
+
+  [](https://www.nvidia.com/en-us/data-center/products/ai-enterprise-suite/)
+  NVIDIA AI Enterprise
+
+  [](https://www.nvidia.com/en-us/data-center/mission-control/)
+  NVIDIA Mission Control
+
+  [](https://www.nvidia.com/en-us/software/run-ai/)
+  NVIDIA Run:ai
+
+  [](https://www.nvidia.com/en-us/ai/cosmos/)
+  Physical AI - Cosmos
+
+  [](https://developer.nvidia.com/isaac/ros)
+  Robotics - Isaac
+
+  [](https://developer.nvidia.com/aerial)
+  Telecommunications - Aerial
+
+  [](https://www.nvidia.com/en-us/software/)
+  See All Software
+
+  Tools
+  [](https://www.nvidia.com/en-us/deep-learning-ai/solutions/data-science/workbench/)
+  AI Workbench
+
+  Simplify AI development with NVIDIA AI Workbench on GPUs
+
+  [](https://build.nvidia.com/explore/discover)
+  API Catalog
+
+  Explore NVIDIA's AI models, blueprints, and tools for developers
+
+  [](https://developer.nvidia.com/dcgm)
+  GPU Monitoring
+
+  Monitor and manage GPU performance in cluster environments
+
+  [](https://developer.nvidia.com/tools-overview)
+  Nsight
+
+  Explore NVIDIA developer tools for AI, graphics, and HPC
+
+  [](https://catalog.ngc.nvidia.com/)
+  NGC Catalog
+
+  Discover GPU-optimized AI, HPC, and data science software
+
+  [](https://www.nvidia.com/en-us/software/nvidia-app-enterprise/)
+  NVIDIA App for Laptops
+
+  Optimize enterprise GPU management
+
+  [](https://www.nvidia.com/en-us/gpu-cloud/)
+  NVIDIA NGC
+
+  Accelerate AI and HPC workloads with NVIDIA GPU Cloud solutions
+
+  [](https://www.nvidia.com/en-us/software/rtx-desktop-manager/)
+  Desktop Manager
+
+  Enhance multi-display productivity with NVIDIA RTX Desktop Manager
+
+  [](https://www.nvidia.com/en-us/studio/creative-apps/)
+  RTX Accelerated Creative Apps
+
+  Creative tools and AI-powered apps for artists and designers
+
+  [](https://www.nvidia.com/en-us/design-visualization/software/broadcast-app/)
+  Video Conferencing
+
+  AI-powered audio and video enhancement
+- Solutions
+  Artificial Intelligence
+  Cloud and Data Center
+  Design and Simulation
+  High-Performance Computing
+  Robotics and Edge AI
+  Autonomous Vehicles
+
+  Artificial Intelligence
+  [](https://www.nvidia.com/en-us/solutions/ai/)
+  Overview
+
+  Add intelligence and efficiency to your business with AI and machine learning
+
+  [](https://www.nvidia.com/en-us/solutions/ai/agentic-ai/)
+  Agentic AI
+
+  Build AI agents designed to reason, plan, and act
+
+  [](https://www.nvidia.com/en-us/data-center/ai-data-platform/)
+  AI Data
+
+  Powering a new class of enterprise infrastructure for AI
+
+  [](https://www.nvidia.com/en-us/solutions/ai/conversational-ai/)
+  Conversational AI
+
+  Enables natural, personalized interactions with real-time speech AI
+
+  [](https://www.nvidia.com/en-us/solutions/ai/cybersecurity/)
+  Cybersecurity
+
+  AI-driven solutions to strengthen cybersecurity and AI infrastructure
+
+  [](https://www.nvidia.com/en-us/deep-learning-ai/solutions/data-science/)
+  Data Science
+
+  Iterate on large datasets, deploy models more frequently, and lower total cost
+
+  [](https://www.nvidia.com/en-us/solutions/ai/inference/)
+  Inference
+
+  Drive breakthrough performance with AI-enabled applications and services
+
+  [](https://www.nvidia.com/en-us/solutions/data-processing/)
+  Data Processing
+
+  Data engines ready for AI
+
+  Cloud and Data Center
+  [](https://www.nvidia.com/en-us/data-center/)
+  Overview
+
+  Powering AI, HPC, and modern workloads with NVIDIA
+
+  [](https://www.nvidia.com/en-us/data-center/ai-storage/)
+  AI Storage
+
+  Bringing codesigned enterprise storage into the era of agentic AI
+
+  [](https://www.nvidia.com/en-us/solutions/ai-factories/)
+  AI Factory
+
+  Full-stack infrastructure for scalable AI workloads
+
+  [](https://www.nvidia.com/en-us/industries/telecommunications/ai-grid/)
+  AI Grid
+
+  Scale AI across connected, distributed AI infrastructure
+
+  [](https://www.nvidia.com/en-us/data-center/solutions/accelerated-computing/)
+  Accelerated Computing
+
+  Accelerated computing uses specialized hardware to boost IT performance
+
+  [](https://www.nvidia.com/en-us/data-center/gpu-cloud-computing/)
+  Cloud Computing
+
+  On-demand IT resources and services, enabling scalability and intelligent insights
+
+  [](https://www.nvidia.com/en-us/data-center/colocation-partners/)
+  Colocation
+
+  Accelerate the scaling of AI across your organization
+
+  [](https://www.nvidia.com/en-us/networking/)
+  Networking
+
+  High speed ethernet interconnect solutions and services
+
+  [](https://www.nvidia.com/en-us/sustainability/)
+  Sustainable Computing
+
+  Save energy and lower cost with AI and accelerated computing
+
+  [](https://www.nvidia.com/en-us/data-center/virtual-solutions/)
+  Virtualization
+
+  NVIDIA virtual GPU software delivers powerful GPU performance
+
+  Design and Simulation
+  [](https://www.nvidia.com/en-us/solutions/design-and-simulation/)
+  Overview
+
+  Streamline building, operating, and connecting metaverse apps
+
+  [](https://www.nvidia.com/en-us/solutions/cae/)
+  Computer Aided-Engineering
+
+  Develop real-time interactive design using AI-accelerated real-time digital twins
+
+  [](https://www.nvidia.com/en-us/glossary/digital-twin/)
+  Digital Twin Development
+
+  Harness the power of large-scale, physically-based OpenUSD simulation
+
+  [](https://www.nvidia.com/en-us/products/workstations/rendering/)
+  Rendering
+
+  Bring state-of-the-art rendering to professional workflows
+
+  [](https://www.nvidia.com/en-us/industries/robotics/)
+  Robotic Simulation
+
+  Innovative solutions to take on your robotics, edge, and vision AI challenges
+
+  [](https://www.nvidia.com/en-us/high-performance-computing/scientific-visualization/)
+  Scientific Visualization
+
+  Enablies researchers to visualize their large datasets at interactive speeds
+
+  [](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/)
+  Vehicle Simulation
+
+  AI-defined vehicles are transforming the future of mobility
+
+  [](https://www.nvidia.com/en-us/design-visualization/solutions/virtual-reality/)
+  Extended Reality
+
+  Transform workflows with immersive, scalable interactions in virtual environments
+
+  High-Performance Computing
+  [](https://www.nvidia.com/en-us/high-performance-computing/)
+  Overview
+
+  Discover NVIDIA’s HPC solutions for AI, simulation, and accelerated computing
+
+  [](https://www.nvidia.com/en-us/high-performance-computing/hpc-and-ai/)
+  HPC and AI
+
+  Boost accuracy with GPU-accelerating HPC and AI
+
+  [](https://www.nvidia.com/en-us/high-performance-computing/scientific-visualization/)
+  Scientific Visualization
+
+  Enables researchers to visualize large datasets at interactive speeds
+
+  [](https://www.nvidia.com/en-us/high-performance-computing/simulation-and-modeling/)
+  Simulation and Modeling
+
+  Accelerate simulation workloads
+
+  [](https://www.nvidia.com/en-us/solutions/quantum-computing/)
+  Quantum Computing
+
+  Fast-tracking the advancement of scientific innovations with QPUs
+
+  Robotics and Edge AI
+  [](https://www.nvidia.com/en-us/industries/robotics/)
+  Overview
+
+  Innovative solutions to take on robotics, edge, and vision AI challenges
+
+  [](https://www.nvidia.com/en-us/industries/robotics/)
+  Robotics
+
+  GPU-accelerated advances in AI perception, simulation, and software
+
+  [](https://www.nvidia.com/en-us/edge-computing/)
+  Edge AI
+
+  Bring the power of NVIDIA AI to the edge for real-time decision-making solutions
+
+  [](https://www.nvidia.com/en-us/autonomous-machines/intelligent-video-analytics-platform/)
+  Vision AI
+
+  Transform data into valuable insights using vision AI
+
+  [](https://www.nvidia.com/en-us/industries/telecommunications/ai-grid/)
+  AI Grid
+
+  Scale AI-native services efficiently across connected, distributed AI infrastructure
+
+  Autonomous Vehicles
+  [](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/)
+  Overview
+
+  AI-enhanced vehicles are transforming the future of mobility
+
+  [](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/alpamayo/)
+  Open Source AV Models and Tools
+
+  For reasoning-based AV systems
+
+  [](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/simulation/)
+  AV Simulation
+
+  Explore high-fidelity sensor simulation for safe autonomous vehicle development
+
+  [](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/drive-hyperion/)
+  Reference Architecture
+
+  Enables vehicles to be L4-ready
+
+  [](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/ai-training/)
+  Infrastructure
+
+  Essential data center tools for safe autonomous vehicle development
+
+  [](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/in-vehicle-computing/)
+  In-Vehicle Computing
+
+  Develop automated driving functions and immersive in-cabin experiences
+
+  [](https://www.nvidia.com/en-us/ai-trust-center/halos/autonomous-vehicles/)
+  Safety
+
+  State-of-the-art system for AV safety, from the cloud to the car
+- Industries
+  Industries
+  [](https://www.nvidia.com/en-us/industries/)
+  Overview
+
+  [](https://www.nvidia.com/en-us/industries/aec/)
+  Architecture, Engineering, Construction & Operations
+
+  [](https://www.nvidia.com/en-us/industries/automotive/)
+  Automotive
+
+  [](https://www.nvidia.com/en-us/industries/energy/)
+  Energy
+
+  [](https://www.nvidia.com/en-us/industries/finance/)
+  Financial Services
+
+  [](https://www.nvidia.com/en-us/industries/government/)
+  Government
+
+  [](https://www.nvidia.com/en-us/industries/healthcare-life-sciences/)
+  Healthcare and Life Sciences
+
+  [](https://www.nvidia.com/en-us/industries/higher-education-research/)
+  Higher Education
+
+  [](https://www.nvidia.com/en-us/industries/industrial-sector/)
+  Industrial Sector
+
+  [](https://www.nvidia.com/en-us/industries/media-and-entertainment/)
+  Media and Entertainment
+
+  [](https://www.nvidia.com/en-us/industries/restaurants/)
+  Restaurants
+
+  [](https://www.nvidia.com/en-us/industries/retail/)
+  Retail and CPG
+
+  [](https://www.nvidia.com/en-us/industries/robotics/)
+  Robotics
+
+  [](https://www.nvidia.com/en-us/industries/semiconductor/)
+  Semiconductor
+
+  [](https://www.nvidia.com/en-us/industries/telecommunications/)
+  Telecommunications
+- 
+
+&nbsp;
+
+- [Shop](https://marketplace.nvidia.com/en-us/)
+- [Drivers](https://www.nvidia.com/en-us/drivers/)
+- [Support](https://www.nvidia.com/en-us/support/)
+
+- 
+
+- [![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ibjI0LWljb24gbWVnYS1uYXYtY2xvc2UtbWVudS1pY29uIiBhcmlhLWxhYmVsbGVkYnk9InNlYXJjaCI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8dXNlIHhsaW5rOmhyZWY9IiNuMjQtY2xvc2UiIC8+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvc3ZnPg==)](#)
+
+- [![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ibjI0LWljb24gbmF2LXNlYXJjaC1pY29uIiBhcmlhLWxhYmVsbGVkYnk9InNlYXJjaCI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI24yNC1zZWFyY2giIC8+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9zdmc+)](#)
+
+- [![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdib3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNNC42NTAwMyAxMC41QzQuNTUxNjUgMTAuOTg0NyA0LjUgMTEuNDg2MyA0LjUgMTJDNC41IDEyLjUxMzcgNC41NTE2NSAxMy4wMTUzIDQuNjUwMDMgMTMuNUg3LjU1OTM1QzcuNTIwMjMgMTMuMDExMyA3LjUgMTIuNTEgNy41IDEyQzcuNSAxMS40OSA3LjUyMDIzIDEwLjk4ODcgNy41NTkzNSAxMC41SDQuNjUwMDNaTTUuMTI0MDcgOUg3Ljc0NDQ4QzcuOTQzNjkgNy44MjEyNCA4LjI1ODQxIDYuNzUxNzcgOC42NjU1NyA1Ljg1NjAyQzguNzgzOTUgNS41OTU2IDguOTE0MyA1LjM0MTc1IDkuMDU2NDkgNS4wOTk2NkM3LjMwMDEgNS44NDk4NiA1Ljg4ODIyIDcuMjUxMDUgNS4xMjQwNyA5Wk0xMiAzQzcuMDI5NDQgMyAzIDcuMDI5NDQgMyAxMkMzIDE2Ljk3MDYgNy4wMjk0NCAyMSAxMiAyMUMxNi45NzA2IDIxIDIxIDE2Ljk3MDYgMjEgMTJDMjEgNy4wMjk0NCAxNi45NzA2IDMgMTIgM1pNMTIgNC41QzExLjQzOTQgNC41IDEwLjY4NjkgNS4wMzQxMiAxMC4wMzExIDYuNDc2NzJDOS43MTA5IDcuMTgxMjEgOS40NDgxMiA4LjAzNzIzIDkuMjY3OTkgOUgxNC43MzJDMTQuNTUxOSA4LjAzNzIzIDE0LjI4OTEgNy4xODEyMSAxMy45Njg5IDYuNDc2NzJDMTMuMzEzMSA1LjAzNDEyIDEyLjU2MDYgNC41IDEyIDQuNVpNMTYuMjU1NSA5QzE2LjA1NjMgNy44MjEyNCAxNS43NDE2IDYuNzUxNzcgMTUuMzM0NCA1Ljg1NjAyQzE1LjIxNjEgNS41OTU2IDE1LjA4NTcgNS4zNDE3NSAxNC45NDM1IDUuMDk5NjZDMTYuNjk5OSA1Ljg0OTg2IDE4LjExMTggNy4yNTEwNSAxOC44NzU5IDlIMTYuMjU1NVpNMTQuOTM1NSAxMC41SDkuMDY0NTRDOS4wMjIzMiAxMC45ODM3IDkgMTEuNDg1MSA5IDEyQzkgMTIuNTE0OSA5LjAyMjMyIDEzLjAxNjMgOS4wNjQ1NCAxMy41SDE0LjkzNTVDMTQuOTc3NyAxMy4wMTYzIDE1IDEyLjUxNDkgMTUgMTJDMTUgMTEuNDg1MSAxNC45Nzc3IDEwLjk4MzcgMTQuOTM1NSAxMC41Wk0xNi40NDA3IDEzLjVDMTYuNDc5OCAxMy4wMTEzIDE2LjUgMTIuNTEgMTYuNSAxMkMxNi41IDExLjQ5IDE2LjQ3OTggMTAuOTg4NyAxNi40NDA3IDEwLjVIMTkuMzVDMTkuNDQ4NCAxMC45ODQ3IDE5LjUgMTEuNDg2MyAxOS41IDEyQzE5LjUgMTIuNTEzNyAxOS40NDg0IDEzLjAxNTMgMTkuMzUgMTMuNUgxNi40NDA3Wk0xNC43MzIgMTVIOS4yNjc5OUM5LjQ0ODEyIDE1Ljk2MjggOS43MTA5IDE2LjgxODggMTAuMDMxMSAxNy41MjMzQzEwLjY4NjkgMTguOTY1OSAxMS40Mzk0IDE5LjUgMTIgMTkuNUMxMi41NjA2IDE5LjUgMTMuMzEzMSAxOC45NjU5IDEzLjk2ODkgMTcuNTIzM0MxNC4yODkxIDE2LjgxODggMTQuNTUxOSAxNS45NjI4IDE0LjczMiAxNVpNMTQuOTQzNSAxOC45MDAzQzE1LjA4NTcgMTguNjU4MyAxNS4yMTYxIDE4LjQwNDQgMTUuMzM0NCAxOC4xNDRDMTUuNzQxNiAxNy4yNDgyIDE2LjA1NjMgMTYuMTc4OCAxNi4yNTU1IDE1SDE4Ljg3NTlDMTguMTExOCAxNi43NDkgMTYuNjk5OSAxOC4xNTAxIDE0Ljk0MzUgMTguOTAwM1pNOS4wNTY0OCAxOC45MDAzQzguOTE0MyAxOC42NTgzIDguNzgzOTUgMTguNDA0NCA4LjY2NTU3IDE4LjE0NEM4LjI1ODQxIDE3LjI0ODIgNy45NDM2OSAxNi4xNzg4IDcuNzQ0NDggMTVINS4xMjQwN0M1Ljg4ODIyIDE2Ljc0OSA3LjMwMDEgMTguMTUwMSA5LjA1NjQ4IDE4LjkwMDNaIiBmaWxsPSIjNUU1RTVFIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuMiIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9zdmc+) US](#)
+
+- - [](# "Sign In")
+    Sign In
+
+    [](https://www.nvidia.com/en-us/account/edit-profile/)
+
+    NVIDIA Account
+
+    [](https://buy.nvidia.com/store/nvidia/en_US/help/ThemeID.326200)
+
+    NVIDIA Store Account
+
+    [](/)
+
+    Logout
+
+- [Log In](#) [LogOut](#)
+
+[Skip to main content](#page-content)
+
+-  ![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ibjI0LWljb24gbWVnYS1uYXYtb3Blbi1tZW51LWljb24iPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8dXNlIHhsaW5rOmhyZWY9IiNuMjQtbWVudSIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L3N2Zz4=) ![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ibjI0LWljb24gbWVnYS1uYXYtY2xvc2UtbWVudS1pY29uIj4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHVzZSB4bGluazpocmVmPSIjbjI0LWNsb3NlIiAvPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvc3ZnPg==)
+
+- [![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ibjI0LWljb24gbWVnYS1uYXYtY2xvc2UtbWVudS1pY29uIiBhcmlhLWxhYmVsbGVkYnk9InNlYXJjaCI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8dXNlIHhsaW5rOmhyZWY9IiNuMjQtY2xvc2UiIC8+CiAgICAgICAgICAgICAgICAgICAgICAgIDwvc3ZnPg==)](#)
+
+- [![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ibjI0LWljb24gbmF2LXNlYXJjaC1pY29uIj4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI24yNC1zZWFyY2giIC8+CiAgICAgICAgICAgICAgICAgICAgICAgIDwvc3ZnPg==)](#)
+
+- [![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMTciIGhlaWdodD0iMzUiIHZpZXdib3g9IjAgMCAxMTcgMzUiIGZpbGw9Im5vbmUiPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8dGl0bGU+QXJ0aWZpY2lhbCBJbnRlbGxpZ2VuY2UgQ29tcHV0aW5nIExlYWRlcnNoaXAgZnJvbSBOVklESUE8L3RpdGxlPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8cGF0aCBkPSJNNjYuNDIwMSAxNS40NzZWMjkuMjM4SDcwLjI0MzdWMTUuNDc2SDY2LjQyMDFaTTM2LjM0NzcgMTUuNDU3M1YyOS4yMzhINDAuMjA0NVYxOC41NDA4TDQzLjIxMzQgMTguNTUxM0M0NC4yMDI2IDE4LjU1MTMgNDQuODg3NyAxOC43OTI4IDQ1LjM2MzkgMTkuMzA5N0M0NS45Njg2IDE5Ljk2NTMgNDYuMjE1NCAyMS4wMjEyIDQ2LjIxNTQgMjIuOTUzMlYyOS4yMzhINDkuOTUxOFYyMS42MjQzQzQ5Ljk1MTggMTYuMTkgNDYuNTQ0NyAxNS40NTczIDQzLjIxMjIgMTUuNDU3M0gzNi4zNDc3Wk03Mi41NzU1IDE1LjQ3NlYyOS4yMzY4SDc4Ljc3NTdDODIuMDc5NSAyOS4yMzY4IDgzLjE1NyAyOC42NzggODQuMzI0MSAyNy40MjYyQzg1LjE0OCAyNi41NDY1IDg1LjY4MDQgMjQuNjE2OCA4NS42ODA0IDIyLjUwNzVDODUuNjgwNCAyMC41NzMyIDg1LjIyOTUgMTguODQ3NyA4NC40NDM0IDE3Ljc3MzJDODMuMDI3MyAxNS44NTE3IDgwLjk4NyAxNS40NzYgNzcuOTQwMyAxNS40NzZINzIuNTc1NVpNNzYuMzY3IDE4LjQ3Mkg3OC4wMTAzQzgwLjM5NDkgMTguNDcyIDgxLjkzNzIgMTkuNTYwNSA4MS45MzcyIDIyLjM4NUM4MS45MzcyIDI1LjIwOTUgODAuMzk0OSAyNi4yOTkyIDc4LjAxMDMgMjYuMjk5Mkg3Ni4zNjdWMTguNDcyWk02MC45MDg1IDE1LjQ3Nkw1Ny43MTgzIDI2LjM4Mkw1NC42NjEzIDE1LjQ3Nkg1MC41MzQ3TDU0LjkwMTEgMjkuMjM2OEg2MC40MTA0TDY0LjgxMTMgMTUuNDc2SDYwLjkwOTZINjAuOTA4NVpNODcuNDU5MSAyOS4yMzY4SDkxLjI4MjdWMTUuNDc2SDg3LjQ1OFYyOS4yMzY4SDg3LjQ1OTFaTTk4LjE3NiAxNS40ODA3TDkyLjgzNzcgMjkuMjMyMkg5Ni42MDczTDk3LjQ1MTkgMjYuODAySDEwMy43NjlMMTA0LjU2OSAyOS4yMzIySDEwOC42NjFMMTAzLjI4MyAxNS40Nzk1SDk4LjE3NlYxNS40ODA3Wk0xMDAuNjU3IDE3Ljk5MDJMMTAyLjk3MyAyNC40MzI1SDk4LjI2NzhMMTAwLjY1NyAxNy45OTAyWiIgZmlsbD0iYmxhY2siIC8+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMS42OTI1IDE3Ljc2OTdWMTUuODc2MkMxMS44NzM4IDE1Ljg2MzMgMTIuMDU2MyAxNS44NTI4IDEyLjI0MjIgMTUuODQ3QzE3LjMzNzIgMTUuNjgzNyAyMC42OCAyMC4yOTc4IDIwLjY4IDIwLjI5NzhDMjAuNjggMjAuMjk3OCAxNy4wNjk5IDI1LjM5NjIgMTMuMTk5MiAyNS4zOTYyQzEyLjY0MTUgMjUuMzk2MiAxMi4xNDIzIDI1LjMwNTIgMTEuNjkyNSAyNS4xNTExVjE5LjQwNzdDMTMuNjc2NiAxOS42NTE1IDE0LjA3NDggMjAuNTQxNyAxNS4yNjcxIDIyLjU2MjNMMTcuOTE5IDIwLjI4ODVDMTcuOTE5IDIwLjI4ODUgMTUuOTgzMSAxNy43MDY3IDEyLjcxOTUgMTcuNzA2N0MxMi4zNjQ5IDE3LjcwNjcgMTIuMDI1MyAxNy43MzIzIDExLjY5MTMgMTcuNzY4NUwxMS42OTI1IDE3Ljc2OTdaTTExLjY5MTMgMTEuNTEyOFYxNC4zNDJDMTEuODczOCAxNC4zMjY4IDEyLjA1NzQgMTQuMzE1MiAxMi4yNDEgMTQuMzA4MkMxOS4zMjU5IDE0LjA2NTUgMjMuOTQyNSAyMC4yMTYyIDIzLjk0MjUgMjAuMjE2MkMyMy45NDI1IDIwLjIxNjIgMTguNjQwOCAyNi43NzA1IDEzLjExNjYgMjYuNzcwNUMxMi42MTA1IDI2Ljc3MDUgMTIuMTM2NiAyNi43MjI3IDExLjY5MTMgMjYuNjQzM1YyOC4zOTIyQzEyLjA3MjMgMjguNDQxMiAxMi40NjcxIDI4LjQ3MDMgMTIuODc3OSAyOC40NzAzQzE4LjAxNzcgMjguNDcwMyAyMS43MzU4IDI1LjgwMjEgMjUuMzM1NiAyMi42NDI4QzI1LjkzMjMgMjMuMTI4MSAyOC4zNzU0IDI0LjMxIDI4Ljg3ODEgMjQuODI4QzI1LjQ1NDkgMjcuNzQxMiAxNy40Nzk1IDMwLjA4ODUgMTIuOTU3MSAzMC4wODg1QzEyLjUyMSAzMC4wODg1IDEyLjEwMjIgMzAuMDYxNyAxMS42OTEzIDMwLjAyMlYzMi40NzlIMzEuMjI4MlYxMS41MTRIMTEuNjkyNUwxMS42OTEzIDExLjUxMjhaTTExLjY5MTMgMjUuMTVWMjYuNjQzM0M2LjkzNzA4IDI1Ljc4MTIgNS42MTc0IDIwLjc1NzUgNS42MTc0IDIwLjc1NzVDNS42MTc0IDIwLjc1NzUgNy44OTk4NiAxOC4xODYyIDExLjY5MTMgMTcuNzY5N1YxOS40MDc3QzExLjY5MTMgMTkuNDA3NyAxMS42ODY3IDE5LjQwNzcgMTEuNjg0NSAxOS40MDc3QzkuNjk0NjIgMTkuMTY1IDguMTQwODUgMjEuMDU1IDguMTQwODUgMjEuMDU1QzguMTQwODUgMjEuMDU1IDkuMDExODMgMjQuMjM2NSAxMS42OTI1IDI1LjE1MjNMMTEuNjkxMyAyNS4xNVpNMy4yNDg4OCAyMC41NDE3QzMuMjQ4ODggMjAuNTQxNyA2LjA2NjA5IDE2LjMxNDggMTEuNjkyNSAxNS44NzczVjE0LjM0NDNDNS40NjEzNCAxNC44NTMgMC4wNjQ0NTMxIDIwLjIxODUgMC4wNjQ0NTMxIDIwLjIxODVDMC4wNjQ0NTMxIDIwLjIxODUgMy4xMjAzNiAyOS4yMDE4IDExLjY5MjUgMzAuMDI0M1YyOC4zOTQ1QzUuNDAxNjcgMjcuNTg5NSAzLjI0ODg4IDIwLjU0MTcgMy4yNDg4OCAyMC41NDE3WiIgZmlsbD0iIzc2QjkwMCIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L3N2Zz4=)](https://www.nvidia.com/en-us/ "Artificial Intelligence Computing Leadership from NVIDIA")
+
+- 0 [![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ibjI0LWljb24gbnZjYXJ0aWNvbiBuMjQtY2FydCIgc3R5bGUgYXJpYS1sYWJlbGxlZGJ5PSJzaG9wcGluZ19jYXJ0Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI24yNC1jYXJ0IiAvPgogICAgICAgICAgICAgICAgICAgICAgICA8L3N2Zz4=)](/)
+
+- [![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdib3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNNC42NTAwMyAxMC41QzQuNTUxNjUgMTAuOTg0NyA0LjUgMTEuNDg2MyA0LjUgMTJDNC41IDEyLjUxMzcgNC41NTE2NSAxMy4wMTUzIDQuNjUwMDMgMTMuNUg3LjU1OTM1QzcuNTIwMjMgMTMuMDExMyA3LjUgMTIuNTEgNy41IDEyQzcuNSAxMS40OSA3LjUyMDIzIDEwLjk4ODcgNy41NTkzNSAxMC41SDQuNjUwMDNaTTUuMTI0MDcgOUg3Ljc0NDQ4QzcuOTQzNjkgNy44MjEyNCA4LjI1ODQxIDYuNzUxNzcgOC42NjU1NyA1Ljg1NjAyQzguNzgzOTUgNS41OTU2IDguOTE0MyA1LjM0MTc1IDkuMDU2NDkgNS4wOTk2NkM3LjMwMDEgNS44NDk4NiA1Ljg4ODIyIDcuMjUxMDUgNS4xMjQwNyA5Wk0xMiAzQzcuMDI5NDQgMyAzIDcuMDI5NDQgMyAxMkMzIDE2Ljk3MDYgNy4wMjk0NCAyMSAxMiAyMUMxNi45NzA2IDIxIDIxIDE2Ljk3MDYgMjEgMTJDMjEgNy4wMjk0NCAxNi45NzA2IDMgMTIgM1pNMTIgNC41QzExLjQzOTQgNC41IDEwLjY4NjkgNS4wMzQxMiAxMC4wMzExIDYuNDc2NzJDOS43MTA5IDcuMTgxMjEgOS40NDgxMiA4LjAzNzIzIDkuMjY3OTkgOUgxNC43MzJDMTQuNTUxOSA4LjAzNzIzIDE0LjI4OTEgNy4xODEyMSAxMy45Njg5IDYuNDc2NzJDMTMuMzEzMSA1LjAzNDEyIDEyLjU2MDYgNC41IDEyIDQuNVpNMTYuMjU1NSA5QzE2LjA1NjMgNy44MjEyNCAxNS43NDE2IDYuNzUxNzcgMTUuMzM0NCA1Ljg1NjAyQzE1LjIxNjEgNS41OTU2IDE1LjA4NTcgNS4zNDE3NSAxNC45NDM1IDUuMDk5NjZDMTYuNjk5OSA1Ljg0OTg2IDE4LjExMTggNy4yNTEwNSAxOC44NzU5IDlIMTYuMjU1NVpNMTQuOTM1NSAxMC41SDkuMDY0NTRDOS4wMjIzMiAxMC45ODM3IDkgMTEuNDg1MSA5IDEyQzkgMTIuNTE0OSA5LjAyMjMyIDEzLjAxNjMgOS4wNjQ1NCAxMy41SDE0LjkzNTVDMTQuOTc3NyAxMy4wMTYzIDE1IDEyLjUxNDkgMTUgMTJDMTUgMTEuNDg1MSAxNC45Nzc3IDEwLjk4MzcgMTQuOTM1NSAxMC41Wk0xNi40NDA3IDEzLjVDMTYuNDc5OCAxMy4wMTEzIDE2LjUgMTIuNTEgMTYuNSAxMkMxNi41IDExLjQ5IDE2LjQ3OTggMTAuOTg4NyAxNi40NDA3IDEwLjVIMTkuMzVDMTkuNDQ4NCAxMC45ODQ3IDE5LjUgMTEuNDg2MyAxOS41IDEyQzE5LjUgMTIuNTEzNyAxOS40NDg0IDEzLjAxNTMgMTkuMzUgMTMuNUgxNi40NDA3Wk0xNC43MzIgMTVIOS4yNjc5OUM5LjQ0ODEyIDE1Ljk2MjggOS43MTA5IDE2LjgxODggMTAuMDMxMSAxNy41MjMzQzEwLjY4NjkgMTguOTY1OSAxMS40Mzk0IDE5LjUgMTIgMTkuNUMxMi41NjA2IDE5LjUgMTMuMzEzMSAxOC45NjU5IDEzLjk2ODkgMTcuNTIzM0MxNC4yODkxIDE2LjgxODggMTQuNTUxOSAxNS45NjI4IDE0LjczMiAxNVpNMTQuOTQzNSAxOC45MDAzQzE1LjA4NTcgMTguNjU4MyAxNS4yMTYxIDE4LjQwNDQgMTUuMzM0NCAxOC4xNDRDMTUuNzQxNiAxNy4yNDgyIDE2LjA1NjMgMTYuMTc4OCAxNi4yNTU1IDE1SDE4Ljg3NTlDMTguMTExOCAxNi43NDkgMTYuNjk5OSAxOC4xNTAxIDE0Ljk0MzUgMTguOTAwM1pNOS4wNTY0OCAxOC45MDAzQzguOTE0MyAxOC42NTgzIDguNzgzOTUgMTguNDA0NCA4LjY2NTU3IDE4LjE0NEM4LjI1ODQxIDE3LjI0ODIgNy45NDM2OSAxNi4xNzg4IDcuNzQ0NDggMTVINS4xMjQwN0M1Ljg4ODIyIDE2Ljc0OSA3LjMwMDEgMTguMTUwMSA5LjA1NjQ4IDE4LjkwMDNaIiBmaWxsPSIjNUU1RTVFIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuMiIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9zdmc+) US](#)
+
+-  ![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ibjI0LWljb24gbWVnYS1uYXYtY2xvc2UtbWVudS1pY29uIj48dXNlIHhsaW5rOmhyZWY9IiNuMjQtY2xvc2UiIC8+PC9zdmc+)
+
+- [](# "Sign In")
+  Sign In
+
+  [](https://www.nvidia.com/en-us/account/edit-profile/)
+
+  NVIDIA Account
+
+  [](https://buy.nvidia.com/store/nvidia/en_US/help/ThemeID.326200)
+
+  NVIDIA Store Account
+
+  [](/)
+
+  Logout
+
+- [Login](#) [LogOut](#)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJoaWRlIiBzdHlsZT0iZGlzcGxheTogbm9uZTsiPgoKICAgICAgICAgICAgPHN5bWJvbCBpZD0ibjI0LW52aWRpYS1sb2dvIiB2aWV3Ym94PSIwIDAgMTA4LjQ3MiAyMCI+CiAgICAgICAgICAgICAgICA8dGl0bGUgaWQ9Im52aWRpYV9sb2dvIj5OVklESUE8L3RpdGxlPgogICAgICAgICAgICAgICAgPGRlc2M+TlZJRElBIGxvZ288L2Rlc2M+CiAgICAgICAgICAgICAgICA8cGF0aCBpZD0ibnZpZGlhLWxvZ28tcmVnIiBkPSJNMTA3Mi42MjgsMjUzLjkxOHYtLjNoLjE5MmMuMTA1LDAsLjI0OC4wMDguMjQ4LjEzNnMtLjA3My4xNjMtLjIuMTYzaC0uMjQzbTAsLjIxMWguMTI5bC4zLjUyNGguMzI3bC0uMzMtLjU0NWEuMy4zLDAsMCwwLC4zMTEtLjMyM2MwLS4yODUtLjItLjM3Ny0uNTMtLjM3N2gtLjQ4MnYxLjI0NWguMjc2di0uNTI0bTEuNC0uMWExLjIsMS4yLDAsMSwwLTEuMiwxLjE1NywxLjE0LDEuMTQsMCwwLDAsMS4yLTEuMTU3bS0uMzQ3LDBhLjg1NC44NTQsMCwwLDEtLjg1NS44OTF2MGEuODg5Ljg4OSwwLDEsMSwuODU1LS44ODdaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtOTY1LjU1NyAtMjM3Ljg3OCkiIC8+CiAgICAgICAgICAgICAgICA8cGF0aCBpZD0ibnZpZGlhLWxvZ28tTlZJRElBIiBkPSJNNDYzLjksMTUxLjkzNHYxMy4xMjdoMy43MDdWMTUxLjkzNFptLTI5LjE2NC0uMDE4djEzLjE0NWgzLjc0di0xMC4ybDIuOTE4LjAxYTIuNjc0LDIuNjc0LDAsMCwxLDIuMDg2LjcyNGMuNTg2LjYyNS44MjYsMS42MzIuODI2LDMuNDc2djUuOTk1aDMuNjI0VjE1Ny44YzAtNS4xODMtMy4zLTUuODgyLTYuNTM2LTUuODgyWm0zNS4xMzQuMDE4djEzLjEyN2g2LjAxM2MzLjIsMCw0LjI0OS0uNTMzLDUuMzgtMS43MjdhNy4zNTIsNy4zNTIsMCwwLDAsMS4zMTYtNC42OTIsNy43ODksNy43ODksMCwwLDAtMS4yLTQuNTE2Yy0xLjM3My0xLjgzMy0zLjM1Mi0yLjE5MS02LjMwNi0yLjE5MVptMy42NzcsMi44NThoMS41OTRjMi4zMTIsMCwzLjgwOCwxLjAzOSwzLjgwOCwzLjczM3MtMS41LDMuNzM0LTMuODA4LDMuNzM0aC0xLjU5NFptLTE0Ljk5Mi0yLjg1OC0zLjA5NCwxMC40LTIuOTY1LTEwLjRoLTRsNC4yMzQsMTMuMTI3aDUuMzQzbDQuMjY3LTEzLjEyN1ptMjUuNzQ5LDEzLjEyN2gzLjcwOFYxNTEuOTM1aC0zLjcwOVpNNDk0LjcsMTUxLjkzOWwtNS4xNzcsMTMuMTE3aDMuNjU2bC44MTktMi4zMThoNi4xMjZsLjc3NSwyLjMxOGgzLjk2OWwtNS4yMTYtMTMuMTE4Wm0yLjQwNywyLjM5MywyLjI0Niw2LjE0NWgtNC41NjJaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzk5LjU1MSAtMTQ4LjE1NSkiIC8+CiAgICAgICAgICAgICAgICA8cGF0aCBpZD0ibnZpZGlhLWxvZ28tZXllLW1hcmsiIGRhdGEtbmFtZT0iRXllIE1hcmsiIGQ9Ik0xMjkuODMyLDEyNC4wODV2LTEuODA3Yy4xNzUtLjAxMy4zNTMtLjAyMi41MzMtLjAyOCw0Ljk0MS0uMTU1LDguMTgzLDQuMjQ2LDguMTgzLDQuMjQ2cy0zLjUsNC44NjMtNy4yNTUsNC44NjNhNC41NTMsNC41NTMsMCwwLDEtMS40NjEtLjIzNHYtNS40NzhjMS45MjQuMjMyLDIuMzEsMS4wODIsMy40NjcsMy4wMWwyLjU3Mi0yLjE2OWE2LjgxLDYuODEsMCwwLDAtNS4wNDItMi40NjIsOS4zMjgsOS4zMjgsMCwwLDAtMSwuMDU5bTAtNS45Njh2Mi43Yy4xNzctLjAxNC4zNTUtLjAyNS41MzMtLjAzMiw2Ljg3MS0uMjMyLDExLjM0OCw1LjYzNSwxMS4zNDgsNS42MzVzLTUuMTQyLDYuMjUzLTEwLjUsNi4yNTNhNy45MDYsNy45MDYsMCwwLDEtMS4zODMtLjEyMnYxLjY2OGE5LjEsOS4xLDAsMCwwLDEuMTUxLjA3NWM0Ljk4NSwwLDguNTktMi41NDYsMTIuMDgxLTUuNTU5LjU3OC40NjMsMi45NDgsMS41OTEsMy40MzUsMi4wODUtMy4zMTksMi43NzgtMTEuMDU1LDUuMDE4LTE1LjQ0LDUuMDE4LS40MjMsMC0uODI5LS4wMjYtMS4yMjgtLjA2NHYyLjM0NGgxOC45NDd2LTIwWm0wLDEzLjAwOXYxLjQyNGMtNC42MTEtLjgyMi01Ljg5LTUuNjE1LTUuODktNS42MTVhOS45NjcsOS45NjcsMCwwLDEsNS44OS0yLjg1djEuNTYzaC0uMDA3YTQuNDI0LDQuNDI0LDAsMCwwLTMuNDM3LDEuNTcxcy44NDUsMy4wMzUsMy40NDQsMy45MDhtLTguMTg5LTQuNGExMS40MTksMTEuNDE5LDAsMCwxLDguMTg5LTQuNDQ5di0xLjQ2M2MtNi4wNDMuNDg1LTExLjI3Nyw1LjYtMTEuMjc3LDUuNnMyLjk2NCw4LjU2OSwxMS4yNzcsOS4zNTR2LTEuNTU1QzEyMy43MzEsMTMzLjQ1MSwxMjEuNjQzLDEyNi43MjgsMTIxLjY0MywxMjYuNzI4WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTExOC41NTUgLTExOC4xMTcpIiBmaWxsPSIjNzRiNzFiIiAvPgogICAgICAgICAgICA8L3N5bWJvbD4KICAgICAgICA8L3N2Zz4=)
+
+Products
+
+Cloud Services
+
+[](https://www.nvidia.com/en-us/data-center/dgx-cloud/)
+
+DGX Cloud
+
+NVIDIA’s AI factory in the cloud
+
+[](https://build.nvidia.com/)
+
+NVIDIA APIs
+
+Explore, test, and deploy AI models and agents
+
+[](https://docs.nvidia.com/ngc/latest/ngc-private-registry-user-guide.html)
+
+Private Registry
+
+Guide for using NVIDIA NGC private registry with GPU cloud
+
+[](https://www.nvidia.com/en-us/gpu-cloud/)
+
+NVIDIA NGC
+
+Accelerated, containerized AI models and SDKs
+
+[](https://www.nvidia.com/en-us/data-center/products/dsx/)
+
+DSX Platform
+
+Build AI factories optimized for lowest cost tokens per megawatt
+
+[](https://www.nvidia.com/en-us/data-center/virtual-solutions/)
+
+Virtual GPU
+
+Virtual solutions for scalable, high-performance computing
+
+Creating
+
+[](https://www.nvidia.com/en-us/studio/)
+
+NVIDIA Studio
+
+High performance GeForce RTX PCs, purpose-built for creators
+
+[](https://www.nvidia.com/en-us/geforce/broadcasting/)
+
+NVIDIA Broadcast App
+
+AI-enhanced voice and video for next-level streams, videos, and calls
+
+[](https://www.nvidia.com/en-us/software/nvidia-app/)
+
+NVIDIA App and Studio Drivers
+
+Optimize gaming, streaming, and AI-powered creativity
+
+[](https://www.nvidia.com/en-us/ai-on-rtx/)
+
+RTX AI PCs
+
+AI PCs for gaming, creating, productivity and development
+
+[](https://www.nvidia.com/en-us/geforce/rtx-remix/)
+
+RTX Remix
+
+Create RTX remasters of classic games with open-source AI
+
+[](https://www.nvidia.com/en-us/software/nvidia-app/g-assist/)
+
+Project G-Assist
+
+AI assistant to optimize and control your GeForce RTX PC
+
+Data Center
+
+[](https://www.nvidia.com/en-us/data-center/products/)
+
+Overview
+
+Modernizing data centers with AI and accelerated computing
+
+[](https://www.nvidia.com/en-us/data-center/dgx-platform/)
+
+DGX Platform
+
+Enterprise AI factory for model development and deployment
+
+[](https://www.nvidia.com/en-us/data-center/grace-cpu/)
+
+Grace CPU
+
+Architecture for data centers that transform data into intelligence
+
+[](https://www.nvidia.com/en-us/data-center/hgx/)
+
+HGX Platform
+
+A supercomputer purpose-built for AI and HPC
+
+[](https://www.nvidia.com/en-us/edge-computing/products/igx/)
+
+IGX Platform
+
+Advanced functional safety and security for edge AI
+
+[](https://www.nvidia.com/en-us/data-center/products/mgx/)
+
+MGX Platform
+
+Accelerated computing with modular servers
+
+[](https://www.nvidia.com/en-us/data-center/products/ovx/)
+
+OVX Systems
+
+Scalable data center infrastructure for high-performance AI
+
+[](https://www.nvidia.com/en-us/data-center/products/dsx/)
+
+DSX Platform
+
+Build AI factories optimized for lowest cost tokens per megawatt
+
+Embedded Systems
+
+[](https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/)
+
+Jetson
+
+Leading platform for autonomous machines and embedded applications
+
+[](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/in-vehicle-computing/)
+
+DRIVE AGX
+
+Powerful in-vehicle computing for AI-driven autonomous vehicle systems
+
+[](https://www.nvidia.com/en-us/edge-computing/products/igx/)
+
+IGX Platform
+
+Advanced functional safety and security for edge AI
+
+Gaming
+
+[](https://www.nvidia.com/en-us/geforce/)
+
+GeForce
+
+Explore graphics cards, gaming solutions, AI technology, and more
+
+[](https://www.nvidia.com/en-us/geforce/graphics-cards/)
+
+GeForce Graphics Cards
+
+RTX graphics cards bring game-changing AI capabilities
+
+[](https://www.nvidia.com/en-us/geforce/laptops/)
+
+Gaming Laptops
+
+Thinnest and longest lasting RTX laptops, optimized by Max-Q
+
+[](https://www.nvidia.com/en-us/geforce/products/g-sync-monitors/)
+
+G-SYNC Monitors
+
+Smooth, tear-free gaming with NVIDIA G-SYNC monitors
+
+[](https://www.nvidia.com/en-us/geforce/technologies/dlss/)
+
+DLSS
+
+Neural rendering tech boosts FPS and enhances image quality
+
+[](https://www.nvidia.com/en-us/geforce/technologies/reflex/)
+
+Reflex
+
+Ultimate responsiveness for faster reactions and better aim
+
+[](https://www.nvidia.com/en-us/geforce/rtx-remix/)
+
+RTX Remix
+
+Create RTX remasters of classic games with open-source AI
+
+[](https://www.nvidia.com/en-us/software/nvidia-app/g-assist/)
+
+Project G-Assist
+
+AI assistant to optimize and control your GeForce RTX PC
+
+[](https://www.nvidia.com/en-us/geforce-now/)
+
+GeForce NOW Cloud Gaming
+
+RTX-powered cloud gaming. Choose from 3 memberships
+
+[](https://www.nvidia.com/en-us/software/nvidia-app/)
+
+NVIDIA App and Game Ready Drivers
+
+Optimize gaming, streaming, and AI-powered creativity
+
+[](https://www.nvidia.com/en-us/geforce/broadcasting/)
+
+NVIDIA Broadcast App
+
+AI-enhanced voice and video for next-level streams, videos, and calls
+
+[](https://www.nvidia.com/en-us/shield/)
+
+SHIELD TV
+
+World-class streaming media performance
+
+Graphics Cards and Desktops
+
+[](https://www.nvidia.com/en-us/geforce/graphics-cards/)
+
+GeForce RTX
+
+RTX graphics cards and desktops bring game-changing AI capabilities
+
+[](https://www.nvidia.com/en-us/products/workstations/)
+
+RTX PRO
+
+Accelerating professional AI, graphics, rendering and compute workloads
+
+[](https://www.nvidia.com/en-us/products/rtx-spark/)
+
+RTX Spark
+
+Compact PCs with NVIDIA AI and RTX graphics
+
+[](https://www.nvidia.com/en-us/ai-on-rtx/)
+
+RTX AI PCs
+
+AI PCs for gaming, creating, productivity and development
+
+[](https://www.nvidia.com/en-us/products/workstations/dgx-spark/)
+
+DGX Spark
+
+A Grace Blackwell AI supercomputer on your desk
+
+Laptops
+
+[](https://www.nvidia.com/en-us/geforce/laptops/)
+
+GeForce Laptops
+
+GPU-powered laptops for gamers and creators
+
+[](https://www.nvidia.com/en-us/products/rtx-spark/)
+
+RTX Spark Laptops
+
+Slim laptops and small desktops with NVIDIA AI and RTX graphics
+
+[](https://www.nvidia.com/en-us/studio/help-me-choose/)
+
+Studio Laptops
+
+High performance laptops purpose-built for creators
+
+[](https://www.nvidia.com/en-us/products/workstations/professional-laptops/)
+
+RTX PRO Laptops
+
+Accelerate professional AI and visual computing from anywhere
+
+[](https://www.nvidia.com/en-us/ai-on-rtx/)
+
+RTX AI PCs
+
+AI PCs for gaming, creating, productivity and development
+
+Networking
+
+[](https://www.nvidia.com/en-us/networking/)
+
+Overview
+
+Accelerated networks for modern workloads
+
+[](https://www.nvidia.com/en-us/networking/products/data-processing-unit/)
+
+DPUs
+
+Software-defined hardware accelerators for networking, storage, and security
+
+[](https://www.nvidia.com/en-us/networking/products/ethernet/)
+
+Ethernet
+
+Ethernet performance, availability, and ease of use across a wide range of applications
+
+[](https://www.nvidia.com/en-us/networking/products/infiniband/)
+
+InfiniBand
+
+High-performance networking for super computers, AI, and cloud data centers
+
+[](https://www.nvidia.com/en-us/networking/products/software/)
+
+Networking Software
+
+Networking software for optimized performance and scalability
+
+[](https://www.nvidia.com/en-us/data-center/magnum-io/)
+
+Network Acceleration
+
+IO subsystem for modern, GPU-accelerated data centers
+
+Professional Workstations
+
+[](https://www.nvidia.com/en-us/products/workstations/)
+
+Overview
+
+Accelerating professional AI, graphics, rendering, and compute workloads
+
+[](https://www.nvidia.com/en-us/products/workstations/dgx-spark/)
+
+DGX Spark
+
+A Grace Blackwell AI Supercomputer on your desk
+
+[](https://www.nvidia.com/en-us/products/workstations/dgx-station/)
+
+DGX Station
+
+The ultimate deskside AI supercomputer powered by NVIDIA Grace Blackwell
+
+[](https://www.nvidia.com/en-us/products/workstations/dgx-station-for-windows/)
+
+DGX Station for Windows
+
+The world’s most powerful deskside AI supercomputer for Windows
+
+[](https://www.nvidia.com/en-us/products/workstations/professional-desktop-gpus/)
+
+NVIDIA RTX PRO Desktops
+
+Powerful AI, graphics, rendering, and compute workloads
+
+[](https://www.nvidia.com/en-us/products/workstations/professional-laptops/)
+
+NVIDIA RTX PRO Laptops
+
+Accelerate professional AI and visual computing from anywhere
+
+Software
+
+[](https://www.nvidia.com/en-us/ai-data-science/foundation-models/nemotron/)
+
+Agentic AI Models - Nemotron
+
+[](https://www.nvidia.com/en-us/ai-data-science/products/nemo/)
+
+AI Agents - NeMo
+
+[](https://build.nvidia.com/blueprints)
+
+AI Blueprints
+
+[](https://www.nvidia.com/en-us/ai/dynamo/)
+
+AI Inference - Dynamo
+
+[](https://www.nvidia.com/en-us/ai-data-science/products/nim-microservices/)
+
+AI Inference - NIM
+
+[](https://www.nvidia.com/en-us/technologies/cuda-x/)
+
+AI Microservices - CUDA-X
+
+[](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/in-vehicle-computing/)
+
+Automotive - DRIVE
+
+[](https://www.nvidia.com/en-us/deep-learning-ai/solutions/data-science/apache-spark-3/)
+
+Data Science - Apache Spark
+
+[](https://developer.nvidia.com/rapids/)
+
+Data Science - RAPIDS
+
+[](https://www.nvidia.com/en-us/ai-data-science/products/cuopt/)
+
+Decision Optimization - cuOpt
+
+[](https://www.nvidia.com/en-us/industries/healthcare-life-sciences/)
+
+Healthcare Platforms
+
+[](https://www.nvidia.com/en-us/omniverse/)
+
+Industrial AI - Omniverse
+
+[](https://www.nvidia.com/en-us/autonomous-machines/intelligent-video-analytics-platform/)
+
+Intelligent Video Analytics - Metropolis
+
+[](https://www.nvidia.com/en-us/data-center/products/ai-enterprise-suite/)
+
+NVIDIA AI Enterprise
+
+[](https://www.nvidia.com/en-us/data-center/mission-control/)
+
+NVIDIA Mission Control
+
+[](https://www.nvidia.com/en-us/software/run-ai/)
+
+NVIDIA Run:ai
+
+[](https://www.nvidia.com/en-us/ai/cosmos/)
+
+Physical AI - Cosmos
+
+[](https://developer.nvidia.com/isaac/ros)
+
+Robotics - Isaac
+
+[](https://developer.nvidia.com/aerial)
+
+Telecommunications - Aerial
+
+[](https://www.nvidia.com/en-us/software/)
+
+See All Software
+
+Tools
+
+[](https://www.nvidia.com/en-us/deep-learning-ai/solutions/data-science/workbench/)
+
+AI Workbench
+
+Simplify AI development with NVIDIA AI Workbench on GPUs
+
+[](https://build.nvidia.com/explore/discover)
+
+API Catalog
+
+Explore NVIDIA's AI models, blueprints, and tools for developers
+
+[](https://developer.nvidia.com/dcgm)
+
+GPU Monitoring
+
+Monitor and manage GPU performance in cluster environments
+
+[](https://developer.nvidia.com/tools-overview)
+
+Nsight
+
+Explore NVIDIA developer tools for AI, graphics, and HPC
+
+[](https://catalog.ngc.nvidia.com/)
+
+NGC Catalog
+
+Discover GPU-optimized AI, HPC, and data science software
+
+[](https://www.nvidia.com/en-us/software/nvidia-app-enterprise/)
+
+NVIDIA App for Laptops
+
+Optimize enterprise GPU management
+
+[](https://www.nvidia.com/en-us/gpu-cloud/)
+
+NVIDIA NGC
+
+Accelerate AI and HPC workloads with NVIDIA GPU Cloud solutions
+
+[](https://www.nvidia.com/en-us/software/rtx-desktop-manager/)
+
+Desktop Manager
+
+Enhance multi-display productivity with NVIDIA RTX Desktop Manager
+
+[](https://www.nvidia.com/en-us/studio/creative-apps/)
+
+RTX Accelerated Creative Apps
+
+Creative tools and AI-powered apps for artists and designers
+
+[](https://www.nvidia.com/en-us/design-visualization/software/broadcast-app/)
+
+Video Conferencing
+
+AI-powered audio and video enhancement
+
+Solutions
+
+Artificial Intelligence
+
+[](https://www.nvidia.com/en-us/solutions/ai/)
+
+Overview
+
+Add intelligence and efficiency to your business with AI and machine learning
+
+[](https://www.nvidia.com/en-us/solutions/ai/agentic-ai/)
+
+Agentic AI
+
+Build AI agents designed to reason, plan, and act
+
+[](https://www.nvidia.com/en-us/data-center/ai-data-platform/)
+
+AI Data
+
+Powering a new class of enterprise infrastructure for AI
+
+[](https://www.nvidia.com/en-us/solutions/ai/conversational-ai/)
+
+Conversational AI
+
+Enables natural, personalized interactions with real-time speech AI
+
+[](https://www.nvidia.com/en-us/solutions/ai/cybersecurity/)
+
+Cybersecurity
+
+AI-driven solutions to strengthen cybersecurity and AI infrastructure
+
+[](https://www.nvidia.com/en-us/deep-learning-ai/solutions/data-science/)
+
+Data Science
+
+Iterate on large datasets, deploy models more frequently, and lower total cost
+
+[](https://www.nvidia.com/en-us/solutions/ai/inference/)
+
+Inference
+
+Drive breakthrough performance with AI-enabled applications and services
+
+[](https://www.nvidia.com/en-us/solutions/data-processing/)
+
+Data Processing
+
+Data engines ready for AI
+
+Cloud and Data Center
+
+[](https://www.nvidia.com/en-us/data-center/)
+
+Overview
+
+Powering AI, HPC, and modern workloads with NVIDIA
+
+[](https://www.nvidia.com/en-us/data-center/ai-storage/)
+
+AI Storage
+
+Bringing codesigned enterprise storage into the era of agentic AI
+
+[](https://www.nvidia.com/en-us/solutions/ai-factories/)
+
+AI Factory
+
+Full-stack infrastructure for scalable AI workloads
+
+[](https://www.nvidia.com/en-us/industries/telecommunications/ai-grid/)
+
+AI Grid
+
+Scale AI across connected, distributed AI infrastructure
+
+[](https://www.nvidia.com/en-us/data-center/solutions/accelerated-computing/)
+
+Accelerated Computing
+
+Accelerated computing uses specialized hardware to boost IT performance
+
+[](https://www.nvidia.com/en-us/data-center/gpu-cloud-computing/)
+
+Cloud Computing
+
+On-demand IT resources and services, enabling scalability and intelligent insights
+
+[](https://www.nvidia.com/en-us/data-center/colocation-partners/)
+
+Colocation
+
+Accelerate the scaling of AI across your organization
+
+[](https://www.nvidia.com/en-us/networking/)
+
+Networking
+
+High speed ethernet interconnect solutions and services
+
+[](https://www.nvidia.com/en-us/sustainability/)
+
+Sustainable Computing
+
+Save energy and lower cost with AI and accelerated computing
+
+[](https://www.nvidia.com/en-us/data-center/virtual-solutions/)
+
+Virtualization
+
+NVIDIA virtual GPU software delivers powerful GPU performance
+
+Design and Simulation
+
+[](https://www.nvidia.com/en-us/solutions/design-and-simulation/)
+
+Overview
+
+Streamline building, operating, and connecting metaverse apps
+
+[](https://www.nvidia.com/en-us/solutions/cae/)
+
+Computer Aided-Engineering
+
+Develop real-time interactive design using AI-accelerated real-time digital twins
+
+[](https://www.nvidia.com/en-us/glossary/digital-twin/)
+
+Digital Twin Development
+
+Harness the power of large-scale, physically-based OpenUSD simulation
+
+[](https://www.nvidia.com/en-us/products/workstations/rendering/)
+
+Rendering
+
+Bring state-of-the-art rendering to professional workflows
+
+[](https://www.nvidia.com/en-us/industries/robotics/)
+
+Robotic Simulation
+
+Innovative solutions to take on your robotics, edge, and vision AI challenges
+
+[](https://www.nvidia.com/en-us/high-performance-computing/scientific-visualization/)
+
+Scientific Visualization
+
+Enablies researchers to visualize their large datasets at interactive speeds
+
+[](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/)
+
+Vehicle Simulation
+
+AI-defined vehicles are transforming the future of mobility
+
+[](https://www.nvidia.com/en-us/design-visualization/solutions/virtual-reality/)
+
+Extended Reality
+
+Transform workflows with immersive, scalable interactions in virtual environments
+
+High-Performance Computing
+
+[](https://www.nvidia.com/en-us/high-performance-computing/)
+
+Overview
+
+Discover NVIDIA’s HPC solutions for AI, simulation, and accelerated computing
+
+[](https://www.nvidia.com/en-us/high-performance-computing/hpc-and-ai/)
+
+HPC and AI
+
+Boost accuracy with GPU-accelerating HPC and AI
+
+[](https://www.nvidia.com/en-us/high-performance-computing/scientific-visualization/)
+
+Scientific Visualization
+
+Enables researchers to visualize large datasets at interactive speeds
+
+[](https://www.nvidia.com/en-us/high-performance-computing/simulation-and-modeling/)
+
+Simulation and Modeling
+
+Accelerate simulation workloads
+
+[](https://www.nvidia.com/en-us/solutions/quantum-computing/)
+
+Quantum Computing
+
+Fast-tracking the advancement of scientific innovations with QPUs
+
+Robotics and Edge AI
+
+[](https://www.nvidia.com/en-us/industries/robotics/)
+
+Overview
+
+Innovative solutions to take on robotics, edge, and vision AI challenges
+
+[](https://www.nvidia.com/en-us/industries/robotics/)
+
+Robotics
+
+GPU-accelerated advances in AI perception, simulation, and software
+
+[](https://www.nvidia.com/en-us/edge-computing/)
+
+Edge AI
+
+Bring the power of NVIDIA AI to the edge for real-time decision-making solutions
+
+[](https://www.nvidia.com/en-us/autonomous-machines/intelligent-video-analytics-platform/)
+
+Vision AI
+
+Transform data into valuable insights using vision AI
+
+[](https://www.nvidia.com/en-us/industries/telecommunications/ai-grid/)
+
+AI Grid
+
+Scale AI-native services efficiently across connected, distributed AI infrastructure
+
+Autonomous Vehicles
+
+[](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/)
+
+Overview
+
+AI-enhanced vehicles are transforming the future of mobility
+
+[](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/alpamayo/)
+
+Open Source AV Models and Tools
+
+For reasoning-based AV systems
+
+[](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/simulation/)
+
+AV Simulation
+
+Explore high-fidelity sensor simulation for safe autonomous vehicle development
+
+[](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/drive-hyperion/)
+
+Reference Architecture
+
+Enables vehicles to be L4-ready
+
+[](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/ai-training/)
+
+Infrastructure
+
+Essential data center tools for safe autonomous vehicle development
+
+[](https://www.nvidia.com/en-us/solutions/autonomous-vehicles/in-vehicle-computing/)
+
+In-Vehicle Computing
+
+Develop automated driving functions and immersive in-cabin experiences
+
+[](https://www.nvidia.com/en-us/ai-trust-center/halos/autonomous-vehicles/)
+
+Safety
+
+State-of-the-art system for AV safety, from the cloud to the car
+
+Industries
+
+[](https://www.nvidia.com/en-us/industries/)
+
+Overview
+
+[](https://www.nvidia.com/en-us/industries/aec/)
+
+Architecture, Engineering, Construction & Operations
+
+[](https://www.nvidia.com/en-us/industries/automotive/)
+
+Automotive
+
+[](https://www.nvidia.com/en-us/industries/energy/)
+
+Energy
+
+[](https://www.nvidia.com/en-us/industries/finance/)
+
+Financial Services
+
+[](https://www.nvidia.com/en-us/industries/government/)
+
+Government
+
+[](https://www.nvidia.com/en-us/industries/healthcare-life-sciences/)
+
+Healthcare and Life Sciences
+
+[](https://www.nvidia.com/en-us/industries/higher-education-research/)
+
+Higher Education
+
+[](https://www.nvidia.com/en-us/industries/industrial-sector/)
+
+Industrial Sector
+
+[](https://www.nvidia.com/en-us/industries/media-and-entertainment/)
+
+Media and Entertainment
+
+[](https://www.nvidia.com/en-us/industries/restaurants/)
+
+Restaurants
+
+[](https://www.nvidia.com/en-us/industries/retail/)
+
+Retail and CPG
+
+[](https://www.nvidia.com/en-us/industries/robotics/)
+
+Robotics
+
+[](https://www.nvidia.com/en-us/industries/semiconductor/)
+
+Semiconductor
+
+[](https://www.nvidia.com/en-us/industries/telecommunications/)
+
+Telecommunications
+
+- [Shop](https://marketplace.nvidia.com/en-us/)
+- [Drivers](https://www.nvidia.com/en-us/drivers/)
+- [Support](https://www.nvidia.com/en-us/support/)
+
+[**GeForce**](https://www.nvidia.com/en-us/geforce/)
+
+Products
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld2JveD0iMCAwIDI0IDI0Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik03IDEwbDUgNSA1LTV6IiAvPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIgLz48L3N2Zz4=)
+
+- [](javascript:void(0))
+  Graphics Cards & Desktops
+
+  ![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld2JveD0iMCAwIDI0IDI0Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMCAxN2w1LTUtNS01djEweiIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGZpbGw9Im5vbmUiIGQ9Ik0wIDI0VjBoMjR2MjRIMHoiIC8+PC9zdmc+)
+
+  - [](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/)
+    RTX 50 Series
+  - [](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090/)
+    RTX 5090
+  - [](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5080/)
+    RTX 5080
+  - [](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5070-family/)
+    RTX 5070 Family
+  - [](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5060-family/)
+    RTX 5060 Family
+  - [](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5050/)
+    RTX 5050
+- [](javascript:void(0))
+  Laptops
+
+  ![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld2JveD0iMCAwIDI0IDI0Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMCAxN2w1LTUtNS01djEweiIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGZpbGw9Im5vbmUiIGQ9Ik0wIDI0VjBoMjR2MjRIMHoiIC8+PC9zdmc+)
+
+  - [](https://www.nvidia.com/en-us/geforce/laptops/50-series/)
+    RTX 50 Series Laptops
+  - [](https://www.nvidia.com/en-us/geforce/laptops/40-series/)
+    RTX 40 Series Laptops
+- [](https://www.nvidia.com/en-us/geforce/products/g-sync-monitors/)
+  G-SYNC Monitors
+- [](https://www.nvidia.com/en-us/geforce-now/)
+  GeForce NOW Cloud Gaming
+- [](https://www.nvidia.com/en-us/ai-on-rtx/)
+  RTX AI PCs
+
+Games & Tech
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld2JveD0iMCAwIDI0IDI0Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik03IDEwbDUgNSA1LTV6IiAvPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIgLz48L3N2Zz4=)
+
+- [](javascript:void(0))
+  DLSS & Ray Tracing
+
+  ![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld2JveD0iMCAwIDI0IDI0Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMCAxN2w1LTUtNS01djEweiIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGZpbGw9Im5vbmUiIGQ9Ik0wIDI0VjBoMjR2MjRIMHoiIC8+PC9zdmc+)
+
+  - [](https://www.nvidia.com/en-us/geforce/technologies/dlss/)
+    DLSS
+  - [](https://www.nvidia.com/en-us/geforce/rtx/)
+    RTX Games
+- [](javascript:void(0))
+  Architecture
+
+  ![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld2JveD0iMCAwIDI0IDI0Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMCAxN2w1LTUtNS01djEweiIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGZpbGw9Im5vbmUiIGQ9Ik0wIDI0VjBoMjR2MjRIMHoiIC8+PC9zdmc+)
+
+  - [](https://www.nvidia.com/en-us/geforce/laptops/max-q-technologies/)
+    Max-Q
+- [](javascript:void(0))
+  Gaming
+
+  ![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld2JveD0iMCAwIDI0IDI0Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMCAxN2w1LTUtNS01djEweiIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGZpbGw9Im5vbmUiIGQ9Ik0wIDI0VjBoMjR2MjRIMHoiIC8+PC9zdmc+)
+
+  - [](https://www.nvidia.com/en-us/geforce/game-ready-drivers/)
+    Game Ready Drivers
+  - [](https://www.nvidia.com/en-us/geforce/technologies/reflex/)
+    Reflex
+  - [](https://www.nvidia.com/en-us/geforce/products/g-sync-monitors/)
+    G-SYNC
+  - [](https://www.nvidia.com/en-us/geforce/technologies/vr/)
+    VR
+- [](javascript:void(0))
+  Studio Creator Tools
+
+  ![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld2JveD0iMCAwIDI0IDI0Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMCAxN2w1LTUtNS01djEweiIgLz4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGZpbGw9Im5vbmUiIGQ9Ik0wIDI0VjBoMjR2MjRIMHoiIC8+PC9zdmc+)
+
+  - [](https://www.nvidia.com/en-us/studio/)
+    Studio
+  - [](https://www.nvidia.com/en-us/geforce/broadcasting/)
+    Broadcasting
+  - [](https://www.nvidia.com/en-us/geforce/broadcasting/broadcast-app/)
+    Broadcast App
+  - [](https://www.nvidia.com/en-us/geforce/rtx-remix/)
+    RTX Remix
+  - [](https://www.nvidia.com/en-us/omniverse/creators/)
+    Omniverse
+
+[NVIDIA App](https://www.nvidia.com/en-us/software/nvidia-app/)
+
+[Drivers](https://www.nvidia.com/en-gb/geforce/drivers/)
+
+[News](https://www.nvidia.com/en-us/geforce/news/)
+
+[Support](https://www.nvidia.com/en-us/geforce/support/)
+
+[Shop](https://store.nvidia.com/en-us/geforce/store/?page=1&limit=9&locale=en-us)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdib3g9IjAgMCAyMS40IDUiPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMjYxMy42LDE4MDAuNWEyLjY1NCwyLjY1NCwwLDEsMC0yLjYsMi41QTIuNTc1LDIuNTc1LDAsMCwwLDEyNjEzLjYsMTgwMC41Wm0yLjcsMGEyLjcwOCwyLjcwOCwwLDEsMCwyLjctMi41QTIuNiwyLjYsMCwwLDAsMTI2MTYuMywxODAwLjVabTguMSwwYTIuNjU0LDIuNjU0LDAsMSwwLDIuNi0yLjVBMi41NzUsMi41NzUsMCwwLDAsMTI2MjQuNCwxODAwLjVaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTI2MDguMyAtMTc5OCkiIC8+Cjwvc3ZnPg==)
+
+-  Products
+  - [Graphics Cards & Desktops]()
+  - [Laptops]()
+  - [G-SYNC Monitors](https://www.nvidia.com/en-us/geforce/products/g-sync-monitors/)
+  - [GeForce NOW Cloud Gaming](https://www.nvidia.com/en-us/geforce-now/)
+  - [RTX AI PCs](https://www.nvidia.com/en-us/ai-on-rtx/)
+-  Games & Tech
+  - [DLSS & Ray Tracing]()
+  - [Architecture]()
+  - [Gaming]()
+  - [Studio Creator Tools]()
+- [NVIDIA App](https://www.nvidia.com/en-us/software/nvidia-app/)
+- [Drivers](https://www.nvidia.com/en-gb/geforce/drivers/)
+- [News](https://www.nvidia.com/en-us/geforce/news/)
+- [Support](https://www.nvidia.com/en-us/geforce/support/)
+- [Shop](https://store.nvidia.com/en-us/geforce/store/?page=1&limit=9&locale=en-us)
+
+[![](data:image/svg+xml;base64,PHN2ZyBpZD0ibWVudS1pY29uIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Ym94PSIwIDAgMjQgMjQiPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgPGxpbmUgaWQ9Im1lbnUtbGluZS10b3AiIGNsYXNzPSJtZW51LWxpbmUiIHgxPSIxIiB5MT0iNiIgeDI9IjIzIiB5Mj0iNiIgc3Ryb2tlLXdpZHRoPSIyLjQiIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSI+PC9saW5lPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgPGxpbmUgaWQ9Im1lbnUtbGluZS1taWQiIGNsYXNzPSJtZW51LWxpbmUiIHgxPSIxIiB5MT0iMTIiIHgyPSIyMyIgeTI9IjEyIiBzdHJva2Utd2lkdGg9IjIuNCIgdmVjdG9yLWVmZmVjdD0ibm9uLXNjYWxpbmctc3Ryb2tlIj48L2xpbmU+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8bGluZSBpZD0ibWVudS1saW5lLWJvdCIgY2xhc3M9Im1lbnUtbGluZSIgeDE9IjEiIHkxPSIxOCIgeDI9IjIzIiB5Mj0iMTgiIHN0cm9rZS13aWR0aD0iMi40IiB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiPjwvbGluZT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvc3ZnPg==)](# "Menu")
+
+- [Products](#)
+  - [Products](#)
+  - [Graphics Cards & Desktops](#)
+    - [Graphics Cards & Desktops](#)
+    - [RTX 50 Series](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/)
+    - [RTX 5090](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090/)
+    - [RTX 5080](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5080/)
+    - [RTX 5070 Family](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5070-family/)
+    - [RTX 5060 Family](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5060-family/)
+    - [RTX 5050](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5050/)
+  - [Laptops](#)
+    - [Laptops](#)
+    - [RTX 50 Series Laptops](https://www.nvidia.com/en-us/geforce/laptops/50-series/)
+    - [RTX 40 Series Laptops](https://www.nvidia.com/en-us/geforce/laptops/40-series/)
+  - [G-SYNC Monitors](https://www.nvidia.com/en-us/geforce/products/g-sync-monitors/)
+  - [GeForce NOW Cloud Gaming](https://www.nvidia.com/en-us/geforce-now/)
+  - [RTX AI PCs](https://www.nvidia.com/en-us/ai-on-rtx/)
+- [Games & Tech](#)
+  - [Games & Tech](#)
+  - [DLSS & Ray Tracing](#)
+    - [DLSS & Ray Tracing](#)
+    - [DLSS](https://www.nvidia.com/en-us/geforce/technologies/dlss/)
+    - [RTX Games](https://www.nvidia.com/en-us/geforce/rtx/)
+  - [Architecture](#)
+    - [Architecture](#)
+    - [Max-Q](https://www.nvidia.com/en-us/geforce/laptops/max-q-technologies/)
+  - [Gaming](#)
+    - [Gaming](#)
+    - [Game Ready Drivers](https://www.nvidia.com/en-us/geforce/game-ready-drivers/)
+    - [Reflex](https://www.nvidia.com/en-us/geforce/technologies/reflex/)
+    - [G-SYNC](https://www.nvidia.com/en-us/geforce/products/g-sync-monitors/)
+    - [VR](https://www.nvidia.com/en-us/geforce/technologies/vr/)
+  - [Studio Creator Tools](#)
+    - [Studio Creator Tools](#)
+    - [Studio](https://www.nvidia.com/en-us/studio/)
+    - [Broadcasting](https://www.nvidia.com/en-us/geforce/broadcasting/)
+    - [Broadcast App](https://www.nvidia.com/en-us/geforce/broadcasting/broadcast-app/)
+    - [RTX Remix](https://www.nvidia.com/en-us/geforce/rtx-remix/)
+    - [Omniverse](https://www.nvidia.com/en-us/omniverse/creators/)
+- [NVIDIA App](https://www.nvidia.com/en-us/software/nvidia-app/)
+- [Drivers](https://www.nvidia.com/en-gb/geforce/drivers/)
+- [News](https://www.nvidia.com/en-us/geforce/news/)
+- [Support](https://www.nvidia.com/en-us/geforce/support/)
+- [Shop](https://store.nvidia.com/en-us/geforce/store/?page=1&limit=9&locale=en-us)
+
+This site requires Javascript in order to view all its content. Please enable Javascript in order to access all the functionality of this web site. Here are the [instructions how to enable JavaScript in your web browser.](http://www.enable-javascript.com/)
+
+![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=)
+
+# GeForce RTX 5090
+
+Game Changer
+
+The NVIDIA® GeForce RTX™ 5090 is the most powerful GeForce GPU ever made, bringing game-changing capabilities to gamers and creators. Tackle the most advanced models and most challenging creative workloads with unprecedented AI horsepower. Game with path tracing and the lowest latency. The GeForce RTX 5090 is powered by the NVIDIA Blackwell architecture and equipped with 32 GB of super-fast GDDR7 memory, so you can do it all.
+
+## .
+
+.
+
+[See All Buying Options](https://marketplace.nvidia.com/en-us/consumer/graphics-cards/?locale=en-us&page=1&limit=12&gpu=RTX%205090&gpu_filter=RTX%205090~8,RTX%205080~4,RTX%204070%20Ti%20SUPER~6,RTX%204070%20Ti~4,RTX%204060%20Ti~3,RTX%204070%20SUPER~4,RTX%204070~4,RTX%204060~22,RTX%203080~1,RTX%203070%20Ti~1,RTX%203060%20Ti~1,RTX%203060~6,GTX%201650~1)
+
+**Starting at \$XXX.00, Available January XX**
+
+Explore
+
+- 
+
+- [Architecture](#architecture)
+
+- [Performance](#performance)
+
+- [RTX Games](#rtx-games)
+
+- [DLSS](#dlss-4)
+
+- [Ray Tracing](#ray-tracing)
+
+- [Reflex](#reflex)
+
+- [AI PCs](#ai-pcs)
+
+- [Creators](#creators)
+
+- [Specs](#specs)
+
+- [Architecture](#architecture)
+- [Performance](#performance)
+- [RTX Games](#rtx-games)
+- [DLSS](#dlss-4)
+- [Ray Tracing](#ray-tracing)
+- [Reflex](#reflex)
+- [AI PCs](#ai-pcs)
+- [Creators](#creators)
+- [Specs](#specs)
+
+![](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdib3g9IjAgMCAyMS40IDUiIGhlaWdodD0iMjQiIHdpZHRoPSIyNCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICA8cGF0aCBkPSJNMTI2MTMuNiwxODAwLjVhMi42NTQsMi42NTQsMCwxLDAtMi42LDIuNUEyLjU3NSwyLjU3NSwwLDAsMCwxMjYxMy42LDE4MDAuNVptMi43LDBhMi43MDgsMi43MDgsMCwxLDAsMi43LTIuNUEyLjYsMi42LDAsMCwwLDEyNjE2LjMsMTgwMC41Wm04LjEsMGEyLjY1NCwyLjY1NCwwLDEsMCwyLjYtMi41QTIuNTc1LDIuNTc1LDAsMCwwLDEyNjI0LjQsMTgwMC41WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEyNjA4LjMgLTE3OTgpIiAvPgogICAgICAgIDwvc3ZnPg==)
+
+- [Architecture](#architecture)
+- [Performance](#performance)
+- [RTX Games](#rtx-games)
+- [DLSS](#dlss-4)
+- [Ray Tracing](#ray-tracing)
+- [Reflex](#reflex)
+- [AI PCs](#ai-pcs)
+- [Creators](#creators)
+- [Specs](#specs)
+
+[See All Buying Options](https://marketplace.nvidia.com/en-us/consumer/graphics-cards/?locale=en-us&page=1&limit=12&gpu=RTX%205090&gpu_filter=RTX%205090~8,RTX%205080~4,RTX%204070%20Ti%20SUPER~6,RTX%204070%20Ti~4,RTX%204060%20Ti~3,RTX%204070%20SUPER~4,RTX%204070~4,RTX%204060~22,RTX%203080~1,RTX%203070%20Ti~1,RTX%203060%20Ti~1,RTX%203060~6,GTX%201650~1)
+
+![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=)
+
+**Future Ready. Present Deals.**  
+Game and create with GeForce RTX 50 series, powered by AI.
+
+[Shop All](https://www.nvidia.com/en-us/geforce/campaigns/holiday-deals/)
+
+> A new king of 4K
+
+– The Verge
+
+> The best there is
+
+– TechRadar
+
+> Glorious performance
+
+– PC Gamer
+
+> Jaw-dropping
+
+– TweakTown
+
+> Brutally fast
+
+– PCWorld
+
+> The new fastest gaming GPU
+
+– Eurogamer
+
+Previous
+
+Next
+
+1.  quote 1
+2.  quote 2
+3.  quote 3
+4.  quote 4
+5.  quote 5
+6.  quote 6
+
+NVIDIA Blackwell Architecture
+
+## The Ultimate Platform for Gamers and Creators
+
+![ NVIDIA Blackwell Architecture](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container/nv_container/nv_image.coreimg.jpeg/1788350696248/geforce-rtx-50-series-architecture-ari.jpeg " NVIDIA Blackwell Architecture")
+
+### Fifth-Gen Tensor Cores
+
+Max AI performance with FP4 and NVIDIA DLSS
+
+### New Streaming Multiprocessors
+
+Optimized for neural shaders
+
+### Fourth-Gen Ray Tracing Cores
+
+Built for Mega Geometry
+
+![Decorative image](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container/nv_container_110424828/nv_teaser.coreimg.svg/1788350697083/m48-nvidia-gpu-cloud-ngc-catalog-ffffff.svg "Decorative image")
+
+### AI-Enhanced Graphics and Performance
+
+NVIDIA DLSS
+
+![Decorative icon](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container/nv_container_110424828/nv_teaser_663963517.coreimg.svg/1788350697184/m48-accuracy-ffffff.svg "Decorative icon")
+
+### Game-Winning Responsiveness
+
+NVIDIA Reflex
+
+![Decorative icon](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container/nv_container_110424828/nv_teaser_742831494.coreimg.svg/1788350697206/m48-render-ffffff.svg "Decorative icon")
+
+### True-to-Life Graphics
+
+Path tracing with neural rendering
+
+![Decorative icon](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container/nv_container_110424828/nv_teaser_1961713040.coreimg.svg/1788350697247/m48-digital-person-ffffff.svg "Decorative icon")
+
+### Digital Humans and AI Assistants
+
+NVIDIA ACE
+
+![Decorative icon](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container/nv_container_110424828/nv_teaser_1205938636.coreimg.svg/1788350697268/m48-3d-manipulation-ffffff.svg "Decorative icon")
+
+### Accelerate Your Creativity
+
+NVIDIA Studio creator tools and technology
+
+![Decorative icon](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container/nv_container_110424828/nv_teaser_1301106110.coreimg.svg/1788350697290/m48-live-talk-on-demand-ffffff.svg "Decorative icon")
+
+### Enhance Any Video with AI
+
+NVIDIA Broadcast and ninth-gen NVIDIA Encoder
+
+![Decorative icon](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container/nv_container_110424828/nv_teaser_931695284.coreimg.svg/1788350697312/m48-download-ffffff.svg "Decorative icon")
+
+### Performance and Reliability
+
+NVIDIA app with Game Ready and Studio Drivers
+
+![Decorative icon](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container/nv_container_110424828/nv_teaser_435825662.coreimg.svg/1788350697344/m48-pc-ffffff.svg "Decorative icon")
+
+### The Ultimate Gaming Display Technologies
+
+NVIDIA G-SYNC
+
+## Performance
+
+RTX 5090
+
+RTX 4090
+
+![Performance](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/rtx-5090/_jcr_content/root/responsivegrid/nv_container_5169690/nv_image.coreimg.svg/1788439976352/geforce-rtx-5090-perf-chart-editors-day.svg "Performance")
+
+**Relative Performance**
+
+4K, Max Settings, DLSS Super Resolution and DLSS Ray Reconstruction on 40 and 50 Series; Frame Gen on 40 Series. Multi Frame Gen (4X Mode) on 50 Series. Horizon Forbidden West supports DLSS 3.
+
+![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=)
+
+RTX. It’s On.
+
+## The Ultimate in Ray Tracing and AI
+
+RTX^(™) is the most advanced platform for path tracing and neural rendering technologies that are revolutionizing the ways we play and create. Over 800 games and applications use RTX to deliver realistic graphics and incredibly fast performance with cutting-edge AI features like DLSS Multi Frame Generation.
+
+[Check Out the Latest RTX Games](https://www.nvidia.com/en-us/geforce/rtx/)
+
+![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=)
+
+## NVIDIA DLSS
+
+## Spectacular Scenes. Powered by AI.
+
+DLSS 5 introduces 3D-Guided Neural Rendering, which uses AI to infuse game scenes with lifelike lighting and materials on GeForce RTX 50 Series GPUs. Developers tune the final output for each game to bring their artistic vision to life.
+
+[Learn More](https://www.nvidia.com/en-us/geforce/technologies/dlss/)
+
+![Play Video](https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/graphic-cards/nba2k2027-vid-thm-3.jpg)
+
+Consent for Optional Cookies
+
+(googleCookiePolicyLink)YouTube sets performance, advertising, and other optional cookies(/googleCookiePolicyLink) when you watch embedded videos. To watch this video, you need to turn on optional cookies for the site. By clicking “Accept and Play Video,” you will automatically turn on advertising and other optional cookies for the site and accept our (nvidiaTermsOfServiceLink)Terms of Service(/nvidiaTermsOfServiceLink) (which contains important waivers). Please see our (nvidiaPrivacyPolicyLink)Privacy Policy(/nvidiaPrivacyPolicyLink) and (nvidiaCookiePolicyLink)Cookie Policy(/nvidiaCookiePolicyLink) for more information.
+
+Cancel
+
+Accept and Play Video
+
+Alternatively, you can (youtubeLink)watch this video on YouTube(/youtubeLink).
+
+GeForce RTX 5090, 4K, Max Settings, DLSS with 3D-Guided Neural Rendering, Multi Frame Generation, Super Resolution
+
+![2K27](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_1205491_13188807/nv_container_878752188/nv_image.coreimg.png/1788427073009/nba2k27-logo-2x.png "2K27")
+
+![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=)
+
+## NVIDIA DLSS
+
+## Supreme Speed. Powered by AI.
+
+Multiply your performance with the suite of DLSS technologies. Super Resolution and Ray Reconstruction boost FPS by reconstructing high-resolution images from a lower resolution input. Dynamic Multi Frame Generation maximizes smoothness by dynamically generating up to five frames per rendered frame.
+
+[Learn More](https://www.nvidia.com/en-us/geforce/technologies/dlss/)
+
+![Play Video](https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/graphic-cards/50-series/rtx-5080/geforce-dlss4-multi-frame-generation-cybperpunk-2077-1920x1080-video-renew.png)
+
+Consent for Optional Cookies
+
+(googleCookiePolicyLink)YouTube sets performance, advertising, and other optional cookies(/googleCookiePolicyLink) when you watch embedded videos. To watch this video, you need to turn on optional cookies for the site. By clicking “Accept and Play Video,” you will automatically turn on advertising and other optional cookies for the site and accept our (nvidiaTermsOfServiceLink)Terms of Service(/nvidiaTermsOfServiceLink) (which contains important waivers). Please see our (nvidiaPrivacyPolicyLink)Privacy Policy(/nvidiaPrivacyPolicyLink) and (nvidiaCookiePolicyLink)Cookie Policy(/nvidiaCookiePolicyLink) for more information.
+
+Cancel
+
+Accept and Play Video
+
+Alternatively, you can (youtubeLink)watch this video on YouTube(/youtubeLink).
+
+GeForce RTX 5090, 4K, RT Overdrive, Max Settings, DLSS with Multi Frame Generation (6X Mode), Super Resolution (Performance Mode)
+
+![Cyberpunk2077](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_1205491/nv_container_878752188/nv_image.coreimg.svg/1788350695265/cyberpunk2077-logo.svg "Cyberpunk2077")
+
+Path Tracing With Neural Rendering
+
+## Game-Changing Realism
+
+The NVIDIA Blackwell architecture unlocks the game-changing realism of path tracing. Experience cinematic quality visuals at unprecedented speed powered by GeForce RTX 50 Series with fourth-gen RT Cores and breakthrough neural rendering technologies accelerated with fifth-gen Tensor Cores.
+
+[Get Immersed in RTX Games](https://www.nvidia.com/en-us/geforce/rtx/)
+
+![RTX On](/content/dam/en-zz/Solutions/geforce/graphic-cards/50-series/rtx-5080/geforce-ray-tracing-half-life-2-rtx-on-2048.jpg "RTX On")
+
+![RTX Off](/content/dam/en-zz/Solutions/geforce/graphic-cards/50-series/rtx-5080/geforce-ray-tracing-half-life-2-rtx-off-2048.jpg "RTX Off")
+
+**RTX Off**
+
+**RTX On**
+
+![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=)
+
+## NVIDIA Reflex
+
+## Compete at Warp Speed
+
+Reflex technologies optimize the graphics pipeline for ultimate responsiveness, providing faster target acquisition, quicker reaction times, and improved aim precision in competitive games. Reflex 2 introduces Frame Warp (*coming soon!*), which further reduces latency based on the game’s latest mouse input.
+
+[Get a Competitive Advantage With Reflex](https://www.nvidia.com/en-us/geforce/technologies/reflex/)
+
+![Play Video](https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/graphic-cards/50-series/rtx-5080/geforce-reflex-2-on-off-ari.jpg)
+
+Consent for Optional Cookies
+
+(googleCookiePolicyLink)YouTube sets performance, advertising, and other optional cookies(/googleCookiePolicyLink) when you watch embedded videos. To watch this video, you need to turn on optional cookies for the site. By clicking “Accept and Play Video,” you will automatically turn on advertising and other optional cookies for the site and accept our (nvidiaTermsOfServiceLink)Terms of Service(/nvidiaTermsOfServiceLink) (which contains important waivers). Please see our (nvidiaPrivacyPolicyLink)Privacy Policy(/nvidiaPrivacyPolicyLink) and (nvidiaCookiePolicyLink)Cookie Policy(/nvidiaCookiePolicyLink) for more information.
+
+Cancel
+
+Accept and Play Video
+
+Alternatively, you can (youtubeLink)watch this video on YouTube(/youtubeLink).
+
+![The Finals](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_1205491167/nv_container_878752188/nv_image.coreimg.png/1775554271830/the-finals-game-logo-2x.png "The Finals")
+
+![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=)
+
+RTX AI PCs
+
+## NVIDIA Powers the World’s AI. And Yours.
+
+Upgrade to advanced AI with NVIDIA GeForce RTX™ GPUs and accelerate your gaming, creating, productivity, and development. Thanks to built-in AI processors, you get world-leading AI technology powering your Windows PC.
+
+[Get the AI Advantage](https://www.nvidia.com/en-us/ai-on-rtx/)
+
+![RTX AI LLM Performance](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_1469886/nv_container_1543181/nv_teaser.coreimg.jpeg/1775554272232/llm-performance-ari.jpeg "RTX AI LLM Performance")
+
+LLM Performance
+
+### Faster, Smarter AI
+
+Stay ahead with the latest AI models the moment they drop - running faster, smoother, and fully private on your RTX-powered PC. Add your files for smarter, more personalized results. Experience it now through your favorite tools like LM Studio, AnythingLLM, and more.
+
+[Learn More ](https://www.nvidia.com/en-us/ai-on-rtx/)
+
+![RTX Generative AI](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_1469886/nv_container_1543181/nv_teaser_1728694943.coreimg.jpeg/1775554272273/generative-ai-ari.jpeg "RTX Generative AI")
+
+Generative AI
+
+### High-Speed Image and Video Generation
+
+Bring your ideas to life faster with RTX. Generate incredible images and videos, tap into optimized ComfyUI workflows, and run the latest AI models locally in seconds to deliver studio-class power and efficiency on your PC.
+
+[Watch Video ](https://www.youtube.com/watch?v=jb4X-U1Riw8)
+
+![RTX AI Assistants](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_1469886/nv_container_1543181/nv_teaser_782164449.coreimg.jpeg/1775554272314/geforce-g-assist-ari.jpeg "RTX AI Assistants")
+
+Project G-Assist
+
+### Your AI Assistant
+
+NVIDIA Project G-Assist is an AI assistant powered by your GeForce RTX PC that helps you tune, control, and optimize your system.
+
+[Download Now ](https://www.nvidia.com/en-us/software/nvidia-app/g-assist/)
+
+![NVIDIA RTX AI Development](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_1469886/nv_container_1543181/nv_teaser_69640828.coreimg.jpeg/1775554272356/rtx-develop-deploy-ai-ari.jpeg "NVIDIA RTX AI Development")
+
+AI Development
+
+### Develop and Deploy AI on RTX
+
+Experiment, build, and optimize with the latest AI technologies on RTX AI PCs. Access curated, GPU-optimized SDKs and models, and maximize performance across Windows ML, Ollama, PyTorch, and other inference backends.
+
+[Learn More ](https://developer.nvidia.com/ai-apps-for-rtx-pcs)
+
+------------------------------------------------------------------------
+
+![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=)
+
+Creators
+
+## Your Creative AI-dvantage
+
+NVIDIA Studio is your creative advantage. GeForce RTX 50 Series GPUs unlock transformative performance in video editing, 3D rendering, and graphic design. Experience RTX accelerations in top creative apps, world-class NVIDIA Studio drivers engineered and continually updated to provide maximum stability, and a suite of exclusive tools that harness the power of RTX for AI-assisted creative workflows.
+
+[Take Your Creativity Further With RTX](https://www.nvidia.com/en-us/studio/)
+
+![NVIDIA Broadcast: The Ultimate AI-Powered Voice and Video App](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_1678431/nv_container_1543181/nv_teaser.coreimg.jpeg/1775554272672/nvidia-broadcast-ari.jpeg "NVIDIA Broadcast: The Ultimate AI-Powered Voice and Video App")
+
+NVIDIA Broadcast
+
+### Your AI-Powered Home Studio
+
+Take your livestreams, voice chats, and video calls to the next level with AI-enhanced voice and video. Remove distracting background noise, customize your background, and more at the touch of a button.
+
+[Download Now ](https://www.nvidia.com/en-us/geforce/broadcasting/broadcast-app/)
+
+![Pixel Perfect Videos with RTX Video Super Resolution and HDR](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_1678431/nv_container_1543181/nv_teaser_1728694943.coreimg.png/1775554272698/geforce-rtx-on-super-resolution-apex-2560x1440-3.png "Pixel Perfect Videos with RTX Video Super Resolution and HDR")
+
+RTX Video
+
+### Upgrade Your Video Viewing
+
+RTX Video Super Resolution and HDR uses AI to transform your videos in Chrome, Edge, or Firefox—automatically sharpening details and wiping out compression artifacts. Enjoy stunning clarity in up to 4K.
+
+[Watch Video ](https://www.youtube.com/watch?v=XA-tQpQqD7U)
+
+![Screenshot of RTX Remix interface showcasing AI-enhanced game assets and ray tracing features for modding](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_1678431/nv_container_1543181/nv_teaser_782164449.coreimg.jpeg/1775554272723/nvidia-rtx-remix-ari.jpeg "Screenshot of RTX Remix interface showcasing AI-enhanced game assets and ray tracing features for modding")
+
+RTX Remix
+
+### Remaster The Classics
+
+RTX Remix allows modders to easily capture game assets, enhance materials with AI tools, and create stunning RTX remasters with ray tracing and DLSS.
+
+[Try The Beta ](https://www.nvidia.com/en-us/geforce/rtx-remix/)
+
+![Video editing software interface](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_1678431/nv_container_1543181/nv_teaser_69640828.coreimg.jpeg/1775554272747/studio-blackwell-video-editing-ui-ari.jpeg "Video editing software interface")
+
+Video Editing
+
+### Speed Meets Creativity
+
+Harness the power of the ninth-gen NVIDIA Encoder (NVENC) for blazing-fast video exports and AI-driven effects in DaVinci Resolve, Adobe Premiere, and more.
+
+[Learn More ](https://www.nvidia.com/en-us/studio/software/)
+
+## Revolutionary Double Flow Through Founders Edition Design
+
+Advanced PCBs and thermal design provides double the airflow of a traditional graphics card configuration.  A 3D Vapor Chamber with integrated heat pipes and active fins further increases thermal performance. ‌ The result is the highest-performance dual-slot graphics card cooler ever made.
+
+![YouTube Video](https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/graphic-cards/50-series/rtx-5090/geforce-rtx-50-series-exploded-view-video-ari.jpg)
+
+Consent for Optional Cookies
+
+(googleCookiePolicyLink)YouTube sets performance, advertising, and other optional cookies(/googleCookiePolicyLink) when you watch embedded videos. To watch this video, you need to turn on optional cookies for the site. By clicking “Accept and Play Video,” you will automatically turn on advertising and other optional cookies for the site and accept our (nvidiaTermsOfServiceLink)Terms of Service(/nvidiaTermsOfServiceLink) (which contains important waivers). Please see our (nvidiaPrivacyPolicyLink)Privacy Policy(/nvidiaPrivacyPolicyLink) and (nvidiaCookiePolicyLink)Cookie Policy(/nvidiaCookiePolicyLink) for more information.
+
+Cancel
+
+Accept and Play Video
+
+Alternatively, you can (youtubeLink)watch this video on YouTube(/youtubeLink).
+
+### Gallery
+
+![RTX 5090](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/rtx-5090/_jcr_content/root/responsivegrid/nv_container_975461298/nv_carousel_home/item_1733731197698.coreimg.jpeg/1788439976770/geforce-rtx-5090-gallery-shot-1-ari.jpeg "RTX 5090")
+
+![RTX 5090](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/rtx-5090/_jcr_content/root/responsivegrid/nv_container_975461298/nv_carousel_home/item_1733731224048.coreimg.jpeg/1788439976780/geforce-rtx-5090-gallery-shot-2-ari.jpeg "RTX 5090")
+
+![RTX 5090](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/rtx-5090/_jcr_content/root/responsivegrid/nv_container_975461298/nv_carousel_home/item_1733731229185.coreimg.jpeg/1788439976789/geforce-rtx-5090-gallery-shot-3-ari.jpeg "RTX 5090")
+
+Previous
+
+Next
+
+1.  img0
+2.  img1
+3.  img2
+4.  img3
+
+### Additional Features and Benefits
+
+![ GeForce Game Ready and Studio Drivers](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_727447072/nv_carousel_home_622/item_1733676244445.coreimg.jpeg/1775554272884/geforce-game-ready-driver.jpeg " GeForce Game Ready and Studio Drivers")
+
+### Game Ready and Studio Drivers
+
+GeForce Game Ready and Studio Drivers deliver the best experience for your favorite games and apps. They’re finely tuned in collaboration with developers and extensively tested across thousands of hardware configurations for maximum performance and reliability.
+
+[Learn More ](https://www.nvidia.com/en-us/geforce/drivers/)
+
+![NVIDIA App for PC gamers and creators](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_727447072/nv_carousel_home_622/item_1733676247870.coreimg.png/1775554272920/nvidia-app-oct24-nv-app-hero-1920x1080.png "NVIDIA App for PC gamers and creators")
+
+### NVIDIA App
+
+The essential companion for PC gamers and creators. Keep your PC up to date with the latest NVIDIA drivers and technology. Optimize games and applications with a new unified GPU control center, and discover the latest NVIDIA apps.
+
+[Learn More ](https://www.nvidia.com/en-us/software/nvidia-app/)
+
+![Gaming Monitors and Displays](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_727447072/nv_carousel_home_622/item_1733676260220.coreimg.jpeg/1775554272943/nvidia-g-sync.jpeg "Gaming Monitors and Displays")
+
+### NVIDIA G-SYNC
+
+NVIDIA G-SYNC® is a suite of game-changing display technologies. The ultimate motion clarity with G-SYNC Pulsar, smooth tear-free immersion, ultra-high refresh rates, and more.
+
+[Learn More ](https://www.nvidia.com/en-us/geforce/products/g-sync-monitors/)
+
+![GeForce RTX for Virtual Reality](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/50-series-reference-module/_jcr_content/root/responsivegrid/nv_container_727447072/nv_carousel_home_622/item_1733676265712.coreimg.jpeg/1775554272978/geforce-virtual-reality.jpeg "GeForce RTX for Virtual Reality")
+
+### Virtual Reality
+
+The highest-performance graphics deliver the smoothest, most immersive VR experiences.
+
+[Learn More ](https://www.nvidia.com/en-us/geforce/technologies/vr/)
+
+Previous
+
+Next
+
+1.  Tile0
+2.  Tile1
+3.  Tile2
+4.  Tile3
+5.  Tile4
+
+## Specs
+
+[View Full Specs](https://www.nvidia.com/en-us/geforce/graphics-cards/compare/#50-series)
+
+## Shop
+
+### GeForce RTX 5090
+
+## Starting at \$XXX.XX.
+
+**Available on Month XX.**  
+
+[See All Buying Options](https://marketplace.nvidia.com/en-us/consumer/graphics-cards/?locale=en-us&page=1&limit=12&gpu=RTX%205090&gpu_filter=RTX%205090~8,RTX%205080~4,RTX%204070%20Ti%20SUPER~6,RTX%204070%20Ti~4,RTX%204060%20Ti~3,RTX%204070%20SUPER~4,RTX%204070~4,RTX%204060~22,RTX%203080~1,RTX%203070%20Ti~1,RTX%203060%20Ti~1,RTX%203060~6,GTX%201650~1)
+
+© 2026 NVIDIA Corporation. NVIDIA, the NVIDIA logo, GeForce, GeForce RTX, and G-SYNC are registered trademarks and/or trademarks of NVIDIA Corporation in the United States and other countries. All other trademarks and copyrights are the property of their respective owners.
+
+------------------------------------------------------------------------
+
+## GeForce RTX 5090
+
+[TABLE]
+
+1 - Up to 4K 12-bit HDR at 480Hz with DP 2.1b + DSC or HDMI 2.1b +DSC. Up to 8K 12-bit HDR at 165Hz with DP 2.1b + DSC. Up to 8K 12-bit HDR at 120Hz With HDMI 2.1b + DSC. With dual DP 2.1b + DSC, up to 8K HDR at 100Hz
+
+2 - DisplayPort 2.1b with UHBR20: up to 4K 480Hz or 8K 165Hz with DSC
+
+3 - As specified in HDMI 2.1b: up to 4K 480Hz or 8K 120Hz with DSC, Gaming VRR, HDR
+
+4 - Multi Monitor
+
+1.  4 independent displays at 4K 165Hz using DP or HDMI
+2.  2 independent displays at 4K 360Hz or 8K 100Hz with DSC using DP or HDMI
+3.  Other display configurations may be possible based on available bandwidth
+
+5 - Minimum is based on a PC configured with a Ryzen 9 9950X processor. Recommend PCIe CEM 5.1 compliant PSU. Power requirements can be different depending on system configuration.
+
+Note: The above specifications represent this GPU as incorporated into NVIDIA's Founders Edition or reference graphics card design. Clock specifications apply while gaming with medium to full GPU utilization. Graphics card specifications may vary by add-in-card manufacturer. Please refer to the add-in-card manufacturers' website for actual shipping specifications.
+
+## Prepare your system for the GeForce RTX^(®) 5090 Founders Edition
+
+Graphics card specifications vary by add-in-card manufacturer. Please refer to manufacturer specifications for add-in-card models.
+
+The following steps require some knowledge of PC component specifications, in addition to physical installation.
+
+### 1. Check your power supply
+
+![](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/rtx-5090/_jcr_content/root/responsivegrid/nv_modalcontainer_63/nv_container_452380564/nv_teaser.coreimg.png/1788439977327/2321550-gf-comp-guide-4090-850w-2560x1440px.png)
+
+**850W Minimum**
+
+A higher power rating may be required depending on your system configuration.
+
+Please check with your PSU vendor.
+
+![](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/rtx-5090/_jcr_content/root/responsivegrid/nv_modalcontainer_63/nv_container_copy/nv_teaser_copy.coreimg.png/1788439977418/2321550-gf-comp-guide-4090-pcie-8pin-2560x1440px.png)
+
+**Power Compatibility Option 1.**
+
+3x PCIe 8-pin cables from power supply to included RTX 5090 Power Connector Adapter. Graphics card supports 3x or 4x PCIe 8-pin cables.
+
+![](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/rtx-5090/_jcr_content/root/responsivegrid/nv_modalcontainer_63/nv_container_copy/nv_teaser_copy_806699553.coreimg.png/1788439977459/2321550-gf-comp-guide-4090-pcie-16pin-2560x1440px.png)
+
+**Power Compatibility Option 2.**
+
+1x 450W or greater PCIe Gen 5 power cable from power supply
+
+### 2. Check your case
+
+![](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/rtx-5090/_jcr_content/root/responsivegrid/nv_modalcontainer_63/nv_container_1655508104/nv_container_copy_co/nv_teaser_copy.coreimg.png/1788439977548/2321550-gf-comp-guide-4090-slots-2560x1440px.png)
+
+**Three unused expansion slots.**
+
+Reserving clearance around the graphics card equivalent to an unused expansion slot will typically improve airflow.
+
+![](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/rtx-5090/_jcr_content/root/responsivegrid/nv_modalcontainer_63/nv_container_1655508104/nv_container_copy_co/nv_teaser_copy_806699553.coreimg.png/1788439977591/2321550-gf-comp-guide-4090-case-size-2560x1440px.png)
+
+Clearance: Must have space for 12" (304mm) x 5.4" (137mm) x 3-slot card (61mm). Plan 1.4” (36mm) additional space for power cables.
+
+![GeForce RTX 5090](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/rtx-5090/_jcr_content/root/responsivegrid/nv_modalcontainer_609051001/nv_image.coreimg.jpeg/1788439977626/geforce-rtx-5090-gallery-shot-1-ari.jpeg "GeForce RTX 5090")
+
+![GeForce RTX 5090](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/rtx-5090/_jcr_content/root/responsivegrid/nv_modalcontainer_1683966542/nv_image.coreimg.jpeg/1788439977643/geforce-rtx-5090-gallery-shot-2-ari.jpeg "GeForce RTX 5090")
+
+![GeForce RTX 5090](/content/nvidiaGDC/us/en_US/geforce/graphics-cards/50-series/rtx-5090/_jcr_content/root/responsivegrid/nv_modalcontainer_170491730/nv_image.coreimg.jpeg/1788439977659/geforce-rtx-5090-gallery-shot-3-ari.jpeg "GeForce RTX 5090")
+
+Products
+
+- [Graphics Cards](https://www.nvidia.com/en-us/geforce/graphics-cards/)
+- [Laptops](https://www.nvidia.com/en-us/geforce/laptops/)
+- [G-SYNC Monitors](https://www.nvidia.com/en-us/geforce/products/g-sync-monitors/)
+- [GeForce NOW Cloud Gaming](https://www.nvidia.com/en-us/geforce-now/)
+
+Community & News
+
+- [Latest News](https://www.nvidia.com/en-us/geforce/news/)
+- [Community Forums](https://www.nvidia.com/en-us/geforce/forums/)
+- [Community Portal](https://www.nvidia.com/en-us/geforce/community-portal/)
+- [Developer Resources](https://developer.nvidia.com/industries/game-development)
+
+Support
+
+- [Drivers](https://www.nvidia.com/en-gb/geforce/drivers/)
+- [Purchase Support](https://marketplace.nvidia.com/en-us/account/)
+- [Technical Support](https://www.nvidia.com/en-us/support/)
+
+Follow GeForce
+
+[](https://www.facebook.com/NVIDIAGeForce "<util:I18n key="Follow GeForce on Facebook" />") [](https://www.instagram.com/nvidiageforce/) [](https://www.tiktok.com/@nvidiageforce) [](https://www.twitch.tv/nvidia) [](https://x.com/NVIDIAGeForce "<util:I18n key="Follow GeForce on Twitter" />") [](https://www.youtube.com/channel/UCL-g3eGJi1omSDSz48AML-g)
+
+![](data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZ2xvYmFsLWZvb3Rlcl9fbG9nbyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Ym94PSIwIDQwNy44IDEwMDAgMTg0LjQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCA0MDcuOCAxMDAwIDE4NC40IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KICAgICAgICAgICAgPHRpdGxlPk5WSURJQTwvdGl0bGU+CiAgICAgICAgICAgIDxnIGlkPSJudmlkaWEtbG9nbyI+CiAgICAgICAgICAgICAgICA8cGF0aCBkPSJNOTg3LjEgNTU1Ljd2LTIuOGgxLjdjMC45IDAgMi4zIDAuMSAyLjMgMS4yIDAgMS4yLTAuNyAxLjUtMS44IDEuNUg5ODcuMU05ODcuMSA1NTcuNmgxLjJsMi44IDQuOGgzbC0zLjEtNWMxLjUtMC4xIDIuOS0wLjggMi45LTMgMC0yLjctMS44LTMuNS00LjktMy41aC00LjR2MTEuNWgyLjZMOTg3LjEgNTU3LjZNMTAwMCA1NTYuN2MwLTYuOC01LjItMTAuNy0xMS4xLTEwLjcgLTUuOCAwLTExLjEgMy45LTExLjEgMTAuNyAwIDYuOCA1LjIgMTAuNyAxMS4xIDEwLjdTMTAwMCA1NjMuNSAxMDAwIDU1Ni43TTk5Ni44IDU1Ni43YzAgNC45LTMuNiA4LjItNy45IDguMmwwIDBjLTQuNCAwLTcuOS0zLjMtNy45LTguMiAwLTQuOSAzLjYtOC4yIDcuOS04LjJDOTkzLjIgNTQ4LjYgOTk2LjggNTUxLjkgOTk2LjggNTU2Ljd6IiAvPgogICAgICAgICAgICAgICAgPHBhdGggZD0iTTU5My4yIDQ0Mi43djEyMS4xaDM0LjJWNDQyLjdINTkzLjJ6TTMyNC40IDQ0Mi41djEyMS4yaDM0LjV2LTk0LjFsMjYuOSAwLjFjOC44IDAgMTUgMi4yIDE5LjIgNi43IDUuNCA1LjcgNy42IDE1LjEgNy42IDMydjU1LjNINDQ2di02Ni45YzAtNDcuOC0zMC41LTU0LjMtNjAuMi01NC4zQzM4NS44IDQ0Mi41IDMyNC40IDQ0Mi41IDMyNC40IDQ0Mi41ek02NDguMyA0NDIuN3YxMjEuMWg1NS40YzI5LjUgMCAzOS4yLTQuOSA0OS42LTE1LjkgNy40LTcuNyAxMi4xLTI0LjcgMTIuMS00My4zIDAtMTctNC0zMi4yLTExLjEtNDEuNyAtMTIuNS0xNi45LTMwLjgtMjAuMi01OC4xLTIwLjJINjQ4LjN6TTY4Mi4yIDQ2OWgxNC43YzIxLjMgMCAzNS4xIDkuNSAzNS4xIDM0LjQgMCAyNC44LTEzLjcgMzQuNC0zNS4xIDM0LjRoLTE0LjdWNDY5ek01NDQgNDQyLjdsLTI4LjUgOTUuOSAtMjcuMy05NS45aC0zNi45bDM5IDEyMS4xaDQ5LjJsMzkuMy0xMjEuMUg1NDR6TTc4MS40IDU2My43aDM0LjJ2LTEyMWgtMzQuMlY1NjMuN3pNODc3LjIgNDQyLjdsLTQ3LjcgMTIxaDMzLjdsNy42LTIxLjNoNTYuNWw3LjIgMjEuM2gzNi42bC00OC4yLTEyMUg4NzcuMnpNODk5LjQgNDY0LjhsMjAuNyA1Ni42SDg3OEw4OTkuNCA0NjQuOHoiIC8+CiAgICAgICAgICAgICAgICA8cGF0aCBkPSJNMTAzLjkgNDYyLjh2LTE2LjZjMS42LTAuMSAzLjMtMC4yIDQuOS0wLjIgNDUuNi0xLjQgNzUuNCAzOS4xIDc1LjQgMzkuMXMtMzIuMiA0NC44LTY2LjggNDQuOGMtNSAwLTkuNC0wLjgtMTMuNC0yLjJ2LTUwLjVjMTcuNyAyLjIgMjEuMyAxMCAzMiAyNy43bDIzLjctMjBjMCAwLTE3LjMtMjIuNy00Ni41LTIyLjdDMTEwIDQ2Mi4zIDEwNi45IDQ2Mi41IDEwMy45IDQ2Mi44TTEwMy45IDQwNy44djI0LjhjMS42LTAuMSAzLjMtMC4yIDQuOS0wLjMgNjMuMy0yLjIgMTA0LjYgNTEuOSAxMDQuNiA1MS45cy00Ny40IDU3LjctOTYuNyA1Ny43Yy00LjUgMC04LjctMC40LTEyLjctMS4xdjE1LjRjMy40IDAuNCA3IDAuNyAxMC42IDAuNyA0NiAwIDc5LjItMjMuNSAxMTEuNC01MS4yIDUuMyA0LjMgMjcuMiAxNC43IDMxLjcgMTkuMiAtMzAuNiAyNS42LTEwMS45IDQ2LjMtMTQyLjMgNDYuMyAtMy45IDAtNy42LTAuMi0xMS4zLTAuNnYyMS42aDE3NC43VjQwNy44SDEwMy45ek0xMDMuOSA1MjcuOHYxMy4xYy00Mi41LTcuNi01NC4zLTUxLjgtNTQuMy01MS44czIwLjQtMjIuNiA1NC4zLTI2LjN2MTQuNGMwIDAgMCAwLTAuMSAwIC0xNy43LTIuMi0zMS43IDE0LjUtMzEuNyAxNC41UzgwIDUxOS42IDEwMy45IDUyNy44TTI4LjQgNDg3LjJjMCAwIDI1LjItMzcuMSA3NS41LTQxdi0xMy41QzQ4LjIgNDM3LjIgMCA0ODQuNCAwIDQ4NC40czI3LjMgNzkgMTAzLjkgODYuM3YtMTQuNEM0Ny43IDU0OS4yIDI4LjQgNDg3LjIgMjguNCA0ODcuMnoiIC8+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L3N2Zz4=)
+
+[ United States ](https://www.nvidia.com/en-us/geforce/location-selector/)
+
+- [Privacy Policy](https://www.nvidia.com/en-us/about-nvidia/privacy-policy/)
+- [Your Privacy Choices](https://www.nvidia.com/en-us/about-nvidia/privacy-center/)
+- [Terms of Service](https://www.nvidia.com/en-us/about-nvidia/terms-of-service/)
+- [Accessibility](https://www.nvidia.com/en-us/about-nvidia/accessibility/)
+- [Corporate Policies](https://www.nvidia.com/en-us/about-nvidia/company-policies/)
+- [Product Security](https://www.nvidia.com/en-us/product-security/)
+- [Contact](https://www.nvidia.com/en-us/contact/)
+
+Copyright © 2026 NVIDIA Corporation

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sync chapter outlines into the existing skeleton and reference index."""
+"""Sync Markdown chapter indexes and the reference index."""
 from pathlib import Path
 import re,html,json,hashlib
 from urllib.parse import quote
@@ -28,41 +28,6 @@ for entry in catalog:
     assert core==entry['core_experiments'] and len(core)==3,(p,core)
 counts=dict(sections=sum(len(c['sections']) for c in chapters),subsections=sum(c['subcount'] for c in chapters),experiments=sum(c['labs'] for c in chapters),figures=sum(c['figs'] for c in chapters))
 summary=f'十二章共 {counts["sections"]} 节、{counts["subsections"]} 个小节、{counts["experiments"]} 项实验与计算、{counts["figures"]} 项配图计划'
-h=(R/'skeleton.html').read_text();panorama=re.search(r'<figure class="infra-map".*?</figure>',h,re.S)[0]
-def inline(t):
-    t=html.escape(t);t=re.sub(r'`([^`]+)`',r'<code>\1</code>',t)
-    def link(m):
-        u=html.unescape(m[2]);u=u[3:] if u.startswith('../') else 'outlines/'+u if not re.match(r'https?://|#',u) else u
-        return '<a href="'+html.escape(u,quote=True)+'">'+m[1]+'</a>'
-    t=re.sub(r'\[([^\]]+)\]\(([^)]+)\)',link,t)
-    return re.sub(r'\*\*([^*]+)\*\*',r'<strong>\1</strong>',t)
-def blocks(s):
-    res=[]
-    for part in re.split(r'\n\n+',s.strip()) if s.strip() else []:
-        if part.startswith('> '):
-            q=re.sub(r'^> ?','',part,flags=re.M).strip();kind='experiment' if q.startswith('**实验 ') else 'figure-plan'
-            res.append('<aside class="outline-callout '+kind+'">'+''.join('<p>'+inline(x.replace('\n',' '))+'</p>' for x in q.split('\n\n'))+'</aside>')
-        else:res.append('<p>'+inline(part.replace('\n',' '))+'</p>')
-    return '\n'.join(res)
-parts=['  <section id="chapter-details">\n<h2>章节安排</h2><p class="col">展开各节可查看小节说明，以及紧随内容的实验与配图计划。正式扩写以对应 Markdown 为基础。</p>']
-for c in chapters:
-    n=c['n'];parts.append(f'<article class="card" id="ch-{n}"><span class="tag">第 {n} 章</span><h3>{html.escape(c["title"])}</h3>'+blocks(c['lead']))
-    for sec in c['sections']:
-        opened=' open' if sec['num']=='1.1' else ''
-        parts.append(f'<details class="outline-section" id="sec-{sec["num"].replace(".","-")}"{opened}><summary>{html.escape(sec["num"]+" "+sec["title"])}</summary><div class="outline-section-body">'+blocks(sec['intro']))
-        for sub in sec['subs']:
-            parts.append(f'<section class="outline-subsection" id="sec-{sub["num"].replace(".","-")}"><h4>{html.escape(sub["num"]+" "+sub["title"])}</h4>')
-            if sub['num']=='1.1.1':parts.append(panorama)
-            parts.append(blocks(sub['body'])+'</section>')
-        parts.append('</div></details>')
-    parts.append('<div class="chapter-decision"><h4>本章的设计决定</h4>'+blocks(c['decision'])+'</div>')
-    parts.append(f'<p class="chapter-end"><a href="outlines/{quote(c["path"].name)}">本章 Markdown 大纲</a> · <a href="outlines/extensions/{quote(c["path"].name)}">扩写资料</a> · {len(c["sections"])} 节／{c["subcount"]} 小节 · {c["labs"]} 项练习（3 项核心） · {c["figs"]} 项配图计划</p></article>')
-parts.append('</section>')
-h=re.sub(r'  <section id="chapter-details">.*?(?=  <section id="shared-cases">)','\n'.join(parts)+'\n\n',h,flags=re.S)
-h=re.sub(r'十[二三]章共 \d+ 节、\d+ 个小节、\d+ 项实验与计算、\d+ 项配图计划',summary,h)
-nav='\n'.join(f'<a href="#ch-{c["number"]}">{c["number"]:02d} · {html.escape(c["title"])}</a>' for c in catalog)
-h=re.sub(r'(<nav class="chapter-nav"[^>]*>).*?(</nav>)',lambda m:m[1]+'\n'+nav+'\n'+m[2],h,flags=re.S)
-(R/'skeleton.html').write_text(h)
 for p in [R/'README.md',O/'README.md']:
     s=p.read_text();prefix='outlines/' if p==R/'README.md' else ''
     entries='\n'.join(f'{c["number"]}. [{c["title"]}]({prefix}{quote(c["file"])}): {c["summary"]}' for c in catalog)

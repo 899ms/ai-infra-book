@@ -14,7 +14,7 @@
 
 ## 1. 比较范围与原始资料
 
-原件为 [草案 11 HTML](../../references/outline-checks/2026-09-08/system-abstraction/skeleton-draft11-12fc723.html)，对应提交 `12fc723aca2cf1f189a227147f22a1c506edd5e6`（2026-08-22），已与 `git show 12fc723:skeleton.html` 做字节核对。原文按标题划分为 19 个语义区域，包含页首原则、全部十二章安排、终章两条论证、教学设计、资料与待核清单、页脚；[区域提取文件](draft11-regions.json)保留每区全文及原 HTML 行号。
+原件为 [草案 11 HTML](../../references/outline-checks/2026-09-08/system-abstraction/skeleton-draft11-12fc723.md)，对应提交 `12fc723aca2cf1f189a227147f22a1c506edd5e6`（2026-08-22），已与 `git show 12fc723:skeleton.html` 做字节核对。原文按标题划分为 19 个语义区域，包含页首原则、全部十二章安排、终章两条论证、教学设计、资料与待核清单、页脚；[区域提取文件](draft11-regions.json)保留每区全文及原 HTML 行号。
 
 修改前的 13 章完整文件保存于 [snapshots/](snapshots/)，[快照清单](source-snapshots.json)记录来源路径与 SHA-256。它们用于回答“本来是否已经存在”，避免补入之后又把新增内容算成旧版已保留。辅助参照包括当前[大纲索引](../../outlines/README.md)、[编辑笔记](../../outlines/editorial-notes.md)，以及既有[草案 15 审阅](../../reviews/draft15-review.md)、[草案 16 审阅](../../reviews/draft16-review.md)。后两份记录只用于理解已发现的问题，不作为所有历史删除动机的证明。
 
@@ -23,7 +23,7 @@
 本轮另核对两份官方资料：
 
 - vLLM 的[前缀缓存设计文档](https://docs.vllm.ai/en/latest/design/prefix_caching/)说明额外哈希字段、`cache_salt` 与信任组内复用。文档站下载返回 429，已保存官方仓库的[文档源码快照](sources/vllm-prefix-caching.md)。它是检索时的 `main` 快照，未冒称固定发布版本。
-- NVIDIA 的 [H100 规格](https://www.nvidia.com/en-us/data-center/h100/)沿用项目已有[官方网页归档副本](sources/nvidia-h100-spec.html)，用于核对 H100 SXM 的 80 GB 与 3.35 TB/s。原归档时间不改写成此次抓取时间。
+- NVIDIA 的 [H100 规格](https://www.nvidia.com/en-us/data-center/h100/)沿用项目已有[官方网页归档副本](sources/nvidia-h100-spec.md)，用于核对 H100 SXM 的 80 GB 与 3.35 TB/s。原归档时间不改写成此次抓取时间。
 
 两份文件的来源和校验值见[资料清单](sources/manifest.json)。本轮是完整的大纲内容审计，并没有重新测量所有硬件，也没有把旧待核清单中的型号、制程和拓扑未知项擅自填满。
 
@@ -235,7 +235,7 @@
 
 `80 GB ÷ 3.35 TB/s = 0.0238806 s ≈ 23.88 ms`。
 
-草案 11 写成约 24 μs，相差 1,000 倍；它与 20 ms TPOT 相比约为 119%，不是 0.15% 左右。因此“显存带宽从来不是 TPOT 瓶颈”的推论无效。另一方面，真实 decode 也不一定读取整块 HBM：应数活跃权重、KV、缓存复用及额外访问，不能把单位改对后又把全容量扫描设为所有模型的下界。规格依据见[原始归档](sources/nvidia-h100-spec.html)。
+草案 11 写成约 24 μs，相差 1,000 倍；它与 20 ms TPOT 相比约为 119%，不是 0.15% 左右。因此“显存带宽从来不是 TPOT 瓶颈”的推论无效。另一方面，真实 decode 也不一定读取整块 HBM：应数活跃权重、KV、缓存复用及额外访问，不能把单位改对后又把全容量扫描设为所有模型的下界。规格依据见[原始归档](sources/nvidia-h100-spec.md)。
 
 旧例 `70 GB ÷ 3.35 TB/s ≈ 20.90 ms` 的算术可以保留作理想读取时间；用理想计算时间与它相除，就宣布 GPU 实际有 99.7% 时间“闲着”，没有测量依据。低峰值算力利用率、内存子系统繁忙和处理器完全闲置不是同一件事。
 

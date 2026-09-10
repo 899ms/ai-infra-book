@@ -4,12 +4,11 @@
 
 每次设计先问：搬什么、搬多少、搬几次、经过哪里、谁必须等它。读者沿同一任务逐章修正判断，最终能提出候选、找到遗漏约束，并用最小实验决定值得改什么。
 
-全书已完成草案 22 的结构与逐章写作大纲。第一章已扩写为正文初稿并制作六幅配图，第二章已完成六节正文初稿与八幅配图，其余章节继续按大纲展开。
+正文以十二章 Markdown 为唯一维护源，在线阅读网站由 GitHub Actions 自动构建。
 
-- [第一章正文阅读版](manuscripts/01-%E5%88%9D%E8%AF%86%20AI%20Infra.html)、[Markdown 与图片](manuscripts/README.md)。
-- [第二章正文阅读版](manuscripts/02-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84.html)、[图片与复现](manuscripts/ch02/README.md)。
-- [第十一章正文阅读版](manuscripts/11-资源调度与运行环境.html)、[Markdown、插图与复现](manuscripts/ch11/README.md)：五节全文、八幅无内嵌图号插图、量化算例与十项练习。
-- [网页大纲](skeleton.html)与[逐章 Markdown](outlines/README.md)：十二章的主张、推导、练习和配图。
+- [十二章正文与配图](manuscripts/README.md)。
+- [逐章 Markdown 大纲](outlines/README.md)：十二章的主张、推导、练习和配图。
+- [网站构建与发布说明](website/README.md)：push 到 main 后自动构建 PDF 与网站，发布 GitHub Release 和 GitHub Pages。
 - [量化计算项目](calculations/README.md)：[全书计算计划](calculations/PLAN.md)、官方模型配置与硬件规格、统一 CLI 和[已复算结果](calculations/results/README.md)，持续实现中。
 - [全书主线与章节依赖](outlines/structure.md)、[跨章设计决定](outlines/decision-record.md)：共同表示、固定输入和逐章修正。
 - [阅读路径与配套](outlines/writing-support.md)、[完整扩写资料](outlines/extensions/README.md)：核心练习和详细技术材料。
@@ -66,7 +65,7 @@
 - [负载变化与芯片演进](case-studies/architecture-evolution.md)：代际机制在计算、存储和搬运各层的分析方法。
 
 - [本地参考库](references/README.md)、[推理论文选读](references/INFERENCE-PAPER-GUIDE.md)、[芯片资料覆盖](references/HARDWARE-COVERAGE.md)、[UB 与昇腾 950 核对笔记](references/UB-ASCEND-NOTES.md)。
-- 作者文章原件：[UB 背后的思考](references/files/documents/ub-reflection.html)，网络新黄金时代[（一）](references/files/documents/network-golden-1.html)、[（二）](references/files/documents/network-golden-2.html)、[（三）](references/files/documents/network-golden-3.html)，[A100/H100 太贵，何不用 4090？](references/files/documents/h100-vs-4090.html)。
+- 作者文章原件：[UB 背后的思考](references/files/documents/ub-reflection.md)，网络新黄金时代[（一）](references/files/documents/network-golden-1.md)、[（二）](references/files/documents/network-golden-2.md)、[（三）](references/files/documents/network-golden-3.md)，[A100/H100 太贵，何不用 4090？](references/files/documents/h100-vs-4090.md)。
 - [可编程网卡案例](case-studies/programmable-nic.md)。
 - [片上数据移动与能耗案例](case-studies/logicfolding-energy.md)。
 - [训练计算量复算案例](case-studies/training-compute.md)、[Llama／Qwen 训练投入比较](case-studies/scaling-history.md)。
@@ -83,7 +82,7 @@
 
 [草案 15 审阅](reviews/draft15-review.md)、[草案 16 审阅](reviews/draft16-review.md)保留作为修订记录。[原在线 Artifact](https://claude.ai/code/artifact/f189e837-87cd-4db3-b58b-35db20856858)是此前的发布入口，本地修改尚未同步发布。
 
-`skeleton.html` 保留 Artifact 使用的 HTML 片段形式，浏览器可以直接打开；独立分发时可由发布流程补充文档外壳。
+旧 HTML 阅读版已移除；网站每次从 Markdown 重新构建，生成文件只作为 Pages 或 Release 产物。独有资料快照迁移为 Markdown，原始文件仍可在 Git 历史中查阅。
 
 本轮的模型计算与媒体案例：[容量、计算与访问](case-studies/model-resource-accounting.md)、[RAW 图片精修](case-studies/raw-retouching.md)；[全书写作要求](outlines/editorial-notes.md)。
 

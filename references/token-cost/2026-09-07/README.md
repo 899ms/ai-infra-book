@@ -16,7 +16,7 @@
 
 ### epoch-prices · LLM inference prices have fallen rapidly but unequally across tasks
 
-[原始网址](https://epoch.ai/data-insights/llm-inference-price-trends) · [本地原件](epoch-prices.html) · [提取文本](text/epoch-prices.txt)
+[原始网址](https://epoch.ai/data-insights/llm-inference-price-trends) · [本地原件](epoch-prices.md) · [提取文本](text/epoch-prices.txt)
 
 版本／时点：2025-03-12；获取时间：2026-09-07T15:25:59.786383+00:00。
 
@@ -86,7 +86,7 @@
 
 ### vllm-060 · vLLM v0.6.0: 2.7x Throughput Improvement and 5x Latency Reduction
 
-[原始网址](https://vllm-project.github.io/2024/09/05/perf-update.html) · [本地原件](vllm-060.html) · [提取文本](text/vllm-060.txt)
+[原始网址](https://vllm-project.github.io/2024/09/05/perf-update.html) · [本地原件](vllm-060.md) · [提取文本](text/vllm-060.txt)
 
 版本／时点：2024-09-05；获取时间：2026-09-07T15:26:00.657213+00:00。
 
@@ -96,7 +96,7 @@
 
 ### vllm-v1-launch · vLLM V1: A Major Upgrade to vLLM Core Architecture
 
-[原始网址](https://vllm.ai/blog/2025-01-27-v1-alpha-release) · [本地原件](vllm-v1-launch.html) · [提取文本](text/vllm-v1-launch.txt)
+[原始网址](https://vllm.ai/blog/2025-01-27-v1-alpha-release) · [本地原件](vllm-v1-launch.md) · [提取文本](text/vllm-v1-launch.txt)
 
 版本／时点：2025-01-27；获取时间：2026-09-07T15:26:01.194837+00:00。
 
@@ -126,7 +126,7 @@
 
 ### qwen3-launch · Qwen3: Think Deeper, Act Faster
 
-[原始网址](https://qwenlm.github.io/blog/qwen3/) · [本地原件](qwen3-launch.html) · [提取文本](text/qwen3-launch.txt)
+[原始网址](https://qwenlm.github.io/blog/qwen3/) · [本地原件](qwen3-launch.md) · [提取文本](text/qwen3-launch.txt)
 
 版本／时点：2025-04-29；获取时间：2026-09-07T15:26:02.005709+00:00。
 
@@ -136,7 +136,7 @@
 
 ### blackwell-inferencex · New SemiAnalysis InferenceX Data: Blackwell Ultra Performance and Cost
 
-[原始网址](https://blogs.nvidia.com/blog/data-blackwell-ultra-performance-lower-cost-agentic-ai/) · [本地原件](blackwell-inferencex.html) · [提取文本](text/blackwell-inferencex.txt)
+[原始网址](https://blogs.nvidia.com/blog/data-blackwell-ultra-performance-lower-cost-agentic-ai/) · [本地原件](blackwell-inferencex.md) · [提取文本](text/blackwell-inferencex.txt)
 
 版本／时点：2026-02-16; living page may be updated；获取时间：2026-09-07T15:26:02.384168+00:00。
 
@@ -146,7 +146,7 @@
 
 ### mlperf-60 · MLCommons Releases MLPerf Inference v6.0 Benchmark Results
 
-[原始网址](https://mlcommons.org/2026/04/mlperf-inference-v6-0-results/) · [本地原件](mlperf-60.html) · [提取文本](text/mlperf-60.txt)
+[原始网址](https://mlcommons.org/2026/04/mlperf-inference-v6-0-results/) · [本地原件](mlperf-60.md) · [提取文本](text/mlperf-60.txt)
 
 版本／时点：2026-04；获取时间：2026-09-07T15:26:02.454990+00:00。
 
@@ -156,7 +156,7 @@
 
 ### mlperf-60-reasoning · A new GPT-OSS benchmark and DeepSeek R1 updates for latency-optimized reasoning
 
-[原始网址](https://mlcommons.org/2026/03/mlperf-inference-gpt-oss/) · [本地原件](mlperf-60-reasoning.html) · [提取文本](text/mlperf-60-reasoning.txt)
+[原始网址](https://mlcommons.org/2026/03/mlperf-inference-gpt-oss/) · [本地原件](mlperf-60-reasoning.md) · [提取文本](text/mlperf-60-reasoning.txt)
 
 版本／时点：2026-03-24；获取时间：2026-09-07T15:26:02.750953+00:00。
 
@@ -166,7 +166,7 @@
 
 ### gemini31-lite · Gemini 3.1 Flash-Lite release
 
-[原始网址](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-1-flash-lite/) · [本地原件](gemini31-lite.html) · [提取文本](text/gemini31-lite.txt)
+[原始网址](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-1-flash-lite/) · [本地原件](gemini31-lite.md) · [提取文本](text/gemini31-lite.txt)
 
 版本／时点：2026-03-03；获取时间：2026-09-07T15:26:02.932610+00:00。
 
@@ -176,7 +176,7 @@
 
 ### gemini35-lite · Gemini 3.6 Flash, 3.5 Flash-Lite, and 3.5 Flash Cyber
 
-[原始网址](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-6-flash-3-5-flash-lite-3-5-flash-cyber/) · [本地原件](gemini35-lite.html) · [提取文本](text/gemini35-lite.txt)
+[原始网址](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-6-flash-3-5-flash-lite-3-5-flash-cyber/) · [本地原件](gemini35-lite.md) · [提取文本](text/gemini35-lite.txt)
 
 版本／时点：2026-07-21；获取时间：2026-09-07T15:26:03.306651+00:00。
 
@@ -416,7 +416,7 @@
 
 ### nvidia-h100-spec · NVIDIA H100 Product Specifications
 
-[原始网址](https://www.nvidia.com/en-us/data-center/h100/) · [本地原件](../../files/specs/nvidia-h100-spec.html) · [提取文本](text/nvidia-h100-spec.txt)
+[原始网址](https://www.nvidia.com/en-us/data-center/h100/) · [本地原件](../../files/specs/nvidia-h100-spec.md) · [提取文本](text/nvidia-h100-spec.txt)
 
 版本／时点：版本／日期见原件与 manifest；获取时间：2026-09-05T13:29:02.884939+00:00。
 
@@ -436,7 +436,7 @@
 
 ### nvidia-rubin-arch · Inside NVIDIA Rubin GPU Architecture
 
-[原始网址](https://developer.nvidia.com/blog/inside-nvidia-rubin-gpu-architecture-powering-the-era-of-agentic-ai/) · [本地原件](../../files/documents/nvidia-rubin-arch.html) · [提取文本](text/nvidia-rubin-arch.txt)
+[原始网址](https://developer.nvidia.com/blog/inside-nvidia-rubin-gpu-architecture-powering-the-era-of-agentic-ai/) · [本地原件](../../files/documents/nvidia-rubin-arch.md) · [提取文本](text/nvidia-rubin-arch.txt)
 
 版本／时点：版本／日期见原件与 manifest；获取时间：2026-09-05T14:25:18.330692+00:00。
 
@@ -456,7 +456,7 @@
 
 ### sglang-v04-2024 · SGLang v0.4，2024-12
 
-[原始网址](https://www.lmsys.org/blog/2024-12-04-sglang-v0-4/) · [本地原件](../../outline-checks/2026-09-07/framework-evolution/sglang-v04.html) · [提取文本](text/sglang-v04-2024.txt)
+[原始网址](https://www.lmsys.org/blog/2024-12-04-sglang-v0-4/) · [本地原件](../../outline-checks/2026-09-07/framework-evolution/sglang-v04.md) · [提取文本](text/sglang-v04-2024.txt)
 
 版本／时点：版本／日期见原件与 manifest；获取时间：2026-09-07T14:29:52.041349+00:00。
 
@@ -466,7 +466,7 @@
 
 ### sglang-hicache-2025 · SGLang HiCache，2025-09
 
-[原始网址](https://www.lmsys.org/blog/2025-09-10-sglang-hicache/) · [本地原件](../../outline-checks/2026-09-07/framework-evolution/sglang-hicache.html) · [提取文本](text/sglang-hicache-2025.txt)
+[原始网址](https://www.lmsys.org/blog/2025-09-10-sglang-hicache/) · [本地原件](../../outline-checks/2026-09-07/framework-evolution/sglang-hicache.md) · [提取文本](text/sglang-hicache-2025.txt)
 
 版本／时点：版本／日期见原件与 manifest；获取时间：2026-09-07T14:29:51.766325+00:00。
 
@@ -476,7 +476,7 @@
 
 ### sglang-hisparse-2026 · SGLang HiSparse，2026-04
 
-[原始网址](https://www.lmsys.org/blog/2026-04-10-sglang-hisparse/) · [本地原件](../../outline-checks/2026-09-07/framework-evolution/sglang-hisparse.html) · [提取文本](text/sglang-hisparse-2026.txt)
+[原始网址](https://www.lmsys.org/blog/2026-04-10-sglang-hisparse/) · [本地原件](../../outline-checks/2026-09-07/framework-evolution/sglang-hisparse.md) · [提取文本](text/sglang-hisparse-2026.txt)
 
 版本／时点：版本／日期见原件与 manifest；获取时间：2026-09-07T14:29:52.371282+00:00。
 
@@ -486,7 +486,7 @@
 
 ### sglang-unified-cache-2026 · SGLang Unified Radix Cache，2026-08
 
-[原始网址](https://www.lmsys.org/blog/2026-08-11-unified-radix-cache/) · [本地原件](../../outline-checks/2026-09-07/framework-evolution/sglang-unified-cache.html) · [提取文本](text/sglang-unified-cache-2026.txt)
+[原始网址](https://www.lmsys.org/blog/2026-08-11-unified-radix-cache/) · [本地原件](../../outline-checks/2026-09-07/framework-evolution/sglang-unified-cache.md) · [提取文本](text/sglang-unified-cache-2026.txt)
 
 版本／时点：版本／日期见原件与 manifest；获取时间：2026-09-07T14:29:52.538370+00:00。
 
@@ -496,7 +496,7 @@
 
 ### sglang-graph-2026 · SGLang Advanced CUDA Graph，2026-08
 
-[原始网址](https://www.lmsys.org/blog/2026-08-17-advanced-cuda-graph/) · [本地原件](../../outline-checks/2026-09-07/framework-evolution/sglang-graphs.html) · [提取文本](text/sglang-graph-2026.txt)
+[原始网址](https://www.lmsys.org/blog/2026-08-17-advanced-cuda-graph/) · [本地原件](../../outline-checks/2026-09-07/framework-evolution/sglang-graphs.md) · [提取文本](text/sglang-graph-2026.txt)
 
 版本／时点：版本／日期见原件与 manifest；获取时间：2026-09-07T14:29:52.549779+00:00。
 
@@ -506,7 +506,7 @@
 
 ### vllm-afd-2026 · vLLM AFD Plugin，2026-07
 
-[原始网址](https://vllm-project.github.io/2026/07/23/vllm-afd-plugin.html) · [本地原件](../../outline-checks/2026-09-07/framework-evolution/vllm-afd.html) · [提取文本](text/vllm-afd-2026.txt)
+[原始网址](https://vllm-project.github.io/2026/07/23/vllm-afd-plugin.html) · [本地原件](../../outline-checks/2026-09-07/framework-evolution/vllm-afd.md) · [提取文本](text/vllm-afd-2026.txt)
 
 版本／时点：版本／日期见原件与 manifest；获取时间：2026-09-07T14:29:51.215203+00:00。
 
@@ -516,7 +516,7 @@
 
 ### ollama-mtp-2026 · Ollama MLX 多 token 预测，2026-06
 
-[原始网址](https://ollama.com/blog/faster-gemma-4-mlx-mtp) · [本地原件](../../outline-checks/2026-09-07/framework-evolution/ollama-mtp.html) · [提取文本](text/ollama-mtp-2026.txt)
+[原始网址](https://ollama.com/blog/faster-gemma-4-mlx-mtp) · [本地原件](../../outline-checks/2026-09-07/framework-evolution/ollama-mtp.md) · [提取文本](text/ollama-mtp-2026.txt)
 
 版本／时点：版本／日期见原件与 manifest；获取时间：2026-09-07T14:29:53.068904+00:00。
 
@@ -536,7 +536,7 @@
 
 ### eagle31 · EAGLE 3.1 — EAGLE, vLLM, TorchSpec teams
 
-[原始网址](https://vllm.ai/blog/2026-05-26-eagle-3-1) · [本地原件](../../outline-checks/2026-09-07/systems-cases/eagle31.html) · [提取文本](text/eagle31.txt)
+[原始网址](https://vllm.ai/blog/2026-05-26-eagle-3-1) · [本地原件](../../outline-checks/2026-09-07/systems-cases/eagle31.md) · [提取文本](text/eagle31.txt)
 
 版本／时点：版本／日期见原件与 manifest；获取时间：2026-09-07T13:01:02.701449+00:00。
 
@@ -546,7 +546,7 @@
 
 ### nvidia-h200-systems · NVIDIA H200 official specifications
 
-[原始网址](https://www.nvidia.com/en-us/data-center/h200/) · [本地原件](../../outline-checks/2026-09-07/systems-cases/nvidia-h200-systems.html) · [提取文本](text/nvidia-h200-systems.txt)
+[原始网址](https://www.nvidia.com/en-us/data-center/h200/) · [本地原件](../../outline-checks/2026-09-07/systems-cases/nvidia-h200-systems.md) · [提取文本](text/nvidia-h200-systems.txt)
 
 版本／时点：版本／日期见原件与 manifest；获取时间：2026-09-07T13:12:46.457251+00:00。
 
@@ -656,7 +656,7 @@
 
 ### inferencex-gb300 · InferenceX: GB300 vs GB200 on DeepSeek-V4-Pro
 
-[原始网址](https://inferencex.semianalysis.com/blog/gb300-nvl72-vs-gb200-nvl72-dsv4-pro-vllm-fp4) · [本地原件](inferencex-gb300.html) · [提取文本](text/inferencex-gb300.txt)
+[原始网址](https://inferencex.semianalysis.com/blog/gb300-nvl72-vs-gb200-nvl72-dsv4-pro-vllm-fp4) · [本地原件](inferencex-gb300.md) · [提取文本](text/inferencex-gb300.txt)
 
 版本／时点：2026-05-27；获取时间：2026-09-07T15:28:50.868254+00:00。
 
@@ -666,7 +666,7 @@
 
 ### inferencex-v4-evolution · InferenceX: DeepSeek-V4 Day 0 to Day 43
 
-[原始网址](https://inferencex.semianalysis.com/blog/deepseekv4-16t-day-0-to-day-43-performance) · [本地原件](inferencex-v4-evolution.html) · [提取文本](text/inferencex-v4-evolution.txt)
+[原始网址](https://inferencex.semianalysis.com/blog/deepseekv4-16t-day-0-to-day-43-performance) · [本地原件](inferencex-v4-evolution.md) · [提取文本](text/inferencex-v4-evolution.txt)
 
 版本／时点：2026-06-09；获取时间：2026-09-07T15:28:49.454750+00:00。
 

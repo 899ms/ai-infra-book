@@ -6,9 +6,9 @@
 
 2024 年 MLSys 的 [Punica](../references/proceedings/MLSys/2024/papers/mlsys2024-054de805fcceb78a201f5e9d53c85908.pdf) 与 [S-LoRA](../references/proceedings/MLSys/2024/papers/mlsys2024-906419cd502575b617cc489a1a696a67.pdf) 都围绕共享基座的多租户服务：普通 GEMM 批量计算 `XW`，不同 adapter 的低秩修正 `X A_i B_i` 分组计算。它们是同期研究；不能仅凭会议年份确定谁先实现。Punica 的 SGMV 与 S-LoRA 的异构 rank、非连续页及统一内存管理各有侧重。
 
-当年的对照包含合并权重后的多进程服务。S-LoRA 的旧基线说明不代表当前 vLLM；当前 [vLLM 固定提交的文档](../references/framework-history/2026-09-07/lora/vllm-lora.md)已描述按请求选择 adapter、并发服务和动态加载。[SGLang 文档](../references/framework-history/2026-09-07/lora/sglang-lora.html)明确引用两篇工作，并讨论加载与执行重叠、热 adapter 固定、排队过久时腾出槽位。这条演进说明瓶颈从“重复存整个模型”移到“低秩执行、状态容量和调度公平性”，并非参数小就没有成本。
+当年的对照包含合并权重后的多进程服务。S-LoRA 的旧基线说明不代表当前 vLLM；当前 [vLLM 固定提交的文档](../references/framework-history/2026-09-07/lora/vllm-lora.md)已描述按请求选择 adapter、并发服务和动态加载。[SGLang 文档](../references/framework-history/2026-09-07/lora/sglang-lora.md)明确引用两篇工作，并讨论加载与执行重叠、热 adapter 固定、排队过久时腾出槽位。这条演进说明瓶颈从“重复存整个模型”移到“低秩执行、状态容量和调度公平性”，并非参数小就没有成本。
 
-[Ollama 的 ADAPTER](../references/framework-history/2026-09-07/lora/ollama-modelfile.html)描述给指定基座构建适配模型；这个入口本身不能证明具有上述异构请求合批能力。接口、真实 runner 和调度方式仍须分别验证。文档原件及 vLLM 提交见[来源清单](../references/framework-history/2026-09-07/lora/sources.json)；vLLM 网页下载遇到 429 后改取上游固定提交文档，未把失败响应归档成正文。
+[Ollama 的 ADAPTER](../references/framework-history/2026-09-07/lora/ollama-modelfile.md)描述给指定基座构建适配模型；这个入口本身不能证明具有上述异构请求合批能力。接口、真实 runner 和调度方式仍须分别验证。文档原件及 vLLM 提交见[来源清单](../references/framework-history/2026-09-07/lora/sources.json)；vLLM 网页下载遇到 429 后改取上游固定提交文档，未把失败响应归档成正文。
 
 2026-09-09 补齐[代表版本与实际准入路径](../references/framework-history/2026-09-09/lora-admission/README.md)：vLLM 从 2024 的逐请求服务到 2025 动态加载、2026 原位替换／MoE 格式入口；SGLang 从 2025 分组内核与前缀身份，到 2026 异步加载和冷 adapter 排空。Ollama 三个年份的所查路径均在 adapter 列表变化时要求重载 runner。它们并非同一种多租户合批能力；完整后端与更新协议仍需各自验证。
 

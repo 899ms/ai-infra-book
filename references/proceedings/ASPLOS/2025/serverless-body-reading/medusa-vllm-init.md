@@ -1,0 +1,3 @@
+<!-- 从 medusa-vllm-init.html 迁移的资料快照；原始 HTML SHA-256: d2d413519412bf03b15b5484e8600e893ae01a65e50401784282a855f784ea69。 -->
+
+"""vLLM: a high-throughput and memory-efficient inference engine for LLMs""" from vllm.engine.arg_utils import AsyncEngineArgs, EngineArgs from vllm.engine.async_llm_engine import AsyncLLMEngine from vllm.engine.llm_engine import LLMEngine from vllm.engine.ray_utils import initialize_cluster from vllm.entrypoints.llm import LLM from vllm.outputs import CompletionOutput, RequestOutput from vllm.sampling_params import SamplingParams \_\_version\_\_ = "0.3.1" \_\_all\_\_ = \[ "LLM", "SamplingParams", "RequestOutput", "CompletionOutput", "LLMEngine", "EngineArgs", "AsyncLLMEngine", "AsyncEngineArgs", "initialize_cluster", \]

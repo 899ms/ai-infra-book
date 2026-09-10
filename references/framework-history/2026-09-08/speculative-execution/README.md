@@ -4,11 +4,11 @@
 
 ## 历史文章
 
-- [vLLM 2024](vllm-2024.html)：全部正文、示例与图注已读；动态调节当时列为未来工作，性能随 QPS 改变。
-- [Speculators 2025](vllm-speculators-2025.html)：全部正文及附录已读；离线特征、目标／草稿绑定、训练与推理职责分开。
-- [P-EAGLE 2026](vllm-peagle-2026.html)：全部正文、表格与复现条件已读；曲线未独立数字化。另核对 [PR 32887](vllm-peagle-pr.json) 的 02-05 合入及 [v0.16.0](vllm-v016-release.json) 的 02-25 发布，仅核身份字段，未审阅全部 PR 或 release 内容。
-- [SGLang MTP 2025](sglang-mtp-2025.html)、[DFlash／Spec V2 2026](sglang-specv2-2026.html)、[DSpark 2026](sglang-dspark-2026.html)：全部文字、表格、图注及复现设置已读，未独立提取曲线。MTP 表格百分比疑点、Spec V2 重叠条件、DSpark 图档位与成本限制另记案例。DSpark [PR 身份](sglang-dspark-pr.json)显示 07-12 合入，不能将 07-06 文章日期直接作为主线合入日期；没有审阅全部 84 个改动文件。
-- [Ollama MLX 2026](ollama-mlx-performance-2026.html)：全部正文已读。选择性快照与 GPU 采样／融合用于补已有本地例子；先前的 [MTP 公告](../../../outline-checks/2026-09-07/framework-evolution/ollama-mtp.html)复读，未重复下载。
+- [vLLM 2024](vllm-2024.md)：全部正文、示例与图注已读；动态调节当时列为未来工作，性能随 QPS 改变。
+- [Speculators 2025](vllm-speculators-2025.md)：全部正文及附录已读；离线特征、目标／草稿绑定、训练与推理职责分开。
+- [P-EAGLE 2026](vllm-peagle-2026.md)：全部正文、表格与复现条件已读；曲线未独立数字化。另核对 [PR 32887](vllm-peagle-pr.json) 的 02-05 合入及 [v0.16.0](vllm-v016-release.json) 的 02-25 发布，仅核身份字段，未审阅全部 PR 或 release 内容。
+- [SGLang MTP 2025](sglang-mtp-2025.md)、[DFlash／Spec V2 2026](sglang-specv2-2026.md)、[DSpark 2026](sglang-dspark-2026.md)：全部文字、表格、图注及复现设置已读，未独立提取曲线。MTP 表格百分比疑点、Spec V2 重叠条件、DSpark 图档位与成本限制另记案例。DSpark [PR 身份](sglang-dspark-pr.json)显示 07-12 合入，不能将 07-06 文章日期直接作为主线合入日期；没有审阅全部 84 个改动文件。
+- [Ollama MLX 2026](ollama-mlx-performance-2026.md)：全部正文已读。选择性快照与 GPU 采样／融合用于补已有本地例子；先前的 [MTP 公告](../../../outline-checks/2026-09-07/framework-evolution/ollama-mtp.md)复读，未重复下载。
 
 ## 固定实现与范围
 

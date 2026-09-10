@@ -14,18 +14,18 @@
 
 ## SGLang：权重预取与 CPU 专家
 
-[2025-10-22 KT 公告](sglang-kt-2025.html)的正文、命令、文本表和图注已读，图片曲线与表格未独立数字化。公告仍将集成称为 proof of concept；原 KTransformers 单卡实验与 SGLang 多卡预览分开。ShareGPT 表的 227.85 是总 token/s、87.58 为输出 token/s；CPU 命令为 AMXINT4，GPU 服务名含 FP8，不能称所有权重均为 FP8。其 R1／V3 实验不改称 V4／K3，也不沿用总结段的“trillion-parameter”来描述这组模型。
+[2025-10-22 KT 公告](sglang-kt-2025.md)的正文、命令、文本表和图注已读，图片曲线与表格未独立数字化。公告仍将集成称为 proof of concept；原 KTransformers 单卡实验与 SGLang 多卡预览分开。ShareGPT 表的 227.85 是总 token/s、87.58 为输出 token/s；CPU 命令为 AMXINT4，GPU 服务名含 FP8，不能称所有权重均为 FP8。其 R1／V3 实验不改称 V4／K3，也不沿用总结段的“trillion-parameter”来描述这组模型。
 
 固定 SGLang 提交沿用 `c99d906effa8bd05573995127f0d4a0984c5a96a`：
 
 - [通用 offloader](sglang-current-offloader.py) 全 585 行：V1 按需搬入；V2 按组预取、事件与捕获分支；CPU、共享主存及 GPU 分片模式。共享／分片路径有 TP=1 和布局限制，代码中存在这些模式不表示所有模型入口或组合均已支持。
 - [KT wrapper](sglang-current-kt.py) 全 393 行：kt-kernel 依赖、GPU／CPU 专家划分、物理到逻辑映射、TP rank 0 的 CPU 提交与结果合并；SiLU 条件、deferral 参数及最后一层限制。未读取 kt-kernel 内部算法、通用 EP 支持或所有模型的实际调用链。
 
-重新核读已归档 [2025 GB200 第二期](../overlap-placement/sglang-gb200-2025-sept.html)的 Scaling Down by Offloading 段，连接“互联足够快时减少 EP 卡数”的设计选择。其 900 GB/s 为双向峰值，不能代替题设的单向有效传输率。Expert Deferral 改变跨层贡献到达次序，公告承认模型行为变化；普通同层 submit／compute／merge 和 deferral 分别评估。
+重新核读已归档 [2025 GB200 第二期](../overlap-placement/sglang-gb200-2025-sept.md)的 Scaling Down by Offloading 段，连接“互联足够快时减少 EP 卡数”的设计选择。其 900 GB/s 为双向峰值，不能代替题设的单向有效传输率。Expert Deferral 改变跨层贡献到达次序，公告承认模型行为变化；普通同层 submit／compute／merge 和 deferral 分别评估。
 
 ## Ollama：模型层、辅助阶段与内存报告
 
-[v0.30 GGUF 公告](ollama-gguf-2026.html)正文和图注已读：文章日期 2026-06-05，Gemma 4 26B／5090／Q4_K_M 条件保留；Vulkan 默认启用与 GGUF 支持按公告范围表述。[v0.30.0 release](ollama-v030-release.json)正文、已知限制与发布时间已读，GitHub published_at 为 2026-05-13，不能用公告日期覆盖发布记录。
+[v0.30 GGUF 公告](ollama-gguf-2026.md)正文和图注已读：文章日期 2026-06-05，Gemma 4 26B／5090／Q4_K_M 条件保留；Vulkan 默认启用与 GGUF 支持按公告范围表述。[v0.30.0 release](ollama-v030-release.json)正文、已知限制与发布时间已读，GitHub published_at 为 2026-05-13，不能用公告日期覆盖发布记录。
 
 [固定 llm 目录](ollama-llm-directory.json)仅用于定位文件。沿先前已核的 `83ed7d9965b1ee07e0f0b29fd46e47c31f0fcab8` 读取 [llama-server 客户端](ollama-current-llama-server.go)的 386–420、635–705、2642–2695 行：自动／指定 GPU 层，projector 单独落 CPU，内存报告中 mmap 重复计数处理和全部文本层卸载时的显示规则。实际上游算子路径与完整启动恢复未审查。
 
@@ -33,7 +33,7 @@
 
 ## 多模态候选，尚未纳入提纲
 
-[vLLM-Omni 2026-08-17 分布式逐层卸载文章](vllm-omni-dlo-2026.html)本轮只读官方页面开头、加载与权重分片，以及双缓冲引入部分；后续评估未读。[PR #5864](vllm-omni-pr5864.json)只核 2026-08-08 的合入身份并读 Why／Architecture 开头：DLO 的 DP 请求仍受权重 AllGather 与相容控制流约束。这两份是下一轮多模态调研候选，不登记会议正文阅读，也未将未核完的性能值或命令放进书中。
+[vLLM-Omni 2026-08-17 分布式逐层卸载文章](vllm-omni-dlo-2026.md)本轮只读官方页面开头、加载与权重分片，以及双缓冲引入部分；后续评估未读。[PR #5864](vllm-omni-pr5864.json)只核 2026-08-08 的合入身份并读 Why／Architecture 开头：DLO 的 DP 请求仍受权重 AllGather 与相容控制流约束。这两份是下一轮多模态调研候选，不登记会议正文阅读，也未将未核完的性能值或命令放进书中。
 
 采用内容与教学计算见[权重卸载算例](../../../../case-studies/weight-offload-execution.md)。第 9.4／10.3 及现有实验补容量、带宽、CPU 算力、批量与质量条件；正文不逐项罗列配置参数。
 

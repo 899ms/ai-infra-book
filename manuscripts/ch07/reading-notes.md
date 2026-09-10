@@ -4,7 +4,7 @@
 
 | 来源 | 采用内容 | 边界 |
 |---|---|---|
-| [UB 作者文章](../../references/files/documents/ub-reflection.html)、[规范核对笔记](../../references/UB-ASCEND-NOTES.md) | 总线与网络统一、KV-Direct、1Pipe、Jetty／传输分离、引用寿命 | 经历用于解释动机；规范模式、物理实现和产品版本分别处理 |
+| [UB 作者文章](../../references/files/documents/ub-reflection.md)、[规范核对笔记](../../references/UB-ASCEND-NOTES.md) | 总线与网络统一、KV-Direct、1Pipe、Jetty／传输分离、引用寿命 | 经历用于解释动机；规范模式、物理实现和产品版本分别处理 |
 | [路径与诊断](../../case-studies/collective-paths-and-diagnosis.md) | MegaScale 就绪等待、可路由 PCIe 的服务限制 | 保留论文平台与证据范围 |
 | [远端排序与完成](../../case-studies/remote-ordering-and-completion.md) | 必要依赖、目标端检查、旧值与完成消费 | 新硬件提案不写成现有网卡已支持 |
 | [网络规划与集合通信](../../case-studies/network-planning-and-collectives.md) | CASSINI 周期与相位、消息大小和启动成本 | 周期、放置与校准条件不可省略 |

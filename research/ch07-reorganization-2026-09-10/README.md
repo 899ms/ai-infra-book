@@ -2,7 +2,7 @@
 
 按用户确认的可读性、逻辑结构建议，并阅读全文《Unified Bus 背后的思考》，将本章组织为“集群边界 → 流量与路径 → 远程访问 → 数据交接 → 拥塞与可靠性 → 任务收益”。用户称原文为《Unified Bus 背后的故事》，归档页面标题为《Unified Bus 背后的思考》，发布日期 2025-09-28。
 
-当前入口：[主大纲](../../outlines/07-数据中心网络.md)、[扩写资料](../../outlines/extensions/07-数据中心网络.md)、[网页大纲](../../skeleton.html#ch-7)。本轮开始时的工作区原文保存在 [outline-before.txt](outline-before.txt) 与 [extension-before.txt](extension-before.txt)，不是 Git HEAD。
+当前入口：[主大纲](../../outlines/07-数据中心网络.md)、[扩写资料](../../outlines/extensions/07-数据中心网络.md)、[网页大纲](../../outlines/README.md#ch-7)。本轮开始时的工作区原文保存在 [outline-before.txt](outline-before.txt) 与 [extension-before.txt](extension-before.txt)，不是 Git HEAD。
 
 本章维持 6 节，21 个小节调整为 23 个。10 项实验、9 项配图及原有计算证据保留；核心练习仍为 7-3、7-7、7-10。正文先讲问题、备选、设计原则和代价，再用一个机制或算例检验；协议字段、模式表、完整测量条件与进阶变体在扩写资料查阅。
 
@@ -28,7 +28,7 @@
 
 ## 原文阅读与采用
 
-阅读全文：[Unified Bus 背后的思考](../../references/files/documents/ub-reflection.html)。采用的是设计问题、备选与权衡，具体协议保证沿用仓库已有规范核对入口；本轮没有宣称重新逐条验证全部 UB 规范。
+阅读全文：[Unified Bus 背后的思考](../../references/files/documents/ub-reflection.md)。采用的是设计问题、备选与权衡，具体协议保证沿用仓库已有规范核对入口；本轮没有宣称重新逐条验证全部 UB 规范。
 
 | 原文部分 | 提炼的设计原则 | 大纲落点 |
 | --- | --- | --- |

@@ -31,6 +31,6 @@ vLLM 样本分别固定于 `32e7db2…`、`a5dd03c…`、`537af2c…`；SGLang �
 
 PR 10286 的例子为 Llama-3.1-8B、特定 adapter、ShareGPT 与禁用 radix cache；正文没有给出该测试的 GPU 型号，不能补写。PR 15512 明确使用单 H200：一组把同一大于 1 GB 的 adapter 注册为十六个名称并刻意制造加载 miss，另一组才使用较小 adapters。两组收益不可混成“普遍加速”；链接中的 profiler 截图本次未查看。PR 17913 使用 A100-SXM4-80GB、六个 adapter、三个槽位及固定随机长度。其表格中 P99 TTFT 改善时，中位 TTFT 从 83.30 ms 升到 3728.36 ms，正好说明尾部与中位数要分别看。这里只分析原表条件，不作为本书测量结果。
 
-[2026-07-15 Inkling 公告](https://www.lmsys.org/blog/2026-07-15-inkling-day0-support)的 LoRA Serving 节提供另一种专用实现：基座 GEMM 与低秩路径在两条流上运行，在激活等依赖处汇合；MoE 修正复用基座的专家路由。所读表格为 B200 W4A16、TP8、输入 8192／输出 1024、对称内存开启、关闭推测解码；它比较批内一个与四个 adapter，不能推广为任意模型或任意 LoRA 格式的结果。这里只读该节文字和表格，未查看图 5、未核完整定制内核，也未通读公告其他章节。[归档原件](sglang-inkling-2026.html)
+[2026-07-15 Inkling 公告](https://www.lmsys.org/blog/2026-07-15-inkling-day0-support)的 LoRA Serving 节提供另一种专用实现：基座 GEMM 与低秩路径在两条流上运行，在激活等依赖处汇合；MoE 修正复用基座的专家路由。所读表格为 B200 W4A16、TP8、输入 8192／输出 1024、对称内存开启、关闭推测解码；它比较批内一个与四个 adapter，不能推广为任意模型或任意 LoRA 格式的结果。这里只读该节文字和表格，未查看图 5、未核完整定制内核，也未通读公告其他章节。[归档原件](sglang-inkling-2026.md)
 
 Punica 与 S-LoRA 的已完成论文选读范围保留在旧笔记。本轮新增的是实际框架的准入、等待和专用模型边界，没有新增论文正文阅读或把所有 release notes 写进提纲。实验仍先用同一 Qwen3 算清容量和分组，再选择与实验条件相符的引擎路径。

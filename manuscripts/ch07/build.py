@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Generate chapter-seven vector figures, data, and an offline reading edition."""
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from preview_output import preview_path
 from fractions import Fraction
 import argparse, base64, hashlib, html, json, re, subprocess
 import matplotlib

@@ -4,7 +4,7 @@
 
 | 来源 | 固定范围 | 本轮用途 |
 |---|---|---|
-| [PyTorch 发布文章](pytorch-superoffload.html) | 2025-10-09，article 文字及图注 | 核对 DeepSpeed 0.18.0 起的发布说明与四种机制；文章图像未作为新的性能读数 |
+| [PyTorch 发布文章](pytorch-superoffload.md) | 2025-10-09，article 文字及图注 | 核对 DeepSpeed 0.18.0 起的发布说明与四种机制；文章图像未作为新的性能读数 |
 | [DeepSpeed v0.18.0 配置](offload-config-v0180.py) | `79caae1c04fca210345bdeb03bcacf87b1ac2f23`，2025-10-07 | 全文 115 行；`super_offload`、ratio、CPU 核比例与 ZeRO Stage 3 的范围 |
 | [官方示例 README](examples-readme.md) | `931169269a844a44a4c6cb97d9f563b42852d736`，提交时间 2026-08-26 | 全文 111 行；示例模型、配置与 NUMA／MPAM 建议 |
 | [Qwen3-14B 启动脚本](finetune_qwen3-14b_1gpu.sh) | 同一示例提交，全文 130 行 | 静态读取生成配置与启动参数，不执行 shell、训练或数据下载 |

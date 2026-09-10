@@ -1,0 +1,34 @@
+<!-- 从 mlsys2026-ea5ffdf7da91256ecd2770f9fd2dade9.html 迁移的资料快照；原始 HTML SHA-256: 5289b13f9d14951932e2a565a5301b50647110fb068884b305d0506e72a26f70。 -->
+
+[MLSys Proceedings](/)
+
+- [](/admin/login/?next=/admin/)
+- [](/admin/logout/?nextp=/admin)
+
+Search
+
+# IntAttention: A Fully Integer Attention Pipeline for Efficient Edge Inference
+
+Wanli Zhong, Haibo Feng, Zirui Zhou, Hanyang Peng, Shiqi Yu
+
+[Proceedings of Machine Learning and Systems 8 (MLSys 2026)](/paper_files/paper/2026) Conference
+
+[Bibtex](/paper_files/paper/798-/bibtex) [Paper](/paper_files/paper/2026/file/ea5ffdf7da91256ecd2770f9fd2dade9-Paper-Conference.pdf)
+
+## Abstract
+
+Deploying Transformer models on edge devices is limited by latency and energy budgets. While INT8 quantization effectively accelerates the primary matrix multiplications, it exposes the softmax-related path as the dominant bottleneck. This stage incurs a costly dequantize -\> softmax -\> requantize detour, which can account for up to 65% of total attention latency and disrupts the end-to-end integer dataflow critical for edge hardware efficiency. To address this limitation, we present IntAttention, the first fully integer attention pipeline that serves as a training-free drop-in replacement. At the core of our approach lies IndexSoftmax, a hardware-friendly operator that replaces floating-point exponentials entirely within the integer domain. IntAttention integrates sparsity-aware clipping, a 32-entry lookup table approximation, and direct integer normalization, thereby eliminating datatype conversion overhead along the attention path. Experiments on Armv8 CPUs show that our method achieves up to 3.7x speedup and 61% energy reduction over FP16 baselines, and up to 2.0x speedup over conventional INT8 attention pipelines. Across diverse language and vision models, as well as additional reasoning and long-context evaluations, IntAttention maintains strong overall fidelity and demonstrates a more favorable trade-off than existing LUT-based softmax approximations. Code is available at: https://github.com/WanliZhong/IntAttention
+
+  
+
+#### Name Change Policy
+
+×
+
+Requests for name changes in the electronic proceedings will be accepted with no questions asked. However name changes may cause bibliographic tracking issues. Authors are asked to consider this carefully and discuss it with their co-authors prior to requesting a name change in the electronic proceedings.
+
+Use the "Report an Issue" link to request a name change.
+
+[Report an Issue](https://mlsys.org/Help/Contact?select=Conference)    \|    [Name Change Policy](#)
+
+Do not remove: This comment is monitored to verify that the site is working properly

@@ -13,7 +13,7 @@
 | Llama 3.1 405B | 405B；15.6T | 30.84M H100 80GB GPU 小时；论文给出最高约 16K 卡规模 | [Llama 3 报告](../references/files/papers/llama3.pdf)，§3、表 4；同上模型卡 |
 | Qwen2.5 | family 约 18T；以 7B 规模标签作小模型粗算 | 所读报告未披露完整预训练 GPU 数／小时 | [报告 v2](../references/outline-checks/2026-09-07/scaling-history/qwen25-v2.pdf)，§3.1–3.2 |
 | Qwen3 | family 约 36T；有 dense 8B、MoE 235B-A22B 等 | 所读报告未披露完整预训练 GPU 数／小时 | [报告](../references/files/papers/qwen3.pdf)，§3；主预训练 >30T、后续约 5T，再有长上下文阶段 |
-| Qwen3.5 | 原生多模态预训练；不能沿用 Qwen3 的 36T | 本次模型卡／发布材料未给出可闭合的预训练 token 与 GPU 小时组合 | [官方发布快照](../references/outline-checks/2026-09-07/scaling-history/qwen35-blog.html)、[模型卡](../references/files/models/qwen35-card.md) |
+| Qwen3.5 | 原生多模态预训练；不能沿用 Qwen3 的 36T | 本次模型卡／发布材料未给出可闭合的预训练 token 与 GPU 小时组合 | [官方发布快照](../references/outline-checks/2026-09-07/scaling-history/qwen35-blog.md)、[模型卡](../references/files/models/qwen35-card.md) |
 | DeepSeek-V3 | 671B 总参数、37B 激活；14.8T | 预训练 2.664M H800 GPU 小时；2048 张 H800 | [报告](../references/files/papers/deepseek-v3.pdf)，表 1、§3；上下文扩展 119K、后训练 5K，合计 2.788M 小时 |
 | DeepSeek-V4-Flash／Pro | 284B／1.6T 总参数，约 13B／49B 激活；32T／33T | 当前笔记不从部署规模反推完整训练卡数或小时 | [报告](../references/files/papers/deepseek-v4.pdf)，§4.2；分阶段与专家计算见[原复算笔记](training-compute.md) |
 

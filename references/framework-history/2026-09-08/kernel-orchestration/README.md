@@ -6,7 +6,7 @@ Korch 固定 `b188b5296ed14510a46f36e21545d35e8741c9f2`（2025-03-27）；它是
 
 | 文件 | 实际读取范围与用途 |
 | --- | --- |
-| [作者出版页](korch-author.html)、[arXiv landing](korch-arxiv-landing.html) | 书目信息、作者 PDF 链接、v1／related DOI／修正说明；页面与 PDF 作者列表差异单列在论文记录 |
+| [作者出版页](korch-author.md)、[arXiv landing](korch-arxiv-landing.md) | 书目信息、作者 PDF 链接、v1／related DOI／修正说明；页面与 PDF 作者列表差异单列在论文记录 |
 | [commit](korch-commit.json)、[tree](korch-tree.json) | SHA、日期、路径与尺寸查找；不是全部 JSON 正文阅读 |
 | [Korch README](korch-README.md)、[Segformer 配置](korch-segformer.toml) | 完整文件；手工 cut points、full_graph 设置、依赖和代码生成仅 Candy 实验支持的边界 |
 | [calc.py](korch-calc.py) | 300–425 行；输入／输出约束、加和目标、1000 秒求解限时、候选构建和调用的 profiler 列表 |

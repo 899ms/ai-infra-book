@@ -4,7 +4,7 @@
 
 ## ASPLOS 2026 的 167 与 168
 
-[官方日程](../../discovery/2026-09-08/asplos2026-program.html)顶部写 167 unique papers，详细日程列 168 个不同标题。现在 **168 个详细条目均匹配到不同正式 DOI**，其中 159 个通过规范化标题匹配，9 个核对了题名变化与作者名单；见[完整映射](asplos2026-program-doi-map.json)。保留原页面的 167，不凭这个汇总数字删除论文；未找到官方对差异原因的解释。
+[官方日程](../../discovery/2026-09-08/asplos2026-program.md)顶部写 167 unique papers，详细日程列 168 个不同标题。现在 **168 个详细条目均匹配到不同正式 DOI**，其中 159 个通过规范化标题匹配，9 个核对了题名变化与作者名单；见[完整映射](asplos2026-program-doi-map.json)。保留原页面的 167，不凭这个汇总数字删除论文；未找到官方对差异原因的解释。
 
 | 这份日程中的匹配来源 | 篇数 | 出版元数据的日期 |
 | --- | --- | --- |
@@ -14,7 +14,7 @@
 
 这是详细日程的组成，不宣称上述每卷的正式全集仅有这些条目。第二卷查询还返回三场 keynote 的出版记录，已按官方日程分开，未加进 168 篇论文。
 
-题名变化包括 HistoRL／RhymeRL、Lambda-trim／λ-trim 和 Transforming／Reconfigurable Torus Fabrics。λ-trim 的前两名作者顺序不同；CHERI-SIMT 的作者中间名、TiNA 的 Nan／Nam 也保留差异。机构公开的 [HybridTier PDF](hybridtier-author.pdf)、[λ-trim PDF](lambda-trim-author.pdf)只读取第一页用于书目信息核对；[Google Wave 页面](wave-google.html)只核题名、作者与年份。两份 PDF 共 35 页已归档，不算 35 页已读，也不增加摘要筛选或重点章节阅读数量。
+题名变化包括 HistoRL／RhymeRL、Lambda-trim／λ-trim 和 Transforming／Reconfigurable Torus Fabrics。λ-trim 的前两名作者顺序不同；CHERI-SIMT 的作者中间名、TiNA 的 Nan／Nam 也保留差异。机构公开的 [HybridTier PDF](hybridtier-author.pdf)、[λ-trim PDF](lambda-trim-author.pdf)只读取第一页用于书目信息核对；[Google Wave 页面](wave-google.md)只核题名、作者与年份。两份 PDF 共 35 页已归档，不算 35 页已读，也不增加摘要筛选或重点章节阅读数量。
 
 最初按 2026 出版日期检索，只得到第二卷相关记录；按 ISBN 的第一卷查询返回零结果，不能证明卷内没有论文。后续[无年份限制的查询](asplos2026-no-year-query.json)返回 1,000 条搜索结果，从中完成日程映射。该查询共有更多结果，**没有遍历整个结果集**；因此它能支持逐篇匹配，不能单独证明会议全集完整。原始响应、派生映射和哈希分别保留。
 

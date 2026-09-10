@@ -6,12 +6,12 @@
 
 | 证据与版本 | 值得保留的变化 | 扩写时采用的范围 |
 | --- | --- | --- |
-| [vLLM，2024-10](../references/framework-history/2026-09-08/speculative-execution/vllm-2024.html) | 草稿／目标 runner 接入连续批处理，多 token 槽位与双模型 KV 管理；高负载可能抵消加速 | 当时按负载动态调节仍列为路线图，不能写成已有自动能力 |
-| [Speculators v0.3，2025-12](../references/framework-history/2026-09-08/speculative-execution/vllm-speculators-2025.html) | 从目标模型抽取特征、训练匹配草稿，再由 vLLM 加载目标与草稿 | 草稿训练是配套工具的工作；更换目标精度还需检查接受行为及质量 |
-| [P-EAGLE，2026-03](../references/framework-history/2026-09-08/speculative-execution/vllm-peagle-2026.html) | 将串行起草改成一次并行起草，融合 token／位置准备，并处理独立的草稿布局 | 需要专门训练的草稿；目标与草稿的图形状、KV 槽位不能直接复用 |
-| [SGLang MTP，2025-07](../references/framework-history/2026-09-08/speculative-execution/sglang-mtp-2025.html) → [Spec V2，2026-06](../references/framework-history/2026-09-08/speculative-execution/sglang-specv2-2026.html) | 从 MTP 尚不能与主机重叠调度同用，到清理上一批、准备下一批与 GPU 执行重叠 | TBO 的计算通信重叠和 overlap scheduler 的主机设备重叠分开说明 |
-| [SGLang DSpark，2026-07](../references/framework-history/2026-09-08/speculative-execution/sglang-dspark-2026.html) | 按请求置信度选择验证长度，紧凑装入图输入，再按实测成本选预算 | 讲验证工作怎样减少，保留图档位、DP 协同及成本模型局限 |
-| [Ollama MLX，2026-06](../references/framework-history/2026-09-08/speculative-execution/ollama-mlx-performance-2026.html)与[已归档 MTP 公告](../references/outline-checks/2026-09-07/framework-evolution/ollama-mtp.html) | 分支与响应前保存状态；MTP 动态起草、拒绝回滚和小批验证权重复用 | 限定 Gemma 4／MLX 的对应支持；减少思考历史后的续接与逐轮拒绝回滚是不同边界 |
+| [vLLM，2024-10](../references/framework-history/2026-09-08/speculative-execution/vllm-2024.md) | 草稿／目标 runner 接入连续批处理，多 token 槽位与双模型 KV 管理；高负载可能抵消加速 | 当时按负载动态调节仍列为路线图，不能写成已有自动能力 |
+| [Speculators v0.3，2025-12](../references/framework-history/2026-09-08/speculative-execution/vllm-speculators-2025.md) | 从目标模型抽取特征、训练匹配草稿，再由 vLLM 加载目标与草稿 | 草稿训练是配套工具的工作；更换目标精度还需检查接受行为及质量 |
+| [P-EAGLE，2026-03](../references/framework-history/2026-09-08/speculative-execution/vllm-peagle-2026.md) | 将串行起草改成一次并行起草，融合 token／位置准备，并处理独立的草稿布局 | 需要专门训练的草稿；目标与草稿的图形状、KV 槽位不能直接复用 |
+| [SGLang MTP，2025-07](../references/framework-history/2026-09-08/speculative-execution/sglang-mtp-2025.md) → [Spec V2，2026-06](../references/framework-history/2026-09-08/speculative-execution/sglang-specv2-2026.md) | 从 MTP 尚不能与主机重叠调度同用，到清理上一批、准备下一批与 GPU 执行重叠 | TBO 的计算通信重叠和 overlap scheduler 的主机设备重叠分开说明 |
+| [SGLang DSpark，2026-07](../references/framework-history/2026-09-08/speculative-execution/sglang-dspark-2026.md) | 按请求置信度选择验证长度，紧凑装入图输入，再按实测成本选预算 | 讲验证工作怎样减少，保留图档位、DP 协同及成本模型局限 |
+| [Ollama MLX，2026-06](../references/framework-history/2026-09-08/speculative-execution/ollama-mlx-performance-2026.md)与[已归档 MTP 公告](../references/outline-checks/2026-09-07/framework-evolution/ollama-mtp.md) | 分支与响应前保存状态；MTP 动态起草、拒绝回滚和小批验证权重复用 | 限定 Gemma 4／MLX 的对应支持；减少思考历史后的续接与逐轮拒绝回滚是不同边界 |
 
 日期另有核对：P-EAGLE 的统一并行草稿 PR 于 2026-02-05 合入，v0.16.0 于 02-25 发布，介绍文章为 03-13。DSpark 文章标为 07-06，相关 PR 于 07-12 合入，文中的复现入口曾固定在 PR 提交。公告、分支复现和正式主线不是同一个时间点；获取日文章也可能包含后续更新。当前源码快照及精确阅读范围见[来源索引](../references/framework-history/2026-09-08/speculative-execution/README.md)。
 

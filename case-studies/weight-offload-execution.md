@@ -8,7 +8,7 @@ vLLM v0.6.0（2024）的所读 helper 将部分参数放到主存，每次前向
 
 2026 年的变化是把“选哪些参数”和“何时准备权重”进一步分开：选择性卸载 PR 于 2 月 14 日合入，预取 PR 于 2 月 26 日合入，3 月 7 日的 [vLLM v0.17.0 发布说明](https://github.com/vllm-project/vllm/releases/tag/v0.17.0)同时列出这两项能力。固定当前实现按层分组、参数名称选择卸载对象，用独立复制流和静态 GPU 缓冲准备未来层，再通过依赖事件让计算等待对应权重。计算图还必须表达缓冲何时可复用，不能为了重叠覆盖仍在读取的权重。
 
-这条预取路径明确借鉴 SGLang 的实现；[2025 年 GB200 公告](../references/framework-history/2026-09-08/overlap-placement/sglang-gb200-2025-sept.html)已用较快主存互联换取更小的 EP 规模。当前 SGLang 通用 offloader 与 KT wrapper 则解决不同问题：前者搬权重供 GPU 计算，后者提交 CPU 专家工作，同时运行 GPU 专家，最后合并结果。不能因为两者都使用主存，就按同一种 PCIe 载荷计算。
+这条预取路径明确借鉴 SGLang 的实现；[2025 年 GB200 公告](../references/framework-history/2026-09-08/overlap-placement/sglang-gb200-2025-sept.md)已用较快主存互联换取更小的 EP 规模。当前 SGLang 通用 offloader 与 KT wrapper 则解决不同问题：前者搬权重供 GPU 计算，后者提交 CPU 专家工作，同时运行 GPU 专家，最后合并结果。不能因为两者都使用主存，就按同一种 PCIe 载荷计算。
 
 Ollama 的 GPU layer offload 又是另一种用法：runner 选择哪些层交给 GPU。2024 的所读入口把层数传给 llama.cpp server；2025 新引擎加入分配反馈；2026 v0.30 的 GGUF 路径与 MLX 并存，当前默认让 llama-server 自动选 GPU 层。v0.30.0 GitHub 发布记录为 5 月 13 日，[对应公告](https://ollama.com/blog/improved-performance-and-model-support-with-gguf)为 6 月 5 日，两个日期分别保存。
 

@@ -1,6 +1,6 @@
 # ASPLOS 2024：官方摘要与阅读状态
 
-已将[官方日程](../../discovery/2026-09-08/asplos2024-program.html)的 193 个 DOI 条目与[官方摘要页](../../discovery/2026-09-08/asplos2024-abstracts.html)中的 193 个摘要一一匹配。当前按日程顺序完成 **193／193** 篇完整摘要筛选；Korch 作者版本已选读物理页 1–13。本届三卷 PDF 全文归档尚未完成。
+已将[官方日程](../../discovery/2026-09-08/asplos2024-program.md)的 193 个 DOI 条目与[官方摘要页](../../discovery/2026-09-08/asplos2024-abstracts.md)中的 193 个摘要一一匹配。当前按日程顺序完成 **193／193** 篇完整摘要筛选；Korch 作者版本已选读物理页 1–13。本届三卷 PDF 全文归档尚未完成。
 
 [manifest.json](manifest.json)保存 DOI、原摘要标题、完整摘要、段落哈希及实际筛选状态；[逐项取舍](../../../../research/2026-infra-survey/screening-asplos-2024.tsv)与[阅读笔记](../../../../research/2026-infra-survey/reading-asplos-2024.md)记录候选、备查和排除理由。候选只是需要读正文的材料，不代表已加入大纲。
 

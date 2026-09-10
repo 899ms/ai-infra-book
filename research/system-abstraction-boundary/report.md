@@ -14,7 +14,7 @@
 
 > ②抽象边界的上移——从 ISA/OS 上移至 token 层，边界以下只余一种程序形态，可编程性与多租户均非消失而是迁移。
 
-原文见[草案 11 原件](../../references/outline-checks/2026-09-08/system-abstraction/skeleton-draft11-12fc723.html)，HTML 第 482 行。草案 14，`d9199ca101babf25e12c240b7676deefdfa72a1f`，2026-08-31，仍保留相同内容，见[原件](../../references/outline-checks/2026-09-08/system-abstraction/skeleton-draft14-d9199ca.html)第 483 行。到 2026-09-05 的 `e524afec5ca6a61b8a79d0f83566ac88ab66b15c`，[草案 16](../../references/outline-checks/2026-09-08/system-abstraction/skeleton-draft16-e524afe.html)改写了章节蓝图，这段论证不再出现。本轮修改前，逐章 Markdown 与生成的 skeleton 也都缺少这条开篇主线。
+原文见[草案 11 原件](../../references/outline-checks/2026-09-08/system-abstraction/skeleton-draft11-12fc723.md)，HTML 第 482 行。草案 14，`d9199ca101babf25e12c240b7676deefdfa72a1f`，2026-08-31，仍保留相同内容，见[原件](../../references/outline-checks/2026-09-08/system-abstraction/skeleton-draft14-d9199ca.md)第 483 行。到 2026-09-05 的 `e524afec5ca6a61b8a79d0f83566ac88ab66b15c`，[草案 16](../../references/outline-checks/2026-09-08/system-abstraction/skeleton-draft16-e524afe.md)改写了章节蓝图，这段论证不再出现。本轮修改前，逐章 Markdown 与生成的 skeleton 也都缺少这条开篇主线。
 
 因此，本次是恢复并明确原有立意。原文中的 ISA、OS 和 token 分属不同层次，正式写作时应以“面向应用的主要编程抽象从 OS 上移到模型能力与调用接口”展开。token 是语言模型输入输出的载体，只说“token 层”还不足以交代应用怎样编程。旧段相邻的性能数字与绝对化表述另行核算，不随原意恢复而整段照搬。
 
@@ -49,7 +49,7 @@
 | 调度优化什么 | 各类客户程序的资源供给、共享、公平性与服务目标 | 模型阶段、批量、拓扑、成组分配及有效训练／推理产出 | 9、10、11、12 |
 | 隔离放在哪里 | 客户程序与其机器、网络和存储环境 | 分清模型请求、GPU 作业和工具环境的隔离对象 | 9、10、12 |
 
-这一组织方法也能接上第一章已有历史案例。SmartNIC 的网络虚拟化案例说明通用云为何需要花费 CPU 处理转发、封装和隔离；TPU 说明共同模型计算怎样支持专用加速；UB 说明模型规模扩大后，多设备协作怎样进入整体设计。三者分别提供历史条件下的证据，不能只凭年代把它们写成前者被后者全面替代。具体经历与推算沿用[可编程网卡案例](../../case-studies/programmable-nic.md)和作者的[UB 原文](../../references/files/documents/ub-reflection.html)。
+这一组织方法也能接上第一章已有历史案例。SmartNIC 的网络虚拟化案例说明通用云为何需要花费 CPU 处理转发、封装和隔离；TPU 说明共同模型计算怎样支持专用加速；UB 说明模型规模扩大后，多设备协作怎样进入整体设计。三者分别提供历史条件下的证据，不能只凭年代把它们写成前者被后者全面替代。具体经历与推算沿用[可编程网卡案例](../../case-studies/programmable-nic.md)和作者的[UB 原文](../../references/files/documents/ub-reflection.md)。
 
 模型执行效率也不能只由 GPU 峰值衡量。边界下方的共同计算要进一步转换为可计算的容量、访问量、带宽、同步和关键路径，才能解释哪些优化值得做。因此恢复这条主线之后，第一章仍应尽早给出已有的纸笔估算方法，并在 1.1.3 用[固定能力的成本下降报告](../token-cost-2023-2026/report.md#findings)连接全栈协同的结果。
 

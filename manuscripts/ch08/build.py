@@ -208,7 +208,7 @@ body=re.sub(r'<table>(.*?)</table>',r'<div class="table-scroll"><table>\1</table
 for p in outputs:
  if p.suffix=='.svg':body=body.replace('src="ch08/'+p.name+'"','src="data:image/png;base64,'+base64.b64encode(p.with_suffix('.png').read_bytes()).decode()+'"')
 css=(HERE/'reading.css').read_text();nav=''.join('<a href="#'+i+'">'+t+'</a>' for i,t in re.findall(r'<h2 id="([^"]+)">(8\.\d+ [^<]+)</h2>',body))
-page='<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第 8 章 推理优化</title><style>'+css+mathcss+'</style></head><body><main><nav aria-label="本章目录">'+nav+'</nav>'+body+'</main></body></html>';hp=md.with_suffix('.html')
+page='<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第 8 章 推理优化</title><style>'+css+mathcss+'</style></head><body><main><nav aria-label="本章目录">'+nav+'</nav>'+body+'</main></body></html>';hp=preview_path(md)
 zoom='''<dialog id="figure-view" aria-label="放大插图"><button id="close-figure" type="button">关闭</button><div id="figure-content"></div></dialog><script>
 const view=document.getElementById('figure-view'),content=document.getElementById('figure-content');
 for(const img of document.querySelectorAll('main img')){img.tabIndex=0;img.setAttribute('role','button');img.setAttribute('aria-label',img.alt+'，点击放大');const show=()=>{content.replaceChildren(img.cloneNode());content.firstChild.removeAttribute('role');content.firstChild.removeAttribute('tabindex');view.showModal();};img.addEventListener('click',show);img.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show();}});}
@@ -218,6 +218,7 @@ page=page.replace('</body>',zoom+'</body>')
 import sys
 sys.path.insert(0,str(HERE.parent))
 from teaching_reading import readable_diagrams
+from preview_output import preview_path
 page=readable_diagrams(page)
 hp.write_text(page)
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')

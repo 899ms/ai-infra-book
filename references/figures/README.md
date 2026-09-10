@@ -6,7 +6,7 @@
 
 ## Inside the Eighth-Generation TPU: An Architecture Deep Dive
 
-[本地正文](../files/specs/google-tpu8.html) · [官方来源](https://cloud.google.com/blog/products/compute/tpu-8t-and-tpu-8i-technical-deep-dive)
+[本地正文](../files/specs/google-tpu8.md) · [官方来源](https://cloud.google.com/blog/products/compute/tpu-8t-and-tpu-8i-technical-deep-dive)
 
 - [1_v4.max-1600x1600.png](google-tpu8-efb12c0471ce.png)
 - [2_TPU_8t_rack_level_connectivity_to_Virgo_.max-2000x2000.png](google-tpu8-333253b6a57b.png)
@@ -17,7 +17,7 @@
 
 ## IPU Hardware Overview
 
-[本地正文](../files/documents/graphcore-hardware.html) · [官方来源](https://docs.graphcore.ai/projects/ipu-programmers-guide/en/latest/about_ipu.html)
+[本地正文](../files/documents/graphcore-hardware.md) · [官方来源](https://docs.graphcore.ai/projects/ipu-programmers-guide/en/latest/about_ipu.html)
 
 - [Example of an IPU-Machine. The Bow-2000 is a building block for Bow Pod systems.](graphcore-hardware-a20b3638d71b.jpg)
 - [IPU internal architecture](graphcore-hardware-cbd58c8c2ff4.png)
@@ -31,7 +31,7 @@
 
 ## IPU Programming Model
 
-[本地正文](../files/documents/graphcore-programming.html) · [官方来源](https://docs.graphcore.ai/projects/ipu-programmers-guide/en/latest/programming_model.html)
+[本地正文](../files/documents/graphcore-programming.md) · [官方来源](https://docs.graphcore.ai/projects/ipu-programmers-guide/en/latest/programming_model.html)
 
 - [Programs running on a set of IPUs](graphcore-programming-1bb345dd2b5c.png)
 - [A variable and its mapping to tiles](graphcore-programming-fe23833c2409.png)
@@ -51,13 +51,13 @@
 
 ## AWS Trainium3 Architecture
 
-[本地正文](../files/specs/aws-trainium3.html) · [官方来源](https://awsdocs-neuron.readthedocs-hosted.com/en/latest/about-neuron/arch/neuron-hardware/trainium3.html)
+[本地正文](../files/specs/aws-trainium3.md) · [官方来源](https://awsdocs-neuron.readthedocs-hosted.com/en/latest/about-neuron/arch/neuron-hardware/trainium3.html)
 
 - [../../../_images/neuroncore-v4-overview.png](aws-trainium3-946fbb339674.png)
 
 ## Trainium3 Architecture Guide for NKI
 
-[本地正文](../files/documents/aws-trainium3-nki.html) · [官方来源](https://awsdocs-neuron.readthedocs-hosted.com/en/latest/nki/guides/architecture/trainium3_arch.html)
+[本地正文](../files/documents/aws-trainium3-nki.md) · [官方来源](https://awsdocs-neuron.readthedocs-hosted.com/en/latest/nki/guides/architecture/trainium3_arch.html)
 
 - [../../../_images/nki-trn3-arch-1.png](aws-trainium3-nki-1f9ce33c45df.png)
 - [../../../_images/nki-trn3-arch-2.png](aws-trainium3-nki-ca50b02912c9.png)

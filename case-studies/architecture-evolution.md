@@ -6,7 +6,7 @@
 
 CNN、BERT／GPT 类训练用于说明当时需求，Qwen3-8B 与 V4-Flash 用于今天可重算的结构。两种角色分开，不能说 Ampere 是为后来的具体模型设计。
 
-[Ampere 白皮书](../references/files/specs/nvidia-a100.pdf)说明 TF32、BF16 与矩阵单元；[Hopper 白皮书](../references/files/specs/nvidia-h100.pdf)和[Tuning Guide](../references/files/documents/nvidia-hopper-tuning.html)说明 FP8、异步执行及供数。[Blackwell 技术简报](../references/files/specs/nvidia-blackwell-brief.pdf)配合[CUTLASS 功能说明](../references/outline-checks/2026-09-07/systems-cases/cutlass-blackwell.html)，用于分开理解数据中心 SM100 与 RTX SM120。
+[Ampere 白皮书](../references/files/specs/nvidia-a100.pdf)说明 TF32、BF16 与矩阵单元；[Hopper 白皮书](../references/files/specs/nvidia-h100.pdf)和[Tuning Guide](../references/files/documents/nvidia-hopper-tuning.md)说明 FP8、异步执行及供数。[Blackwell 技术简报](../references/files/specs/nvidia-blackwell-brief.pdf)配合[CUTLASS 功能说明](../references/outline-checks/2026-09-07/systems-cases/cutlass-blackwell.md)，用于分开理解数据中心 SM100 与 RTX SM120。
 
 对 Qwen 的 QK—Softmax—AV，先分别求矩阵 FLOPs、指数、归约和中间字节。将矩阵时间单独减半，观察剩余串行部分；不能给整段注意力套同一个峰值倍数。Rubin 的官方说明把指数能力变化与长上下文联系起来，第 4 章据此分析矩阵／非矩阵配比，具体算子还要考虑融合与重叠。
 
@@ -22,9 +22,9 @@ Ampere 异步拷贝已经避免经寄存器中转；Hopper TMA 在此基础上�
 
 ## 容量、精度与系统接口
 
-Qwen 的长前缀及 V4 的大规模专家说明容量与带宽是独立限制。H100→[H200](../references/outline-checks/2026-09-07/systems-cases/nvidia-h200-systems.html)用于观察存储增长，[B200](../references/files/specs/nvidia-dgx-b200.html)与 Rubin 则进一步比较供数和设备协作。固定具体产品形态；卡间双向聚合带宽先转成模型实际路径的有效带宽。
+Qwen 的长前缀及 V4 的大规模专家说明容量与带宽是独立限制。H100→[H200](../references/outline-checks/2026-09-07/systems-cases/nvidia-h200-systems.md)用于观察存储增长，[B200](../references/files/specs/nvidia-dgx-b200.md)与 Rubin 则进一步比较供数和设备协作。固定具体产品形态；卡间双向聚合带宽先转成模型实际路径的有效带宽。
 
-低精度部分沿质量、数据量和运算路径解释 TF32／BF16、FP8、分块缩放与 FP4。软件将低比特权重解码到高精度和原生低精度矩阵执行，省去的步骤不同。Rubin 的新增表示和稀疏能力采用[官方架构说明](../references/outline-checks/2026-09-07/systems-cases/rubin-rechecked.html)的适用范围；涉及近似的激活／注意力压缩，必须检验质量。不能把 MoE 路由稀疏当作硬件 2:4 稀疏。
+低精度部分沿质量、数据量和运算路径解释 TF32／BF16、FP8、分块缩放与 FP4。软件将低比特权重解码到高精度和原生低精度矩阵执行，省去的步骤不同。Rubin 的新增表示和稀疏能力采用[官方架构说明](../references/outline-checks/2026-09-07/systems-cases/rubin-rechecked.md)的适用范围；涉及近似的激活／注意力压缩，必须检验质量。不能把 MoE 路由稀疏当作硬件 2:4 稀疏。
 
 封装与互联小节由本章未解决的数据移动引出。Vera 是 CPU、Rubin 是 GPU，Vera Rubin 是平台；卡间通信、CPU—GPU 一致性接口和整柜指标分别讲。同步机制改善只消除其中一部分交接等待，完整放置由第 6 章计算。
 
@@ -32,7 +32,7 @@ Qwen 的长前缀及 V4 的大规模专家说明容量与带宽是独立限制�
 
 昇腾沿早期 DaVinci、910C 与 950 的计算／向量组织、存储及搬运分别展开。CNN 背景与作者经历、CloudMatrix 的 MLA 实现、950 的 CV 通路和 NDDMA 使用各自原件；结合工作比例推断资源选择，不填造未公开的 910A／B／C 连续微架构历史。详见[架构比较](accelerator-architecture.md)和[UB／昇腾核对](../references/UB-ASCEND-NOTES.md)。
 
-Apple 从 M2 Max 的实际 Metal 路径出发：[M3 的 Dynamic Caching](../references/outline-checks/2026-09-07/systems-cases/apple-m3-evolution.html)放在局部存储分配，[M5 的 GPU Neural Accelerator](../references/outline-checks/2026-09-07/systems-cases/apple-m5-evolution.html)放在矩阵单元与软件调用路径。局部存储机制不等于系统统一内存，GPU 内的 Neural Accelerator 不等于独立 Neural Engine。Apple 未披露的指令、容量或内部设计动机不补猜。
+Apple 从 M2 Max 的实际 Metal 路径出发：[M3 的 Dynamic Caching](../references/outline-checks/2026-09-07/systems-cases/apple-m3-evolution.md)放在局部存储分配，[M5 的 GPU Neural Accelerator](../references/outline-checks/2026-09-07/systems-cases/apple-m5-evolution.md)放在矩阵单元与软件调用路径。局部存储机制不等于系统统一内存，GPU 内的 Neural Accelerator 不等于独立 Neural Engine。Apple 未披露的指令、容量或内部设计动机不补猜。
 
 ## 写作中的因果判断
 

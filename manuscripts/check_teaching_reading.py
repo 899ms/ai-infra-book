@@ -1,5 +1,6 @@
 """Validate revised chapters at desktop/mobile widths and save review PDFs."""
 from pathlib import Path
+from preview_output import preview_path
 import argparse,json,re
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parent
@@ -13,7 +14,7 @@ with sync_playwright() as p:
         target=review/f'ch{n:02}';target.mkdir(exist_ok=True)
         for width in [1440,390]:
             page=browser.new_page(viewport={'width':width,'height':1050})
-            page.goto(md.with_suffix('.html').as_uri());page.wait_for_load_state('load')
+            page.goto(preview_path(md).as_uri());page.wait_for_load_state('load')
             result=page.evaluate('''() => ({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,images:[...document.images].map(i=>({loaded:i.complete&&i.naturalWidth>0,width:i.getBoundingClientRect().width})),mathErrors:document.querySelectorAll('.katex-error').length,mathCount:document.querySelectorAll('.katex').length,brokenAnchors:[...document.querySelectorAll('a[href^="#"]')].map(a=>a.hash.slice(1)).filter(id=>id&&!document.getElementById(decodeURIComponent(id)))})''')
             result.update(chapter=n,expectedImages=expected);records.append(result)
             assert result['scrollWidth']<=width,result

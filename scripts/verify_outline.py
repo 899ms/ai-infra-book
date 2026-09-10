@@ -9,7 +9,6 @@ import html
 import json
 import re
 import tarfile
-from outline_text import rendered_inline
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTLINES = ROOT / 'outlines'
@@ -44,7 +43,6 @@ counts = Counter()
 all_labs = set()
 all_figures = set()
 all_sections = set()
-page = (ROOT / 'skeleton.html').read_text()
 
 
 for c in catalog:
@@ -72,15 +70,6 @@ for c in catalog:
     check(cores == c['core_experiments'] and len(cores) == 3, f'{p.name}: core selection')
     check(len(re.findall(r'^> \*\*实验 [^\n]*〔(?:核心|延伸)〕', s, re.M)) == len(re.findall(r'^> \*\*实验 ', s, re.M)), f'{p.name}: lab classification')
     counts.update(sections=len(sections), subsections=len(subs), core=len(cores))
-    check(f'id="ch-{n}"' in page and f'{n:02d} · {html.escape(c["title"])}' in page, f'{p.name}: HTML navigation')
-    for sec in sections + subs:
-        check(f'id="sec-{sec.replace(".", "-")}"' in page, f'{p.name}: HTML section {sec}')
-    article = re.search(r'<article class="card" id="ch-' + str(n) + r'">(.*?)</article>', page, re.S)
-    visible = html.unescape(re.sub(r'<[^>]+>', '', article[1])) if article else ''
-    for paragraph in s.split('## 写作资料', 1)[0].split('\n\n')[2:]:
-        if paragraph.startswith(('#', '>')):
-            continue
-        check(rendered_inline(paragraph.replace('\n', ' ')) in visible, f'{p.name}: stale HTML paragraph {paragraph[:45]}')
     companion = OUTLINES / 'extensions' / c['file']
     check(companion.exists(), f'{p.name}: companion')
     if companion.exists():
@@ -96,9 +85,6 @@ for c in catalog:
             check(re.search(r'^> \*\*' + word + ' ' + re.escape(identifier) + r'\b', companion_text, re.M), f'Missing supplementary {word}: {identifier}')
             target.add(identifier)
 
-check(page.count('<h4>本章的设计决定</h4>') == len(catalog), 'HTML chapter decisions')
-ids = re.findall(r'\bid=["\']([^"\']+)', page)
-check(len(ids) == len(set(ids)), 'Duplicate HTML IDs')
 for p in OUTLINES.glob('[0-9][0-9]-*.md'):
     text = p.read_text()
     for word, valid in [('实验', all_labs), ('图', all_figures)]:
@@ -106,7 +92,7 @@ for p in OUTLINES.glob('[0-9][0-9]-*.md'):
             check(identifier in valid, f'{p.name}: undefined {word} {identifier}')
 
 # All current writing surfaces; source snapshots and historical reports retain their own anchors.
-active = [ROOT / 'README.md', ROOT / 'skeleton.html', *OUTLINES.rglob('*.md'),
+active = [ROOT / 'README.md', *OUTLINES.rglob('*.md'),
           *ROOT.glob('case-studies/*.md'), ROOT / 'references/README.md',
           ROOT / 'references/INFERENCE-PAPER-GUIDE.md', REVISION / 'README.md']
 anchor_cache = {}

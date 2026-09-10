@@ -20,7 +20,7 @@ Marconi 根据共享输入的分支和上一轮输出末尾决定准入，再结
 
 第 8.3.4 与实验 8-4 采用这个判断：先确定能恢复的共同边界，再算增量状态占用、可能省下的工作、再次访问机会及恢复开销。共享祖先的容量和工作不能重复记账；`FLOPs/byte` 只有在相近算子与算力约束下才适合近似时间收益，最终仍用轨迹校准。
 
-历史比较必须保留条件：论文为 vLLM、SGLang 添加了混合模型支持；`SGLang+` 已额外采用同样的准入策略，主要对照 LRU 淘汰。主命中实验用 Attention/SSM/MLP 为 4/24/28 层的 7B 模型，TTFT 分析使用 Jamba-1.5-Mini、4×A100-40GB、FP16。这些并非当前 SGLang 的状态。2026 年 [Unified Radix Cache](../references/outline-checks/2026-09-07/framework-evolution/sglang-unified-cache.html) 的 V4/K3 各自存储格式要独立计算；K3 的循环 attention 状态也不能直接套用论文的 Mamba 大小。两项工作按共同问题比较，不声称已有未经核对的代码继承关系。
+历史比较必须保留条件：论文为 vLLM、SGLang 添加了混合模型支持；`SGLang+` 已额外采用同样的准入策略，主要对照 LRU 淘汰。主命中实验用 Attention/SSM/MLP 为 4/24/28 层的 7B 模型，TTFT 分析使用 Jamba-1.5-Mini、4×A100-40GB、FP16。这些并非当前 SGLang 的状态。2026 年 [Unified Radix Cache](../references/outline-checks/2026-09-07/framework-evolution/sglang-unified-cache.md) 的 V4/K3 各自存储格式要独立计算；K3 的循环 attention 状态也不能直接套用论文的 Mamba 大小。两项工作按共同问题比较，不声称已有未经核对的代码继承关系。
 
 ## 动态请求如何兼容 CUDA Graph
 
@@ -28,7 +28,7 @@ Marconi 根据共享输入的分支和上一轮输出末尾决定准入，再结
 
 第 5.4.4 和实验 5-8 用 Qwen3-8B 的 36 层举例：假定一次规划需 20 μs，每层重做是 720 μs，每步共用一次为 20 μs；这只是主机工作量推算，实际节省的关键路径时间还取决于异步重叠。V4/K3 有不同类型的层，不能因此假定全模型只需一份计划。实验同时记录 plan、元数据复制、run、padding、临时空间和图捕获，判断规划是否成为下一处瓶颈。
 
-论文测试 FlashInfer v0.2、SGLang v0.3.4、CUDA 11.2、PyTorch 2.4.0，并使用 A100/H100；其后端收益不当作当前引擎实测。当前 [FlashInfer API 快照](../references/framework-history/2026-09-07/flashinfer/attention.html)仍对相应 wrapper 明确规定图模式的 batch 与缓冲约束，部分后端不支持同样的 graph 路径；实验必须固定具体后端。论文 §4.1 的 closed-source 表述没有在本轮实现核对中得到支持，不据此描述 Triton 或当前框架的开放状态。
+论文测试 FlashInfer v0.2、SGLang v0.3.4、CUDA 11.2、PyTorch 2.4.0，并使用 A100/H100；其后端收益不当作当前引擎实测。当前 [FlashInfer API 快照](../references/framework-history/2026-09-07/flashinfer/attention.md)仍对相应 wrapper 明确规定图模式的 batch 与缓冲约束，部分后端不支持同样的 graph 路径；实验必须固定具体后端。论文 §4.1 的 closed-source 表述没有在本轮实现核对中得到支持，不据此描述 Triton 或当前框架的开放状态。
 
 ## 调度可以改变作业的执行方案
 

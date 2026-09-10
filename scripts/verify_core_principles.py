@@ -8,13 +8,10 @@ errors=[];rows=[]
 def check(ok,msg):
  if not ok:errors.append(msg)
 for n in range(1,13):
- p=next(M.glob(f'{n:02}-*.md'));s=p.read_text();page=p.with_suffix('.html').read_text()
+ p=next(M.glob(f'{n:02}-*.md'));s=p.read_text()
  headings=re.findall(r'^## (.+)$',s,re.M)
  check(headings[-1]=='本章小结' and headings.count('本章小结')==1,f'{n}: final summary')
  check(not any(any(w in h for w in ['参考资料','参考文献','资料说明','资料与','注释与','文献与','参考与']) for h in headings),f'{n}: reference sections removed')
- html_heads=re.findall(r'<h2\b[^>]*>(.*?)</h2>',page,re.S)
- check(html_heads[-1]=='本章小结',f'{n}: HTML final heading')
- if 'class="footnote"' in page:check(page.index('class="footnote"')<page.rfind('>本章小结</h2>'),f'{n}: notes precede conclusion')
  defined=set(re.findall(r'^\[\^([^\]]+)\]:',s,re.M));used=set(re.findall(r'\[\^([^\]]+)\](?!:)',s));check(used<=defined,f'{n}: unresolved footnotes {used-defined}')
  for url in re.findall(r'\]\(([^)]+)\)',s):
   u=urlsplit(url.strip('<>'))

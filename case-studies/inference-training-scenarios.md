@@ -21,8 +21,8 @@
 H100／4090 保留作者历史文章的问题。A100／A800 用于隔离互联差异，H20 用于检验“推理卡”称呼与实际任务是否一致，H100／H200／B200 用于分开理解算力、容量、带宽和互联的代际变化。
 
 - **A100／A800：** [Lenovo 原厂指南](../references/outline-checks/2026-09-07/systems-cases/a800-lenovo.pdf)首页明确比较 NVLink 600／400 GB/s。其表列 A800 80 GB PCIe／SXM 的 HBM 带宽分别为 1,935／2,039 GB/s，BF16 dense 为 312 TFLOP/s。与[对应 A100 数据表](../references/files/specs/nvidia-a100-80-spec.pdf)同形态对齐，不能把 NVLink 削减写成 HBM 削减。只引用本例需要的项目；端口双向聚合规格还需换算为实际路径有效单向带宽。
-- **H20：** [NVIDIA 的固定产品支持表](../references/files/specs/nvidia-h20-vgpu.html)可确认本例 H20 SXM5 96 GB；本轮仍未获得可完整核对的官方算力／带宽表。H20 训练是否合算采用具体 GEMM、训练步和 P／D 服务率记录推算，未测项目保留区间。[Bullet](../references/files/papers/bullet.pdf)含 A100／H20 的 SM 与访存实验、Qwen3 服务案例，可作为原条件证据，不能拼成 A100＋H20 异构 PD 的实测。
-- **H100／B200：** [H100 规格](../references/files/specs/nvidia-h100-spec.html)的 80 GB SXM 与[HGX B200 表](../references/outline-checks/2026-09-07/systems-cases/nvidia-hgx.html)分开核对。HGX B200 的 8 卡 BF16 表值 36 PFLOP/s 含结构稀疏，dense 为一半，即每卡 2.25 PFLOP/s。[DGX B200](../references/files/specs/nvidia-dgx-b200.html)的 1,440 GB／8 卡对应本例每卡 180 GB；不混入 GB200 的形态与容量。[H200](../references/outline-checks/2026-09-07/systems-cases/nvidia-h200-systems.html)的容量和带宽增长另由其官方规格解释。
+- **H20：** [NVIDIA 的固定产品支持表](../references/files/specs/nvidia-h20-vgpu.md)可确认本例 H20 SXM5 96 GB；本轮仍未获得可完整核对的官方算力／带宽表。H20 训练是否合算采用具体 GEMM、训练步和 P／D 服务率记录推算，未测项目保留区间。[Bullet](../references/files/papers/bullet.pdf)含 A100／H20 的 SM 与访存实验、Qwen3 服务案例，可作为原条件证据，不能拼成 A100＋H20 异构 PD 的实测。
+- **H100／B200：** [H100 规格](../references/files/specs/nvidia-h100-spec.md)的 80 GB SXM 与[HGX B200 表](../references/outline-checks/2026-09-07/systems-cases/nvidia-hgx.md)分开核对。HGX B200 的 8 卡 BF16 表值 36 PFLOP/s 含结构稀疏，dense 为一半，即每卡 2.25 PFLOP/s。[DGX B200](../references/files/specs/nvidia-dgx-b200.md)的 1,440 GB／8 卡对应本例每卡 180 GB；不混入 GB200 的形态与容量。[H200](../references/outline-checks/2026-09-07/systems-cases/nvidia-h200-systems.md)的容量和带宽增长另由其官方规格解释。
 
 若用稳态总步时得到的 MFU 估计训练时间，其中已经包含该计时区间的通信、重计算和气泡影响，不再重复叠加。若从计算、访存、通信分别建模，则先组合执行时间，再反算 MFU。跨卡比较先统一算法 FLOPs、精度与 dense／structured-sparse 峰值口径；MoE 路由稀疏不等于 Tensor Core 的 2:4 结构稀疏。
 
@@ -70,7 +70,7 @@ batch＝1 的低矩阵利用率可能由交互期限决定，并不自动等于�
 
 ## 推测解码的近期案例
 
-基础只用一幅草稿—验证时序说明；主案例采用 [EAGLE 3.1](../references/outline-checks/2026-09-07/systems-cases/eagle31.html)、[DFlash 论文](../references/outline-checks/2026-09-07/systems-cases/dflash-paper.pdf)及[固定仓库](../references/outline-checks/2026-09-07/systems-cases/dflash-readme.md)、[DFlash 2](../references/outline-checks/2026-09-07/systems-cases/dflash2.html)、[MiMo／TileRT 官方说明](../references/outline-checks/2026-09-07/systems-cases/mimo-tilert.html)和 DeepSeek-V4 的 MTP。EAGLE 团队与小米 MiMo 分别归属；引擎里的 EAGLE 选项也可能执行模型自带的 MTP，需检查实际草稿来源。
+基础只用一幅草稿—验证时序说明；主案例采用 [EAGLE 3.1](../references/outline-checks/2026-09-07/systems-cases/eagle31.md)、[DFlash 论文](../references/outline-checks/2026-09-07/systems-cases/dflash-paper.pdf)及[固定仓库](../references/outline-checks/2026-09-07/systems-cases/dflash-readme.md)、[DFlash 2](../references/outline-checks/2026-09-07/systems-cases/dflash2.md)、[MiMo／TileRT 官方说明](../references/outline-checks/2026-09-07/systems-cases/mimo-tilert.md)和 DeepSeek-V4 的 MTP。EAGLE 团队与小米 MiMo 分别归属；引擎里的 EAGLE 选项也可能执行模型自带的 MTP，需检查实际草稿来源。
 
 Qwen3-8B 的 DFlash 提供与前文相连的小规模实验。EAGLE 3.1 的 Kimi K2.6、DFlash 2 的近期模型、MiMo-V2.5-Pro 与 V4 则各自保留目标、草稿、精度和机器条件，不能把跨论文加速比当同条件排名。
 

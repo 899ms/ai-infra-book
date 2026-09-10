@@ -33,7 +33,7 @@ LLM.265 先把浮点张量映射成视频引擎接受的表示，再使用帧内
 
 论文的低比特质量证据包括 LLaMA 权重／KV 和 Pythia 训练；训练梯度还使用了残差补偿和分阶段配方。它们不证明任意 reasoning 或 Agent 任务都保持质量。§7 的 three-in-one codec 是 ASAP7 下的综合、布局布线设计；集群收益由分析模型给出，并用微基准及 Astra-SIM 校准，不能写成现有 GPU 新增了这种硬件。
 
-设备能力须逐型号核对。[NVIDIA 官方支持表快照](../references/proceedings/MICRO/2025/nvidia-codec-matrix.html)列出的 A100 和 H100 没有 NVENC，RTX 3090 则有；解码能力另列。[Dynamo 的相关说明](../references/proceedings/MICRO/2025/dynamo-codec-requirements.html)也把 NVDEC 与 NVENC 分开列出。本次仅核对相应表行，没有审计 Dynamo 的媒体执行实现；更不能据视频输入解码功能断言它已经支持 LLM.265 张量压缩。
+设备能力须逐型号核对。[NVIDIA 官方支持表快照](../references/proceedings/MICRO/2025/nvidia-codec-matrix.md)列出的 A100 和 H100 没有 NVENC，RTX 3090 则有；解码能力另列。[Dynamo 的相关说明](../references/proceedings/MICRO/2025/dynamo-codec-requirements.md)也把 NVDEC 与 NVENC 分开列出。本次仅核对相应表行，没有审计 Dynamo 的媒体执行实现；更不能据视频输入解码功能断言它已经支持 LLM.265 张量压缩。
 
 ## 就地实验与配图
 

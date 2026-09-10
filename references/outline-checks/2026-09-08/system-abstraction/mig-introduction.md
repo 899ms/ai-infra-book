@@ -1,0 +1,43 @@
+<!-- 从 mig-introduction.html 迁移的资料快照；原始 HTML SHA-256: 970cf62e3a98556a48a8298401a45a3b12e22c072676bc8b587186cb87e9f3e0。 -->
+
+- [](index.html)
+- Introduction
+
+<a id="introduction"></a>
+
+# Introduction
+The new Multi-Instance GPU (MIG) feature allows GPUs (starting with NVIDIA Ampere architecture) to be securely partitioned into up to seven separate GPU Instances for CUDA applications, providing multiple users with separate GPU resources for optimal GPU utilization. This feature is particularly beneficial for workloads that do not fully saturate the GPU’s compute capacity and therefore users may want to run different workloads in parallel to maximize utilization.
+
+For Cloud Service Providers (CSPs), who have multi-tenant use cases, MIG ensures one client cannot impact the work or scheduling of other clients, in addition to providing enhanced isolation for customers.
+
+With MIG, each instance’s processors have separate and isolated paths through the entire memory system - the on-chip crossbar ports, L2 cache banks, memory controllers, and DRAM address busses are all assigned uniquely to an individual instance. This ensures that an individual user’s workload can run with predictable throughput and latency, with the same L2 cache allocation and DRAM bandwidth, even if other tasks are thrashing their own caches or saturating their DRAM interfaces. MIG can partition available GPU compute resources (including streaming multiprocessors or SMs, and GPU engines such as copy engines or decoders), to provide a defined quality of service (QoS) with fault isolation for different clients such as VMs, containers or processes. MIG enables multiple GPU Instances to run in parallel on a single, physical NVIDIA Ampere architecture GPU.
+
+MIG enables users to view and schedule jobs on virtual GPU instances as if they were physical GPUs. It supports Linux operating systems, containerized workloads using Docker Engine, orchestration with Kubernetes, and virtualized environments through hypervisors such as Red Hat Virtualization and VMware vSphere.
+
+MIG supports the following deployment configurations:
+
+- Bare-metal, including containers
+
+- GPU pass-through virtualization to Linux guests on top of supported hypervisors
+
+- vGPU on top of supported hypervisors
+
+MIG allows multiple vGPUs (and thereby VMs) to run in parallel on a single GPU, while preserving the isolation guarantees that vGPU provides. For more information on GPU partitioning using vGPU and MIG, refer to the [technical brief](https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/solutions/resources/documents1/TB-10226-001_v01.pdf).
+
+[![MIG Overview](_images/gpu-mig-overview.jpg)](_images/gpu-mig-overview.jpg)
+
+Figure 1 MIG Overview[\#](#gpu-mig-overview "Link to this image")
+
+The purpose of this document is to introduce the concepts behind MIG, deployment considerations and provide examples of MIG management to demonstrate how users can run CUDA applications on MIG supported GPUs.
+
+[](index.html "previous page")
+
+previous
+
+MIG User Guide
+
+[](supported-gpus.html "next page")
+
+next
+
+Supported GPUs

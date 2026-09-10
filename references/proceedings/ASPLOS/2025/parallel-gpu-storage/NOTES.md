@@ -6,7 +6,7 @@
 
 ## 正式身份与原件
 
-所有正式 DOI、题名、作者均从[原始 Crossref 响应](registry-original.json)中重新提取，未只信旧索引的匹配布尔值；正式题名还与[原始会议 program](program-original.html)核对。两份原始归档的复制字节和来源位置保留在 [local-copy-provenance.json](local-copy-provenance.json)。这两份是已有档案的字节复制，不伪造新的联网采集日期。
+所有正式 DOI、题名、作者均从[原始 Crossref 响应](registry-original.json)中重新提取，未只信旧索引的匹配布尔值；正式题名还与[原始会议 program](program-original.md)核对。两份原始归档的复制字节和来源位置保留在 [local-copy-provenance.json](local-copy-provenance.json)。这两份是已有档案的字节复制，不伪造新的联网采集日期。
 
 | 序号 | 正式 DOI | 完整摘要来源 | 版本边界 |
 |---|---|---|---|
@@ -25,7 +25,7 @@
 
 与本书最直接的连接是 4.3.1“片上存储与数据复用”或 4.4.3“矩阵与向量单元的协作”。现有提纲已经讲 TMEM／累加器与供数；本候选的新增判断应是：**性能需求在什么条件下迫使我们改变计算单元边界，而不只是增加寄存器或带宽**。若正文核验支持，可用一个粒度、访问量和控制工作比较接入原小节，不新增章节或核心实验。
 
-必须保留版本差异：v1 摘要写相对单一 core-coupled baseline，active power 最多下降 66.3%、active energy 最多下降 77.2%；v2 改为相对 Ampere-style／Hopper-style 两基线，on-chip active power 分别下降 67.3%／24.2%。不能将功率、能量、基线混在同一对比中，更不能把 style 原型写成实测 A100／H100。[v1 摘要原件](173-arxiv-v1.html)、[v2 原件](173-arxiv.html)与两个重提取摘要均保留。
+必须保留版本差异：v1 摘要写相对单一 core-coupled baseline，active power 最多下降 66.3%、active energy 最多下降 77.2%；v2 改为相对 Ampere-style／Hopper-style 两基线，on-chip active power 分别下降 67.3%／24.2%。不能将功率、能量、基线混在同一对比中，更不能把 style 原型写成实测 A100／H100。[v1 摘要原件](173-arxiv-v1.md)、[v2 原件](173-arxiv.md)与两个重提取摘要均保留。
 
 摘要说明使用 synthesizable RTL，并不证明流片或产品测试。本批没有核技术节点、时钟、面积、等 MAC 预算、功耗测量方法、融合负载、完整服务收益或软件可用性；这些是下一次是否正式采用的必要正文问题。本轮只标后续正文候选，不将数字回填硬件规格表。
 

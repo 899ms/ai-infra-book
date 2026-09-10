@@ -16,7 +16,7 @@
 | 功率计量 | 以实测整机边界登记 | 以实测整机边界登记 | 600 W 是板卡功率规格；整机能耗另测 |
 | 主要软件路径 | Metal GPU；是否使用 ANE 另核 | Ollama 的实际 runner／Metal 后端；MLX 作同机对照 | CUDA 后端；按实际模型核对量化与 Tensor Core 路径 |
 
-Apple 的“GPU 核”、NVIDIA 的 SM 和 CUDA Core 计数不处于相同粒度，不能用核数直接计算性能比。[Apple 发布资料](../references/files/specs/apple-m2-pro-max.html)给出容量与带宽；RTX 参数见[产品数据表](../references/files/specs/nvidia-rtx-pro6000-spec.pdf)和[架构白皮书表 1](../references/files/specs/nvidia-rtx-blackwell-pro.pdf)。M2 Max 的配置来自本机只读检测及作者确认，不登记序列号或设备唯一标识。
+Apple 的“GPU 核”、NVIDIA 的 SM 和 CUDA Core 计数不处于相同粒度，不能用核数直接计算性能比。[Apple 发布资料](../references/files/specs/apple-m2-pro-max.md)给出容量与带宽；RTX 参数见[产品数据表](../references/files/specs/nvidia-rtx-pro6000-spec.pdf)和[架构白皮书表 1](../references/files/specs/nvidia-rtx-blackwell-pro.pdf)。M2 Max 的配置来自本机只读检测及作者确认，不登记序列号或设备唯一标识。
 
 ## 第 4 章：沿同一计算追踪数据
 
@@ -39,13 +39,13 @@ flowchart LR
 
 图是计算与存储的功能示意，不代表片上物理布局或完整缓存一致性协议。CPU 和 GPU 共享物理内存，可以省去部分重复缓冲与显式跨设备拷贝，但 GPU 仍要从内存读取权重与 KV，写回输出。CPU、GPU、操作系统还会竞争容量和带宽。统一内存解决了一部分数据交接问题，不会消除内存访问成本。
 
-Apple GPU 也有执行分组、片上存储与同步责任。Metal 的 `shared`、`private` 等资源模式决定访问范围；`private` 并不表示芯片旁另有一套独立显存。即使缓冲可以直接共享，应用仍须遵守 CPU／GPU 访问时序。依据为 [Metal 资源模式文档的官方数据原件](../references/files/documents/apple-metal-memory.json)。[WWDC20 架构说明](../references/files/documents/apple-gpu-architecture.html)中的 tile rendering 用来解释图形侧设计背景，不将图形 tile memory 的收益直接写成 LLM 收益。
+Apple GPU 也有执行分组、片上存储与同步责任。Metal 的 `shared`、`private` 等资源模式决定访问范围；`private` 并不表示芯片旁另有一套独立显存。即使缓冲可以直接共享，应用仍须遵守 CPU／GPU 访问时序。依据为 [Metal 资源模式文档的官方数据原件](../references/files/documents/apple-metal-memory.json)。[WWDC20 架构说明](../references/files/documents/apple-gpu-architecture.md)中的 tile rendering 用来解释图形侧设计背景，不将图形 tile memory 的收益直接写成 LLM 收益。
 
 NVIDIA 侧从 GDDR7、L2、SM 内存储到 Tensor Core 追踪供数。缓存由硬件承担部分管理，优化后的 CUDA 算子仍可能显式使用 shared memory、异步搬运和同步。Apple Metal 和 CUDA 都需要布局、分块和依赖管理；比较的是责任落在程序、编译器还是硬件，以及为达到相近效率需要多少调优。
 
 矩阵计算要区分三个对象：Apple GPU 经 Metal 暴露的 SIMD-group 矩阵操作、独立的 Apple Neural Engine，以及 NVIDIA Tensor Core。当前 GPU 推理不能把 Neural Engine 的 TOPS 加进 GPU 峰值。RTX Blackwell 的 FP4／FP6／FP8 等能力还要核对对应内核；GGUF 的某种 4-bit 权重量化不等于直接执行 Tensor Core 原生 FP4 指令。
 
-RTX PRO 6000 的 compute capability 为 12.0，见 [Ollama 硬件支持表](../references/files/documents/ollama-hardware.html)。其 GB202／GDDR7 配置与 B200 的数据中心 Blackwell 分别取证；不能把 B200 的 HBM、NVLink 或特定矩阵指令／存储机制全部移用到这张工作站卡。
+RTX PRO 6000 的 compute capability 为 12.0，见 [Ollama 硬件支持表](../references/files/documents/ollama-hardware.md)。其 GB202／GDDR7 配置与 B200 的数据中心 Blackwell 分别取证；不能把 B200 的 HBM、NVLink 或特定矩阵指令／存储机制全部移用到这张工作站卡。
 
 ## 用性能模型解释差异
 
@@ -82,7 +82,7 @@ Ollama 承担模型管理、请求服务、加载和运行实例调度；实际�
 | 组织命令与同步 | 根据实际 runner 追踪计算图、Metal 命令提交、CPU 等待及缓冲寿命 | 小算子提交、批次变化和同步是否成为瓶颈；不把 Metal 命令缓冲称作 CUDA Graph |
 | 决定驻留与回退 | 核对 GPU 层数、模型与 KV 驻留位置和 CPU 回退；未支持的路径按日志解释 | 能运行和充分利用 GPU 是不同结果；统一内存不能替代算子支持 |
 
-当前 [Ollama 开发文档](../references/files/documents/ollama.html)还出现 MLX 相关路径，因此不把所有版本、模型的 Ollama 都概括为同一个 llama.cpp runner。Ollama、llama.cpp、ggml、MLX、Metal 和 Core ML 分别说明所在层次；不能把底层项目实现的所有内核都归为 Ollama 独立开发，也不能由“Apple Silicon 加速”推断使用了 Neural Engine。
+当前 [Ollama 开发文档](../references/files/documents/ollama.md)还出现 MLX 相关路径，因此不把所有版本、模型的 Ollama 都概括为同一个 llama.cpp runner。Ollama、llama.cpp、ggml、MLX、Metal 和 Core ML 分别说明所在层次；不能把底层项目实现的所有内核都归为 Ollama 独立开发，也不能由“Apple Silicon 加速”推断使用了 Neural Engine。
 
 ## 第 8 章：配对实验与记录
 

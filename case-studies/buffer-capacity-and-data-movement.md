@@ -49,7 +49,7 @@
 
 两种布局读的有效数据完全一样。增加一列 padding 多占 128 B，即 3.125%，却把按列访问从同一 bank 的 32 个不同地址分散到 32 个 bank。这是给定请求和端口模型的服务轮数，不能推成 GEMM 快了 32 倍；真实指令、同步、并发和存储分配粒度都还没有加入。
 
-已有 [CUDA 13.2.1 官方快照](../references/files/documents/nvidia-async-copies.html#shared-memory-bank-swizzling)说明连续 32-bit 字的 bank 映射，以及 TMA swizzle 如何在搬运时改变布局。这里的标量 padding 与 TMA 的 16-byte 分组 swizzle 是两种映射；后者另有对齐、box 尺寸与索引条件。官方转置示例也明确只用于说明机制，不能直接当作高性能实现。扩写时用真实 GEMM／TMA trace 检验实际采用的映射，不要求先手写优化内核。
+已有 [CUDA 13.2.1 官方快照](../references/files/documents/nvidia-async-copies.md#shared-memory-bank-swizzling)说明连续 32-bit 字的 bank 映射，以及 TMA swizzle 如何在搬运时改变布局。这里的标量 padding 与 TMA 的 16-byte 分组 swizzle 是两种映射；后者另有对齐、box 尺寸与索引条件。官方转置示例也明确只用于说明机制，不能直接当作高性能实现。扩写时用真实 GEMM／TMA trace 检验实际采用的映射，不要求先手写优化内核。
 
 ## 把布局交接算进整条链
 

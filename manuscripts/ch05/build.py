@@ -239,8 +239,9 @@ page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewpo
 import sys
 sys.path.insert(0,str(HERE.parent))
 from teaching_reading import readable_diagrams
+from preview_output import preview_path
 page=readable_diagrams(page)
-html_path=HERE.parent/'05-算子与运行时.html';html_path.write_text(page)
+html_path=preview_path(HERE.parent/'05-算子与运行时.html');html_path.write_text(page)
 section_start=re.search(r'<h2 id="[^"]+">5\.2 ',body).start()
 section_end=re.search(r'<h2 id="[^"]+">5\.4 ',body).start()
 # Keep cited evidence available in the standalone reading sample.
@@ -253,7 +254,7 @@ for i,(ident,content) in enumerate(re.findall(r'<li id="(fn:[^"]+)">([\s\S]*?)</
   content=re.sub(r'<a class="footnote-backref" href="#([^"]+)"[^>]*>[\s\S]*?</a>',lambda m:m[0] if m[1] in section_ids else '',content)
   footnote_items.append('<li id="'+ident+'" value="'+str(i)+'">'+content+'</li>')
 footnotes='<div class="footnote"><hr><ol>'+''.join(footnote_items)+'</ol></div>'
-excerpt=HERE.parent/'05-算子与运行时-5.2-5.3.html'
+excerpt=preview_path(HERE.parent/'05-算子与运行时-5.2-5.3.html')
 excerpt.write_text('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第五章 5.2–5.3 图文试改</title><style>'+css+math_css+'</style><main><h1>第五章 5.2–5.3 图文试改</h1>'+body[section_start:section_end]+footnotes+'</main></html>')
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')
 from book_assets import sync_figure_index

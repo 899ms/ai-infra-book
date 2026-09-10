@@ -18,7 +18,7 @@ RL 中分别记录实际生成样本的行为策略、更新前的训练策略�
 
 一个最小反例：假定某 token 的真实行为 logprob 与当前 logprob 都是 `−3`，对应比值为 `exp(−3−(−3))=1`。若错误地用 `−3.25` 的重算值覆盖分母，就得到 `exp(0.25)≈1.2840`。若题设对这里的 `r_behavior` 设诊断上界 `1.2`，它已越过上界，即使这个例子根本没有参数更新。数值不是对真实框架误差的测量；目的是让读者先检查概率的身份和定义。
 
-同一个 `−3.25` 若明确属于 `π_old`，则 `r_update≈1.2840` 与 `w≈0.7788` 都是定义清楚的值，乘积仍为 1。错误在于混淆身份后覆盖行为记录，不在于重算本身。[固定 AReaL 指南](../references/framework-history/2026-09-08/rl-consistency/areal-async-current.html#decoupled-ppo-objective)甚至要求启用 decoupled loss 时开启 `recompute_logprobs`；这只支持保留两类记录的必要性，本例不声称复现其完整 loss。实际使用哪个比值、怎样裁剪或截断，回到选定算法核对。
+同一个 `−3.25` 若明确属于 `π_old`，则 `r_update≈1.2840` 与 `w≈0.7788` 都是定义清楚的值，乘积仍为 1。错误在于混淆身份后覆盖行为记录，不在于重算本身。[固定 AReaL 指南](../references/framework-history/2026-09-08/rl-consistency/areal-async-current.md#decoupled-ppo-objective)甚至要求启用 decoupled loss 时开启 `recompute_logprobs`；这只支持保留两类记录的必要性，本例不声称复现其完整 loss。实际使用哪个比值、怎样裁剪或截断，回到选定算法核对。
 
 [R3 与 NeMo RL 的既有资料](execution-feedback.md)处理专家离散选择这一部分：记录逻辑专家 ID，在当前权重下重算分数与输出；它不消除所有浮点差异，也不解决异步策略滞后。`8192 × 48 × 8 × 2` 为 6 MiB 路由 ID，int32 则为 12 MiB，另计 mask、版本和传输。这个小记录不包含 KV，更不是旧输出的回放。batch invariance、Routing Replay 和 off-policy 处理要按原因分别检验。
 

@@ -27,7 +27,7 @@ flowchart LR
   D -.-> W
 ```
 
-教学规格参照先选 **A100 80 GB SXM**；40 GB、80 GB PCIe 的内存与互联不同，不混在一个配置里。[A100 产品数据表](../references/files/specs/nvidia-a100-80-spec.pdf)提供规格依据。[NVIDIA AI Enterprise 6.2](../references/files/specs/nvidia-h20-vgpu.html)确认 H20 SXM5 96 GB 型号，但并不提供完整的 H20 算力与带宽表。H20 的精确资源上限需取得对应产品原件或实机信息后再填，不从 H100 规格或二手对比图推导一个确定值。
+教学规格参照先选 **A100 80 GB SXM**；40 GB、80 GB PCIe 的内存与互联不同，不混在一个配置里。[A100 产品数据表](../references/files/specs/nvidia-a100-80-spec.pdf)提供规格依据。[NVIDIA AI Enterprise 6.2](../references/files/specs/nvidia-h20-vgpu.md)确认 H20 SXM5 96 GB 型号，但并不提供完整的 H20 算力与带宽表。H20 的精确资源上限需取得对应产品原件或实机信息后再填，不从 H100 规格或二手对比图推导一个确定值。
 
 案例的待验证假设是：在所选精度和请求分布下，A100 适合承担计算较密集的 prefill，H20 的存储供给适合承担受权重／KV 访问约束的 decode。先分别测两种卡的 prefill 和 decode，确认有效性能的互补，再讨论分离。长上下文注意力、大批量 decode、不同量化内核都可能改变这个匹配；并非所有 prefill 都只受算力限制，也并非所有 decode 都只受带宽限制。
 

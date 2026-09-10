@@ -6,13 +6,13 @@
 
 | 来源 | 日期与已读范围 | 取舍 |
 | --- | --- | --- |
-| LucIus：[阶跃星辰 AI Infra 实习](stepfun-infra-main.html) | 主帖全文。`createdAt=1772260800000`，发表于 2026-02-28 14:40 +08:00；没有明确面试日期。 | 序列并行通信、训练容错、DMA／RDMA 与锁页提供问题方向。I12／I16 增加交叉材料，I20 将锁页问题改编成张量、缓冲和时间推算。未经独立认证，不解释为公司完整题纲。 |
-| Ventus_Fur：[阶跃星辰算法实习](stepfun-rl.html) | 主帖全文。`createdAt=1772832900000`，发表于 2026-03-07 05:35 +08:00；没有明确面试日期。 | MoE RL、GRPO／GSPO 与训练框架支持 I17／I18 的问题方向；基础算法部分不扩写成 Infra 教材内容。原帖未提 Routing Replay，不推断它是面试原题。 |
-| 不愿吃饼的少年很活泼：[阿里云 AI Infer 一面](alibaba-agent-rl.html) | 主帖全文。`createTime=1787476248000`，发表于 2026-08-23 17:10:48 +08:00；正文自述面试为当日 15:00–16:30，显示编辑时间另计。 | 政企业务 Agentic RL，涵盖 OPD、奖励、模拟器、评估与 verl AgentLoop。补 I18 的业务与轨迹链路；阿里云为相关云平台岗位，单列于基础模型公司的样本之外。不将简略提问变成未经披露的生产设计。 |
-| psykhexx：[阶跃面经图片帖](stepfun-short.html) | 主帖身份、日期与一句标题已读，发表于 2026-08-11 01:23:23 +08:00；题目在附图中，附图未读取。 | 只保留线索，不采用题目、不计入三份完整主帖阅读。 |
-| [PyTorch 搬运教程](pytorch-pinmem.html) | Background、Other copy directions、Practical recommendations、Additional considerations 的文本及代码静态阅读；图像未查看，程序未运行。 | 核对临时 pin 的准备成本、源缓冲改写、D2H 完成与并发条件。不采用页面中的性能数字；简化的同步表述以 CUDA API 文档限定，架构名称笔误不引用。 |
-| [CUDA 13.3 同步语义](cuda-sync.html) | API synchronization behavior 主文全部。 | 明确 Async 后缀不保证所有输入都不阻塞主机；区分 pageable staging 与真正复制完成。不是面试证据。 |
-| [CUDA 主机内存](cuda-memory.html) | Page-Locked Host Memory 及其 mapped memory 子节文本／示例已读，其余章节未宣称已读。 | 限定显式复制路径，并区分 mapped、统一内存和 HMM／ATS。避免把可寻址误当成本地 HBM 性能。 |
+| LucIus：[阶跃星辰 AI Infra 实习](stepfun-infra-main.md) | 主帖全文。`createdAt=1772260800000`，发表于 2026-02-28 14:40 +08:00；没有明确面试日期。 | 序列并行通信、训练容错、DMA／RDMA 与锁页提供问题方向。I12／I16 增加交叉材料，I20 将锁页问题改编成张量、缓冲和时间推算。未经独立认证，不解释为公司完整题纲。 |
+| Ventus_Fur：[阶跃星辰算法实习](stepfun-rl.md) | 主帖全文。`createdAt=1772832900000`，发表于 2026-03-07 05:35 +08:00；没有明确面试日期。 | MoE RL、GRPO／GSPO 与训练框架支持 I17／I18 的问题方向；基础算法部分不扩写成 Infra 教材内容。原帖未提 Routing Replay，不推断它是面试原题。 |
+| 不愿吃饼的少年很活泼：[阿里云 AI Infer 一面](alibaba-agent-rl.md) | 主帖全文。`createTime=1787476248000`，发表于 2026-08-23 17:10:48 +08:00；正文自述面试为当日 15:00–16:30，显示编辑时间另计。 | 政企业务 Agentic RL，涵盖 OPD、奖励、模拟器、评估与 verl AgentLoop。补 I18 的业务与轨迹链路；阿里云为相关云平台岗位，单列于基础模型公司的样本之外。不将简略提问变成未经披露的生产设计。 |
+| psykhexx：[阶跃面经图片帖](stepfun-short.md) | 主帖身份、日期与一句标题已读，发表于 2026-08-11 01:23:23 +08:00；题目在附图中，附图未读取。 | 只保留线索，不采用题目、不计入三份完整主帖阅读。 |
+| [PyTorch 搬运教程](pytorch-pinmem.md) | Background、Other copy directions、Practical recommendations、Additional considerations 的文本及代码静态阅读；图像未查看，程序未运行。 | 核对临时 pin 的准备成本、源缓冲改写、D2H 完成与并发条件。不采用页面中的性能数字；简化的同步表述以 CUDA API 文档限定，架构名称笔误不引用。 |
+| [CUDA 13.3 同步语义](cuda-sync.md) | API synchronization behavior 主文全部。 | 明确 Async 后缀不保证所有输入都不阻塞主机；区分 pageable staging 与真正复制完成。不是面试证据。 |
+| [CUDA 主机内存](cuda-memory.md) | Page-Locked Host Memory 及其 mapped memory 子节文本／示例已读，其余章节未宣称已读。 | 限定显式复制路径，并区分 mapped、统一内存和 HMM／ATS。避免把可寻址误当成本地 HBM 性能。 |
 
 [读取核对](reading-proof.json)保存主帖路径、UUID、作者、时间字段与正文抽取。`createTime`／`createdAt` 来自主帖，未沿递归搜索误取话题创建时间、推荐帖或评论日期。三位候选人的自述没有独立认证，不形成“高频”或代表性统计。
 

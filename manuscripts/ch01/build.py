@@ -307,8 +307,9 @@ page='<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="
 import sys
 sys.path.insert(0,str(HERE.parent))
 from teaching_reading import readable_diagrams
+from preview_output import preview_path
 page=readable_diagrams(page)
-ht=md.with_suffix('.html');ht.write_text(page);outputs.append(ht)
+ht=preview_path(md);ht.write_text(page);outputs.append(ht)
 from book_assets import sync_figure_index
 outputs.extend(sync_figure_index(HERE))
 manifest={'source_lock':'sources.json','font':str(font_path),'matplotlib':matplotlib.__version__,

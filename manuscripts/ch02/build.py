@@ -212,6 +212,9 @@ from teaching_figures import draw as draw_teaching_figures
 data['teaching_diagrams']=draw_teaching_figures(2,save,ROOT)
 
 (HERE/'figure-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
+from teaching_revision import draw as draw_revision
+out.extend(draw_revision(HERE,data))
+out=list(dict.fromkeys(out))
 md=HERE.parent/'02-模型架构.md';raw=md.read_text()
 maths=[]
 def protect_math(match):
@@ -236,11 +239,12 @@ body=re.sub(r'<table>(.*?)</table>',r'<div class="table-scroll"><table>\1</table
 for p in out:
  if p.suffix=='.svg':body=body.replace('src="ch02/'+p.name+'"','src="data:image/png;base64,'+base64.b64encode(p.with_suffix('.png').read_bytes()).decode()+'"')
 css='''body{margin:0;background:#fafaf8;color:#243640;font:18px/1.95 Georgia,"Songti SC",serif}main{max-width:960px;margin:auto;padding:50px 38px 90px;background:white}h1,h2,h3{font-family:Arial,"PingFang SC",sans-serif;line-height:1.45;color:#163747}h1{font-size:36px}h2{font-size:28px;border-top:1px solid #d5e1e4;margin-top:65px;padding-top:28px}h3{font-size:23px;margin-top:40px}p{margin:1em 0}a{color:#246f91;text-underline-offset:3px}img{display:block;width:100%;height:auto;margin:26px auto 10px}em{font-size:15px;color:#55707d}table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.7;margin:24px 0}td,th{padding:10px 12px;border-bottom:1px solid #d5e1e4;text-align:left}th{background:#edf4f6}blockquote{margin:28px 0;padding:16px 24px;border-left:4px solid #138b83;background:#f1f8f6;font-size:16px}code{font:0.85em/1.65 Menlo,monospace;background:#f0f4f6;overflow-wrap:anywhere}pre{white-space:pre-wrap}.equation{font:20px/1.8 Georgia,"Songti SC",serif;text-align:center;background:#f7f9fa;padding:18px 12px;margin:25px 0;overflow-wrap:anywhere}nav{font:16px/1.9 Arial,"PingFang SC",sans-serif;background:#f0f6f8;padding:18px 24px}nav a{display:block}@media(max-width:650px){main{padding:25px 18px}body{font-size:17px}table{display:block;overflow-x:auto}h1{font-size:29px}h2{font-size:25px}.equation{font-size:17px}}@media print{main{max-width:none;padding:0}h2,h3{break-after:avoid}img,blockquote{break-inside:avoid}body{font-size:11pt}}'''
+css+=' main{max-width:760px}img{max-width:720px}@media print{img{width:420pt;max-width:100%}}'
 css+=math_css+' .katex{font-size:1.04em;position:relative}.katex .katex-mathml{contain:strict}.katex-display{overflow-x:auto;overflow-y:hidden;padding:14px 0}.table-scroll{overflow-x:auto;max-width:100%}td{min-width:120px}td .katex{white-space:nowrap}@media(max-width:650px){table{display:table}td{min-width:145px}}'
 nav=''.join('<a href="#'+ident+'">'+title+'</a>' for ident,title in re.findall(r'<h2 id="([^"]+)">(2\.\d+ [^<]+)</h2>',body))
 page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>第 2 章 模型架构</title><style>'+css+'</style><main><nav>'+nav+'</nav>'+body+'</main></html>'
 html_path=HERE.parent/'02-模型架构.html';html_path.write_text(page)
 artifacts=out+[HERE/'figure-data.json',HERE/'model-comparison.json',HERE/'model-comparison.md',HERE/'comparison-v4-decode.json',html_path,md]
-manifest={'chapter':2,'generator':'manuscripts/ch02/build.py','font_family':family,'figures':15,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]}
+manifest={'chapter':2,'generator':'manuscripts/ch02/build.py','font_family':family,'figures':len(re.findall(r'!\[',raw)),'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]}
 (HERE/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(out)} figure files and reading HTML.')

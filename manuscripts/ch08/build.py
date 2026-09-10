@@ -56,7 +56,7 @@ for j,(policy,label) in enumerate([('fixed','固定批次〔教学〕'),('contin
    y=3-int(plan['request'][1:]);start=step['start_ns']/1000;dur=step['duration_ns']/1000
    a.broken_barh([(start,dur)],(y-.34,.68),facecolors=C['blue' if plan['phase']=='prefill' else 'teal'],edgecolors='white',lw=.8)
    # The time bars carry the scheduling argument; detailed step counts stay in figure-data.json.
- a.set(yticks=range(4),yticklabels=['r3','r2','r1','r0'],xlim=(0,330),xticks=[0,50,100,150,200,250,300],ylim=(-.85,3.85),xlabel='教学时间 / μs');a.set_title(label+['  ·  总时间 317 μs，最大间隔 12 μs','  ·  总时间 277 μs，最大间隔 147 μs','  ·  总时间 317 μs，最大间隔 29 μs'][j],loc='left',fontsize=12,pad=9)
+ a.set(yticks=range(4),yticklabels=['r3','r2','r1','r0'],xlim=(0,330),xticks=[0,50,100,150,200,250,300],ylim=(-.85,3.85),xlabel='时间 / μs');a.set_title(label+['  ·  总时间 317 μs，最大间隔 12 μs','  ·  总时间 277 μs，最大间隔 147 μs','  ·  总时间 317 μs，最大间隔 29 μs'][j],loc='left',fontsize=12,pad=9)
  # Arrival markers and maximum output gap are derived from the saved request events.
  for reqrow in d['batching_requests']:
   y=3-int(reqrow['id'][1:]);a.scatter([reqrow['arrival_ns']/1000],[y],marker='>',s=45,color=C['ink'],zorder=6,clip_on=False)

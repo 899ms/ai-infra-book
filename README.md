@@ -5,52 +5,48 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/bojieli/ai-infra-book?style=social)](https://github.com/bojieli/ai-infra-book)
 
-**从一次模型执行出发，理解芯片、网络、推理与训练系统的设计取舍。**
+《深入理解 AI Infra》由李博杰撰写，是 GitHub 上获得 **45k+ Star** 的[《深入理解 AI Agent：设计原理与工程实践》](https://github.com/bojieli/ai-agent-book)的姊妹篇。
 
-模型为什么能放进显存，却跑不快？增加 GPU 为什么不一定缩短完成时间？算子融合、KV Cache、并行通信和资源调度，怎样共同影响一次任务的质量、延迟与成本？
+写完《深入理解 AI Agent》后，在与读者交流和开发 Agent 产品的过程中，我越来越感到：要做好模型应用，还需要理解它背后的基础设施。为什么模型放得进显存，却跑不快？为什么加了 GPU，用户还是要等很久？一次模型调用的延迟和成本，究竟花在了哪里？这些问题促使我写下这本书，也把自己从微软的 FPGA 推理加速、华为的算子编译和万卡互联，到创业做实时语音 Agent 的经历串了起来。
 
-本书沿着模型执行中的计算、数据搬移与等待，用十二章连接模型架构、加速器、运行时、互联和服务系统。通过公式推导、机制图、具体模型和配套实验，学习估算资源需求、识别瓶颈，并用测量检验设计判断。
+本书从模型的计算与数据读写出发，逐步讲到芯片、网络、推理和训练系统。我希望和读者一起养成一个习惯：面对新的模型或系统设计，先算一算需要多少显存、算力和带宽，找出可能的瓶颈，再用实验检验判断。更多写作背景见[前言](manuscripts/00-前言.md)。
 
-**[阅读前言](manuscripts/00-前言.md) · [章节正文](manuscripts/README.md) · [下载 PDF](https://github.com/bojieli/ai-infra-book/releases/latest) · [配套实验](experiments/README.md)**
+**[在线阅读](https://bojieli.github.io/ai-infra-book/) · [下载 PDF](https://github.com/bojieli/ai-infra-book/releases/latest) · [章节正文](manuscripts/README.md) · [配套实验](experiments/README.md)**
 
-## 阅读本书
-
-- **PDF**：[Releases](https://github.com/bojieli/ai-infra-book/releases) 提供按提交构建的全书 PDF、封面和校验文件；也可查看[仓库内 PDF](book/AI-Infra-Book.pdf)。
-- **Markdown**：下方目录直接进入章节正文，无需安装环境。
-- **在线网站**：发布地址为 <https://bojieli.github.io/ai-infra-book/>，首次 Pages 部署成功后可用，支持全文搜索、数学公式与深色模式。
-
-正文持续修订。引用具体结论或复现实验时，请记录所用提交或 Release，以及模型版本、硬件条件和输入参数。
-
-## 适合谁读
-
-本书面向希望理解 AI 系统工作原理的工程师、研究人员和计算机专业学生。具备 Python、线性代数和计算机系统基础会更容易跟上推导；前言介绍了阅读前置条件。
-
-- **建立全景**：从第 1–3 章理解系统层次、模型结构和负载。
-- **深入底层执行**：第 4–7 章讨论加速器、算子与运行时、超节点和网络。
-- **设计完整系统**：第 8–12 章讨论推理、训练、资源调度与端边云协同。
-
-建议先做资源估算，再阅读实现与实验结果，最后改变一个条件，观察原来的选择是否仍然成立。
+目前书稿仍是初稿，正在持续修订。可以直接从下方目录阅读 Markdown，也可以通过网站或 PDF 阅读全书。[Releases](https://github.com/bojieli/ai-infra-book/releases) 中保留了各次发布的 PDF，方便查阅和引用同一版本。
 
 ## 内容目录
 
 | 章 | 主题 | 主要问题 |
 | :--: | --- | --- |
-| 1 | [初识 AI Infra](<manuscripts/01-初识 AI Infra.md>) | 如何估算一次生成的容量、计算量与数据读取？ |
+| 1 | [初识 AI Infra](<manuscripts/01-初识 AI Infra.md>) | 一次生成需要多少显存、计算和数据读写？ |
 | 2 | [模型架构](manuscripts/02-模型架构.md) | 注意力、历史状态与专家结构如何改变系统需求？ |
 | 3 | [推理与训练负载](manuscripts/03-推理与训练负载.md) | 任务阶段、到达模式和状态寿命如何影响资源需求？ |
 | 4 | [加速器架构](manuscripts/04-加速器架构.md) | 如何在计算、存储、带宽、功耗与成本之间取舍？ |
 | 5 | [算子与运行时](manuscripts/05-算子与运行时.md) | 融合、复用、并发和调度如何减少执行开销？ |
 | 6 | [超节点](manuscripts/06-超节点.md) | 多设备协作如何平衡容量、吞吐和同步代价？ |
-| 7 | [数据中心网络](manuscripts/07-数据中心网络.md) | 通信语义与网络设计如何影响任务关键路径？ |
+| 7 | [数据中心网络](manuscripts/07-数据中心网络.md) | 网络带宽、通信方式和拥塞怎样影响计算效率？ |
 | 8 | [推理优化](manuscripts/08-单实例推理.md) | 批处理、KV 管理、卸载与推测解码何时有效？ |
 | 9 | [分布式推理](manuscripts/09-分布式推理.md) | 如何放置计算和状态，并处理扩缩容与恢复？ |
-| 10 | [训练系统](manuscripts/10-训练系统.md) | 如何在容量、通信和重算之间提高有效训练进展？ |
-| 11 | [资源调度与运行环境](manuscripts/11-资源调度与运行环境.md) | 如何计入状态驻留、环境准备和恢复的完整成本？ |
-| 12 | [端边云协同](manuscripts/12-端边云协同.md) | 如何按完整交互的质量、时限与传输代价选择执行位置？ |
+| 10 | [训练系统](manuscripts/10-训练系统.md) | 怎样安排显存、通信和重算，让训练更高效？ |
+| 11 | [资源调度与运行环境](manuscripts/11-资源调度与运行环境.md) | 模型服务和工具环境如何共享资源，减少等待？ |
+| 12 | [端边云协同](manuscripts/12-端边云协同.md) | 任务放在本地、边缘还是云端，怎样兼顾效果、延迟和成本？ |
+
+## 适合谁读
+
+如果你已经调用过模型 API，或在自己的机器上运行过模型，想进一步弄清它为什么慢、怎样降低成本，这本书可以作为起点。对于从事系统、网络和芯片工作的工程师，以及相关方向的研究人员和学生，书中也会把各层的设计与实际模型任务联系起来。
+
+阅读时需要一些 Python、线性代数和计算机系统基础，具体要求见[前言](manuscripts/00-前言.md)。建议先读第 1—3 章，了解模型与负载，再根据自己的兴趣选择重点：
+
+- 做模型应用和推理服务，可以重点读第 8、9 章，再看第 11、12 章的运行环境与部署。
+- 做系统、网络或芯片，可以重点读第 4—7 章，再结合第 9、10 章理解分布式推理与训练。
+- 希望系统学习，可以按目录顺序阅读，配合计算工具和实验，逐步核对自己的理解。
+
+遇到书中的算例，不妨先自己估一下，再看推导和实验结果。也可以换成你正在使用的模型和硬件，看看结论会怎样变化。
 
 ## 配套计算与实验
 
-[量化计算项目](calculations/README.md)提供模型配置、资源推导、统一 CLI 和[结果索引](calculations/results/README.md)。静态计算只需 Python 3.10+ 标准库，无需 GPU 或模型权重。
+[配套计算工具](calculations/README.md)可以用来复算书中的数字，也可以换一组模型和输入，估算资源需求。工具附有模型配置和[结果索引](calculations/results/README.md)，静态计算只需 Python 3.10+ 标准库，无需 GPU 或模型权重。
 
 ```bash
 git lfs install
@@ -67,7 +63,7 @@ python3 calculations/calc.py forward --model qwen3-8b --tokens 8192 --format md
 
 仓库使用 [Git LFS](https://git-lfs.com/) 保存论文和部分较大的输入与测量记录。复现前请下载所需 LFS 文件；仅阅读 Markdown 不必克隆整个资料库。
 
-[配套实验](experiments/README.md)按 `experiments/chXX/XX-YY/` 组织，各目录提供运行方法、输入、结果和适用条件。计算推导、硬件实测与公开资料分别注明来源；尚未覆盖的条件见各实验说明及 [inventory.json](experiments/inventory.json)。GPU 实验的硬件和依赖要求以各自 README 为准。
+[配套实验](experiments/README.md)按章节存放在 `experiments/chXX/XX-YY/` 中，每个实验都附有运行方法、输入条件和结果说明。需要 GPU 的实验会注明硬件与依赖要求；没有相应设备，也可以先阅读已有记录。复现或引用结果时，请留意所用的书稿版本、模型、硬件和输入参数。
 
 ## 本地构建
 
@@ -120,7 +116,7 @@ bash book/build_pdf.sh
 
 作者：[李博杰](https://01.me/)（[@bojieli](https://github.com/bojieli)）。
 
-本书与[《深入理解 AI Agent：设计原理与工程实践》](https://github.com/bojieli/ai-agent-book)属于同一系列，PDF 沿用其 ElegantBook / XeLaTeX 模板。感谢相关论文、开源项目与技术文档的作者，以及参与勘误和实验复现的读者。具体来源见正文脚注和[参考资料库](references/README.md)。
+感谢这些年一起做研究和工程的合作者，也感谢相关论文、开源项目与技术文档的作者，以及参与勘误和实验复现的读者。详细致谢见[前言](manuscripts/00-前言.md)，引用来源见正文脚注和[参考资料库](references/README.md)。本书 PDF 沿用《深入理解 AI Agent》的 ElegantBook / XeLaTeX 模板。
 
 ## 许可
 

@@ -67,14 +67,14 @@ def draw(here,data,teaching):
         for i in range(4):a.barh(i,8192,color=COL['gray'],edgecolor=COL['line'],height=.5);a.barh(i,256,color=COL['blue'],height=.5)
         a.set(yticks=range(4),yticklabels=['第 0 行','第 1 行','第 2 行','第 127 行'],xlim=(0,8500),xlabel='相对每行起点的字节偏移',xticks=[0,4096,8192]);a.invert_yaxis();a.annotate('实际读取 256 bytes',(128,0),xytext=(2000,.65),arrowprops={'arrowstyle':'->'},fontsize=12);save(f,'8-layout')
         f,a=plot(3.1,left=.16);a.barh(0,320,left=0,color=COL['gray'],height=.62,label='槽位占用');a.barh(0,64,left=0,color=COL['blue'],height=.4);a.barh(0,128,left=192,color=COL['green'],height=.4);a.axvline(192,color='#a56c28',lw=1)
-        a.set(xlim=(0,350),ylim=(-.7,.7),yticks=[],xticks=[0,64,192,320],xlabel='教学时间（tick）')
+        a.set(xlim=(0,350),ylim=(-.7,.7),yticks=[],xticks=[0,64,192,320],xlabel='时间（tick）')
         for x,label in [(32,'传输'),(128,'等待返回'),(256,'计算')]:a.text(x,.4,label,fontsize=11,ha='center')
         a.text(175,-.4,'320 tick 后用完，输入槽才能再次写入',fontsize=11,ha='center');save(f,'slot-lifetime')
         for slots,name in [(1,'9-pipeline'),(2,'pipeline-two'),(3,'pipeline-three')]:
             r=teaching['baseline'][slots-1];f,a=plot(3.5,left=.17)
             for t in r['chunks']:
                 y=t['chunk'];a.barh(y,t['slot_released']-t['issue_start'],left=t['issue_start'],height=.62,color=COL['gray']);a.barh(y,t['transfer_end']-t['issue_start'],left=t['issue_start'],height=.40,color=COL['blue']);a.barh(y,t['compute_end']-t['compute_start'],left=t['compute_start'],height=.40,color=COL['green']);a.plot(t['data_ready'],y,'|',color='#a56c28',markersize=12)
-            a.set(yticks=range(4),yticklabels=[f'块 {i}' for i in range(4)],xlim=(0,1320),xticks=[0,320,640,960,1280],xlabel='教学时间（tick）');a.invert_yaxis();save(f,name)
+            a.set(yticks=range(4),yticklabels=[f'块 {i}' for i in range(4)],xlim=(0,1320),xticks=[0,320,640,960,1280],xlabel='时间（tick）');a.invert_yaxis();save(f,name)
         f,a=canvas(4.0);text(a,.04,.93,'传递完整行，两组交替使用缓冲区',14)
         box(a,.04,.61,.26,.17,'矩阵单元\n计算 QK','orange');box(a,.70,.61,.26,.17,'向量单元\n计算 Softmax','green')
         box(a,.38,.66,.23,.11,'槽 A','blue');box(a,.38,.42,.23,.11,'槽 B','purple')

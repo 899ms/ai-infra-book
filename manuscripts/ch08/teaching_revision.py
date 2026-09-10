@@ -17,14 +17,14 @@ def draw(here,data):
         for dur,l,c in [(.1,'排队','gray'),(.3,'prefill','blue'),(2.55,'decode','green')]:a.barh(0,dur,left=start,height=.35,color=COL[c],edgecolor=COL['line'],label=l);start+=dur
         a.scatter([.4,2.95],[0,0],color='#252525',zorder=5);a.axvline(3,ls='--',color='#a56c28');a.set(yticks=[],xlim=(0,3.15),xlabel='从到达起计时（s）');a.legend(ncol=3,frameon=False,loc='upper center');save(f,'1-lifecycle')
         f,a=plot(3.7);b=np.array(data['batch']['batch']);w=data['batch']['shared_weight_bytes']/2**30/b
-        for L,c in [(2048,'#267398'),(8192,'#388768')]:a.plot(b,w+L*144/2**20,color=c,label=f'{L} 位置上下文');a.axhline(L*144/2**20,color=c,ls=':')
-        a.plot(b,w,ls='--',color='#777777',label='共享权重项');a.set(xscale='log',yscale='log',xlabel='批内请求数',ylabel='每输出读取量（GiB）');a.legend(frameon=False);save(f,'2-batch')
+        for L,c in [(2048,'#267398'),(8192,'#388768')]:a.plot(b,w+L*144/2**20,color=c,label=f'上下文 {L} token：总读取量');a.axhline(L*144/2**20,color=c,ls=':')
+        a.plot(b,w,ls='--',color='#777777',label='每个输出 token 分摊的权重读取量');a.set(xscale='log',yscale='log',xlabel='批内请求数',ylabel='每生成一个 token 的读取量（GiB）');a.legend(frameon=False,fontsize=11);save(f,'2-batch')
         for i,key in enumerate(['fixed','continuous','chunked']):
             f,a=plot(3.8,left=.16)
             for step in data[key]:
                 for plan in step['plans']:
                     lane=int(plan['request'][1:]);a.barh(lane,step['duration_ns']/1000,left=step['start_ns']/1000,height=.55,color=COL['blue' if plan['phase']=='prefill' else 'green'],edgecolor=COL['line'],linewidth=.45)
-            a.scatter([0,0,20,30],range(4),marker='^',color='#252525',s=18,zorder=5);a.set(yticks=range(4),yticklabels=[f'r{j}' for j in range(4)],xlim=(0,330),xlabel='教学时间（μs）');a.invert_yaxis();save(f,'3-scheduling' if i==0 else f'scheduling-{key}')
+            a.scatter([0,0,20,30],range(4),marker='^',color='#252525',s=18,zorder=5);a.set(yticks=range(4),yticklabels=[f'请求 r{j}' for j in range(4)],xlim=(0,330),xlabel='时间（μs）');a.invert_yaxis();save(f,'3-scheduling' if i==0 else f'scheduling-{key}')
         for i,d in enumerate(data['attention_geometry']):
             f,a=canvas(3.5);h=d['history'];step=.065;start=.15
             for row in range(4):

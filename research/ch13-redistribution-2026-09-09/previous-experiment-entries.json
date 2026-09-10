@@ -1,0 +1,130 @@
+[
+  {
+    "id": "13-1",
+    "chapter": 13,
+    "title": "审阅一份尚未闭合的设计",
+    "source": "outlines/13-架构协同设计.md",
+    "requirements": "> **实验 13-1 ★〔核心〕：审阅一份尚未闭合的设计**\n>\n> 给定任务和三份半成品候选，指出一处遗漏的需求或路径，复算可行范围，选择最值得继续验证的两项。提交一页决定，包含条件、反例与最小补测。\n>\n> 条件：基础·计算／配套记录；候选输入在扩写时制作。",
+    "directory": "experiments/ch13/13-01",
+    "status": "partial",
+    "evidence": [
+      "experiments/ch13/13-01/README.md",
+      "experiments/ch13/13-01/design-review/README.md",
+      "experiments/ch13/13-01/design-review/manifest.json",
+      "experiments/ch13/13-01/retrieval-generation/README.md",
+      "experiments/ch13/13-01/retrieval-generation/manifest.json"
+    ],
+    "calculation_owner": "calculations/PLAN.md and calculations/PROGRESS.md (read-only; separate task)",
+    "execution_scope": "review_for_non_calculation_work",
+    "calculation_work_packages": [
+      "C72"
+    ],
+    "scope_note": "三种表示候选事后评审及真实MiniLM/Faiss/Qwen3检索选做已完成：288完整管线请求281正确，calibration预选k1留出15/16失败；6固定cells全24合格但非预选成功。实际KV910块及每请求分配、全pipeline时序核验；原guard未覆盖GPU后代，资源峰限制明确。完整三架构/生命周期仍待，C72不重复。"
+  },
+  {
+    "id": "13-2",
+    "chapter": 13,
+    "title": "修正一个乐观的性能模型",
+    "source": "outlines/13-架构协同设计.md",
+    "requirements": "> **实验 13-2 ★〔延伸〕：修正一个乐观的性能模型**\n>\n> 先复算局部通信与理想算术预算，再加入跨度或辅助工作，记录原结论何时翻转。提出两项可改变的设计，并说明各自新增代价。\n>\n> 条件：基础·历史分析／手算；不要求制造芯片。",
+    "directory": "experiments/ch13/13-02",
+    "status": "external_calculation_task",
+    "evidence": [],
+    "calculation_owner": "calculations/PLAN.md and calculations/PROGRESS.md (read-only; separate task)",
+    "execution_scope": "external_calculation_only",
+    "calculation_work_packages": [
+      "C73"
+    ],
+    "scope_note": "纯计算"
+  },
+  {
+    "id": "13-3",
+    "chapter": 13,
+    "title": "比较自由度与选择翻转",
+    "source": "outlines/13-架构协同设计.md",
+    "requirements": "> **实验 13-3 ★〔核心〕：比较自由度与选择翻转**\n>\n> 先比较两套固定配置，再开放相同条件下的量化、TP／PP 与副本选择。说明最优候选是否变化，分别报告三种目标，并指出一个不确定输入足以改变排序的区间。\n>\n> 条件：基础·综合计算／配套分析记录。",
+    "directory": "experiments/ch13/13-03",
+    "status": "external_calculation_task",
+    "evidence": [],
+    "calculation_owner": "calculations/PLAN.md and calculations/PROGRESS.md (read-only; separate task)",
+    "execution_scope": "external_calculation_only",
+    "calculation_work_packages": [
+      "C74"
+    ],
+    "scope_note": "纯计算"
+  },
+  {
+    "id": "13-4",
+    "chapter": 13,
+    "title": "换任务角色或负载后重做比较",
+    "source": "outlines/13-架构协同设计.md",
+    "requirements": "> **实验 13-4 ★〔延伸〕：换任务角色或负载后重做比较**\n>\n> 从前文选择一组结果，改变调用量、请求长度或模型角色，先调整质量条件，再重算搬移、执行与准备成本，解释哪些历史结论仍可迁移。\n>\n> 条件：基础·模型与系统预算分析。",
+    "directory": "experiments/ch13/13-04",
+    "status": "external_calculation_task",
+    "evidence": [],
+    "calculation_owner": "calculations/PLAN.md and calculations/PROGRESS.md (read-only; separate task)",
+    "execution_scope": "external_calculation_only",
+    "calculation_work_packages": [
+      "C74"
+    ],
+    "scope_note": "纯计算"
+  },
+  {
+    "id": "13-5",
+    "chapter": 13,
+    "title": "继续、修改还是停止投入",
+    "source": "outlines/13-架构协同设计.md",
+    "requirements": "> **实验 13-5 ★〔延伸〕：继续、修改还是停止投入**\n>\n> 给定固定投入、单位节省、交付期、使用量与模型更新情景，判断可否回本；改变一项需求或站点条件后重新决定。标明需要先解决的质量或实现未知量。\n>\n> 条件：基础·手算／短脚本；金额为明确标注的教学输入。",
+    "directory": "experiments/ch13/13-05",
+    "status": "external_calculation_task",
+    "evidence": [],
+    "calculation_owner": "calculations/PLAN.md and calculations/PROGRESS.md (read-only; separate task)",
+    "execution_scope": "external_calculation_only",
+    "calculation_work_packages": [
+      "C75"
+    ],
+    "scope_note": "纯计算"
+  },
+  {
+    "id": "13-6",
+    "chapter": 13,
+    "title": "独立完成一次设计评审",
+    "source": "outlines/13-架构协同设计.md",
+    "requirements": "> **实验 13-6 ★★〔核心〕：独立完成一次设计评审**\n>\n> 提交任务、候选、资源与状态图、收益代价、反例、未知量及最小实验。先封存预测，再阅读配套测量或新增约束，修订决定并解释误差。评判依据为推理和证据，允许选择与作者不同。\n>\n> 条件：进阶·配套记录／可选实测；隐藏结果在扩写时制作。",
+    "directory": "experiments/ch13/13-06",
+    "status": "partial",
+    "evidence": [
+      "experiments/ch13/13-06/README.md",
+      "experiments/ch13/13-06/manifest.json",
+      "experiments/ch13/13-06/prediction.json",
+      "experiments/ch13/13-06/results/summary.json"
+    ],
+    "calculation_owner": "calculations/PLAN.md and calculations/PROGRESS.md (read-only; separate task)",
+    "execution_scope": "measurement_or_record_analysis",
+    "calculation_work_packages": [
+      "C76"
+    ],
+    "scope_note": "预测封存/留出实测或约束揭示/修订评审，不能伪造事前预测 已完成局部软件候选的事前封存/新实测/决定复核：256/512同8K请求各5次，比值1.177支持>=1.10预测，输出一致；明确已知旧512证据与固定顺序/观测局限。第13章完整设计案例仍需后续整合。"
+  },
+  {
+    "id": "13-7",
+    "chapter": 13,
+    "title": "一项值得公开复核的预测",
+    "source": "outlines/13-架构协同设计.md",
+    "requirements": "> **实验 13-7 ★★〔延伸〕：一项值得公开复核的预测**\n>\n> 从本章选择一个尚未确定的判断，给出指标范围、到期时间、推翻条件和复核来源；同时记录最有力的反例，制定发生后怎样修改模型。\n>\n> 条件：进阶·研究判断；不填造未来结果。",
+    "directory": "experiments/ch13/13-07",
+    "status": "measurement_complete",
+    "evidence": [
+      "experiments/ch13/13-07/README.md",
+      "experiments/ch13/13-07/manifest.sha256",
+      "experiments/ch13/13-07/prediction.json",
+      "experiments/ch13/13-07/observations/0001.json"
+    ],
+    "calculation_owner": "calculations/PLAN.md and calculations/PROGRESS.md (read-only; separate task)",
+    "execution_scope": "review_for_non_calculation_work",
+    "calculation_work_packages": [
+      "C76"
+    ],
+    "scope_note": "一项有日期条件预测已事前冻结、明确已知K96反例；K192五轮30真实Metal路径/20抢占，10配对中位0.69314低于[0.70,1.00]判失准，质量通过。原null预测/初始图不覆盖，观察及修订追加独立文件；C76计算未重复。"
+  }
+]

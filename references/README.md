@@ -1,6 +1,6 @@
 # 本地参考资料库
 
-对应草案 22 的十三章顺序：方法与需求、硬件与协作、推理训练、任务环境与端边云、综合设计。收录原始论文、作者报告、芯片与系统规格、协议及官方软件文档，按具体论证选用。原件快照保留历史版本；本索引章号采用当前目录。
+对应草案 22 的十二章顺序：方法与需求、硬件与协作、推理训练、任务环境与端边云。收录原始论文、作者报告、芯片与系统规格、协议及官方软件文档，按具体论证选用。原件快照保留历史版本；本索引章号采用当前目录。
 
 当前清单 230 项：已保存正文 226 项，其中 PDF 136 份。其余项目的获取状态见文末。
 
@@ -537,79 +537,6 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [Snapdragon X Elite Product Brief](https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/images/company/news-media/media-center/press-kits/snapdragon-summit-2023/documents/SnapdragonXEliteProductBrief.pdf) | [原件](files/specs/qualcomm-xelite.pdf) · [文本](text/qualcomm-xelite.txt) | 端侧 CPU、GPU、Hexagon 与共享内存；2023 年产品代际 |
 | [MacBook Pro (14-inch, M5) Technical Specifications](https://support.apple.com/en-mide/125405) | [原件](files/specs/apple-m5-macbook.html) · [文本](text/apple-m5-macbook.txt) | 2025 年具体端侧产品；CPU、GPU、Neural Engine 与统一内存，非完整微架构手册 |
 | [Apple M2 Pro and M2 Max launch specifications](https://www.apple.com/newsroom/2023/01/apple-unveils-m2-pro-and-m2-max-next-generation-chips-for-next-level-workflows/) | [原件](files/specs/apple-m2-pro-max.html) · [文本](text/apple-m2-pro-max.txt) | 2023-01-17；M2 Pro 200 GB/s，M2 Max 400 GB/s；本书实机为 M2 Max 38 核 GPU、96 GB |
-
-## 第 13 章 架构协同设计
-
-| 资料 | 本地文件 | 用途 |
-| --- | --- | --- |
-| [DeepSeek-V3 Technical Report](https://arxiv.org/abs/2412.19437) | [原件](files/papers/deepseek-v3.pdf) · [文本](text/deepseek-v3.txt) | FP8、MTP、负载均衡与训练系统 |
-| [DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence](https://arxiv.org/abs/2606.19348) | [原件](files/papers/deepseek-v4.pdf) · [文本](text/deepseek-v4.txt) | 混合压缩注意力与分阶段训练 |
-| [Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361) | [原件](files/papers/scaling-laws.pdf) · [文本](text/scaling-laws.txt) | 历史 scaling law；计算口径须重核 |
-| [Training Compute-Optimal Large Language Models](https://arxiv.org/abs/2203.15556) | [原件](files/papers/chinchilla.pdf) · [文本](text/chinchilla.txt) | 参数、数据与预算 |
-| [Roofline: An Insightful Visual Performance Model for Floating-Point Programs and Multicore Architectures](https://digicoll.lib.berkeley.edu/record/136692) | [原件](files/papers/roofline.pdf) · [文本](text/roofline.txt) | 作者机构技术报告；Berkeley 图书馆归档 |
-| [The Hardware Lottery](https://arxiv.org/abs/2009.06489) | [原件](files/papers/hardware-lottery.pdf) · [文本](text/hardware-lottery.txt) | 硬件、软件与研究选择 |
-| [In-Datacenter Performance Analysis of a Tensor Processing Unit](https://arxiv.org/abs/1704.04760) | [原件](files/papers/tpu-v1.pdf) · [文本](text/tpu-v1.txt) | TPU 起源与设计比较 |
-| [TPU v4: An Optically Reconfigurable Supercomputer for Machine Learning with Hardware Support for Embeddings](https://arxiv.org/abs/2304.01433) | [原件](files/papers/tpu-v4.pdf) · [文本](text/tpu-v4.txt) | 芯片与互联协同 |
-| [NVIDIA GB200 NVL72](https://www.nvidia.com/en-us/data-center/gb200-nvl72/) | [原件](files/specs/nvidia-gb200.html) · [文本](text/nvidia-gb200.txt) | 整柜与 NVLink 域 |
-| [昇腾 950 与 Unified Bus 公开路线图](https://www.huawei.com/cn/news/2025/9/hc-xu-keynote-speech) | [原件](files/specs/ascend-950-roadmap.html) · [文本](text/ascend-950-roadmap.txt) | 按型号区分计划与交付状态 |
-| [Huawei SuperPoD Portfolio at MWC Barcelona 2026](https://www.huawei.com/en/news/2026/3/mwc-superpod-computing) | [原件](files/documents/ascend-950-mwc.html) · [文本](text/ascend-950-mwc.txt) | Atlas 950 至多 8192 NPU 的官方公告 |
-| [Unified Bus 背后的思考](https://01.me/2025/09/a-story-of-unified-bus/) | [原件](files/documents/ub-reflection.html) · [文本](text/ub-reflection.txt) | 作者综述；非协议规范 |
-| [Splitwise: Efficient Generative LLM Inference Using Phase Splitting](https://arxiv.org/abs/2311.18677) | [原件](files/papers/splitwise.pdf) · [文本](text/splitwise.txt) | 阶段资源池 |
-| [OpenTallas architecture and analysis](https://github.com/bojieli/OpenTallas/tree/39b96158d35b24bd2bcd49061a689aea6893d2ed) | [原件](files/documents/opentallas-readme.md) · [文本](text/opentallas-readme.txt)（local_snapshot） | 与本书已有案例使用相同提交 |
-| [The Llama 3 Herd of Models](https://arxiv.org/abs/2407.21783) | [原件](files/papers/llama3.pdf) · [文本](text/llama3.txt) | 架构与训练报告 |
-| [The Cerebras Wafer-Scale Architecture for Deep Learning](https://www.cerebras.ai/chip) | [原件](files/specs/cerebras-wse3.pdf) · [文本](text/cerebras-wse3.txt) | 13 页架构白皮书，正文介绍 WSE-3；官网 Datasheet 链接名称与正文标题不同，以正文为准 |
-| [SambaNova SN40L Reconfigurable Dataflow Unit](https://sambanova.ai/) | [原件](files/specs/sambanova-sn40l.pdf) · [文本](text/sambanova-sn40l.txt) | 两页官方产品技术介绍；非完整微架构论文 |
-| [SambaNova SambaRack SN40L-16 Datasheet](https://sambanova.ai/) | [原件](files/specs/sambanova-sambarack.pdf) · [文本](text/sambanova-sambarack.txt) | 按 PDF 正文核对产品代际，不从下载文件名推断日期 |
-| [Think Fast: A Tensor Streaming Processor (TSP) for Accelerating Deep Learning Workloads](https://groq.com/papers/) | [原件](files/papers/groq-tsp.pdf) · [文本](text/groq-tsp.txt) | ISCA 2020；编译调度与确定性执行 |
-| [A Software-defined Tensor Streaming Multiprocessor for Large-scale Machine Learning](https://groq.com/papers/) | [原件](files/papers/groq-scale.pdf) · [文本](text/groq-scale.txt) | ISCA 2022；多芯片协同 |
-| [GroqChip Processor Product Brief v1.5](https://groq.com/papers/) | [原件](files/specs/groq-chip.pdf) · [文本](text/groq-chip.txt) | 官方规格；历史代际参数 |
-| [Taalas HC1 Technology Demonstrator](https://taalas.com/products/) | [原件](files/specs/taalas-hc1.html) · [文本](text/taalas-hc1.txt) | 厂商模型固化产品介绍；吞吐为厂商声明，须保留负载条件 |
-| [Etched 官方产品页面](https://www.etched.com/) | [原件](files/documents/etched-sohu.html) · [文本](text/etched-sohu.txt) | 当前公开介绍；不能代替 Sohu 完整微架构规格 |
-| [Cerebras Wafer-Scale Engine 3 Datasheet](https://training-docs.cerebras.ai/rel-2.4.0/concepts/cerebras-wafer-scale-cluster) | [原件](files/specs/cerebras-wse3-spec.pdf) · [文本](text/cerebras-wse3-spec.txt) | 由官方开发文档直接链接；与 WSE-3T 区分 |
-| [Cerebras CS-4 Datasheet](https://investors.cerebras.ai/news-releases/news-release-details/cerebras-unveils-cs-4-30-times-faster-gpu-based-solutions) | [原件](files/specs/cerebras-cs4-spec.pdf) · [文本](text/cerebras-cs4-spec.txt) | 2026 年公开新代际；保留产品声明和交付时间边界 |
-| [昇腾 950 NPU 架构白皮书](files/specs/昇腾950%20NPU架构白皮书.pdf) | [原件](files/specs/%E6%98%87%E8%85%BE950%20NPU%E6%9E%B6%E6%9E%84%E7%99%BD%E7%9A%AE%E4%B9%A6.pdf) · [文本](text/ascend-950-whitepaper.txt)（user_provided） | 作者提供，40 页；保留原文件；另存官方 OBS 文件 ascend-950-official，两份文件差异核对见 UB-ASCEND-NOTES.md |
-| [Google Cloud TPU v4 官方规格](https://docs.cloud.google.com/tpu/docs/v4) | [原件](files/specs/google-v4.html) · [文本](text/google-v4.txt) | 芯片、HBM、ICI 与 Pod 配置；云资源参数与硬件能力分别引用 |
-| [Google Cloud TPU v5e 官方规格](https://docs.cloud.google.com/tpu/docs/v5e) | [原件](files/specs/google-v5e.html) · [文本](text/google-v5e.txt) | 芯片、HBM、ICI 与 Pod 配置；云资源参数与硬件能力分别引用 |
-| [Google Cloud TPU v5p 官方规格](https://docs.cloud.google.com/tpu/docs/v5p) | [原件](files/specs/google-v5p.html) · [文本](text/google-v5p.txt) | 芯片、HBM、ICI 与 Pod 配置；云资源参数与硬件能力分别引用 |
-| [Google Cloud TPU v6e 官方规格](https://docs.cloud.google.com/tpu/docs/v6e) | [原件](files/specs/google-v6e.html) · [文本](text/google-v6e.txt) | 芯片、HBM、ICI 与 Pod 配置；云资源参数与硬件能力分别引用 |
-| [Google Cloud TPU tpu7x 官方规格](https://docs.cloud.google.com/tpu/docs/tpu7x) | [原件](files/specs/google-tpu7x.html) · [文本](text/google-tpu7x.txt) | 芯片、HBM、ICI 与 Pod 配置；云资源参数与硬件能力分别引用 |
-| [Inside the Eighth-Generation TPU: An Architecture Deep Dive](https://cloud.google.com/blog/products/compute/tpu-8t-and-tpu-8i-technical-deep-dive) | [原件](files/specs/google-tpu8.html) · [文本](text/google-tpu8.txt) | 2026-04-22 官方技术说明及规格表；不等同于完整 ISA 或正式云实例规格 |
-| [Google's Training Supercomputers from TPU v2 to Ironwood: Architectural Stability, Scale, Resilience, Power Efficiency, and Sustainability Across Five Generations](https://arxiv.org/abs/2606.15870) | [原件](files/papers/google-tpu-generations.pdf) · [文本](text/google-tpu-generations.txt) | Google 作者跨代架构论文；与云文档日期分别登记 |
-| [The Data Center Architecture for Graphcore Computing](https://www.graphcore.ai/hubfs/Graphcore-Mk2-IPU-System-Architecture-GC.pdf) | [原件](files/specs/graphcore-mk2.pdf) · [文本](text/graphcore-mk2.txt) | 官方系统白皮书；芯片、Streaming Memory 与主机解耦 |
-| [IPU-Machine M2000 Datasheet 1.0.0](https://docs.graphcore.ai/projects/graphcore-ipu-m2000-datasheet/en/1.0.0/) | [原件](files/specs/graphcore-m2000-pdf.pdf) · [文本](text/graphcore-m2000-pdf.txt) | 历史版本的整机规格，4 个 IPU 的参数不当作单芯片 |
-| [IPU-M2000 Product Description and Technical Specifications](https://docs.graphcore.ai/projects/graphcore-ipu-m2000-datasheet/en/latest/product-description.html) | [原件](files/specs/graphcore-m2000.html) · [文本](text/graphcore-m2000.txt) | 官方完整产品规格章节快照；latest URL 不代表当前仍在销售 |
-| [Bow-2000 Product Description and Technical Specifications](https://docs.graphcore.ai/projects/bow-2000-datasheet/en/latest/product-description.html) | [原件](files/specs/graphcore-bow2000.html) · [文本](text/graphcore-bow2000.txt) | 官方完整产品规格章节快照；latest URL 不代表当前仍在销售 |
-| [Graphcore Bow Pod16 Product Brief](https://www.graphcore.ai/hubfs/assets/pdf/Product%20Brief%20Bow%20Pod16%20020322.pdf) | [原件](files/specs/graphcore-bowpod16.pdf) · [文本](text/graphcore-bowpod16.txt) | Pod 系统规格；保留主机与交换机是否计入的边界 |
-| [Dissecting the Graphcore IPU Architecture via Microbenchmarking](https://arxiv.org/abs/1912.03413) | [原件](files/papers/graphcore-microbench.pdf) · [文本](text/graphcore-microbench.txt) | 原始测量论文；第一代 IPU 的结果不移植为 GC200 或 Bow 实测 |
-| [SambaNova SN40L: Scaling the AI Memory Wall with Dataflow and Composition of Experts](https://arxiv.org/abs/2405.07518) | [原件](files/papers/sambanova-sn40l-paper.pdf) · [文本](text/sambanova-sn40l-paper.txt) | 厂商原始架构论文；三级存储、融合与多模型切换，非两页宣传材料 |
-| [Introducing AMD CDNA 3 Architecture](https://www.amd.com/en/technologies/cdna.html) | [原件](files/specs/amd-cdna3.pdf) · [文本](text/amd-cdna3.txt) | 架构白皮书；MI300A 与 MI300X 的芯粒和内存组织分开 |
-| [Introducing AMD CDNA 4 Architecture](https://www.amd.com/en/technologies/cdna.html) | [原件](files/specs/amd-cdna4.pdf) · [文本](text/amd-cdna4.txt) | 架构白皮书；精度、分块、存储与通信 |
-| [AMD Instinct MI300X Product Specifications](https://www.amd.com/en/products/accelerators/instinct/mi300/mi300x.html) | [原件](files/specs/amd-mi300x.html) · [文本](text/amd-mi300x.txt) | 单加速器规格与功率边界 |
-| [AMD Instinct MI300X Platform Datasheet](https://www.amd.com/en/products/accelerators/instinct/mi300/mi300x.html) | [原件](files/specs/amd-mi300x-platform.pdf) · [文本](text/amd-mi300x-platform.txt) | 8 GPU 平台；与单 OAM 规格区分 |
-| [AMD Instinct MI350X GPU Datasheet](https://www.amd.com/en/products/accelerators/instinct/mi350/mi350x.html) | [原件](files/specs/amd-mi350x.pdf) · [文本](text/amd-mi350x.txt) | 单 OAM 规格，按精度与稀疏条件引用 |
-| [AMD Instinct MI350X Platform Datasheet](https://www.amd.com/en/products/accelerators/instinct/mi350/mi350x.html) | [原件](files/specs/amd-mi350x-platform.pdf) · [文本](text/amd-mi350x-platform.txt) | 8 GPU 平台、互联、容量与系统功率 |
-| [Intel Gaudi 3 AI Accelerator White Paper](https://www.intel.com/content/www/us/en/content-details/817486/intel-gaudi-3-ai-accelerator-white-paper.html) | [原件](files/specs/intel-gaudi3.pdf) · [文本](text/intel-gaudi3.txt) | July 2025 V1 Rev.3；矩阵、可编程核、HBM 与以太互联 |
-| [寒武纪思元 370 系列官方产品规格](https://cambricon.com/index.php?a=lists&c=index&catid=360&m=content) | [原件](files/specs/cambricon-mlu370.html) · [文本](text/cambricon-mlu370.txt) | 官方产品页；不能代替完整 ISA、微架构或后续代际规格 |
-| [AWS Trainium2 Architecture](https://awsdocs-neuron.readthedocs-hosted.com/en/latest/about-neuron/arch/neuron-hardware/trainium2.html) | [原件](files/specs/aws-trainium2.html) · [文本](text/aws-trainium2.txt) | 芯片规格；与 NKI 指南中 CC-Core 计数的口径差异单列 |
-| [AWS Trainium3 Architecture](https://awsdocs-neuron.readthedocs-hosted.com/en/latest/about-neuron/arch/neuron-hardware/trainium3.html) | [原件](files/specs/aws-trainium3.html) · [文本](text/aws-trainium3.txt) | 单芯片 NeuronCore、内存、DMA 与 NeuronLink 规格 |
-| [Amazon EC2 Trn2 Architecture](https://awsdocs-neuron.readthedocs-hosted.com/en/latest/about-neuron/arch/neuron-hardware/trn2-arch.html) | [原件](files/specs/aws-trn2-system.html) · [文本](text/aws-trn2-system.txt) | 实例、UltraServer、NeuronLink 拓扑和 EFA |
-| [Amazon EC2 Trn3 UltraServers](https://aws.amazon.com/ec2/instance-types/trn3/) | [原件](files/specs/aws-trn3-system.html) · [文本](text/aws-trn3-system.txt) | 系统规格；整机 HBM、芯片数与单设备参数分开 |
-| [Hot Chips 2026: SN50 RDU Dataflow at Scale](https://sambanova.ai/blog/hot-chips-2026-dataflow-at-scale) | [原件](files/documents/sambanova-sn50.html) · [文本](text/sambanova-sn50.txt) | 2026-09-02 厂商技术说明；模型推演与测量结果分别标注 |
-| [SambaRack SN50 Official Product Description](https://sambanova.ai/products/sambarack) | [原件](files/specs/sambanova-sn50-system.html) · [文本](text/sambanova-sn50-system.txt) | 系统产品介绍，非完整 ISA 或全部产品参数手册 |
-| [Inside NVIDIA Rubin GPU Architecture](https://developer.nvidia.com/blog/inside-nvidia-rubin-gpu-architecture-powering-the-era-of-agentic-ai/) | [原件](files/documents/nvidia-rubin-arch.html) · [文本](text/nvidia-rubin-arch.txt) | 2026-07-21 官方技术说明；与早期发布规格分开记录 |
-| [NVIDIA Vera Rubin NVL72 Specifications](https://www.nvidia.com/en-us/data-center/vera-rubin-nvl72/) | [原件](files/specs/nvidia-rubin-system.html) · [文本](text/nvidia-rubin-system.txt) | 当前官方产品规格；部署形态、精度和供货状态分开 |
-| [GroqRack Compute Cluster Product Brief v1.0](https://groq.com/papers/) | [原件](files/specs/groq-rack.pdf) · [文本](text/groq-rack.txt) | 官方整柜规格；历史 Groq 代际，与 NVIDIA Groq 3 LPX 分开 |
-| [Serving Large Language Models on Huawei CloudMatrix384, v2](https://arxiv.org/abs/2506.12708v2) | [原件](files/papers/cloudmatrix384-v2.pdf) · [文本](text/cloudmatrix384-v2.txt) | 2025-06-18；§3.3.1 的 910C、§4.2.2 MLA 与动态 tiling；与 v3 分开保存 |
-| [Serving Large Language Models on Huawei CloudMatrix384, v3](https://arxiv.org/abs/2506.12708v3) | [原件](files/papers/cloudmatrix384-v3.pdf) · [文本](text/cloudmatrix384-v3.txt) | 2025-06-19 修订；核对型号称谓与 v2 差异 |
-| [昇腾 950 NPU 架构白皮书（官方下载原件）](https://public-download.obs.cn-east-2.myhuaweicloud.com/ascend/%E6%98%87%E8%85%BE950%20NPU%E6%9E%B6%E6%9E%84%E7%99%BD%E7%9A%AE%E4%B9%A6.pdf) | [原件](files/specs/ascend-950-official.pdf) · [文本](text/ascend-950-official.txt) | 作者提供官方 OBS 下载地址；与先前作者提供版本分别保留，差异核对见 UB-ASCEND-NOTES.md |
-| [Efficiently Scaling Transformer Inference](https://arxiv.org/abs/2211.05102v1) | [原件](files/papers/scaling-inference.pdf) · [文本](text/scaling-inference.txt) | Google；推理计算／通信模型、TPU 分片与延迟—吞吐取舍；历史配置不直接套用 GPU |
-| [Qwen3 Technical Report](https://arxiv.org/abs/2505.09388v1) | [原件](files/papers/qwen3.pdf) · [文本](text/qwen3.txt) | Alibaba 公司技术报告；稠密／MoE 配置与 thinking budget，不代填 Qwen3.5 参数 |
-| [DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning](https://arxiv.org/abs/2501.12948v2) | [原件](files/papers/deepseek-r1.pdf) · [文本](text/deepseek-r1.txt) | 公司技术报告；RL 推理模型、长输出与采样负载；不视为 serving 性能报告 |
-| [Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters](https://arxiv.org/abs/2408.03314v1) | [原件](files/papers/test-time-compute.pdf) · [文本](text/test-time-compute.txt) | DeepMind／Berkeley；按难度分配推理预算；计算量、质量与墙钟时间分开 |
-| [Insights into DeepSeek-V3: Scaling Challenges and Reflections on Hardware for AI Architectures](https://arxiv.org/abs/2505.09343v2) | [原件](files/papers/deepseek-infra.pdf) · [文本](text/deepseek-infra.txt) | DeepSeek ISCA 2025 报告；MLA／MoE、跨节点通信及硬件协同设计建议 |
-| [Day 6: DeepSeek-V3/R1 Inference System Overview](https://github.com/deepseek-ai/open-infra-index/blob/56d86855fcf6e08fdfd45ce6280bd24322c93351/202502OpenSourceWeek/day_6_one_more_thing_deepseekV3R1_inference_system_overview.md) | [原件](files/documents/deepseek-serving-report.md) · [文本](text/deepseek-serving-report.txt) | 2025 公司工程报告；固定提交；PD、EP、通信与费用口径 |
-| [基于可编程网卡的高性能数据中心系统](https://01.me/files/pubs/bojieli-phd-thesis.pdf) | [原件](files/papers/bojieli-phd-thesis.pdf) · [文本](text/bojieli-phd-thesis.txt)（user_provided） | 李博杰博士论文，2019-05-26；ClickNP 核数预算、KV-Direct PCIe 并发与数据通路；论文测量按原配置引用 |
-| [Huawei’s τ Chip Was Supposed to Melt?](files/papers/202609.00031v1.pdf) | [原件](files/papers/202609.00031v1.pdf) · [文本](text/logicfolding-energy.txt)（user_provided） | 何庭波，ChinaXiv:202609.00031v1，2026-09-04；片上连线、降压与功率密度；作者报告，AI 集群 80% 能耗说法待独立取证 |
 
 ## 获取记录
 

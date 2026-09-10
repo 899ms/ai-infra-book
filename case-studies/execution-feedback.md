@@ -51,7 +51,7 @@ NeMo RL 当前归档文档明确支持 Megatron MoE policy＋vLLM rollout，传�
 |---|---|---|
 | 单实例请求、批处理、KV 和服务入口 | vLLM、SGLang | 8.1–8.3 |
 | 本地模型加载、管理与后端选择 | Ollama，区分具体 runner；MLX／llama.cpp 等按版本核对 | 5.5、8.4 |
-| NVIDIA LLM 执行与服务优化 | TensorRT-LLM，当前公开实现包含 PyTorch 原生路径 | 8.1、8.5 |
+| NVIDIA LLM 执行与服务优化 | TensorRT-LLM，当前公开实现包含 PyTorch 原生路径 | 8.2、8.6 |
 | 通用网络优化与执行 | TensorRT，用于相应图像编码等网络 | 12.1；不是 TensorRT-LLM 的简称 |
 | 算子与通信库 | FlashInfer、DeepGEMM、DeepEP、NCCL | 5、6、10；不作为完整推理服务 |
 | 多级与共享 KV | SGLang HiCache、LMCache、Mooncake | 9.5 |

@@ -42,7 +42,7 @@ CRAFT 的历史系统基于 SGLang v0.4.8 与 EPLB，在 AWS p4de.24xlarge（每
 
 [Breaking the Ice](../references/proceedings/MLSys/2026/papers/mlsys2026-29416b66c2149872b9d1415a3fd2c5e0.pdf) 已读物理页 2–10。论文逐阶段分析的是 vLLM **v0.10.1.1**，不是 2026 当前版本；其版本演进图与主要控制实验也不是同一组模型。作者的[公开工具](https://github.com/upb-cn/vllm-startup-profiler)固定同一版本并增加计时日志，可作为实验 9-10 的历史记录对照。
 
-9.6.2 以启动 Qwen3-8B 服务为当前教学任务，沿执行依赖分开记录：进程／依赖与 tokenizer、权重读取及传输、编译和编译缓存、KV 内存探测、CUDA Graph 捕获，然后才是首个请求与扩容后排队消退。引擎就绪不等于用户请求已完成。CPU 串行工作多时，提高 GPU 峰值算力不能按比例缩短启动。
+9.6.1 以启动 Qwen3-8B 服务为当前教学任务，沿执行依赖分开记录：进程／依赖与 tokenizer、权重读取及传输、编译和编译缓存、KV 内存探测、CUDA Graph 捕获，然后才是首个请求与扩容后排队消退。引擎就绪不等于用户请求已完成。CPU 串行工作多时，提高 GPU 峰值算力不能按比例缩短启动。
 
 特别保留三个实验条件：
 

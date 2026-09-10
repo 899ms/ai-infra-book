@@ -1,0 +1,181 @@
+--- outlines/03-推理与训练负载.md
++++ outlines/03-推理与训练负载.md
+@@ -83,6 +83,8 @@
+ > 由实验 3-4 生成模型、工具和缓存时间线，标出分支、等待与前缀共享。
+ 
+ ### 3.1.4 Real-time：连续感知与交互
++
++加入作者 AOI 论文的短例：动作之间的瞬时弹窗可能被周期截图漏掉，观测与动作应分别调度。沿采集、筛选、持久文字与模型消费记录速率、字节和状态寿命，并保留额外图像挤占上下文导致效果退化的反例。论文入口与取材范围见[作者材料](../case-studies/author-context-and-design.md)。
+ 
+ 以语音、持续视频感知和截图请求定义非文本输入的阶段。图像编码记为 E，语言 prefill 为 P，decode 为 D；E 产生的编码结果 EC 与 P／D 产生的 KV 在身份、位置依赖和可复用范围上分别记录。编码、传输和生成的顺序由实际模型决定，后文单实例调度和 EPD 直接使用这里的定义。
+ 
+--- outlines/04-加速器架构.md
++++ outlines/04-加速器架构.md
+@@ -227,6 +227,8 @@
+ 回到第 1 章的 TPU，比较 v1 与后续训练系统的存储、专用单元及互联需求；近期 8t／8i 作训推分工实例，和本章的共同分析方法连接。
+ 
+ ### 4.6.4 片上容量与扩展通信
++
++以作者 Groq 文章补一个短例：片上 SRAM 放下权重后，长上下文与并发增加的 KV 会怎样改变设备数下界和扩展通信。容量足够之后仍需检查切分与单序列速度；旧文假设售价和理想 batch 吞吐不作实测。沿[作者材料](../case-studies/author-context-and-design.md)接到第 13 章成本题，不重复已收录的 FPGA 空间计算经历。
+ 
+ 对照 Graphcore、Cerebras 的片上数据组织与扩展办法：省下什么访问，怎样容纳大模型，软件怎样分配工作。设计适用性由工作集与通信决定，不用企业成败替代架构分析。
+ 
+--- outlines/05-算子与运行时.md
++++ outlines/05-算子与运行时.md
+@@ -167,6 +167,8 @@
+ > 自动归约变体标出局部状态与合并位置；量化变体标出 cast 前后的位宽、尺度生效时间和输出块的重复读取。由同一计算记录生成 SVG。
+ 
+ ### 5.3.4 分层抽象与性能控制
++
++用作者《MSRA 读博五年（一）》补技术判断的形成：最初想做接口库，发现 HLS 生成路径达不到流水要求，才识别可用原语与读写依赖、转向编译变换。比较继续封装、改变表示和代码变换三项选择，以实际生成路径解释为何改判。ClickNP 已有的技术介绍不重讲，经历与来源见[作者材料](../case-studies/author-context-and-design.md)。
+ 
+ 对照 CUDA、Triton、Ascend C 与 Metal 表达同一个分块算法：工作分配、布局、同步和边界哪些显式指定、哪些自动处理。
+ 
+--- outlines/08-单实例推理.md
++++ outlines/08-单实例推理.md
+@@ -116,11 +116,15 @@
+ 
+ ### 8.2.4 Chat 与 Agent 的前缀复用
+ 
++本节应用侧取材以作者 AI Agent 书第 2 章“上下文工程”为主，沿稳定提示与工具定义、前部时间戳、工具排序、状态替换和持久追加，定位首个变化 token 及其后需要重建的状态。比较替换旧状态的后缀重算与持续追加的 KV 驻留、陈旧信息和后续读取；对应实验 2-3 的来源与阅读边界见[作者材料](../case-studies/author-context-and-design.md)。
++
+ 用 vLLM APC 与 SGLang RadixCache 的同一组共享前缀请求比较重算量。接着用 2026 年 Unified Radix Cache 回到 V4／K3：全注意力、滑窗和 KDA 循环状态有不同的有效复用边界，同样匹配了 N 个 token 不代表所有状态都能在 N 处直接复用。对齐窗口与检查点以后，才核算命中节省的工作。
+ 
+ 复用第 2、3 章的请求分布：Chat 的多轮历史、Agent 的系统提示和工具定义、工具返回后增长的上下文，各有不同的公共前缀与复用间隔。前缀匹配依赖 token 序列、模型与缓存格式；工具等待会延长 KV 驻留，reasoning 与分支会增加状态占用。
+ 
+ ### 8.2.5 命中收益与缓存淘汰
++
++继续借 AI Agent 书的上下文压缩策略与原书第 2 章第 10 项实验，区分稳定前缀、被替换历史和需要重建的后缀；同时计摘要调用、重建 prefill、未来 decode 读取与质量变化。Programmable KV 论文作为扩写短例，分开事实更新、追加更正与缓存组合，明确上下文依赖和质量验证，不能把普通 KV 当作任意可拼接状态。[取材与论文入口](../case-studies/author-context-and-design.md)。
+ 
+ 同时计算按请求与按 token 加权的命中率、节省的 prefill 工作、缓存驻留量与命中后的取回时间。区分本地 HBM、主存和远程池：高命中率仍可能伴随慢取回或 decode 拥塞。用复用间隔分布决定保留多久，再把共享缓存与跨实例路由交给第 9 章。
+ 
+--- outlines/11-资源调度与运行环境.md
++++ outlines/11-资源调度与运行环境.md
+@@ -169,6 +169,8 @@
+ 先固定同等质量的任务，再算思考、前缀复用、队列和失败升级。实际订阅与 API 档位是可更新输入。
+ 
+ ### 11.4.1 容量采购与按量调用
++
++为第 13 章的[单 Agent、24×7 serving 成本题](../case-studies/single-agent-serving-cost.md)准备三种计费口径：独占完整实例、与其他独立用户连续批处理时的分摊、按 token API。员工始终只有一条串行轨迹；分摊要用实际共租与各自速度，不能把池总吞吐当作该员工的生成速度。月费用与月产出同时列出，价格和速度的教学输入与实测分开。
+ 
+ 用同一月度任务集比较预留推理容量、按量 API 和通过产品允许入口使用的订阅。固定投入、闲置预留与实际用量分开，所有花费除以满足质量条件的完成任务；额度不足而未完成的需求保持可见。
+ 
+--- outlines/12-端边云协同.md
++++ outlines/12-端边云协同.md
+@@ -44,6 +44,8 @@
+ 
+ ### 12.1.3 Computer Use 的截图与操作循环
+ 
++复用第 3 章 AOI 短例，分别放置连续观测、音频转录／视觉文字化和动作模型，检查跨设备传的是帧、文字还是状态，以及短暂事件能否及时保留。这里计算传输与排队，不再重复介绍观测接口。[作者论文材料](../case-studies/author-context-and-design.md)。
++
+ 使用 Ollama 2025 年多模态引擎或受支持的 vLLM／SGLang 视觉模型记录，区分上传图片、图像编码与语言模型 prefill。相同图片可复用编码不代表每轮变化的截图也能命中；图像内容、预处理与模型版本共同限定复用。把图像 EC 与依赖文本前缀的语言 KV 分开，不展开图像背景。端侧编码对照可使用 TensorRT 的受支持视觉网络，LLM 服务仍由相应引擎承担。
+ 
+ 沿截图、编码、上传、模型判断、操作下发与界面更新画一轮执行。用明确标为教学输入的“上传之外合计 2.5 s、0.8 MB 截图、有效上行 6.4 Mbit/s”算出约 1 s 上传与 3.5 s 总轮时；连续多轮会反复支付这项代价，不能把模型判断两三秒当作完整 Agent 速度。
+@@ -119,6 +121,8 @@
+ > 自绘同一 AI 助手的三条执行路径；实验 12-3 标出计算、特征和状态传输，分别标注压缩图片、完整 EC 与语言 KV 的字节。
+ 
+ ### 12.2.3 端侧模型的协作条件
++
++加入 Latent Bridge 的快慢协作短例：固定快模型与慢模型，比较独立执行、文本交接与学习到的 latent 交接，列出双方周期、传输字节、投影与陈旧状态代价。快慢不必对应大小；先验证慢规划对任务有帮助，再判断协作是否值得。论文条件和入口见[作者材料](../case-studies/author-context-and-design.md)。
+ 
+ 承接第 6、7 章，用同一 Qwen3-8B 算例把卡间链路换成局域网或无线：重算 TP 的逐层同步与 PP 的阶段激活，比较跨设备切分、整模型本地执行和远端调用；延迟与任务依赖决定哪些切分仍值得继续研究。
+ 
+--- outlines/13-架构协同设计.md
++++ outlines/13-架构协同设计.md
+@@ -110,6 +110,8 @@
+ 
+ ### 13.4.1 固定什么、固定多久
+ 
++加入作者“网络的智能应该放在哪里”的历史判断：把“10 年／100 行／1000 台”拆成负载寿命、热路径的硬件实现规模和摊销部署量。用下一小节的成本模型替代固定门槛，改变模型寿命或部署量后重新判断是否值得专用化。[经历与适用范围](../case-studies/author-context-and-design.md)。
++
+ 将专用化分到算子、数据流、数值表示与模型权重：每项固定省下的运行时成本不同，软件与模型可变性也不同。用 TPU、SmartNIC 和 OpenTallas 对照服务规模、生命周期、开发与维护成本。
+ 
+ ### 13.4.2 使用量、交付与更新风险
+@@ -136,11 +138,15 @@
+ 
+ ### 13.5.1 未见配置与最小实验
+ 
++综合估算采用[一名 24×7 数字员工的 serving 成本](../case-studies/single-agent-serving-cost.md)：固定一条串行 Agent 轨迹持续 decode，prefill 先作为小修正，比较 8B、70B 稠密和 235B MoE 在独占、共享批处理、卸载／异构及 API 服务下的月产出与月成本。历史长度取 8K／32K／128K，声明周期压缩／换段；不以无限增长的上下文外推整月。单用户速度、共享池吞吐和共租人数分开，再检查 prefill 假设及相同速度门槛下的成本排序。
++
+ 给一项未在正文求解的配置，仅提供资源和任务条件，让读者使用五问和执行图判断。选择最敏感的未知量，设计能区分两个候选的最小测量；测量可能支持、修改或推翻原建议。
+ 
+ > **实验 13-6 ★★〔核心〕：独立完成一次设计评审**
+ >
+ > 提交任务、候选、资源与状态图、收益代价、反例、未知量及最小实验。先封存预测，再阅读配套测量或新增约束，修订决定并解释误差。评判依据为推理和证据，允许选择与作者不同。
++>
++> 数字员工变体先用配套教学输入复算每月 720 小时的账单，再用前章模型与 serving 记录替换；提交月产出、每百万输出成本及固定单序列速度的可行性检查。不得用名义最大 batch 分摊未满载实例。
+ >
+ > 条件：进阶·配套记录／可选实测；隐藏结果在扩写时制作。
+ 
+--- outlines/extensions/03-推理与训练负载.md
++++ outlines/extensions/03-推理与训练负载.md
+@@ -213,3 +213,7 @@
+ - 配套复算：[训练投入与 Scaling Law 历史比较](../../case-studies/scaling-history.md)；[训练计算量笔记](../../case-studies/training-compute.md)。
+ 
+ 原文版本、参数差异与扩写时需补的材料见[编辑笔记](../editorial-notes.md#ch-03)。
++
++## 作者材料补充（2026-09-09）
++
++本轮落点：3.1.4 Real-time：连续感知与交互。沿[作者材料与取材边界](../../case-studies/author-context-and-design.md)扩写；正文只保留短例，源文件快照、已有实验入口与待验证条件在案例笔记中区分。沿用现有练习和图号。
+--- outlines/extensions/04-加速器架构.md
++++ outlines/extensions/04-加速器架构.md
+@@ -297,3 +297,7 @@
+ - 4.6 的不同设计选择：[Google's Training Supercomputers from TPU v2 to Ironwood: Architectural Stability, Scale, Resilience, Power Efficiency, and Sustainability Across Five Generations](../../references/files/papers/google-tpu-generations.pdf)；[Inside the Eighth-Generation TPU: An Architecture Deep Dive](../../references/files/specs/google-tpu8.html)；[IPU Programming Model](../../references/files/documents/graphcore-programming.html)；[Cerebras Wafer-Scale Engine 3 Datasheet](../../references/files/specs/cerebras-wse3-spec.pdf)；[Think Fast: A Tensor Streaming Processor (TSP) for Accelerating Deep Learning Workloads](../../references/files/papers/groq-tsp.pdf)；[SambaNova SN40L: Scaling the AI Memory Wall with Dataflow and Composition of Experts](../../references/files/papers/sambanova-sn40l-paper.pdf)；[OpenTallas architecture and analysis](../../references/files/documents/opentallas-readme.md)。
+ 
+ 原文版本、参数差异与扩写时需补的材料见[编辑笔记](../editorial-notes.md#ch-04)。
++
++## 作者材料补充（2026-09-09）
++
++本轮落点：4.6.4 片上容量与扩展通信。沿[作者材料与取材边界](../../case-studies/author-context-and-design.md)扩写；正文只保留短例，源文件快照、已有实验入口与待验证条件在案例笔记中区分。沿用现有练习和图号。
+--- outlines/extensions/05-算子与运行时.md
++++ outlines/extensions/05-算子与运行时.md
+@@ -363,3 +363,7 @@
+ - 5.3 的具体模型与实现：[模型与算子核对笔记](../../case-studies/model-operator-examples.md)；[Qwen3 固定实现](../../references/outline-checks/2026-09-07/scaling-history/vllm-qwen3.py)；[V4-Flash 官方参考实现](../../references/outline-checks/2026-09-07/scaling-history/deepseek-v4-flash-inference-model.py)。
+ 
+ 原文版本、参数差异与扩写时需补的材料见[编辑笔记](../editorial-notes.md#ch-05)。
++
++## 作者材料补充（2026-09-09）
++
++本轮落点：5.3.4 分层抽象与性能控制。沿[作者材料与取材边界](../../case-studies/author-context-and-design.md)扩写；正文只保留短例，源文件快照、已有实验入口与待验证条件在案例笔记中区分。沿用现有练习和图号。
+--- outlines/extensions/08-单实例推理.md
++++ outlines/extensions/08-单实例推理.md
+@@ -384,3 +384,7 @@
+ - 8.1、8.5 的实现与设备：[vLLM CUDA Graphs Design](../../references/files/documents/vllm-cuda-graphs.html)；[Ollama Generate API](../../references/files/documents/ollama-api-generate.md)；[RTX PRO 6000 Blackwell Workstation Edition Datasheet](../../references/files/specs/nvidia-rtx-pro6000-spec.pdf)；[Apple M2 Pro and M2 Max launch specifications](../../references/files/specs/apple-m2-pro-max.html)。
+ 
+ 原文版本、参数差异与扩写时需补的材料见[编辑笔记](../editorial-notes.md#ch-08)。
++
++## 作者材料补充（2026-09-09）
++
++本轮落点：8.2.4 Chat 与 Agent 的前缀复用、8.2.5 命中收益与缓存淘汰。沿[作者材料与取材边界](../../case-studies/author-context-and-design.md)扩写；正文只保留短例，源文件快照、已有实验入口与待验证条件在案例笔记中区分。沿用现有练习和图号。
+--- outlines/extensions/11-资源调度与运行环境.md
++++ outlines/extensions/11-资源调度与运行环境.md
+@@ -354,3 +354,7 @@
+ - 11.5 的计量背景：[OpenCost](../../references/files/documents/opencost.html)；云平台历史参照作者的[计算机网络的新黄金时代（一）](../../references/files/documents/network-golden-1.html)。
+ 
+ 版本、计费边界与待补任务记录见[编辑笔记](../editorial-notes.md#ch-11)。
++
++## 作者材料补充（2026-09-09）
++
++本轮落点：11.4.1 容量采购与按量调用。沿[作者材料与取材边界](../../case-studies/single-agent-serving-cost.md)扩写；正文只保留短例，源文件快照、已有实验入口与待验证条件在案例笔记中区分。沿用现有练习和图号。
+--- outlines/extensions/12-端边云协同.md
++++ outlines/extensions/12-端边云协同.md
+@@ -266,3 +266,7 @@
+ - 12.2–12.5 的设备协作与算力取舍：[Apple M2 Pro and M2 Max launch specifications](../../references/files/specs/apple-m2-pro-max.html)；[RTX PRO 6000 Blackwell Workstation Edition Datasheet](../../references/files/specs/nvidia-rtx-pro6000-spec.pdf)；[A100/H100 太贵，何不用 4090？](../../references/files/documents/h100-vs-4090.html)。
+ 
+ 原文版本、参数差异与扩写时需补的材料见[编辑笔记](../editorial-notes.md#ch-12)。
++
++## 作者材料补充（2026-09-09）
++
++本轮落点：12.1.3 Computer Use 的截图与操作循环、12.2.3 端侧模型的协作条件。沿[作者材料与取材边界](../../case-studies/author-context-and-design.md)扩写；正文只保留短例，源文件快照、已有实验入口与待验证条件在案例笔记中区分。沿用现有练习和图号。
+--- outlines/extensions/13-架构协同设计.md
++++ outlines/extensions/13-架构协同设计.md
+@@ -207,3 +207,9 @@
+ - 13.4 的专用化与物理约束：[In-Datacenter Performance Analysis of a Tensor Processing Unit](../../references/files/papers/tpu-v1.pdf)；[基于可编程网卡的高性能数据中心系统](../../references/files/papers/bojieli-phd-thesis.pdf)；[OpenTallas architecture and analysis](../../references/files/documents/opentallas-readme.md)；[Huawei’s τ Chip Was Supposed to Melt?](../../references/files/papers/202609.00031v1.pdf)。
+ 
+ 原文版本、参数差异与扩写时需补的材料见[编辑笔记](../editorial-notes.md#ch-13)。
++
++## 作者材料补充（2026-09-09）
++
++本轮落点：13.4.1 固定什么、固定多久、13.5.1 未见配置与最小实验。沿[作者材料与取材边界](../../case-studies/single-agent-serving-cost.md)扩写；正文只保留短例，源文件快照、已有实验入口与待验证条件在案例笔记中区分。沿用现有练习和图号。
++
++实验 13-6 增加单 Agent、24×7 持续 decode 的综合估算变体，比较模型大小与 serving 方法；配套笔记提供公式、教学数值、prefill 修正与实测输入要求。

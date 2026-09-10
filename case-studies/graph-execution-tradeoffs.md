@@ -1,6 +1,6 @@
 # 图执行的范围与成本
 
-核对于 2026-09-09。本文将 [GraCE 的已读正文](../references/proceedings/OSDI/2026/selected/osdi26-ghosh.pdf#page=4)与 [vLLM／SGLang 的版本路径](../references/framework-history/2026-09-08/graph-selection/README.md)连接到 5.4、8.1 和既有实验，并用 Configuration Wall 的声明范围补充配置与重叠分析。以下数值为教学计算，没有运行模型或测得图执行收益。
+核对于 2026-09-09。本文将 [GraCE 的已读正文](../references/proceedings/OSDI/2026/selected/osdi26-ghosh.pdf#page=4)与 [vLLM／SGLang 的版本路径](../references/framework-history/2026-09-08/graph-selection/README.md)连接到 5.4、8.2 和既有实验，并用 Configuration Wall 的声明范围补充配置与重叠分析。以下数值为教学计算，没有运行模型或测得图执行收益。
 
 ## 捕获范围为什么变化
 
@@ -74,4 +74,4 @@ vLLM 的历史 runner 自己复制图输入，固定当前的图封装将这项�
 
 GraCE 采用 PyTorch 2.4，25 个选定负载含训练和推理，以每 iteration 时间为主，主要单卡为 H100 NVL 94GB；多卡与 A6000 另有配置。其对 vLLM “只能部分编译”等描述属于论文背景，不代替当前框架证据。论文报告的筛选前 116 个图与优化后 123 个候选图是不同集合，不能把分母混用；额外编译时间也不是服务稳态开销。本文采用机制及选择方法，不将论文加速比移到 Qwen3／V4／K3。[正文 §5](../references/proceedings/OSDI/2026/selected/osdi26-ghosh.pdf#page=11)
 
-5.4.4／实验 5-8 增加输入缓冲与逐段选择：保持计算和正确性约束，先估拷贝与等待，再用 Nsight Systems 对照普通、分段和全图。8.1／实验 8-2 回放同一请求，改变 token 桶、请求槽位和捕获上限，报告 TTFT／ITL、实际图命中、启动时间、常驻与峰值内存。真实系统不具备 GraCE 间接寻址时，使用论文记录作对照，不声称已将原型集成入引擎。图 5-7 用自绘时间线展示捕获边界和额外拷贝，不增加独立章节或实验数量。
+5.4.4／实验 5-8 增加输入缓冲与逐段选择：保持计算和正确性约束，先估拷贝与等待，再用 Nsight Systems 对照普通、分段和全图。8.2／实验 8-2 回放同一请求，改变 token 桶、请求槽位和捕获上限，报告 TTFT／ITL、实际图命中、启动时间、常驻与峰值内存。真实系统不具备 GraCE 间接寻址时，使用论文记录作对照，不声称已将原型集成入引擎。图 5-7 用自绘时间线展示捕获边界和额外拷贝，不增加独立章节或实验数量。

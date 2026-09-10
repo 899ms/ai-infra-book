@@ -1,6 +1,6 @@
 # 流式交接的顺序与缓冲
 
-第 5.2 节与实验 5-2 的扩写依据，核对日期 2026-09-08。[StreamTensor 公开稿](../references/proceedings/MICRO/2025/paper-014.pdf)的物理页 3–14 已选读，设计、评估与边界见[阅读记录](../references/proceedings/MICRO/2025/streamtensor-reading.json)。本例补充现有的[容量、布局和数据复用](buffer-capacity-and-data-movement.md)：省去中间写回以后，仍要让生产顺序、消费顺序和缓冲容量彼此兼容。
+第 5.3 节与实验 5-2 的扩写依据，核对日期 2026-09-08。[StreamTensor 公开稿](../references/proceedings/MICRO/2025/paper-014.pdf)的物理页 3–14 已选读，设计、评估与边界见[阅读记录](../references/proceedings/MICRO/2025/streamtensor-reading.json)。本例补充现有的[容量、布局和数据复用](buffer-capacity-and-data-movement.md)：省去中间写回以后，仍要让生产顺序、消费顺序和缓冲容量彼此兼容。
 
 ## 形状相同，还要看访问顺序
 

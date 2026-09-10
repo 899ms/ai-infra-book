@@ -125,7 +125,7 @@ def index(items):
     ok = [r for r in items if r["status"] in ("downloaded", "local_snapshot", "user_provided")]
     pdfs = [r for r in ok if r.get("file", "").endswith(".pdf")]
     lines = ["# 本地参考资料库", "",
-             "对应草案 22 的十三章顺序：方法与需求、硬件与协作、推理训练、任务环境与端边云、综合设计。收录原始论文、作者报告、芯片与系统规格、协议及官方软件文档，按具体论证选用。原件快照保留历史版本；本索引章号采用当前目录。",
+             "对应草案 22 的十二章顺序：方法与需求、硬件与协作、推理训练、任务环境与端边云。收录原始论文、作者报告、芯片与系统规格、协议及官方软件文档，按具体论证选用。原件快照保留历史版本；本索引章号采用当前目录。",
              "", f"当前清单 {len(items)} 项：已保存正文 {len(ok)} 项，其中 PDF {len(pdfs)} 份。其余项目的获取状态见文末。",
              "", "[浏览本地索引](index.html) · [来源清单](sources.tsv) · [下载与校验记录](manifest.json) · [证据缺口](GAPS.md)",
              "", "[LLM 推理论文选读与写作落点](INFERENCE-PAPER-GUIDE.md)按问题整理 49 项核心与专题资料，标注查阅小节、可支撑的论点及引用边界；另有 [章节映射](inference-reading-map.tsv)和[本轮新增论文 BibTeX](inference-additions.bib)。",

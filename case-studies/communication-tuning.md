@@ -4,7 +4,7 @@
 
 ## 从同一模型的两段工作判断配置
 
-承接第 6.4.4，先用固定 Qwen3-8B 配置确定工作量：1024 个 token 的 BF16 `[1024,4096]` 输出是 8 MiB；TP=8 时，三个 FFN 投影在每卡合计约 38.65 GFLOPs。这里忽略激活函数等非矩阵操作，假定三块权重均匀切分。当前微批的 FFN 依赖其上游数据，不能凭空与同一条链上的依赖通信重叠；下面比较的是执行图已经允许重叠的两个微批片段。
+承接第 6.4.3，先用固定 Qwen3-8B 配置确定工作量：1024 个 token 的 BF16 `[1024,4096]` 输出是 8 MiB；TP=8 时，三个 FFN 投影在每卡合计约 38.65 GFLOPs。这里忽略激活函数等非矩阵操作，假定三块权重均匀切分。当前微批的 FFN 依赖其上游数据，不能凭空与同一条链上的依赖通信重叠；下面比较的是执行图已经允许重叠的两个微批片段。
 
 给出两组**教学计时输入**，并非 A40、Qwen3 或 AutoCCL 的测量。通信 A／B 在独占时分别需 0.24／0.18 ms，单看通信会选 B。两段同时运行时，A 下的计算／通信为 0.44／0.26 ms，B 下为 0.62／0.20 ms；若同刻就绪、最后汇合，片段耗时分别为 0.44／0.62 ms。B 的通信独占速度高 33.3%，该并发片段却慢 40.9%。瓶颈从搬移转到了争用后的计算，不应只报告通信带宽。
 
@@ -26,7 +26,7 @@ NVIDIA 2025-07-22 的调优说明把默认成本模型与动态 CTA／chunk 调�
 
 2026-08-11 发布的 NCCL 2.31.2-1 已有逐 collective 配置接口；其固定提交的 tuner v6 头文件增加可选 `getChunkSize` 回调，并规定结果受缓冲上限约束。这与 2025 说明中的 2.27 接口范围不同。头文件还允许保留默认选择，并对失败回调回退；本轮只核接口声明，没有审全部调度实现，也不宣称该版本已有 AutoCCL 的在线搜索算法。[版本公告](https://github.com/NVIDIA/nccl/releases/tag/v2.31.2-1)、[固定接口](https://github.com/NVIDIA/nccl/blob/7b83616df3ae082a1f32bb74c27458bfe8153a13/src/include/plugin/tuner/tuner_v6.h)
 
-第 6.4.5 再问能否减少通信占用的 SM。2025 年 NCCL 2.28 公告介绍设备端通信 API、对称窗口和 Copy Engine 搬移；设备 API、SM 执行的融合、CE 卸载是不同执行方式，不能因都与通信有关就混用名称。[2.28 官方公告](https://developer.nvidia.com/blog/fusing-communication-and-compute-with-new-device-api-and-copy-engine-collectives-in-nvidia-nccl-2-28/)
+第 6.4.4 再问能否减少通信占用的 SM。2025 年 NCCL 2.28 公告介绍设备端通信 API、对称窗口和 Copy Engine 搬移；设备 API、SM 执行的融合、CE 卸载是不同执行方式，不能因都与通信有关就混用名称。[2.28 官方公告](https://developer.nvidia.com/blog/fusing-communication-and-compute-with-new-device-api-and-copy-engine-collectives-in-nvidia-nccl-2-28/)
 
 2.31.2 固定版本文档明确：NVLink 的零 CTA 路径自 2.28 支持；跨网络路径自 2.30.6 支持，使用节点内 CE 和节点间 CPU proxy。要求合适驱动、对称注册窗口和 ZERO CTA policy。文档所列网络操作是 AllGather／AlltoAll，单 NVL／MNNVL 范围还包括 Gather／Scatter，不能将 AllReduce 普遍描述成 CE 完成。减少 SM 使用后，显存带宽、互联、CE、CPU 和注册开销仍要入账。[固定版本条件](https://github.com/NVIDIA/nccl/blob/7b83616df3ae082a1f32bb74c27458bfe8153a13/docs/userguide/source/usage/bufferreg.rst)
 
@@ -36,4 +36,4 @@ vLLM／SGLang 的归约融合沿[已核分派与通信组](collective-paths-and-
 
 TACOS（MICRO 2024）提供另一层选择：先按拓扑和数据块生成路由与时序，再考虑运行参数。与 AutoCCL 的实际通信反馈对照，读者先检查共享端口是否被多条逻辑边重复计入带宽，以及生成的计划是否已有可执行后端。[论文与公开入口核对](../references/proceedings/MICRO/2024/tacos-body-reading/NOTES.md)表明，所读 README 只声明 All-Gather 和预计时间输出，All-Reduce／MSCCL-XML 尚在进行；论文的仿真收益不能写成当前 NCCL 或推理框架的现成能力。实验 6-5 仅将其作为计划与执行的可选对照，不要求安装替换通信库。
 
-只深化第 6.4.4／6.4.5，扩展实验 6-5 和图 6-5：先算模型片段，再比较独占、并发和整步结果，最后判断调优／卸载是否值得。第 5 章的 Agent profiling 与第 10 章的训练时序通过交叉引用连接；I12 增加同一配置选择的追问，不新增题号或面试来源。NSDI 2026 本轮另筛读前 40 篇摘要，SYMI、DroidSpeak、Checkmate、HydraServe、PIPEMORPH 等仍是比较候选，尚未读正文或采用。
+只深化第 6.4.3／6.4.4，扩展实验 6-5 和图 6-5：先算模型片段，再比较独占、并发和整步结果，最后判断调优／卸载是否值得。第 5 章的 Agent profiling 与第 10 章的训练时序通过交叉引用连接；I12 增加同一配置选择的追问，不新增题号或面试来源。NSDI 2026 本轮另筛读前 40 篇摘要，SYMI、DroidSpeak、Checkmate、HydraServe、PIPEMORPH 等仍是比较候选，尚未读正文或采用。

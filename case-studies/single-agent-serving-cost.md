@@ -1,6 +1,6 @@
 # 一名 24×7 数字员工的 serving 成本
 
-第 13.5.1 的综合已解示例，供实验 13-6 独立评审前参考，连接第 11.4.1 的自建计费口径。题目来自作者[数字员工文章](../references/author-materials/2026-09-09/digital-worker.md)，按最新反馈改为 **DeepSeek V4 Flash 与 Kimi K3** 两档，历史实际占用 **200K／1M token**，接近满载。每名员工只有一条串行 Agent 轨迹，生成包含思考与工具调用。
+第 11.4.4 的容量采购与按量调用已解示例。题目来自作者[数字员工文章](../references/author-materials/2026-09-09/digital-worker.md)，按最新反馈改为 **DeepSeek V4 Flash 与 Kimi K3** 两档，历史实际占用 **200K／1M token**，接近满载。每名员工只有一条串行 Agent 轨迹，生成包含思考与工具调用。
 
 输入快照、公式、脚本和完整结果统一在 [experiments](../experiments/ch13/13-06/single-agent-serving/README.md)。先按模型原生混合精度权重和状态核算逐卡容量，再用权重读取、长历史 attention、专家工作及串行通信估算速度，最后乘 GPU 租金。V4 比较 TP2／4／8；K3 比较 PP2×TP8 下的复制缓存与 DCP8 分片。容量放得下，不自动等于速度达标。
 

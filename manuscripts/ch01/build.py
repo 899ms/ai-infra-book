@@ -251,6 +251,10 @@ from teaching_figures import draw as draw_teaching_figures
 data['teaching_diagrams']=draw_teaching_figures(1,save,ROOT)
 (HERE/'figure-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
 
+from teaching_revision import draw as draw_revision
+outputs.extend(draw_revision(HERE,data))
+outputs=list(dict.fromkeys(outputs))
+
 # Reading copy: embed PNGs to make display independent of local CJK SVG font support.
 md=HERE.parent/'01-初识 AI Infra.md';raw=md.read_text()
 import subprocess
@@ -279,13 +283,14 @@ for name in [p.stem for p in outputs if p.suffix=='.png']:
  encoded=base64.b64encode((HERE/f'{name}.png').read_bytes()).decode()
  body=body.replace(f'src="ch01/{name}.svg"',f'src="data:image/png;base64,{encoded}"')
 css='''body{margin:0;background:#fafaf8;color:#243640;font:18px/1.95 Georgia,"Songti SC","Noto Serif CJK SC",serif}main{max-width:900px;margin:auto;padding:60px 36px 100px;background:white}h1,h2,h3{font-family:Arial,"PingFang SC","Noto Sans CJK SC",sans-serif;line-height:1.4;color:#163747}h1{font-size:36px;margin:10px 0 36px}h2{font-size:28px;border-top:1px solid #d5e1e4;margin-top:70px;padding-top:32px}h3{font-size:23px;margin-top:38px}p{margin:1.1em 0}a{color:#167c86;text-underline-offset:3px}img{width:100%;height:auto;display:block;margin:30px auto 16px}img+p,em{color:#59717c}table{border-collapse:collapse;width:100%;font-size:16px;margin:25px 0}th,td{padding:12px;border-bottom:1px solid #d5e1e4;text-align:left}th{background:#edf5f6}pre{background:#f1f6f7;padding:20px;overflow:auto;line-height:1.8;font-size:15px}code{font-family:Menlo,Consolas,monospace}blockquote{margin:30px 0;padding:5px 22px;border-left:4px solid #218a83;background:#f1f7f4;font-size:17px}.footnote{margin-top:70px;font-size:14px;line-height:1.8}.edition{font:13px Arial,sans-serif;letter-spacing:.12em;color:#68828c}.nav{font:15px/2 Arial,"PingFang SC",sans-serif;border:1px solid #d5e1e4;background:#f6f9f9;padding:16px 22px;margin-bottom:32px}.nav a{display:block}@media(max-width:650px){main{padding:26px 18px 65px}body{font-size:17px}h1{font-size:30px}h2{font-size:25px}table{font-size:13px}th,td{padding:8px}}@media print{body{background:white;font-size:11pt}main{max-width:none;padding:0}h2,h3{break-after:avoid}img,table,blockquote{break-inside:avoid}.nav,.edition{display:none}a{color:inherit}}'''
+css+=' main{max-width:760px}img{max-width:720px} @media print{img{width:420pt;max-width:100%}main{max-width:none}}'
 css+=math_css+' .katex{font-size:1.04em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:12px 0}.table-scroll{overflow-x:auto;max-width:100%}'
 heads=re.findall(r'<h2 id="([^"]+)">([^<]+)</h2>',body)
 nav='<nav class="nav" aria-label="本章目录">'+''.join(f'<a href="#{html.escape(k)}">{html.escape(v)}</a>' for k,v in heads)+'</nav>'
-page='<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第 1 章 初识 AI Infra</title><style>'+css+'</style></head><body><main><div class="edition">AI INFRA · 第一章正文初稿 · 2026-09-09</div>'+nav+body+'</main></body></html>'
+page='<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第 1 章 初识 AI Infra</title><style>'+css+'</style></head><body><main><div class="edition">AI INFRA · 第一章图文修订 · 2026-09-10</div>'+nav+body+'</main></body></html>'
 ht=md.with_suffix('.html');ht.write_text(page);outputs.append(ht)
 manifest={'source_lock':'sources.json','font':str(font_path),'matplotlib':matplotlib.__version__,
  'chapter':{'file':str(md.relative_to(ROOT)),'sha256':hashlib.sha256(md.read_bytes()).hexdigest()},
  'outputs':[{'path':str(p.relative_to(ROOT)),'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in outputs]}
 (HERE/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
-print(json.dumps({'figures':8,'formats':['SVG','PNG'],'html':str(ht),'font':family},ensure_ascii=False))
+print(json.dumps({'figures':len(re.findall(r'!\[',raw)),'formats':['SVG','PNG','PDF'],'html':str(ht),'font':family},ensure_ascii=False))

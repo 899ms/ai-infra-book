@@ -6,7 +6,7 @@
 
 各章均以“本章小结”收尾，资料说明移出正文，来源保留为脚注。
 
-[全书 PDF](../book/AI-Infra-Book.pdf) · [本轮修改与验证](../reviews/core-principles-revision-2026-09-10/README.md) · [思想实验复算](../calculations/results/core-principles.json)
+[全书 PDF](../book/AI-Infra-Book.pdf) · [本轮修改与验证](../archive/reviews/core-principles-revision-2026-09-10/README.md) · [思想实验复算](../calculations/results/core-principles.json)
 
 | 章 | 正文 | 配图 |
 | --- | --- | ---: |
@@ -32,6 +32,6 @@
 这里的条件比较属于教学推导，未新增 GPU 性能实测；原始实验、模型配置和版本来源仍保留在对应目录。
 
 
-V4／V4.1 贯穿案例已沿十二章展开，新增六幅图，见[修改与验证记录](../reviews/v41-throughline-2026-09-10/README.md)。模型状态、CED 输入处理、缓存恢复和路由选择采用同一组[固定条件与复算](../calculations/results/v41-throughline.json)。
+V4／V4.1 贯穿案例已沿十二章展开，新增六幅图，见[修改与验证记录](../archive/reviews/v41-throughline-2026-09-10/README.md)。模型状态、CED 输入处理、缓存恢复和路由选择采用同一组[固定条件与复算](../calculations/results/v41-throughline.json)。
 
-V4／V4.1 再次核对后，补充 CED 数据流图，并区分编码器与解码器的 SWA 恢复；全书共 409 幅图。见[数据与概念复核记录](../reviews/v4-v41-audit-2026-09-10/README.md)。
+V4／V4.1 再次核对后，补充 CED 数据流图，并区分编码器与解码器的 SWA 恢复；全书共 409 幅图。见[数据与概念复核记录](../archive/reviews/v4-v41-audit-2026-09-10/README.md)。

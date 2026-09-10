@@ -1,0 +1,1905 @@
+{
+  "date": "2026-09-10",
+  "scope": "Current manuscript Markdown image references; no per-figure visual certification",
+  "chapter_count": 12,
+  "figure_reference_count": 201,
+  "chapters": [
+    {
+      "file": "manuscripts/01-初识 AI Infra.md",
+      "title": "# 第 1 章 初识 AI Infra",
+      "lines": 354,
+      "characters": 17855,
+      "sha256": "91780ad144f3eaaa3aecc014b39246d717d7482e4535e7119bb9ac8c46aa521f",
+      "figures": [
+        {
+          "alt": "AI Infra 六层全景：从应用需求到设备与互联，右侧为跨层平台能力，底部为共同物理条件。",
+          "path": "manuscripts/ch01/figure-1-1-panorama.svg",
+          "line": 13,
+          "exists": true,
+          "sha256": "c4beac21abd241f9a7c4b0e3f57300a1059ccbbf25abb6dd765182b67a623f8b"
+        },
+        {
+          "alt": "请求经过应用、入口、路由、实例调度、GPU 执行与输出返回；另标模型加载、KV 状态与多设备协作。",
+          "path": "manuscripts/ch01/figure-1-2-request.svg",
+          "line": 41,
+          "exists": true,
+          "sha256": "a39437f45e533764ec3a3594451eab606bdc4a0845b61bd0d299dc82c38b614b"
+        },
+        {
+          "alt": "数据中心通过网络连接多个超节点，放大一个超节点展示计算托盘、CPU 与主存、GPU 与 HBM、内部互联和网卡。",
+          "path": "manuscripts/ch01/figure-1-3-datacenter.svg",
+          "line": 55,
+          "exists": true,
+          "sha256": "645a0bfe9ebf9cfadafb6025671a8728778ae00811d99eaae1fdf651def34254"
+        },
+        {
+          "alt": "关键数字分为历史访问延迟与 H100 SXM 资源卡。延迟采用对数刻度；容量、带宽与计算吞吐分别列示。",
+          "path": "manuscripts/ch01/figure-1-4-numbers.svg",
+          "line": 93,
+          "exists": true,
+          "sha256": "f0e852aa08858dcc2e1f143464300670418194a2ebb94d08e94f11f136851923"
+        },
+        {
+          "alt": "图 1-5 每卡容量与执行时的权重读取",
+          "path": "manuscripts/ch01/figure-1-capacity-path.svg",
+          "line": 151,
+          "exists": true,
+          "sha256": "161fe841b795211402110d8aaddbc53deccf50190851b8a237df8c4c26594ecf"
+        },
+        {
+          "alt": "教学模型的算力、带宽和批复用变化，以及独立 Qwen3-8B 实测中的吞吐和每请求时间。",
+          "path": "manuscripts/ch01/figure-1-5-budget.svg",
+          "line": 225,
+          "exists": true,
+          "sha256": "264afcacd07931f087531d233277269b1b1b64b25c3c1700fd4190bed6e7ffaf"
+        },
+        {
+          "alt": "图 1-7 batch 增长时的计算、读取与吞吐转折",
+          "path": "manuscripts/ch01/figure-1-batch-transition.svg",
+          "line": 237,
+          "exists": true,
+          "sha256": "f5104106389ab5faec3e66cb52c06481d70825cef74536c926abe9c6bd70561f"
+        },
+        {
+          "alt": "TPU、SmartNIC 与 Unified Bus 分别改变专用资源配置、处理位置和协作范围。",
+          "path": "manuscripts/ch01/figure-1-6-designs.svg",
+          "line": 318,
+          "exists": true,
+          "sha256": "59cd8c61e3dc39a4bd8488546ff3ef7934ea23c52e03591f27417224cb6fda95"
+        }
+      ],
+      "headings": [
+        "## 1.1 AI Infra 全景",
+        "### 1.1.1 AI Infra 的六层宝塔",
+        "### 1.1.2 一次生成请求怎样经过这些组件",
+        "## 1.2 系统设计的关键数字",
+        "### 1.2.1 Jeff Dean：用数量级判断方案",
+        "### 1.2.2 AI 系统需要记住哪些数字",
+        "### 1.2.3 从参数与链路单位算起",
+        "## 1.3 用几个数字估算一次模型执行",
+        "### 1.3.1 生成一个 token，先检查什么",
+        "### 1.3.2 计算与读取分别需要多久",
+        "### 1.3.3 从初算到观察",
+        "## 1.4 从资源约束到架构选择",
+        "### 1.4.1 TPU：需求规模改变资源选择",
+        "### 1.4.2 SmartNIC：改变已有工作的处理位置",
+        "### 1.4.3 Unified Bus：扩大资源协作范围",
+        "## 谬误与陷阱",
+        "## 本章小结"
+      ]
+    },
+    {
+      "file": "manuscripts/02-模型架构.md",
+      "title": "# 第 2 章 模型架构",
+      "lines": 951,
+      "characters": 50938,
+      "sha256": "49d06042096fb943526787e99ff1a996ae48e39344974175332c74255b130cac",
+      "figures": [
+        {
+          "alt": "图 2-1 序列模型的计算依赖",
+          "path": "manuscripts/ch02/figure-2-1-dependencies.svg",
+          "line": 27,
+          "exists": true,
+          "sha256": "afef8f53d3beb2145e84ba05d08dc0f58f8fa06a5798bf62f8f8a13080c81142"
+        },
+        {
+          "alt": "图 2-2 四个模型的层数、隐藏维度与专家数",
+          "path": "manuscripts/ch02/figure-2-architecture.svg",
+          "line": 73,
+          "exists": true,
+          "sha256": "15a112d6f1b2c3fc5f6e7159a4a9010575f9d3347cdbb0db94638f525c754f6d"
+        },
+        {
+          "alt": "图 2-3 Qwen3-8B 单层的尺寸与数据流",
+          "path": "manuscripts/ch02/figure-2-2-layer.svg",
+          "line": 164,
+          "exists": true,
+          "sha256": "f16c7f47394013049a260c6fa79c9a1aab05afd10d696f018b4dfeebd1038605"
+        },
+        {
+          "alt": "图 2-4 历史读取的阶梯与批内权重复用",
+          "path": "manuscripts/ch02/figure-2-history.svg",
+          "line": 272,
+          "exists": true,
+          "sha256": "dc1b13296fb06571d2e8979a7a88b29364a84a70ef288679806fc17cc562e52c"
+        },
+        {
+          "alt": "图 2-5 查询头与共享历史的对应关系",
+          "path": "manuscripts/ch02/figure-2-3-sharing.svg",
+          "line": 308,
+          "exists": true,
+          "sha256": "32c3fe97d24d61998d3164ca7ec957fac9614d0e7e65536cc5dfcd28964355f6"
+        },
+        {
+          "alt": "图 2-6 KV 共享与潜变量压缩",
+          "path": "manuscripts/ch02/figure-2-4-cache.svg",
+          "line": 336,
+          "exists": true,
+          "sha256": "8703830c4a78b68102b377a159a6ced522de9d58bb6bd9879c8c11a0d27caa0a"
+        },
+        {
+          "alt": "图 2-7 V4 的窗口、压缩与索引",
+          "path": "manuscripts/ch02/figure-2-5-sparse.svg",
+          "line": 356,
+          "exists": true,
+          "sha256": "cdb21864693aeb9eebf4668af51fecb6ceb13ae1d2d611dc98b2f5562c54a3a4"
+        },
+        {
+          "alt": "图 2-8 逐位置历史与固定状态矩阵",
+          "path": "manuscripts/ch02/figure-2-recurrence.svg",
+          "line": 376,
+          "exists": true,
+          "sha256": "c803932793ed585d6115866c7b63e68a62f1cc4c9f33148aa128a7dca19ace7d"
+        },
+        {
+          "alt": "图 2-9 混合注意力与专家计算的组合",
+          "path": "manuscripts/ch02/figure-2-6-hybrid.svg",
+          "line": 394,
+          "exists": true,
+          "sha256": "922b0f97759348df6a58b1f3c37c49aa2868c72cc0f1d90fd64e8696d5c5595b"
+        },
+        {
+          "alt": "图 2-10 状态容量、访问与输入工作",
+          "path": "manuscripts/ch02/figure-2-7-state-growth.svg",
+          "line": 398,
+          "exists": true,
+          "sha256": "e98fb69f7c3e1a52eb32f28fcc0239627291edb3d67918a2fd01fb3108ff319c"
+        },
+        {
+          "alt": "图 2-11 同样的专家运算量与不同的权重读取量",
+          "path": "manuscripts/ch02/figure-2-expert-reuse.svg",
+          "line": 453,
+          "exists": true,
+          "sha256": "3592914e0dc91d0e504340cf58957b8152d3f702cf7e3a091a2ad18f0fb79574"
+        },
+        {
+          "alt": "图 2-12 稠密层与 V4 层的数据流",
+          "path": "manuscripts/ch02/figure-2-8-residual.svg",
+          "line": 501,
+          "exists": true,
+          "sha256": "2f1ced3a29e5b56dd0a62ff506f4c4a69f4a14802078fdb473cb63af41c1c7ae"
+        },
+        {
+          "alt": "图 2-13 模型权重、单步计算与历史状态的对照",
+          "path": "manuscripts/ch02/figure-2-resources.svg",
+          "line": 553,
+          "exists": true,
+          "sha256": "83767ec23a61ff8e65f31e0687d6565f7042ba8d30d74b5201d6383320c9cde3"
+        },
+        {
+          "alt": "图 2-14 权重、历史与显存可容纳的并发请求数",
+          "path": "manuscripts/ch02/figure-2-9-capacity.svg",
+          "line": 834,
+          "exists": true,
+          "sha256": "668daa76cde12f211ea897aaf54acee9772558541b35850f7a84959b5e054dfb"
+        },
+        {
+          "alt": "图 2-15 请求输入与计算状态映射",
+          "path": "manuscripts/ch02/figure-2-10-request.svg",
+          "line": 873,
+          "exists": true,
+          "sha256": "f64610cc1602f5641de9a869c52f21bae5f6b662d5431cc5011aa68e6967468e"
+        }
+      ],
+      "headings": [
+        "## 2.1 计算图与前向执行",
+        "### 2.1.1 序列依赖与因果计算图",
+        "### 2.1.2 模型配置与张量结构",
+        "### 2.1.3 注意力计算与位置表示",
+        "### 2.1.4 前馈网络与前向计算量",
+        "## 2.2 自回归生成与资源核算",
+        "### 2.2.1 Prefill、Decode 与状态复用",
+        "### 2.2.2 驻留容量与逻辑访问",
+        "### 2.2.3 完整生成的计算与状态累积",
+        "## 2.3 历史状态表示与访问机制",
+        "### 2.3.1 多头注意力与 KV 共享",
+        "### 2.3.2 潜变量压缩与 MLA 执行路径",
+        "### 2.3.3 局部窗口、历史压缩与稀疏索引",
+        "### 2.3.4 线性注意力与有限状态递推",
+        "### 2.3.5 混合注意力的状态构成",
+        "## 2.4 条件计算与专家权重复用",
+        "### 2.4.1 稠密前馈网络与专家路由",
+        "### 2.4.2 激活计算与批内权重访问",
+        "### 2.4.3 共享专家与潜空间计算",
+        "## 2.5 网络形状与计算组织",
+        "### 2.5.1 深度、宽度与专家粒度",
+        "### 2.5.2 残差连接与跨层状态",
+        "### 2.5.3 多 token 预测与辅助计算",
+        "## 2.6 整模型需求与条件比较",
+        "### 2.6.1 模型组件与资源汇总",
+        "### 2.6.2 参数规模、数值精度与容量约束",
+        "### 2.6.3 请求条件与模型比较",
+        "## 谬误与陷阱",
+        "## 本章小结",
+        "## 本章练习与复现",
+        "## 参考资料与证据范围"
+      ]
+    },
+    {
+      "file": "manuscripts/03-推理与训练负载.md",
+      "title": "# 第 3 章 推理与训练负载",
+      "lines": 647,
+      "characters": 34644,
+      "sha256": "e5b374ba7a955170ccafb47f8af1b3ef684ad840cd83f8334faa876e65b84e0d",
+      "figures": [
+        {
+          "alt": "图 3-1 同一模型的 Prefill 与 Decode",
+          "path": "manuscripts/ch03/figure-3-1-stages.svg",
+          "line": 15,
+          "exists": true,
+          "sha256": "ad488f43e3c897b61aec21eb33d64d2f4406e931e55317ae841ae44fa670ae19"
+        },
+        {
+          "alt": "图 3-2 请求组成与阶段积压",
+          "path": "manuscripts/ch03/figure-3-2-workload-budget.svg",
+          "line": 107,
+          "exists": true,
+          "sha256": "b6b2b6c16e6202de5ba022f7ad8377fd560d4f8ac4021973cda18b94ff25b8e7"
+        },
+        {
+          "alt": "图 3-3 每次尝试的费用与每个成功任务的费用",
+          "path": "manuscripts/ch03/figure-3-success-cost.svg",
+          "line": 157,
+          "exists": true,
+          "sha256": "3742bcaf94c0e3c8f0ac079e78d66c93f38cb17ebea2238551df52d9e296304f"
+        },
+        {
+          "alt": "图 3-4 Agent 轨迹与 KV 生命周期",
+          "path": "manuscripts/ch03/figure-3-3-agent.svg",
+          "line": 190,
+          "exists": true,
+          "sha256": "5747afbaae2b24bf6f7b812ef2f5a4c9ab87a0b4e585ce615d65ef70048ebabf"
+        },
+        {
+          "alt": "图 3-5 工具依赖决定关键路径与状态寿命",
+          "path": "manuscripts/ch03/figure-3-tool-dependency.svg",
+          "line": 200,
+          "exists": true,
+          "sha256": "c5f750e384a0ce06748247a6ef80ba7efa7bfe2456ed5f9effe393887db5ad6b"
+        },
+        {
+          "alt": "图 3-6 图像位置合并与特征宽度的变化",
+          "path": "manuscripts/ch03/figure-3-vision-shapes.svg",
+          "line": 230,
+          "exists": true,
+          "sha256": "0eddf264e3ca652dda68188e484d7792c60f367a29d414e95ac55ad20f669cb7"
+        },
+        {
+          "alt": "图 3-7 实时交互的端到端时序",
+          "path": "manuscripts/ch03/figure-3-4-realtime.svg",
+          "line": 286,
+          "exists": true,
+          "sha256": "7ccdf37849485d35ba50f4e28319769ac23c1c4e9634098eef3288bc1c75fb36"
+        },
+        {
+          "alt": "图 3-8 推理与各训练阶段的计算和状态",
+          "path": "manuscripts/ch03/figure-3-5-training.svg",
+          "line": 328,
+          "exists": true,
+          "sha256": "f9077b9c1427a8b309539e1ec3b7d2f360924c9ec8dab11e48c9facb9e666582"
+        },
+        {
+          "alt": "图 3-9 RL／OPD 的工作与数据流",
+          "path": "manuscripts/ch03/figure-3-6-rl.svg",
+          "line": 437,
+          "exists": true,
+          "sha256": "ed7f57026cf6ebe0c944827921d5c6bd752d8500876156590c32269394a15219"
+        },
+        {
+          "alt": "图 3-10 训练预算与生命周期成本",
+          "path": "manuscripts/ch03/figure-3-7-scaling.svg",
+          "line": 489,
+          "exists": true,
+          "sha256": "7b523779531dab7fb3c2a07265783eff43de787deed89270c3228da9fbd284ea"
+        },
+        {
+          "alt": "图 3-11 Llama 与 Qwen 的模型—数据选择",
+          "path": "manuscripts/ch03/figure-3-8-history.svg",
+          "line": 527,
+          "exists": true,
+          "sha256": "e41ef2657b03171efcadaebea321f82aa1830e669749cacce84812528dae08db"
+        },
+        {
+          "alt": "图 3-12 公开 GPU 小时与训练阶段",
+          "path": "manuscripts/ch03/figure-3-9-gpu-hours.svg",
+          "line": 547,
+          "exists": true,
+          "sha256": "d00847c4ebfbce5d943d14d98942c17b73e998c9054fa82677f88efde5497e3b"
+        }
+      ],
+      "headings": [
+        "## 3.1 从一次执行到持续负载",
+        "### 3.1.1 Prefill 与 Decode",
+        "### 3.1.2 任务目标与评价指标",
+        "### 3.1.3 请求分布",
+        "## 3.2 多轮交互与 Agent 任务",
+        "### 3.2.1 多轮 Chat 与前缀增长",
+        "### 3.2.2 Reasoning、验证与成功任务成本",
+        "### 3.2.3 Agentic：模型、工具与检索的循环",
+        "### 3.2.4 分支、工具等待与状态驻留",
+        "## 3.3 多模态与实时交互",
+        "### 3.3.1 视觉编码、语言生成与状态",
+        "### 3.3.2 音频与图像生成的工作单位",
+        "### 3.3.3 连续感知、首段响应与打断",
+        "## 3.4 训练的计算与状态需求",
+        "### 3.4.1 前向、反向与更新状态",
+        "### 3.4.2 预训练、中期训练与 SFT",
+        "### 3.4.3 从 $6ND$ 到分项训练预算",
+        "## 3.5 RL：生成、反馈与更新",
+        "### 3.5.1 Rollout、奖励与环境验证",
+        "### 3.5.2 有效样本、策略更新与权重交接",
+        "### 3.5.3 同一有效样本目标下的阶段需求",
+        "## 3.6 从负载需求到训练与服务预算",
+        "### 3.6.1 Scaling Law：拟合、验证与适用范围",
+        "### 3.6.2 从 Llama 到 Qwen 的训练投入",
+        "### 3.6.3 质量约束下的生命周期成本与负载汇总",
+        "## 谬误与陷阱",
+        "## 本章小结",
+        "## 资料与复算"
+      ]
+    },
+    {
+      "file": "manuscripts/04-加速器架构.md",
+      "title": "# 第 4 章 加速器架构",
+      "lines": 775,
+      "characters": 42348,
+      "sha256": "c260f120de881d9f5f5a62d7e814505438d010e729eb9691fdd6637c06f25b7b",
+      "figures": [
+        {
+          "alt": "同一份权重被不同行数的输入复用",
+          "path": "manuscripts/ch04/figure-4-1-reuse.svg",
+          "line": 47,
+          "exists": true,
+          "sha256": "2cdeee13fbc70706e24376e362ad7dce632275ef5b357212e62e79c906b8441f"
+        },
+        {
+          "alt": "一次矩阵乘法的数据路径",
+          "path": "manuscripts/ch04/figure-4-2-components.svg",
+          "line": 69,
+          "exists": true,
+          "sha256": "8f88e5783da5a8839d79f4c2b610e70fa55183b579b8a275d1ca64345038c3a8"
+        },
+        {
+          "alt": "专家输入行数与补零浪费",
+          "path": "manuscripts/ch04/figure-4-3-expert-rows.svg",
+          "line": 121,
+          "exists": true,
+          "sha256": "f9f5c73fe7ee2aa715f9d66b767e46cc718f4668e01038885d80cac79acd091f"
+        },
+        {
+          "alt": "注意力资源配比与瓶颈转移",
+          "path": "manuscripts/ch04/figure-4-4-attention.svg",
+          "line": 173,
+          "exists": true,
+          "sha256": "e8c83007b7dc9db0070cb296813ca9ff167e0036a3573973e3127e9135d7c972"
+        },
+        {
+          "alt": "低比特权重的两种计算方法",
+          "path": "manuscripts/ch04/figure-4-5-precision.svg",
+          "line": 207,
+          "exists": true,
+          "sha256": "73e7b4bd0804d4d5a381359e95ed78118b7fb179fe03c34c5ab9b6f1e9a62602"
+        },
+        {
+          "alt": "权重工作区和KV在固定显存中的占用",
+          "path": "manuscripts/ch04/figure-4-6-capacity.svg",
+          "line": 259,
+          "exists": true,
+          "sha256": "e46ddb2f364570886438863791e7d8f3947d4f730860b67e9b67809b273f32ae"
+        },
+        {
+          "alt": "访存并发与带宽上界",
+          "path": "manuscripts/ch04/figure-4-7-memory.svg",
+          "line": 321,
+          "exists": true,
+          "sha256": "32a62ebb6e2c60887886f6df5386e9dd89600f9a0f49ee8f0128d29ab870dc2a"
+        },
+        {
+          "alt": "跨行子矩阵的有效数据与地址跨度",
+          "path": "manuscripts/ch04/figure-4-8-layout.svg",
+          "line": 349,
+          "exists": true,
+          "sha256": "c998ab8f328e8315eedac7ac111e011089bb220db243849fe5ce27d1a2e9d794"
+        },
+        {
+          "alt": "输入槽位与最小无间隙流水",
+          "path": "manuscripts/ch04/figure-4-9-pipeline.svg",
+          "line": 381,
+          "exists": true,
+          "sha256": "f0e03cd980deab55514932aedb6b5a06b01d93cb6d23e8b0c19f4cf0662b02fc"
+        },
+        {
+          "alt": "跨裸片搬权重与移动计算的比较",
+          "path": "manuscripts/ch04/figure-4-10-locality.svg",
+          "line": 450,
+          "exists": true,
+          "sha256": "e726ccf0c59745d99a7a19831ec5fa5c32d581f0feb6b36482f7b4b0ffb51351"
+        },
+        {
+          "alt": "带宽翻倍对大小消息的不同收益",
+          "path": "manuscripts/ch04/figure-4-11-interconnect.svg",
+          "line": 493,
+          "exists": true,
+          "sha256": "6ee46282089a1a35138b6066d444181607febff26b9160e3e4c1187d0260f919"
+        },
+        {
+          "alt": "固定权重与增长的KV读取",
+          "path": "manuscripts/ch04/figure-4-12-specialization.svg",
+          "line": 559,
+          "exists": true,
+          "sha256": "c732634a7e227051044fcd5d68aa652cf93245b4c4a64cdc7c77ae3272b45587"
+        },
+        {
+          "alt": "矩阵行数改变计算与传输时间的主次",
+          "path": "manuscripts/ch04/figure-4-13-roofline.svg",
+          "line": 618,
+          "exists": true,
+          "sha256": "87cc5fb0300fa44bb0881bbe44e99481c0f508e45ff712e6316ab8cb55f347f3"
+        },
+        {
+          "alt": "时间差与缓存读取的对照",
+          "path": "manuscripts/ch04/figure-4-14-performance.svg",
+          "line": 657,
+          "exists": true,
+          "sha256": "ce57428a8917bd251e55ba281491e83e2a1adb5866b3465d7a4a4a8e17bd6209"
+        }
+      ],
+      "headings": [
+        "## 4.1 从模型计算到加速器组成",
+        "### 4.1.1 一个贯穿例子：矩阵乘法需要哪些计算与数据",
+        "### 4.1.2 加速器全景：计算单元、存储与数据通路",
+        "### 4.1.3 资源取舍：面积、功耗与封装预算",
+        "## 4.2 计算单元：矩阵、向量与控制",
+        "### 4.2.1 矩阵单元为什么适合神经网络",
+        "### 4.2.2 向量与控制单元负责哪些工作",
+        "### 4.2.3 同一注意力在 NVIDIA、昇腾和 Apple 上的分工",
+        "### 4.2.4 低精度如何改变计算量、数据量与转换开销",
+        "## 4.3 存储层次：数据放在哪里，能多快读出来",
+        "### 4.3.1 显存与统一内存：权重和 KV 能否放下",
+        "### 4.3.2 缓存、片上缓冲与寄存器：减少重复读取",
+        "### 4.3.3 容量、带宽与延迟分别限制什么",
+        "## 4.4 数据搬运：怎样减少计算单元的等待",
+        "### 4.4.1 数据布局与寻址：怎样找到并取出一个矩阵块",
+        "### 4.4.2 异步搬运与双缓冲：让搬运和计算重叠",
+        "### 4.4.3 单元间的数据传递：矩阵与向量计算怎样衔接",
+        "## 4.5 从单芯片到多芯片：封装与互联",
+        "### 4.5.1 封装内的计算芯片、内存与连接",
+        "### 4.5.2 CPU 与加速器之间的数据访问",
+        "### 4.5.3 加速器之间的数据交换",
+        "## 4.6 专用架构：固定哪些工作，换来哪些收益",
+        "### 4.6.1 TPU：以矩阵阵列为核心的设计",
+        "### 4.6.2 Groq、Graphcore 与 Cerebras：片上存储与扩展",
+        "### 4.6.3 固定数据流与固定权重：收益、限制及投入条件",
+        "## 4.7 用架构解释性能与选择",
+        "### 4.7.1 从计算量与访问量估算执行时间",
+        "### 4.7.2 Roofline：batch 与上下文怎样改变瓶颈",
+        "### 4.7.3 预测与实测为什么有差距",
+        "### 4.7.4 在容量、速度、功耗与成本之间做选择",
+        "## 本章小结",
+        "## 参考文献与计算说明"
+      ]
+    },
+    {
+      "file": "manuscripts/05-算子与运行时.md",
+      "title": "# 第 5 章 算子与运行时",
+      "lines": 733,
+      "characters": 39775,
+      "sha256": "0196834dd8468a337ba5e8780629b2c562a95d57b4bd8bbda04046c9c8f0e9b1",
+      "figures": [
+        {
+          "alt": "图 5-1 提交、执行与结果可用的时间",
+          "path": "manuscripts/ch05/figure-5-1-execution.svg",
+          "line": 82,
+          "exists": true,
+          "sha256": "1233404522dead7b079bd385e95db55a96170665b9618777947f007dea5dc11c"
+        },
+        {
+          "alt": "图 5-2 相邻输出怎样复用同一行输入",
+          "path": "manuscripts/ch05/figure-5-reuse-steps.svg",
+          "line": 104,
+          "exists": true,
+          "sha256": "589045fe3470e86703e11ad9d98de1f7d806281e9a41c00db5b8a8aa091b67eb"
+        },
+        {
+          "alt": "图 5-3 输入块更换而输出累加器保留",
+          "path": "manuscripts/ch05/figure-5-tile-working-set.svg",
+          "line": 145,
+          "exists": true,
+          "sha256": "1ea7e9e8f06f2cf69d3486f480a250ef4f18a89237331d821573f67bdb661a45"
+        },
+        {
+          "alt": "图 5-4 局部容量与矩阵重读",
+          "path": "manuscripts/ch05/figure-5-2-tiles.svg",
+          "line": 169,
+          "exists": true,
+          "sha256": "2dfa7dd3849376dbd3eb25c15ee61c3fdd49074dffbbaeaa3479bb07266ae741"
+        },
+        {
+          "alt": "图 5-5 同一局部存储预算容纳的工作集",
+          "path": "manuscripts/ch05/figure-5-tile-residency.svg",
+          "line": 183,
+          "exists": true,
+          "sha256": "ddde8358bcabde3fb0d81da092a076166ad15bc07ec4cd27c1610ef39655a699"
+        },
+        {
+          "alt": "图 5-6 补齐行跨度如何分散 bank 请求",
+          "path": "manuscripts/ch05/figure-5-3-banks.svg",
+          "line": 201,
+          "exists": true,
+          "sha256": "59a8c6ae19abd448486190d350ffde55e597114553e780db3dbd009eb3e0140f"
+        },
+        {
+          "alt": "图 5-7 RMSNorm 拆分后的归约与输入重读",
+          "path": "manuscripts/ch05/figure-5-4-reduction.svg",
+          "line": 211,
+          "exists": true,
+          "sha256": "3dad2d4a978d2cf351557d0f51a3f56258c0b56a1c4ad851100a7e6f750e8743"
+        },
+        {
+          "alt": "图 5-8 融合前后中间结果经过的路径",
+          "path": "manuscripts/ch05/figure-5-fusion-path.svg",
+          "line": 233,
+          "exists": true,
+          "sha256": "61b552601f932a9491f22c79bd4bdf33a1e27232fd014a4789ff01efcd5bc58a"
+        },
+        {
+          "alt": "图 5-9 融合边界与中间读写",
+          "path": "manuscripts/ch05/figure-5-5-boundaries.svg",
+          "line": 243,
+          "exists": true,
+          "sha256": "643d128962502d9ccdfc649eeaf93f695c3d31e07a89b0eeaa95452bbcd146a0"
+        },
+        {
+          "alt": "图 5-10 两个缓冲槽的交替使用",
+          "path": "manuscripts/ch05/figure-5-buffer-slots.svg",
+          "line": 259,
+          "exists": true,
+          "sha256": "a51a96c49037cf5a4266913e9cd3f01e29fd87cecbc86e16b9e4b7e79d29dfd5"
+        },
+        {
+          "alt": "图 5-11 同样四块数据的串行与双缓冲执行",
+          "path": "manuscripts/ch05/figure-5-6-fusion-buffer.svg",
+          "line": 267,
+          "exists": true,
+          "sha256": "a625d7c32b43f84c6fbed7f6a74f74c068262132ab7bf141da11a4315f3af6a0"
+        },
+        {
+          "alt": "图 5-12 完整中间矩阵与逐块统计量",
+          "path": "manuscripts/ch05/figure-5-attention-storage.svg",
+          "line": 289,
+          "exists": true,
+          "sha256": "60f98285fc6b5561433f55e2999917c19530ab11df206a6a2951c5ab1b21c26f"
+        },
+        {
+          "alt": "图 5-13 在线 Softmax 如何合并两个块",
+          "path": "manuscripts/ch05/figure-5-7-online-softmax.svg",
+          "line": 299,
+          "exists": true,
+          "sha256": "9063e430f3cd654fcdec2f096cd2010b02c4dbf8e2c3f26b8d74cc4ca65736fb"
+        },
+        {
+          "alt": "图 5-14 注意力块大小在访问量与更新次数之间的取舍",
+          "path": "manuscripts/ch05/figure-5-8-attention-tradeoff.svg",
+          "line": 335,
+          "exists": true,
+          "sha256": "15221e55954916fd04ce494ba759a06b88632357c723871e810139efd70afc0e"
+        },
+        {
+          "alt": "图 5-15 循环层级决定临时数据的保存时间",
+          "path": "manuscripts/ch05/figure-5-9-polyhedral.svg",
+          "line": 402,
+          "exists": true,
+          "sha256": "80f4989eb98390ffd42e25d310d31c9db548909213c733a56a4c607e6bf5aab6"
+        },
+        {
+          "alt": "图 5-16 保存量化结果如何减少后续读取",
+          "path": "manuscripts/ch05/figure-5-10-quantization.svg",
+          "line": 448,
+          "exists": true,
+          "sha256": "3b52b39e4f45cbbb34d9e20d683e15e5b5ed560f3835975a2425a679d82bfc9a"
+        },
+        {
+          "alt": "图 5-17 调用比例与平均执行时间",
+          "path": "manuscripts/ch05/figure-5-11-feedback.svg",
+          "line": 474,
+          "exists": true,
+          "sha256": "90d4d679c8e30938824c4589aa9c336f46c9af20799d7eb5d0f64acbe64451c7"
+        },
+        {
+          "alt": "图 5-18 主机提交与设备执行的对应关系",
+          "path": "manuscripts/ch05/figure-5-12-runtime.svg",
+          "line": 502,
+          "exists": true,
+          "sha256": "a84e049cd22eeccd511b64c59ffc3ec998dbdfd90d8918ae08b84f974a629d32"
+        },
+        {
+          "alt": "图 5-19 图重放的固定收益与输入复制时间",
+          "path": "manuscripts/ch05/figure-5-13-graph-copy.svg",
+          "line": 514,
+          "exists": true,
+          "sha256": "acfd47aea1fd1631f40d3a4daf2c66a4746d12eb24eeca874548ef46f11b57bd"
+        },
+        {
+          "alt": "图 5-20 准备成本与累计执行时间",
+          "path": "manuscripts/ch05/figure-5-14-specialization.svg",
+          "line": 544,
+          "exists": true,
+          "sha256": "e5f83f7c0349d847db1c70a1ce1dc4949f7428764796c86501ccd517367c52d4"
+        },
+        {
+          "alt": "图 5-21 从等待全部投影到逐块开始激活",
+          "path": "manuscripts/ch05/figure-5-15-persistent.svg",
+          "line": 566,
+          "exists": true,
+          "sha256": "ca97eb6e63b0893caad5d07c22b6ac2a97a58263a8f1f49e29e78457f0635927"
+        },
+        {
+          "alt": "图 5-22 局部加速引起关键路径切换",
+          "path": "manuscripts/ch05/figure-5-16-critical-path.svg",
+          "line": 600,
+          "exists": true,
+          "sha256": "659cdf5fe2ac3d12d1de22c9f94840d4ba0ceb00bcc2128c10d7a21d20c8c3e0"
+        },
+        {
+          "alt": "图 5-23 完整请求的逐轮配对时间差",
+          "path": "manuscripts/ch05/figure-5-17-request.svg",
+          "line": 625,
+          "exists": true,
+          "sha256": "0f7f50acac0edfe436b957a86b1a971e3881783ed5c2a5ae04d1009a94cd9404"
+        }
+      ],
+      "headings": [
+        "## 5.1 一次设备执行：提交、搬运与同步",
+        "### 5.1.1 从框架调用到 kernel launch",
+        "### 5.1.2 数据在哪里：H2D、D2H 与 D2D",
+        "### 5.1.3 stream、event 与完成顺序",
+        "### 5.1.4 从提交时间到结果可用时间",
+        "## 5.2 单算子：分块、布局与实际访存",
+        "### 5.2.1 矩阵形状与重复读取",
+        "### 5.2.2 容量约束下的分块复用",
+        "### 5.2.3 布局与归约的并行代价",
+        "## 5.3 算子链：融合、缓冲与流水",
+        "### 5.3.1 中间张量与融合边界",
+        "### 5.3.2 布局转换、缓冲复用与双缓冲",
+        "### 5.3.3 FlashAttention：分块与在线 Softmax",
+        "## 5.4 编译器：表达、变换与选择",
+        "### 5.4.1 为什么要比较多种实现",
+        "### 5.4.2 用循环变换表达分块与融合",
+        "### 5.4.3 依赖与舍入怎样限制变换",
+        "### 5.4.4 AKG：用多面体编译组织循环与存储",
+        "### 5.4.5 成本估计与实测选择",
+        "## 5.5 运行时：提交、重放与动态形状",
+        "### 5.5.1 主机准备与设备计算的重叠",
+        "### 5.5.2 CUDA Graph：提交收益与输入复制开销",
+        "### 5.5.3 动态形状、分桶与特化摊销",
+        "### 5.5.4 Persistent Kernel：按数据块调度任务",
+        "## 5.6 从局部优化到完整请求",
+        "### 5.6.1 热点占比决定加速空间",
+        "### 5.6.2 并行分支与关键路径切换",
+        "### 5.6.3 综合案例：一次 Qwen3 请求的优化选择",
+        "## 本章小结",
+        "## 常见误区",
+        "## 习题与配套实验",
+        "## 历史与进一步阅读",
+        "## 注释与资料"
+      ]
+    },
+    {
+      "file": "manuscripts/06-超节点.md",
+      "title": "# 第 6 章 超节点",
+      "lines": 748,
+      "characters": 38821,
+      "sha256": "0d9b3219cad18a73449458f0e4039c38aacef2dcd852864c4a80d834af9d439c",
+      "figures": [
+        {
+          "alt": "八张卡上的实例分组",
+          "path": "manuscripts/ch06/figure-6-1-placement.svg",
+          "line": 15,
+          "exists": true,
+          "sha256": "5e1a39992fce75d313aaf45b04f8f767aa6c236acedd217cf76382d56d6e14cb"
+        },
+        {
+          "alt": "模型分片与每卡内存占用",
+          "path": "manuscripts/ch06/figure-6-2-capacity.svg",
+          "line": 52,
+          "exists": true,
+          "sha256": "ca00a2630ddf4e4702099e28e880c4763d31ecd4e05dc0903b33264c1bf16cde"
+        },
+        {
+          "alt": "TP 的切分方向与输出部分和",
+          "path": "manuscripts/ch06/figure-6-3-tp.svg",
+          "line": 123,
+          "exists": true,
+          "sha256": "2451689962398c8b3678481940ab17cdfc47580ee98301a4b46741723a6a77a6"
+        },
+        {
+          "alt": "四阶段流水的填充与排空",
+          "path": "manuscripts/ch06/figure-6-4-pipeline.svg",
+          "line": 177,
+          "exists": true,
+          "sha256": "86593da94588f24f2e97eee4ca11fc36d4499afb41ea12344fa49bd0052d26f0"
+        },
+        {
+          "alt": "token 派发和专家结果合并",
+          "path": "manuscripts/ch06/figure-6-5-dispatch.svg",
+          "line": 224,
+          "exists": true,
+          "sha256": "f35895a8b86d4055ab2b0d7eea45206c7fff5cc6376e35c11053674e2f69ecee"
+        },
+        {
+          "alt": "TP 与 EP 的分组及归约方向",
+          "path": "manuscripts/ch06/figure-6-6-ep-layout.svg",
+          "line": 241,
+          "exists": true,
+          "sha256": "09b31742c416ecd847f8d382673b6e116e60a33b4c2dc38808b70002858034d5"
+        },
+        {
+          "alt": "批内专家复用与权重读取",
+          "path": "manuscripts/ch06/figure-6-7-reuse.svg",
+          "line": 265,
+          "exists": true,
+          "sha256": "15c6a2e4d1b1d9097e141f4ba1b05fc49f705155a69c448bdab93c907dfc6264"
+        },
+        {
+          "alt": "专家复用与设备负载分布",
+          "path": "manuscripts/ch06/figure-6-8-expert-load.svg",
+          "line": 273,
+          "exists": true,
+          "sha256": "f7cc71cbbc4fd5ea7d8c7d45e026ec7c39050cbd02615c2cf4939912c9272165"
+        },
+        {
+          "alt": "环形归约的逐轮状态",
+          "path": "manuscripts/ch06/figure-6-9-ring-rounds.svg",
+          "line": 338,
+          "exists": true,
+          "sha256": "b8f204bf40ea445d750eb38df1b9a80d8827e5fafebe464821e5112982c94247"
+        },
+        {
+          "alt": "增加 TP 卡数时各项时间的变化",
+          "path": "manuscripts/ch06/figure-6-10-tp-time.svg",
+          "line": 363,
+          "exists": true,
+          "sha256": "269e9d085b1a899ae254ebfda185dc7242f5026598308503a1fb154260bf3c5c"
+        },
+        {
+          "alt": "消息大小与环树选择",
+          "path": "manuscripts/ch06/figure-6-11-collectives.svg",
+          "line": 379,
+          "exists": true,
+          "sha256": "6f6496f67016499cccc91679edab05821f949aeed88485246ee40ec8882b2c07"
+        },
+        {
+          "alt": "并发时的资源竞争与完成时间",
+          "path": "manuscripts/ch06/figure-6-12-resources.svg",
+          "line": 406,
+          "exists": true,
+          "sha256": "a29a70f3229748d884015205d6b634a533490d826d1c6bc7b6f844e4f4ad1fa4"
+        },
+        {
+          "alt": "下联与上联端口分配",
+          "path": "manuscripts/ch06/figure-6-13-ports.svg",
+          "line": 457,
+          "exists": true,
+          "sha256": "a9b9f3cb66777500278bc0f027b6093396e1923e6554e4701341d765234575ad"
+        },
+        {
+          "alt": "相同发送量与不同物理路径",
+          "path": "manuscripts/ch06/figure-6-14-topology.svg",
+          "line": 473,
+          "exists": true,
+          "sha256": "52fc089e179be32e4ec63f556db949cc1bec3d2e41f58a6ce02e8018051f6626"
+        },
+        {
+          "alt": "三维环面网络的二分链路",
+          "path": "manuscripts/ch06/figure-6-15-torus.svg",
+          "line": 535,
+          "exists": true,
+          "sha256": "f226b412286883e6f9631d678b14acbf1c967e4d2bf44f69c7b17b353ae8221f"
+        },
+        {
+          "alt": "三种系统的连接组织",
+          "path": "manuscripts/ch06/figure-6-16-systems.svg",
+          "line": 551,
+          "exists": true,
+          "sha256": "67095efbc524a0f1d6660dcc2a70a9cf81a54b174ba58213a43c72c7fafaf9e1"
+        },
+        {
+          "alt": "借用前后的物理内存位置",
+          "path": "manuscripts/ch06/figure-6-17-pool-placement.svg",
+          "line": 579,
+          "exists": true,
+          "sha256": "be986b6353ffcf50ce538bcad622c21ec8d0ede7761670dcb30273d81b6e8be3"
+        },
+        {
+          "alt": "远端读取中的在途事务",
+          "path": "manuscripts/ch06/figure-6-18-read-window.svg",
+          "line": 591,
+          "exists": true,
+          "sha256": "e91b5ec7328e00acbc4a5d29a40f8132015e607ac66be1dbc0f268cfce292199"
+        },
+        {
+          "alt": "访问频率与带宽需求",
+          "path": "manuscripts/ch06/figure-6-19-memory-pool.svg",
+          "line": 614,
+          "exists": true,
+          "sha256": "1335bc91272a90ed9cdc68a2432dd30bd891c663e09a52dbd38640c253154bdd"
+        },
+        {
+          "alt": "实例数量与四会话的完成顺序",
+          "path": "manuscripts/ch06/figure-6-20-session-schedule.svg",
+          "line": 649,
+          "exists": true,
+          "sha256": "74b6cb8bb3af1c4161efd707b1f9ab600c7abb322f5e57816c6df04736104de9"
+        },
+        {
+          "alt": "期限、故障与按时完成会话的平均成本",
+          "path": "manuscripts/ch06/figure-6-21-scale-cost.svg",
+          "line": 681,
+          "exists": true,
+          "sha256": "2f5a134f05295abf92b156c199a59b521b3797e23e9534eb25e92b8c6a33654e"
+        }
+      ],
+      "headings": [
+        "## 6.1 从单卡到多卡：需求与资源边界",
+        "### 6.1.1 同样八张卡：独立部署还是多卡协作",
+        "### 6.1.2 每卡内存需求与单步执行时间",
+        "### 6.1.3 Prefill、Decode 与训练为什么提出不同要求",
+        "## 6.2 Dense 的多卡执行：数据并行、TP 与 PP",
+        "### 6.2.1 Qwen3-8B 的多实例推理与训练数据并行",
+        "### 6.2.2 张量并行与层内数据交换",
+        "### 6.2.3 流水线并行与组合方案",
+        "## 6.3 MoE 的多卡执行：专家放置、复用与负载",
+        "### 6.3.1 专家权重与注意力状态怎样放到多张卡",
+        "### 6.3.2 Token 怎样到达专家：EP 与 dispatch／combine",
+        "### 6.3.3 批内复用与负载不均：为什么要看负载最重的卡",
+        "### 6.3.4 从数千亿到万亿参数：并行组合怎样变化",
+        "## 6.4 集合通信的实现与执行代价",
+        "### 6.4.1 从并行切分汇总通信需求",
+        "### 6.4.2 环、树与通信轮次",
+        "### 6.4.3 通信库与计算的资源竞争",
+        "### 6.4.4 通信融合、设备发起与专用卸载",
+        "## 6.5 超节点的物理组织：拓扑、介质与系统实例",
+        "### 6.5.1 直连、交换与分层拓扑",
+        "### 6.5.2 互联介质、供电与物理规模",
+        "### 6.5.3 NVIDIA：从八卡服务器到机柜",
+        "### 6.5.4 TPU：拓扑与负载协同",
+        "### 6.5.5 Unified Bus 与 CloudMatrix",
+        "## 6.6 内存池：共享容量与远端访问",
+        "### 6.6.1 局部容量不足与全局空闲",
+        "### 6.6.2 内存借用与访问边界",
+        "### 6.6.3 共享容量与 KV cache",
+        "## 6.7 从并行方案到超节点规模",
+        "### 6.7.1 更大的协作组与更多推理实例",
+        "### 6.7.2 功率、成本与故障范围怎样改变选择",
+        "### 6.7.3 从执行模型到跨超节点设计",
+        "## 本章小结",
+        "## 注释与资料"
+      ]
+    },
+    {
+      "file": "manuscripts/07-数据中心网络.md",
+      "title": "# 第 7 章 数据中心网络",
+      "lines": 660,
+      "characters": 36030,
+      "sha256": "ebd6aaf7b26e76eea092759b931d900b1626d310f406ff1728701c85ff619a49",
+      "figures": [
+        {
+          "alt": "八个参与者的分布与服务器边界",
+          "path": "manuscripts/ch07/figure-7-1-boundaries.svg",
+          "line": 23,
+          "exists": true,
+          "sha256": "bc5c6495f26c2f2cf6e5d93a03b02f3e197ace6d8550199b637d107396bd2dd8"
+        },
+        {
+          "alt": "设备扩展与固定通信需求",
+          "path": "manuscripts/ch07/figure-7-2-cut.svg",
+          "line": 58,
+          "exists": true,
+          "sha256": "a304a99857cfa5718daa88ab4d6771f30fdb5548351efc445d761fe8b294fc4d"
+        },
+        {
+          "alt": "归约路径与跨服务器流量",
+          "path": "manuscripts/ch07/figure-7-3-hierarchy.svg",
+          "line": 102,
+          "exists": true,
+          "sha256": "e7b2782be8c8108e8787d75d75a4d72f19d62fe0d93ff5af3b4666f3e77f1efe"
+        },
+        {
+          "alt": "四阶段流水线中的计算与空闲",
+          "path": "manuscripts/ch07/figure-7-4-pipeline.svg",
+          "line": 148,
+          "exists": true,
+          "sha256": "ccd7a48fa29eded6cdd3ccc91708754a1d8dc35af9b7e6eb7b00a7993d4db50a"
+        },
+        {
+          "alt": "专家分派在独立入口与共享入口上的传输",
+          "path": "manuscripts/ch07/figure-7-5-expert.svg",
+          "line": 171,
+          "exists": true,
+          "sha256": "2bf53b1a5d75d7d63c57e5627f7ae32871fce4f5d3b9283ac8614f6f48811ff4"
+        },
+        {
+          "alt": "直接网卡与相邻网卡中继的带宽限制",
+          "path": "manuscripts/ch07/figure-7-6-relay.svg",
+          "line": 189,
+          "exists": true,
+          "sha256": "3d111edd595680913807f111af9e511b40bfee8d8c2efc21a07a8dd8482c6bcf"
+        },
+        {
+          "alt": "通信发起位置与数据通路",
+          "path": "manuscripts/ch07/figure-7-7-access.svg",
+          "line": 231,
+          "exists": true,
+          "sha256": "ad238dfaf487ffa04b790f9389fb2085825a11bc28d2b196ed39644375a0ec25"
+        },
+        {
+          "alt": "按需远读与搬回本地的复用交点",
+          "path": "manuscripts/ch07/figure-7-8-snapshot.svg",
+          "line": 258,
+          "exists": true,
+          "sha256": "968f2a949adc3b9afbbb99c0b0bff90dedd0880dad633c1605d73b40c6e070a2"
+        },
+        {
+          "alt": "请求槽位不足造成的链路空闲",
+          "path": "manuscripts/ch07/figure-7-9-window.svg",
+          "line": 280,
+          "exists": true,
+          "sha256": "9ae482de35ac685d9f298afda4841b703764691154579a12818591de593a852a"
+        },
+        {
+          "alt": "源缓冲和目的缓冲的不同复用时刻",
+          "path": "manuscripts/ch07/figure-7-10-lifetime.svg",
+          "line": 315,
+          "exists": true,
+          "sha256": "cdf45831968f3c05e98f08495b1a76543672c7ba0eb4bc256a5cab38a5c562d5"
+        },
+        {
+          "alt": "应用关系与共享传输状态",
+          "path": "manuscripts/ch07/figure-7-11-state.svg",
+          "line": 340,
+          "exists": true,
+          "sha256": "540a9ed4459365d9b180b7d48d877e8d24c2c51aa9491c6c91e18b9bd9c633fc"
+        },
+        {
+          "alt": "必要依赖与独立操作的完成时间",
+          "path": "manuscripts/ch07/figure-7-12-ordering.svg",
+          "line": 366,
+          "exists": true,
+          "sha256": "0a1dd0b56c9f270ad02c79c448316d3f8f842ae2163297ae1549a96741357bef"
+        },
+        {
+          "alt": "实际读取时刻与按序返回的区别",
+          "path": "manuscripts/ch07/figure-7-13-stale.svg",
+          "line": 380,
+          "exists": true,
+          "sha256": "4d298527f5b92228d59a1cb0f2896e0775530da571c74d6444fc80dac2d9e4f8"
+        },
+        {
+          "alt": "传输完成后仍被占用的请求槽位",
+          "path": "manuscripts/ch07/figure-7-14-reclaim.svg",
+          "line": 394,
+          "exists": true,
+          "sha256": "18c62a7f775d249a72aa401522c34808d88e9cc837f9936e6a1f3f1322ea6516"
+        },
+        {
+          "alt": "通信高峰与积压",
+          "path": "manuscripts/ch07/figure-7-15-congestion.svg",
+          "line": 430,
+          "exists": true,
+          "sha256": "a127c7b558baa08522cabde3b0fae82dc421f6e959f09561dc4b71ad879294c1"
+        },
+        {
+          "alt": "有限缓冲的填满与反馈后的排空",
+          "path": "manuscripts/ch07/figure-7-16-feedback.svg",
+          "line": 462,
+          "exists": true,
+          "sha256": "da04c7133dca3af6f72329043219fb68e7b4d9f8f7c7ed2c3270fa0754279cde"
+        },
+        {
+          "alt": "多路径报文到达与等待缺口",
+          "path": "manuscripts/ch07/figure-7-17-packets.svg",
+          "line": 480,
+          "exists": true,
+          "sha256": "bee7ba26621c4f7e0b7da0914bf69a8e76105a7eb0ff44957cb4cc302ec97226"
+        },
+        {
+          "alt": "循环资源依赖与响应通路",
+          "path": "manuscripts/ch07/figure-7-18-deadlock.svg",
+          "line": 500,
+          "exists": true,
+          "sha256": "b5970438df5e6b08ac1f673fcdd91b808ee2206d40258fdba1364e5918166744"
+        },
+        {
+          "alt": "就绪与交换的关键路径",
+          "path": "manuscripts/ch07/figure-7-19-progress.svg",
+          "line": 518,
+          "exists": true,
+          "sha256": "7cf9fd6fdd1f2b636ee04af3c434780512d6f09b06e29ff1149d63244c5901bf"
+        },
+        {
+          "alt": "通信优化如何改变训练步的关键路径",
+          "path": "manuscripts/ch07/figure-7-20-step.svg",
+          "line": 548,
+          "exists": true,
+          "sha256": "605b2e4171985c9d145408597fb5c3e497f0e055ba3cff899e06cd1eedafb65c"
+        },
+        {
+          "alt": "小消息启动开销与大消息传输开销",
+          "path": "manuscripts/ch07/figure-7-21-message.svg",
+          "line": 568,
+          "exists": true,
+          "sha256": "60d5e68eb7a5010a774450d7354c5aa9c625538493d5535dfb027ae89fa6c105"
+        }
+      ],
+      "headings": [
+        "## 7.1 从超节点走向集群",
+        "### 7.1.1 从容量需求到协作问题",
+        "### 7.1.2 流量与资源模型：沿数据传输路径计算耗时",
+        "### 7.1.3 统一互联：将访问与协作扩展到更大范围",
+        "## 7.2 跨节点流量与物理路径",
+        "### 7.2.1 数据并行：从归约算法推到跨服务器流量",
+        "### 7.2.2 TP 与 PP：把频繁协作放在哪里",
+        "### 7.2.3 专家并行：总字节与最忙端点",
+        "### 7.2.4 多网卡：增加出口还是绕开瓶颈",
+        "## 7.3 远程访问的路径与并发",
+        "### 7.3.1 数据传输与完成通知",
+        "### 7.3.2 由产生数据的设备直接发起通信",
+        "### 7.3.3 指令与异步请求：由谁管理未完成的请求",
+        "### 7.3.4 并发与吞吐模型：怎样充分利用 40 GB/s 出口",
+        "## 7.4 数据交接、顺序与状态管理",
+        "### 7.4.1 一份分片从产生到复用",
+        "### 7.4.2 应用端点与传输状态：共享哪一部分",
+        "### 7.4.3 必要顺序：把故障等待留在依赖链内",
+        "### 7.4.4 回收与背压：及时释放请求槽位",
+        "## 7.5 共享网络中的拥塞与可靠性",
+        "### 7.5.1 从固定流量到随时间变化的需求",
+        "### 7.5.2 反馈：将缓冲空间换算成响应时间",
+        "### 7.5.3 多路径与重传：带宽、等待和接收状态",
+        "### 7.5.4 死锁：给释放资源的工作留出通路",
+        "## 7.6 从通信改进到任务完成",
+        "### 7.6.1 关键路径从数据就绪开始",
+        "### 7.6.2 完整例题：分层、并发与重叠怎样共同起作用",
+        "### 7.6.3 训练与推理：同一模型，不同主导项",
+        "### 7.6.4 部署与常见误区：用三个模型完成选择",
+        "## 本章小结",
+        "## 文献与数据说明"
+      ]
+    },
+    {
+      "file": "manuscripts/08-单实例推理.md",
+      "title": "# 第 8 章 推理优化",
+      "lines": 606,
+      "characters": 35266,
+      "sha256": "4fcbc32fe52e7238cabc8959068fd8cd5f96e44f70e6b7fb7ebbb96e8a221a7e",
+      "figures": [
+        {
+          "alt": "请求从到达到最后一个输出的时间线",
+          "path": "manuscripts/ch08/figure-8-1-lifecycle.svg",
+          "line": 36,
+          "exists": true,
+          "sha256": "763b243a3ec7211bad25e07764bc5d2ece39582eb0e0fee06080156f4ff582f8"
+        },
+        {
+          "alt": "批量增加时每个输出token分摊的权重与历史读取量",
+          "path": "manuscripts/ch08/figure-8-2-batch.svg",
+          "line": 115,
+          "exists": true,
+          "sha256": "f198af86f1e9fb4ae82e711708f4f9e30d4afe1f31695bd13bbb238cec0a9fd1"
+        },
+        {
+          "alt": "同一请求流在三种接纳策略下的时间线",
+          "path": "manuscripts/ch08/figure-8-3-scheduling.svg",
+          "line": 149,
+          "exists": true,
+          "sha256": "1227d7f056d3b83895e60b64f3d64bc272fb4ad1df94e13d5fee54804c47c851"
+        },
+        {
+          "alt": "同一块新位置访问旧历史和块内位置的范围",
+          "path": "manuscripts/ch08/figure-8-4-attention.svg",
+          "line": 170,
+          "exists": true,
+          "sha256": "c370f8b981affe32b61d08bbca92a51d76469e4d40495f6f8a34cdf1a23a57ec"
+        },
+        {
+          "alt": "整段预留分页与前缀共享的物理位置数",
+          "path": "manuscripts/ch08/figure-8-5-pages.svg",
+          "line": 208,
+          "exists": true,
+          "sha256": "e3f64d6896aaf459fda425883a3610605d6f6e73bde47efa5f43a8ef9a9e5578"
+        },
+        {
+          "alt": "多轮输入的压缩前缀树与共同前缀长度",
+          "path": "manuscripts/ch08/figure-8-6-prefix.svg",
+          "line": 250,
+          "exists": true,
+          "sha256": "ea13fb4122f80132be387d6eaaa88d074de5e2e7ded1b6a3a56d9c9f11fd5d3c"
+        },
+        {
+          "alt": "相同缓存空间保留一个大前缀或三个小前缀",
+          "path": "manuscripts/ch08/figure-8-7-cache-choice.svg",
+          "line": 278,
+          "exists": true,
+          "sha256": "210ac027d4e2900c5c1dd34830c58978d7cc3ef589dc128990002e0e523ad3ed"
+        },
+        {
+          "alt": "同一组32个值在三种KV格式中的字节布局",
+          "path": "manuscripts/ch08/figure-8-8-kv-format.svg",
+          "line": 318,
+          "exists": true,
+          "sha256": "0786e445b5471f02794dfe3b53d73b7c90b8886247715330ce48a8dcc922506f"
+        },
+        {
+          "alt": "预取缓冲如何改变新增 KV 容量",
+          "path": "manuscripts/ch08/figure-8-9-offload.svg",
+          "line": 340,
+          "exists": true,
+          "sha256": "91ac9812e0a0a5a3fb0266eb048cd1094a86c967068a2c8381a7fbe080d143b0"
+        },
+        {
+          "alt": "同一模型中 Q 精度与正确答案数",
+          "path": "manuscripts/ch08/figure-8-10-kv-quality.svg",
+          "line": 368,
+          "exists": true,
+          "sha256": "4ab04ea3295128effe9a36cf733c47a36e7dac22594ec6c68e4298eb27be1621"
+        },
+        {
+          "alt": "草稿第三个位置不匹配时的保留修正和丢弃",
+          "path": "manuscripts/ch08/figure-8-11-verification.svg",
+          "line": 390,
+          "exists": true,
+          "sha256": "95455260e773eab0e105f170090bad16940fdc2a02371cbb5332711bfef846ff"
+        },
+        {
+          "alt": "草稿查询时间与平均每个输出 token 的耗时",
+          "path": "manuscripts/ch08/figure-8-12-speculation.svg",
+          "line": 426,
+          "exists": true,
+          "sha256": "97483e1d4557e662f5b945f0f2f7289d1e2f20891588616e4d99644e7565aff9"
+        },
+        {
+          "alt": "不同到达条件下的完成与合格吞吐",
+          "path": "manuscripts/ch08/figure-8-13-service.svg",
+          "line": 498,
+          "exists": true,
+          "sha256": "38e9edc59b78b7a1947883e00cde614eb525c45d65b19466b5663e2b60f4fb59"
+        },
+        {
+          "alt": "四种配置相对于内存上限和完成时限的位置",
+          "path": "manuscripts/ch08/figure-8-14-design.svg",
+          "line": 531,
+          "exists": true,
+          "sha256": "8956628c997fcc3fd10aae9a0c7f97a98d43d9cd37a746fdfca5219ce6c638a4"
+        },
+        {
+          "alt": "局部decode加速对完整任务的影响",
+          "path": "manuscripts/ch08/figure-8-15-task.svg",
+          "line": 545,
+          "exists": true,
+          "sha256": "cac986da03bba4d0e0324676dc2aec9de75d2bd3f549517a5bf02c6250b67dab"
+        }
+      ],
+      "headings": [
+        "## 8.1 推理请求的执行过程与资源需求",
+        "### 8.1.1 执行资源与请求生命周期",
+        "### 8.1.2 权重、KV 与运行时缓冲的容量预算",
+        "### 8.1.3 从单请求时间到服务目标",
+        "## 8.2 批处理与请求调度",
+        "### 8.2.1 权重复用与批量收益",
+        "### 8.2.2 从固定批次到连续批处理",
+        "### 8.2.3 长 Prefill 干扰与分块执行",
+        "### 8.2.4 Token 预算、动态图形状与实际执行时间",
+        "## 8.3 KV 缓存的分配、复用与回收",
+        "### 8.3.1 预留、碎片与分页分配",
+        "### 8.3.2 分支共享、写时复制与取消回收",
+        "### 8.3.3 Chat 与 Agent 的前缀复用",
+        "### 8.3.4 缓存准入、淘汰、换出与重计算",
+        "## 8.4 压缩与卸载：内存占用和执行开销",
+        "### 8.4.1 权重量化与实际驻留容量",
+        "### 8.4.2 KV 压缩与读取成本",
+        "### 8.4.3 权重卸载、预取与每步搬移",
+        "### 8.4.4 质量约束下的容量与速度选择",
+        "## 8.5 推测解码：用额外计算减少生成轮数",
+        "### 8.5.1 草稿、验证、回退与正确性",
+        "### 8.5.2 每轮耗时与输出数量",
+        "### 8.5.3 草稿来源与串行、并行起草",
+        "### 8.5.4 块长、动态预算与并发竞争",
+        "## 8.6 请求负载下的性能与配置选择",
+        "### 8.6.1 到达率、排队、准入与取消",
+        "### 8.6.2 质量与 SLO 约束下的有效吞吐",
+        "### 8.6.3 配置、设备与完整任务成本",
+        "## 本章小结",
+        "## 历史与延伸阅读",
+        "## 参考文献与资料说明"
+      ]
+    },
+    {
+      "file": "manuscripts/09-分布式推理.md",
+      "title": "# 第 9 章 分布式推理",
+      "lines": 564,
+      "characters": 34415,
+      "sha256": "897f4d4c3dcf32272cabbcea6d0690fafdff023b810461b3bd510c6ba2dc4281",
+      "figures": [
+        {
+          "alt": "多卡协作完整副本和计算分工",
+          "path": "manuscripts/ch09/figure-9-1-organization.svg",
+          "line": 19,
+          "exists": true,
+          "sha256": "a6c5fda46b20613566335f7c36590118158cfcecbc51c288b5c29714a3049202"
+        },
+        {
+          "alt": "请求阶段、实例分工与状态寿命",
+          "path": "manuscripts/ch09/figure-9-2-state.svg",
+          "line": 60,
+          "exists": true,
+          "sha256": "5c92c0072ad9dae2254a9d48b11d2ce4a4f67486cbc16bb595b50880a9c0bc5b"
+        },
+        {
+          "alt": "阶段配比与请求率",
+          "path": "manuscripts/ch09/figure-9-3-pd.svg",
+          "line": 132,
+          "exists": true,
+          "sha256": "fdef643d6b62fa8d123037beb0191c4acc15d95e0644eb8fcddd0fe0a715e8c1"
+        },
+        {
+          "alt": "不同请求下八个执行单元的分工",
+          "path": "manuscripts/ch09/figure-9-4-allocation.svg",
+          "line": 148,
+          "exists": true,
+          "sha256": "b788ec4831609cadd2406f4b1b62e8b2fe3e729c5108958b0f4f82db9f737a61"
+        },
+        {
+          "alt": "专家权重搬运与CPU就地计算",
+          "path": "manuscripts/ch09/figure-9-5-local.svg",
+          "line": 166,
+          "exists": true,
+          "sha256": "8004dba0d852789734e67993f4fde529c619c1b98d68b019f45349f2c98de4ea"
+        },
+        {
+          "alt": "专家复用与执行位置边界",
+          "path": "manuscripts/ch09/figure-9-6-reuse.svg",
+          "line": 196,
+          "exists": true,
+          "sha256": "20577886a978a550c3e383f981ee9560a0229c1d8a19ce8040bea01a942580cc"
+        },
+        {
+          "alt": "同样分派次数下的专家数与输入行数",
+          "path": "manuscripts/ch09/figure-9-7-footprint.svg",
+          "line": 210,
+          "exists": true,
+          "sha256": "a336c1a2e3085b938abe3106449f736572cf0dcc17fa5fe345e0e891368174d6"
+        },
+        {
+          "alt": "消息数量与启动开销",
+          "path": "manuscripts/ch09/figure-9-8-handoff.svg",
+          "line": 236,
+          "exists": true,
+          "sha256": "6c886ce564041b81806dbfb3098c1e0d1ec848a7bf1579c50d3bff964bc8219d"
+        },
+        {
+          "alt": "八张卡的任务分布与结果合并时刻",
+          "path": "manuscripts/ch09/figure-9-9-balance.svg",
+          "line": 253,
+          "exists": true,
+          "sha256": "9e7ba202cf14bb1e3dbcd6c35ff36c04b5ce05e2c5cb1015dfec9219978fc9ff"
+        },
+        {
+          "alt": "专家副本的准备与回本",
+          "path": "manuscripts/ch09/figure-9-10-experts.svg",
+          "line": 276,
+          "exists": true,
+          "sha256": "f1fe4494945f6d7f28adfb1adda3fc8ac6bd5cea8fafa450fdafb1a7f2e21f40"
+        },
+        {
+          "alt": "专家分派计算与结果合并的流水时间线",
+          "path": "manuscripts/ch09/figure-9-11-overlap.svg",
+          "line": 288,
+          "exists": true,
+          "sha256": "2716140d2e8c3c5da8dc84a1e0849fdd308f4bdaa47df70aabe57a4a6c401cd3"
+        },
+        {
+          "alt": "读取页与可复用连续前缀",
+          "path": "manuscripts/ch09/figure-9-12-cache.svg",
+          "line": 332,
+          "exists": true,
+          "sha256": "670656c41097a340ef8e7572e2188930026d0763aa085fea41fb5fad6884caa1"
+        },
+        {
+          "alt": "缓存路由中排队取回与计算的时间关系",
+          "path": "manuscripts/ch09/figure-9-13-route.svg",
+          "line": 357,
+          "exists": true,
+          "sha256": "ee5774111b7a1e0e34e7078c097ad896592d6daaf887c000c602fe17dfa9db7a"
+        },
+        {
+          "alt": "状态生成与后台复制的进度",
+          "path": "manuscripts/ch09/figure-9-14-migration.svg",
+          "line": 401,
+          "exists": true,
+          "sha256": "6f38db1ada193d982c5ab3404d6f360577fb0fe3cc00651e302c7b7d5c4da9bc"
+        },
+        {
+          "alt": "输出记录与KV检查点的恢复位置",
+          "path": "manuscripts/ch09/figure-9-15-recovery.svg",
+          "line": 419,
+          "exists": true,
+          "sha256": "57ca5ffc45f56bf7534e9c3b0e0dbfa3cdad3441383c6d1ff3e29df64c93bf05"
+        },
+        {
+          "alt": "直接交接与共享池中转",
+          "path": "manuscripts/ch09/figure-9-16-composition.svg",
+          "line": 435,
+          "exists": true,
+          "sha256": "4cba0b7908e0ef7c4f080891c13789b7674b51eeb32bd19ef2e67a12dfee04e6"
+        },
+        {
+          "alt": "服务能力与启动积压消退",
+          "path": "manuscripts/ch09/figure-9-17-service.svg",
+          "line": 473,
+          "exists": true,
+          "sha256": "301f41791ceb799c9a1bd0a3fa63dfeba505f1a4adb9887c36e3f49e07718b4e"
+        }
+      ],
+      "headings": [
+        "## 9.1 计算与状态的分布方式",
+        "### 9.1.1 设备、推理实例与服务副本",
+        "### 9.1.2 计算分工与状态共享",
+        "### 9.1.3 同一请求的执行路径与状态图",
+        "## 9.2 Prefill–Decode 分离与资源配比",
+        "### 9.2.1 Prefill 与 Decode 的干扰及分离动机",
+        "### 9.2.2 KV 交接路径与双端驻留",
+        "### 9.2.3 阶段能力、设备选择与池配比",
+        "### 9.2.4 不同请求与负载下的收益边界",
+        "## 9.3 Attention–FFN 分离与异构执行",
+        "### 9.3.1 Attention、FFN 与专家的执行边界",
+        "### 9.3.2 CPU／GPU 协作：搬权重还是搬激活",
+        "### 9.3.3 容量、并发与专家复用的服务边界",
+        "### 9.3.4 跨机 AF、微批流水及与 PD 的比较",
+        "## 9.4 专家放置、复制与负载均衡",
+        "### 9.4.1 路由倾斜与最忙设备",
+        "### 9.4.2 专家副本、放置与动态调整",
+        "### 9.4.3 Dispatch、计算与 Combine 的重叠",
+        "## 9.5 KV 的分布、共享与请求路由",
+        "### 9.5.1 缓存标识、共享范围与可用状态",
+        "### 9.5.2 多级存储：取回、驻留还是重算",
+        "### 9.5.3 持久化、检查点与部分重算",
+        "### 9.5.4 缓存亲和性与完成时间路由",
+        "## 9.6 服务启动、扩缩容与故障恢复",
+        "### 9.6.1 启动、预热与准备成本的摊销",
+        "### 9.6.2 运行中重配置与状态交接",
+        "### 9.6.3 部分故障与流式生成恢复",
+        "## 9.7 部署方案的综合比较",
+        "### 9.7.1 组合副本、PD、AF 与共享 KV",
+        "### 9.7.2 同质量、同资源约束下的方案比较",
+        "### 9.7.3 负载变化后的部署调整",
+        "## 练习",
+        "## 资料与注释"
+      ]
+    },
+    {
+      "file": "manuscripts/10-训练系统.md",
+      "title": "# 第 10 章 训练系统",
+      "lines": 646,
+      "characters": 34539,
+      "sha256": "5849c09f7904e2e394cd41a41d7b45af1f2c256f2e1a57aa69c3019d641def75",
+      "figures": [
+        {
+          "alt": "训练状态与推理权重的容量比较",
+          "path": "manuscripts/ch10/figure-10-1-state.svg",
+          "line": 44,
+          "exists": true,
+          "sha256": "7a02fb07b747d6b3437629d17b692eafb574469b8c490568db71fa2db2c09b4f"
+        },
+        {
+          "alt": "容量下界与不同效率下的计算设备数",
+          "path": "manuscripts/ch10/figure-10-2-budget.svg",
+          "line": 71,
+          "exists": true,
+          "sha256": "e75c393031379c76892547a280107e4c8bba6af29f91e53feadc22dd4f491618"
+        },
+        {
+          "alt": "参数分片与执行时的完整参数缓冲区",
+          "path": "manuscripts/ch10/figure-10-3-sharding.svg",
+          "line": 107,
+          "exists": true,
+          "sha256": "bdf68707fe7a9a7150f4642310839edadcc090020a7a86af75367577d5434e9f"
+        },
+        {
+          "alt": "保存乘积与反向前重建乘积的时间对比",
+          "path": "manuscripts/ch10/figure-10-4-recompute.svg",
+          "line": 127,
+          "exists": true,
+          "sha256": "3dae1a9f9ef4c2a4de6e4a40fff2e42825348b77129afc475a5c1f6585f47152"
+        },
+        {
+          "alt": "CPU 与 GPU 转换梯度时的传输路径",
+          "path": "manuscripts/ch10/figure-10-5-casting.svg",
+          "line": 153,
+          "exists": true,
+          "sha256": "d53b9b35dc2255ab51556460f49afb8fd4b0ef0bc98b528c6a245a8b96708dde"
+        },
+        {
+          "alt": "分片参与者数与每卡容量",
+          "path": "manuscripts/ch10/figure-10-6-candidates.svg",
+          "line": 185,
+          "exists": true,
+          "sha256": "6aeea30594bcb427829d53254c667a743128f5143e3ef2f946219e10613bb516"
+        },
+        {
+          "alt": "两种流水的依赖等待与激活保存",
+          "path": "manuscripts/ch10/figure-10-7-pipeline.svg",
+          "line": 234,
+          "exists": true,
+          "sha256": "e654084fe4af5e7318cf31db738631e110b103b52b148e22062b410f86b38668"
+        },
+        {
+          "alt": "链路占用怎样使归约延迟到计算结束之后",
+          "path": "manuscripts/ch10/figure-10-8-overlap.svg",
+          "line": 246,
+          "exists": true,
+          "sha256": "7f0b1c482902a1e53eafbfe38ee9a950f9954743c02e3e98840fe5a3e9f0ff86"
+        },
+        {
+          "alt": "等长与不等长序列的因果注意力面积",
+          "path": "manuscripts/ch10/figure-10-9-attention-area.svg",
+          "line": 272,
+          "exists": true,
+          "sha256": "d37b714f2f705992ae09831640779b548b130383dc25536ba4496396031a2506"
+        },
+        {
+          "alt": "预取进度与已经完成的训练进度",
+          "path": "manuscripts/ch10/figure-10-10-input-queue.svg",
+          "line": 292,
+          "exists": true,
+          "sha256": "55ae3fcd6c490c7f1b9fd23c88208b29da729894e865ec9ad0911138e14ba104"
+        },
+        {
+          "alt": "从四份权重分片恢复为八份分片",
+          "path": "manuscripts/ch10/figure-10-11-resharding.svg",
+          "line": 308,
+          "exists": true,
+          "sha256": "b2d2112aec902ee043852fa6749f188d8b420029c2a45625a24b9b0a06e12abd"
+        },
+        {
+          "alt": "写带宽与故障时可用恢复点",
+          "path": "manuscripts/ch10/figure-10-12-recovery.svg",
+          "line": 328,
+          "exists": true,
+          "sha256": "d9cf1ae1bbb1d240bb0d931e0e3d4dc6aceba563ae48b8edb7fd51454fa2a69a"
+        },
+        {
+          "alt": "保存间隔对保存成本与故障重做成本的相反影响",
+          "path": "manuscripts/ch10/figure-10-13-save-interval.svg",
+          "line": 355,
+          "exists": true,
+          "sha256": "e9f6055ca12e6f10cb584e76a73dbf0fb36629018fcf2340e764970d5e3b9035"
+        },
+        {
+          "alt": "生成验证学习的处理瓶颈与权重反馈",
+          "path": "manuscripts/ch10/figure-10-14-rl-flow.svg",
+          "line": 395,
+          "exists": true,
+          "sha256": "5b2783dba7f41770c35939eca6d385d7d6ac718929ebe515091edaa1347d8555"
+        },
+        {
+          "alt": "权重同步次序与显存峰值",
+          "path": "manuscripts/ch10/figure-10-15-rl.svg",
+          "line": 407,
+          "exists": true,
+          "sha256": "dfac3a9d8a2df779b2b230bc2065edf724c497a9cdd29513da7683ff9a8bf2f5"
+        },
+        {
+          "alt": "同步等待与跨批次异步执行的时间对比",
+          "path": "manuscripts/ch10/figure-10-16-async-cycle.svg",
+          "line": 431,
+          "exists": true,
+          "sha256": "e93e1bf4fe4729ba498a7813fa5cbb0ff6dac5119b745309bf05bc8c588f7d8e"
+        },
+        {
+          "alt": "重放离散选择与重算当前数值",
+          "path": "manuscripts/ch10/figure-10-17-replay.svg",
+          "line": 455,
+          "exists": true,
+          "sha256": "afe426c515da49a9eb15fba212de71d84f80636d6c4cd6b02ad3dd8a29a6295b"
+        },
+        {
+          "alt": "32卡与48卡方案的完成时间分解",
+          "path": "manuscripts/ch10/figure-10-18-deadline.svg",
+          "line": 497,
+          "exists": true,
+          "sha256": "018ac9702ec92885dd0907d521805fa30b7f97dfa0ffc686509d2d58893622eb"
+        },
+        {
+          "alt": "通信带宽变化对每步耗时的影响",
+          "path": "manuscripts/ch10/figure-10-19-hardware.svg",
+          "line": 531,
+          "exists": true,
+          "sha256": "f38e5ff3268ebb338446dbe8940c3d6171f35d2d9f3120dc76bd4c37908a8867"
+        },
+        {
+          "alt": "给定期限下模型规模与设备数边界",
+          "path": "manuscripts/ch10/figure-10-20-scale.svg",
+          "line": 549,
+          "exists": true,
+          "sha256": "5343a2ac7c46745d92156c4eadbec9deac4d5bc0c6a7bc3aa7d76b6df6af6474"
+        }
+      ],
+      "headings": [
+        "## 10.1 从训练任务到容量与时间预算",
+        "### 10.1.1 训练任务、可训练参数与完成目标",
+        "### 10.1.2 参数、梯度、优化器与激活",
+        "### 10.1.3 计算需求、MFU 与资源下界",
+        "## 10.2 训练状态的分片、重计算与卸载",
+        "### 10.2.1 数据并行与 ZeRO／FSDP 状态分片",
+        "### 10.2.2 激活保存与选择性重计算",
+        "### 10.2.3 CPU／GPU 卸载与缓冲区的使用时间",
+        "### 10.2.4 并行组合下的逐卡状态与拓扑映射",
+        "## 10.3 训练步的流水调度与通信重叠",
+        "### 10.3.1 微批次、梯度累积与参数更新",
+        "### 10.3.2 流水线调度、气泡与激活的保存时间",
+        "### 10.3.3 反向依赖、梯度分桶与通信重叠",
+        "### 10.3.4 MoE 与长上下文的调度变化",
+        "## 10.4 数据输入、检查点与故障恢复",
+        "### 10.4.1 数据读取、打包与预取",
+        "### 10.4.2 可恢复状态与布局变换",
+        "### 10.4.3 同步、异步保存与带宽竞争",
+        "### 10.4.4 故障规模、保存周期与有效训练进度",
+        "## 10.5 RL：阶段协作、权重同步与样本一致性",
+        "### 10.5.1 一轮回答生成、验证与参数更新",
+        "### 10.5.2 各阶段的资源分配与权重同步",
+        "### 10.5.3 异步训练、策略版本与长轨迹恢复",
+        "### 10.5.4 MoE Routing Replay 与训练一致性",
+        "## 10.6 从系统方案到完成期限与硬件选择",
+        "### 10.6.1 汇总容量、每步耗时、停顿与恢复",
+        "### 10.6.2 4090 集群的可行范围",
+        "### 10.6.3 替换硬件后的瓶颈与选择",
+        "### 10.6.4 模型规模、数据量与期限的敏感性",
+        "## 本章小结",
+        "## 常见误区",
+        "## 习题与实验",
+        "## 参考资料与进一步阅读"
+      ]
+    },
+    {
+      "file": "manuscripts/11-资源调度与运行环境.md",
+      "title": "# 第 11 章 资源调度与运行环境",
+      "lines": 565,
+      "characters": 32896,
+      "sha256": "7700dde6e14c4a62038ddf0a91d3f14430028adf8603629f08632a42434fcbe0",
+      "figures": [
+        {
+          "alt": "模型调用、工具工作和环境驻留的三轮时间线",
+          "path": "manuscripts/ch11/figure-11-1-timeline.svg",
+          "line": 30,
+          "exists": true,
+          "sha256": "fbe54c555fd642596a3ab9d96d931f9d0540003c2c0c8851d7877a35d495dcca"
+        },
+        {
+          "alt": "模型响应变慢对三类资源需求的不同影响",
+          "path": "manuscripts/ch11/figure-11-capacity.svg",
+          "line": 74,
+          "exists": true,
+          "sha256": "9a325383a8fc3c6d83a2090dc07628b090f56d22404b642c0f163f9f831ee1a1"
+        },
+        {
+          "alt": "Agent 控制器、平台、模型服务与工具隔离边界",
+          "path": "manuscripts/ch11/figure-11-2-boundary.svg",
+          "line": 106,
+          "exists": true,
+          "sha256": "8feac9921f24001c976b0b7bc1214c2dd995069e633a543cb54581f7bb330fb4"
+        },
+        {
+          "alt": "不同环境内容加载方式的本地数据量",
+          "path": "manuscripts/ch11/figure-11-pages.svg",
+          "line": 128,
+          "exists": true,
+          "sha256": "33f678201ba5123310a13fe87c4bc8d145450cdb0db9217c30048c5012a4340a"
+        },
+        {
+          "alt": "同一段模型等待中的内存保留与暂停恢复",
+          "path": "manuscripts/ch11/figure-11-pause.svg",
+          "line": 142,
+          "exists": true,
+          "sha256": "05ffeb44a7e97ac681ba6a952cd66728a5e4b127a3ba5b7eab7fb3516a2942c3"
+        },
+        {
+          "alt": "全程保留环境与每轮重建的内存占用时间",
+          "path": "manuscripts/ch11/figure-11-residency.svg",
+          "line": 166,
+          "exists": true,
+          "sha256": "5c425a434e4ef05705c651833fa6dddd040c0570559bea80f1b027d2a85eba33"
+        },
+        {
+          "alt": "准备提前量与调用等待的关系",
+          "path": "manuscripts/ch11/figure-11-3-lifecycle.svg",
+          "line": 183,
+          "exists": true,
+          "sha256": "036f688f42ad10395014d315984838fa300707d19339ebb85ca48cd198c26081"
+        },
+        {
+          "alt": "资源碎片与迁移整理前后的节点配置",
+          "path": "manuscripts/ch11/figure-11-4-placement.svg",
+          "line": 201,
+          "exists": true,
+          "sha256": "66862d3a1c889e9cd0f63b4c593172b2368fc4326ab5eedc3500f245412fdd1f"
+        },
+        {
+          "alt": "均匀到达与同时到达时的排队过程",
+          "path": "manuscripts/ch11/figure-11-queue.svg",
+          "line": 225,
+          "exists": true,
+          "sha256": "dba25f4f2ad65a950697afb5818b351461917367334d910e85bf447efa367f9b"
+        },
+        {
+          "alt": "生成速度加倍后仍未缩短的其他阶段",
+          "path": "manuscripts/ch11/figure-11-rl-stages.svg",
+          "line": 253,
+          "exists": true,
+          "sha256": "e357ad04dfaa5b942f1e3f00afd55da1f0bf7972a9604dadbf2c5866db184ac1"
+        },
+        {
+          "alt": "六个接收实例共用一个发送出口",
+          "path": "manuscripts/ch11/figure-11-weights.svg",
+          "line": 275,
+          "exists": true,
+          "sha256": "bc546ae9a7b3c43e83ec178ad4d18dc429b7963bda6f438ea2a9f9cff5903663"
+        },
+        {
+          "alt": "逐条提交与整批后提交的验证时间线",
+          "path": "manuscripts/ch11/figure-11-5-stages.svg",
+          "line": 299,
+          "exists": true,
+          "sha256": "5565d6d7cf2eb26755bbbf6df54133363610da743948b8ae0c4bbe7d920a0966"
+        },
+        {
+          "alt": "思考缩短后单次费用的组成",
+          "path": "manuscripts/ch11/figure-11-thinking.svg",
+          "line": 333,
+          "exists": true,
+          "sha256": "d8a3f804c6c9c7503bde66f29774af83c7abb99b4b8007ce9ec88062e82568a0"
+        },
+        {
+          "alt": "模型服务入口、后端选择及计费位置",
+          "path": "manuscripts/ch11/figure-11-6-service.svg",
+          "line": 343,
+          "exists": true,
+          "sha256": "6cd87143ab03428dcefd38dc1ea68fbbb94b65c45b7e8a7a3b01bf776a4c6791"
+        },
+        {
+          "alt": "费用曲线与按时通过测试的要求的交点",
+          "path": "manuscripts/ch11/figure-11-7-routing.svg",
+          "line": 393,
+          "exists": true,
+          "sha256": "28a6a5a6cde6e5c6fb1feb330673c955cabb0df417211d680c1b68790c8a354f"
+        },
+        {
+          "alt": "固定支出与每项任务费用决定采购交点",
+          "path": "manuscripts/ch11/figure-11-purchase.svg",
+          "line": 415,
+          "exists": true,
+          "sha256": "f0f4beff12bfc68f55e4409ffe696630888dd57c11407b30284e4d3a3ab43b5a"
+        },
+        {
+          "alt": "重试分支的概率与累计完成时间",
+          "path": "manuscripts/ch11/figure-11-retry-tree.svg",
+          "line": 455,
+          "exists": true,
+          "sha256": "5f2cd62868b1ef66ef4eb695ef3d3198a219b555323ef1dcc9b75abbdd390d20"
+        },
+        {
+          "alt": "恢复策略的单位成本与完成比例比较",
+          "path": "manuscripts/ch11/figure-11-8-retry.svg",
+          "line": 474,
+          "exists": true,
+          "sha256": "fc0e71d4c79eac3869b00c270d7ab8a73f25385046dec141806ff85c0230eb3d"
+        },
+        {
+          "alt": "普通模型与快速模型的三轮完成时间",
+          "path": "manuscripts/ch11/figure-11-decision.svg",
+          "line": 492,
+          "exists": true,
+          "sha256": "07df8b49252ad0d9210dfff81b5ac22678589d67ef474231707eb950cfd15c45"
+        }
+      ],
+      "headings": [
+        "## 11.1 从任务轨迹到资源需求",
+        "### 11.1.1 一项代码任务的执行与等待",
+        "### 11.1.2 CPU 工作量、环境驻留与并发容量",
+        "### 11.1.3 任务完成条件与必须保留的状态",
+        "## 11.2 运行环境的生命周期与取舍",
+        "### 11.2.1 工具执行路径与隔离边界",
+        "### 11.2.2 资源交付与环境创建",
+        "### 11.2.3 暂停、恢复、快照派生与干净重建",
+        "### 11.2.4 始终驻留、按需创建与提前准备",
+        "## 11.3 共享资源池的分配与调度",
+        "### 11.3.1 异构资源、成组分配与放置约束",
+        "### 11.3.2 队列、优先级与抢占代价",
+        "### 11.3.3 RL 生成与训练的动态资源配比",
+        "### 11.3.4 验证批次、长尾与资源释放",
+        "## 11.4 模型服务的选择与调用成本",
+        "### 11.4.1 任务质量与思考预算",
+        "### 11.4.2 服务路径、前缀缓存与实际用量",
+        "### 11.4.3 排队、限流与模型路由",
+        "### 11.4.4 自建容量、按量 API 与订阅的成本比较",
+        "## 11.5 完整任务的恢复、核算与扩容",
+        "### 11.5.1 工具失败、局部续接与模型升级",
+        "### 11.5.2 成功任务的完整成本",
+        "### 11.5.3 CPU、GPU、内存与服务额度的扩容选择",
+        "## 本章小结",
+        "## 练习与实验",
+        "## 参考与资料说明"
+      ]
+    },
+    {
+      "file": "manuscripts/12-端边云协同.md",
+      "title": "# 第 12 章 端边云协同",
+      "lines": 628,
+      "characters": 31174,
+      "sha256": "5fe990086c7b2a9a74947a81f3efb8904a5d6f1181c650577f9a0a22d1942810",
+      "figures": [
+        {
+          "alt": "上行速率改变三种精修方案的完成时间",
+          "path": "manuscripts/ch12/figure-12-1-raw.svg",
+          "line": 44,
+          "exists": true,
+          "sha256": "7805f44899790cf56c35c60c67e6be562d7428f86e2ddb20a82b68c368ef73c7"
+        },
+        {
+          "alt": "分块计算怎样与后续上传重叠",
+          "path": "manuscripts/ch12/figure-12-2-overlap.svg",
+          "line": 52,
+          "exists": true,
+          "sha256": "7102c4d37444271824bc7e699335aae3678206fc7e0abdd1bd99701f5988a085"
+        },
+        {
+          "alt": "一个音频块晚到如何推迟后续播放",
+          "path": "manuscripts/ch12/figure-12-3-paths.svg",
+          "line": 76,
+          "exists": true,
+          "sha256": "4ec74258e53673d6c3a5bdd083b97fc4a10849f651763b993806e50a34a00f16"
+        },
+        {
+          "alt": "接收比播放慢时缓冲逐渐耗尽",
+          "path": "manuscripts/ch12/figure-12-4-buffer.svg",
+          "line": 92,
+          "exists": true,
+          "sha256": "7c28de3cd7b83723047352a6fec50b5c60336594d9d819bc53ac76c167e82b5d"
+        },
+        {
+          "alt": "下一轮截图依赖本轮操作完成",
+          "path": "manuscripts/ch12/figure-12-5-agent.svg",
+          "line": 104,
+          "exists": true,
+          "sha256": "d37c4b5d34eb4926e014f5cd541024fbf0d89d91905aa01899f606d8220aa7b0"
+        },
+        {
+          "alt": "相同上行下原图与完整视觉特征的传输时间",
+          "path": "manuscripts/ch12/figure-12-6-placement.svg",
+          "line": 161,
+          "exists": true,
+          "sha256": "e997cc0dfd9b8afefb7598fae598c1d43e95eee99cdf938ac365031c32245a1c"
+        },
+        {
+          "alt": "逐轮节省如何抵消迁移开销",
+          "path": "manuscripts/ch12/figure-12-7-migration.svg",
+          "line": 201,
+          "exists": true,
+          "sha256": "c50b6f1ad25f08cc691b3ca5c2ed0147bf21b5b43dc24a2f960a54b1e8289e21"
+        },
+        {
+          "alt": "两台设备每层都要汇总结果才能继续计算",
+          "path": "manuscripts/ch12/figure-12-8-sync.svg",
+          "line": 225,
+          "exists": true,
+          "sha256": "a07b5e2b64399da94e572f2b967664c5e4c3430ba156653d265ae32f04a5614b"
+        },
+        {
+          "alt": "窗口用完后链路空闲等待确认",
+          "path": "manuscripts/ch12/figure-12-9-window.svg",
+          "line": 259,
+          "exists": true,
+          "sha256": "c7e2e68f8898a37ed34b2671c55377fd5e77dd10e488bbafa6f76366e5805cfd"
+        },
+        {
+          "alt": "相同发送轨迹下交付顺序改变音频完成时间",
+          "path": "manuscripts/ch12/figure-12-10-transport.svg",
+          "line": 283,
+          "exists": true,
+          "sha256": "aae6665ff22ff6b26e9b58352a48b58991e988ba2fd7c32a2bb0e51922413938"
+        },
+        {
+          "alt": "短数据帧也需要相同的无线交换固定开销",
+          "path": "manuscripts/ch12/figure-12-11-wireless.svg",
+          "line": 301,
+          "exists": true,
+          "sha256": "363b28390f30aa2207c2c2dcb083b0b43df554c422787232c7278abb213e3965"
+        },
+        {
+          "alt": "两条接入路径汇入共同出口",
+          "path": "manuscripts/ch12/figure-12-12-multipath.svg",
+          "line": 343,
+          "exists": true,
+          "sha256": "8ac95755dd2c8cb7b7ed6f0fbdf3e1ed3418b326bb2e25d2d366fd24d05ad4c1"
+        },
+        {
+          "alt": "调优基线使同一语音请求的时间差缩小",
+          "path": "manuscripts/ch12/figure-12-13-queqiao.svg",
+          "line": 380,
+          "exists": true,
+          "sha256": "fe16b56fbdcf2db30deef73a2d2a1cf5ca11b1f5f152a6897077c1561a4d74d0"
+        },
+        {
+          "alt": "不同执行设备的时间组成",
+          "path": "manuscripts/ch12/figure-12-14-budgets.svg",
+          "line": 434,
+          "exists": true,
+          "sha256": "1534f6a221242569b6ab40b4d9afc4b62a72a20bc3853a40fe6589c9a9ec9c01"
+        },
+        {
+          "alt": "云路径上行决定部署方案何时满足期限和何时更快",
+          "path": "manuscripts/ch12/figure-12-15-deployment.svg",
+          "line": 448,
+          "exists": true,
+          "sha256": "6b34535bdb0ab0e090ebbddc708442c3c07ccd1e42d937d91a036b151ef8d91c"
+        },
+        {
+          "alt": "保留提交记录可以少做哪些工作",
+          "path": "manuscripts/ch12/figure-12-16-recovery.svg",
+          "line": 468,
+          "exists": true,
+          "sha256": "ab026dbc28da805874935089ff35ea59ebc68b11b8fb0fc737c5817e2f9aa59e"
+        }
+      ],
+      "headings": [
+        "## 12.1 从模型耗时到完整交互",
+        "### 12.1.1 图片精修：一次完整交付",
+        "### 12.1.2 语音服务：首个结果与持续播放",
+        "### 12.1.3 Computer Use：多轮截图与操作",
+        "### 12.1.4 本地、附近设备与云端的初步比较",
+        "## 12.2 跨设备分工：传输入、传特征还是迁移状态",
+        "### 12.2.1 整项调用与阶段切分",
+        "### 12.2.2 端侧编码的字节与计算代价",
+        "### 12.2.3 会话迁移的准备、复用与恢复",
+        "### 12.2.4 模型内部切分的通信边界",
+        "## 12.3 实际传输怎样改变时间预算",
+        "### 12.3.1 连接建立与复用",
+        "### 12.3.2 窗口、反馈与有效吞吐",
+        "### 12.3.3 多流、优先级与交付顺序",
+        "## 12.4 无线变化下的交互与恢复",
+        "### 12.4.1 共享空口与上下行争用",
+        "### 12.4.2 业务时限、过期数据与取消",
+        "### 12.4.3 双路径选择、分流与故障切换",
+        "## 12.5 Queqiao：从性能观察到归因修正",
+        "### 12.5.1 最初观察与测量边界",
+        "### 12.5.2 调优基线与单因素比较",
+        "### 12.5.3 保留的收益与修正后的选择",
+        "## 12.6 从端边云分工到完整部署",
+        "### 12.6.1 地域、数据与服务位置",
+        "### 12.6.2 时限、费用与恢复的联合比较",
+        "### 12.6.3 最终方案与选择翻转条件",
+        "## 本章小结",
+        "## 练习",
+        "## 参考与进一步阅读"
+      ]
+    }
+  ]
+}

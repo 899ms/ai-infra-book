@@ -2,7 +2,7 @@
 
 按用户确认的五节结构重组，并明确要求 AKG 的核心技术 Polyhedral Compilation 用 Halide／TVM 风格的循环变换讲解。正文不以 affine transformation 的形式推导起步。
 
-当前入口：[主大纲](../../outlines/05-算子与运行时.md)、[扩写资料](../../outlines/extensions/05-算子与运行时.md)。修改前工作区原文保存在 [outline-before.txt](outline-before.txt) 与 [extension-before.txt](extension-before.txt)，作为本次迁移的证据基线，不代表 Git HEAD。
+当前入口：[主大纲](../../archive/outlines/05-算子与运行时.md)、[扩写资料](../../archive/outlines/extensions/05-算子与运行时.md)。修改前工作区原文保存在 [outline-before.txt](outline-before.txt) 与 [extension-before.txt](extension-before.txt)，作为本次迁移的证据基线，不代表 Git HEAD。
 
 | 原位置 | 新位置与用途 |
 | --- | --- |

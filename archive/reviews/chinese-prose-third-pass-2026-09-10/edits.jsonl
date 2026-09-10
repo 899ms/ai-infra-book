@@ -1,0 +1,212 @@
+{"file": "00-前言.md", "before": "模型执行时搬运数据的开销，也是我那时就遇到的问题", "after": "我也是从那时起，开始关注模型执行中的数据搬运开销", "occurrences": 1}
+{"file": "00-前言.md", "before": "我还记得为 softmax 算子做融合时，到处寻找合适的算法，后来找到 NVIDIA 在 2018 年发表的在线 softmax 工作，才有了继续实现融合的办法", "after": "我还记得，为了融合 softmax 算子，我到处寻找合适的算法。后来读到 NVIDIA 在 2018 年发表的在线 softmax 研究，才找到实现融合的办法", "occurrences": 1}
+{"file": "00-前言.md", "before": "因为站在当时，答案远没有今天看起来这样清楚", "after": "因为回到当时的条件下，答案远没有今天看起来这样清楚", "occurrences": 1}
+{"file": "00-前言.md", "before": "成本相差两个数量级，能够服务的用户和使用方式也会改变", "after": "成本相差两个数量级，能够服务多少用户、支持哪些使用方式，也会随之改变", "occurrences": 1}
+{"file": "00-前言.md", "before": "当模型训练和推理成为可以贯穿各层共同分析的完整应用时", "after": "把模型训练和推理作为完整应用，贯穿各层加以分析时", "occurrences": 1}
+{"file": "00-前言.md", "before": "再顺着后面两部分逐步展开", "after": "再依次阅读后面两部分", "occurrences": 1}
+{"file": "01-初识 AI Infra.md", "before": "一部分原来需要逐条编写规则来规定的行为", "after": "一部分原来需要逐条编写规则才能实现的行为", "occurrences": 1}
+{"file": "01-初识 AI Infra.md", "before": "从各层之间的联系出发，并按教学需要将讨论内容归为图 1-2 的六层", "after": "按教学需要将讨论内容归为图 1-2 的六层，着重分析各层之间的联系", "occurrences": 1}
+{"file": "01-初识 AI Infra.md", "before": "设备容量、算力与带宽决定系统能运行多大的模型、同时处理多少请求，以及多快作出响应", "after": "设备容量、算力与带宽决定系统能运行多大的模型、同时处理多少请求，以及能以多快的速度作出响应", "occurrences": 1}
+{"file": "01-初识 AI Infra.md", "before": "实例调度器将请求放入队列，将请求编入批次", "after": "实例调度器将请求放入队列，再编入批次", "occurrences": 1}
+{"file": "01-初识 AI Infra.md", "before": "先按每参数一字节估算主要权重数据", "after": "先按每个参数一字节估算主要权重的数据量", "occurrences": 1}
+{"file": "01-初识 AI Infra.md", "before": "参数矩阵中的权重越多，这部分工作越大", "after": "参数矩阵中的权重越多，这部分工作量就越大", "occurrences": 1}
+{"file": "01-初识 AI Infra.md", "before": "一批中本次参与计算的 token 增加时", "after": "一批中参与计算的 token 数增加时", "occurrences": 1}
+{"file": "01-初识 AI Infra.md", "before": "同一份权重为更多请求当前输入的 token 完成乘加", "after": "同一份权重要与更多请求当前输入的 token 向量进行乘加运算", "occurrences": 1}
+{"file": "01-初识 AI Infra.md", "before": "继续生成下一步时", "after": "执行下一步生成时", "occurrences": 1}
+{"file": "01-初识 AI Infra.md", "before": "将它除以八，得到的是每个输出分摊的服务时间", "after": "将这段时间除以八，得到的是每个输出分摊的服务时间", "occurrences": 1}
+{"file": "01-初识 AI Infra.md", "before": "每个请求仍须等待整批执行完成和自己的排队", "after": "每个请求仍须经历排队和整批执行", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "先完整地理解这个模型", "after": "先把这个模型的执行过程弄清楚", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "先认识图上的对象", "after": "先认识图中的运算和数据", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "这些数据在用途上的区别", "after": "这些数据用途的差异", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "输出宽度为 $n$：", "after": "设输出宽度为 $n$，则有：", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "已有上下文中从缓存读取的键和值所对应的位置，不计入这里的 $m$", "after": "从缓存读取键和值的已有上下文位置，不计入这里的 $m$", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "再以分数汇总 $V$", "after": "再根据评分得到的权重汇总 $V$", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "主注意力选择的压缩条目最多约 0.5 MiB", "after": "主注意力选中的压缩条目合计最多约 0.5 MiB", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "最后查询的主注意力与索引数据量约 27.6 MiB", "after": "最后一次查询的主注意力与索引读取量合计约为 27.6 MiB", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "主状态", "after": "主注意力状态", "occurrences": 5}
+{"file": "02-模型架构.md", "before": "固定 FP32 递推状态 60 MiB", "after": "60 MiB 的固定 FP32 递推状态", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "低于交点时，缩短上下文只能节省较小部分", "after": "低于交点时，缩短上下文只能节省较小一部分空间", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "减少每位置宽度对容量更有效", "after": "减小每个位置的表示宽度能更有效地节省容量", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "[^v41-candidate]后续层", "after": "[^v41-candidate] 后续层", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "这些工作使用多大的矩阵", "after": "执行这些工作时使用多大的矩阵", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "逐层依赖链也增至原来的四倍长", "after": "逐层依赖链的长度也增至原来的四倍", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "形状也决定多卡分工的最小单位", "after": "矩阵和状态的形状也决定多卡分工的最小单位", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "前者回答结构包含多少参数，后者回答这些参数在文件中占多少字节", "after": "前者按统一精度反映参数规模，后者反映这些参数在实际文件中占多少字节", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "Qwen3-8B 的主要参数集中在每个 token 都执行的稠密 FFN", "after": "Qwen3-8B 的主要参数集中在处理每个 token 时都要执行的稠密 FFN", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "每条 8192-token BF16 KV 为 2.5 GiB", "after": "每条 8192-token 请求的 BF16 KV 为 2.5 GiB", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "[^core-calculation]图中", "after": "[^core-calculation] 图中", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "[^codesign]模型", "after": "[^codesign] 模型", "occurrences": 1}
+{"file": "02-模型架构.md", "before": "同一个输入 128 个 token、输出四个 token 的请求的矩阵运算量", "after": "输入 128 个 token、输出四个 token 时，各模型处理同一请求所需的矩阵运算量", "occurrences": 2}
+{"file": "02-模型架构.md", "before": "总工作固定", "after": "总工作量固定", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "再综合计算训练与长期服务的成本", "after": "再综合计算训练和长期服务的成本", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "减少请求开始前的排队", "after": "减少请求开始执行前的排队", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "全程 p95 则直接对每条请求的全程时间排序得到", "after": "完整请求的 p95 则直接由各请求的全程耗时排序得到", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "总计平均每秒四条", "after": "合计平均每秒四条", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "这个递推还能直接预测新的突发条件", "after": "这个递推式还能预测其他突发条件下的积压", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "工具依赖决定等待时间和状态保存多久", "after": "工具依赖决定等待时间，以及状态需要保存多久", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "图片两条边都加倍", "after": "图片的高度和宽度都加倍", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "每块数据按时到达", "after": "每块数据都按时到达", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "播放开始后，每经过一秒，已播放音频时长 $P(t)$ 就增加一秒", "after": "连续播放期间，每经过一秒，已播放音频时长 $P(t)$ 就增加一秒", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "模型处理 12 ms、发送 1 ms", "after": "模型处理耗时 12 ms、发送耗时 1 ms", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "造成 5 ms 新增停顿", "after": "造成额外 5 ms 的停顿", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "整层增加量由这笔新增交互占原有工作的比例决定", "after": "整层运算量的增幅取决于这部分新增交互占原有工作量的比例", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "三次矩阵乘为何有相同运算量", "after": "三次矩阵乘法为何具有相同的运算量", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "广播或分层分发则通过复用中间传输减少重复发送", "after": "广播或分层分发则可以让多个副本共用部分传输路径，减少重复发送", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "其中 150M 模型测试到 10,000 token／参数，较大模型测试到 1,000", "after": "其中 150M 模型的训练量最高达到每个参数 10,000 个 token，较大模型最高达到 1,000 个", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "若参数量保持不变、训练数据增加四倍", "after": "若参数量保持不变、训练数据量增至四倍", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "多训练一个较小模型", "after": "对一个较小模型进行更充分的训练", "occurrences": 1}
+{"file": "03-推理与训练负载.md", "before": "生命周期成本时", "after": "整个生命周期的成本时", "occurrences": 1}
+{"file": "04-加速器架构.md", "before": "同一份权重支持的运算越多", "after": "同一份权重参与的运算越多", "occurrences": 1}
+{"file": "04-加速器架构.md", "before": "选择最能缩短执行时间的方案", "after": "选择能最大限度缩短执行时间的方案", "occurrences": 1}
+{"file": "04-加速器架构.md", "before": "（Unified Buffer） 和", "after": "（Unified Buffer）和", "occurrences": 1}
+{"file": "04-加速器架构.md", "before": "每对四次乘法、两次加减", "after": "每对需要四次乘法、两次加减", "occurrences": 1}
+{"file": "04-加速器架构.md", "before": "指数没有加快时", "after": "指数运算没有加快时", "occurrences": 1}
+{"file": "04-加速器架构.md", "before": "同样的 96 KiB 就能容纳三组输入块和权重块", "after": "同样的 96 KiB 就能容纳三组配对的输入块与权重块", "occurrences": 1}
+{"file": "04-加速器架构.md", "before": "寄存器与输入缓冲的压力也随之重新分配", "after": "寄存器与输入缓冲各自承担的存储负担也随之改变", "occurrences": 1}
+{"file": "04-加速器架构.md", "before": "图 4-18 比较计算单元与权重的相对位置", "after": "图 4-18 与图 4-19 比较计算单元与权重的相对位置", "occurrences": 1}
+{"file": "04-加速器架构.md", "before": "每条请求完整读取 8,192 位置 KV", "after": "每条请求完整读取 8,192 个位置的 KV", "occurrences": 1}
+{"file": "04-加速器架构.md", "before": "这两种改进作用不同：前者提高运算速度，后者减少需要执行的运算", "after": "增加乘加器和减少补零的作用不同：前者提高运算速度，后者减少需要执行的运算", "occurrences": 1}
+{"file": "04-加速器架构.md", "before": "还可以求出转折发生在哪个行数", "after": "还可以求出转折发生时的输入行数", "occurrences": 1}
+{"file": "04-加速器架构.md", "before": "权重可能从 DRAM 读取，也可能由缓存提供", "after": "权重可能需要从 DRAM 读取，也可能已在缓存中", "occurrences": 1}
+{"file": "04-加速器架构.md", "before": "同一组设备和成本，矩阵尺寸改变了哪种设备更便宜的结论", "after": "设备及其小时成本保持不变，仅矩阵尺寸改变，就会使成本更低的设备发生变化", "occurrences": 1}
+{"file": "05-算子与运行时.md", "before": "减少搬运能否补偿同时执行的块数减少所带来的影响", "after": "减少搬运带来的收益，能否抵消同时执行的块数减少所带来的性能损失", "occurrences": 1}
+{"file": "05-算子与运行时.md", "before": "上行内核二十微秒，结果三十五微秒可用；下行内核五微秒，结果二十微秒可用", "after": "上方内核执行二十微秒，结果在第三十五微秒可用；下方内核执行五微秒，结果在第二十微秒可用", "occurrences": 1}
+{"file": "05-算子与运行时.md", "before": "内层 k 每走完一遍", "after": "内层 k 循环每执行完一遍", "occurrences": 1}
+{"file": "05-算子与运行时.md", "before": "图中每组只处理八分之一行", "after": "图中每组只处理一行的八分之一", "occurrences": 1}
+{"file": "05-算子与运行时.md", "before": "再比较一次普通调用新增的显存峰值", "after": "再比较一次普通调用的新增显存占用峰值", "occurrences": 1}
+{"file": "05-算子与运行时.md", "before": "其中 token 是模型处理的一个离散输入位置", "after": "每个 token 对应序列中的一个输入位置", "occurrences": 1}
+{"file": "05-算子与运行时.md", "before": "让即将再次使用的数据有机会留在近处", "after": "让即将再次使用的数据有机会留在局部存储中", "occurrences": 1}
+{"file": "05-算子与运行时.md", "before": "仍然会浪费访问", "after": "仍然会产生不必要的访问", "occurrences": 1}
+{"file": "05-算子与运行时.md", "before": "若中间结果使用更少的位数表示", "after": "若中间结果采用位数更少的表示", "occurrences": 1}
+{"file": "05-算子与运行时.md", "before": "先保存中间结果供多次读取，或者每次使用前重新计算", "after": "先保存中间结果供多次读取，或在每次使用前重新计算", "occurrences": 1}
+{"file": "05-算子与运行时.md", "before": "让前一个算子直接写入图缓冲", "after": "让前一个算子直接将结果写入图缓冲", "occurrences": 1}
+{"file": "05-算子与运行时.md", "before": "上下文增长后，仍需执行的索引扫描会产生更大的开销", "after": "上下文变长后，仍需执行的索引扫描也会带来更多开销", "occurrences": 1}
+{"file": "05-算子与运行时.md", "before": "再比较配套转置程序采用两种块大小时的执行过程，比较访问连续性、同步操作和临时数据量", "after": "再对照配套转置程序采用两种块大小时的执行过程，比较访问连续性、同步操作和临时数据量", "occurrences": 1}
+{"file": "05-算子与运行时.md", "before": "提供了另一个有启发的编排例子", "after": "提供了另一个有启发的例子", "occurrences": 1}
+{"file": "06-超节点.md", "before": "需要比较分摊计算和内存访问所节省的时间，与通信和同步增加的开销。", "after": "需要比较分摊计算和内存访问节省的时间，以及通信和同步增加的时间。", "occurrences": 1}
+{"file": "06-超节点.md", "before": "八个持续有工作可做的单卡实例", "after": "八个始终有请求待处理的单卡实例", "occurrences": 1}
+{"file": "06-超节点.md", "before": "同一矩阵还要生成输入梯度和权重梯度", "after": "训练还要计算输入梯度和权重梯度", "occurrences": 1}
+{"file": "06-超节点.md", "before": "前向激活要保留到反向使用", "after": "前向激活要保留到反向计算用完", "occurrences": 1}
+{"file": "06-超节点.md", "before": "它们各包含中间维一半的贡献", "after": "它们分别包含来自中间维一半分量的贡献", "occurrences": 1}
+{"file": "06-超节点.md", "before": "队列逐渐积累", "after": "队列中的输入逐渐积压", "occurrences": 1}
+{"file": "06-超节点.md", "before": "自回归会话的下一 token 在当前输出后才就绪", "after": "自回归会话的下一步输入，要等当前 token 生成后才就绪", "occurrences": 1}
+{"file": "06-超节点.md", "before": "最后收回两份输出", "after": "最后汇合两份输出", "occurrences": 1}
+{"file": "06-超节点.md", "before": "对于二次幂的 $n$", "after": "当 $n$ 为二的整数次幂时", "occurrences": 1}
+{"file": "06-超节点.md", "before": "（Copy Engine） 与", "after": "（Copy Engine）与", "occurrences": 1}
+{"file": "06-超节点.md", "before": "设备只能按八卡托盘增加时", "after": "设备只能以八卡托盘为单位增加时", "occurrences": 1}
+{"file": "06-超节点.md", "before": "某对 GPU 是否具有直连", "after": "某对 GPU 是否直接相连", "occurrences": 1}
+{"file": "06-超节点.md", "before": "借用首先是一段内存的使用关系。", "after": "借用首先要明确一段内存由谁提供、由谁使用。", "occurrences": 1}
+{"file": "06-超节点.md", "before": "增加线速而保持 128 个事务", "after": "增加线速而仍只允许 128 个事务同时在途", "occurrences": 1}
+{"file": "06-超节点.md", "before": "后者用 16 GiB 本地内存空间换来约 3.7 s 的访问时间节省。", "after": "后者占用 16 GiB 本地内存空间，节省了约 3.7 s 的访问时间。", "occurrences": 1}
+{"file": "06-超节点.md", "before": "至此，已经知道数据能否存下", "after": "至此，我们已经知道数据能否存下", "occurrences": 1}
+{"file": "06-超节点.md", "before": "排在它后面的会话也会推迟", "after": "分配给该实例的后续会话也会推迟", "occurrences": 1}
+{"file": "06-超节点.md", "before": "下一章沿已经得到的消息和依赖", "after": "下一章将沿着本章分析的消息传输路径和依赖关系", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "一个 8B 参数模型采用混合精度 Adam 训练。", "after": "以一个采用混合精度 Adam 训练的 8B 参数模型为例。", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "200 GB/s 的上行就是需要离开本叶交换机的流量共同经过的割集。", "after": "这些总带宽为 200 GB/s 的上行链路，构成了离开本叶交换机的流量必须经过的割集。", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "理解这种统一，需要分开两件事。", "after": "理解这种统一，需要区分两件事。", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "在同一目标设备合并多个专家的输入", "after": "将发往同一目标设备上多个专家的输入合并", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "将每次传送拆成两个不重叠区间交给两张 NIC", "after": "将每次传送的数据拆成两个不重叠的区间，分别交给两张 NIC", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "但中继路径内部的两段必须依次经过", "after": "但数据必须依次经过中继路径内部的两段", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "消费者观察通知之后开始归约", "after": "消费者收到并确认通知之后开始归约", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "操作系统负责建立映射、权限和资源分配", "after": "操作系统负责建立映射、设置权限和分配资源", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "第一次搬到本地，后续读取反复使用这个副本", "after": "第一次访问时将数据搬到本地，后续读取反复使用这个副本", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "从第 18 次读取开始节省总读取时间", "after": "从第 18 次读取开始，先搬回本地的方案才会节省总读取时间", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "下一次操作需要知道这块目的缓冲何时可以覆盖", "after": "下一次写入操作则需要确定这块目的缓冲何时可以覆盖", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "下游处理不及、通过限制上游提交速度来防止请求继续积压的机制", "after": "下游来不及处理时，通过限制上游提交速度来防止请求继续积压的机制", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "两种安排发送同样多的数据，差别来自相对时刻。", "after": "两种安排发送同样多的数据，差别在于两项作业开始发送的相对时刻。", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "让源端需求适应整条路径的传输能力", "after": "让源端的发送速率适应整条路径的传输能力", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "它的最后一个报文在约 13.1 μs 才到达", "after": "这条路径上的最后一个报文在约 13.1 μs 才到达", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "两条路径节省了发送时间，却可能增加等待缺口的时间", "after": "两条路径节省了发送时间，却可能增加等待缺失报文的时间", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "一次额外晚就绪 2 ms，一次额外恢复 10 ms", "after": "一次因晚就绪而多等 2 ms，一次因恢复而多等 10 ms", "occurrences": 1}
+{"file": "07-数据中心网络.md", "before": "例如昇腾 950 的以太网上的 UB 通信（UBoE）与 UB Link 链路", "after": "例如，昇腾 950 中承载于以太网的 UB 通信（UBoE）与 UB Link 链路", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "每轮与它合批的其他请求可以改变", "after": "每轮与它合批的其他请求可能不同", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "此后的 255 个间隔决定答案何时完整", "after": "此后的 255 个间隔决定用户何时收到完整答案", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "传统 HBM 每输出 token 摊到的读取为", "after": "传统方案中，每个输出 token 分摊的 HBM 读取量为", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "如果一定要等这两条都结束才接下一组", "after": "如果一定要等这两条请求都结束才接下一组", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "这里的执行位置表示本轮允许接纳的一条活跃请求", "after": "这里的执行位置表示本轮为一条活跃请求预留的计算位置", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "小块增加了响应机会", "after": "小块让已有请求更早获得执行机会", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "两条分支会争用同一个第四位置", "after": "两条分支会争用块中的第四个位置", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "页表负责地址映射，前缀关系决定共享范围，分支写入触发私有副本。", "after": "页表负责地址映射，前缀关系决定共享范围，分支写入触发私有副本的创建。", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "总结把一次额外计算换成后续多次较短的状态访问", "after": "总结通过一次额外计算，缩短后续多次状态访问的时间", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "仅仅值得保留，还不意味着应该优先保留。", "after": "一个前缀值得保留，并不意味着应该优先保留它。", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "取 96 GB 十进制内存、给系统与工作区预留 8 GiB", "after": "设内存容量为十进制的 96 GB，给系统与工作区预留 8 GiB", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "因此，解决容量不足可以减少数据本身的字节数，也可以只保留当前需要的数据", "after": "因此，要解决容量不足的问题，可以减少数据本身的字节数，也可以只保留当前需要的数据", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "执行后端还可能一起改变 Q 的计算格式", "after": "更换执行后端还可能同时改变 Q 的计算格式", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "第一次回答更快，如果同时更容易出错，完成整个任务反而可能更慢。", "after": "如果第一次回答虽然更快，却也更容易出错，完成整个任务反而可能更慢。", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "从这个差值归一化得到的分布中重新采样", "after": "将这一正差额归一化，再从得到的分布中重新采样", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "下面将这些变化放进同一个请求", "after": "下面将这些变化应用于同一组请求", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "低秩适配（LoRA）用两个较小矩阵的乘积", "after": "低秩适配（LoRA）用两个较小的矩阵的乘积", "occurrences": 1}
+{"file": "08-单实例推理.md", "before": "推测解码增加了草稿生成和验证", "after": "推测解码增加了草稿生成和验证的开销", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "每个请求输入 8192 个位置", "after": "每个请求输入 8192 个 token", "occurrences": 2}
+{"file": "09-分布式推理.md", "before": "若恰好只有两个单元，额外到达的请求就会一直积压", "after": "若恰好只有两个单元，突发到达的额外请求就会一直积压", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "将新生成的 token 送回模型", "after": "将刚生成的 token 送回模型", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "提高载荷带宽更可能改变等待时间", "after": "提高载荷带宽更有助于缩短等待时间", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "到 AF 的小消息交接时，这个比例会反过来", "after": "而在 AF 的小消息交接中，固定开销会占据更大比例", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "额外保存这些权重与图则会减少 KV 可用空间", "after": "但额外保存这些权重与图会减少 KV 可用空间", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "随着批量继续增长，不同专家数至多达到 128，而任务数仍线性增加", "after": "随着批量继续增长，被访问的不同专家数至多达到 128，而分派次数仍线性增加", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "完成时还要等待它所选择的专家汇合", "after": "完成时还要等待它所选择的各个专家返回结果并汇合", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "让缩短的等待累计超过准备成本", "after": "让累计节省的等待时间超过准备耗时", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "若按页汇集，则消息数和布局转换不同", "after": "若按页汇集，消息数量和所需的布局转换也会不同", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "同时运行两个任务的压力实验", "after": "同时运行两个任务的负载压力实验", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "先后台复制不再改变的上下文", "after": "先在后台复制不再改变的上下文", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "追上状态解决了数据一致性问题", "after": "目标追上源端的状态更新后，两端的数据才能保持一致", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "共享池省下重算的同时", "after": "共享池省去重算的同时", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "原记录预取限额为3289位置，4096为已登记占用；八个请求由客户端同时发出，GPU最大运行请求数为一。", "after": "原记录的预取限额为 3289 个位置，已登记占用 4096 个位置；八个请求由客户端同时发出，GPU 最多同时运行一个请求。", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "25 GB/s使用十进制单位，1.125 GiB使用二进制单位；精确载荷1207959552 bytes，纯传输48.31838208 ms，加5 μs为48.32338208 ms。", "after": "25 GB/s 使用十进制单位，1.125 GiB 使用二进制单位；精确载荷为 1207959552 bytes，纯传输耗时为 48.31838208 ms，加上 5 μs 后为 48.32338208 ms。", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "执行期间还会出现参数聚合和转换缓冲", "after": "执行期间还需要用于参数聚合和格式转换的缓冲区", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "它逐步划分这些状态的所有权", "after": "它分阶段划分这些状态的所有权", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "用额外计算换取这些中间值的存储空间", "after": "通过额外计算减少保存这些中间值所需的空间", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "先传 BF16 的路径在这次转换的数据范围内只保留 96 MiB GPU 梯度", "after": "先传 BF16 的路径则只需在 GPU 上保留参与这次转换的 96 MiB 梯度", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "式中的 $m$ 项是有用微批次工作", "after": "式中的 $m$ 项对应微批次的实际计算工作", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "沿前后向依赖安排收集、交换与归约", "after": "沿前向和反向的依赖关系安排收集、交换与归约", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "全局批次不变时，设备增加四倍能加速多少", "after": "全局批次不变时，设备数增至四倍能加速多少", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "把能共同确定后续执行的状态保存在同一个一致的进度上", "after": "保存与同一训练进度对应的全部必要状态，以共同确定后续执行", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "第三项是恢复次数乘每次恢复时间", "after": "第三项是单位有用训练时间内的预期恢复次数乘以每次恢复时间", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "48 卡更容易遇到一次设备中断", "after": "48 卡方案遭遇设备故障中断的概率更高", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "有效回答共 20 token", "after": "回答中的有效 token 共 20 个", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "样本权重却增加约 28%", "after": "样本权重却增加了约 28%", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "按 token 保存进展和策略版本", "after": "逐 token 保存生成进度和策略版本", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "把更多微批次并行分给设备", "after": "将微批次分配给更多设备并行处理", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "可将其对应的单卡计算、接口服务和容量代入同样的分解", "after": "可将其单卡计算时间、接口传输时间和容量代入同样的分析", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "重计算减少前向到反向之间的保存", "after": "重计算减少前向到反向之间需要保存的数据", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "相同模型也给出了结论随效率、通信和故障变化的阈值", "after": "同一分析模型也给出了效率、通信和故障条件变化时，方案能否按期完成的临界值", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "沿着每次调用、返回和等待", "after": "沿着每次调用、返回和等待的过程", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "平均有 $10\\times3\\times9=270$ 次模型调用正在处理", "after": "平均有 $10\\times3\\times9=270$ 次模型调用正在执行", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "已经花了 20 秒，其中工具累计使用的 CPU 时间只有 2 秒", "after": "已经过去了 20 秒，其中工具累计使用的 CPU 时间只有 2 秒", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "创建时少加载一些数据，可以缩短启动时间", "after": "创建环境时少加载一些数据，可以缩短启动时间", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "预测选对环境的概率为 $h$", "after": "正确预测所需环境的概率为 $h$", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "再提早开始准备，只会延长环境准备好之后的空闲时间", "after": "再提早开始准备，只会延长环境就绪后等待调用的时间", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "即使总工作量相同，排队时间也会不同", "after": "即使总工作量相同，排队时间也可能不同", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "总工作量决定执行进程要工作多久，到达顺序决定每个任务先等多久", "after": "总工作量决定执行进程要工作多久，到达时刻和执行顺序决定每个任务先等多久", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "增加的时间主要落在环境已经就绪、调用尚未到达的区间", "after": "增加的内存占用主要发生在环境已经就绪、调用尚未到达的区间", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "原来成本中的 0.020 用于输入", "after": "原有成本中的 0.020 用于输入", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "平均有 270 次调用正在处理", "after": "平均有 270 次调用正在执行", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "成功概率是所有最终成功的执行路径概率之和", "after": "成功概率是所有最终成功路径的概率之和", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "如果这次换服务让任务从 30 秒降到 21 秒", "after": "如果更换服务让任务耗时从 30 秒降到 21 秒", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "把每项环境占用压到 18 GiB·秒", "after": "把每项任务的累计环境内存占用降到 18 GiB·秒", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "工具平均使用 33 个 CPU 核和 180 GiB 内存", "after": "工具执行与环境准备平均使用 33 个 CPU 核和 180 GiB 内存", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "模型服务平均同时处理 180 次调用", "after": "模型服务平均同时执行 180 次调用", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "环境能释放的空闲时间也会缩短", "after": "可以释放环境内存的空闲时段也会缩短", "occurrences": 1}
+{"file": "11-资源调度与运行环境.md", "before": "可以把创建提前", "after": "可以提前创建环境", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "把输入大小压缩到一半", "after": "把输入文件压缩到原来的一半", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "因为用 0.15 秒计算替换了 6 秒传输", "after": "因为多花 0.15 秒编解码，就省去了 6 秒传输", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "每轮都要传输截图，因此单轮不到一秒的改善累计起来", "after": "每轮都要传输截图，因此单轮节省的不到一秒时间累计起来", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "压缩图片中的纹理和重复区域可以用较少字节表示", "after": "图片压缩可以用较少字节表示纹理和重复区域", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "模型特征", "after": "模型使用的特征", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "预处理后 $640\\times640$", "after": "预处理后的图像尺寸为 $640\\times640$", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "曲线中的“恢复时间”包括新设备继续执行前所需的准备工作。除了将缓存数据加载到内存，它还要知道任务已经执行到哪一步。", "after": "曲线中的“恢复时间”包括新设备继续执行前所需的准备工作。新设备除了要将缓存数据加载到内存，还要确定任务已经执行到哪一步。", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "约 355 KB 的语音请求因此要进入第五轮发送", "after": "约 355 KB 的语音请求因此要到第五轮才能发完", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "少发确认减少传输时间，确认晚到延长窗口等待", "after": "少发确认缩短传输时间，确认晚到则延长窗口等待", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "实际测量路径是贵阳至美国 Irvine，与上面的美东—美西部署示例分开。", "after": "实际测量路径是贵阳至美国 Irvine，并非上面的美东—美西部署示例所用路径。", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "两者给出不同预测", "after": "两种解释给出的预测不同", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "请求结束只记录最后一批数据到达", "after": "请求结束时刻只反映最后一批数据何时到达", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "因此空口占用时间不会同比缩短", "after": "因此空口占用时间不会按相同比例缩短", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "分流把不同字节交给不同路径", "after": "分流把不同部分的数据交给不同路径", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "复制把同一字节交给两条路径", "after": "复制把同一份数据交给两条路径", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "前十轮已完成，剩余二十轮要选择执行位置；从现在起，任务期限为 45 秒。", "after": "前十轮已完成，现在要为剩余二十轮选择执行位置；从现在起，任务必须在 45 秒内完成。", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "下面先确定能否按时，再比较成本", "after": "下面先确定能否按时完成，再比较成本", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "将前文的硬件与执行方式比较用于完整任务。", "after": "下面将前文比较硬件与执行方式的方法用于完整任务。", "occurrences": 1}
+{"file": "12-端边云协同.md", "before": "先根据数据量、计算量和传播距离求出各步骤所需时间，再以执行依赖确定哪些时间相加、哪些可以重叠", "after": "先根据数据量、计算量和传播距离求出各步骤所需时间，再根据执行依赖确定哪些耗时需要相加、哪些步骤可以重叠", "occurrences": 1}
+{"file": "04-加速器架构.md", "before": "设备及其小时成本保持不变，仅矩阵尺寸改变，就会使成本更低的设备发生变化", "after": "设备及其小时成本保持不变，仅改变矩阵尺寸，就可能改变不同设备之间的成本高低", "occurrences": 1}
+{"file": "09-分布式推理.md", "before": "目标追上源端的状态更新后，两端的数据才能保持一致，目标还要完成通信组和执行图的准备。", "after": "目标追上源端的状态更新后，两端的数据才能保持一致。此外，目标还要完成通信组和执行图的准备。", "occurrences": 1}
+{"file": "10-训练系统.md", "before": "因此，训练检查点要保存与同一训练进度对应的全部必要状态，以共同确定后续执行。", "after": "因此，训练检查点要保存与同一训练进度对应的全部必要状态，使恢复后能够接着执行。", "occurrences": 1}

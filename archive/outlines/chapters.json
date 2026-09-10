@@ -1,0 +1,205 @@
+[
+  {
+    "number": 1,
+    "previous_number": 1,
+    "title": "初识 AI Infra",
+    "file": "01-初识 AI Infra.md",
+    "summary": "从六层全景和关键数字出发，估算生成一个 token 的容量、计算与读取下界，再用三个短例理解资源约束怎样推动架构选择。",
+    "prerequisites": [],
+    "core_experiments": [
+      "1-2",
+      "1-3",
+      "1-4"
+    ],
+    "supplementary_experiments": [
+      "1-5",
+      "1-6",
+      "1-7",
+      "1-8"
+    ],
+    "supplementary_figures": [
+      "1-7",
+      "1-8",
+      "1-9"
+    ]
+  },
+  {
+    "number": 2,
+    "previous_number": 2,
+    "title": "模型架构",
+    "file": "02-模型架构.md",
+    "summary": "从前向执行与完整生成建立资源基线，分别比较历史状态、专家权重和网络组织；参数量或激活计算相近的模型仍可提出不同的系统需求。",
+    "prerequisites": [
+      1
+    ],
+    "core_experiments": [
+      "2-2",
+      "2-5",
+      "2-7"
+    ]
+  },
+  {
+    "number": 3,
+    "previous_number": 3,
+    "title": "推理与训练负载",
+    "file": "03-推理与训练负载.md",
+    "summary": "模型结构给出单次执行的需求；任务的阶段组成、到达与依赖关系，以及状态寿命，决定这些需求如何在时间上叠加。比较系统方案时，还必须保持任务质量和完成目标一致。",
+    "prerequisites": [
+      2
+    ],
+    "core_experiments": [
+      "3-2",
+      "3-4",
+      "3-7"
+    ]
+  },
+  {
+    "number": 4,
+    "previous_number": 4,
+    "title": "加速器架构",
+    "file": "04-加速器架构.md",
+    "summary": "从加速器组成出发，理解计算、存储、数据搬运、封装互联与专用化，再结合性能、功耗和成本选择适合负载的架构。",
+    "prerequisites": [
+      2,
+      3
+    ],
+    "core_experiments": [
+      "4-1",
+      "4-4",
+      "4-5"
+    ]
+  },
+  {
+    "number": 5,
+    "previous_number": 5,
+    "title": "算子与运行时",
+    "file": "05-算子与运行时.md",
+    "summary": "少一次写回、少一个 kernel 或更快的独占内核都要接受整条链的检验；复用、并发和缓冲寿命共同决定搬移代价。",
+    "prerequisites": [
+      4
+    ],
+    "core_experiments": [
+      "5-2",
+      "5-8",
+      "5-9"
+    ]
+  },
+  {
+    "number": 6,
+    "previous_number": 6,
+    "title": "超节点",
+    "file": "06-超节点.md",
+    "summary": "并行换来容量或处理能力，也增加交接与同步。总容量足够时仍要检查最忙设备；同一组卡应扩大协作还是增加推理实例数量，取决于负载和时限。",
+    "prerequisites": [
+      3,
+      5
+    ],
+    "core_experiments": [
+      "6-2",
+      "6-3",
+      "6-10"
+    ]
+  },
+  {
+    "number": 7,
+    "previous_number": 7,
+    "title": "数据中心网络",
+    "file": "07-数据中心网络.md",
+    "summary": "网络设计既要利用并行与共享降低搬移代价，也要界定必要的顺序、资源寿命和故障范围；最终收益取决于这些选择能否减少任务关键路径上的等待。",
+    "prerequisites": [
+      6
+    ],
+    "core_experiments": [
+      "7-3",
+      "7-7",
+      "7-10"
+    ]
+  },
+  {
+    "number": 8,
+    "previous_number": 9,
+    "title": "推理优化",
+    "file": "08-单实例推理.md",
+    "summary": "在给定设备组合下，通过批处理、请求调度、KV 管理、压缩卸载和推测解码提高执行效率。",
+    "prerequisites": [
+      3,
+      5,
+      6,
+      7
+    ],
+    "core_experiments": [
+      "8-2",
+      "8-4",
+      "8-9"
+    ]
+  },
+  {
+    "number": 9,
+    "previous_number": 10,
+    "title": "分布式推理",
+    "file": "09-分布式推理.md",
+    "summary": "分配计算与状态的执行位置，比较完整副本、阶段与算子分工、共享 KV，以及扩缩容和恢复。",
+    "prerequisites": [
+      7,
+      8
+    ],
+    "core_experiments": [
+      "9-4",
+      "9-7",
+      "9-10"
+    ]
+  },
+  {
+    "number": 10,
+    "previous_number": 11,
+    "title": "训练系统",
+    "file": "10-训练系统.md",
+    "summary": "省容量可能增加通信或重算；提高生成吞吐也可能改变样本选择。执行优化要同时保持所声明的更新语义、质量和有效进展。",
+    "prerequisites": [
+      3,
+      6,
+      7,
+      9
+    ],
+    "core_experiments": [
+      "10-3",
+      "10-7",
+      "10-10"
+    ]
+  },
+  {
+    "number": 11,
+    "previous_number": 12,
+    "title": "资源调度与运行环境",
+    "file": "11-资源调度与运行环境.md",
+    "summary": "计算空闲时状态仍可能驻留；释放、复用和迁移状态都要支付准备或恢复代价。资源与模型服务的选择，以满足质量和期限的完整任务及其全部成本评价。",
+    "prerequisites": [
+      3,
+      9,
+      10
+    ],
+    "core_experiments": [
+      "11-1",
+      "11-2",
+      "11-10"
+    ]
+  },
+  {
+    "number": 12,
+    "previous_number": 8,
+    "title": "端边云协同",
+    "file": "12-端边云协同.md",
+    "summary": "执行位置要按相同质量下的完整交互选择；用分工、实际传输与恢复条件修正预算，再以调优基线验证收益，形成部署方案和选择翻转条件。",
+    "prerequisites": [
+      3,
+      8,
+      9,
+      11
+    ],
+    "core_experiments": [
+      "12-2",
+      "12-3",
+      "12-7"
+    ]
+  }
+]

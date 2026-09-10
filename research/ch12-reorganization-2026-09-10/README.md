@@ -2,7 +2,7 @@
 
 按用户确认的建议，保留六节框架，以“完整交互 → 跨设备分工 → 实际传输 → 无线变化 → Queqiao 归因修正 → 完整部署”组织推导。
 
-入口：[主大纲](../../outlines/12-端边云协同.md)、[扩写资料](../../outlines/extensions/12-端边云协同.md)。修改前的工作区原文见 [outline-before.txt](outline-before.txt) 与 [extension-before.txt](extension-before.txt)，用于保留性核验，不代表 Git HEAD。
+入口：[主大纲](../../archive/outlines/12-端边云协同.md)、[扩写资料](../../archive/outlines/extensions/12-端边云协同.md)。修改前的工作区原文见 [outline-before.txt](outline-before.txt) 与 [extension-before.txt](extension-before.txt)，用于保留性核验，不代表 Git HEAD。
 
 | 原位置 | 新位置与用途 |
 | --- | --- |

@@ -1,0 +1,118 @@
+{
+  "scope": "B1, prefill P8192 S0 / decode P1 S8192; head last; per-model algorithm as documented",
+  "parameter_group_order": [
+    "embedding_head",
+    "attention_projection",
+    "dense_shared_ffn",
+    "routed_experts",
+    "other"
+  ],
+  "sources": [
+    {
+      "path": "calculations/results/qwen3-8b-prefill-8192.json",
+      "sha256": "58eb8cefb44ce8e8b45cdf8306e3f19a8aed395fb562b404151b6877e1c7707e"
+    },
+    {
+      "path": "calculations/results/qwen36-prefill-last-head.json",
+      "sha256": "bda4562444b64b039c314736158fa530b777ebb60c24576fca5ec5837c6055a5"
+    },
+    {
+      "path": "calculations/results/forward-deepseek-v4-flash-b1-t8192-s0.json",
+      "sha256": "2e4eeb7dcaeded843cd7d8871f1a16b2c7329344b2a6c4b2e0061d6df9552a19"
+    },
+    {
+      "path": "calculations/results/forward-kimi-k3-b1-t8192-s0-compact.json",
+      "sha256": "6b4ed2d46ecafafbd66ef7f47984e4b3f5925566c4cc6702469c0ec54a58fba1"
+    },
+    {
+      "path": "calculations/results/qwen3-8b-decode-b1-s8192.json",
+      "sha256": "b0a607a59c547e70ad16c4e27645b7c009816b91f3987f3d71b21b90dce799d7"
+    },
+    {
+      "path": "calculations/results/qwen36-decode-b1.json",
+      "sha256": "88b996dce2125f35aae4bb9a4fa450accbfadb9af8decd83bb4c7a899e0c5113"
+    },
+    {
+      "path": "manuscripts/ch02/comparison-v4-decode.json",
+      "sha256": "09ae01391eefcf4bde6a52596c1ddc591e966d0473d1dd6f6708880b562c07f2"
+    },
+    {
+      "path": "calculations/results/forward-kimi-k3-b1-t1-s8192-compact.json",
+      "sha256": "cba613d810288f0f533c9cb718783702605a887bbc37305f4df7f97ef4869662"
+    },
+    {
+      "path": "calculations/results/state-deepseek-v4-flash-n8192-b1-native.json",
+      "sha256": "9fe3e8f10238dce54678910128edacdd61cf5cc1149e2625c4203fc865ccc48f"
+    },
+    {
+      "path": "calculations/results/state-kimi-k3-n8192-b1-compact.json",
+      "sha256": "670168e5163ca0346c610ebc740cb1765922049c648695c762719fbc54029ff9"
+    }
+  ],
+  "models": [
+    {
+      "model": "Qwen3-8B",
+      "total_parameters": 8190735360,
+      "parameter_groups": [
+        1244659712,
+        1509949440,
+        5435817984,
+        0,
+        308224
+      ],
+      "uniform_bf16_bytes": 16381470720,
+      "prefill_matrix_flops": 133594323353600,
+      "decode_matrix_flops": 19968622592,
+      "state_8192_bytes": 1207959552,
+      "selected_routed_expert_bf16_bytes": 0
+    },
+    {
+      "model": "Qwen3.6",
+      "total_parameters": 34660610688,
+      "parameter_groups": [
+        1017118720,
+        1283194880,
+        125829120,
+        32212254720,
+        22213248
+      ],
+      "uniform_bf16_bytes": 69321221376,
+      "prefill_matrix_flops": 52094951358464,
+      "decode_matrix_flops": 7331184832,
+      "state_8192_bytes": 232652800,
+      "selected_routed_expert_bf16_bytes": 2013265920
+    },
+    {
+      "model": "V4-Flash",
+      "total_parameters": 284332240471,
+      "parameter_groups": [
+        1059061760,
+        5084807168,
+        1082130432,
+        277025390592,
+        80850519
+      ],
+      "uniform_bf16_bytes": 568664480942,
+      "prefill_matrix_flops": 231125253357568,
+      "decode_matrix_flops": 29539565568,
+      "state_8192_bytes": 74203136,
+      "selected_routed_expert_bf16_bytes": 12985565184
+    },
+    {
+      "model": "K3（紧凑 MLA）",
+      "total_parameters": 2779484476000,
+      "parameter_groups": [
+        2348810240,
+        36179705856,
+        12881756160,
+        2722740830208,
+        5333373536
+      ],
+      "uniform_bf16_bytes": 5558968952000,
+      "prefill_matrix_flops": 1863462762315776,
+      "decode_matrix_flops": 249438187520,
+      "state_8192_bytes": 680951808,
+      "selected_routed_expert_bf16_bytes": 97240743936
+    }
+  ]
+}

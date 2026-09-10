@@ -7,7 +7,7 @@ from .paths import PROJECT, BOOK
 
 def insert_evidence(book, filename, key, paragraph, before):
     """Update calculation evidence without undoing an editor's chapter ownership."""
-    outlines = book / "outlines"
+    outlines = book / "archive/outlines"
     main = outlines / filename
     prefix = f"**已复算（{key}）：** "
     pattern = r"(?m)^" + re.escape(prefix) + r".*$"
@@ -31,7 +31,7 @@ def insert_evidence(book, filename, key, paragraph, before):
     if not destination.exists():
         raise ValueError(f"Missing chapter companion: {destination}")
     text = destination.read_text()
-    line = prefix + paragraph.replace("](../", "](../../")
+    line = prefix + paragraph.replace("](../", "](../../../")
     if prefix in text:
         text = re.sub(pattern, lambda _: line, text)
     elif before in text:

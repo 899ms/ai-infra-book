@@ -102,7 +102,7 @@ native 的 worker 警告时间约 65.393–65.396 ms，早于本窗口；schedul
 2. **第 5 章第 295 行，正文旧状态。** 原文：“实验5-9同引擎替换前后记录尚缺，因此本图仅为分析，不声明真实请求收益。”建议短句：“实验5-9已有固定负载替换前后记录；本图仍采用教学时长，尚未用真实并发和资源依赖校准，不声明该图预测了请求收益。”第 305 行已有部分实测说明，可保留。
 3. **生成源 outline.py 第 488 行，同句会回生。** 原文与上一条相同，建议同步使用同一句修订。否则下一次生成大纲会恢复旧状态。PLAN 第 110 行的“校准仍待补”仍有依据；PROGRESS 第 448 行若是历史日志，应补后续说明而非改写历史。
 
-定位：[README](../../experiments/ch05/05-09/README.md)、[第 5 章](../../outlines/05-算子与运行时.md)、[outline.py](../../calculations/src/infra_calc/outline.py)。以上均交给用户/主代理统一修改，本审计不动原文件。
+定位：[README](../../experiments/ch05/05-09/README.md)、[第 5 章](../../archive/outlines/05-算子与运行时.md)、[outline.py](../../calculations/src/infra_calc/outline.py)。以上均交给用户/主代理统一修改，本审计不动原文件。
 
 C31 教学 DAG 的 `actual_measured_request_ns=null` 继续保留；不能拿这次约 817 ms 请求给一个 80 μs 教学 DAG 填“实测”。不将本次 fixed-shape/eager、单请求局部实验外推到 CUDA Graph、Agent 自动优化、饱和服务、其他形状或全书核心实验已完成。README 关于没有稳定端到端收益、单轮 profile 不归因配对时延的保留是正确的，无须改成强结论。
 

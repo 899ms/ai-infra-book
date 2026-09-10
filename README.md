@@ -1,90 +1,129 @@
-# 《深入理解 AI Infra：量化分析与系统设计》
+# 深入理解 AI Infra：量化分析与系统设计
 
-**理解模型应用的执行过程，才能重新选择系统的设计取舍。** 应用通过模型与上下文表达行为，底层围绕共同的训练与推理计算开展专用化和跨层优化。这本书用作者的研究经历、具体模型和可复算的数字，解释模型、编译运行时、芯片与网络怎样共同减少读写、提交和等待。数据搬移贯穿这些分析，质量、完成时间与成本决定最终选择。
+[![Build](https://github.com/bojieli/ai-infra-book/actions/workflows/book-site.yml/badge.svg)](https://github.com/bojieli/ai-infra-book/actions/workflows/book-site.yml)
+[![PDF](https://img.shields.io/badge/PDF-下载-blue)](https://github.com/bojieli/ai-infra-book/releases/latest)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/bojieli/ai-infra-book?style=social)](https://github.com/bojieli/ai-infra-book)
 
-每次设计先问：搬什么、搬多少、搬几次、经过哪里、谁必须等它。读者沿同一任务逐章修正判断，最终能提出候选、找到遗漏约束，并用最小实验决定值得改什么。
+**从一次模型执行出发，理解芯片、网络、推理与训练系统的设计取舍。**
 
-正文以十二章 Markdown 为唯一维护源，在线阅读网站由 GitHub Actions 自动构建。
+模型为什么能放进显存，却跑不快？增加 GPU 为什么不一定缩短完成时间？算子融合、KV Cache、并行通信和资源调度，怎样共同影响一次任务的质量、延迟与成本？
 
-- [前言](manuscripts/00-前言.md)：写作缘起、UB 与数据中心网络经历，以及量化分析的方法。
-- [十二章正文与配图](manuscripts/README.md)。
-- [逐章 Markdown 大纲](outlines/README.md)：十二章的主张、推导、练习和配图。
-- [网站构建与发布说明](website/README.md)：push 到 main 后自动构建 PDF 与网站，发布 GitHub Release 和 GitHub Pages。
-- [量化计算项目](calculations/README.md)：[全书计算计划](calculations/PLAN.md)、官方模型配置与硬件规格、统一 CLI 和[已复算结果](calculations/results/README.md)，持续实现中。
-- [全书主线与章节依赖](outlines/structure.md)、[跨章设计决定](outlines/decision-record.md)：共同表示、固定输入和逐章修正。
-- [阅读路径与配套](outlines/writing-support.md)、[完整扩写资料](outlines/extensions/README.md)：核心练习和详细技术材料。
-- [本轮改动记录](research/outline-revision-2026-09-08/README.md)：主要建议的落地、章节映射及修改前快照。
+本书沿着模型执行中的计算、数据搬移与等待，用十二章连接模型架构、加速器、运行时、互联和服务系统。通过公式推导、机制图、具体模型和配套实验，学习估算资源需求、识别瓶颈，并用测量检验设计判断。
 
-论文和较大的计算输入、测量记录使用 Git LFS 保存。需要复算或读取原始记录时，克隆仓库后先运行 `git lfs install` 和 `git lfs pull`，再按对应项目的说明执行校验。
+**[阅读前言](manuscripts/00-前言.md) · [章节正文](manuscripts/README.md) · [下载 PDF](https://github.com/bojieli/ai-infra-book/releases/latest) · [配套实验](experiments/README.md)**
 
-## PDF 阅读与编译
+## 阅读本书
 
-[全书 PDF](book/AI-Infra-Book.pdf) · [第二章排版样张](book/AI-Infra-Book-Chapter-02.pdf) · [封面预览](book/AI-Infra-Book-Cover.png)
+- **PDF**：[Releases](https://github.com/bojieli/ai-infra-book/releases) 提供按提交构建的全书 PDF、封面和校验文件；也可查看[仓库内 PDF](book/AI-Infra-Book.pdf)。
+- **Markdown**：下方目录直接进入章节正文，无需安装环境。
+- **在线网站**：发布地址为 <https://bojieli.github.io/ai-infra-book/>，首次 Pages 部署成功后可用，支持全文搜索、数学公式与深色模式。
 
-沿用 AI Agent Book 的 ElegantBook / XeLaTeX 模板。运行 `bash book/build_pdf.sh` 编译全书，或加 `--chapter 2` 只编译第二章；依赖和模板来源见 [PDF 编译说明](book/README.md)。
+正文持续修订。引用具体结论或复现实验时，请记录所用提交或 Release，以及模型版本、硬件条件和输入参数。
 
-## 这本书怎样讲
+## 适合谁读
 
-首章从六层全景与关键数字开始，估算一次模型生成，再用 TPU、SmartNIC 和 UB 的短例解释架构选择。模型与负载给出必须处理的数据；芯片、执行与互联改变复用、放置和等待；推理训练把这些机制组成有效服务；环境与端边云把服务放回完整任务。OpenTallas 的供数与通信修正融入芯片和超节点，Queqiao 的基线修正留在端边云；各章用具体证据修正选择。
+本书面向希望理解 AI 系统工作原理的工程师、研究人员和计算机专业学生。具备 Python、线性代数和计算机系统基础会更容易跟上推导；前言介绍了阅读前置条件。
 
-正文采用同一执行图：节点标计算与位置，边标字节、接口、频次和依赖，状态标生命周期。容量检查、资源下界和关键路径先排除明显不可行的方案，实测校准会改变选择的未知量。每章末保存当前决定、新增代价、下一个限制与翻转条件。
+- **建立全景**：从第 1–3 章理解系统层次、模型结构和负载。
+- **深入底层执行**：第 4–7 章讨论加速器、算子与运行时、超节点和网络。
+- **设计完整系统**：第 8–12 章讨论推理、训练、资源调度与端边云协同。
 
-## 章节安排
+建议先做资源估算，再阅读实现与实验结果，最后改变一个条件，观察原来的选择是否仍然成立。
 
-<!-- CHAPTERS:START -->
-1. [初识 AI Infra](outlines/01-%E5%88%9D%E8%AF%86%20AI%20Infra.md): 从六层全景和关键数字出发，估算生成一个 token 的容量、计算与读取下界，再用三个短例理解资源约束怎样推动架构选择。
-2. [模型架构](outlines/02-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84.md): 从前向执行与完整生成建立资源基线，分别比较历史状态、专家权重和网络组织；参数量或激活计算相近的模型仍可提出不同的系统需求。
-3. [推理与训练负载](outlines/03-%E6%8E%A8%E7%90%86%E4%B8%8E%E8%AE%AD%E7%BB%83%E8%B4%9F%E8%BD%BD.md): 模型结构给出单次执行的需求；任务的阶段组成、到达与依赖关系，以及状态寿命，决定这些需求如何在时间上叠加。比较系统方案时，还必须保持任务质量和完成目标一致。
-4. [加速器架构](outlines/04-%E5%8A%A0%E9%80%9F%E5%99%A8%E6%9E%B6%E6%9E%84.md): 从加速器组成出发，理解计算、存储、数据搬运、封装互联与专用化，再结合性能、功耗和成本选择适合负载的架构。
-5. [算子与运行时](outlines/05-%E7%AE%97%E5%AD%90%E4%B8%8E%E8%BF%90%E8%A1%8C%E6%97%B6.md): 少一次写回、少一个 kernel 或更快的独占内核都要接受整条链的检验；复用、并发和缓冲寿命共同决定搬移代价。
-6. [超节点](outlines/06-%E8%B6%85%E8%8A%82%E7%82%B9.md): 并行换来容量或处理能力，也增加交接与同步。总容量足够时仍要检查最忙设备；同一组卡应扩大协作还是增加推理实例数量，取决于负载和时限。
-7. [数据中心网络](outlines/07-%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E7%BD%91%E7%BB%9C.md): 网络设计既要利用并行与共享降低搬移代价，也要界定必要的顺序、资源寿命和故障范围；最终收益取决于这些选择能否减少任务关键路径上的等待。
-8. [推理优化](outlines/08-%E5%8D%95%E5%AE%9E%E4%BE%8B%E6%8E%A8%E7%90%86.md): 在给定设备组合下，通过批处理、请求调度、KV 管理、压缩卸载和推测解码提高执行效率。
-9. [分布式推理](outlines/09-%E5%88%86%E5%B8%83%E5%BC%8F%E6%8E%A8%E7%90%86.md): 分配计算与状态的执行位置，比较完整副本、阶段与算子分工、共享 KV，以及扩缩容和恢复。
-10. [训练系统](outlines/10-%E8%AE%AD%E7%BB%83%E7%B3%BB%E7%BB%9F.md): 省容量可能增加通信或重算；提高生成吞吐也可能改变样本选择。执行优化要同时保持所声明的更新语义、质量和有效进展。
-11. [资源调度与运行环境](outlines/11-%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E4%B8%8E%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83.md): 计算空闲时状态仍可能驻留；释放、复用和迁移状态都要支付准备或恢复代价。资源与模型服务的选择，以满足质量和期限的完整任务及其全部成本评价。
-12. [端边云协同](outlines/12-%E7%AB%AF%E8%BE%B9%E4%BA%91%E5%8D%8F%E5%90%8C.md): 执行位置要按相同质量下的完整交互选择；用分工、实际传输与恢复条件修正预算，再以调优基线验证收益，形成部署方案和选择翻转条件。
-<!-- CHAPTERS:END -->
+## 内容目录
 
-旧第 12 章（资源调度与运行环境）成为新第 11 章，旧第 8 章（端边云协同）成为新第 12 章。先有环境生命周期、状态及恢复预算，再比较任务的位置。多模态阶段和 EC／KV 已在第 3 章定义，后续推理章节可以独立展开。
+| 章 | 主题 | 主要问题 |
+| :--: | --- | --- |
+| 1 | [初识 AI Infra](<manuscripts/01-初识 AI Infra.md>) | 如何估算一次生成的容量、计算量与数据读取？ |
+| 2 | [模型架构](manuscripts/02-模型架构.md) | 注意力、历史状态与专家结构如何改变系统需求？ |
+| 3 | [推理与训练负载](manuscripts/03-推理与训练负载.md) | 任务阶段、到达模式和状态寿命如何影响资源需求？ |
+| 4 | [加速器架构](manuscripts/04-加速器架构.md) | 如何在计算、存储、带宽、功耗与成本之间取舍？ |
+| 5 | [算子与运行时](manuscripts/05-算子与运行时.md) | 融合、复用、并发和调度如何减少执行开销？ |
+| 6 | [超节点](manuscripts/06-超节点.md) | 多设备协作如何平衡容量、吞吐和同步代价？ |
+| 7 | [数据中心网络](manuscripts/07-数据中心网络.md) | 通信语义与网络设计如何影响任务关键路径？ |
+| 8 | [推理优化](manuscripts/08-单实例推理.md) | 批处理、KV 管理、卸载与推测解码何时有效？ |
+| 9 | [分布式推理](manuscripts/09-分布式推理.md) | 如何放置计算和状态，并处理扩缩容与恢复？ |
+| 10 | [训练系统](manuscripts/10-训练系统.md) | 如何在容量、通信和重算之间提高有效训练进展？ |
+| 11 | [资源调度与运行环境](manuscripts/11-资源调度与运行环境.md) | 如何计入状态驻留、环境准备和恢复的完整成本？ |
+| 12 | [端边云协同](manuscripts/12-端边云协同.md) | 如何按完整交互的质量、时限与传输代价选择执行位置？ |
 
-## 实验与图
+## 配套计算与实验
 
-每章三项核心练习，共 36 项，其余就地标为延伸。练习先预测，再计算或测量，最后改变条件并修改选择；完整变体见扩写资料。公式、练习与图共用输入，机制图自绘 SVG，数据图由原始记录与脚本生成 SVG／PDF。
+[量化计算项目](calculations/README.md)提供模型配置、资源推导、统一 CLI 和[结果索引](calculations/results/README.md)。静态计算只需 Python 3.10+ 标准库，无需 GPU 或模型权重。
 
-十二章共 72 节、253 个小节、97 项实验与计算、98 项配图计划。[统一计算项目](calculations/README.md)交付官方配置、可复现代码与分析结果；[独立实验项目](experiments/README.md)为这 106 项各建一个可独立运行的目录（程序、README 与结果），正文在每个实验块之后回填一段简洁结果并链接到对应目录。计算类实验复用统一计算项目的结果，不重复实现公式；实跑类保留完整原始记录、哈希与失败尝试，仍未覆盖的部分逐项写在 `experiments/inventory.json` 的 `remaining` 字段。本书实测 M2 Max 38 核 GPU／96 GB 与 RTX PRO 6000 Blackwell Workstation Edition；H100／4090 保留为历史判断，昇腾使用已有公开证据，配置不同的结果分别使用。
+```bash
+git lfs install
+git clone https://github.com/bojieli/ai-infra-book.git
+cd ai-infra-book
+git lfs pull
 
-## 材料入口
+# 查看模型支持情况
+python3 calculations/calc.py models
 
+# 估算 Qwen3-8B 在 8192-token prefill 下的逐算子资源需求
+python3 calculations/calc.py forward --model qwen3-8b --tokens 8192 --format md
+```
 
-- [草案 14／15 新增内容的保留审计](research/draft14-15-outline-audit/report.md)：比较到草案 14 的增量，并用草案 15 同期审阅核对后续变化；补回 5 处占位，明确独立草案 15 原件未找到的证据限制。
-- [草案 11 与当前大纲的完整对照](research/draft11-outline-audit/report.md)：[112 项取舍与原文定位](research/draft11-outline-audit/decision-matrix.md)，保留修改前快照；记录当时补回的章节与配套项目；[配套安排](outlines/writing-support.md)已在草案 22 具体化。
-- [系统抽象边界上移调研](research/system-abstraction-boundary/report.md)：恢复旧版 skeleton 的可编程性主线，保存[历史原件与官方资料](references/outline-checks/2026-09-08/system-abstraction/README.md)，用于第 1 章的背景与第 11 章的环境边界。
-- [2023—2026 年 token 成本下降调研](research/token-cost-2023-2026/report.md)：完整报告、[67 项原始资料](references/token-cost/2026-09-07/README.md)及[章节落点](research/token-cost-2023-2026/outline-placement.md)；草案 22 将相关问题融入推导，详细证据留在扩写材料。
-- [2024–2026 长期调研](research/2026-infra-survey/README.md)：框架变迁、逐卷会议阅读、面试方向与精选题，当前进行中；[会议论文集](references/proceedings/README.md)保存全集，正文只采用经过筛选的案例。
-- [业务与硬件的贯穿推算](case-studies/inference-training-scenarios.md)：请求、量化、异构服务与训练期限。
-- [负载变化与芯片演进](case-studies/architecture-evolution.md)：代际机制在计算、存储和搬运各层的分析方法。
+仓库使用 [Git LFS](https://git-lfs.com/) 保存论文和部分较大的输入与测量记录。复现前请下载所需 LFS 文件；仅阅读 Markdown 不必克隆整个资料库。
 
-- [本地参考库](references/README.md)、[推理论文选读](references/INFERENCE-PAPER-GUIDE.md)、[芯片资料覆盖](references/HARDWARE-COVERAGE.md)、[UB 与昇腾 950 核对笔记](references/UB-ASCEND-NOTES.md)。
-- 作者文章原件：[UB 背后的思考](references/files/documents/ub-reflection.md)，网络新黄金时代[（一）](references/files/documents/network-golden-1.md)、[（二）](references/files/documents/network-golden-2.md)、[（三）](references/files/documents/network-golden-3.md)，[A100/H100 太贵，何不用 4090？](references/files/documents/h100-vs-4090.md)。
-- [可编程网卡案例](case-studies/programmable-nic.md)。
-- [片上数据移动与能耗案例](case-studies/logicfolding-energy.md)。
-- [训练计算量复算案例](case-studies/training-compute.md)、[Llama／Qwen 训练投入比较](case-studies/scaling-history.md)。
-- [Qwen3／V4-Flash 模型与算子核对](case-studies/model-operator-examples.md)、[具体模型的并行推算](case-studies/model-parallelism.md)。
-- [Queqiao 语音与广域实验案例](case-studies/queqiao.md)。
-- [加速器架构比较案例](case-studies/accelerator-architecture.md)。
-- [MacBook／RTX 配对案例](case-studies/macbook-rtx-pro6000.md)。
-- [OpenTallas案例](case-studies/opentallas.md)。
-- [异构 PD／AF案例](case-studies/pd-af-heterogeneous.md)。
+[配套实验](experiments/README.md)按 `experiments/chXX/XX-YY/` 组织，各目录提供运行方法、输入、结果和适用条件。计算推导、硬件实测与公开资料分别注明来源；尚未覆盖的条件见各实验说明及 [inventory.json](experiments/inventory.json)。GPU 实验的硬件和依赖要求以各自 README 为准。
 
-近期模型、芯片和协议采用固定来源快照。规范说明行为，论文与公开实现支持相应机制，作者经历说明研究背景；根据数字作出的解释保留假设，未公开参数不填成确定结果。案例笔记中的旧细节节号按新版大纲重新定位。
+## 本地构建
 
-## 历史文件与页面
+**阅读网站**（Python 3.10+）：
 
-[草案 15 审阅](reviews/draft15-review.md)、[草案 16 审阅](reviews/draft16-review.md)保留作为修订记录。[原在线 Artifact](https://claude.ai/code/artifact/f189e837-87cd-4db3-b58b-35db20856858)是此前的发布入口，本地修改尚未同步发布。
+```bash
+python3 -m venv .venv-site
+source .venv-site/bin/activate
+python -m pip install -r website/requirements.txt
+python scripts/build_site.py
+python scripts/check_site.py
+python scripts/build_site.py --serve
+```
 
-旧 HTML 阅读版已移除；网站每次从 Markdown 重新构建，生成文件只作为 Pages 或 Release 产物。独有资料快照迁移为 Markdown，原始文件仍可在 Git 历史中查阅。
+预览地址为 <http://127.0.0.1:8000>。生成文件位于 `build/`，详细说明见[网站构建与发布](website/README.md)。
 
-本轮的模型计算与媒体案例：[容量、计算与访问](case-studies/model-resource-accounting.md)、[RAW 图片精修](case-studies/raw-retouching.md)；[全书写作要求](outlines/editorial-notes.md)。
+**全书 PDF**（另需 Pandoc、XeLaTeX 和字体）：
 
-本轮实用案例与取证：[执行优化与 Routing Replay](case-studies/execution-feedback.md)、[框架关键特性与章节对应](case-studies/framework-evolution.md)、[调度、模型路由与 E2B](case-studies/platform-routing.md)。
+```bash
+bash book/build_pdf.sh
+```
+
+依赖、字体及单章编译方法见 [PDF 编译说明](book/README.md)。GitHub Actions 会检查 Pull Request 的网站与 PDF 构建；推送到 `main` 后自动生成 Release 并部署 Pages。
+
+## 仓库结构
+
+| 目录 | 内容 |
+| --- | --- |
+| [manuscripts/](manuscripts/README.md) | 前言、十二章正文、配图与绘图脚本 |
+| [experiments/](experiments/README.md) | 按章节组织的实验与运行记录 |
+| [calculations/](calculations/README.md) | 资源计算工具、固定输入与复算结果 |
+| [case-studies/](case-studies/) | 模型、硬件和系统案例分析 |
+| [references/](references/README.md) | 引用资料、来源清单与版本快照 |
+| [research/](research/) | 支撑正文的专题调研与证据分析 |
+| [book/](book/README.md) | PDF 模板、构建与校验工具 |
+| [website/](website/README.md)、[scripts/](scripts/) | 网站资源、构建与检查脚本 |
+| [archive/](archive/README.md) | 历史大纲、审阅和写作协调记录 |
+
+## 参与贡献
+
+欢迎通过 [Issues](https://github.com/bojieli/ai-infra-book/issues) 反馈勘误、提出问题，或提交 Pull Request 改进正文、配图和实验。
+
+- **文字与公式**：注明章节、原文位置、问题及建议修改。
+- **数据与结论**：提供可查阅来源、版本、单位、假设与计算过程。
+- **实验与代码**：给出运行命令、依赖、硬件条件及结果；说明结果适用范围。
+
+请直接修改 `manuscripts/` 中的正文源文件。网站页面由构建生成；临时截图、日志、虚拟环境和本地凭据不应提交。涉及构建或代码的修改，请运行相应检查并在 PR 中说明验证结果。
+
+## 作者与致谢
+
+作者：[李博杰](https://01.me/)（[@bojieli](https://github.com/bojieli)）。
+
+本书与[《深入理解 AI Agent：设计原理与工程实践》](https://github.com/bojieli/ai-agent-book)属于同一系列，PDF 沿用其 ElegantBook / XeLaTeX 模板。感谢相关论文、开源项目与技术文档的作者，以及参与勘误和实验复现的读者。具体来源见正文脚注和[参考资料库](references/README.md)。
+
+## 许可
+
+本书原创正文、配图及配套代码采用 [Apache License 2.0](LICENSE) 许可。Copyright © 2026 Bojie Li（李博杰）。
+
+仓库中的第三方代码、字体、模板与参考资料保留各自的版权和许可声明，不因收录于本仓库而改用 Apache-2.0；具体来源和使用条件见相应目录。

@@ -21,9 +21,16 @@ def stage():
     DOCS.mkdir(parents=True)
     ref = os.environ.get('BOOK_SOURCE_REF') or subprocess.check_output(
         ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
-    catalog = json.loads((ROOT / 'outlines/chapters.json').read_text())
+    catalog = []
+    for path in sorted((ROOT / 'manuscripts').glob('[0-9][0-9]-*.md')):
+        number = int(path.name[:2])
+        if 1 <= number <= 12:
+            title = re.sub(r'^# 第 \d+ 章 ', '', path.read_text().splitlines()[0])
+            catalog.append({'number': number, 'title': title, 'file': path.name})
+    if [c['number'] for c in catalog] != list(range(1, 13)):
+        raise ValueError('Expected manuscript chapters 1–12')
     sources = {ROOT / 'website/index.md': Path('index.md')}
-    for folder in ('manuscripts', 'outlines'):
+    for folder in ('manuscripts',):
         sources[ROOT / folder / 'README.md'] = Path(folder) / 'README.md'
         for chapter in catalog:
             path = ROOT / folder / chapter['file']
@@ -79,8 +86,6 @@ def stage():
     # JSON is valid YAML and avoids quoting problems in Chinese chapter titles.
     nav = [{'首页': 'index.md'}, {'正文': [{'前言': 'manuscripts/00-前言.md'}] + [
         {f'{c["number"]}. {c["title"]}': f'manuscripts/{c["file"]}'} for c in catalog]},
-        {'写作大纲': [{'大纲索引': 'outlines/README.md'}] + [
-            {f'{c["number"]}. {c["title"]}': f'outlines/{c["file"]}'} for c in catalog]},
         {'配图与复算': 'manuscripts/README.md'}, {'构建与发布': 'website/README.md'}]
     config = (ROOT / 'mkdocs.yml').read_text() + '\nnav: ' + json.dumps(nav, ensure_ascii=False) + '\n'
     # Config stays at the root so docs_dir/site_dir remain relative to the repository.

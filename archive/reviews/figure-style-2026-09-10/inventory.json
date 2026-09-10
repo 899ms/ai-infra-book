@@ -1,0 +1,1546 @@
+[
+  {
+    "chapter": "01-初识 AI Infra",
+    "caption": "AI Infra 六层全景：从应用需求到设备与互联，右侧为跨层平台能力，底部为共同物理条件。",
+    "path": "manuscripts/ch01/figure-1-1-panorama.svg",
+    "svg_width_pt": 837.072,
+    "min_font_pt": 10.5,
+    "min_at_420pt": 5.268364011697918
+  },
+  {
+    "chapter": "01-初识 AI Infra",
+    "caption": "请求经过应用、入口、路由、实例调度、GPU 执行与输出返回；另标模型加载、KV 状态与多设备协作。",
+    "path": "manuscripts/ch01/figure-1-2-request.svg",
+    "svg_width_pt": 868.896,
+    "min_font_pt": 10.5,
+    "min_at_420pt": 5.075406032482599
+  },
+  {
+    "chapter": "01-初识 AI Infra",
+    "caption": "数据中心通过网络连接多个超节点，放大一个超节点展示计算托盘、CPU 与主存、GPU 与 HBM、内部互联和网卡。",
+    "path": "manuscripts/ch01/figure-1-3-datacenter.svg",
+    "svg_width_pt": 865.152,
+    "min_font_pt": 8.5,
+    "min_at_420pt": 4.126442521083
+  },
+  {
+    "chapter": "01-初识 AI Infra",
+    "caption": "关键数字分为历史访问延迟与 H100 SXM 资源卡。延迟采用对数刻度；容量、带宽与计算吞吐分别列示。",
+    "path": "manuscripts/ch01/figure-1-4-numbers.svg",
+    "svg_width_pt": 837.072,
+    "min_font_pt": 9.0,
+    "min_at_420pt": 4.515740581455359
+  },
+  {
+    "chapter": "01-初识 AI Infra",
+    "caption": "图 1-5 每卡容量与执行时的权重读取",
+    "path": "manuscripts/ch01/figure-1-capacity-path.svg",
+    "svg_width_pt": 964.441468,
+    "min_font_pt": 12.0,
+    "min_at_420pt": 5.225822579416504
+  },
+  {
+    "chapter": "01-初识 AI Infra",
+    "caption": "教学模型的算力、带宽和批复用变化，以及独立 Qwen3-8B 实测中的吞吐和每请求时间。",
+    "path": "manuscripts/ch01/figure-1-5-budget.svg",
+    "svg_width_pt": 858.4,
+    "min_font_pt": 9.0,
+    "min_at_420pt": 4.40354147250699
+  },
+  {
+    "chapter": "01-初识 AI Infra",
+    "caption": "TPU、SmartNIC 与 Unified Bus 分别改变专用资源配置、处理位置和协作范围。",
+    "path": "manuscripts/ch01/figure-1-6-designs.svg",
+    "svg_width_pt": 855.792,
+    "min_font_pt": 9.0,
+    "min_at_420pt": 4.416961130742049
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-1 序列模型的计算依赖",
+    "path": "manuscripts/ch02/figure-2-1-dependencies.svg",
+    "svg_width_pt": 1008.0,
+    "min_font_pt": 9.0,
+    "min_at_420pt": 3.75
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-2 四个模型的层数、隐藏维度与专家数",
+    "path": "manuscripts/ch02/figure-2-architecture.svg",
+    "svg_width_pt": 1008.0,
+    "min_font_pt": 12.0,
+    "min_at_420pt": 5.0
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-3 Qwen3-8B 单层的尺寸与数据流",
+    "path": "manuscripts/ch02/figure-2-2-layer.svg",
+    "svg_width_pt": 1008.0,
+    "min_font_pt": 7.0,
+    "min_at_420pt": 2.9166666666666665
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-4 历史读取的阶梯与批内权重复用",
+    "path": "manuscripts/ch02/figure-2-history.svg",
+    "svg_width_pt": 1008.0,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.166666666666667
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-5 查询头与共享历史的对应关系",
+    "path": "manuscripts/ch02/figure-2-3-sharing.svg",
+    "svg_width_pt": 1008.0,
+    "min_font_pt": 7.7,
+    "min_at_420pt": 3.2083333333333335
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-6 KV 共享与潜变量压缩",
+    "path": "manuscripts/ch02/figure-2-4-cache.svg",
+    "svg_width_pt": 1008.0,
+    "min_font_pt": 8.4,
+    "min_at_420pt": 3.5
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-7 V4 的窗口、压缩与索引",
+    "path": "manuscripts/ch02/figure-2-5-sparse.svg",
+    "svg_width_pt": 1008.0,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.166666666666667
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-8 逐位置历史与固定状态矩阵",
+    "path": "manuscripts/ch02/figure-2-recurrence.svg",
+    "svg_width_pt": 1008.0,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 4.583333333333333
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-9 混合注意力与专家计算的组合",
+    "path": "manuscripts/ch02/figure-2-6-hybrid.svg",
+    "svg_width_pt": 1008.0,
+    "min_font_pt": 7.0,
+    "min_at_420pt": 2.9166666666666665
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-10 状态容量、访问与输入工作",
+    "path": "manuscripts/ch02/figure-2-7-state-growth.svg",
+    "svg_width_pt": 1152.0,
+    "min_font_pt": 8.0,
+    "min_at_420pt": 2.9166666666666665
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-11 同样的专家运算量与不同的权重读取量",
+    "path": "manuscripts/ch02/figure-2-expert-reuse.svg",
+    "svg_width_pt": 1008.0,
+    "min_font_pt": 12.0,
+    "min_at_420pt": 5.0
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-12 稠密层与 V4 层的数据流",
+    "path": "manuscripts/ch02/figure-2-8-residual.svg",
+    "svg_width_pt": 1008.0,
+    "min_font_pt": 7.0,
+    "min_at_420pt": 2.9166666666666665
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-13 模型权重、单步计算与历史状态的对照",
+    "path": "manuscripts/ch02/figure-2-resources.svg",
+    "svg_width_pt": 1008.0,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 4.583333333333333
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-14 权重、历史与显存可容纳的并发请求数",
+    "path": "manuscripts/ch02/figure-2-9-capacity.svg",
+    "svg_width_pt": 1080.0,
+    "min_font_pt": 9.0,
+    "min_at_420pt": 3.5
+  },
+  {
+    "chapter": "02-模型架构",
+    "caption": "图 2-15 请求输入与计算状态映射",
+    "path": "manuscripts/ch02/figure-2-10-request.svg",
+    "svg_width_pt": 1008.0,
+    "min_font_pt": 7.0,
+    "min_at_420pt": 2.9166666666666665
+  },
+  {
+    "chapter": "03-推理与训练负载",
+    "caption": "图 3-1 同一模型的 Prefill 与 Decode",
+    "path": "manuscripts/ch03/figure-3-1-stages.svg",
+    "svg_width_pt": 924.48,
+    "min_font_pt": 7.0,
+    "min_at_420pt": 3.180166147455867
+  },
+  {
+    "chapter": "03-推理与训练负载",
+    "caption": "图 3-2 请求组成与阶段积压",
+    "path": "manuscripts/ch03/figure-3-2-workload-budget.svg",
+    "svg_width_pt": 974.50957,
+    "min_font_pt": 9.0,
+    "min_at_420pt": 3.878874170522512
+  },
+  {
+    "chapter": "03-推理与训练负载",
+    "caption": "图 3-3 每次尝试的费用与每个成功任务的费用",
+    "path": "manuscripts/ch03/figure-3-success-cost.svg",
+    "svg_width_pt": 906.4256,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.096943422604127
+  },
+  {
+    "chapter": "03-推理与训练负载",
+    "caption": "图 3-4 Agent 轨迹与 KV 生命周期",
+    "path": "manuscripts/ch03/figure-3-3-agent.svg",
+    "svg_width_pt": 958.408,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.382267259872622
+  },
+  {
+    "chapter": "03-推理与训练负载",
+    "caption": "图 3-5 图像位置合并与特征宽度的变化",
+    "path": "manuscripts/ch03/figure-3-vision-shapes.svg",
+    "svg_width_pt": 898.463333,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.674648197357209
+  },
+  {
+    "chapter": "03-推理与训练负载",
+    "caption": "图 3-6 实时交互的端到端时序",
+    "path": "manuscripts/ch03/figure-3-4-realtime.svg",
+    "svg_width_pt": 934.56,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.494093477144325
+  },
+  {
+    "chapter": "03-推理与训练负载",
+    "caption": "图 3-7 推理与各训练阶段的计算和状态",
+    "path": "manuscripts/ch03/figure-3-5-training.svg",
+    "svg_width_pt": 931.48,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.5089534933653965
+  },
+  {
+    "chapter": "03-推理与训练负载",
+    "caption": "图 3-8 RL／OPD 的工作与数据流",
+    "path": "manuscripts/ch03/figure-3-6-rl.svg",
+    "svg_width_pt": 979.0,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.290091930541369
+  },
+  {
+    "chapter": "03-推理与训练负载",
+    "caption": "图 3-9 训练预算与生命周期成本",
+    "path": "manuscripts/ch03/figure-3-7-scaling.svg",
+    "svg_width_pt": 988.18957,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.250196650021311
+  },
+  {
+    "chapter": "03-推理与训练负载",
+    "caption": "图 3-10 Llama 与 Qwen 的模型—数据选择",
+    "path": "manuscripts/ch03/figure-3-8-history.svg",
+    "svg_width_pt": 904.32,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.644373673036093
+  },
+  {
+    "chapter": "03-推理与训练负载",
+    "caption": "图 3-11 公开 GPU 小时与训练阶段",
+    "path": "manuscripts/ch03/figure-3-9-gpu-hours.svg",
+    "svg_width_pt": 919.44,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.567997911772383
+  },
+  {
+    "chapter": "04-加速器架构",
+    "caption": "同一份权重被不同行数的输入复用",
+    "path": "manuscripts/ch04/figure-4-1-reuse.svg",
+    "svg_width_pt": 842.4,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.484330484330484
+  },
+  {
+    "chapter": "04-加速器架构",
+    "caption": "一次矩阵乘法的数据路径",
+    "path": "manuscripts/ch04/figure-4-2-components.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "04-加速器架构",
+    "caption": "专家输入行数与补零浪费",
+    "path": "manuscripts/ch04/figure-4-3-expert-rows.svg",
+    "svg_width_pt": 799.2,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.7807807807807805
+  },
+  {
+    "chapter": "04-加速器架构",
+    "caption": "注意力资源配比与瓶颈转移",
+    "path": "manuscripts/ch04/figure-4-4-attention.svg",
+    "svg_width_pt": 729.917656,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.75407371704953
+  },
+  {
+    "chapter": "04-加速器架构",
+    "caption": "低比特权重的两种计算方法",
+    "path": "manuscripts/ch04/figure-4-5-precision.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 12.0,
+    "min_at_420pt": 5.533596837944664
+  },
+  {
+    "chapter": "04-加速器架构",
+    "caption": "权重工作区和KV在固定显存中的占用",
+    "path": "manuscripts/ch04/figure-4-6-capacity.svg",
+    "svg_width_pt": 801.870625,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.7615279272762985
+  },
+  {
+    "chapter": "04-加速器架构",
+    "caption": "访存并发与带宽上界",
+    "path": "manuscripts/ch04/figure-4-7-memory.svg",
+    "svg_width_pt": 761.946836,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.0634151645719285
+  },
+  {
+    "chapter": "04-加速器架构",
+    "caption": "跨行子矩阵的有效数据与地址跨度",
+    "path": "manuscripts/ch04/figure-4-8-layout.svg",
+    "svg_width_pt": 766.262969,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.029261737689428
+  },
+  {
+    "chapter": "04-加速器架构",
+    "caption": "输入槽位与最小无间隙流水",
+    "path": "manuscripts/ch04/figure-4-9-pipeline.svg",
+    "svg_width_pt": 774.532969,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.964884885358573
+  },
+  {
+    "chapter": "04-加速器架构",
+    "caption": "跨裸片搬权重与移动计算的比较",
+    "path": "manuscripts/ch04/figure-4-10-locality.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 12.0,
+    "min_at_420pt": 5.533596837944664
+  },
+  {
+    "chapter": "04-加速器架构",
+    "caption": "带宽翻倍对大小消息的不同收益",
+    "path": "manuscripts/ch04/figure-4-11-interconnect.svg",
+    "svg_width_pt": 819.639258,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.636626058240855
+  },
+  {
+    "chapter": "04-加速器架构",
+    "caption": "固定权重与增长的KV读取",
+    "path": "manuscripts/ch04/figure-4-12-specialization.svg",
+    "svg_width_pt": 729.61457,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.332110390832793
+  },
+  {
+    "chapter": "04-加速器架构",
+    "caption": "矩阵行数改变计算与传输时间的主次",
+    "path": "manuscripts/ch04/figure-4-13-roofline.svg",
+    "svg_width_pt": 746.558867,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.188393446541169
+  },
+  {
+    "chapter": "04-加速器架构",
+    "caption": "时间差与缓存读取的对照",
+    "path": "manuscripts/ch04/figure-4-14-performance.svg",
+    "svg_width_pt": 889.45457,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.194194460094797
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-1 提交、执行与结果可用的时间",
+    "path": "manuscripts/ch05/figure-5-1-execution.svg",
+    "svg_width_pt": 713.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.884001120762119
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-2 局部容量与矩阵重读",
+    "path": "manuscripts/ch05/figure-5-2-tiles.svg",
+    "svg_width_pt": 649.385664,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 6.467651247687537
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-3 补齐行跨度如何分散 bank 请求",
+    "path": "manuscripts/ch05/figure-5-3-banks.svg",
+    "svg_width_pt": 912.24,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.6040515653775325
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-4 RMSNorm 拆分后的归约与输入重读",
+    "path": "manuscripts/ch05/figure-5-4-reduction.svg",
+    "svg_width_pt": 912.24,
+    "min_font_pt": 8.0,
+    "min_at_420pt": 3.6832412523020257
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-5 融合边界与中间读写",
+    "path": "manuscripts/ch05/figure-5-5-boundaries.svg",
+    "svg_width_pt": 747.935547,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.615457129757198
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-6 同样四块数据的串行与双缓冲执行",
+    "path": "manuscripts/ch05/figure-5-6-fusion-buffer.svg",
+    "svg_width_pt": 795.08,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.282487296875786
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-7 在线 Softmax 如何合并两个块",
+    "path": "manuscripts/ch05/figure-5-7-online-softmax.svg",
+    "svg_width_pt": 912.24,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.6040515653775325
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-8 注意力块大小在访问量与更新次数之间的取舍",
+    "path": "manuscripts/ch05/figure-5-8-attention-tradeoff.svg",
+    "svg_width_pt": 668.352344,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.912521578588194
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-9 循环层级决定临时数据的保存时间",
+    "path": "manuscripts/ch05/figure-5-9-polyhedral.svg",
+    "svg_width_pt": 912.24,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.6040515653775325
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-10 保存量化结果如何减少后续读取",
+    "path": "manuscripts/ch05/figure-5-10-quantization.svg",
+    "svg_width_pt": 912.24,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.6040515653775325
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-11 调用比例与平均执行时间",
+    "path": "manuscripts/ch05/figure-5-11-feedback.svg",
+    "svg_width_pt": 717.187539,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.441829715058671
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-12 主机提交与设备执行的对应关系",
+    "path": "manuscripts/ch05/figure-5-12-runtime.svg",
+    "svg_width_pt": 920.363672,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.563413493791181
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-13 图重放的固定收益与输入复制时间",
+    "path": "manuscripts/ch05/figure-5-13-graph-copy.svg",
+    "svg_width_pt": 695.65,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 6.03751886724646
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-14 准备成本与累计执行时间",
+    "path": "manuscripts/ch05/figure-5-14-specialization.svg",
+    "svg_width_pt": 813.689961,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.677838269409348
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-15 从等待全部投影到逐块开始激活",
+    "path": "manuscripts/ch05/figure-5-15-persistent.svg",
+    "svg_width_pt": 786.44,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.340521845277452
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-16 局部加速引起关键路径切换",
+    "path": "manuscripts/ch05/figure-5-16-critical-path.svg",
+    "svg_width_pt": 912.24,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.064456721915286
+  },
+  {
+    "chapter": "05-算子与运行时",
+    "caption": "图 5-17 完整请求的逐轮配对时间差",
+    "path": "manuscripts/ch05/figure-5-17-request.svg",
+    "svg_width_pt": 728.680977,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.3402231509057225
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "八张卡上的实例分组",
+    "path": "manuscripts/ch06/figure-6-1-placement.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 9.0,
+    "min_at_420pt": 4.150197628458498
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "模型分片与每卡内存占用",
+    "path": "manuscripts/ch06/figure-6-2-capacity.svg",
+    "svg_width_pt": 748.367813,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.612213576053411
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "TP 的切分方向与输出部分和",
+    "path": "manuscripts/ch06/figure-6-3-tp.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "四阶段流水的填充与排空",
+    "path": "manuscripts/ch06/figure-6-4-pipeline.svg",
+    "svg_width_pt": 745.312969,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.198738237708031
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "token 派发和专家结果合并",
+    "path": "manuscripts/ch06/figure-6-5-dispatch.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "TP 与 EP 的分组及归约方向",
+    "path": "manuscripts/ch06/figure-6-6-ep-layout.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "批内专家复用与权重读取",
+    "path": "manuscripts/ch06/figure-6-7-reuse.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "专家复用与设备负载分布",
+    "path": "manuscripts/ch06/figure-6-8-expert-load.svg",
+    "svg_width_pt": 904.931602,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.105358227947044
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "环形归约的逐轮状态",
+    "path": "manuscripts/ch06/figure-6-9-ring-rounds.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "增加 TP 卡数时各项时间的变化",
+    "path": "manuscripts/ch06/figure-6-10-tp-time.svg",
+    "svg_width_pt": 748.788906,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.169963207227325
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "消息大小与环树选择",
+    "path": "manuscripts/ch06/figure-6-11-collectives.svg",
+    "svg_width_pt": 688.639258,
+    "min_font_pt": 7.7,
+    "min_at_420pt": 4.696217885388114
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "并发时的资源竞争与完成时间",
+    "path": "manuscripts/ch06/figure-6-12-resources.svg",
+    "svg_width_pt": 770.337344,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.452156815079706
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "下联与上联端口分配",
+    "path": "manuscripts/ch06/figure-6-13-ports.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "相同发送量与不同物理路径",
+    "path": "manuscripts/ch06/figure-6-14-topology.svg",
+    "svg_width_pt": 901.44,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.659211927582534
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "三维环面网络的二分链路",
+    "path": "manuscripts/ch06/figure-6-15-torus.svg",
+    "svg_width_pt": 906.12,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.63514766256125
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "三种系统的连接组织",
+    "path": "manuscripts/ch06/figure-6-16-systems.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.072463768115942
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "借用前后的物理内存位置",
+    "path": "manuscripts/ch06/figure-6-17-pool-placement.svg",
+    "svg_width_pt": 816.691602,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.142700120479505
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "远端读取中的在途事务",
+    "path": "manuscripts/ch06/figure-6-18-read-window.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "访问频率与带宽需求",
+    "path": "manuscripts/ch06/figure-6-19-memory-pool.svg",
+    "svg_width_pt": 684.808164,
+    "min_font_pt": 7.7,
+    "min_at_420pt": 4.722490428720999
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "实例数量与四会话的完成顺序",
+    "path": "manuscripts/ch06/figure-6-20-session-schedule.svg",
+    "svg_width_pt": 892.628516,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.705204824534197
+  },
+  {
+    "chapter": "06-超节点",
+    "caption": "期限、故障与按时完成会话的平均成本",
+    "path": "manuscripts/ch06/figure-6-21-scale-cost.svg",
+    "svg_width_pt": 811.128164,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.177973329502094
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "八个参与者的分布与服务器边界",
+    "path": "manuscripts/ch07/figure-7-1-boundaries.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "设备扩展与固定通信需求",
+    "path": "manuscripts/ch07/figure-7-2-cut.svg",
+    "svg_width_pt": 646.81457,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 7.142696244458439
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "归约路径与跨服务器流量",
+    "path": "manuscripts/ch07/figure-7-3-hierarchy.svg",
+    "svg_width_pt": 901.44,
+    "min_font_pt": 9.0,
+    "min_at_420pt": 4.193290734824281
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "四阶段流水线中的计算与空闲",
+    "path": "manuscripts/ch07/figure-7-4-pipeline.svg",
+    "svg_width_pt": 739.09,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.682663816314657
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "专家分派在独立入口与共享入口上的传输",
+    "path": "manuscripts/ch07/figure-7-5-expert.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 9.0,
+    "min_at_420pt": 4.150197628458498
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "直接网卡与相邻网卡中继的带宽限制",
+    "path": "manuscripts/ch07/figure-7-6-relay.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "通信发起位置与数据通路",
+    "path": "manuscripts/ch07/figure-7-7-access.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 9.0,
+    "min_at_420pt": 4.150197628458498
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "按需远读与搬回本地的复用交点",
+    "path": "manuscripts/ch07/figure-7-8-snapshot.svg",
+    "svg_width_pt": 825.12,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.090168702734148
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "请求槽位不足造成的链路空闲",
+    "path": "manuscripts/ch07/figure-7-9-window.svg",
+    "svg_width_pt": 716.363867,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.8629422748369855
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "源缓冲和目的缓冲的不同复用时刻",
+    "path": "manuscripts/ch07/figure-7-10-lifetime.svg",
+    "svg_width_pt": 699.557031,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 6.00379928137696
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "应用关系与共享传输状态",
+    "path": "manuscripts/ch07/figure-7-11-state.svg",
+    "svg_width_pt": 882.72,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.758020663404023
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "必要依赖与独立操作的完成时间",
+    "path": "manuscripts/ch07/figure-7-12-ordering.svg",
+    "svg_width_pt": 799.2,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.7807807807807805
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "实际读取时刻与按序返回的区别",
+    "path": "manuscripts/ch07/figure-7-13-stale.svg",
+    "svg_width_pt": 675.84,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 6.214488636363636
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "传输完成后仍被占用的请求槽位",
+    "path": "manuscripts/ch07/figure-7-14-reclaim.svg",
+    "svg_width_pt": 705.789258,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.545863297908113
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "通信高峰与积压",
+    "path": "manuscripts/ch07/figure-7-15-congestion.svg",
+    "svg_width_pt": 658.909414,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 6.374169059906618
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "有限缓冲的填满与反馈后的排空",
+    "path": "manuscripts/ch07/figure-7-16-feedback.svg",
+    "svg_width_pt": 750.24,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.598208573256557
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "多路径报文到达与等待缺口",
+    "path": "manuscripts/ch07/figure-7-17-packets.svg",
+    "svg_width_pt": 705.725664,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.546453155485642
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "循环资源依赖与响应通路",
+    "path": "manuscripts/ch07/figure-7-18-deadlock.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "就绪与交换的关键路径",
+    "path": "manuscripts/ch07/figure-7-19-progress.svg",
+    "svg_width_pt": 698.273684,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.616316933977423
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "通信优化如何改变训练步的关键路径",
+    "path": "manuscripts/ch07/figure-7-20-step.svg",
+    "svg_width_pt": 765.345303,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.487719051174474
+  },
+  {
+    "chapter": "07-数据中心网络",
+    "caption": "小消息启动开销与大消息传输开销",
+    "path": "manuscripts/ch07/figure-7-21-message.svg",
+    "svg_width_pt": 714.98457,
+    "min_font_pt": 7.7,
+    "min_at_420pt": 4.523174535081226
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "请求从到达到最后一个输出的时间线",
+    "path": "manuscripts/ch08/figure-8-1-lifecycle.svg",
+    "svg_width_pt": 721.618516,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.402274744291622
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "批量增加时每个输出token分摊的权重与历史读取量",
+    "path": "manuscripts/ch08/figure-8-2-batch.svg",
+    "svg_width_pt": 762.03793,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.0626903440357625
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "同一请求流在三种接纳策略下的时间线",
+    "path": "manuscripts/ch08/figure-8-3-scheduling.svg",
+    "svg_width_pt": 862.059687,
+    "min_font_pt": 9.0,
+    "min_at_420pt": 4.384847194461141
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "同一块新位置访问旧历史和块内位置的范围",
+    "path": "manuscripts/ch08/figure-8-4-attention.svg",
+    "svg_width_pt": 414.27748,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 11.151945792467405
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "整段预留分页与前缀共享的物理位置数",
+    "path": "manuscripts/ch08/figure-8-5-pages.svg",
+    "svg_width_pt": 842.4,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.985754985754986
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "多轮输入的压缩前缀树与共同前缀长度",
+    "path": "manuscripts/ch08/figure-8-6-prefix.svg",
+    "svg_width_pt": 873.36,
+    "min_font_pt": 9.0,
+    "min_at_420pt": 4.328112118713932
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "相同缓存空间保留一个大前缀或三个小前缀",
+    "path": "manuscripts/ch08/figure-8-7-cache-choice.svg",
+    "svg_width_pt": 842.4,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.985754985754986
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "同一组32个值在三种KV格式中的字节布局",
+    "path": "manuscripts/ch08/figure-8-8-kv-format.svg",
+    "svg_width_pt": 684.99,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 6.131476371917838
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "预取缓冲如何改变新增 KV 容量",
+    "path": "manuscripts/ch08/figure-8-9-offload.svg",
+    "svg_width_pt": 842.4,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.484330484330484
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "同一模型中 Q 精度与正确答案数",
+    "path": "manuscripts/ch08/figure-8-10-kv-quality.svg",
+    "svg_width_pt": 807.711758,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.719862258090342
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "草稿第三个位置不匹配时的保留修正和丢弃",
+    "path": "manuscripts/ch08/figure-8-11-verification.svg",
+    "svg_width_pt": 842.4,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.484330484330484
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "草稿查询时间与平均每个输出 token 的耗时",
+    "path": "manuscripts/ch08/figure-8-12-speculation.svg",
+    "svg_width_pt": 679.15332,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.802587669011174
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "不同到达条件下的完成与合格吞吐",
+    "path": "manuscripts/ch08/figure-8-13-service.svg",
+    "svg_width_pt": 819.661602,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.124065821494954
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "四种配置相对于内存上限和完成时限的位置",
+    "path": "manuscripts/ch08/figure-8-14-design.svg",
+    "svg_width_pt": 669.464883,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.901034120411063
+  },
+  {
+    "chapter": "08-单实例推理",
+    "caption": "局部decode加速对完整任务的影响",
+    "path": "manuscripts/ch08/figure-8-15-task.svg",
+    "svg_width_pt": 674.496367,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.849555054756878
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "多卡协作完整副本和计算分工",
+    "path": "manuscripts/ch09/figure-9-1-organization.svg",
+    "svg_width_pt": 828.0,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.072463768115942
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "请求阶段、实例分工与状态寿命",
+    "path": "manuscripts/ch09/figure-9-2-state.svg",
+    "svg_width_pt": 828.0,
+    "min_font_pt": 12.0,
+    "min_at_420pt": 6.086956521739131
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "阶段配比与请求率",
+    "path": "manuscripts/ch09/figure-9-3-pd.svg",
+    "svg_width_pt": 533.743828,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 8.655837796404457
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "不同请求下八个执行单元的分工",
+    "path": "manuscripts/ch09/figure-9-4-allocation.svg",
+    "svg_width_pt": 828.0,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.072463768115942
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "专家权重搬运与CPU就地计算",
+    "path": "manuscripts/ch09/figure-9-5-local.svg",
+    "svg_width_pt": 828.0,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.072463768115942
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "专家复用与执行位置边界",
+    "path": "manuscripts/ch09/figure-9-6-reuse.svg",
+    "svg_width_pt": 811.535898,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.692908978377688
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "同样分派次数下的专家数与输入行数",
+    "path": "manuscripts/ch09/figure-9-7-footprint.svg",
+    "svg_width_pt": 741.70793,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.228866934185266
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "消息数量与启动开销",
+    "path": "manuscripts/ch09/figure-9-8-handoff.svg",
+    "svg_width_pt": 747.810352,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.178036968389012
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "八张卡的任务分布与结果合并时刻",
+    "path": "manuscripts/ch09/figure-9-9-balance.svg",
+    "svg_width_pt": 716.932969,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.444117092904958
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "专家副本的准备与回本",
+    "path": "manuscripts/ch09/figure-9-10-experts.svg",
+    "svg_width_pt": 673.841602,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.85621069742144
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "专家分派计算与结果合并的流水时间线",
+    "path": "manuscripts/ch09/figure-9-11-overlap.svg",
+    "svg_width_pt": 724.92,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.373117033603708
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "读取页与可复用连续前缀",
+    "path": "manuscripts/ch09/figure-9-12-cache.svg",
+    "svg_width_pt": 828.0,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.072463768115942
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "缓存路由中排队取回与计算的时间关系",
+    "path": "manuscripts/ch09/figure-9-13-route.svg",
+    "svg_width_pt": 720.597344,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.411347527808817
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "状态生成与后台复制的进度",
+    "path": "manuscripts/ch09/figure-9-14-migration.svg",
+    "svg_width_pt": 674.762852,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 6.224409046157746
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "输出记录与KV检查点的恢复位置",
+    "path": "manuscripts/ch09/figure-9-15-recovery.svg",
+    "svg_width_pt": 828.0,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.579710144927536
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "直接交接与共享池中转",
+    "path": "manuscripts/ch09/figure-9-16-composition.svg",
+    "svg_width_pt": 828.0,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.072463768115942
+  },
+  {
+    "chapter": "09-分布式推理",
+    "caption": "服务能力与启动积压消退",
+    "path": "manuscripts/ch09/figure-9-17-service.svg",
+    "svg_width_pt": 671.208633,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.883105748134798
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "训练状态与推理权重的容量比较",
+    "path": "manuscripts/ch10/figure-10-1-state.svg",
+    "svg_width_pt": 751.56,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.588376177550695
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "容量下界与不同效率下的计算设备数",
+    "path": "manuscripts/ch10/figure-10-2-budget.svg",
+    "svg_width_pt": 808.062344,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.197618761950377
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "参数分片与执行时的完整参数缓冲区",
+    "path": "manuscripts/ch10/figure-10-3-sharding.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "保存乘积与反向前重建乘积的时间对比",
+    "path": "manuscripts/ch10/figure-10-4-recompute.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "CPU 与 GPU 转换梯度时的传输路径",
+    "path": "manuscripts/ch10/figure-10-5-casting.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "分片参与者数与每卡容量",
+    "path": "manuscripts/ch10/figure-10-6-candidates.svg",
+    "svg_width_pt": 711.971602,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.899111689569889
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "两种流水的依赖等待与激活保存",
+    "path": "manuscripts/ch10/figure-10-7-pipeline.svg",
+    "svg_width_pt": 864.732969,
+    "min_font_pt": 7.0,
+    "min_at_420pt": 3.3998934993769154
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "链路占用怎样使归约延迟到计算结束之后",
+    "path": "manuscripts/ch10/figure-10-8-overlap.svg",
+    "svg_width_pt": 749.607812,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.163222856060631
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "等长与不等长序列的因果注意力面积",
+    "path": "manuscripts/ch10/figure-10-9-attention-area.svg",
+    "svg_width_pt": 742.93378,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.2185892260814954
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "预取进度与已经完成的训练进度",
+    "path": "manuscripts/ch10/figure-10-10-input-queue.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "从四份权重分片恢复为八份分片",
+    "path": "manuscripts/ch10/figure-10-11-resharding.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "写带宽与故障时可用恢复点",
+    "path": "manuscripts/ch10/figure-10-12-recovery.svg",
+    "svg_width_pt": 782.68,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.366177748249604
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "保存间隔对保存成本与故障重做成本的相反影响",
+    "path": "manuscripts/ch10/figure-10-13-save-interval.svg",
+    "svg_width_pt": 749.934039,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.600492552118974
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "生成验证学习的处理瓶颈与权重反馈",
+    "path": "manuscripts/ch10/figure-10-14-rl-flow.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "权重同步次序与显存峰值",
+    "path": "manuscripts/ch10/figure-10-15-rl.svg",
+    "svg_width_pt": 788.248633,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.861094845691917
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "同步等待与跨批次异步执行的时间对比",
+    "path": "manuscripts/ch10/figure-10-16-async-cycle.svg",
+    "svg_width_pt": 738.607813,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.255011006768216
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "重放离散选择与重算当前数值",
+    "path": "manuscripts/ch10/figure-10-17-replay.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "32卡与48卡方案的完成时间分解",
+    "path": "manuscripts/ch10/figure-10-18-deadline.svg",
+    "svg_width_pt": 733.85,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.723240444232473
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "通信带宽变化对每步耗时的影响",
+    "path": "manuscripts/ch10/figure-10-19-hardware.svg",
+    "svg_width_pt": 749.437773,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.164621221994371
+  },
+  {
+    "chapter": "10-训练系统",
+    "caption": "给定期限下模型规模与设备数边界",
+    "path": "manuscripts/ch10/figure-10-20-scale.svg",
+    "svg_width_pt": 704.537687,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.961356045954147
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "模型调用、工具工作和环境驻留的三轮时间线",
+    "path": "manuscripts/ch11/figure-11-1-timeline.svg",
+    "svg_width_pt": 749.72375,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.6020634266955
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "模型响应变慢对三类资源需求的不同影响",
+    "path": "manuscripts/ch11/figure-11-capacity.svg",
+    "svg_width_pt": 698.68,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.612469227686495
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "Agent 控制器、平台、模型服务与工具隔离边界",
+    "path": "manuscripts/ch11/figure-11-2-boundary.svg",
+    "svg_width_pt": 842.4,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.484330484330484
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "不同环境内容加载方式的本地数据量",
+    "path": "manuscripts/ch11/figure-11-pages.svg",
+    "svg_width_pt": 710.68,
+    "min_font_pt": 12.0,
+    "min_at_420pt": 7.091799403388305
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "同一段模型等待中的内存保留与暂停恢复",
+    "path": "manuscripts/ch11/figure-11-pause.svg",
+    "svg_width_pt": 681.353125,
+    "min_font_pt": 12.0,
+    "min_at_420pt": 7.397045401384195
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "全程保留环境与每轮重建的内存占用时间",
+    "path": "manuscripts/ch11/figure-11-residency.svg",
+    "svg_width_pt": 693.353125,
+    "min_font_pt": 12.0,
+    "min_at_420pt": 7.269023270068914
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "准备提前量与调用等待的关系",
+    "path": "manuscripts/ch11/figure-11-3-lifecycle.svg",
+    "svg_width_pt": 647.992625,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 7.1297107741002455
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "资源碎片与迁移整理前后的节点配置",
+    "path": "manuscripts/ch11/figure-11-4-placement.svg",
+    "svg_width_pt": 842.4,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.484330484330484
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "均匀到达与同时到达时的排队过程",
+    "path": "manuscripts/ch11/figure-11-queue.svg",
+    "svg_width_pt": 760.559375,
+    "min_font_pt": 12.0,
+    "min_at_420pt": 6.6267015642269875
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "生成速度加倍后仍未缩短的其他阶段",
+    "path": "manuscripts/ch11/figure-11-rl-stages.svg",
+    "svg_width_pt": 696.689687,
+    "min_font_pt": 12.0,
+    "min_at_420pt": 7.234210716829514
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "六个接收实例共用一个发送出口",
+    "path": "manuscripts/ch11/figure-11-weights.svg",
+    "svg_width_pt": 842.4,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.484330484330484
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "逐条提交与整批后提交的验证时间线",
+    "path": "manuscripts/ch11/figure-11-5-stages.svg",
+    "svg_width_pt": 710.78,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.499901516643687
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "思考缩短后单次费用的组成",
+    "path": "manuscripts/ch11/figure-11-thinking.svg",
+    "svg_width_pt": 704.726875,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.959755685491632
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "模型服务入口、后端选择及计费位置",
+    "path": "manuscripts/ch11/figure-11-6-service.svg",
+    "svg_width_pt": 842.4,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.484330484330484
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "费用曲线与按时通过测试的要求的交点",
+    "path": "manuscripts/ch11/figure-11-7-routing.svg",
+    "svg_width_pt": 711.982813,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.488920681291783
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "固定支出与每项任务费用决定采购交点",
+    "path": "manuscripts/ch11/figure-11-purchase.svg",
+    "svg_width_pt": 721.802188,
+    "min_font_pt": 12.0,
+    "min_at_420pt": 6.982522474703277
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "重试分支的概率与累计完成时间",
+    "path": "manuscripts/ch11/figure-11-retry-tree.svg",
+    "svg_width_pt": 842.4,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.484330484330484
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "恢复策略的单位成本与完成比例比较",
+    "path": "manuscripts/ch11/figure-11-8-retry.svg",
+    "svg_width_pt": 678.6125,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.808008988929618
+  },
+  {
+    "chapter": "11-资源调度与运行环境",
+    "caption": "普通模型与快速模型的三轮完成时间",
+    "path": "manuscripts/ch11/figure-11-decision.svg",
+    "svg_width_pt": 662.68,
+    "min_font_pt": 12.0,
+    "min_at_420pt": 7.605480775034708
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "上行速率改变三种精修方案的完成时间",
+    "path": "manuscripts/ch12/figure-12-1-raw.svg",
+    "svg_width_pt": 610.781914,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 7.564074662498929
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "分块计算怎样与后续上传重叠",
+    "path": "manuscripts/ch12/figure-12-2-overlap.svg",
+    "svg_width_pt": 737.88,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 6.261180679785331
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "一个音频块晚到如何推迟后续播放",
+    "path": "manuscripts/ch12/figure-12-3-paths.svg",
+    "svg_width_pt": 603.172969,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 7.659494435998176
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "接收比播放慢时缓冲逐渐耗尽",
+    "path": "manuscripts/ch12/figure-12-4-buffer.svg",
+    "svg_width_pt": 610.804258,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 7.563797958985414
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "下一轮截图依赖本轮操作完成",
+    "path": "manuscripts/ch12/figure-12-5-agent.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "相同上行下原图与完整视觉特征的传输时间",
+    "path": "manuscripts/ch12/figure-12-6-placement.svg",
+    "svg_width_pt": 655.117031,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 7.052175079234049
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "逐轮节省如何抵消迁移开销",
+    "path": "manuscripts/ch12/figure-12-7-migration.svg",
+    "svg_width_pt": 620.540977,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 7.445116714669433
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "两台设备每层都要汇总结果才能继续计算",
+    "path": "manuscripts/ch12/figure-12-8-sync.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 5.072463768115942
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "窗口用完后链路空闲等待确认",
+    "path": "manuscripts/ch12/figure-12-9-window.svg",
+    "svg_width_pt": 689.938516,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 6.087498962008956
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "相同发送轨迹下交付顺序改变音频完成时间",
+    "path": "manuscripts/ch12/figure-12-10-transport.svg",
+    "svg_width_pt": 627.0,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 7.368421052631579
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "短数据帧也需要相同的无线交换固定开销",
+    "path": "manuscripts/ch12/figure-12-11-wireless.svg",
+    "svg_width_pt": 672.850234,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 6.242102310095949
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "两条接入路径汇入共同出口",
+    "path": "manuscripts/ch12/figure-12-12-multipath.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "调优基线使同一语音请求的时间差缩小",
+    "path": "manuscripts/ch12/figure-12-13-queqiao.svg",
+    "svg_width_pt": 613.827539,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 7.52654403144985
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "不同执行设备的时间组成",
+    "path": "manuscripts/ch12/figure-12-14-budgets.svg",
+    "svg_width_pt": 761.7136,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 5.513883433353428
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "云路径上行决定部署方案何时满足期限和何时更快",
+    "path": "manuscripts/ch12/figure-12-15-deployment.svg",
+    "svg_width_pt": 617.033008,
+    "min_font_pt": 11.0,
+    "min_at_420pt": 7.48744384838485
+  },
+  {
+    "chapter": "12-端边云协同",
+    "caption": "保留提交记录可以少做哪些工作",
+    "path": "manuscripts/ch12/figure-12-16-recovery.svg",
+    "svg_width_pt": 910.8,
+    "min_font_pt": 10.0,
+    "min_at_420pt": 4.611330698287221
+  }
+]

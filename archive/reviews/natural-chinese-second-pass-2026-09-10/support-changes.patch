@@ -1,0 +1,337 @@
+--- a/manuscripts/ch02/compare_models.py
++++ b/manuscripts/ch02/compare_models.py
+@@ -23,7 +23,7 @@
+ for x in rows:lines.append('| '+x['model']+' | '+' | '.join(('$<0.001$' if 0<z<500000 else f'{z/1e9:.3f}') for z in x['parameter_groups']+[x['total_parameters']])+' |')
+ lines+=['','其他包含 router、潜空间进出投影、归一化、卷积和连接等参数；注意力投影包括 DeepSeek V4-Flash 的压缩与索引投影。Qwen3-8B 的主要参数集中在每个 token 都执行的稠密 FFN，三个 MoE 模型则将大部分参数放进路由专家。Qwen3.6 的路由专家占约 93%，DeepSeek V4-Flash 与 Kimi K3 约为 97%—98%。因此，它们的总容量主要由专家集合决定，单 token 的专家运算量则取决于每层选中的专家。','','**表 2-C　相同输入条件下的计算与状态**','','| 模型 | 统一 BF16 权重（GB） | 8K prefill（TFLOPs） | 8K 上下文单步 decode（GFLOPs） | 8K 状态（MiB） | 单 token 选中路由专家的 BF16 权重（GiB） |','| --- | ---: | ---: | ---: | ---: | ---: |']
+ for x in rows:lines.append(f"| {x['model']} | {x['uniform_bf16_bytes']/1e9:.2f} | {x['prefill_matrix_flops']/1e12:.2f} | {x['decode_matrix_flops']/1e9:.2f} | {x['state_8192_bytes']/2**20:.2f} | "+(f"{x['selected_routed_expert_bf16_bytes']/2**30:.3f}" if x['selected_routed_expert_bf16_bytes'] else '—')+' |')
+-lines+=['', '两种调用均取 $B=1$，prefill 为 $S=0,P=8192$，decode 为 $S=8192,P=1$，词表头均只处理末位置。状态列列出保存 8192 个上下文位置所需的空间：上下文表示采用 BF16，递推状态和压缩缓冲按相应实现采用 FP32。最后一列将一个 token 在各层选中的路由专家权重相加，再按 BF16 换算为字节数。由此可以分别比较完整模型占用的空间、一次调用的运算量，以及请求上下文占用的空间。', '', '各模型按自己的执行路径累计：Qwen3-8B 为有效因果注意力，Qwen3.6 为逐项执行的矩形注意力实现（eager）与块式线性分支，DeepSeek V4-Flash 为有效主注意力及参考索引，Kimi K3 为紧凑 MLA 与块式 KDA。Qwen3.6 保存的权重约为 Qwen3-8B 的四倍，单步矩阵运算量却更少；DeepSeek V4-Flash 权重继续扩大，8K 状态反而因压缩与选择缩小；Kimi K3 拥有更多专家，隐藏维度更大、层数也更多，因此需要保存更多权重，完成更多运算。这些差异说明，总参数量、单次运算量和上下文状态大小需要根据各自对应的结构分别计算。', '', '**从保存量继续推到访问量。** Qwen3-8B 每步使用 1152 MiB 旧 KV；DeepSeek V4-Flash 的主注意力读取与索引扫描合计 27.625 MiB，并更新压缩器。Kimi K3 紧凑 MLA 使用 216 MiB 上下文，414 MiB 递推矩阵还要一读一写，读写量合计 828 MiB；Qwen3.6 对应 160 MiB 全局上下文和 120 MiB 递推矩阵读写。递推状态每步都要读出并更新，上下文表示则要供当前查询使用。因此，即使状态大小固定，每步也仍有相应的读写开销。', '', '**从参数转到存储格式。** 统一按 BF16 计算时，每个参数占 2 字节，权重大小可以直接反映参数量的差异。实际发布的模型检查点 使用各自的存储格式，DeepSeek V4-Flash 主干约为 156.02 GB，Kimi K3 文本约为 1559.97 GB。文件大小由低位宽矩阵、采用较高精度的参数以及格式元数据共同决定。模型加载后，还需要为格式转换和计算分配空间。第五章将分析存储格式与运行时实现如何影响显存占用。', '', '表 2-B 的参数组成解释了权重容量，表 2-C 则展示这些参数怎样参与一次调用。二者结合起来，可以区分“模型能容纳多少参数”与“处理一个 token 要使用多少资源”。[^comparison-data]']
++lines+=['', '两种调用均取 $B=1$，prefill 为 $S=0,P=8192$，decode 为 $S=8192,P=1$，词表头均只处理末位置。状态列列出保存 8192 个上下文位置所需的空间：上下文表示采用 BF16，递推状态和压缩缓冲按相应实现采用 FP32。最后一列将一个 token 在各层选中的路由专家权重相加，再按 BF16 换算为字节数。由此可以分别比较完整模型占用的空间、一次调用的运算量，以及请求上下文占用的空间。', '', '各模型按自己的执行路径累计：Qwen3-8B 为有效因果注意力，Qwen3.6 为逐项执行的矩形注意力实现（eager）与块式线性分支，DeepSeek V4-Flash 为有效主注意力及参考索引，Kimi K3 为紧凑 MLA 与块式 KDA。Qwen3.6 保存的权重约为 Qwen3-8B 的四倍，单步矩阵运算量却更少；DeepSeek V4-Flash 权重继续扩大，8K 状态反而因压缩与选择缩小；Kimi K3 拥有更多专家，隐藏维度更大、层数也更多，因此需要保存更多权重，完成更多运算。这些差异说明，总参数量、单次运算量和上下文状态大小需要根据各自对应的结构分别计算。', '', '**从保存量继续推到访问量。** Qwen3-8B 每步使用 1152 MiB 旧 KV；DeepSeek V4-Flash 的主注意力读取与索引扫描合计 27.625 MiB，并更新压缩器。Kimi K3 紧凑 MLA 使用 216 MiB 上下文，414 MiB 递推矩阵还要一读一写，读写量合计 828 MiB；Qwen3.6 对应 160 MiB 全局上下文和 120 MiB 递推矩阵读写。递推状态每步都要读出并更新，上下文表示则要供当前查询使用。因此，即使状态大小固定，每步也仍有相应的读写开销。', '', '**从参数转到存储格式。** 统一按 BF16 计算时，每个参数占 2 字节，权重大小可以直接反映参数量的差异。实际发布的模型检查点 使用各自的存储格式，DeepSeek V4-Flash 主干约为 156.02 GB，Kimi K3 文本约为 1559.97 GB。文件大小由低位宽矩阵、采用较高精度的参数以及格式元数据共同决定。模型加载后，还需要为格式转换和计算分配空间。第五章将分析存储格式与运行时实现如何影响显存占用。', '', '表 2-B 的参数组成解释了权重容量，表 2-C 则展示这些参数怎样参与一次调用。二者结合起来，可以区分“保存整个模型需要多少空间”与“处理一个 token 要使用多少资源”。[^comparison-data]']
+ import sys
+ sys.path.insert(0,str(H.parent))
+ from math_style import normalize
+--- a/manuscripts/ch07/README.md
++++ b/manuscripts/ch07/README.md
+@@ -75,7 +75,7 @@
+ | 7-12 | 主机 RPC 的参数从 CPU A 所在主机出发，经网卡和网络到达 CPU B 所在主机，由远端执行请求。箭头表示参数数据路径，返回结果沿反方向传送。 | [SVG](figure-7-7-access.svg) | [PNG](figure-7-7-access.png) | [PDF](figure-7-7-access.pdf) |
+ | 7-13 | 数据从 GPU 内存直接经过网卡到达远端 GPU 内存；虚线表示 CPU 提交请求，数据载荷无需经过 CPU 内存。映射和访问权限预先建立。 | [SVG](figure-7-access-1.svg) | [PNG](figure-7-access-1.png) | [PDF](figure-7-access-1.pdf) |
+ | 7-14 | GPU 通过 NVLink 访问对端 GPU 内存，由发起设备执行已授权的访问。 | [SVG](figure-7-access-2.svg) | [PNG](figure-7-access-2.png) | [PDF](figure-7-access-2.pdf) |
+-| 7-15 | 设备通过 URMA 提交异步读写，载荷经过 UB 互联到达目标设备；请求完成后按接口定义观察结果。 | [SVG](figure-7-access-3.svg) | [PNG](figure-7-access-3.png) | [PDF](figure-7-access-3.pdf) |
++| 7-15 | 设备通过 URMA 提交异步读写，载荷经过 UB 互联到达目标设备；请求完成后按接口规定检查完成状态和结果。 | [SVG](figure-7-access-3.svg) | [PNG](figure-7-access-3.png) | [PDF](figure-7-access-3.pdf) |
+ | 7-16 | 每次使用都访问远端，会重复传送同一份数据；下一图先搬回本地，再进行多次复用。两种路径处理同一份不变快照。 | [SVG](figure-7-snapshot-paths.svg) | [PNG](figure-7-snapshot-paths.png) | [PDF](figure-7-snapshot-paths.pdf) |
+ | 7-17 | 每次读取完整 144 MiB 快照时，两种方法的累计耗时。先搬回本地需要一次固定成本，从第二次复用开始节省时间。 | [SVG](figure-7-8-snapshot.svg) | [PNG](figure-7-8-snapshot.png) | [PDF](figure-7-8-snapshot.pdf) |
+ | 7-18 | 每次远程读取和本地读取都只访问 10%，但搬回时仍复制全部快照；因此需要更多复用才能抵消固定成本。 | [SVG](figure-7-snapshot-partial.svg) | [PNG](figure-7-snapshot-partial.png) | [PDF](figure-7-snapshot-partial.pdf) |
+--- a/manuscripts/ch09/README.md
++++ b/manuscripts/ch09/README.md
+@@ -11,7 +11,7 @@
+ | 文件 | 内容 |
+ | --- | --- |
+ | figure-9-1-organization | 多卡协作完整副本和计算分工 |
+-| figure-9-2-state | 请求阶段、实例分工与状态寿命 |
++| figure-9-2-state | 请求阶段、实例分工与状态保存时间 |
+ | figure-9-3-pd | 阶段配比与请求率 |
+ | figure-9-4-allocation | 不同请求下八个执行单元的分工 |
+ | figure-9-5-local | 专家权重搬运与CPU就地计算 |
+@@ -91,7 +91,7 @@
+ | 9-2 | 每个副本都能完成整次推理，可以分别接收独立请求。副本自身也可以由多张卡组成。 | [SVG](figure-9-organization-1.svg) | [PNG](figure-9-organization-1.png) | [PDF](figure-9-organization-1.pdf) |
+ | 9-3 | P 处理输入，D 继续生成。两个服务池分别调度，上下文 KV 从 P 交给 D。 | [SVG](figure-9-organization-2.svg) | [PNG](figure-9-organization-2.png) | [PDF](figure-9-organization-2.pdf) |
+ | 9-4 | 注意力与 FFN／专家分别执行，隐状态作为激活在两侧往返。每层都需要这次交接。 | [SVG](figure-9-organization-3.svg) | [PNG](figure-9-organization-3.png) | [PDF](figure-9-organization-3.pdf) |
+-| 9-5 | 计算暂停期间，状态仍需保留。示意同一请求从 prefill、decode 到工具等待和下一轮的状态寿命；横轴按阶段排列，不表示相等时长，EC 仅在有视觉输入时出现。 | [SVG](figure-9-2-state.svg) | [PNG](figure-9-2-state.png) | [PDF](figure-9-2-state.pdf) |
++| 9-5 | 计算暂停期间，状态仍需保留。示意同一请求从 prefill、decode 到工具等待和下一轮的状态保存时间；横轴按阶段排列，不表示相等时长，EC 仅在有视觉输入时出现。 | [SVG](figure-9-2-state.svg) | [PNG](figure-9-2-state.png) | [PDF](figure-9-2-state.pdf) |
+ | 9-6 | 源 P 保留完整 1.125 GiB 状态，目的 D 同时分配 1.125 GiB 接收空间。传输过程共占 2.25 GiB。 | [SVG](figure-9-kv-residency.svg) | [PNG](figure-9-kv-residency.png) | [PDF](figure-9-kv-residency.pdf) |
+ | 9-7 | 数据到齐并满足可见性条件后，完成标记允许 D 读取状态。标记指示使用顺序，完整载荷已经写到目的端。 | [SVG](figure-9-kv-publish.svg) | [PNG](figure-9-kv-publish.png) | [PDF](figure-9-kv-publish.pdf) |
+ | 9-8 | 本算例将执行权交给 D 后释放 P 的源缓冲，D 保留上下文并继续生成。源端空间用于后续请求。 | [SVG](figure-9-kv-release.svg) | [PNG](figure-9-kv-release.png) | [PDF](figure-9-kv-release.pdf) |
+@@ -106,7 +106,7 @@
+ | 9-17 | 相同总载荷下，消息数放大启动开销。两条曲线总载荷均为 1.125 GiB、有效带宽均为 25 GB/s，分别串行发送 1 次和 72 次；差值为 $71\alpha$，纵轴从48.2 ms起以显示差异。这样保持总字节数不变，只比较消息数量的影响，实际一步 AF 仅传 576 KiB。 | [SVG](figure-9-8-handoff.svg) | [PNG](figure-9-8-handoff.png) | [PDF](figure-9-8-handoff.pdf) |
+ | 9-18 | 总计 512 次专家分派均分到八张卡，每卡 64 次；虚线表示全部计算结束、可以汇合的时刻。 | [SVG](figure-9-9-balance.svg) | [PNG](figure-9-9-balance.png) | [PDF](figure-9-9-balance.pdf) |
+ | 9-19 | 512 次全部落在卡 0，其他卡空闲。相同总计算量，需要等待卡 0 完成；两图使用相同时间尺度。 | [SVG](figure-9-balance-hotspot.svg) | [PNG](figure-9-balance-hotspot.png) | [PDF](figure-9-balance-hotspot.pdf) |
+-| 9-20 | 热点持续多久，专家复制才值得。一次准备约 10.6 ms，每批节省约 0.40 ms；曲线使用例 9.5 未舍入时间计算，第 27 批开始净获益。七张接收卡各需额外 36 MiB，假设容量足够且热点不变。 | [SVG](figure-9-10-experts.svg) | [PNG](figure-9-10-experts.png) | [PDF](figure-9-10-experts.pdf) |
++| 9-20 | 热点持续多久，专家复制才值得。一次准备约 10.6 ms，每批节省约 0.40 ms；曲线使用例 9.5 中未经四舍五入的时间计算，第 27 批开始净获益。七张接收卡各需额外 36 MiB，假设容量足够且热点不变。 | [SVG](figure-9-10-experts.svg) | [PNG](figure-9-10-experts.png) | [PDF](figure-9-10-experts.pdf) |
+ | 9-21 | 整批依次分派 0.2 ms、计算 0.6 ms、合并 0.2 ms，总时间 1 ms。 | [SVG](figure-9-11-overlap.svg) | [PNG](figure-9-11-overlap.png) | [PDF](figure-9-11-overlap.pdf) |
+ | 9-22 | 每微批次各阶段时间减半，三条轨道使用独立资源。第一微批次计算时可以分派第二微批次，总时间降到 0.8 ms。 | [SVG](figure-9-overlap-pipeline.svg) | [PNG](figure-9-overlap-pipeline.png) | [PDF](figure-9-overlap-pipeline.pdf) |
+ | 9-23 | 虚线表示按标识查找对象位置。目录用于定位，实际 KV 对象用于恢复计算；路由前还需确认对象版本与可用性。 | [SVG](figure-9-cache-directory.svg) | [PNG](figure-9-cache-directory.png) | [PDF](figure-9-cache-directory.pdf) |
+@@ -118,8 +118,8 @@
+ | 9-29 | 服务余量决定启动积压的消退速度。连续流量模型，每秒到达四请求，启动 10 秒后积压 40 个。就绪后服务率为八或五请求/s，净排空率分别为四或一请求/s，从开始启动算起在第 20 或 50 秒排空。例 9.7 的排空期限为第 25 秒。 | [SVG](figure-9-17-service.svg) | [PNG](figure-9-17-service.png) | [PDF](figure-9-17-service.pdf) |
+ | 9-30 | 后台复制需要赶上仍在增长的状态。开始时待复制状态为 1 GiB，源端以 0.5 GiB/s 生成新状态，目标以 2 GiB/s 复制；两条曲线相交前，垂直距离就是尚未复制的数据量。相交后，目标只需跟随源端的新增状态。 | [SVG](figure-9-14-migration.svg) | [PNG](figure-9-14-migration.png) | [PDF](figure-9-14-migration.pdf) |
+ | 9-31 | 输出记录决定继续哪条序列，KV 检查点决定从哪里补算。假定 129 个输出均已可靠记录，但 KV 只保存了原输入。下方按输入、前 128 个输出和第 129 个输出分段示意，宽度不按 token 数量比例绘制。 | [SVG](figure-9-15-recovery.svg) | [PNG](figure-9-15-recovery.png) | [PDF](figure-9-15-recovery.pdf) |
+-| 9-32 | P 直接向 D 交接 1.125 GiB 上下文 KV 缓存，只经过一条数据边。 | [SVG](figure-9-16-composition.svg) | [PNG](figure-9-16-composition.png) | [PDF](figure-9-16-composition.pdf) |
+-| 9-33 | P 先向池写入完整 1.125 GiB 并发布，D 再取回同一对象，共经过两条边。后续实例还可以复用池中对象。 | [SVG](figure-9-composition-pool.svg) | [PNG](figure-9-composition-pool.png) | [PDF](figure-9-composition-pool.pdf) |
++| 9-32 | P 直接向 D 交接 1.125 GiB 上下文 KV 缓存，只经过一次直接传输。 | [SVG](figure-9-16-composition.svg) | [PNG](figure-9-16-composition.png) | [PDF](figure-9-16-composition.pdf) |
++| 9-33 | P 先向池写入完整 1.125 GiB 并发布，D 再取回同一对象，共经过写入和取回两次传输。后续实例还可以复用池中对象。 | [SVG](figure-9-composition-pool.svg) | [PNG](figure-9-composition-pool.png) | [PDF](figure-9-composition-pool.pdf) |
+ 
+ 
+ ## V4／V4.1 会话修订后的当前图表
+@@ -132,7 +132,7 @@
+ | 9-2 | 每个副本都能完成整次推理，可以分别接收独立请求。副本自身也可以由多张卡组成。 | [SVG](figure-9-organization-1.svg) |
+ | 9-3 | P 处理输入，D 继续生成。两个服务池分别调度，上下文 KV 从 P 交给 D。 | [SVG](figure-9-organization-2.svg) |
+ | 9-4 | 注意力与 FFN／专家分别执行，隐状态作为激活在两侧往返。每层都需要这次交接。 | [SVG](figure-9-organization-3.svg) |
+-| 9-5 | 计算暂停期间，状态仍需保留。示意同一请求从 prefill、decode 到工具等待和下一轮的状态寿命；横轴按阶段排列，不表示相等时长，EC 仅在有视觉输入时出现。 | [SVG](figure-9-2-state.svg) |
++| 9-5 | 计算暂停期间，状态仍需保留。示意同一请求从 prefill、decode 到工具等待和下一轮的状态保存时间；横轴按阶段排列，不表示相等时长，EC 仅在有视觉输入时出现。 | [SVG](figure-9-2-state.svg) |
+ | 9-6 | 源 P 保留完整 1.125 GiB 状态，目的 D 同时分配 1.125 GiB 接收空间。传输过程共占 2.25 GiB。 | [SVG](figure-9-kv-residency.svg) |
+ | 9-7 | 数据到齐并满足可见性条件后，完成标记允许 D 读取状态。标记指示使用顺序，完整载荷已经写到目的端。 | [SVG](figure-9-kv-publish.svg) |
+ | 9-8 | 本算例将执行权交给 D 后释放 P 的源缓冲，D 保留上下文并继续生成。源端空间用于后续请求。 | [SVG](figure-9-kv-release.svg) |
+@@ -147,7 +147,7 @@
+ | 9-17 | 相同总载荷下，消息数放大启动开销。两条曲线总载荷均为 1.125 GiB、有效带宽均为 25 GB/s，分别串行发送 1 次和 72 次；差值为 $71\alpha$，纵轴从48.2 ms起以显示差异。这样保持总字节数不变，只比较消息数量的影响，实际一步 AF 仅传 576 KiB。 | [SVG](figure-9-8-handoff.svg) |
+ | 9-18 | 总计 512 次专家分派均分到八张卡，每卡 64 次；虚线表示全部计算结束、可以汇合的时刻。 | [SVG](figure-9-9-balance.svg) |
+ | 9-19 | 512 次全部落在卡 0，其他卡空闲。相同总计算量，需要等待卡 0 完成；两图使用相同时间尺度。 | [SVG](figure-9-balance-hotspot.svg) |
+-| 9-20 | 热点持续多久，专家复制才值得。一次准备约 10.6 ms，每批节省约 0.40 ms；曲线使用例 9.5 未舍入时间计算，第 27 批开始净获益。七张接收卡各需额外 36 MiB，假设容量足够且热点不变。 | [SVG](figure-9-10-experts.svg) |
++| 9-20 | 热点持续多久，专家复制才值得。一次准备约 10.6 ms，每批节省约 0.40 ms；曲线使用例 9.5 中未经四舍五入的时间计算，第 27 批开始净获益。七张接收卡各需额外 36 MiB，假设容量足够且热点不变。 | [SVG](figure-9-10-experts.svg) |
+ | 9-21 | 整批依次分派 0.2 ms、计算 0.6 ms、合并 0.2 ms，总时间 1 ms。 | [SVG](figure-9-11-overlap.svg) |
+ | 9-22 | 每微批次各阶段时间减半，三条轨道使用独立资源。第一微批次计算时可以分派第二微批次，总时间降到 0.8 ms。 | [SVG](figure-9-overlap-pipeline.svg) |
+ | 9-23 | 虚线表示按标识查找对象位置。目录用于定位，实际 KV 对象用于恢复计算；路由前还需确认对象版本与可用性。 | [SVG](figure-9-cache-directory.svg) |
+@@ -160,5 +160,5 @@
+ | 9-30 | 服务余量决定启动积压的消退速度。连续流量模型，每秒到达四请求，启动 10 秒后积压 40 个。就绪后服务率为八或五请求/s，净排空率分别为四或一请求/s，从开始启动算起在第 20 或 50 秒排空。例 9.7 的排空期限为第 25 秒。 | [SVG](figure-9-17-service.svg) |
+ | 9-31 | 后台复制需要赶上仍在增长的状态。开始时待复制状态为 1 GiB，源端以 0.5 GiB/s 生成新状态，目标以 2 GiB/s 复制；两条曲线相交前，垂直距离就是尚未复制的数据量。相交后，目标只需跟随源端的新增状态。 | [SVG](figure-9-14-migration.svg) |
+ | 9-32 | 输出记录决定继续哪条序列，KV 检查点决定从哪里补算。假定 129 个输出均已可靠记录，但 KV 只保存了原输入。下方按输入、前 128 个输出和第 129 个输出分段示意，宽度不按 token 数量比例绘制。 | [SVG](figure-9-15-recovery.svg) |
+-| 9-33 | P 直接向 D 交接 1.125 GiB 上下文 KV 缓存，只经过一条数据边。 | [SVG](figure-9-16-composition.svg) |
+-| 9-34 | P 先向池写入完整 1.125 GiB 并发布，D 再取回同一对象，共经过两条边。后续实例还可以复用池中对象。 | [SVG](figure-9-composition-pool.svg) |
++| 9-33 | P 直接向 D 交接 1.125 GiB 上下文 KV 缓存，只经过一次直接传输。 | [SVG](figure-9-16-composition.svg) |
++| 9-34 | P 先向池写入完整 1.125 GiB 并发布，D 再取回同一对象，共经过写入和取回两次传输。后续实例还可以复用池中对象。 | [SVG](figure-9-composition-pool.svg) |
+--- a/manuscripts/ch08/reading-notes.md
++++ b/manuscripts/ch08/reading-notes.md
+@@ -11,7 +11,7 @@
+ | MLSys 2025 的 Marconi 与 KV 压缩评估阅读记录 | 8.3 恢复边界、8.4 自然质量 | 仅采用先前已声明页段的设计与评价结论，未把摘要候选当正文证据 |
+ | OSDI 2024 的 Sarathi-Serve 阅读记录及分块笔记 | 8.2 连续接纳与分块的分工 | 不据抽取文本中的图轴差异估读性能；正文用本书计算和实测 |
+ | OSDI 2025 的 NanoFlow 阅读记录及资源共享笔记 | 8.2 切分可能重复读权重 | 高吞吐条件与 batch=1 分开；不复制论文加速比 |
+-| 混合状态、上下文工程、多 LoRA 笔记 | 8.3 共享身份、状态寿命、检查点 | K3 为指定布局和并行下的教学载荷；Agent 输入回放不等于完成任务 |
++| 混合状态、上下文工程、多 LoRA 笔记 | 8.3 共享身份、状态保存时间、检查点 | K3 为指定布局和并行下的教学载荷；Agent 输入回放不等于完成任务 |
+ | KV 格式、卸载、张量压缩与业务配置笔记 | 8.4 的真实文件、scale、预取、解压交点 | 每值位数与执行格式分开，24／384 GiB/s 为假设；大模型文件与小模型实测分开 |
+ | 推测执行、历史草稿笔记与有理数穷举结果 | 8.5 正确性、计数、两种草稿成本 | 保持目标分布不保证目标质量；EAGLE／DFlash 实现和公开条件不拼排名 |
+ | 既有 8-1 至 8-9 实验 README 和相关汇总 | 对应小节的实测对照 | 共享设备、固定顺序、单次或少量重复、窄题集、未知整机成本就地注明 |
+--- a/manuscripts/ch01/README.md
++++ b/manuscripts/ch01/README.md
+@@ -50,7 +50,7 @@
+ | 1-9 | 保持运算量与读取量不变，分别把算力或带宽翻倍。蓝条是权重读取下界，橙条是矩阵计算下界；较长的读取项决定这组条件下的优化方向。 | [SVG](figure-1-5-budget.svg) | [PNG](figure-1-5-budget.png) | [PDF](figure-1-5-budget.pdf) |
+ | 1-10 | 一批八个请求共享一次权重读取，各产生一个输出。整批读取仍需约 20.90 ms，除以八得到每输出分摊的服务时间；每个请求经历整批执行。 | [SVG](figure-1-batch-reuse.svg) | [PNG](figure-1-batch-reuse.png) | [PDF](figure-1-batch-reuse.pdf) |
+ | 1-11 | 批内请求增加时，矩阵运算量按 $2BN$ 增长，权重读取保持每批 70 GB。约 148 个请求处两项下界相等，随后计算项主导。 | [SVG](figure-1-batch-transition.svg) | [PNG](figure-1-batch-transition.png) | [PDF](figure-1-batch-transition.pdf) |
+-| 1-12 | 同一批量模型的理想输出吞吐。每批输出数除以时间下界得到曲线；竖虚线与前图对应同一个约 148 请求的转折点。 | [SVG](figure-1-batch-throughput.svg) | [PNG](figure-1-batch-throughput.png) | [PDF](figure-1-batch-throughput.pdf) |
++| 1-12 | 上述批处理模型的理想输出吞吐率。每批输出数除以时间下界得到曲线；竖虚线与前图对应同一个约 148 请求的转折点。 | [SVG](figure-1-batch-throughput.svg) | [PNG](figure-1-batch-throughput.png) | [PDF](figure-1-batch-throughput.pdf) |
+ | 1-13 | Qwen3-8B 实测的整批输出吞吐。四档请求数等距排列，纵轴从零开始；模型、精度、输入输出长度和计时范围保持一致。 | [SVG](figure-1-measured-throughput.svg) | [PNG](figure-1-measured-throughput.png) | [PDF](figure-1-measured-throughput.pdf) |
+ | 1-14 | 同一组实测中的每请求输出间隔。吞吐增加的同时，单个请求的平均间隔也在增大；两张图分别说明设备的输出速度和用户的等待时间。 | [SVG](figure-1-measured-tpot.svg) | [PNG](figure-1-measured-tpot.png) | [PDF](figure-1-measured-tpot.pdf) |
+ | 1-15 | 专用处理器围绕反复出现的矩阵运算组织计算阵列和输入输出缓冲。缓冲是临时保存待计算或已算完数据的存储区域；三个方框及其箭头展示数据搬运方向。 | [SVG](figure-1-design-tpu.svg) | [PNG](figure-1-design-tpu.png) | [PDF](figure-1-design-tpu.pdf) |
+--- a/manuscripts/ch04/evidence-notes.md
++++ b/manuscripts/ch04/evidence-notes.md
+@@ -81,7 +81,7 @@
+ [OpenTallas 案例](../../case-studies/opentallas.md)，采用锁定的 `39b96158d35b24bd2bcd49061a689aea6893d2ed` 分析版本及案例 A、C、F。作者与项目的关系在正文披露；性能、lane 和回本例子分别使用自己的输入范围。
+ ### stage
+ 
+-[逐阶段资源界建模说明](../../calculations/research/stage-resource-bounds/README.md)；实际模型算子范围见[Qwen3-8B prefill128 资源结果](../../calculations/results/stage-resources-qwen8-b1-prefill128.md)。默认缺少速率时不填造完整时间。
++[各阶段耗时下界的建模说明](../../calculations/research/stage-resource-bounds/README.md)；实际模型算子范围见[Qwen3-8B prefill128 资源结果](../../calculations/results/stage-resources-qwen8-b1-prefill128.md)。默认缺少速率时不填造完整时间。
+ ### hardware
+ 
+ [硬件来源与精度审查](../../calculations/HARDWARE-AUDIT.md)及[官方基础表](../../calculations/results/hardware.md)。4090 的累加条件反例来自官方 RTX 架构白皮书附录；字段未公开不代表硬件缺失该能力。
+--- a/manuscripts/ch03/README.md
++++ b/manuscripts/ch03/README.md
+@@ -16,7 +16,7 @@
+ | 图 3-2 请求组成与阶段积压 | [SVG](figure-3-2-workload-budget.svg) | [PNG](figure-3-2-workload-budget.png) |
+ | 图 3-3 每次尝试的费用与每个成功任务的费用 | [SVG](figure-3-success-cost.svg) | [PNG](figure-3-success-cost.png) |
+ | 图 3-4 Agent 轨迹与 KV 生命周期 | [SVG](figure-3-3-agent.svg) | [PNG](figure-3-3-agent.png) |
+-| 图 3-5 工具依赖决定关键路径与状态寿命 | [SVG](figure-3-tool-dependency.svg) | [PNG](figure-3-tool-dependency.png) |
++| 图 3-5 工具依赖决定关键路径与状态保存时间 | [SVG](figure-3-tool-dependency.svg) | [PNG](figure-3-tool-dependency.png) |
+ | 图 3-6 图像位置合并与特征宽度的变化 | [SVG](figure-3-vision-shapes.svg) | [PNG](figure-3-vision-shapes.png) |
+ | 图 3-7 实时交互的端到端时序 | [SVG](figure-3-4-realtime.svg) | [PNG](figure-3-4-realtime.png) |
+ | 图 3-8 推理与各训练阶段的计算和状态 | [SVG](figure-3-5-training.svg) | [PNG](figure-3-5-training.png) |
+@@ -45,7 +45,7 @@
+ | --- | --- | --- | --- | --- |
+ | 3-1 | 恢复 6144 个上下文位置，处理 2048 个新输入并生成四个输出。首输出来自 prefill，后续三次 decode 各追加一个位置；纵向表示调用次序，间距用于示意。 | [SVG](figure-3-1-stages.svg) | [PNG](figure-3-1-stages.png) | [PDF](figure-3-1-stages.pdf) |
+ | 3-2 | 请求到达、首输出与末输出决定三个计时区间。首响应包含开始生成前的等待，输出间隔描述生成过程，完整请求时间从到达累计到结束。 | [SVG](figure-3-request-clocks.svg) | [PNG](figure-3-request-clocks.png) | [PDF](figure-3-request-clocks.pdf) |
+-| 3-3 | 1 GiB 状态持续占用空间十秒，对应面积为 10 GiB·s。横轴为状态存活时间，纵轴为占用空间；面积描述这段等待消耗的空间时间。 | [SVG](figure-3-state-time-area.svg) | [PNG](figure-3-state-time-area.png) | [PDF](figure-3-state-time-area.pdf) |
++| 3-3 | 1 GiB 状态持续占用空间十秒，对应面积为 10 GiB·s。横轴为状态保存时间，纵轴为占用空间；面积描述这段等待消耗的空间时间。 | [SVG](figure-3-state-time-area.svg) | [PNG](figure-3-state-time-area.png) | [PDF](figure-3-state-time-area.pdf) |
+ | 3-4 | 相同两分钟总量的三种窗口组成。长输入类为 8192 输入、256 输出，长输出类为 1024 输入、2048 输出；两类混合比例改变阶段需求。 | [SVG](figure-3-2-workload-budget.svg) | [PNG](figure-3-2-workload-budget.png) | [PDF](figure-3-2-workload-budget.pdf) |
+ | 3-5 | 三种窗口组成对应的输入与后续生成需求。输入数按 token 计，后续生成按每请求的一次 decode 步计；每请求首输出已计入 prefill。 | [SVG](figure-3-stage-demand.svg) | [PNG](figure-3-stage-demand.png) | [PDF](figure-3-stage-demand.pdf) |
+ | 3-6 | 工作先进入队列，再由处理资源完成。到来快于处理时差额留在队列中；处理快于到来时，资源逐步消化已有积压。 | [SVG](figure-3-queue-mechanism.svg) | [PNG](figure-3-queue-mechanism.png) | [PDF](figure-3-queue-mechanism.pdf) |
+@@ -61,7 +61,7 @@
+ | 3-16 | 可组合的多模态阶段。编码形成模型输入，语言模型生成回复，声学模块将回复转成音频，接收端缓冲与播放设备决定何时真正发声。 | [SVG](figure-3-4-realtime.svg) | [PNG](figure-3-4-realtime.png) | [PDF](figure-3-4-realtime.pdf) |
+ | 3-17 | 八块音频的教学播放时间线。每块长二十毫秒，圆点标到达，短竖线标原定播放时刻，色条标实际播放；第三块晚到五毫秒，后续播放随之顺延。 | [SVG](figure-3-audio-timing.svg) | [PNG](figure-3-audio-timing.png) | [PDF](figure-3-audio-timing.pdf) |
+ | 3-18 | 同一教学场景中的本地打断。123 ms 发出操作，130 ms 设备静音；远端计算是否停止属于另一条控制路径。 | [SVG](figure-3-audio-interrupt.svg) | [PNG](figure-3-audio-interrupt.png) | [PDF](figure-3-audio-interrupt.pdf) |
+-| 3-19 | 一层激活从前向完成后保留到相应反向用完。横轴按事件排列，间距表示过程顺序；反向需要的前向输入决定这段存活区间。 | [SVG](figure-3-activation-lifetime.svg) | [PNG](figure-3-activation-lifetime.png) | [PDF](figure-3-activation-lifetime.pdf) |
++| 3-19 | 一层激活从前向完成后保留到相应反向用完。横轴按事件排列，间距表示过程顺序；反向需要的前向输入决定这段保存时间。 | [SVG](figure-3-activation-lifetime.svg) | [PNG](figure-3-activation-lifetime.png) | [PDF](figure-3-activation-lifetime.pdf) |
+ | 3-20 | 训练沿前向依赖计算输出，再沿反向依赖传递梯度。当前层既向前层传输入梯度，也计算自己的权重梯度，供优化器更新。 | [SVG](figure-3-5-training.svg) | [PNG](figure-3-5-training.png) | [PDF](figure-3-5-training.pdf) |
+ | 3-21 | Qwen3-8B 全参数训练的参数相关状态。每参数包括两字节计算权重和四组四字节状态，共十八字节；激活和工作区由各自寿命另行核算。 | [SVG](figure-3-training-states.svg) | [PNG](figure-3-training-states.png) | [PDF](figure-3-training-states.pdf) |
+ | 3-22 | Qwen3-8B 的 8192 输入全参数训练。全部位置执行词表头、没有重计算；按矩阵逐项累计，前向加反向为 431.368 TFLOPs。 | [SVG](figure-3-training-flops.svg) | [PNG](figure-3-training-flops.png) | [PDF](figure-3-training-flops.pdf) |
+@@ -85,7 +85,7 @@
+ | --- | --- | --- |
+ | 3-1 | 恢复 6144 个上下文位置，处理 2048 个新输入并生成四个输出。首输出来自 prefill，后续三次 decode 各追加一个位置；纵向表示调用次序，间距用于示意。 | [SVG](figure-3-1-stages.svg) |
+ | 3-2 | 请求到达、首输出与末输出决定三个计时区间。首响应包含开始生成前的等待，输出间隔描述生成过程，完整请求时间从到达累计到结束。 | [SVG](figure-3-request-clocks.svg) |
+-| 3-3 | 1 GiB 状态持续占用空间十秒，对应面积为 10 GiB·s。横轴为状态存活时间，纵轴为占用空间；面积描述这段等待消耗的空间时间。 | [SVG](figure-3-state-time-area.svg) |
++| 3-3 | 1 GiB 状态持续占用空间十秒，对应面积为 10 GiB·s。横轴为状态保存时间，纵轴为占用空间；面积描述这段等待消耗的空间时间。 | [SVG](figure-3-state-time-area.svg) |
+ | 3-4 | 相同两分钟总量的三种窗口组成。长输入类为 8192 输入、256 输出，长输出类为 1024 输入、2048 输出；两类混合比例改变阶段需求。 | [SVG](figure-3-2-workload-budget.svg) |
+ | 3-5 | 三种窗口组成对应的输入与后续生成需求。输入数按 token 计，后续生成按每请求的一次 decode 步计；每请求首输出已计入 prefill。 | [SVG](figure-3-stage-demand.svg) |
+ | 3-6 | 工作先进入队列，再由处理资源完成。到来快于处理时差额留在队列中；处理快于到来时，资源逐步消化已有积压。 | [SVG](figure-3-queue-mechanism.svg) |
+@@ -102,7 +102,7 @@
+ | 3-17 | 可组合的多模态阶段。编码形成模型输入，语言模型生成回复，声学模块将回复转成音频，接收端缓冲与播放设备决定何时真正发声。 | [SVG](figure-3-4-realtime.svg) |
+ | 3-18 | 八块音频的教学播放时间线。每块长二十毫秒，圆点标到达，短竖线标原定播放时刻，色条标实际播放；第三块晚到五毫秒，后续播放随之顺延。 | [SVG](figure-3-audio-timing.svg) |
+ | 3-19 | 同一教学场景中的本地打断。123 ms 发出操作，130 ms 设备静音；远端计算是否停止属于另一条控制路径。 | [SVG](figure-3-audio-interrupt.svg) |
+-| 3-20 | 一层激活从前向完成后保留到相应反向用完。横轴按事件排列，间距表示过程顺序；反向需要的前向输入决定这段存活区间。 | [SVG](figure-3-activation-lifetime.svg) |
++| 3-20 | 一层激活从前向完成后保留到相应反向用完。横轴按事件排列，间距表示过程顺序；反向需要的前向输入决定这段保存时间。 | [SVG](figure-3-activation-lifetime.svg) |
+ | 3-21 | 训练沿前向依赖计算输出，再沿反向依赖传递梯度。当前层既向前层传输入梯度，也计算自己的权重梯度，供优化器更新。 | [SVG](figure-3-5-training.svg) |
+ | 3-22 | Qwen3-8B 全参数训练的参数相关状态。每参数包括两字节计算权重和四组四字节状态，共十八字节；激活和工作区由各自寿命另行核算。 | [SVG](figure-3-training-states.svg) |
+ | 3-23 | Qwen3-8B 的 8192 输入全参数训练。全部位置执行词表头、没有重计算；按矩阵逐项累计，前向加反向为 431.368 TFLOPs。 | [SVG](figure-3-training-flops.svg) |
+--- a/manuscripts/ch02/model-comparison.md
++++ b/manuscripts/ch02/model-comparison.md
+@@ -26,4 +26,4 @@
+ 
+ **从参数转到存储格式。** 统一按 BF16 计算时，每个参数占 2 字节，权重大小可以直接反映参数量的差异。实际发布的 checkpoint 使用各自的存储格式，V4 主干约为 156.02 GB，K3 文本约为 1559.97 GB。文件大小由低位宽矩阵、保留较高精度的参数以及格式元数据共同决定。模型加载后，还需要为格式转换和计算分配空间。第五章将分析存储格式与运行时实现如何影响显存占用。
+ 
+-表 2-B 的参数组成解释了权重容量，表 2-C 则展示这些参数怎样参与一次调用。二者结合起来，可以区分“模型能容纳多少参数”与“处理一个 token 要使用多少资源”。[^comparison-data]
++表 2-B 的参数组成解释了权重容量，表 2-C 则展示这些参数怎样参与一次调用。二者结合起来，可以区分“保存整个模型需要多少空间”与“处理一个 token 要使用多少资源”。[^comparison-data]
+--- a/manuscripts/ch05/README.md
++++ b/manuscripts/ch05/README.md
+@@ -80,22 +80,22 @@
+ | 5-12 | 上半图保存完整 S、P，两份 FP32 矩阵各占 256 MiB，写出与读回合计 1 GiB。下半图只传递已处理部分的最大值 m、指数和 ℓ、加权值 u；每处理完一个块，其分数缓冲即可复用。箭头概括处理顺序，完整计算还需读入 Q、K、V。 | [SVG](figure-5-attention-storage.svg) | [PNG](figure-5-attention-storage.png) | [PDF](figure-5-attention-storage.pdf) |
+ | 5-13 | 两个块的分数分别为 0、ln 2，值分别为 1、3。最大值增大后，将旧指数和与旧加权值同时乘以 1/2，再加上新块的贡献，最后才做除法。箭头传递的是统计量，旧分数无需保留。 | [SVG](figure-5-7-online-softmax.svg) | [PNG](figure-5-7-online-softmax.png) | [PDF](figure-5-7-online-softmax.pdf) |
+ | 5-14 | 快速缓冲为 128 KiB，序列长 8192、头维度 128，无掩码；每个点对应正文表格的一种 K/V 块大小。横轴为缓冲与下一级存储之间的访问量，纵轴为在线更新次数，采用对数刻度。从 b=64 的点移到 b=1 的点，读取减少，更新次数却约增至 43 倍。 | [SVG](figure-5-8-attention-tradeoff.svg) | [PNG](figure-5-8-attention-tradeoff.png) | [PDF](figure-5-8-attention-tradeoff.pdf) |
+-| 5-15 | 循环层次确定存储寿命。外层选输出块，创建十六 KiB 累加器；内层 ko 反复读取 A、W 块，全部归约结束后再舍入并激活。 | [SVG](figure-5-9-polyhedral.svg) | [PNG](figure-5-9-polyhedral.png) | [PDF](figure-5-9-polyhedral.pdf) |
++| 5-15 | 循环层次决定临时数据需要保存多久。外层选输出块，创建十六 KiB 累加器；内层 ko 反复读取 A、W 块，全部归约结束后再舍入并激活。 | [SVG](figure-5-9-polyhedral.svg) | [PNG](figure-5-9-polyhedral.png) | [PDF](figure-5-9-polyhedral.pdf) |
+ | 5-16 | 同样两个部分和，先相加得到零，再做 SiLU 仍为零；先对各部分做 SiLU 再相加，得到约 0.4621。两个数说明把激活计算移到求和之前会改变结果。 | [SVG](figure-5-activation-order.svg) | [PNG](figure-5-activation-order.png) | [PDF](figure-5-activation-order.pdf) |
+ | 5-17 | 一行分成两个块，后一块中的十决定整行尺度。第一项要先按这一尺度映射，再舍入到格式允许的值，最后反量化。 | [SVG](figure-5-quantization-scale.svg) | [PNG](figure-5-quantization-scale.png) | [PDF](figure-5-quantization-scale.pdf) |
+ | 5-18 | 两种方案都先读完整输入以确定行尺度。保存 FP8 结果后十二列块合计重读 192 MiB；融合方案重读 FP16 输入 384 MiB。权重与输出另有相同的 204 MiB。 | [SVG](figure-5-10-quantization.svg) | [PNG](figure-5-10-quantization.png) | [PDF](figure-5-10-quantization.pdf) |
+ | 5-19 | 形状 A 占比超过 2/3 时，新实现的总执行时间更短。A、B 原耗时均为 10 μs，新实现分别为 5、20 μs；调用串行，图中比较稳态执行。交点由两种实现的平均时间相等确定。 | [SVG](figure-5-11-feedback.svg) | [PNG](figure-5-11-feedback.png) | [PDF](figure-5-11-feedback.pdf) |
+ | 5-20 | 普通提交的三次 FFN 实测。上行为主机内核启动 API，下行为设备 kernel；横轴从本段标记起点计时。十八次内核启动对应十八个设备 kernel。 | [SVG](figure-5-12-runtime.svg) | [PNG](figure-5-12-runtime.png) | [PDF](figure-5-12-runtime.pdf) |
+-| 5-21 | 三次 FFN 融合激活链后，主机与设备各有十五次启动和内核执行。数据来自与前图相同实验的独立标记范围。 | [SVG](figure-5-runtime-1.svg) | [PNG](figure-5-runtime-1.png) | [PDF](figure-5-runtime-1.pdf) |
++| 5-21 | 三次 FFN 融合激活链后，主机与设备各有十五次启动和内核执行。数据来自与前图相同实验的单独标记的采集区间。 | [SVG](figure-5-runtime-1.svg) | [PNG](figure-5-runtime-1.png) | [PDF](figure-5-runtime-1.pdf) |
+ | 5-22 | 三次 graph launch 对应十八个设备 kernel。图重放减少主机提交次数，设备仍执行原图各节点；本图按自身采集范围标出真实时间。 | [SVG](figure-5-runtime-2.svg) | [PNG](figure-5-runtime-2.png) | [PDF](figure-5-runtime-2.pdf) |
+ | 5-23 | 先融合再重放，主机发起三次图执行，设备执行十五个 kernel。融合与图重放分别改变设备边界和主机提交。 | [SVG](figure-5-runtime-3.svg) | [PNG](figure-5-runtime-3.png) | [PDF](figure-5-runtime-3.pdf) |
+ | 5-24 | 图执行时读取记录的地址 G。新输入位于 X 时先复制到 G；上游直接写 G 时沿用同一缓冲，省去中间复制。 | [SVG](figure-5-graph-address.svg) | [PNG](figure-5-graph-address.png) | [PDF](figure-5-graph-address.pdf) |
+ | 5-25 | 橙色为准备，蓝色为额外输入复制，绿色为设备计算。普通方式四十微秒；图的两 MiB 输入约二十七微秒，十六 MiB 输入约四十二微秒。 | [SVG](figure-5-13-graph-copy.svg) | [PNG](figure-5-13-graph-copy.png) | [PDF](figure-5-13-graph-copy.pdf) |
+-| 5-26 | 同一组调用反复执行时，最省时的策略随复用次数变化。曲线采用例 5-12 的形状、处理率和准备时间，整数选择边界使用未舍入数值计算。 | [SVG](figure-5-14-specialization.svg) | [PNG](figure-5-14-specialization.png) | [PDF](figure-5-14-specialization.pdf) |
++| 5-26 | 同一组调用反复执行时，最省时的策略随复用次数变化。曲线采用例 5-12 的形状、处理率和准备时间，不同策略适用的整数调用次数范围使用未经四舍五入的数值计算。 | [SVG](figure-5-14-specialization.svg) | [PNG](figure-5-14-specialization.png) | [PDF](figure-5-14-specialization.pdf) |
+ | 5-27 | 粗粒度执行先完成八块投影，再启动八块激活。每块投影约 32.2 μs、激活约 39.3 μs，两次主机启动各五微秒；竖线为激活开始。 | [SVG](figure-5-15-persistent.svg) | [PNG](figure-5-15-persistent.png) | [PDF](figure-5-15-persistent.pdf) |
+ | 5-28 | 矩阵与向量资源独立、缓冲充足。每个任务另计 0.7 μs 调度与通知，首块投影完成后即可激活，八块流水约三百五十八微秒结束。 | [SVG](figure-5-persistent-blocks.svg) | [PNG](figure-5-persistent-blocks.png) | [PDF](figure-5-persistent-blocks.pdf) |
+ | 5-29 | 收尾等待 A、B 两条分支。A 从 60 μs 缩短至 15 μs 后，较慢分支由 A 切换为 B，请求从 80 μs 降至 60 μs。准备和收尾各为 10 μs，两条分支使用独立资源。 | [SVG](figure-5-16-critical-path.svg) | [PNG](figure-5-16-critical-path.png) | [PDF](figure-5-16-critical-path.pdf) |
+-| 5-30 | 同轮替换前的请求时间减去替换后的请求时间，正值表示替换后更快。Qwen3-8B，7239-token 输入、强制 32-token 输出，并发 1，BF16、eager，关闭前缀缓存；11 对交错计时，轮内顺序随机，期间有其他驻留服务。虚线为配对时间差的中位数约 1.3 ms。阶段表来自独立 profile。 | [SVG](figure-5-17-request.svg) | [PNG](figure-5-17-request.png) | [PDF](figure-5-17-request.pdf) |
++| 5-30 | 同轮替换前的请求时间减去替换后的请求时间，正值表示替换后更快。Qwen3-8B，7239-token 输入、强制 32-token 输出，并发 1，BF16、eager，关闭前缀缓存；11 对交错计时，轮内顺序随机，期间有其他驻留服务。虚线为配对时间差的中位数约 1.3 ms。阶段表来自单独采集的性能分析记录。 | [SVG](figure-5-17-request.svg) | [PNG](figure-5-17-request.png) | [PDF](figure-5-17-request.pdf) |
+ 
+ 
+ ## V4／V4.1 会话修订后的当前图表
+@@ -118,20 +118,20 @@
+ | 5-12 | 上半图保存完整 S、P，两份 FP32 矩阵各占 256 MiB，写出与读回合计 1 GiB。下半图只传递已处理部分的最大值 m、指数和 ℓ、加权值 u；每处理完一个块，其分数缓冲即可复用。箭头概括处理顺序，完整计算还需读入 Q、K、V。 | [SVG](figure-5-attention-storage.svg) |
+ | 5-13 | 两个块的分数分别为 0、ln 2，值分别为 1、3。最大值增大后，将旧指数和与旧加权值同时乘以 1/2，再加上新块的贡献，最后才做除法。箭头传递的是统计量，旧分数无需保留。 | [SVG](figure-5-7-online-softmax.svg) |
+ | 5-14 | 快速缓冲为 128 KiB，序列长 8192、头维度 128，无掩码；每个点对应正文表格的一种 K/V 块大小。横轴为缓冲与下一级存储之间的访问量，纵轴为在线更新次数，采用对数刻度。从 b=64 的点移到 b=1 的点，读取减少，更新次数却约增至 43 倍。 | [SVG](figure-5-8-attention-tradeoff.svg) |
+-| 5-15 | 循环层次确定存储寿命。外层选输出块，创建十六 KiB 累加器；内层 ko 反复读取 A、W 块，全部归约结束后再舍入并激活。 | [SVG](figure-5-9-polyhedral.svg) |
++| 5-15 | 循环层次决定临时数据需要保存多久。外层选输出块，创建十六 KiB 累加器；内层 ko 反复读取 A、W 块，全部归约结束后再舍入并激活。 | [SVG](figure-5-9-polyhedral.svg) |
+ | 5-16 | 同样两个部分和，先相加得到零，再做 SiLU 仍为零；先对各部分做 SiLU 再相加，得到约 0.4621。两个数说明把激活计算移到求和之前会改变结果。 | [SVG](figure-5-activation-order.svg) |
+ | 5-17 | 一行分成两个块，后一块中的十决定整行尺度。第一项要先按这一尺度映射，再舍入到格式允许的值，最后反量化。 | [SVG](figure-5-quantization-scale.svg) |
+ | 5-18 | 两种方案都先读完整输入以确定行尺度。保存 FP8 结果后十二列块合计重读 192 MiB；融合方案重读 FP16 输入 384 MiB。权重与输出另有相同的 204 MiB。 | [SVG](figure-5-10-quantization.svg) |
+ | 5-19 | 形状 A 占比超过 2/3 时，新实现的总执行时间更短。A、B 原耗时均为 10 μs，新实现分别为 5、20 μs；调用串行，图中比较稳态执行。交点由两种实现的平均时间相等确定。 | [SVG](figure-5-11-feedback.svg) |
+ | 5-20 | 普通提交的三次 FFN 实测。上行为主机内核启动 API，下行为设备 kernel；横轴从本段标记起点计时。十八次内核启动对应十八个设备 kernel。 | [SVG](figure-5-12-runtime.svg) |
+-| 5-21 | 三次 FFN 融合激活链后，主机与设备各有十五次启动和内核执行。数据来自与前图相同实验的独立标记范围。 | [SVG](figure-5-runtime-1.svg) |
++| 5-21 | 三次 FFN 融合激活链后，主机与设备各有十五次启动和内核执行。数据来自与前图相同实验的单独标记的采集区间。 | [SVG](figure-5-runtime-1.svg) |
+ | 5-22 | 三次 graph launch 对应十八个设备 kernel。图重放减少主机提交次数，设备仍执行原图各节点；本图按自身采集范围标出真实时间。 | [SVG](figure-5-runtime-2.svg) |
+ | 5-23 | 先融合再重放，主机发起三次图执行，设备执行十五个 kernel。融合与图重放分别改变设备边界和主机提交。 | [SVG](figure-5-runtime-3.svg) |
+ | 5-24 | 图执行时读取记录的地址 G。新输入位于 X 时先复制到 G；上游直接写 G 时沿用同一缓冲，省去中间复制。 | [SVG](figure-5-graph-address.svg) |
+ | 5-25 | 橙色为准备，蓝色为额外输入复制，绿色为设备计算。普通方式四十微秒；图的两 MiB 输入约二十七微秒，十六 MiB 输入约四十二微秒。 | [SVG](figure-5-13-graph-copy.svg) |
+-| 5-26 | 同一组调用反复执行时，最省时的策略随复用次数变化。曲线采用例 5-12 的形状、处理率和准备时间，整数选择边界使用未舍入数值计算。 | [SVG](figure-5-14-specialization.svg) |
++| 5-26 | 同一组调用反复执行时，最省时的策略随复用次数变化。曲线采用例 5-12 的形状、处理率和准备时间，不同策略适用的整数调用次数范围使用未经四舍五入的数值计算。 | [SVG](figure-5-14-specialization.svg) |
+ | 5-27 | 粗粒度执行先完成八块投影，再启动八块激活。每块投影约 32.2 μs、激活约 39.3 μs，两次主机启动各五微秒；竖线为激活开始。 | [SVG](figure-5-15-persistent.svg) |
+ | 5-28 | 矩阵与向量资源独立、缓冲充足。每个任务另计 0.7 μs 调度与通知，首块投影完成后即可激活，八块流水约三百五十八微秒结束。 | [SVG](figure-5-persistent-blocks.svg) |
+ | 5-29 | 收尾等待 A、B 两条分支。A 从 60 μs 缩短至 15 μs 后，较慢分支由 A 切换为 B，请求从 80 μs 降至 60 μs。准备和收尾各为 10 μs，两条分支使用独立资源。 | [SVG](figure-5-16-critical-path.svg) |
+ | 5-30 | 全局驻留与逐层逻辑读取分开比较。上方仅计全局 KV 容量，下方读取包含全局条目、局部窗口和索引；两栏各自采用相同横轴尺度。数值为生产布局的逻辑载荷，不是实测 HBM 流量。 | [SVG](figure-5-v41-traffic.svg) |
+-| 5-31 | 同轮替换前的请求时间减去替换后的请求时间，正值表示替换后更快。Qwen3-8B，7239-token 输入、强制 32-token 输出，并发 1，BF16、eager，关闭前缀缓存；11 对交错计时，轮内顺序随机，期间有其他驻留服务。虚线为配对时间差的中位数约 1.3 ms。阶段表来自独立 profile。 | [SVG](figure-5-17-request.svg) |
++| 5-31 | 同轮替换前的请求时间减去替换后的请求时间，正值表示替换后更快。Qwen3-8B，7239-token 输入、强制 32-token 输出，并发 1，BF16、eager，关闭前缀缓存；11 对交错计时，轮内顺序随机，期间有其他驻留服务。虚线为配对时间差的中位数约 1.3 ms。阶段表来自单独采集的性能分析记录。 | [SVG](figure-5-17-request.svg) |
+--- a/manuscripts/ch05/reading-notes.md
++++ b/manuscripts/ch05/reading-notes.md
+@@ -69,4 +69,4 @@
+ 
+ 重写节间及段间过渡，使下一个问题来自前文已发现的资源限制或依赖：布局解决请求冲突，任务拆分解决并行任务不足；在线归约省去完整中间矩阵，再讨论有限缓冲中的块大小；图重放减少提交，再讨论新增输入复制。
+ 
+-新增八图：提交与结果可用时间、bank 请求分布、RMSNorm 拆分、在线 Softmax 合并、注意力访问与更新取舍、量化结果复用、图输入复制、持久化内核逐块流水。全章现为十七图，按正文重新编号，图号与完整条件放外部图注。原有实验和计算值保持不变；新增图均来自正文已有教学条件。此前记录中的图号保留其历史含义。
++新增八图：提交与结果可用时间、bank 请求分布、RMSNorm 拆分、在线 Softmax 合并、注意力访问与更新取舍、量化结果复用、图输入复制、常驻内核逐块流水。全章现为十七图，按正文重新编号，图号与完整条件放外部图注。原有实验和计算值保持不变；新增图均来自正文已有教学条件。此前记录中的图号保留其历史含义。
+--- a/manuscripts/ch11/README.md
++++ b/manuscripts/ch11/README.md
+@@ -108,7 +108,7 @@
+ | 11-29 | 两次调用的输入和可见输出相同，只改变思考长度。橙色成本缩短到原来的十分之一，蓝色和绿色成本保持不变，所以总成本由 0.032 降到 0.023，减少约 28%。价格和 token 数见例 11-5。 | [SVG](figure-11-thinking.svg) | [PNG](figure-11-thinking.png) | [PDF](figure-11-thinking.pdf) |
+ | 11-30 | 同一任务的模型服务与成本路径。外部应用程序接口（API）按调用用量收费，自建副本按设备预留及运行支出计价；两条路径都将成本归到任务及尝试。输入拆分为普通处理、缓存创建和缓存读取，生成单独计量。 | [SVG](figure-11-6-service.svg) | [PNG](figure-11-6-service.png) | [PDF](figure-11-6-service.pdf) |
+ | 11-31 | B 的成功任务成本随命中率提高而下降，在约 84.9% 处等于 A。两者的成本先按各自成功数归一化；本图只比较成本，下一图单独加入期限。 | [SVG](figure-11-7-routing.svg) | [PNG](figure-11-7-routing.png) | [PDF](figure-11-7-routing.pdf) |
+-| 11-32 | 只有 B 命中的 4 s 路径满足 6 s 期限；再乘 98% 质量概率，按时成功比例为 0.98h。达到 90% 目标要求 h 至少约 91.8%。 | [SVG](figure-11-routing-deadline.svg) | [PNG](figure-11-routing-deadline.png) | [PDF](figure-11-routing-deadline.pdf) |
++| 11-32 | 只有 B 命中的 4 s 路径满足 6 s 期限；再乘 98% 的验收通过率，按时成功比例为 0.98h。达到 90% 目标要求 h 至少约 91.8%。 | [SVG](figure-11-routing-deadline.svg) | [PNG](figure-11-routing-deadline.png) | [PDF](figure-11-routing-deadline.pdf) |
+ | 11-33 | 自建总成本为 1,000＋0.002N，API 为 0.012N，其中 N 为提交任务数。两者成功率相同，并有足够能力满足期限。自建曲线起点较高、斜率较小，在 100,000 项时与 API 相交。 | [SVG](figure-11-purchase.svg) | [PNG](figure-11-purchase.png) | [PDF](figure-11-purchase.pdf) |
+ | 11-34 | 外部系统已执行并提交操作 K，确认却丢失。恢复环境不会撤回外部操作的结果；控制器按同一操作 ID 查询结果后接续任务。实线表示请求与执行，虚线表示确认及恢复查询。 | [SVG](figure-11-commit-ack.svg) | [PNG](figure-11-commit-ack.png) | [PDF](figure-11-commit-ack.pdf) |
+ | 11-35 | 首次尝试在 10 s 后分为成功、局部修复、直接升级三类。框内比例以全部提交为分母；下一图展开修复的条件分支。 | [SVG](figure-11-retry-tree.svg) | [PNG](figure-11-retry-tree.png) | [PDF](figure-11-retry-tree.pdf) |
+--- a/manuscripts/ch10/README.md
++++ b/manuscripts/ch10/README.md
+@@ -96,14 +96,14 @@
+ | 10-23 | 两条 4096-token 序列的因果注意力配对。查询位置读取本序列中不晚于自己的位置，形成两个三角形；两序列互不注意，总配对数为 16781312。 | [SVG](figure-10-9-attention-area.svg) | [PNG](figure-10-9-attention-area.png) | [PDF](figure-10-9-attention-area.pdf) |
+ | 10-24 | 相同 8192 个 token 改分为 7168 与 1024，总因果配对数增至 26218496。长三角形的面积增长超过短三角形的面积减少。 | [SVG](figure-10-attention-unequal.svg) | [PNG](figure-10-attention-unequal.png) | [PDF](figure-10-attention-unequal.pdf) |
+ | 10-25 | 训练已完成批次 100，预取任务已安排到 108。中间八个批次仍需训练，其中一部分已经准备好，另一部分还在处理。虚线框示意尚在处理的批次。恢复时应保留这些数据或重新准备它们，从批次 101 继续。 | [SVG](figure-10-10-input-queue.svg) | [PNG](figure-10-10-input-queue.png) | [PDF](figure-10-10-input-queue.pdf) |
+-| 10-26 | 横向位置对应原矩阵的行号，颜色表示旧分片。每份旧分片分成前后两半后，分别装入两个新分片。模型权重的内容和顺序保持相同，改变的是各设备负责的行范围；BF16 权重总量始终为 96 MiB。 | [SVG](figure-10-11-resharding.svg) | [PNG](figure-10-11-resharding.png) | [PDF](figure-10-11-resharding.pdf) |
++| 10-26 | 横向位置对应原矩阵的行号，颜色表示旧分片。每份旧分片分成前后两半后，分别存入两个新分片。模型权重的内容和顺序保持相同，改变的是各设备负责的行范围；BF16 权重总量始终为 96 MiB。 | [SVG](figure-10-11-resharding.svg) | [PNG](figure-10-11-resharding.png) | [PDF](figure-10-11-resharding.pdf) |
+ | 10-27 | 捕获一致的训练状态，复制到独立缓冲后允许训练继续；后台写完数据并提交完整快照后，恢复程序才使用这份检查点。箭头表示先后依赖。 | [SVG](figure-10-checkpoint-commit.svg) | [PNG](figure-10-checkpoint-commit.png) | [PDF](figure-10-checkpoint-commit.pdf) |
+ | 10-28 | 两份 112 GB 快照以 8 GB/s 写入，各先花 0.5 s 复制到缓冲（橙色），随后上传（蓝色）。50 s 故障时第一份已提交，第二份尚未提交；斜线为无故障时剩余上传，空心点为原定提交时刻。 | [SVG](figure-10-12-recovery.svg) | [PNG](figure-10-12-recovery.png) | [PDF](figure-10-12-recovery.pdf) |
+ | 10-29 | 相同快照以 16 GB/s 写入，于 27.5、47.5 s 提交。50 s 故障时可以恢复到 40 s 的训练状态，只需重做 10 s。 | [SVG](figure-10-recovery-fast.svg) | [PNG](figure-10-recovery-fast.png) | [PDF](figure-10-recovery-fast.pdf) |
+ | 10-30 | 蓝线为保存耗时占比，橙线为故障重做耗时占比，绿线为两者加上恢复耗时后的合计。使用 1024 卡、单卡平均故障间隔（MTBF）365 天、保存约 14.3 s 和恢复 120 s 的一阶模型。最低点出现在两项随间隔变化的代价相互平衡处。 | [SVG](figure-10-13-save-interval.svg) | [PNG](figure-10-13-save-interval.png) | [PDF](figure-10-13-save-interval.pdf) |
+ | 10-31 | 三阶段分别最多处理 12、6、8 条等长轨迹/s。验证后保留 75%，所以只有 4.5 条/s 进入学习。返回箭头表示学习产生的新权重影响后续生成；其同步耗时在后面的阶段切换与异步算例中展开。 | [SVG](figure-10-14-rl-flow.svg) | [PNG](figure-10-14-rl-flow.png) | [PDF](figure-10-14-rl-flow.pdf) |
+-| 10-32 | 先装载生成权重和 KV 池，再释放训练状态，峰值约为 83.3 GiB，超过 64 GiB 预算。横轴按操作顺序排列。 | [SVG](figure-10-15-rl.svg) | [PNG](figure-10-15-rl.png) | [PDF](figure-10-15-rl.pdf) |
+-| 10-33 | 先装载生成权重，再释放训练状态，最后分配 KV 池。峰值降为约 59.3 GiB；两图共用 64 GiB 预算线和同一纵轴。 | [SVG](figure-10-rl-staged.svg) | [PNG](figure-10-rl-staged.png) | [PDF](figure-10-rl-staged.pdf) |
++| 10-32 | 先加载生成权重并分配 KV 池，再释放训练状态，峰值约为 83.3 GiB，超过 64 GiB 预算。横轴按操作顺序排列。 | [SVG](figure-10-15-rl.svg) | [PNG](figure-10-15-rl.png) | [PDF](figure-10-15-rl.pdf) |
++| 10-33 | 先加载生成权重，再释放训练状态，最后分配 KV 池。峰值降为约 59.3 GiB；两图共用 64 GiB 预算线和同一纵轴。 | [SVG](figure-10-rl-staged.svg) | [PNG](figure-10-rl-staged.png) | [PDF](figure-10-rl-staged.pdf) |
+ | 10-34 | 固定版本服务与策略训练的权重生命周期。上方 ROM 重复提供同一版本；下方训练产生新版本并发布给生成端。可写 KV 不能替代权重更新通路。 | [SVG](figure-10-weight-update.svg) | [PNG](figure-10-weight-update.png) | [PDF](figure-10-weight-update.pdf) |
+ | 10-35 | μ 产生训练样本，πold 标识本轮优化的起点，πθ 随本轮更新变化。虚线表示版本演进顺序。三个概率必须针对同一前缀与同一 token 计算。 | [SVG](figure-10-policy-versions.svg) | [PNG](figure-10-policy-versions.png) | [PDF](figure-10-policy-versions.pdf) |
+ | 10-36 | 同步循环依次生成本批样本、学习本批样本、同步权重，分别用时 40、16、4 s，共 60 s。 | [SVG](figure-10-16-async-cycle.svg) | [PNG](figure-10-16-async-cycle.png) | [PDF](figure-10-16-async-cycle.pdf) |
+--- a/manuscripts/ch11/figure-index.json
++++ b/manuscripts/ch11/figure-index.json
+@@ -157,7 +157,7 @@
+   {
+     "number": 32,
+     "file": "figure-11-routing-deadline.svg",
+-    "caption": "只有 B 命中的 4 s 路径满足 6 s 期限；再乘 98% 质量概率，按时成功比例为 0.98h。达到 90% 目标要求 h 至少约 91.8%。"
++    "caption": "只有 B 命中的 4 s 路径满足 6 s 期限；再乘 98% 的验收通过率，按时成功比例为 0.98h。达到 90% 目标要求 h 至少约 91.8%。"
+   },
+   {
+     "number": 33,
+--- a/manuscripts/ch10/figure-index.json
++++ b/manuscripts/ch10/figure-index.json
+@@ -127,7 +127,7 @@
+   {
+     "file": "figure-10-11-resharding.svg",
+     "number": 26,
+-    "caption": "横向位置对应原矩阵的行号，颜色表示旧分片。每份旧分片分成前后两半后，分别装入两个新分片。模型权重的内容和顺序保持相同，改变的是各设备负责的行范围；BF16 权重总量始终为 96 MiB。"
++    "caption": "横向位置对应原矩阵的行号，颜色表示旧分片。每份旧分片分成前后两半后，分别存入两个新分片。模型权重的内容和顺序保持相同，改变的是各设备负责的行范围；BF16 权重总量始终为 96 MiB。"
+   },
+   {
+     "file": "figure-10-checkpoint-commit.svg",
+@@ -157,12 +157,12 @@
+   {
+     "file": "figure-10-15-rl.svg",
+     "number": 32,
+-    "caption": "先装载生成权重和 KV 池，再释放训练状态，峰值约为 83.3 GiB，超过 64 GiB 预算。横轴按操作顺序排列。"
++    "caption": "先加载生成权重并分配 KV 池，再释放训练状态，峰值约为 83.3 GiB，超过 64 GiB 预算。横轴按操作顺序排列。"
+   },
+   {
+     "file": "figure-10-rl-staged.svg",
+     "number": 33,
+-    "caption": "先装载生成权重，再释放训练状态，最后分配 KV 池。峰值降为约 59.3 GiB；两图共用 64 GiB 预算线和同一纵轴。"
++    "caption": "先加载生成权重，再释放训练状态，最后分配 KV 池。峰值降为约 59.3 GiB；两图共用 64 GiB 预算线和同一纵轴。"
+   },
+   {
+     "file": "figure-10-weight-update.svg",
+--- a/manuscripts/ch10/teaching_revision.py
++++ b/manuscripts/ch10/teaching_revision.py
+@@ -48,7 +48,7 @@
+             else:box(a,.61,.65,.35,.20,'CPU：BF16\n96 MiB','blue');arrow(a,(.39,.75),(.61,.75));arrow(a,(.785,.65),(.785,.43));text(a,.5,.52,'链路传 96 MiB',11,ha='center')
+             text(a,.5,.08,'GPU 转换时同时占用 288 MiB' if gpu else '格式转换在 CPU 完成',12,ha='center');save(f,name)
+         d=data['10-6'];f,a=plot(4.2)
+-        for k,l,c in [('total_gib','分片＋10 GiB 临时量','#267398'),('persistent_gib','训练状态分片','#388768')]:a.plot(d['participants'],d[k],label=l,color=c)
++        for k,l,c in [('total_gib','分片＋10 GiB 临时缓冲','#267398'),('persistent_gib','训练状态分片','#388768')]:a.plot(d['participants'],d[k],label=l,color=c)
+         a.axhline(24,ls='--',color='#a56c28',label='可用 24 GiB');a.set(xlabel='分片参与者数',ylabel='每卡容量（GiB）',ylim=(0,47));a.legend(frameon=False);save(f,'6-candidates')
+         for i,(label,d) in enumerate(data['10-7'].items()):
+             f,a=plot(4.1,left=.18)
+@@ -99,7 +99,7 @@
+         for x in [.28,.62]:arrow(a,(x,.60),(x+.10,.60))
+         text(a,.70,.34,'保留 75% → 4.5 条/s',11,ha='center');arrow(a,(.84,.48),(.84,.16),'control');arrow(a,(.84,.16),(.16,.16),'control');arrow(a,(.16,.16),(.16,.48),'control');text(a,.5,.08,'新权重用于后续生成',12,ha='center');save(f,'14-rl-flow')
+         for i,key in enumerate(['restore_bytes','staged_bytes']):
+-            f,a=plot(4.1,bottom=.26);v=np.array(data['10-15'][key])/2**30;a.step(range(4),v,where='post',color='#267398');a.plot(range(4),v,'o',color='#267398');a.axhline(64,ls='--',color='#a56c28');a.set(xticks=range(4),xticklabels=['训练\n结束','装载\n生成状态' if i==0 else '只装载\n权重','释放\n训练状态','开始\n生成'],ylabel='显存占用（GiB）',ylim=(0,100));a.text(1,v[1]+4,f'峰值 {v[1]:.1f} GiB',fontsize=12,ha='center');save(f,'15-rl' if i==0 else 'rl-staged')
++            f,a=plot(4.1,bottom=.26);v=np.array(data['10-15'][key])/2**30;a.step(range(4),v,where='post',color='#267398');a.plot(range(4),v,'o',color='#267398');a.axhline(64,ls='--',color='#a56c28');a.set(xticks=range(4),xticklabels=['训练\n结束','加载权重\n分配 KV' if i==0 else '只加载\n权重','释放\n训练状态','开始\n生成'],ylabel='显存占用（GiB）',ylim=(0,100));a.text(1,v[1]+4,f'峰值 {v[1]:.1f} GiB',fontsize=12,ha='center');save(f,'15-rl' if i==0 else 'rl-staged')
+         f,a=canvas(4.5)
+         for row,(l,c) in enumerate([('μ：实际生成样本的策略','blue'),('πold：本轮优化开始时的策略','orange'),('πθ：本轮更新中的当前策略','green')]):
+             y=.70-row*.28;box(a,.04,y,.92,.18,l,c)
+--- a/manuscripts/ch10/build.py
++++ b/manuscripts/ch10/build.py
+@@ -125,7 +125,7 @@
+ ax.axhline(64,ls='--',color=C['muted']);ax.text(2.82,65.5,'64 GiB',ha='right',fontsize=11)
+ for yy,dy in [(restore[1]/2**30,3),(staged[1]/2**30,-6)]:ax.annotate(f'{yy:.1f} GiB',(1,yy),xytext=(12,dy),textcoords='offset points',fontsize=12)
+ ax.annotate('',xy=(1.63,restore[1]/2**30),xytext=(1.63,staged[1]/2**30),arrowprops={'arrowstyle':'<->','color':C['orange'],'lw':1.5});ax.text(1.7,73,'24 GiB\n一份 KV 池',fontsize=11,color=C['orange'],va='center')
+-ax.set(xticks=x,xticklabels=['训练迭代结束','装载生成权重','释放训练状态','开始生成'],ylabel='显存占用 / GiB',ylim=(0,103),yticks=[0,20,40,60,80,100],xlim=(-.1,3.15));ax.legend(frameon=False,fontsize=11,loc='upper left');ax.grid(axis='y',alpha=.15)
++ax.set(xticks=x,xticklabels=['训练迭代结束','加载生成权重','释放训练状态','开始生成'],ylabel='显存占用 / GiB',ylim=(0,103),yticks=[0,20,40,60,80,100],xlim=(-.1,3.15));ax.legend(frameon=False,fontsize=11,loc='upper left');ax.grid(axis='y',alpha=.15)
+ save(f,'figure-10-6-rl');data['10-6']={'phase_live_bytes':v,'net_budget_gib':64,'restore_bytes':restore,'staged_bytes':staged,'x_unit':'ordered steps, not elapsed time'}
+ 
+ # 7. One relation: preserve discrete choices, recompute current values.

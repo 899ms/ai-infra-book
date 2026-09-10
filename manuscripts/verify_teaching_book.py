@@ -2,7 +2,7 @@
 """Audit active book assets, hashes, numbering, rendering, and sample preservation."""
 from pathlib import Path
 import hashlib,json,re,xml.etree.ElementTree as ET
-ROOT=Path(__file__).resolve().parents[1];M=ROOT/'manuscripts';REVIEW=ROOT/'reviews/book-teaching-rewrite-2026-09-10'
+ROOT=Path(__file__).resolve().parents[1];M=ROOT/'manuscripts';REVIEW=ROOT/'archive/reviews/book-teaching-rewrite-2026-09-10'
 errors=[];chapters=[]
 def check(ok,message):
     if not ok:errors.append(message)

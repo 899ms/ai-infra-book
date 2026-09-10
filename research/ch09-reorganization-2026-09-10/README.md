@@ -4,8 +4,8 @@
 
 ## 当前入口
 
-- [主大纲](../../outlines/09-分布式推理.md)
-- [扩写资料](../../outlines/extensions/09-分布式推理.md)
+- [主大纲](../../archive/outlines/09-分布式推理.md)
+- [扩写资料](../../archive/outlines/extensions/09-分布式推理.md)
 - [旧新小节映射](section-map.json)
 - 修改前快照：[主大纲](before-outline.txt)、[扩写资料](before-extension.txt)。快照中的相对链接按原文件位置解释。
 

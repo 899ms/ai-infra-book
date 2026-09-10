@@ -45,7 +45,7 @@ bash book/build_pdf.sh --chapter 2
 
 公式直接交给 Pandoc / LaTeX 的原生数学环境，保持正文对应的数学字号及正常上下标，不经过 `adjustbox`、`resizebox` 或图片宽度设置。全局图形宽高均已清空，尺寸限制只作用于真正的图片。构建产物采用原子替换，打开 PDF 时不会读到编译中的半份文件。
 
-可选运行 `python3 book/check_layout.py`（需安装 PyMuPDF），直接检查 PDF 中的数学字体大小与封面标题位置，并保存代表页面的渲染。2026-09-10 的紧凑排版复核见 [修订记录](../reviews/pdf-flow-revision-2026-09-10/README.md)。
+可选运行 `python3 book/check_layout.py`（需安装 PyMuPDF），直接检查 PDF 中的数学字体大小与封面标题位置，并保存代表页面的渲染。2026-09-10 的紧凑排版复核见 [修订记录](../archive/reviews/pdf-flow-revision-2026-09-10/README.md)。
 
 ## 中文字体体例
 

@@ -2,7 +2,7 @@
 
 按确认的建议，将本章组织为“任务预算 → 状态放置 → 单步执行 → 持续运行 → RL 闭环 → 期限复核”。
 
-当前入口：[主大纲](../../outlines/10-训练系统.md)、[扩写资料](../../outlines/extensions/10-训练系统.md)。修改前的工作区原文保存为 [outline-before.txt](outline-before.txt) 和 [extension-before.txt](extension-before.txt)，不代表 Git HEAD。
+当前入口：[主大纲](../../archive/outlines/10-训练系统.md)、[扩写资料](../../archive/outlines/extensions/10-训练系统.md)。修改前的工作区原文保存为 [outline-before.txt](outline-before.txt) 和 [extension-before.txt](extension-before.txt)，不代表 Git HEAD。
 
 本章由 6 节、20 小节调整为 6 节、23 小节。保留 10 项实验、9 项配图和三项核心练习，原始实验目录及计算文件不改名。主大纲保留代表配置、关键推算、反例和必要边界；扩写资料保留原计算证据、详细实测、版本与变体。
 

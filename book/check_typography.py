@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 import fitz
 
 ROOT = Path(__file__).resolve().parents[1]
-REVIEW = ROOT / 'reviews/figure-font-revision-2026-09-10'
+REVIEW = ROOT / 'archive/reviews/figure-font-revision-2026-09-10'
 REVIEW.mkdir(parents=True, exist_ok=True)
 errors, figures, books = [], [], []
 for md in sorted((ROOT / 'manuscripts').glob('[0-9][0-9]-*.md')):

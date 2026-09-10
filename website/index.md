@@ -7,10 +7,9 @@
 ## 阅读与复算
 
 - [正文与配图索引](../manuscripts/README.md)
-- [逐章写作大纲](../outlines/README.md)
 - [量化计算项目](../calculations/README.md)
 - [配套实验](../experiments/README.md)
 - [PDF 编译说明](../book/README.md)
 - [网站构建与发布](README.md)
 
-本网站由仓库中的 Markdown 自动构建。正文的唯一维护源是 `manuscripts/01-*.md` 至 `12-*.md`；大纲维护在 `outlines/`。网站不会另存或维护章节正文副本。
+本网站由仓库中的 Markdown 自动构建。正文的唯一维护源是 `manuscripts/01-*.md` 至 `12-*.md`，包含前言与十二章。网站不会另存或维护章节正文副本。

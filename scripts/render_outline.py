@@ -3,7 +3,7 @@
 from pathlib import Path
 import re,html,json,hashlib
 from urllib.parse import quote
-R=Path(__file__).resolve().parents[1];O=R/'outlines'
+R=Path(__file__).resolve().parents[1];O=R/'archive/outlines'
 catalog=json.loads((O/'chapters.json').read_text())
 assert [c['number'] for c in catalog]==list(range(1,len(catalog)+1))
 assert {c['file'] for c in catalog}=={p.name for p in O.glob('[0-9][0-9]-*.md')}
@@ -28,7 +28,7 @@ for entry in catalog:
     assert core==entry['core_experiments'] and len(core)==3,(p,core)
 counts=dict(sections=sum(len(c['sections']) for c in chapters),subsections=sum(c['subcount'] for c in chapters),experiments=sum(c['labs'] for c in chapters),figures=sum(c['figs'] for c in chapters))
 summary=f'十二章共 {counts["sections"]} 节、{counts["subsections"]} 个小节、{counts["experiments"]} 项实验与计算、{counts["figures"]} 项配图计划'
-for p in [R/'README.md',O/'README.md']:
+for p in [O/'README.md']:
     s=p.read_text();prefix='outlines/' if p==R/'README.md' else ''
     entries='\n'.join(f'{c["number"]}. [{c["title"]}]({prefix}{quote(c["file"])}): {c["summary"]}' for c in catalog)
     s=re.sub(r'<!-- CHAPTERS:START -->.*?<!-- CHAPTERS:END -->','<!-- CHAPTERS:START -->\n'+entries+'\n<!-- CHAPTERS:END -->',s,flags=re.S)

@@ -1,0 +1,144 @@
+#!/usr/bin/env python3
+"""Validate chapter structure, evidence links, figures, formulas and generated edition."""
+from pathlib import Path
+from urllib.parse import unquote,urlsplit
+import hashlib,json,re,math,xml.etree.ElementTree as ET
+import numpy as np
+ROOT=Path(__file__).resolve().parents[2];HERE=Path(__file__).resolve().parent
+md=HERE.parent/'05-算子与运行时.md';s=md.read_text();outline=(ROOT/'outlines'/md.name).read_text();page=md.with_suffix('.html').read_text();errors=[]
+def check(ok,msg):
+ if not ok:errors.append(msg)
+heads=lambda t:re.findall(r'^#{2,3} (5\.\d+(?:\.\d+)?) (.+)$',t,re.M)
+check(heads(s)==heads(outline),'outline heading correspondence')
+check(re.findall(r'^> \*\*实验 (5-\d+)',s,re.M)==[f'5-{i}' for i in range(1,10)],'nine ordered exercises')
+check(re.findall(r'^> \*\*实验 (5-\d+) · 核心',s,re.M)==['5-2','5-8','5-9'],'core exercises')
+check(len(re.findall(r'^!\[图 5-',s,re.M))==23,'twenty-three illustrations')
+check(len(re.findall(r'^\*图 5-\d+：',s,re.M))==23,'twenty-three external captions')
+check(len(re.findall(r'<img ',page))==23,'twenty-three embedded images')
+check(re.findall(r'^!\[图 (5-\d+)',s,re.M)==[f'5-{i}' for i in range(1,24)],'figure reading order')
+check(re.findall(r'^\*\*例 (5-\d+)',s,re.M)==[f'5-{i}' for i in range(1,13)],'twelve ordered worked examples')
+check(s.index('## 习题与配套实验')<s.index('> **实验 5-1'),'exercises after main exposition')
+check(s.index('### 5.6.1 热点占比')<s.index('### 5.6.3 综合案例'),'principle before request case')
+check('MATHPLACEHOLDER' not in page,'rendered formulas')
+links=0
+for u in re.findall(r'\]\(([^)]+)\)',s):
+ if re.match(r'\w+:|//',u):continue
+ parts=urlsplit(u);p=(md.parent/unquote(parts.path)).resolve();check(p.exists(),'link '+u);links+=1
+ if parts.fragment and p.suffix=='.md':check(f'id="{unquote(parts.fragment)}"' in p.read_text() or unquote(parts.fragment) in p.read_text(),'anchor '+u)
+refs=set(re.findall(r'\[\^([^\]]+)\](?!:)',s));defs=set(re.findall(r'^\[\^([^\]]+)\]:',s,re.M));check(refs==defs,'footnote definitions')
+for name in ['sources.json','manifest.json']:
+ for entry in json.loads((HERE/name).read_text())['sources' if name=='sources.json' else 'outputs']:
+  p=ROOT/entry['path'];check(hashlib.sha256(p.read_bytes()).hexdigest()==entry['sha256'],'hash '+entry['path'])
+for p in HERE.glob('figure-*.svg'):
+ tree=ET.parse(p);texts=' '.join(tree.getroot().itertext());check(not re.search(r'图\s*\d+[-－]\d+',texts),'number inside '+p.name)
+check(not json.loads((HERE/'figure-layout-check.json').read_text())['text_extent_warnings'],'figure text extents')
+# Independent arithmetic and semantic checks support the printed examples.
+M,K,N=1024,4096,12288
+check(2*(M*K+K*N+M*N)==128*2**20,'minimum bytes')
+for b,cap,flow in [(32,8,6168),(64,24,3096),(128,80,1560)]:
+ check(2*b*32+2*32*b+4*b*b==cap*1024,'tile capacity')
+ check(2*M*K*(N//b)+2*K*N*(M//b)+2*M*N==flow*2**20,'tile traffic')
+check(5*24==120 and 3*24==72,'pointwise bytes')
+for b,a,flow in [(1,166,204),(64,110,304),(128,76,436)]:
+ size=lambda a:2*a*128+2*b*128+4*a*b+4*a*128+12*a
+ check(size(a)<=131072<size(a+1),'attention capacity')
+ check(4*8192*128*(1+math.ceil(8192/a))==flow*2**20,'attention traffic')
+rng=np.random.default_rng(5);q=rng.normal(size=(7,4));k=rng.normal(size=(11,4));v=rng.normal(size=(11,3));scores=q@k.T/2
+weights=np.exp(scores-scores.max(axis=1,keepdims=True));reference=(weights@v)/weights.sum(axis=1,keepdims=True)
+for block in [1,3,11]:
+ m=np.full(7,-np.inf);l=np.zeros(7);u=np.zeros((7,3))
+ for start in range(0,11,block):
+  sub=scores[:,start:start+block];new=np.maximum(m,sub.max(axis=1));r=np.exp(m-new);p=np.exp(sub-new[:,None]);l=r*l+p.sum(axis=1);u=r[:,None]*u+p@v[start:start+block];m=new
+ check(np.allclose(u/l[:,None],reference,rtol=1e-12,atol=1e-12),'online softmax block '+str(block))
+# Added exposition: boundary rereads, double-buffer lifetimes and amortization.
+check(32+16+12*16+32*6+12==444,'separate quantization traffic')
+check(32+12*32+32*6+12==620,'fused quantization traffic')
+check(math.isclose(20-15*(2/3),10),'workload composition threshold')
+check(math.isclose(600/(5e-6),120_000_000),'tuning calls to payback')
+check(math.isclose(15e-6*2e12/2/2**20,14.30511474609375),'graph copy payload threshold')
+figdata=json.loads((HERE/'figure-data.json').read_text())
+for mode,end in [('serial',20),('double_buffer',14)]:
+ events=figdata['5-6'][mode]
+ check(max(e['start']+e['duration'] for e in events)==end,'timeline completion '+mode)
+ for tile in range(4):
+  cp=next(e for e in events if e['tile']==tile and e['kind']=='copy')
+  comp=next(e for e in events if e['tile']==tile and e['kind']=='compute')
+  check(cp['start']+cp['duration']<=comp['start'],'copy before consumption')
+  if tile>=2:
+   prev=next(e for e in events if e['tile']==tile-2 and e['kind']=='compute')
+   check(cp['start']>=prev['start']+prev['duration'],'slot lifetime before reuse')
+ for kind in ['copy','compute']:
+  ordered=sorted((e for e in events if e['kind']==kind),key=lambda e:e['start'])
+  check(all(a['start']+a['duration']<=b['start'] for a,b in zip(ordered,ordered[1:])),'single resource exclusivity')
+prod=32.21225472;consume=39.3216
+check(math.isclose(2*5+8*(prod+consume),582.27083776),'coarse task completion')
+check(math.isclose(5+prod+.7+8*(consume+.7),358.08505472),'persistent task completion')
+
+# Check newly explained thresholds and the actual RMSNorm traffic objects.
+check(math.isclose(1560/3096/.4,1.25968992248062),'tile bandwidth reversal')
+input_bytes=1024*4096*2;gamma_per_row_bytes=1024*4096*2;output_bytes=input_bytes
+partial_bytes=1024*8*4;inverse_bytes=1024*4
+fused_bytes=input_bytes+gamma_per_row_bytes+output_bytes
+split_bytes=fused_bytes+input_bytes+2*partial_bytes+inverse_bytes+8*inverse_bytes
+check(fused_bytes==25165824 and split_bytes==33656832,'RMSNorm input/gamma/output and split exchanges')
+check(math.isclose(3.5/1.5,7/3),'two-block softmax example')
+check([100*(20+20),20+100*20,100*20+5,5+100*5]==[4000,2020,2005,505],'host pipeline regimes')
+dag=figdata['5-16'];computed=[dag['prepare_us']+max(h,dag['branch_B_us'])+dag['finish_us'] for h in dag['branch_A_us']]
+check(computed==dag['completion_us']==[80,60],'critical path diagram')
+check(10+max(15,90)+10==110,'contention scenario')
+# Check the new mechanism diagrams against the equations used in the text.
+check(set(figdata)=={f'5-{i}' for i in range(1,18)}|{'reuse_steps','tile_working_set','tile_residency','fusion_path','buffer_slots','attention_storage'},'complete stable figure data identifiers')
+bank=figdata['5-3']
+check([len(set(x)) for x in bank['column_banks']]==[1,32],'bank conflict versus distributed requests')
+check(figdata['5-4']['segments']*figdata['5-4']['partial_elements']==4096,'split reduction covers one row')
+check(np.allclose(figdata['5-4']['traffic_MiB'],[fused_bytes/2**20,split_bytes/2**20]),'reduction diagram traffic')
+for b,a,traffic,updates in zip(*[figdata['5-8'][k] for k in ['kv_rows','q_rows','traffic_MiB','updates']]):
+ check(updates==math.ceil(8192/a)*math.ceil(8192/b),'attention diagram update counts')
+graph=figdata['5-13']
+check(np.allclose(np.array(graph['prepare_us'])+graph['copy_us']+np.array([graph['compute_us']]*3),graph['completion_us']),'graph-copy time components')
+check(np.allclose(figdata['5-15']['completion_us'],[2*5+8*(prod+consume),5+prod+.7+8*(consume+.7)]),'persistent diagram time components')
+
+# New diagrams must preserve the shared capacity, traffic and lifetime models.
+index=json.loads((HERE/'figure-index.json').read_text())
+check([z['number'] for z in index]==[f'5-{i}' for i in range(1,24)],'index matches caption order')
+check(sum(z['revised'] for z in index)==13,'thirteen revised section figures')
+layout=json.loads((HERE/'teaching-layout-check.json').read_text())
+check(len(layout)==13 and all(z['width_pt']==420 and z['min_label_pt']>=11 and not z['text_extent_warnings'] for z in layout),'book-size revised labels and extents')
+for z in index:
+ if z['revised']:
+  check((HERE/Path(z['asset']).with_suffix('.pdf')).exists(),'print PDF '+z['asset'])
+res=figdata['tile_residency']
+check([res['budget_KiB']//v for v in res['working_set_KiB']]==res['resident_sets'],'resident working-set capacity bound')
+work=figdata['tile_working_set'];m,n,k=work['tile']
+check(work['input_bytes']==[2*m*k,2*k*n] and work['accumulator_bytes']==4*m*n,'working-set labels versus shape')
+att=figdata['attention_storage']
+check(4*att['L']**2/2**20==att['SP_each_MiB'] and 4*att['SP_each_MiB']==att['SP_write_read_MiB'],'attention intermediates versus dimensions')
+check(figdata['buffer_slots']['reuse_A_us']==next(e['start'] for e in figdata['5-6']['double_buffer'] if e['kind']=='copy' and e['tile']==2),'snapshots match full timeline')
+
+# Exercise arithmetic: changed inputs require generalization of the worked examples.
+m,n,k=64,128,32
+check(2*m*k+2*k*n+4*m*n==44*1024,'rectangular tile exercise capacity')
+check(2*M*K*(N//n)+2*K*N*(M//m)+2*M*N==2328*2**20,'rectangular tile exercise traffic')
+bytes_saved_per_row=(156-60)*2**20/1024
+check(101*bytes_saved_per_row/2e12<5e-6<102*bytes_saved_per_row/2e12,'fusion overhead exercise integer threshold')
+attn_capacity=lambda a:2*a*128+2*2*64*128+4*a*64+4*a*128+12*a
+check(attn_capacity(94)<=131072<attn_capacity(95),'attention prefetch exercise capacity')
+check(math.ceil(8192/94)==88 and 4+88*4==356,'attention prefetch exercise traffic')
+check(math.isclose((.5*3.5+5)/(.5*1.5+1),27/7),'three-block softmax exercise')
+check(math.isclose(11-5*.2,10),'shape dispatch exercise threshold')
+# A small tiled GEMM with ragged boundaries, preserving the explicit output cast.
+a=rng.normal(size=(5,7));w=rng.normal(size=(7,9));out=np.zeros((5,9))
+for i in range(0,5,3):
+ for j in range(0,9,4):
+  acc=np.zeros((min(3,5-i),min(4,9-j)))
+  for k0 in range(0,7,2):acc+=a[i:i+3,k0:k0+2]@w[k0:k0+2,j:j+4]
+  out[i:i+3,j:j+4]=acc
+check(np.allclose(out,a@w,rtol=1e-12,atol=1e-12),'ragged tiled loop')
+check(abs(1/(1+math.exp(-1))-1/(1+math.exp(1))-.46211715726)<1e-10,'illegal early activation counterexample')
+spec=json.loads((ROOT/'calculations/results/specialization-medium.json').read_text())['specialization_policies']
+for r,winner in [(64,'generic'),(65,'bucket'),(89,'bucket'),(90,'specialized')]:check(min(spec,key=lambda z:z['prepare_ns']+r*z['cohort_execution_ns'])['policy']==winner,'specialization threshold '+str(r))
+trace=json.loads((ROOT/'experiments/ch05/05-08/results/trace-analysis.json').read_text())['ranges'][:4]
+check([z['kernel_count'] for z in trace]==[18,15,18,15],'trace kernel counts')
+check([z['launch_api_count']-z['graph_launch_count'] for z in trace]==[18,15,0,0],'trace kernel launch distinction')
+report={'status':'passed' if not errors else 'failed','sections':len(re.findall(r'^## 5\.\d+ ',s,re.M)),'subsections':len(re.findall(r'^### 5\.\d+\.\d+ ',s,re.M)),'exercises':9,'worked_examples':12,'figures':23,'local_links':links,'footnotes':len(defs),'han_characters':len(re.findall(r'[\u4e00-\u9fff]',s)),'numerical_checks':'worked-example thresholds; RMSNorm input/gamma traffic; rectangular tile and prefetch exercises; critical path; tile capacity/traffic; quantization rereads; double-buffer dependencies and slot lifetimes; workload and payback thresholds; graph payload limit; persistent task schedule; attention budget; online softmax; ragged GEMM; activation counterexample; specialization thresholds; trace counts','errors':errors}
+(HERE/'validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');print(json.dumps(report,ensure_ascii=False,indent=2));raise SystemExit(bool(errors))

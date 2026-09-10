@@ -1,0 +1,42 @@
+% Preserve the AI Agent Book series typography, colors and boxes.
+\makeatletter
+\@ifundefined{Shaded}{\newenvironment{Shaded}{}{}}{}
+\makeatother
+\input{template/agent-book-preamble.tex}
+% Infrastructure-specific additions; keep the imported template unchanged.
+\usepackage{pdflscape}
+\usepackage{adjustbox}
+\usepackage{xurl}
+\urlstyle{same}
+\setlength{\emergencystretch}{3em}
+\providecommand{\BookEdition}{全书审阅版}
+% Keep figures readable, including tall architecture drawings.
+\setkeys{Gin}{width=\linewidth,height=0.72\textheight,keepaspectratio}
+\captionsetup{font={small,sf,cjkmatch},justification=justified,singlelinecheck=false}
+\newenvironment{infratable}{\begingroup\small\setlength{\tabcolsep}{4pt}}{\endgroup}
+% Size exceptionally wide display formulae to the available line, preserving source.
+\newenvironment{infraequation}{\begin{center}\begin{adjustbox}{max width=\linewidth}$\displaystyle}{$\end{adjustbox}\end{center}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{←}{\ensuremath{\leftarrow}}
+\newunicodechar{↔}{\ensuremath{\leftrightarrow}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{÷}{\ensuremath{\div}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∝}{\ensuremath{\propto}}
+\newunicodechar{∑}{\ensuremath{\sum}}
+\newunicodechar{∞}{\ensuremath{\infty}}
+\newunicodechar{²}{\ensuremath{^2}}
+\newunicodechar{³}{\ensuremath{^3}}
+\newunicodechar{ₖ}{\ensuremath{_k}}
+\newunicodechar{ᵀ}{\ensuremath{^{\mathsf T}}}
+
+% Pandoc's MatchLowercase is inappropriate for full-width Chinese sans glyphs.
+\IfFontExistsTF{Heiti SC}{\setCJKsansfont[Scale=1,AutoFakeBold=2.5]{Heiti SC}}{\setCJKsansfont[Scale=1,AutoFakeBold=2.5]{Noto Sans CJK SC}}
+\DeclareCaptionFont{cjkmatch}{\CJKfamily{capcjksf}}
+\IfFontExistsTF{Heiti SC}{\setCJKfamilyfont{capcjksf}[Scale=1,AutoFakeBold=2.5]{Heiti SC}}{\setCJKfamilyfont{capcjksf}[Scale=1,AutoFakeBold=2.5]{Noto Sans CJK SC}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{𝜇}{\ensuremath{\mu}}

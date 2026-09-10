@@ -11,7 +11,7 @@ import re
 import tarfile
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTLINES = ROOT / 'outlines'
+OUTLINES = ROOT / 'archive/outlines'
 REVISION = ROOT / 'research/outline-revision-2026-09-08'
 errors = []
 

@@ -1,0 +1,668 @@
+[
+  {
+    "file": "manuscripts/00-前言.md",
+    "before": "在质量目标下，把这些执行代价一同纳入架构选择",
+    "after": "在满足质量要求的前提下，把这些执行代价一同纳入架构选择",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/00-前言.md",
+    "before": "减少保存与搬运",
+    "after": "减少需要保存和搬运的数据量",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "若多张设备共同执行",
+    "after": "若多台设备共同执行",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "运行时掌握状态的产生与使用",
+    "after": "运行时掌握状态何时产生、何时使用",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "运行时预留共同消耗容量",
+    "after": "运行时预留的空间共同占用显存",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "同一批量模型的理想输出吞吐",
+    "after": "上述批处理模型的理想输出吞吐率",
+    "count": 2
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "并发增加时，一次矩阵运算会处理更多请求当前输入的 token 表示",
+    "after": "并发增加时，一次矩阵运算会同时处理更多请求的当前输入 token 所对应的向量",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "掌握模型的计算关系与状态寿命",
+    "after": "掌握模型的计算关系与状态需要保存多久",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "说明保留 CPU、可编程性与带宽扩展的设计目标",
+    "after": "说明减少 CPU 占用、保持可编程性与支持更高带宽的设计目标",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "同时存活的张量",
+    "after": "同时仍需保存的张量",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "第五章按缓冲寿命分析这一问题",
+    "after": "第五章根据缓冲区从分配到释放的过程分析这一问题",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "不同的缓冲寿命和串行步骤",
+    "after": "不同的缓冲区占用时间和串行步骤",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "它的寿命就要延长到最后一次使用",
+    "after": "就必须将它保存到最后一次使用结束",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "两者的寿命不同",
+    "after": "两者需要保存的时间范围不同",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "并计入 scale 与打包尾部后",
+    "after": "并计入缩放因子（scale）及打包时尾部填充的空间后",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "Kimi K3 又将专家计算移到 3584 维潜空间，使主干宽度与专家输入宽度分开",
+    "after": "Kimi K3 又将专家计算移到 3584 维潜空间，使专家输入不必与主干采用相同的宽度",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "全局历史之外，V4.1 的局部窗口",
+    "after": "除全局上下文缓存外，V4.1 的局部窗口",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "表中的历史缓存共同构成当前容量",
+    "after": "表中的上下文缓存共同决定当前的内存占用",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "任务检查则确定哪些方案能够提供所需的回答质量",
+    "after": "再通过实际任务测试，确定哪些方案能够达到所需的回答质量",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "“模型能容纳多少参数”",
+    "after": "“保存整个模型需要多少空间”",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "每个位置可以保存得更窄",
+    "after": "可以用更少的维度表示每个位置",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "排队、状态寿命、关键路径",
+    "after": "排队、状态保存时间、关键路径",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "驻留位置和寿命",
+    "after": "存放位置和保存时间",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "状态存活时间",
+    "after": "状态保存时间",
+    "count": 2
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "它们的寿命不同",
+    "after": "它们需要保存的时间不同",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "反向传播把中间数据的寿命从相邻算子之间延长到了前后两次遍历之间",
+    "after": "反向传播要求将部分中间数据从前向计算一直保存到相应的反向计算结束",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "这段存活区间",
+    "after": "这段保存时间",
+    "count": 2
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "执行顺序与激活寿命",
+    "after": "执行顺序与激活的保存时间",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "反馈还可以改变后续计算",
+    "after": "反馈还可以改变后续的计算过程",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "已有前缀时，输入工作由追加长度与恢复路径共同决定",
+    "after": "已有前缀时，输入处理的工作量由追加长度与恢复方式共同决定",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "打断与过期工作",
+    "after": "打断后不再需要的计算",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "严格预先规定的评分标准、后验提取和并发进程观测分开",
+    "after": "分别记录按预定标准评分的结果、事后从输出中提取答案的结果，以及并发进程的观测数据",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "打断与静音的教学投影",
+    "after": "打断与静音的教学算例",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "固定 verl 配方的损失归一与更新路径",
+    "after": "固定 verl 训练配置的损失归一化与参数更新过程",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "在某一时刻同时存活的张量",
+    "after": "在某一时刻仍需保存的所有张量",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "把下一块装入第二个缓冲",
+    "after": "把下一块加载到第二个缓冲",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "权重经过片上先进先出队列（FIFO，按进入次序取出的缓冲）装入",
+    "after": "权重经片上先进先出队列（FIFO，按进入次序取出的缓冲）加载到阵列",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "装入与计算可以通过缓冲衔接",
+    "after": "权重加载与计算可以通过缓冲衔接",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "代入未舍入速率",
+    "after": "代入未经四舍五入的速率数值",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "逐阶段资源界建模说明",
+    "after": "各阶段耗时下界的建模说明",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "各单元通过计算、同步和数据交换协同完成任务",
+    "after": "各单元通过计算、同步和数据交换协作完成任务",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "存储分体",
+    "after": "存储体",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "G、U、T 同时存活",
+    "after": "G、U、T 同时占用内存",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "G、U 与最终输出同时存活",
+    "after": "G、U 与最终输出同时占用内存",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "A 便可装入块 2",
+    "after": "便可将块 2 加载到 A",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "循环层次确定存储寿命",
+    "after": "循环层次决定临时数据需要保存多久",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "持久化内核",
+    "after": "常驻内核",
+    "count": 2
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "整数选择边界使用未舍入数值计算",
+    "after": "不同策略适用的整数调用次数范围使用未经四舍五入的数值计算",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "阶段表来自独立 profile",
+    "after": "阶段表来自单独采集的性能分析记录",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "独立标记范围",
+    "after": "单独标记的采集区间",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "全宽隐藏维为 7168",
+    "after": "主干隐藏向量的完整维度为 7168",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "把投影放在接收之后，就要传输全宽输入",
+    "after": "把投影放在接收之后，就要传输未经降维的输入",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "处理全宽输入的共享专家",
+    "after": "处理完整主干向量的共享专家",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "两者静态复用串行器／解串器",
+    "after": "两者按预先配置的方式共用串行器／解串器",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "第一种限制放置灵活性",
+    "after": "第一种限制了模型层在设备上的分配方式",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "整个八卡实例却预留约 34.8 GB",
+    "after": "整个八卡实例合计需要约 34.8 GB 内存",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "这里同时使用了模型内部与请求之间的并行关系",
+    "after": "这里同时利用了模型内部的并行计算与不同请求之间的并发执行",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "设备发起则进一步让 GPU",
+    "after": "由设备发起通信则进一步让 GPU",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "按接口定义观察结果",
+    "after": "按接口规定检查完成状态和结果",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "系统就需要同时保存更多未完成工作",
+    "after": "系统就需要同时记录更多尚未完成的请求",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "快路径先到的后续报文需要等待缺口，接收端最多保留 3 KiB 乱序载荷",
+    "after": "快路径上提前到达的后续报文需要等待前面的缺失报文补齐，接收端最多需要缓存 3 KiB 乱序数据",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "若从缺口开始重发整个后缀，则再搬 8 KiB",
+    "after": "若从缺失报文开始重发它及其后的所有报文，则要再传输 8 KiB",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "接收状态决定缺口后多少工作可以保留",
+    "after": "接收端记录的状态决定能缓存多少在缺失报文之后到达的数据",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "链路静态复用串行器／解串器",
+    "after": "链路按预先配置的方式共用串行器／解串器",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "槽位寿命为教学条件",
+    "after": "槽位占用时间为教学条件",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "8 KiB 后缀重发用于计算额外载荷",
+    "after": "从缺失报文起重发的 8 KiB 数据用于计算额外载荷",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "用未舍入的权重字节数计算",
+    "after": "用未经四舍五入的权重字节数计算",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "两种方案均通过相同任务检查",
+    "after": "两种方案均通过相同的任务测试",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "这些尚未完成的请求会占用多少状态？",
+    "after": "保存这些尚未完成请求的状态需要多少空间？",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "另用 2 字节保存量化尺度",
+    "after": "另用 2 字节保存缩放系数",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "工作集超过内存容量时",
+    "after": "执行时需要访问的数据总量超过内存容量时",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "驻留仍包含完整 embedding",
+    "after": "内存中仍需保存完整的 embedding 矩阵",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "每窗口 16 请求的 nearest-rank p95 即最大值",
+    "after": "每窗口包含 16 条请求，按排序后向上取整的位置计算 p95，得到的就是最大值",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "状态寿命",
+    "after": "状态保存时间",
+    "count": 3
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "一种 TP2×EP4 放置",
+    "after": "一种 TP2×EP4 部署方式",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "按未经舍入的执行时间",
+    "after": "按未经四舍五入的执行时间",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "例 9.5 未舍入时间",
+    "after": "例 9.5 中未经四舍五入的时间",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "以零命中开始 prefill",
+    "after": "在没有命中任何缓存的情况下开始 prefill",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "运行中并行切换将同一组设备重新组织为 TP 或 SP×TP",
+    "after": "运行时切换并行方式，将同一组设备重新组织为 TP 或 SP×TP",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "源端可能已经无法读取",
+    "after": "源端的数据可能已经无法读取",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "只经过一条数据边",
+    "after": "只经过一次直接传输",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "共经过两条边",
+    "after": "共经过写入和取回两次传输",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "before": "这里的收益来自生命周期的差别",
+    "after": "这里的收益来自数据保存时间的差别",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "before": "如果激活与临时量同时需要 10 GiB",
+    "after": "如果激活与临时缓冲区同时需要 10 GiB",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "before": "分别装入两个新分片",
+    "after": "分别存入两个新分片",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "before": "由未舍入数值计算",
+    "after": "由未经四舍五入的数值计算",
+    "count": 2
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "before": "旧状态尚未释放，新状态已经开始装载",
+    "after": "旧状态尚未释放，新状态已经开始加载",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "before": "先装载生成权重和 KV 池",
+    "after": "先加载生成权重并分配 KV 池",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "before": "先装载生成权重",
+    "after": "先加载生成权重",
+    "count": 2
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "before": "训练分配峰为",
+    "after": "训练期间分配的内存峰值为",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "before": "固定 Qwen2.5-0.5B-Instruct 配方采用",
+    "after": "固定 Qwen2.5-0.5B-Instruct 训练配置采用",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "before": "训练容量由状态表示、所有权和生命周期共同决定",
+    "after": "训练所需的内存容量由状态的存储格式、设备间的分配方式和保存时间共同决定",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "before": "分别安排模型状态与工具状态的生命周期",
+    "after": "分别安排模型状态与工具状态的保存和释放",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "before": "质量成功概率与缓存命中独立",
+    "after": "任务通过验收的概率与缓存是否命中相互独立",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "before": "再乘 98% 质量概率",
+    "after": "再乘 98% 的验收通过率",
+    "count": 2
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "before": "条件独立的质量概率",
+    "after": "与缓存命中相互独立的验收通过概率",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "before": "95% 质量概率为题设",
+    "after": "95% 验收通过率为题设",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "before": "[宽预算检查]",
+    "after": "[增加思考预算后的检查]",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "before": "串行字节下界",
+    "after": "串行传输的数据量下界",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "before": "用未舍入的 $M$",
+    "after": "用未经四舍五入的 $M$",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "before": "HTTP/3 是 HTTP 的传输映射",
+    "after": "HTTP/3 规定了如何在 QUIC 上传输 HTTP 请求和响应",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "before": "线上 39,554,832 bytes",
+    "after": "网络实际传输 39,554,832 bytes",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "before": "入向原值 66,207／10,193 bytes，出向均为 2,527 bytes",
+    "after": "传入服务端的数据量分别为 66,207／10,193 bytes，返回客户端的数据量均为 2,527 bytes",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "before": "分别隔离调度和交付依赖",
+    "after": "分别考察发送调度和接收端交付依赖的影响",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "主机搬运与缓冲寿命",
+    "after": "主机搬运与缓冲区占用时间",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "主机时间线 survey",
+    "after": "主机时间线调研",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "token 成本 survey",
+    "after": "token 成本调研",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "独立 profile 的 prefill",
+    "after": "单独采集的性能分析记录中，prefill",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "各卡必须交换完整形状的输出部分和",
+    "after": "各卡必须交换形状与完整输出相同的部分和",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "使用未舍入值计算",
+    "after": "使用未经四舍五入的数值计算",
+    "count": 1
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "before": "串行传输的数据量下界",
+    "after": "串行传输的耗时下界",
+    "count": 1
+  }
+]

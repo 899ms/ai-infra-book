@@ -3,7 +3,7 @@
 from pathlib import Path
 from urllib.parse import unquote,urlsplit
 import re,json,hashlib
-ROOT=Path(__file__).resolve().parents[1];M=ROOT/'manuscripts';R=ROOT/'reviews/core-principles-revision-2026-09-10'
+ROOT=Path(__file__).resolve().parents[1];M=ROOT/'manuscripts';R=ROOT/'archive/reviews/core-principles-revision-2026-09-10'
 errors=[];rows=[]
 def check(ok,msg):
  if not ok:errors.append(msg)

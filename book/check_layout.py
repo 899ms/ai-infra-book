@@ -9,7 +9,7 @@ import statistics
 import pymupdf
 
 ROOT=Path(__file__).resolve().parent.parent
-REVIEW=ROOT/'reviews/pdf-flow-revision-2026-09-10'
+REVIEW=ROOT/'archive/reviews/pdf-flow-revision-2026-09-10'
 REVIEW.mkdir(parents=True,exist_ok=True)
 
 

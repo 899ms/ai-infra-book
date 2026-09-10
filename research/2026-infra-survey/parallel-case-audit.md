@@ -6,7 +6,7 @@
 
 ## 1. 训练期限练习仍把不同 FLOPs 口径都称为 MFU
 
-**位置。** [第 10 章](../../outlines/10-训练系统.md)第 55、59 行；[扩写资料](../../outlines/extensions/10-训练系统.md)第 55 行；[训练期限结果](../../calculations/results/training-deadline-book.md)第 14、22、55–60 行；[业务推算](../../case-studies/inference-training-scenarios.md)第 29、35–45 行。
+**位置。** [第 10 章](../../archive/outlines/10-训练系统.md)第 55、59 行；[扩写资料](../../archive/outlines/extensions/10-训练系统.md)第 55 行；[训练期限结果](../../calculations/results/training-deadline-book.md)第 14、22、55–60 行；[业务推算](../../case-studies/inference-training-scenarios.md)第 29、35–45 行。
 
 第 55 行及计算结果已经规定：100B 有效位置按 Qwen3-8B 的实际线性变换和有效因果注意力前反向计算，得到 `5,265,722,561,667,444,768,768` 矩阵 FLOPs；30%／40%／50% 是这个子账相对 BF16 输入、FP32 累加、dense Tensor 峰值的教学效率。第 59 行的实验 10-2 却只说“用 30%、40%、50% MFU 作敏感性输入”。同一组百分比还用于后面的 `6ND` 名义 Dense 情景，读者容易直接沿用公开训练报告的 MFU。
 
@@ -18,7 +18,7 @@
 
 ## 2. PD 需求中的输出 token 与 decode 调用尚未统一定义
 
-**位置。** [请求分布案例](../../case-studies/workload-and-provisioning.md)第 17–36 行；[第 9 章](../../outlines/09-分布式推理.md)第 65、69 行；[贯穿请求](../../case-studies/inference-training-scenarios.md)第 7–17 行。影响实验 9-2，并连接案例明确指定的实验 3-2 与资源池准备。
+**位置。** [请求分布案例](../../case-studies/workload-and-provisioning.md)第 17–36 行；[第 9 章](../../archive/outlines/09-分布式推理.md)第 65、69 行；[贯穿请求](../../case-studies/inference-training-scenarios.md)第 7–17 行。影响实验 9-2，并连接案例明确指定的实验 3-2 与资源池准备。
 
 C47 明确“8192 输入／129 输出，首输出来自 prefill，D 仅调用 128 次”，也覆盖仅一个输出时不需要 D 的边界。请求分布案例则设 D 为“有效生成 2048 输出 token/s”，把 256／2048 个交付输出全部计入 D 需求。该案例没有写明 `O−1≈O`，也未定义这里的速率到底是设备 decode 调用率，还是按某种请求分布折算的交付输出率。
 
@@ -44,7 +44,7 @@ C47 明确“8192 输入／129 输出，首输出来自 prefill，D 仅调用 12
 
 ## 3. MoE 的容量与通信已有子账，但还不是同一个完整并行方案
 
-**位置。** [第 6 章](../../outlines/06-超节点.md)第 105、117、161、163 行；[第 7 章](../../outlines/07-数据中心网络.md)第 67、73、257 行；[第 9 章](../../outlines/09-分布式推理.md)第 19、33 行；[并行案例](../../case-studies/model-parallelism.md)第 21–25、68–74 行。
+**位置。** [第 6 章](../../archive/outlines/06-超节点.md)第 105、117、161、163 行；[第 7 章](../../archive/outlines/07-数据中心网络.md)第 67、73、257 行；[第 9 章](../../archive/outlines/09-分布式推理.md)第 19、33 行；[并行案例](../../case-studies/model-parallelism.md)第 21–25、68–74 行。
 
 现有两个可用结果分别明确了不同条件：
 

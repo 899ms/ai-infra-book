@@ -5,7 +5,7 @@ import argparse,json,re
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parent
 parser=argparse.ArgumentParser();parser.add_argument('chapters',nargs='+',type=int);args=parser.parse_args()
-review=ROOT.parent/'reviews/book-teaching-rewrite-2026-09-10';records=[]
+review=ROOT.parent/'archive/reviews/book-teaching-rewrite-2026-09-10';records=[]
 with sync_playwright() as p:
     chrome=Path('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')
     browser=p.chromium.launch(**({'executable_path':str(chrome)} if chrome.exists() else {}),headless=True)

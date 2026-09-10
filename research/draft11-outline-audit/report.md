@@ -16,7 +16,7 @@
 
 原件为 [草案 11 HTML](../../references/outline-checks/2026-09-08/system-abstraction/skeleton-draft11-12fc723.md)，对应提交 `12fc723aca2cf1f189a227147f22a1c506edd5e6`（2026-08-22），已与 `git show 12fc723:skeleton.html` 做字节核对。原文按标题划分为 19 个语义区域，包含页首原则、全部十二章安排、终章两条论证、教学设计、资料与待核清单、页脚；[区域提取文件](draft11-regions.json)保留每区全文及原 HTML 行号。
 
-修改前的 13 章完整文件保存于 [snapshots/](snapshots/)，[快照清单](source-snapshots.json)记录来源路径与 SHA-256。它们用于回答“本来是否已经存在”，避免补入之后又把新增内容算成旧版已保留。辅助参照包括当前[大纲索引](../../outlines/README.md)、[编辑笔记](../../outlines/editorial-notes.md)，以及既有[草案 15 审阅](../../reviews/draft15-review.md)、[草案 16 审阅](../../reviews/draft16-review.md)。后两份记录只用于理解已发现的问题，不作为所有历史删除动机的证明。
+修改前的 13 章完整文件保存于 [snapshots/](snapshots/)，[快照清单](source-snapshots.json)记录来源路径与 SHA-256。它们用于回答“本来是否已经存在”，避免补入之后又把新增内容算成旧版已保留。辅助参照包括当前[大纲索引](../../archive/outlines/README.md)、[编辑笔记](../../archive/outlines/editorial-notes.md)，以及既有[草案 15 审阅](../../archive/reviews/draft15-review.md)、[草案 16 审阅](../../archive/reviews/draft16-review.md)。后两份记录只用于理解已发现的问题，不作为所有历史删除动机的证明。
 
 比较采用语义对应：正文、实验、图计划及已有配套笔记都可能承载旧内容。某个名字没有出现，不等于它所代表的机制丢失；反之，一个宽泛标题也不能证明原来的具体问题仍在。
 
@@ -171,7 +171,7 @@
 
 ## 4. 需要加进配套大纲的 4 项材料
 
-已新建 [writing-support.md](../../outlines/writing-support.md)。它仍是制作占位，没有冒充已完成的附录、工具、参考答案或预测结果。
+已新建 [writing-support.md](../../archive/outlines/writing-support.md)。它仍是制作占位，没有冒充已完成的附录、工具、参考答案或预测结果。
 
 ### D11-SP01：跨章逐步修正的推算表
 
@@ -277,7 +277,7 @@ Transformer 原论文表中的 sequence-parallel 操作数不等于自回归整�
 
 ### 6.6 不恢复会破坏当前体例的强制模板
 
-现有[编辑笔记](../../outlines/editorial-notes.md)明确要求按完整问题组织，实验与图就在使用处，不为压缩或套体例移到章末。这支持以下决定：
+现有[编辑笔记](../../archive/outlines/editorial-notes.md)明确要求按完整问题组织，实验与图就在使用处，不为压缩或套体例移到章末。这支持以下决定：
 
 - 不恢复十二章、每章固定九格、统一章末“会过时／反事实／总结”标题。
 - 保留基础与进阶两档星级；不强制回到旧版三档，也不因“主要是推导题”削掉现有真实引擎实验。

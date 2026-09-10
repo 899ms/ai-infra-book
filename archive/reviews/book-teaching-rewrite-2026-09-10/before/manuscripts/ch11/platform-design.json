@@ -1,0 +1,242 @@
+{
+  "kind": "deterministic teaching design, not a deployment measurement",
+  "arrivals": {
+    "count": 1000,
+    "spacing_seconds": "1/10"
+  },
+  "preparation": {
+    "seconds": 2,
+    "core_seconds": "1/10",
+    "gib": 2
+  },
+  "resident_pool": "warm reusable environments; initialization is amortized over pool lifetime",
+  "options": [
+    {
+      "model": "ordinary",
+      "environment": "resident",
+      "duration_seconds": 30,
+      "phases": [
+        {
+          "model": [
+            0,
+            9
+          ],
+          "prepare": null,
+          "tool": [
+            9,
+            10
+          ]
+        },
+        {
+          "model": [
+            10,
+            19
+          ],
+          "prepare": null,
+          "tool": [
+            19,
+            20
+          ]
+        },
+        {
+          "model": [
+            20,
+            29
+          ],
+          "prepare": null,
+          "tool": [
+            29,
+            30
+          ]
+        }
+      ],
+      "cpu_core_seconds": "3",
+      "memory_gib_seconds": "60",
+      "model_slot_seconds": "27",
+      "submission_cost": "363/10000",
+      "on_time_quality_probability": "0",
+      "cost_per_on_time_quality": null,
+      "peak_cpu_memory_slots": [
+        "30",
+        "600",
+        "270"
+      ],
+      "within_capacity": true
+    },
+    {
+      "model": "ordinary",
+      "environment": "jit",
+      "duration_seconds": 30,
+      "phases": [
+        {
+          "model": [
+            0,
+            9
+          ],
+          "prepare": [
+            7,
+            9
+          ],
+          "tool": [
+            9,
+            10
+          ]
+        },
+        {
+          "model": [
+            10,
+            19
+          ],
+          "prepare": [
+            17,
+            19
+          ],
+          "tool": [
+            19,
+            20
+          ]
+        },
+        {
+          "model": [
+            20,
+            29
+          ],
+          "prepare": [
+            27,
+            29
+          ],
+          "tool": [
+            29,
+            30
+          ]
+        }
+      ],
+      "cpu_core_seconds": "33/10",
+      "memory_gib_seconds": "18",
+      "model_slot_seconds": "27",
+      "submission_cost": "3213/100000",
+      "on_time_quality_probability": "0",
+      "cost_per_on_time_quality": null,
+      "peak_cpu_memory_slots": [
+        "33",
+        "180",
+        "270"
+      ],
+      "within_capacity": true
+    },
+    {
+      "model": "fast",
+      "environment": "resident",
+      "duration_seconds": 21,
+      "phases": [
+        {
+          "model": [
+            0,
+            6
+          ],
+          "prepare": null,
+          "tool": [
+            6,
+            7
+          ]
+        },
+        {
+          "model": [
+            7,
+            13
+          ],
+          "prepare": null,
+          "tool": [
+            13,
+            14
+          ]
+        },
+        {
+          "model": [
+            14,
+            20
+          ],
+          "prepare": null,
+          "tool": [
+            20,
+            21
+          ]
+        }
+      ],
+      "cpu_core_seconds": "3",
+      "memory_gib_seconds": "42",
+      "model_slot_seconds": "18",
+      "submission_cost": "81/2000",
+      "on_time_quality_probability": "19/20",
+      "cost_per_on_time_quality": "81/1900",
+      "peak_cpu_memory_slots": [
+        "30",
+        "420",
+        "180"
+      ],
+      "within_capacity": true
+    },
+    {
+      "model": "fast",
+      "environment": "jit",
+      "duration_seconds": 21,
+      "phases": [
+        {
+          "model": [
+            0,
+            6
+          ],
+          "prepare": [
+            4,
+            6
+          ],
+          "tool": [
+            6,
+            7
+          ]
+        },
+        {
+          "model": [
+            7,
+            13
+          ],
+          "prepare": [
+            11,
+            13
+          ],
+          "tool": [
+            13,
+            14
+          ]
+        },
+        {
+          "model": [
+            14,
+            20
+          ],
+          "prepare": [
+            18,
+            20
+          ],
+          "tool": [
+            20,
+            21
+          ]
+        }
+      ],
+      "cpu_core_seconds": "33/10",
+      "memory_gib_seconds": "18",
+      "model_slot_seconds": "18",
+      "submission_cost": "3813/100000",
+      "on_time_quality_probability": "19/20",
+      "cost_per_on_time_quality": "3813/95000",
+      "peak_cpu_memory_slots": [
+        "33",
+        "180",
+        "180"
+      ],
+      "within_capacity": true
+    }
+  ],
+  "inter_call_gap_cost_crossover_seconds": "41/20"
+}

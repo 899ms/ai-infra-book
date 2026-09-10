@@ -15,13 +15,13 @@ def collect() -> dict:
     previous = json.loads(path.read_text()) if path.exists() else {"items": []}
     previous_items = {(item["file"], item["title"], item["sha256"]): item for item in previous["items"]}
     files, items = [], []
-    surfaces = (sorted((BOOK / "outlines").glob("[0-9][0-9]-*.md"))
-                + sorted((BOOK / "outlines/extensions").glob("[0-9][0-9]-*.md"))
+    surfaces = (sorted((BOOK / "archive/outlines").glob("[0-9][0-9]-*.md"))
+                + sorted((BOOK / "archive/outlines/extensions").glob("[0-9][0-9]-*.md"))
                 + sorted((BOOK / "case-studies").glob("*.md")))
     for source in surfaces:
         text = source.read_text()
         relative = str(source.relative_to(BOOK))
-        surface = "extension" if "/extensions/" in relative else "outline" if relative.startswith("outlines/") else "case"
+        surface = "extension" if "/extensions/" in relative else "outline" if relative.startswith("archive/outlines/") else "case"
         files.append({"file": relative, "sha256": hashlib.sha256(source.read_bytes()).hexdigest()})
         offset = 0
         for index, chunk in enumerate(re.split(r"(?m)(?=^#{1,4} |^> \*\*实验 )", text)):

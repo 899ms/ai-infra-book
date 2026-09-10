@@ -2,7 +2,7 @@
 
 按用户确认的建议，将第六章组织为“需求与资源边界 → Dense 多卡执行 → MoE 多卡执行 → 集合通信实现 → 超节点物理组织 → 内存池 → 超节点规模选择”七节。
 
-当前入口：[主大纲](../../outlines/06-超节点.md)、[扩写资料](../../outlines/extensions/06-超节点.md)。本轮修改前的工作区原文保存在 [outline-before.txt](outline-before.txt) 与 [extension-before.txt](extension-before.txt)，用作保留性核验基线，不代表 Git HEAD。
+当前入口：[主大纲](../../archive/outlines/06-超节点.md)、[扩写资料](../../archive/outlines/extensions/06-超节点.md)。本轮修改前的工作区原文保存在 [outline-before.txt](outline-before.txt) 与 [extension-before.txt](extension-before.txt)，用作保留性核验基线，不代表 Git HEAD。
 
 | 原位置 | 新位置与用途 |
 | --- | --- |

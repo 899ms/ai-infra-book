@@ -1,0 +1,902 @@
+[
+  {
+    "chapter": 1,
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "批次大小（batch size），",
+    "after": "批次大小（batch size，即一次共同执行的请求数），"
+  },
+  {
+    "chapter": 1,
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "矩阵乘法、归一化等操作，",
+    "after": "矩阵乘法、归一化（按统计量调整数值尺度）等操作，"
+  },
+  {
+    "chapter": 1,
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "多租户服务要隔离不同用户的数据和权限。",
+    "after": "多个独立用户共用资源的服务称为多租户服务，它需要隔离不同用户的数据和权限。"
+  },
+  {
+    "chapter": 1,
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "一次请求只选择一个服务实例，但这个实例可能由多张设备共同运行。",
+    "after": "服务实例是能够独立完成模型请求的一组执行资源，可以由一张或多张设备组成。一次请求由其中一个实例承接。"
+  },
+  {
+    "chapter": 1,
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "路由器选择实例，实例内部再安排设备执行模型。",
+    "after": "服务路由器是选择请求执行位置的软件，选定实例后，由实例内部安排设备执行模型。"
+  },
+  {
+    "chapter": 1,
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "随后驻留显存，",
+    "after": "随后保留在显存中（称为驻留），"
+  },
+  {
+    "chapter": 1,
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "以 GB200 NVL72 为一个具体例子，",
+    "after": "以 NVIDIA 的 GB200 NVL72 为一个具体例子，"
+  },
+  {
+    "chapter": 1,
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "所有时间统一为 ns（纳秒）。",
+    "after": "所有时间统一为 ns（纳秒，十亿分之一秒）；1 μs（微秒）等于 1000 ns，1 ms（毫秒）等于 1000 μs。数据单位中，1 byte（字节）等于 8 bit（比特）；bit/s 表示每秒传送的比特数。"
+  },
+  {
+    "chapter": 1,
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "以及是否使用稀疏条件；",
+    "after": "以及是否使用稀疏条件。稠密计算按完整矩阵执行；稀疏计算利用零元素或规定的稀疏结构跳过部分运算。"
+  },
+  {
+    "chapter": 1,
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "同一转折也可以用算术强度 $I=F/R_W=2B/b_W$ 描述。",
+    "after": "同一转折也可以用算术强度 $I=F/R_W=2B/b_W$ 描述，即每读取一字节数据所完成的运算次数。"
+  },
+  {
+    "chapter": 2,
+    "file": "manuscripts/02-模型架构.md",
+    "before": "一次前向执行从 token ID 开始。",
+    "after": "一次前向执行从 token ID（词元在词表中的整数编号）开始。"
+  },
+  {
+    "chapter": 2,
+    "file": "manuscripts/02-模型架构.md",
+    "before": "不再按一次词表 GEMM 计算。",
+    "after": "不再按一次词表矩阵乘法（GEMM，通用矩阵乘法）计算。"
+  },
+  {
+    "chapter": 2,
+    "file": "manuscripts/02-模型架构.md",
+    "before": "选择 top-k 专家，",
+    "after": "选择路由分数最高的 k 个专家（top-k），"
+  },
+  {
+    "chapter": 2,
+    "file": "manuscripts/02-模型架构.md",
+    "before": "第九章介绍 CPU／GPU 放置及 AF 分离。",
+    "after": "第九章介绍 CPU／GPU 放置，以及将注意力与前馈网络交给不同资源的 AF 分离。"
+  },
+  {
+    "chapter": 2,
+    "file": "manuscripts/02-模型架构.md",
+    "before": "router 要为每个专家计算路由分数，",
+    "after": "路由器要为每个专家计算路由分数，"
+  },
+  {
+    "chapter": 2,
+    "file": "manuscripts/02-模型架构.md",
+    "before": "一次 forward、一次采样",
+    "after": "一次前向执行、一次采样"
+  },
+  {
+    "chapter": 2,
+    "file": "manuscripts/02-模型架构.md",
+    "before": "V3 的表 2-3",
+    "after": "DeepSeek-V3 的表 2-3"
+  },
+  {
+    "chapter": 2,
+    "file": "manuscripts/02-模型架构.md",
+    "before": "发布 checkpoint 则采用混合存储格式，",
+    "after": "发布的模型检查点（保存参数的文件集合）则采用混合存储格式，"
+  },
+  {
+    "chapter": 2,
+    "file": "manuscripts/02-模型架构.md",
+    "before": "Qwen3.6 为 eager 矩形注意力与块式线性分支，",
+    "after": "Qwen3.6 为逐项执行的矩形注意力实现（eager）与块式线性分支，"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "多轮 Chat 与前缀增长",
+    "after": "多轮对话与前缀增长"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "Agentic 工作负载",
+    "after": "智能体工作负载"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "| Thinking 关闭 | Thinking 开启 |",
+    "after": "| 思考模式关闭 | 思考模式开启 |"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "投影和 FFN 只处理新增位置，",
+    "after": "投影和前馈网络（FFN，对每个位置分别变换特征）只处理新增位置，"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "patch 边长为",
+    "after": "将图片分成方形图像块（patch），每块边长为"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "模型还取三个中间视觉层的 DeepStack 特征，",
+    "after": "为向语言模型提供不同深度的视觉信息，DeepStack 将视觉编码器中间层的特征送入相应语言层。模型还取三个中间视觉层的这类特征，"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "编码缓存（EC）保存",
+    "after": "编码缓存（encoder cache，EC）保存"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "以 Fish Audio S2 Pro 为例，",
+    "after": "以 Fish Audio 的语音生成模型 S2 Pro 为例，"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "随后增加 STEM、代码、推理与合成数据，",
+    "after": "随后增加科学、技术、工程与数学（STEM）、代码、推理与合成数据，"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "可以按 teacher-forced 前向处理：",
+    "after": "可以采用教师强制（teacher forcing）执行前向：每个位置使用轨迹中已经确定的前一个 token，而不是等待模型重新生成它。因此，这些已知位置可以一同计算。"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "在 MMLU 上分别为",
+    "after": "在覆盖多学科选择题的 MMLU 基准上分别为"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "TriviaQA-Wiki 为",
+    "after": "使用维基百科证据的问答基准 TriviaQA-Wiki 为"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "流式多处理器（SM）",
+    "after": "流式多处理器（Streaming Multiprocessor，SM）"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "Softmax 正在等待 QK 的最终分数。",
+    "after": "将分数转为归一化权重的 Softmax，正在等待查询与键的点积（QK）完成。"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "RoPE 使用固定位置的正弦、余弦系数，",
+    "after": "旋转位置编码（RoPE）通过旋转向量引入位置信息。它使用固定位置的正弦、余弦系数，"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "| QK、PV |",
+    "after": "| 查询与键的点积 QK、概率与值的乘积 PV |"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "Cube／AIC",
+    "after": "矩阵核 Cube（AIC）"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "Vector／AIV",
+    "after": "向量核 Vector（AIV）"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "寄存器、shared memory、累加存储",
+    "after": "寄存器、共享内存、累加存储"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "L0、Unified Buffer 与交换通路",
+    "after": "计算单元近旁的 L0 缓冲、统一缓冲与交换通路"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "权重与 scale 约为",
+    "after": "权重与量化缩放系数（scale）约为"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "Mess 用延迟探针",
+    "after": "内存性能测量工具 Mess 用延迟探针"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "若每隔 64 tick 发出一次读取请求，",
+    "after": "用 tick 表示本算例的离散时间单位。若每隔 64 tick 发出一次读取请求，"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "昇腾 950 的 CV 通路",
+    "after": "昇腾 950 在矩阵核 Cube 与向量核 Vector 之间的 CV 通路"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "完整 all-reduce 将多次传输与归约连接起来，",
+    "after": "全归约（AllReduce）将各设备的局部贡献合并，并让每个设备取得完整结果；它将多次传输与归约连接起来，"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "Groq 的 TSP 由编译器",
+    "after": "Groq 的张量流处理器（Tensor Streaming Processor，TSP）由编译器"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "Graphcore 的 IPU 由许多",
+    "after": "Graphcore 的智能处理单元（Intelligence Processing Unit，IPU）由许多"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "WSE-3 的片上 SRAM 为 44 GB。",
+    "after": "第三代晶圆级引擎 WSE-3 的片上静态随机存取存储器（SRAM）为 44 GB。SRAM 适合直接集成在计算芯片内，用面积换取低延迟访问。"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "从独立 ROM 读取权重",
+    "after": "从独立只读存储器（ROM）读取权重"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "实验另用 Nsight Compute，",
+    "after": "实验另用 NVIDIA 的 GPU 内核性能分析工具 Nsight Compute，"
+  },
+  {
+    "chapter": 5,
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "profiler 将主机调用",
+    "after": "性能分析工具（profiler）将主机调用"
+  },
+  {
+    "chapter": 5,
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "让 Agent 修改调度或内核代码，",
+    "after": "让能够调用编译和测试工具的智能体（Agent）修改调度或内核代码，"
+  },
+  {
+    "chapter": 5,
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "FlashInfer 的两组对照",
+    "after": "推理算子库 FlashInfer 的两组对照"
+  },
+  {
+    "chapter": 5,
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "每层每步执行一次 SwiGLU，",
+    "after": "每层每步执行一次 SwiGLU，即第 5.3.1 节中以 SiLU 调节一支投影、再与另一支逐元素相乘的门控前馈计算，"
+  },
+  {
+    "chapter": 5,
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "Korch 提供了另一个",
+    "after": "算子编排优化系统 Korch 提供了另一个"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "## 6.2 Dense 的多卡执行",
+    "after": "## 6.2 稠密模型的多卡执行"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "例如 NVIDIA 的 NCCL。",
+    "after": "例如 NVIDIA 集合通信库（NVIDIA Collective Communications Library，NCCL）。"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "已有 CPU/Gloo 并发实验",
+    "after": "Gloo 是支持 CPU 等执行环境的集合通信库。已有 CPU/Gloo 并发实验"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "归约后还要加残差并做 RMSNorm，",
+    "after": "归约后还要加残差并做均方根归一化（RMSNorm，按整行均方根调整数值尺度），"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "忽略 epsilon 和缩放参数，",
+    "after": "忽略用于避免除零的小常数 epsilon 和可学习缩放参数，"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "昇腾 CCU 将搬运",
+    "after": "昇腾的集合通信单元（CCU）将搬运"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "节点内 Copy Engine",
+    "after": "节点内复制引擎（Copy Engine）"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "RDMA 平面，业务接入由 VPC 平面承担。",
+    "after": "远程直接内存访问（RDMA）网络，让网卡访问授权的远端内存；业务接入由虚拟私有云（VPC）网络承担，用于隔离和连接租户资源。"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "按 72 lane、每 lane 112 Gbit/s 计算，",
+    "after": "按 72 条串行传输通道（lane）、每条 112 Gbit/s 计算，"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "UBoE 与 UB Link 静态复用 SerDes，",
+    "after": "UBoE 是以太网上承载 UB 通信的方式，UB Link 是 UB 的链路连接方式。两者静态复用串行器／解串器（SerDes，将芯片内部并行数据与链路串行信号互相转换的电路），"
+  },
+  {
+    "chapter": 7,
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "笔者在参与 KV-Direct、1Pipe 和 Unified Bus（UB）的研究与设计时，",
+    "after": "KV-Direct 研究由可编程网卡直接处理键值存储请求，1Pipe 研究分布式执行中的流水组织，Unified Bus（UB）提供统一的设备互联。笔者在参与这些研究与设计时，"
+  },
+  {
+    "chapter": 7,
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "集合通信通常将这些进程称为参与者，",
+    "after": "集合通信由一组进程共同执行数据收集、分发或归约等操作，通常将这些进程称为参与者，"
+  },
+  {
+    "chapter": 7,
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "远端 dispatch 就有",
+    "after": "向远端专家分发输入（dispatch）就有"
+  },
+  {
+    "chapter": 7,
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "加上 combine 为",
+    "after": "加上返回并合并专家结果（combine）为"
+  },
+  {
+    "chapter": 7,
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "rPCIeBench 后来对共享 PCIe 路径的研究",
+    "after": "PCIe 性能测试工具 rPCIeBench 后来对共享 PCIe 路径的研究"
+  },
+  {
+    "chapter": 7,
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "MegaScale 在诊断训练性能时发现，",
+    "after": "大规模分布式训练系统 MegaScale 在诊断训练性能时发现，"
+  },
+  {
+    "chapter": 7,
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "本书四进程 CPU Gloo 测量",
+    "after": "本书使用集合通信库 Gloo 的四进程 CPU 测量"
+  },
+  {
+    "chapter": 7,
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "每层 attention 与 FFN 各有",
+    "after": "每层注意力与前馈网络（FFN）各有"
+  },
+  {
+    "chapter": 7,
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "UBoE 与 UB Link 静态复用 SerDes，",
+    "after": "以太网上的 UB 通信（UBoE）与 UB Link 链路静态复用串行器／解串器（SerDes，连接芯片内部并行数据与链路串行信号的电路），"
+  },
+  {
+    "chapter": 7,
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "16 GiB 非原位输入下，",
+    "after": "16 GiB 输入、输入与输出分别使用不同缓冲区时，"
+  },
+  {
+    "chapter": 8,
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "投影和 FFN，",
+    "after": "投影和前馈网络（FFN，对各位置分别进行特征变换），"
+  },
+  {
+    "chapter": 8,
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "从 HBM 读取它们，",
+    "after": "从高带宽内存（HBM）读取它们，"
+  },
+  {
+    "chapter": 8,
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "一种 KDA 实现在 TP=8 下",
+    "after": "一种 KDA 实现将层内张量分到八张卡（张量并行 TP=8），此时"
+  },
+  {
+    "chapter": 8,
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "多 LoRA 服务让不同 adapter 共用一个基础模型。",
+    "after": "低秩适配（LoRA）用两个较小矩阵的乘积表示权重调整量，基础模型权重保持不变。多 LoRA 服务让不同适配器（adapter）共用一个基础模型。"
+  },
+  {
+    "chapter": 8,
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "使用 rank 16、BF16 adapter 时，",
+    "after": "使用低秩维度为 16 的 BF16 适配器时，"
+  },
+  {
+    "chapter": 9,
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "Qwen3-235B 的一种 TP2×EP4 放置",
+    "after": "Qwen3-235B-A22B 的一种 TP2×EP4 放置（张量并行 TP 将专家矩阵二分，专家并行 EP 将专家分成四组）"
+  },
+  {
+    "chapter": 9,
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "MoE 为这种分工",
+    "after": "混合专家模型（MoE）由路由器为每个 token 选择部分专家网络，为这种分工"
+  },
+  {
+    "chapter": 9,
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "形成 ping-pong 流水。",
+    "after": "形成交替流水：一个微批次执行注意力时，另一个微批次执行专家计算。"
+  },
+  {
+    "chapter": 9,
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "36 层 dense FFN",
+    "after": "36 层稠密前馈网络"
+  },
+  {
+    "chapter": 9,
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "逻辑 top-k；",
+    "after": "每个 token 选择分数最高的 k 个专家这一规则（top-k）；"
+  },
+  {
+    "chapter": 9,
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "模型与 adapter 版本、",
+    "after": "模型与适配器（adapter，附加在基础模型上的参数模块）版本、"
+  },
+  {
+    "chapter": 9,
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "TP 或 SP×TP。",
+    "after": "TP 或 SP×TP。这里 TP 切分层内矩阵，序列并行（SP）按 token 位置分配部分计算与中间状态，SP×TP 表示组合使用两种划分。"
+  },
+  {
+    "chapter": 10,
+    "file": "manuscripts/10-训练系统.md",
+    "before": "训练 reward 没有一致提高。",
+    "after": "训练奖励没有一致提高。"
+  },
+  {
+    "chapter": 10,
+    "file": "manuscripts/10-训练系统.md",
+    "before": "四组 R3 开关对照",
+    "after": "四组路由重放（R3）开关对照"
+  },
+  {
+    "chapter": 10,
+    "file": "manuscripts/10-训练系统.md",
+    "before": "参数变化来自 AdamW 权重衰减。",
+    "after": "参数变化来自 AdamW 权重衰减。AdamW 在 Adam 的梯度更新之外，单独按比例缩小权重；即使当前策略梯度为零，这一步也能改变参数。"
+  },
+  {
+    "chapter": 10,
+    "file": "manuscripts/10-训练系统.md",
+    "before": "MegaScale 在 175B 模型上",
+    "after": "大规模分布式训练系统 MegaScale 在 175B 模型上"
+  },
+  {
+    "chapter": 10,
+    "file": "manuscripts/10-训练系统.md",
+    "before": "使用页锁定内存（pinned memory）",
+    "after": "使用锁页内存（pinned memory）"
+  },
+  {
+    "chapter": 11,
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "before": "下一节保持同样的比较方法，计算rollout 指用当前策略生成供训练使用的交互轨迹，轨迹包括模型输出及其引起的工具或环境反馈。增加 rollout 设备实际能缩短多少训练时间。",
+    "after": "rollout 指用当前策略生成供训练使用的交互轨迹，包括模型输出及工具或环境反馈。下一节计算增加这类轨迹生成设备实际能缩短多少训练时间。"
+  },
+  {
+    "chapter": 11,
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "before": "DeepSeek V4-Flash Flash",
+    "after": "DeepSeek V4-Flash"
+  },
+  {
+    "chapter": 11,
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "before": "microVM 保留虚拟机隔离模型，",
+    "after": "微型虚拟机（microVM）保留虚拟机隔离模型，"
+  },
+  {
+    "chapter": 11,
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "before": "ASI 对生产集群的研究表明，",
+    "after": "关于生产集群中 AI 超级基础设施（AI Super Infrastructure，ASI）的研究表明，"
+  },
+  {
+    "chapter": 12,
+    "file": "manuscripts/12-端边云协同.md",
+    "before": "PPDU 指一次物理层协议数据单元，",
+    "after": "PPDU 是物理层协议数据单元，包含物理层前导、头部和承载的数据，代表一次无线发送的完整物理层内容；"
+  },
+  {
+    "chapter": 12,
+    "file": "manuscripts/12-端边云协同.md",
+    "before": "Link Turbo 的历史实践",
+    "after": "华为 Link Turbo 的多网络协同实践"
+  },
+  {
+    "chapter": 11,
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "before": "关于生产集群中 AI 超级基础设施（AI Super Infrastructure，ASI）的研究表明，",
+    "after": "香港科技大学、阿里巴巴等机构在 2026 年发表的研究分析了阿里巴巴无服务器基础设施（Alibaba Serverless Infrastructure，ASI）的生产 GPU 集群。研究表明，"
+  },
+  {
+    "chapter": 7,
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "1Pipe 研究分布式执行中的流水组织",
+    "after": "1Pipe 研究用网络提供全局操作顺序，简化分布式程序的协作"
+  },
+  {
+    "chapter": 7,
+    "file": "manuscripts/07-数据中心网络.md",
+    "before": "其梯度，形状为",
+    "after": "其梯度的形状为"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "$H_{mathrm{img}},W_{mathrm{img}}$",
+    "after": "$H_{\\mathrm{img}},W_{\\mathrm{img}}$"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "$p_{mathrm{patch}}$",
+    "after": "$p_{\\mathrm{patch}}$"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "Reasoning、验证与成功任务成本",
+    "after": "推理任务、验证与成功任务成本"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "BF16 张量 $[400,2560]$",
+    "after": "每元素占两字节的 BF16 张量 $[400,2560]$"
+  },
+  {
+    "chapter": 2,
+    "file": "manuscripts/02-模型架构.md",
+    "before": "普通残差计算 $x_{\\ell+1}=x_\\ell+f_\\ell(x_\\ell)$，",
+    "after": "残差连接把子层输入直接加到变换结果上，使原始信息和梯度具有跨层直通路径。普通残差计算 $x_{\\ell+1}=x_\\ell+f_\\ell(x_\\ell)$，其中 $f_\\ell$ 是第 $\\ell$ 个子层的变换，"
+  },
+  {
+    "chapter": 2,
+    "file": "manuscripts/02-模型架构.md",
+    "before": "另有固定 FP32 递推状态 60 MiB 和 BF16 卷积槽 1.875 MiB。",
+    "after": "另有固定 FP32 递推状态 60 MiB，以及保存短卷积所需近期输入的 BF16 缓冲区 1.875 MiB。短卷积先混合邻近位置的信息，缓冲区让下一步更新可以复用这些输入。"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "下面用 FlashAttention-4 对 B200 单个 SM 的分析，",
+    "after": "FlashAttention 系列通过分块减少注意力中间结果的显存访问；第四版进一步研究更强矩阵单元下的计算分工。下面用 FlashAttention-4 对 NVIDIA Blackwell 架构 B200 单个 SM 的分析，"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "Hopper 的张量内存加速器",
+    "after": "NVIDIA Hopper 架构（H100 所属架构）的张量内存加速器"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "Rubin 还支持更新描述符，",
+    "after": "NVIDIA 后续的 Rubin 架构还支持更新描述符，"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "Ampere 异步拷贝",
+    "after": "NVIDIA Ampere 架构（A100 所属架构）的异步拷贝"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "FPGA 的可重配置通路",
+    "after": "现场可编程门阵列（FPGA）的可重配置通路"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "Roofline 吞吐上界为",
+    "after": "Roofline（屋顶线）模型的吞吐上界为"
+  },
+  {
+    "chapter": 5,
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "再将 Z 交给 down 投影。",
+    "after": "再将 Z 交给降回隐藏维度的 down 投影。"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "## 6.2 稠密模型的多卡执行\n",
+    "after": "## 6.2 稠密模型的多卡执行\n\n稠密模型让每个 token 使用同一组前馈网络权重。本节先在这一固定计算结构下讨论多卡分工，再在第 6.3 节引入按输入选择专家的模型。\n"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "69 个 KDA 层保存递推状态，24 个 MLA 层保存压缩注意力状态。",
+    "after": "69 个 Kimi Delta Attention（KDA）层用固定大小的矩阵递推汇总历史，24 个多头潜变量注意力（MLA）层用低维表示保存历史。"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "递归算法和 Swing 每节点每轮同样发送",
+    "after": "Swing 是为环面拓扑设计的集合通信算法，通过改变各轮通信对端分散链路负载。递归算法和 Swing 每节点每轮同样发送"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "在配套的 Morphlux 教学算例中，",
+    "after": "Morphlux 研究为任务重构光互联拓扑，使连接适合任务的通信需求。在配套的教学算例中，"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "AutoCCL 将算法选择",
+    "after": "集合通信自动调优系统 AutoCCL 将算法选择"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "TPU 则采用规则的互联形状，",
+    "after": "Google 的张量处理器 TPU 则采用规则的互联形状，"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "CloudMatrix384 将 384 个 Ascend 910C NPU 与 192 个 Kunpeng CPU",
+    "after": "华为 CloudMatrix384 将 384 个昇腾（Ascend）910C 神经网络处理器（NPU）与 192 个鲲鹏（Kunpeng）CPU"
+  },
+  {
+    "chapter": 8,
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "Chat 与 Agent 的前缀复用",
+    "after": "对话与智能体的前缀复用"
+  },
+  {
+    "chapter": 8,
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "Token 预算、动态图形状与实际执行时间",
+    "after": "Token 预算、动态形状与执行时间"
+  },
+  {
+    "chapter": 8,
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "GGML 系列实现中的一种分组量化格式",
+    "after": "张量计算库 GGML 系列实现中的一种分组量化格式"
+  },
+  {
+    "chapter": 8,
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "模型自带的多 token 预测头",
+    "after": "模型自带的多 token 预测（MTP）头，即同时学习预测后续多个位置的辅助模块，"
+  },
+  {
+    "chapter": 9,
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "跨 EP 的输入 dispatch 可以为零，",
+    "after": "跨 EP 的输入分发（dispatch）可以为零，"
+  },
+  {
+    "chapter": 9,
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "### 9.4.3 Dispatch、计算与 Combine 的重叠",
+    "after": "### 9.4.3 输入分发、计算与结果合并的重叠"
+  },
+  {
+    "chapter": 9,
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "HiCache、vLLM 的多级路径和 LMCache 提供了不同的组织方式，",
+    "after": "SGLang 的分层缓存 HiCache、vLLM 的多级缓存路径和 KV 缓存管理系统 LMCache 提供了不同的组织方式，"
+  },
+  {
+    "chapter": 9,
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "进程与分词器（tokenizer）初始化",
+    "after": "进程与分词器（tokenizer，将文本转换为 token 编号的组件）初始化"
+  },
+  {
+    "chapter": 10,
+    "file": "manuscripts/10-训练系统.md",
+    "before": "**1F1B** 预热后交错执行前向和反向，",
+    "after": "**1F1B（one forward, one backward）**在流水线预热后交替执行一次前向和一次反向，"
+  },
+  {
+    "chapter": 10,
+    "file": "manuscripts/10-训练系统.md",
+    "before": "检查点需要权重、Adam 动量、步数、学习率状态、随机状态和下一批数据的组成。",
+    "after": "检查点需要权重、Adam 的一阶矩与二阶矩、步数、学习率状态、随机状态和下一批数据的组成。学习率控制更新步长，随机状态决定后续随机采样的序列；保存它们可以从中断处继续同一训练过程。"
+  },
+  {
+    "chapter": 10,
+    "file": "manuscripts/10-训练系统.md",
+    "before": "权重相同而动量不同，",
+    "after": "权重相同而优化器的矩状态不同，"
+  },
+  {
+    "chapter": 10,
+    "file": "manuscripts/10-训练系统.md",
+    "before": "优势函数给出调整回答概率的方向和幅度，",
+    "after": "优势值衡量回答比所选基准好多少，用来确定调整回答概率的方向和幅度，"
+  },
+  {
+    "chapter": 10,
+    "file": "manuscripts/10-训练系统.md",
+    "before": "固定 verl／vLLM 小模型实验中，",
+    "after": "固定小模型实验使用强化学习训练框架 verl 与推理引擎 vLLM 协作，"
+  },
+  {
+    "chapter": 10,
+    "file": "manuscripts/10-训练系统.md",
+    "before": "### 10.5.4 MoE Routing Replay 与训练一致性",
+    "after": "### 10.5.4 专家路由重放与训练一致性"
+  },
+  {
+    "chapter": 12,
+    "file": "manuscripts/12-端边云协同.md",
+    "before": "### 12.2.2 端侧编码的传输量与计算开销\n",
+    "after": "### 12.2.2 端侧编码的传输量与计算开销\n\n编码器放在远端时，网络发送图片；放在终端时，网络发送特征。先沿图中的箭头确认两种方案分别传什么，再比较传输量和节省的远端计算时间。\n"
+  },
+  {
+    "chapter": 12,
+    "file": "manuscripts/12-端边云协同.md",
+    "before": "整体有序交付把音频也阻挡到第 7 秒；",
+    "after": "这里把接收数据交给应用称为交付。整个连接共用一个接收顺序时，前方缺口会阻塞后续数据，这称为队头阻塞（head-of-line blocking）。整体有序交付把音频也阻挡到第 7 秒；"
+  },
+  {
+    "chapter": 2,
+    "file": "manuscripts/02-模型架构.md",
+    "before": "模型简称及连字符混用",
+    "after": "Qwen3-235B-A22B、DeepSeek V4；保留路径与代码标识"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "模型简称及连字符混用",
+    "after": "Qwen3-235B-A22B、DeepSeek V4；保留路径与代码标识"
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "模型简称及连字符混用",
+    "after": "Qwen3-235B-A22B、DeepSeek V4；保留路径与代码标识"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "模型简称及连字符混用",
+    "after": "Qwen3-235B-A22B、DeepSeek V4；保留路径与代码标识"
+  },
+  {
+    "chapter": 9,
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "模型简称及连字符混用",
+    "after": "Qwen3-235B-A22B、DeepSeek V4；保留路径与代码标识"
+  },
+  {
+    "chapter": 10,
+    "file": "manuscripts/10-训练系统.md",
+    "before": "模型简称及连字符混用",
+    "after": "Qwen3-235B-A22B、DeepSeek V4；保留路径与代码标识"
+  },
+  {
+    "chapter": 2,
+    "file": "manuscripts/02-模型架构.md",
+    "before": "比较 Qwen3.6、DeepSeek V4-Flash 与 Kimi K3 的资源需求。",
+    "after": "比较 Qwen3.6-35B-A3B（下文简称 Qwen3.6）、DeepSeek V4-Flash 与 Kimi K3 的资源需求。"
+  },
+  {
+    "chapter": 2,
+    "file": "manuscripts/02-模型架构.md",
+    "before": "接下来的 MoE 分支在同一主干上改变权重选择，",
+    "after": "接下来的混合专家（Mixture of Experts，MoE）分支准备多个前馈子网络，由路由器为每个 token 选择其中一部分执行，在同一主干上改变权重选择，"
+  },
+  {
+    "chapter": 3,
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "训练阶段的名称不同，系统仍要回答同样的问题：",
+    "after": "把一次参数更新所需的完整批次拆成较小批次、逐次执行并累积梯度，这些较小批次称为微批次。训练阶段的名称不同，系统仍要回答同样的问题："
+  },
+  {
+    "chapter": 4,
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "HBM 和 GDDR 是内存器件与接口技术，",
+    "after": "高带宽内存（HBM）通过堆叠存储裸片和宽接口提供带宽；图形双倍数据速率内存（GDDR）通常以多颗存储芯片配合高速接口提供显存。两者都是内存器件与接口技术，"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "超节点外使用 远程直接内存访问",
+    "after": "超节点外使用远程直接内存访问"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "共享容量与 KV cache",
+    "after": "共享容量与 KV 缓存"
+  },
+  {
+    "chapter": 6,
+    "file": "manuscripts/06-超节点.md",
+    "before": "Unified Bus 进一步把问题",
+    "after": "华为的统一互联 Unified Bus（UB）进一步把问题"
+  },
+  {
+    "chapter": 10,
+    "file": "manuscripts/10-训练系统.md",
+    "before": "Adam 是一种利用梯度历史调整参数更新的优化器。",
+    "after": "损失是衡量预测与训练目标差异的数值；优化器是根据损失梯度调整参数的算法。Adam 是一种利用梯度历史调整参数更新的优化器。"
+  }
+]

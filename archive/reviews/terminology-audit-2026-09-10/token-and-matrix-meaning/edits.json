@@ -1,0 +1,297 @@
+[
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "设输入有 $m$ 行，每行 $k$ 个特征",
+    "after": "设本次为 $m$ 个输入 token 计算投影，每个 token 用一个包含 $k$ 个特征的向量表示。把这些向量逐行排成输入矩阵 $X$，它就有 $m$ 行、$k$ 列"
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "以及处理 $m$ 行输入的运算量。",
+    "after": "以及为本次输入的 $m$ 个 token 完成这些投影和 FFN 计算所需的运算量。每个 token 在这一层都有一个 4096 维向量，作为输入矩阵的一行；$m$ 统计本次实际参与计算的 token 位置数。同一词元出现在两个位置时计作两个 token。若有 $B$ 条等长请求、每条本次处理 $P$ 个 token，则 $m=BP$。例如，一条请求处理 128 个输入 token 时 $m=128$；八条请求各推进一个 token 时 $m=8$。"
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "即 $m=BP$ 行。",
+    "after": "每一行是一个 token 在当前层的表示，共有 $m=BP$ 行。已有上下文中从缓存读取的键和值不计入这里的 $m$。"
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "投影处理的总行数；普通 decode 时",
+    "after": "本次参与投影的 token 总数，也就是输入矩阵行数；普通 decode 时"
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "专家 $e$ 收到的行数；无丢弃路由时",
+    "after": "分派给专家 $e$ 的 token 数，每个 token 表示占该专家输入矩阵的一行；无丢弃路由时"
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "真正执行词表头的行数；只预测每请求末位置时为 $B$",
+    "after": "实际进行词表投影的 token 位置数；只用每条请求的末位置预测下一个 token 时为 $B$，它不等于本次生成的全部输出长度"
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "先按每行矩阵尺寸求单次运算量",
+    "after": "先按表格中每项操作的矩阵尺寸求一次调用的运算量"
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "“增加输入行”和“让每行看到更长上下文”",
+    "after": "“增加本次参与计算的 token 数”和“让每个 token 读取更长的上下文”"
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "处理 $m$ 行需 $6mdf$ FLOPs",
+    "after": "处理 $m$ 个 token 的特征向量需 $6mdf$ FLOPs"
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "共享专家对全部 $B$ 行输入执行，路由专家则分别处理 $t_e$ 行。若共享专家有 $N_s$ 个参数，一层的专家矩阵运算量为 $2BN_s+2\\sum_e t_eN_e$。",
+    "after": "共享专家处理本次全部 $m$ 个 token 的特征向量，路由专家 $e$ 只处理分派给它的 $t_e$ 个 token。若共享专家有 $N_s$ 个参数，一层的专家矩阵运算量为 $2mN_s+2\\sum_e t_eN_e$。普通单步 decode 中，每条请求输入一个新 token，此时 $m=B$；prefill 则要累计各请求本次处理的全部 token。"
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "例中两种分派都有 512 行",
+    "after": "例中两种路由方式都产生 512 次 token 到专家的分派；一个 token 发给八个专家，会在八个专家的输入矩阵中各占一行。这 512 行来自 64 个原始 token"
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "均匀分派时每专家只有两行，集中分派时每专家有 64 行",
+    "after": "均匀分派时每个专家处理两个 token，集中分派时每个专家处理 64 个 token"
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "这些矩阵对每一行做相同的变换",
+    "after": "这些投影对每个 token 的特征向量做相同的变换"
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "每个权重为一个输入行执行一次乘加",
+    "after": "在一个投影中，每个权重为一个 token 的特征向量参与一次乘加"
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "一批输入行增加时，同一矩阵服务更多行，工作按行数增加",
+    "after": "一批中本次参与计算的 token 增加时，同一权重矩阵处理更多 token 的特征向量，运算量随之增加"
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "同一份权重为更多输入行完成乘加",
+    "after": "同一份权重为更多请求当前输入的 token 完成乘加"
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "before": "矩阵一次处理更多输入行",
+    "after": "矩阵一次处理更多请求当前输入的 token 表示"
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "prefill 又带来较多输入行",
+    "after": "prefill 可以同时处理较多已知 token，它们的特征向量组成更多输入矩阵行"
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "投影与 FFN 仍处理同样的 8192 行",
+    "after": "投影与 FFN 仍处理同样的 8192 个 token 表示"
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "decode 每次只处理少量输入行",
+    "after": "decode 每步通常只处理各请求的一个新 token，在小批次下同时处理的 token 很少"
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "before": "分辨率提高则改变单步内部的矩阵行数和位置交互",
+    "after": "分辨率提高会增加图像潜在表示中的空间位置数，从而增加单步内部的矩阵行数和位置间交互"
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "$M$ 在本章的矩阵式中表示输入行数，$K$ 表示内积长度，$N$ 表示输出列数",
+    "after": "在投影 $Y=XW$ 中，$M$ 是本次处理的 token 总数，每个 token 的特征向量占 $X$ 的一行；$K$ 是每个输入向量的特征数，也是权重矩阵 $W$ 的行数；$N$ 是每个输出向量的特征数，也是 $W$ 的列数"
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "每个专家只有两行输入；如果全部 token 选择同样的八个专家，每个专家有 64 行输入。两种情况下，专家实际处理的输入都是 512 行。",
+    "after": "每个专家只处理两个 token 的特征向量；如果全部 token 选择同样的八个专家，每个专家处理 64 个 token 的特征向量。两种情况下，64 个原始 token 都产生 512 次专家分派，在各专家输入矩阵中合计占 512 个有效行。内核为满足计算块大小而补入的零行另行计数，不代表新的 token。"
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "| 行数 | 矩阵计算时间",
+    "after": "| 本次处理的 token 数 $M$ | 矩阵计算时间"
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "before": "| 行数 | M2 Max",
+    "after": "| 本次处理的 token 数 $M$ | M2 Max"
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "先取 $M=1024$ 行输入 X，计算一支投影 $C=XW$",
+    "after": "先同时处理 $M=1024$ 个 token，将它们各自的 4096 维特征向量排成输入矩阵 X，计算一支投影 $C=XW$"
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "| 输入 X | $[1024,4096]$ | 8 MiB | 每行产生一行投影结果 |",
+    "after": "| 输入 X | $[1024,4096]$ | 8 MiB | 每个 token 的特征向量占一行，投影后得到该 token 的新特征向量 |"
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "在 1024 行输入之间共享",
+    "after": "由 1024 个 token 的投影计算共享"
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "仍取 1024 行，第一阶段",
+    "after": "仍取 1024 个 token，每个 token 的特征向量占输入矩阵的一行。第一阶段"
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "取 512 行输入，按 64 行分成八个数据块",
+    "after": "取 512 个 token 的特征向量，每 64 个 token 的向量组成一个数据块，共八块"
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "before": "prefill 每次处理 7239 行，36 次合计 260604 行；decode 每次处理一行，1116 次合计 1116 行",
+    "after": "同一请求的 prefill 在 36 个模型层中分别对 7239 个输入 token 执行该算子，共处理 $36\\times7239=260604$ 个 token 表示；31 步 decode 在每层处理一个新 token，共执行 $36\\times31=1116$ 次单 token 算子调用。这里按“层数 × token 数”累计算子工作，同一个 token 在不同层参与计算会被重复计数"
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "按输出列切分时",
+    "after": "按权重矩阵的列切分时，即把输出特征分给不同设备，"
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "改为按输入行切分，",
+    "after": "改为按权重矩阵的行切分，即把同一个 token 的输入特征分给不同设备，"
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "![按输入行分工]",
+    "after": "![按权重矩阵的行分工，对应切分输入特征]"
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "*图 6-4：按行切分时",
+    "after": "*图 6-4：按权重矩阵的行切分时"
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "上投影按输出列切分，逐元素运算留在本地，下投影按输入行切分",
+    "after": "上投影按权重矩阵的列划分输出特征，逐元素运算留在本地；下投影按权重矩阵的行划分输入特征。两步均保留全部 $m$ 个 token，切分的是每个 token 的特征维度"
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "每个专家处理四行输入；若所有 token 选择同样的八个专家，每个专家处理 64 行输入",
+    "after": "每个专家处理四个 token 的特征向量；若所有 token 选择同样的八个专家，每个专家处理 64 个 token 的特征向量"
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "BF16 的 $s_w=2$。输入从一行增加到 16 行时",
+    "after": "BF16 的 $s_w=2$。把同时执行一步 decode 的请求数从 1 增至 16，每条请求都提供一个新 token，各 token 的特征向量分别占输入矩阵的一行；矩阵便从一行增至 16 行，此时"
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "如果四行和五行输入都使用八行的计算图",
+    "after": "如果本次验证四个或五个 token，都把各 token 的特征向量补齐为八行矩阵，使用预先准备的八行计算图"
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "若输入从八行增至九行，需要改用十六行图",
+    "after": "若待验证的 token 从八个增至九个，需要补齐为十六行矩阵并改用相应计算图；补入的行只用于凑齐执行形状，不代表额外的候选 token。此时"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "选择取决于同一份权重能被多少行输入复用。",
+    "after": "选择取决于本次分派给同一个专家的 token 数；每个 token 的特征向量占该专家输入矩阵的一行，这些向量复用同一份专家权重。"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "每行输入和输出合计 16 KiB",
+    "after": "每次 token 到专家的分派，传入和传出的特征向量合计 16 KiB"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "每个专家只有一行输入时",
+    "after": "每个专家只收到一个 token 的特征向量时"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "增加一行输入时",
+    "after": "每个专家多处理一个 token 的特征向量时"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "共 64 个有效任务行",
+    "after": "合计 64 次 token 到专家的分派，对应 64 个有效输入矩阵行"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "硬件执行的是补齐后的行，模型需要的是其中 64 行",
+    "after": "硬件执行的是补齐后的矩阵，模型所需的专家计算只对应其中 64 个有效行；补齐的零行没有对应的真实 token"
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "before": "设两张专家设备分别收到 96、32 行输入，每行计算时间近似相同。总计 128 行，平均每卡 64 行",
+    "after": "设两张设备上的专家分别接到 96、32 次 token 分派，每次分派把一个 token 的特征向量送给一个专家，在该专家输入矩阵中占一行。假定每次分派的计算时间近似相同。总计 128 次分派，对应 128 个有效行，平均每卡 64 行"
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "before": "专家负载取决于分派了多少行输入",
+    "after": "专家负载取决于设备上的专家接到了多少次 token 分派"
+  },
+  {
+    "file": "manuscripts/ch04/teaching_revision.py",
+    "before": "\"\"\"Physical resources and finite buffers at final book dimensions.\"\"\"\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.patches import Rectangle\nfrom figure_style import COL,STYLE,canvas,plot,text,box,arrow,Exporter\n\ndef draw(here,data,teaching):\n    out=Exporter(here)\n    def save(f,n):out.save(f,'figure-4-'+n)\n    with plt.rc_context(STYLE):\n        f,a=canvas(4.7)\n        for row,m in enumerate([1,256]):\n            y=.58-row*.44;text(a,.04,y+.30,f'{m} 行共用 32 MiB 权重',14)\n            box(a,.34,y+.04,.32,.20,'权重 W','orange')\n            for j in range(1 if m==1 else 4):\n                yy=y+.12+(j-1.5)*.06 if m>1 else y+.12\n                box(a,.04,yy,.17,.045,'','blue');box(a,.80,yy,.16,.045,'','green');arrow(a,(.21,yy+.023),(.34,y+.14));arrow(a,(.66,y+.14),(.80,yy+.023))\n            text(a,.50,y-.07,'每行分摊：'+('32 MiB' if m==1 else '128 KiB'),12,ha='center')\n        save(f,'1-reuse')\n        f,a=canvas(4.9);box(a,.04,.79,.36,.14,'主机 CPU','gray');box(a,.60,.79,.36,.14,'片外显存','blue')\n        box(a,.03,.06,.94,.60,'','gray');text(a,.06,.62,'加速器芯片内部',14)\n        box(a,.10,.41,.80,.12,'共享缓存与数据搬运','blue');arrow(a,(.78,.79),(.68,.53));arrow(a,(.22,.79),(.24,.53),'control')\n        box(a,.10,.16,.24,.14,'局部缓冲','green');box(a,.41,.16,.24,.14,'矩阵单元','orange');box(a,.72,.16,.19,.14,'累加存储','purple',11)\n        arrow(a,(.25,.41),(.22,.30));arrow(a,(.34,.23),(.41,.23));arrow(a,(.65,.23),(.72,.23));save(f,'2-components')\n        f,a=canvas(3.9);text(a,.04,.94,'小阵列反复复用输入与权重',14)\n        for i in range(3):\n            text(a,.12,.67-i*.18,f'A{i}',12,ha='center')\n            for j in range(3):\n                x=.30+j*.22;y=.59-i*.18;box(a,x,y,.16,.14,'乘加','green',11)\n                arrow(a,(.18 if j==0 else x-.06,y+.07),(x,y+.07))\n                if i==0:text(a,x+.08,.84,f'W{j}',12,ha='center')\n                arrow(a,(x+.08,.79 if i==0 else y+.18),(x+.08,y+.14))\n        text(a,.5,.08,'每个位置保留部分和，继续累加下一对输入',11,ha='center');save(f,'matrix-array')\n        f,a=canvas(4.0);text(a,.04,.94,'每块固定 16 行，灰色行也参与执行',14)\n        for x,count,label in [(.08,2,'每专家 2 行'),(.57,16,'每专家 64 行\\n由四块组成')]:\n            for i in range(16):a.add_patch(Rectangle((x,.74-i*.034),.30,.029,facecolor=COL['green'] if i<count else COL['gray'],edgecolor=COL['line'],lw=.3))\n            text(a,x+.15,.10,label,12,ha='center')\n        save(f,'3-expert-rows')\n        f,a=plot(3.2,left=.28)\n        a.barh([0,1],[512,512],color=COL['green'],label='有效行');a.barh([0,1],[3584,0],left=[512,512],color=COL['gray'],edgecolor=COL['line'],label='补零行')\n        a.set(yticks=[0,1],yticklabels=['256 个专家','8 个专家'],xlim=(0,4500),ylim=(-.7,1.7),xlabel='实际执行的输入行数');a.invert_yaxis();a.legend(frameon=False);save(f,'expert-padding-total')\n        vals=np.array(data['4-4']['service_cycles'])\n        f,a=plot(4.0,left=.27)\n        for i,(label,c) in enumerate([('矩阵','orange'),('共享存储','blue'),('指数','green')]):a.barh(np.arange(4)+(i-1)*.22,vals[:,i],height=.20,color=COL[c],edgecolor=COL['line'],label=label)\n        a.set(yticks=range(4),yticklabels=['原配置','矩阵 ×2','矩阵指数 ×2','三项 ×2'],xlabel='单计算组服务周期',xlim=(0,1150),ylim=(-1.1,3.6));a.invert_yaxis();a.legend(ncol=3,loc='upper center',frameon=False,fontsize=11);save(f,'4-attention')\n        f,a=canvas(4.3)\n        for y,title,stages in [(.58,'先展开为高精度',[('压缩 8.5 MiB','blue'),('展开 32 MiB','orange'),('BF16 计算','green')]),(.12,'在低精度路径中计算',[('压缩 8.5 MiB','blue'),('低精度计算','orange'),('缩放与合并','green')])]:\n            text(a,.04,y+.29,title,14)\n            for i,(label,c) in enumerate(stages):\n                x=.03+i*.335;box(a,x,y,.27,.20,label,c,11)\n                if i<2:arrow(a,(x+.27,y+.10),(x+.335,y+.10))\n        save(f,'5-precision')\n        d=data['4-6'];f,a=plot(3.8,left=.28,bottom=.25)\n        for y,row in enumerate(d['cases']):\n            left=0\n            for n,c,label in [(d['weight_bytes'],'blue','权重'),(d['workspace_bytes'],'orange','工作区'),(row['requests']*row['context_multiplier']*d['kv_bytes_per_request'],'green','KV')]:\n                a.barh(y,n/1e9,left=left,height=.5,color=COL[c],edgecolor=COL['line'],label=label if y==0 else None);left+=n/1e9\n        a.axvline(24,ls='--',color='#555555');a.set(yticks=range(3),yticklabels=['8K × 4 请求','8K × 5 请求','16K × 2 请求'],xlim=(0,27),xlabel='显存占用（GB）');a.invert_yaxis();a.legend(ncol=3,loc='upper center',bbox_to_anchor=(.5,-.22),frameon=False);save(f,'6-capacity')\n        f,a=canvas(3.3);text(a,.04,.92,'同时等待返回的访问占用请求槽',14)\n        for i in range(4):box(a,.05+i*.235,.49,.20,.18,f'请求 {i+1}','blue',11)\n        text(a,.5,.31,'每请求 128 bytes，发出后 500 ns 返回',12,ha='center')\n        text(a,.5,.12,'持续带宽还取决于能同时处理多少请求',12,ha='center');save(f,'memory-inflight')\n        d=data['4-7'];f,a=plot(3.7)\n        for b,ys,c in zip([1,2],d['bandwidth_upper_bytes_per_second'],['#267398','#388768']):a.plot(d['requests'],np.array(ys)/1e12,label=f'接口 {b} TB/s',color=c)\n        a.set(xlim=(0,10000),ylim=(0,2.4),xlabel='同时未完成请求数',ylabel='带宽上界（TB/s）');a.legend(frameon=False);save(f,'7-memory')\n        f,a=plot(3.4,left=.21)\n        for i in range(4):a.barh(i,8192,color=COL['gray'],edgecolor=COL['line'],height=.5);a.barh(i,256,color=COL['blue'],height=.5)\n        a.set(yticks=range(4),yticklabels=['第 0 行','第 1 行','第 2 行','第 127 行'],xlim=(0,8500),xlabel='相对每行起点的字节偏移',xticks=[0,4096,8192]);a.invert_yaxis();a.annotate('实际读取 256 bytes',(128,0),xytext=(2000,.65),arrowprops={'arrowstyle':'->'},fontsize=12);save(f,'8-layout')\n        f,a=plot(3.1,left=.16);a.barh(0,320,left=0,color=COL['gray'],height=.62,label='槽位占用');a.barh(0,64,left=0,color=COL['blue'],height=.4);a.barh(0,128,left=192,color=COL['green'],height=.4);a.axvline(192,color='#a56c28',lw=1)\n        a.set(xlim=(0,350),ylim=(-.7,.7),yticks=[],xticks=[0,64,192,320],xlabel='教学时间（tick）')\n        for x,label in [(32,'传输'),(128,'等待返回'),(256,'计算')]:a.text(x,.4,label,fontsize=11,ha='center')\n        a.text(175,-.4,'320 tick 后用完，输入槽才能再次写入',fontsize=11,ha='center');save(f,'slot-lifetime')\n        for slots,name in [(1,'9-pipeline'),(2,'pipeline-two'),(3,'pipeline-three')]:\n            r=teaching['baseline'][slots-1];f,a=plot(3.5,left=.17)\n            for t in r['chunks']:\n                y=t['chunk'];a.barh(y,t['slot_released']-t['issue_start'],left=t['issue_start'],height=.62,color=COL['gray']);a.barh(y,t['transfer_end']-t['issue_start'],left=t['issue_start'],height=.40,color=COL['blue']);a.barh(y,t['compute_end']-t['compute_start'],left=t['compute_start'],height=.40,color=COL['green']);a.plot(t['data_ready'],y,'|',color='#a56c28',markersize=12)\n            a.set(yticks=range(4),yticklabels=[f'块 {i}' for i in range(4)],xlim=(0,1320),xticks=[0,320,640,960,1280],xlabel='教学时间（tick）');a.invert_yaxis();save(f,name)\n        f,a=canvas(4.0);text(a,.04,.93,'传递完整行，两组交替使用缓冲区',14)\n        box(a,.04,.61,.26,.17,'矩阵单元\\n计算 QK','orange');box(a,.70,.61,.26,.17,'向量单元\\n计算 Softmax','green')\n        box(a,.38,.66,.23,.11,'槽 A','blue');box(a,.38,.42,.23,.11,'槽 B','purple')\n        arrow(a,(.30,.695),(.38,.715));arrow(a,(.61,.715),(.70,.695));arrow(a,(.17,.61),(.38,.475))\n        box(a,.28,.09,.44,.16,'矩阵单元计算 PV\\n用完后释放缓冲区','orange');arrow(a,(.83,.61),(.72,.17));save(f,'matrix-vector-handoff')\n        for move,name in [(False,'10-locality'),(True,'locality-compute')]:\n            f,a=canvas(3.0);text(a,.04,.93,'计算留在裸片 0' if not move else '把计算放到权重所在的裸片',14)\n            box(a,.04,.44,.33,.25,'裸片 0\\n本地计算','blue');box(a,.63,.44,.33,.25,'裸片 1\\n权重'+('与计算' if move else ''),'orange')\n            arrow(a,(.63,.57),(.37,.57));text(a,.5,.30,'输入与结果共 64 MiB' if move else '远程权重 32 GiB',12,ha='center')\n            text(a,.5,.13,'传输约 61 μs' if move else '传输约 31 ms',14,ha='center');save(f,name)\n        d=data['4-11']\n        for i,name in enumerate(['11-interconnect','large-message']):\n            f,a=plot(3.2);vals=np.array(d['total_us'][i]);a.bar([0,1],[2,2],color=COL['orange'],edgecolor=COL['line'],label='启动');a.bar([0,1],vals-2,bottom=2,color=COL['blue'],edgecolor=COL['line'],label='传输')\n            a.set(xticks=[0,1],xticklabels=['100 GB/s','200 GB/s'],ylabel='传输时间（μs）',ylim=(0,max(vals)*1.45));a.legend(ncol=2,frameon=False)\n            for j,v in enumerate(vals):a.text(j,v+max(vals)*.035,f'{v:.3f}',ha='center',fontsize=12)\n            save(f,name)\n        d=data['4-12'];f,a=plot(3.5)\n        a.axhline(d['active_weight_bytes']/1e9,color='#267398',label='每批权重');a.plot(d['batch'],np.array(d['kv_read_bytes'])/1e9,color='#388768',label='各请求 KV');a.axvline(13,ls=':',color='#777777')\n        a.set(xlim=(1,32),ylim=(0,45),xlabel='批内请求数',ylabel='每步读取（GB）');a.legend(frameon=False);save(f,'12-specialization')\n        d=data['4-13'];f,a=plot(3.6)\n        for key,label,c in [('compute_us','矩阵计算','#a56c28'),('memory_us','片外读取','#267398')]:a.plot(d['rows'],d[key],label=label,color=c)\n        a.axvline(179,ls=':',color='#777777');a.set(xlim=(1,256),ylim=(0,65),xlabel='输入行数 M',ylabel='资源时间（μs）');a.legend(frameon=False);save(f,'13-roofline')\n        d=data['4-14']\n        for key,name,label in [('wall_us','14-performance','每次调用总耗时（μs）'),('dram_read_mib','performance-traffic','DRAM 读取（MiB）')]:\n            f,a=plot(3.5)\n            vals=d[key];a.bar(range(4),vals,color=[COL['blue'],COL['green']]*2,edgecolor=COL['line']);a.set(xticks=range(4),xticklabels=['1 行\\n复用','1 行\\n轮换','256 行\\n复用','256 行\\n轮换'],ylabel=label,ylim=(0,max(vals)*1.3))\n            for i,v in enumerate(vals):a.text(i,v+max(vals)*.025,'256 B' if v<.001 else f'{v:.1f}',ha='center',fontsize=11)\n            save(f,name)\n    from core_principles_figures import draw as draw_principles\n    draw_principles(4, out)\n    return out.finish()\n",
+    "after": "\"\"\"Physical resources and finite buffers at final book dimensions.\"\"\"\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.patches import Rectangle\nfrom figure_style import COL,STYLE,canvas,plot,text,box,arrow,Exporter\n\ndef draw(here,data,teaching):\n    out=Exporter(here)\n    def save(f,n):out.save(f,'figure-4-'+n)\n    with plt.rc_context(STYLE):\n        f,a=canvas(4.7)\n        for row,m in enumerate([1,256]):\n            y=.58-row*.44;text(a,.04,y+.30,f'{m} 行共用 32 MiB 权重',14)\n            box(a,.34,y+.04,.32,.20,'权重 W','orange')\n            for j in range(1 if m==1 else 4):\n                yy=y+.12+(j-1.5)*.06 if m>1 else y+.12\n                box(a,.04,yy,.17,.045,'','blue');box(a,.80,yy,.16,.045,'','green');arrow(a,(.21,yy+.023),(.34,y+.14));arrow(a,(.66,y+.14),(.80,yy+.023))\n            text(a,.50,y-.07,'每行分摊：'+('32 MiB' if m==1 else '128 KiB'),12,ha='center')\n        save(f,'1-reuse')\n        f,a=canvas(4.9);box(a,.04,.79,.36,.14,'主机 CPU','gray');box(a,.60,.79,.36,.14,'片外显存','blue')\n        box(a,.03,.06,.94,.60,'','gray');text(a,.06,.62,'加速器芯片内部',14)\n        box(a,.10,.41,.80,.12,'共享缓存与数据搬运','blue');arrow(a,(.78,.79),(.68,.53));arrow(a,(.22,.79),(.24,.53),'control')\n        box(a,.10,.16,.24,.14,'局部缓冲','green');box(a,.41,.16,.24,.14,'矩阵单元','orange');box(a,.72,.16,.19,.14,'累加存储','purple',11)\n        arrow(a,(.25,.41),(.22,.30));arrow(a,(.34,.23),(.41,.23));arrow(a,(.65,.23),(.72,.23));save(f,'2-components')\n        f,a=canvas(3.9);text(a,.04,.94,'小阵列反复复用输入与权重',14)\n        for i in range(3):\n            text(a,.12,.67-i*.18,f'A{i}',12,ha='center')\n            for j in range(3):\n                x=.30+j*.22;y=.59-i*.18;box(a,x,y,.16,.14,'乘加','green',11)\n                arrow(a,(.18 if j==0 else x-.06,y+.07),(x,y+.07))\n                if i==0:text(a,x+.08,.84,f'W{j}',12,ha='center')\n                arrow(a,(x+.08,.79 if i==0 else y+.18),(x+.08,y+.14))\n        text(a,.5,.08,'每个位置保留部分和，继续累加下一对输入',11,ha='center');save(f,'matrix-array')\n        f,a=canvas(4.0);text(a,.04,.94,'每块固定 16 行，灰色行也参与执行',14)\n        for x,count,label in [(.08,2,'每专家 2 行'),(.57,16,'每专家 64 行\\n由四块组成')]:\n            for i in range(16):a.add_patch(Rectangle((x,.74-i*.034),.30,.029,facecolor=COL['green'] if i<count else COL['gray'],edgecolor=COL['line'],lw=.3))\n            text(a,x+.15,.10,label,12,ha='center')\n        save(f,'3-expert-rows')\n        f,a=plot(3.2,left=.28)\n        a.barh([0,1],[512,512],color=COL['green'],label='有效行');a.barh([0,1],[3584,0],left=[512,512],color=COL['gray'],edgecolor=COL['line'],label='补零行')\n        a.set(yticks=[0,1],yticklabels=['256 个专家','8 个专家'],xlim=(0,4500),ylim=(-.7,1.7),xlabel='执行的矩阵行数（含补零）');a.invert_yaxis();a.legend(frameon=False);save(f,'expert-padding-total')\n        vals=np.array(data['4-4']['service_cycles'])\n        f,a=plot(4.0,left=.27)\n        for i,(label,c) in enumerate([('矩阵','orange'),('共享存储','blue'),('指数','green')]):a.barh(np.arange(4)+(i-1)*.22,vals[:,i],height=.20,color=COL[c],edgecolor=COL['line'],label=label)\n        a.set(yticks=range(4),yticklabels=['原配置','矩阵 ×2','矩阵指数 ×2','三项 ×2'],xlabel='单计算组服务周期',xlim=(0,1150),ylim=(-1.1,3.6));a.invert_yaxis();a.legend(ncol=3,loc='upper center',frameon=False,fontsize=11);save(f,'4-attention')\n        f,a=canvas(4.3)\n        for y,title,stages in [(.58,'先展开为高精度',[('压缩 8.5 MiB','blue'),('展开 32 MiB','orange'),('BF16 计算','green')]),(.12,'在低精度路径中计算',[('压缩 8.5 MiB','blue'),('低精度计算','orange'),('缩放与合并','green')])]:\n            text(a,.04,y+.29,title,14)\n            for i,(label,c) in enumerate(stages):\n                x=.03+i*.335;box(a,x,y,.27,.20,label,c,11)\n                if i<2:arrow(a,(x+.27,y+.10),(x+.335,y+.10))\n        save(f,'5-precision')\n        d=data['4-6'];f,a=plot(3.8,left=.28,bottom=.25)\n        for y,row in enumerate(d['cases']):\n            left=0\n            for n,c,label in [(d['weight_bytes'],'blue','权重'),(d['workspace_bytes'],'orange','工作区'),(row['requests']*row['context_multiplier']*d['kv_bytes_per_request'],'green','KV')]:\n                a.barh(y,n/1e9,left=left,height=.5,color=COL[c],edgecolor=COL['line'],label=label if y==0 else None);left+=n/1e9\n        a.axvline(24,ls='--',color='#555555');a.set(yticks=range(3),yticklabels=['8K × 4 请求','8K × 5 请求','16K × 2 请求'],xlim=(0,27),xlabel='显存占用（GB）');a.invert_yaxis();a.legend(ncol=3,loc='upper center',bbox_to_anchor=(.5,-.22),frameon=False);save(f,'6-capacity')\n        f,a=canvas(3.3);text(a,.04,.92,'同时等待返回的访问占用请求槽',14)\n        for i in range(4):box(a,.05+i*.235,.49,.20,.18,f'请求 {i+1}','blue',11)\n        text(a,.5,.31,'每请求 128 bytes，发出后 500 ns 返回',12,ha='center')\n        text(a,.5,.12,'持续带宽还取决于能同时处理多少请求',12,ha='center');save(f,'memory-inflight')\n        d=data['4-7'];f,a=plot(3.7)\n        for b,ys,c in zip([1,2],d['bandwidth_upper_bytes_per_second'],['#267398','#388768']):a.plot(d['requests'],np.array(ys)/1e12,label=f'接口 {b} TB/s',color=c)\n        a.set(xlim=(0,10000),ylim=(0,2.4),xlabel='同时未完成请求数',ylabel='带宽上界（TB/s）');a.legend(frameon=False);save(f,'7-memory')\n        f,a=plot(3.4,left=.21)\n        for i in range(4):a.barh(i,8192,color=COL['gray'],edgecolor=COL['line'],height=.5);a.barh(i,256,color=COL['blue'],height=.5)\n        a.set(yticks=range(4),yticklabels=['第 0 行','第 1 行','第 2 行','第 127 行'],xlim=(0,8500),xlabel='相对每行起点的字节偏移',xticks=[0,4096,8192]);a.invert_yaxis();a.annotate('实际读取 256 bytes',(128,0),xytext=(2000,.65),arrowprops={'arrowstyle':'->'},fontsize=12);save(f,'8-layout')\n        f,a=plot(3.1,left=.16);a.barh(0,320,left=0,color=COL['gray'],height=.62,label='槽位占用');a.barh(0,64,left=0,color=COL['blue'],height=.4);a.barh(0,128,left=192,color=COL['green'],height=.4);a.axvline(192,color='#a56c28',lw=1)\n        a.set(xlim=(0,350),ylim=(-.7,.7),yticks=[],xticks=[0,64,192,320],xlabel='教学时间（tick）')\n        for x,label in [(32,'传输'),(128,'等待返回'),(256,'计算')]:a.text(x,.4,label,fontsize=11,ha='center')\n        a.text(175,-.4,'320 tick 后用完，输入槽才能再次写入',fontsize=11,ha='center');save(f,'slot-lifetime')\n        for slots,name in [(1,'9-pipeline'),(2,'pipeline-two'),(3,'pipeline-three')]:\n            r=teaching['baseline'][slots-1];f,a=plot(3.5,left=.17)\n            for t in r['chunks']:\n                y=t['chunk'];a.barh(y,t['slot_released']-t['issue_start'],left=t['issue_start'],height=.62,color=COL['gray']);a.barh(y,t['transfer_end']-t['issue_start'],left=t['issue_start'],height=.40,color=COL['blue']);a.barh(y,t['compute_end']-t['compute_start'],left=t['compute_start'],height=.40,color=COL['green']);a.plot(t['data_ready'],y,'|',color='#a56c28',markersize=12)\n            a.set(yticks=range(4),yticklabels=[f'块 {i}' for i in range(4)],xlim=(0,1320),xticks=[0,320,640,960,1280],xlabel='教学时间（tick）');a.invert_yaxis();save(f,name)\n        f,a=canvas(4.0);text(a,.04,.93,'传递完整行，两组交替使用缓冲区',14)\n        box(a,.04,.61,.26,.17,'矩阵单元\\n计算 QK','orange');box(a,.70,.61,.26,.17,'向量单元\\n计算 Softmax','green')\n        box(a,.38,.66,.23,.11,'槽 A','blue');box(a,.38,.42,.23,.11,'槽 B','purple')\n        arrow(a,(.30,.695),(.38,.715));arrow(a,(.61,.715),(.70,.695));arrow(a,(.17,.61),(.38,.475))\n        box(a,.28,.09,.44,.16,'矩阵单元计算 PV\\n用完后释放缓冲区','orange');arrow(a,(.83,.61),(.72,.17));save(f,'matrix-vector-handoff')\n        for move,name in [(False,'10-locality'),(True,'locality-compute')]:\n            f,a=canvas(3.0);text(a,.04,.93,'计算留在裸片 0' if not move else '把计算放到权重所在的裸片',14)\n            box(a,.04,.44,.33,.25,'裸片 0\\n本地计算','blue');box(a,.63,.44,.33,.25,'裸片 1\\n权重'+('与计算' if move else ''),'orange')\n            arrow(a,(.63,.57),(.37,.57));text(a,.5,.30,'输入与结果共 64 MiB' if move else '远程权重 32 GiB',12,ha='center')\n            text(a,.5,.13,'传输约 61 μs' if move else '传输约 31 ms',14,ha='center');save(f,name)\n        d=data['4-11']\n        for i,name in enumerate(['11-interconnect','large-message']):\n            f,a=plot(3.2);vals=np.array(d['total_us'][i]);a.bar([0,1],[2,2],color=COL['orange'],edgecolor=COL['line'],label='启动');a.bar([0,1],vals-2,bottom=2,color=COL['blue'],edgecolor=COL['line'],label='传输')\n            a.set(xticks=[0,1],xticklabels=['100 GB/s','200 GB/s'],ylabel='传输时间（μs）',ylim=(0,max(vals)*1.45));a.legend(ncol=2,frameon=False)\n            for j,v in enumerate(vals):a.text(j,v+max(vals)*.035,f'{v:.3f}',ha='center',fontsize=12)\n            save(f,name)\n        d=data['4-12'];f,a=plot(3.5)\n        a.axhline(d['active_weight_bytes']/1e9,color='#267398',label='每批权重');a.plot(d['batch'],np.array(d['kv_read_bytes'])/1e9,color='#388768',label='各请求 KV');a.axvline(13,ls=':',color='#777777')\n        a.set(xlim=(1,32),ylim=(0,45),xlabel='批内请求数',ylabel='每步读取（GB）');a.legend(frameon=False);save(f,'12-specialization')\n        d=data['4-13'];f,a=plot(3.6)\n        for key,label,c in [('compute_us','矩阵计算','#a56c28'),('memory_us','片外读取','#267398')]:a.plot(d['rows'],d[key],label=label,color=c)\n        a.axvline(179,ls=':',color='#777777');a.set(xlim=(1,256),ylim=(0,65),xlabel='本次 token 数 M',ylabel='资源时间（μs）');a.legend(frameon=False);save(f,'13-roofline')\n        d=data['4-14']\n        for key,name,label in [('wall_us','14-performance','每次调用总耗时（μs）'),('dram_read_mib','performance-traffic','DRAM 读取（MiB）')]:\n            f,a=plot(3.5)\n            vals=d[key];a.bar(range(4),vals,color=[COL['blue'],COL['green']]*2,edgecolor=COL['line']);a.set(xticks=range(4),xticklabels=['1 行\\n复用','1 行\\n轮换','256 行\\n复用','256 行\\n轮换'],ylabel=label,ylim=(0,max(vals)*1.3))\n            for i,v in enumerate(vals):a.text(i,v+max(vals)*.025,'256 B' if v<.001 else f'{v:.1f}',ha='center',fontsize=11)\n            save(f,name)\n    from core_principles_figures import draw as draw_principles\n    draw_principles(4, out)\n    return out.finish()\n"
+  },
+  {
+    "file": "manuscripts/ch09/teaching_revision.py",
+    "before": "\"\"\"Placement first, state handoff second, resource rates last.\"\"\"\nfrom fractions import Fraction\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom figure_style import COL,STYLE,canvas,plot,text,box,arrow,Exporter\n\ndef draw(here,data):\n    out=Exporter(here)\n    def save(f,n):out.save(f,'figure-9-'+n)\n    with plt.rc_context(STYLE):\n        for i,title in enumerate(['多卡共同执行一个完整模型','完整副本分别接收请求','PD：按输入处理与生成阶段分工','AF：按每层的算子分工']):\n            f,a=canvas(3.7);text(a,.04,.94,title,14)\n            if i==0:\n                box(a,.04,.22,.92,.48,'','gray');text(a,.5,.61,'一个调度器，一组模型权重与状态',12,ha='center')\n                for j in range(8):box(a,.06+j*.112,.32,.09,.12,str(j),'blue',11)\n            elif i==1:\n                for x in [.04,.56]:box(a,x,.25,.40,.26,'完整模型副本','blue');text(a,x+.2,.72,'独立请求',12,ha='center');arrow(a,(x+.2,.65),(x+.2,.51))\n            else:\n                for x,label,c in [(.04,'P：处理输入' if i==2 else '注意力','blue'),(.61,'D：逐步生成' if i==2 else 'FFN／专家','green')]:box(a,x,.28,.35,.27,label,c)\n                arrow(a,(.39,.46),(.61,.46));text(a,.5,.68,'传输上下文 KV' if i==2 else '逐层传递激活',12,ha='center')\n                if i==3:arrow(a,(.61,.35),(.39,.35))\n            save(f,'1-organization' if i==0 else f'organization-{i}')\n        f,a=canvas(4.3)\n        for j,l in enumerate(['P','D','工具等待','下一轮 P']):box(a,.20+j*.19,.73,.18,.15,l,'gray',11)\n        for row,(l,start,c) in enumerate([('权重',.20,'blue'),('KV',.20,'green'),('可复用 EC',.20,'purple')]):\n            y=.48-row*.17;text(a,.02,y+.05,l,11);box(a,start,y,.75,.10,'',c)\n        text(a,.5,.04,'阶段宽度示意顺序；等待期间状态仍保留',11,ha='center');save(f,'2-state')\n        for stage,name in [(0,'kv-residency'),(1,'kv-publish'),(2,'kv-release')]:\n            f,a=canvas(3.9);text(a,.04,.94,['传输开始：两端都占用完整空间','传输完成：通知目的端可以使用 KV','源端释放缓冲区，D 继续生成'][stage],13)\n            box(a,.04,.35,.35,.29,'源 P\\n1.125 GiB' if stage<2 else '源 P\\n已释放','blue' if stage<2 else 'gray');box(a,.61,.35,.35,.29,'目的 D\\n1.125 GiB','orange' if stage==0 else 'green');arrow(a,(.39,.5),(.61,.5),'data' if stage==0 else 'control');text(a,.5,.15,'数据复制中' if stage==0 else '完成标记建立使用顺序' if stage==1 else '下一请求可使用源端空间',12,ha='center');save(f,name)\n        f,a=canvas(4.4)\n        for row,(title,count,c) in enumerate([('P 池：四个 A',4,'blue'),('D 池：四个 B',4,'green')]):\n            y=.61-row*.40;text(a,.04,y+.23,title,14)\n            for i in range(count):box(a,.04+i*.235,y,.21,.16,'2 请求/s',c,11)\n            text(a,.5,y-.09,'池能力：8 请求/s',12,ha='center')\n        save(f,'pd-layout')\n        f,a=plot(4.5,left=.17);matrix=np.zeros((5,5))\n        for row in data['9-3']['assignments']:\n            x=row['prefill_workers']['prefill-oriented'];y=row['prefill_workers']['decode-oriented'];matrix[y,x]=float(Fraction(row['bound_requests_per_second_exact']))\n        a.imshow(matrix,origin='lower',cmap='Blues',vmin=0,vmax=12,aspect='equal')\n        for y in range(5):\n            for x in range(5):a.text(x,y,f'{matrix[y,x]:g}',fontsize=12,ha='center',va='center')\n        a.set(xticks=range(5),yticks=range(5),xlabel='分给 P 的 A 数量',ylabel='分给 P 的 B 数量');save(f,'3-pd')\n        f,a=canvas(4.9)\n        for row,count in enumerate(data['new-allocation']['prefill_A']):\n            y=.69-row*.28;text(a,.04,y+.18,['原始请求','前缀命中','长输出'][row],13)\n            for i in range(8):box(a,.035+i*.117,y,.10,.12,('A' if i<4 else 'B')+'\\n'+('P' if i<count else 'D'),'blue' if i<count else 'green',11)\n            text(a,.5,y-.06,f'请求率上限 {data[\"new-allocation\"][\"rates\"][row]:g}/s',11,ha='center')\n        save(f,'4-allocation')\n        for local,name in [(False,'5-local'),(True,'local-cpu')]:\n            f,a=canvas(4.4);box(a,.04,.67,.35,.18,'CPU 主存：专家权重','blue',11);box(a,.61,.67,.35,.18,'GPU：输入激活','green',11)\n            if local:\n                arrow(a,(.61,.76),(.39,.76));box(a,.04,.31,.35,.18,'CPU 专家计算','blue');arrow(a,(.215,.67),(.215,.49));arrow(a,(.39,.40),(.61,.40));box(a,.61,.31,.35,.18,'GPU 汇合结果','orange',11)\n            else:\n                arrow(a,(.39,.76),(.61,.76));box(a,.61,.31,.35,.18,'GPU 专家计算','green');arrow(a,(.785,.67),(.785,.49))\n            text(a,.5,.13,'激活往返：每行共 16 KiB' if local else '搬运一份专家权重：36 MiB',12,ha='center');save(f,name)\n        d=data['9-6'];f,a=plot(3.7)\n        for key,label,c in [('cpu_ms','CPU 就地计算','#267398'),('weight_copy_gpu_ms','搬权重到 GPU','#388768')]:a.plot(d['tokens_per_expert'],d[key],label=label,color=c)\n        a.set(xlabel='每个专家收到的输入行数',ylabel='八个专家的路径时间（ms）');a.legend(frameon=False);save(f,'6-reuse')\n        for i,(experts,rows) in enumerate(zip(data['new-footprint']['active_experts'],data['new-footprint']['rows_per_expert'])):\n            f,a=plot(3.5);a.bar(0,rows,width=experts,align='edge',color=COL['blue'],edgecolor=COL['line']);a.set(xlim=(0,136),ylim=(0,70),xlabel='不同专家数',ylabel='每专家输入行数');a.text(.5,.9,f'{experts} × {rows} = 512 次分派',transform=a.transAxes,ha='center',fontsize=12);save(f,'7-footprint' if i==0 else 'footprint-reuse')\n        d=data['9-8'];f,a=plot(3.6)\n        for k,l,c in [('one_message_ms','一次发送','#267398'),('many_messages_ms','72 次发送','#a56c28')]:\n            # Stable source uses an explicit descriptive field for the second curve.\n            vals=d.get(k,d.get('seventy_two_messages_ms'))\n            if vals is None:vals=np.array(d['one_message_ms'])+71*np.array(d['startup_us'])/1000\n            a.plot(d['startup_us'],vals,label=l,color=c)\n        a.set(xlabel='每次启动开销（μs）',ylabel='同样 1.125 GiB 的总时间（ms）');a.legend(frameon=False);save(f,'8-handoff')\n        for i,tasks in enumerate(data['new-balance']['assignments_per_card']):\n            f,a=plot(4,left=.17);times=np.array(tasks)*2*18874368/1e14*1e6;a.barh(range(8),times,color=COL['blue'],edgecolor=COL['line']);a.axvline(max(times),ls='--',color='#a56c28');a.set(yticks=range(8),yticklabels=[f'卡 {j}' for j in range(8)],xlim=(0,205),xlabel='专家矩阵计算（μs）');a.invert_yaxis();save(f,'9-balance' if i==0 else 'balance-hotspot')\n        d=data['9-10'];f,a=plot(3.6);a.plot(d['batches'],d['net_saving_ms'],color='#388768');a.axhline(0,color='#777777');a.set(xlabel='热点持续的批数',ylabel='累计净节省（ms）');save(f,'10-experts')\n        for i,items in enumerate([[(0,0,.2),(1,.2,.6),(2,.8,.2)],[(0,0,.1),(0,.1,.1),(1,.1,.3),(1,.4,.3),(2,.4,.1),(2,.7,.1)]]):\n            f,a=plot(3.5,left=.23)\n            for row,start,dur in items:a.barh(row,dur,left=start,height=.5,color=COL[['blue','green','orange'][row]],edgecolor=COL['line'])\n            a.set(yticks=[0,1,2],yticklabels=['分派','专家计算','结果合并'],xlim=(0,1.05),xlabel='时间（ms）');a.invert_yaxis();save(f,'11-overlap' if i==0 else 'overlap-pipeline')\n        f,a=canvas(3.8);box(a,.04,.50,.34,.24,'目录记录\\n标识 → 存储位置','orange',11);box(a,.62,.50,.34,.24,'KV 数据对象\\n实际上下文状态','blue',11);arrow(a,(.38,.62),(.62,.62),'control');text(a,.5,.22,'先按目录定位，再确认对象可用并取回',12,ha='center');save(f,'cache-directory')\n        f,a=canvas(4.5)\n        for i in range(64):\n            x=.04+i%16*.059;y=.72-i//16*.14;box(a,x,y,.05,.10,str(i+1),'orange' if i==63 else 'green',11)\n        text(a,.5,.94,'读入 64 页，前 63 页可连续复用',14,ha='center');text(a,.5,.10,'绿色：1008 位置；橙色：16 位置仍需处理',11,ha='center');save(f,'12-cache')\n        V=1207959552\n        for i,(queue,band,compute) in enumerate([(250,None,10),(20,None,180),(20,5,10),(20,20,10)]):\n            f,a=plot(3.0,left=.17);a.barh(0,queue,height=.45,color=COL['gray']);ready=0\n            if band:\n                for dur,c in [(10,'gray'),(V/(band*1e9)*1000,'orange'),(V/25e9*1000,'blue')]:a.barh(1,dur,left=ready,height=.45,color=COL[c],edgecolor=COL['line']);ready+=dur\n            a.barh(0,compute,left=max(queue,ready),height=.45,color=COL['green']);a.set(yticks=[0,1],yticklabels=['GPU','取回'],xlim=(0,340),xlabel='从请求到达起计时（ms）');a.invert_yaxis();save(f,'13-route' if i==0 else f'route-{i}')\n        f,a=plot(3.7);t=np.linspace(0,1,121);a.plot(t,1+.5*t,color='#a56c28',label='源端状态');a.plot(t,np.minimum(2*t,1+.5*t),color='#388768',label='已复制状态');a.set(xlabel='后台复制时间（s）',ylabel='累计状态（GiB）');a.legend(frameon=False);save(f,'14-migration')\n        f,a=canvas(4.8)\n        for row,title in enumerate(['已可靠记录的序列','故障前保存的 KV','恢复后继续生成']):\n            y=.68-row*.27;text(a,.04,y+.20,title,13);box(a,.04,y,.36,.13,'输入 8192 位置','blue',11)\n            if row!=1:box(a,.43,y,.32,.13,'输出 1—128','green',11);box(a,.78,y,.19,.13,'输出 129','orange',11)\n            else:text(a,.68,y+.065,'生成部分尚未保存',11,ha='center')\n        text(a,.5,.03,'补算 128 位置 → KV 到 8320 → 处理输出 129',11,ha='center');save(f,'15-recovery')\n        for pooled,name in [(False,'16-composition'),(True,'composition-pool')]:\n            f,a=canvas(3.6);nodes=['P','共享池','D'] if pooled else ['P','D'];xs=[.04,.40,.76] if pooled else [.04,.76]\n            for x,n in zip(xs,nodes):box(a,x,.39,.20,.22,n,'orange' if n=='共享池' else 'blue')\n            for x1,x2 in zip(xs,xs[1:]):arrow(a,(x1+.20,.5),(x2,.5));text(a,(x1+.20+x2)/2,.71,'1.125 GiB',11,ha='center')\n            text(a,.5,.18,'完整写入并通知 D 后，D 再读取' if pooled else 'P 直接将完整状态交给 D',12,ha='center');save(f,name)\n        d=data['9-17'];f,a=plot(3.7)\n        for key,c in [('8','#388768'),('5','#a56c28')]:a.plot(d['time_s'],d['queues'][key],color=c,label=f'服务 {key} 请求/s')\n        a.axvline(10,ls='--',color='#777777');a.set(xlabel='从启动开始计时（s）',ylabel='积压请求数',xlim=(0,55));a.legend(frameon=False);save(f,'17-service')\n    out.finish();return out.outputs,out.checks\n",
+    "after": "\"\"\"Placement first, state handoff second, resource rates last.\"\"\"\nfrom fractions import Fraction\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom figure_style import COL,STYLE,canvas,plot,text,box,arrow,Exporter\n\ndef draw(here,data):\n    out=Exporter(here)\n    def save(f,n):out.save(f,'figure-9-'+n)\n    with plt.rc_context(STYLE):\n        for i,title in enumerate(['多卡共同执行一个完整模型','完整副本分别接收请求','PD：按输入处理与生成阶段分工','AF：按每层的算子分工']):\n            f,a=canvas(3.7);text(a,.04,.94,title,14)\n            if i==0:\n                box(a,.04,.22,.92,.48,'','gray');text(a,.5,.61,'一个调度器，一组模型权重与状态',12,ha='center')\n                for j in range(8):box(a,.06+j*.112,.32,.09,.12,str(j),'blue',11)\n            elif i==1:\n                for x in [.04,.56]:box(a,x,.25,.40,.26,'完整模型副本','blue');text(a,x+.2,.72,'独立请求',12,ha='center');arrow(a,(x+.2,.65),(x+.2,.51))\n            else:\n                for x,label,c in [(.04,'P：处理输入' if i==2 else '注意力','blue'),(.61,'D：逐步生成' if i==2 else 'FFN／专家','green')]:box(a,x,.28,.35,.27,label,c)\n                arrow(a,(.39,.46),(.61,.46));text(a,.5,.68,'传输上下文 KV' if i==2 else '逐层传递激活',12,ha='center')\n                if i==3:arrow(a,(.61,.35),(.39,.35))\n            save(f,'1-organization' if i==0 else f'organization-{i}')\n        f,a=canvas(4.3)\n        for j,l in enumerate(['P','D','工具等待','下一轮 P']):box(a,.20+j*.19,.73,.18,.15,l,'gray',11)\n        for row,(l,start,c) in enumerate([('权重',.20,'blue'),('KV',.20,'green'),('可复用 EC',.20,'purple')]):\n            y=.48-row*.17;text(a,.02,y+.05,l,11);box(a,start,y,.75,.10,'',c)\n        text(a,.5,.04,'阶段宽度示意顺序；等待期间状态仍保留',11,ha='center');save(f,'2-state')\n        for stage,name in [(0,'kv-residency'),(1,'kv-publish'),(2,'kv-release')]:\n            f,a=canvas(3.9);text(a,.04,.94,['传输开始：两端都占用完整空间','传输完成：通知目的端可以使用 KV','源端释放缓冲区，D 继续生成'][stage],13)\n            box(a,.04,.35,.35,.29,'源 P\\n1.125 GiB' if stage<2 else '源 P\\n已释放','blue' if stage<2 else 'gray');box(a,.61,.35,.35,.29,'目的 D\\n1.125 GiB','orange' if stage==0 else 'green');arrow(a,(.39,.5),(.61,.5),'data' if stage==0 else 'control');text(a,.5,.15,'数据复制中' if stage==0 else '完成标记建立使用顺序' if stage==1 else '下一请求可使用源端空间',12,ha='center');save(f,name)\n        f,a=canvas(4.4)\n        for row,(title,count,c) in enumerate([('P 池：四个 A',4,'blue'),('D 池：四个 B',4,'green')]):\n            y=.61-row*.40;text(a,.04,y+.23,title,14)\n            for i in range(count):box(a,.04+i*.235,y,.21,.16,'2 请求/s',c,11)\n            text(a,.5,y-.09,'池能力：8 请求/s',12,ha='center')\n        save(f,'pd-layout')\n        f,a=plot(4.5,left=.17);matrix=np.zeros((5,5))\n        for row in data['9-3']['assignments']:\n            x=row['prefill_workers']['prefill-oriented'];y=row['prefill_workers']['decode-oriented'];matrix[y,x]=float(Fraction(row['bound_requests_per_second_exact']))\n        a.imshow(matrix,origin='lower',cmap='Blues',vmin=0,vmax=12,aspect='equal')\n        for y in range(5):\n            for x in range(5):a.text(x,y,f'{matrix[y,x]:g}',fontsize=12,ha='center',va='center')\n        a.set(xticks=range(5),yticks=range(5),xlabel='分给 P 的 A 数量',ylabel='分给 P 的 B 数量');save(f,'3-pd')\n        f,a=canvas(4.9)\n        for row,count in enumerate(data['new-allocation']['prefill_A']):\n            y=.69-row*.28;text(a,.04,y+.18,['原始请求','前缀命中','长输出'][row],13)\n            for i in range(8):box(a,.035+i*.117,y,.10,.12,('A' if i<4 else 'B')+'\\n'+('P' if i<count else 'D'),'blue' if i<count else 'green',11)\n            text(a,.5,y-.06,f'请求率上限 {data[\"new-allocation\"][\"rates\"][row]:g}/s',11,ha='center')\n        save(f,'4-allocation')\n        for local,name in [(False,'5-local'),(True,'local-cpu')]:\n            f,a=canvas(4.4);box(a,.04,.67,.35,.18,'CPU 主存：专家权重','blue',11);box(a,.61,.67,.35,.18,'GPU：输入激活','green',11)\n            if local:\n                arrow(a,(.61,.76),(.39,.76));box(a,.04,.31,.35,.18,'CPU 专家计算','blue');arrow(a,(.215,.67),(.215,.49));arrow(a,(.39,.40),(.61,.40));box(a,.61,.31,.35,.18,'GPU 汇合结果','orange',11)\n            else:\n                arrow(a,(.39,.76),(.61,.76));box(a,.61,.31,.35,.18,'GPU 专家计算','green');arrow(a,(.785,.67),(.785,.49))\n            text(a,.5,.13,'激活往返：每行共 16 KiB' if local else '搬运一份专家权重：36 MiB',12,ha='center');save(f,name)\n        d=data['9-6'];f,a=plot(3.7)\n        for key,label,c in [('cpu_ms','CPU 就地计算','#267398'),('weight_copy_gpu_ms','搬权重到 GPU','#388768')]:a.plot(d['tokens_per_expert'],d[key],label=label,color=c)\n        a.set(xlabel='每个专家收到的 token 数',ylabel='八个专家的路径时间（ms）');a.legend(frameon=False);save(f,'6-reuse')\n        for i,(experts,rows) in enumerate(zip(data['new-footprint']['active_experts'],data['new-footprint']['rows_per_expert'])):\n            f,a=plot(3.5);a.bar(0,rows,width=experts,align='edge',color=COL['blue'],edgecolor=COL['line']);a.set(xlim=(0,136),ylim=(0,70),xlabel='不同专家数',ylabel='每专家 token 数');a.text(.5,.9,f'{experts} × {rows} = 512 次分派',transform=a.transAxes,ha='center',fontsize=12);save(f,'7-footprint' if i==0 else 'footprint-reuse')\n        d=data['9-8'];f,a=plot(3.6)\n        for k,l,c in [('one_message_ms','一次发送','#267398'),('many_messages_ms','72 次发送','#a56c28')]:\n            # Stable source uses an explicit descriptive field for the second curve.\n            vals=d.get(k,d.get('seventy_two_messages_ms'))\n            if vals is None:vals=np.array(d['one_message_ms'])+71*np.array(d['startup_us'])/1000\n            a.plot(d['startup_us'],vals,label=l,color=c)\n        a.set(xlabel='每次启动开销（μs）',ylabel='同样 1.125 GiB 的总时间（ms）');a.legend(frameon=False);save(f,'8-handoff')\n        for i,tasks in enumerate(data['new-balance']['assignments_per_card']):\n            f,a=plot(4,left=.17);times=np.array(tasks)*2*18874368/1e14*1e6;a.barh(range(8),times,color=COL['blue'],edgecolor=COL['line']);a.axvline(max(times),ls='--',color='#a56c28');a.set(yticks=range(8),yticklabels=[f'卡 {j}' for j in range(8)],xlim=(0,205),xlabel='专家矩阵计算（μs）');a.invert_yaxis();save(f,'9-balance' if i==0 else 'balance-hotspot')\n        d=data['9-10'];f,a=plot(3.6);a.plot(d['batches'],d['net_saving_ms'],color='#388768');a.axhline(0,color='#777777');a.set(xlabel='热点持续的批数',ylabel='累计净节省（ms）');save(f,'10-experts')\n        for i,items in enumerate([[(0,0,.2),(1,.2,.6),(2,.8,.2)],[(0,0,.1),(0,.1,.1),(1,.1,.3),(1,.4,.3),(2,.4,.1),(2,.7,.1)]]):\n            f,a=plot(3.5,left=.23)\n            for row,start,dur in items:a.barh(row,dur,left=start,height=.5,color=COL[['blue','green','orange'][row]],edgecolor=COL['line'])\n            a.set(yticks=[0,1,2],yticklabels=['分派','专家计算','结果合并'],xlim=(0,1.05),xlabel='时间（ms）');a.invert_yaxis();save(f,'11-overlap' if i==0 else 'overlap-pipeline')\n        f,a=canvas(3.8);box(a,.04,.50,.34,.24,'目录记录\\n标识 → 存储位置','orange',11);box(a,.62,.50,.34,.24,'KV 数据对象\\n实际上下文状态','blue',11);arrow(a,(.38,.62),(.62,.62),'control');text(a,.5,.22,'先按目录定位，再确认对象可用并取回',12,ha='center');save(f,'cache-directory')\n        f,a=canvas(4.5)\n        for i in range(64):\n            x=.04+i%16*.059;y=.72-i//16*.14;box(a,x,y,.05,.10,str(i+1),'orange' if i==63 else 'green',11)\n        text(a,.5,.94,'读入 64 页，前 63 页可连续复用',14,ha='center');text(a,.5,.10,'绿色：1008 位置；橙色：16 位置仍需处理',11,ha='center');save(f,'12-cache')\n        V=1207959552\n        for i,(queue,band,compute) in enumerate([(250,None,10),(20,None,180),(20,5,10),(20,20,10)]):\n            f,a=plot(3.0,left=.17);a.barh(0,queue,height=.45,color=COL['gray']);ready=0\n            if band:\n                for dur,c in [(10,'gray'),(V/(band*1e9)*1000,'orange'),(V/25e9*1000,'blue')]:a.barh(1,dur,left=ready,height=.45,color=COL[c],edgecolor=COL['line']);ready+=dur\n            a.barh(0,compute,left=max(queue,ready),height=.45,color=COL['green']);a.set(yticks=[0,1],yticklabels=['GPU','取回'],xlim=(0,340),xlabel='从请求到达起计时（ms）');a.invert_yaxis();save(f,'13-route' if i==0 else f'route-{i}')\n        f,a=plot(3.7);t=np.linspace(0,1,121);a.plot(t,1+.5*t,color='#a56c28',label='源端状态');a.plot(t,np.minimum(2*t,1+.5*t),color='#388768',label='已复制状态');a.set(xlabel='后台复制时间（s）',ylabel='累计状态（GiB）');a.legend(frameon=False);save(f,'14-migration')\n        f,a=canvas(4.8)\n        for row,title in enumerate(['已可靠记录的序列','故障前保存的 KV','恢复后继续生成']):\n            y=.68-row*.27;text(a,.04,y+.20,title,13);box(a,.04,y,.36,.13,'输入 8192 位置','blue',11)\n            if row!=1:box(a,.43,y,.32,.13,'输出 1—128','green',11);box(a,.78,y,.19,.13,'输出 129','orange',11)\n            else:text(a,.68,y+.065,'生成部分尚未保存',11,ha='center')\n        text(a,.5,.03,'补算 128 位置 → KV 到 8320 → 处理输出 129',11,ha='center');save(f,'15-recovery')\n        for pooled,name in [(False,'16-composition'),(True,'composition-pool')]:\n            f,a=canvas(3.6);nodes=['P','共享池','D'] if pooled else ['P','D'];xs=[.04,.40,.76] if pooled else [.04,.76]\n            for x,n in zip(xs,nodes):box(a,x,.39,.20,.22,n,'orange' if n=='共享池' else 'blue')\n            for x1,x2 in zip(xs,xs[1:]):arrow(a,(x1+.20,.5),(x2,.5));text(a,(x1+.20+x2)/2,.71,'1.125 GiB',11,ha='center')\n            text(a,.5,.18,'完整写入并通知 D 后，D 再读取' if pooled else 'P 直接将完整状态交给 D',12,ha='center');save(f,name)\n        d=data['9-17'];f,a=plot(3.7)\n        for key,c in [('8','#388768'),('5','#a56c28')]:a.plot(d['time_s'],d['queues'][key],color=c,label=f'服务 {key} 请求/s')\n        a.axvline(10,ls='--',color='#777777');a.set(xlabel='从启动开始计时（s）',ylabel='积压请求数',xlim=(0,55));a.legend(frameon=False);save(f,'17-service')\n    out.finish();return out.outputs,out.checks\n"
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "矩阵便从一行增至 16 行，此时，同样一次",
+    "after": "矩阵便从一行增至 16 行，同样一次"
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "before": "需要补齐为十六行矩阵并改用相应计算图；补入的行只用于凑齐执行形状，不代表额外的候选 token。此时，计算量便会突然增加。",
+    "after": "需要补齐为十六行矩阵并改用相应计算图，计算量便会突然增加。补入的行只用于凑齐执行形状，不代表额外的候选 token。"
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "before": "合并后 400 个视觉位置，最终投影宽度 2560",
+    "after": "图像块合并后得到 400 个视觉位置，即用来表示图片内容的 400 个特征向量；这里的“位置”不是文本中的词元，也不是原图的单个像素。最终投影的每个特征向量有 2560 个分量"
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "before": "却全部错过槽位",
+    "after": "却全部错过各自预定的播放时刻"
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "*图 6-3：按列切分时",
+    "after": "*图 6-3：按权重矩阵的列切分时"
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "before": "格内的转置符号 T 表示把列写成竖向向量。",
+    "after": "格内的转置符号 T 表示将方括号中横排的数解释为列向量。"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "第十行达到等时点：少于十行主要等待权重，多于十行主要等待计算",
+    "after": "每个专家处理十个 token 时，计算时间与权重读取时间相等：少于十个 token 时主要等待权重，多于十个 token 时主要等待计算"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "before": "等时点移到 20 行",
+    "after": "等时点移到每专家 20 个 token"
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "before": "假设 $B=64$，每个 token 选择 8 个专家",
+    "after": "假设同时为 $B=64$ 条请求各执行一步 decode，每条请求本次输入一个 token，因此 $m=B=64$。每个 token 选择 8 个专家"
+  }
+]

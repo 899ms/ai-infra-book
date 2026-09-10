@@ -1,0 +1,582 @@
+[
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "old": "架构、格式和部署机制按报告区分，教学时间假设不作实测。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "old": "架构、格式和部署机制按报告区分，教学时间假设不作实测。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "old": "架构、格式和部署机制按报告区分，教学时间假设不作实测。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "old": "架构、格式和部署机制按报告区分，教学时间假设不作实测。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "old": "架构、格式和部署机制按报告区分，教学时间假设不作实测。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "架构、格式和部署机制按报告区分，教学时间假设不作实测。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/07-数据中心网络.md",
+    "old": "架构、格式和部署机制按报告区分，教学时间假设不作实测。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "old": "架构、格式和部署机制按报告区分，教学时间假设不作实测。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "架构、格式和部署机制按报告区分，教学时间假设不作实测。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "old": "架构、格式和部署机制按报告区分，教学时间假设不作实测。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "old": "架构、格式和部署机制按报告区分，教学时间假设不作实测。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "架构、格式和部署机制按报告区分，教学时间假设不作实测。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "old": "分析时必须区分三件事：训练时优化了哪些预测目标，发布的模型实际包含哪些模块，服务后端又启用了哪些模块。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "old": " 结合芯片设计时间线，可以研究这些需求如何影响后续设计。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "old": "后续章节将继续检查并行、批处理和版本更新是否还值得采用。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "old": "需要注意的是，上述驻留比较将输入缓冲与累加器合并为一个容量预算。硬件会分别限制这些存储，例如 GPU 的共享内存与寄存器各有上限，块形状要同时满足各自的容量条件。确定能驻留多少线程块后，下一步便是检查这些线程的访问能否同时得到服务。\n\n",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "old": "先用一个简化的容量模型：",
+    "new": "GPU 的输入缓冲与累加器分别受共享内存和寄存器容量约束。这里先用一个合并预算的容量模型："
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "old": "需要注意的是，逻辑读取量与 HBM 流量对应不同的计数位置。共享条目若留在片上缓存中，后续层可直接复用；分块执行若反复装载同一条目，则会增加片外读取。第四章的缓存计数实验给出了区分这两种情况的方法。\n\n",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "old": "比较实现时，需要测量两条分支同时运行时各自的耗时，才能看出 A 的改动对 B 的影响。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/05-算子与运行时.md",
+    "old": "由这些结果可以确定下一步的优化方向。要改善当前长输入请求的首 token 时间，应转向 prefill 中占比更大的计算或等待，因为 decode 的改进发生在首输出之后。要研究这个内核的加速效果，则应增加 decode 所占比例：更长输出会重复执行一行输入的激活计算，从而累积更多单步节省的时间。",
+    "new": "decode 的改进发生在首输出之后，因此当前长输入请求的首 token 时间仍由 prefill 中的计算与等待决定。输出越长，一行输入的激活计算重复执行的次数越多，单步节省的时间也就累积得越多。"
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "old": "总结方案还要额外执行总结并验证质量。",
+    "new": "总结方案先生成摘要，再重建缓存。"
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "old": "需要注意的是，短窗口重放会截断更早的局部依赖。",
+    "new": "短窗口重放得到的是近似恢复的状态，其误差来自更早的局部依赖被截断。"
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "old": "需要注意的是，重要性加权依赖采样分布对目标事件的覆盖。",
+    "new": "重要性加权通过概率比调整已采样事件的贡献，因此采样分布必须覆盖目标事件。"
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "进一步分辨小差异，应重复配对运行并研究差值分布；当前结果的主要信息是两条路径都已接近 240 ms。",
+    "new": "在这组实验中，两条路径的请求时间都已接近 240 ms。"
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "完整矩阵、KV 头复制及工作区范围见该结果，不能把未建模时间当作测量。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "CPU 逻辑设备执行，不能作为 GPU 通信性能证据。",
+    "new": "实验在 CPU 逻辑设备上执行。"
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "这是明确的教学布局，不宣称为 vLLM／SGLang 默认组织；历史审查见[贯穿案例一致性审查](../research/2026-infra-survey/parallel-case-audit.md)。",
+    "new": "本例采用给定的 TP／EP 教学布局。"
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "，不能由速度推断等质量",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "[^routes]: 图形与样本说明见[路由热图](ch06/route-observation.png)和[配套图说明](ch06/README.md)。每题只有四个实际 decode 输入，包含调度器提前执行的 EOS forward；同步与写盘会扰动执行，未测跨卡性能。[完整 DeepSeek V4-Flash 路由观测](../experiments/ch06/06-03/README.md)及[原始计数分析](../experiments/ch06/06-03/runs/routes-001/route-analysis.json)。保留 43 层、四个固定输入与 EOS 额外 forward 的实际边界。",
+    "new": "[^routes]: 图形与样本说明见[路由热图](ch06/route-observation.png)和[配套图说明](ch06/README.md)。记录覆盖 43 层，每题四个实际 decode 输入，包含调度器提前执行的 EOS forward。来源：[DeepSeek V4-Flash 路由观测](../experiments/ch06/06-03/README.md)及[原始计数分析](../experiments/ch06/06-03/runs/routes-001/route-analysis.json)。"
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "，未运行独立的“先通信再计算”串行基线",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "统一地址、借用、共享、CCU 与端口复用分别取证。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "，不宣称已读取受限的论文全文",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "；宣传性能倍数未用作本书比较结果",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "；历史动机与现行规范行为分别引用",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "v3 的称谓与删减参数不混入 v2 规格。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "；没有把它当成增长 KV 的完整服务模型",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "，输出质量没有在该成本模型中测量",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "，包括 AutoCCL 的页级阅读、A40 平台限制以及 NCCL 2.28–2.31.2 的固定接口与卸载支持范围；[NSDI 2025 选读记录](../research/2026-infra-survey/reading-nsdi-2025.md)区分摘要筛选与正文阅读",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/07-数据中心网络.md",
+    "old": "两组中位数之差不等于配对差中位数，局部 CPU 改善不证明完整调用稳定加速。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/07-数据中心网络.md",
+    "old": "[^pcie]: Hou 等，*Understanding Routable PCIe Performance for Composable Infrastructures*，NSDI 2024；[已有正文阅读与诊断笔记](../case-studies/collective-paths-and-diagnosis.md)、[survey 阅读范围](../research/2026-infra-survey/reading-nsdi-2024.md)。论文 Gen3 平台的分配规律不作为所有 PCIe、CXL 或 UB 的保证。",
+    "new": "[^pcie]: Hou 等，*Understanding Routable PCIe Performance for Composable Infrastructures*，NSDI 2024，实验使用 PCIe Gen3 平台；[PCIe 路径与诊断](../case-studies/collective-paths-and-diagnosis.md)。"
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "old": "[^schedule-survey]: [Orca 原文](../references/files/papers/orca.pdf)、[OSDI 2024 调研的阅读范围](../research/2026-infra-survey/reading-osdi-2024.md)与[分块计算和版本笔记](../case-studies/chunking-and-state-transfer.md)。采用迭代接纳与分块原则，不移植旧模型加速比。",
+    "new": "[^schedule-survey]: [Orca 原文](../references/files/papers/orca.pdf)与[分块计算和版本说明](../case-studies/chunking-and-state-transfer.md)。"
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "old": "共享分支的输出相同，该记录不证明语义分叉或实际写时复制；冷、热分支可有相同块峰值而不同 prefill 量。观察器时间不作为无扰动性能排名。",
+    "new": "共享分支的输出相同；冷、热分支具有相同的块峰值，但 prefill 量不同。"
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "old": "读取已归档文件头与发布元数据，未下载或验证完整权重载荷；容量条件不证明量化质量或实际驻留。",
+    "new": "上述文件大小按已归档文件头与发布元数据计算。"
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "old": "LLM.265 的已有视频引擎、专用设计与模型估计保留原条件，正文不宣称复现压缩器。",
+    "new": "资料包含 LLM.265 的视频引擎实现、专用硬件设计与性能估计。"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "，已有调研中在指定条件下完成的计算与验证",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "历史实验的硬件和请求不移作本章 Qwen3 测量。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "输入有效能力、固定分配和理想池内流量模型的限制随结果保存。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "及[固定版本查阅范围](../references/framework-history/2026-09-08/offload-execution/README.md)。本文没有重新审查 kt-kernel 全部实现。",
+    "new": "及[实现版本说明](../references/framework-history/2026-09-08/offload-execution/README.md)。"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "[^kt-audit]: [KTransformers 公开实验记录复核](../experiments/ch09/09-03/README.md)。教程与论文平台分开；公开质量变化为原表复核，没有在本书环境重测。 教程为双6454S＋4090，论文为双8452Y，不能移用平台计时；Expert Deferral公开质量变化有正有负。",
+    "new": "[^kt-audit]: [KTransformers 公开实验记录](../experiments/ch09/09-03/README.md)。教程平台为双 6454S＋4090，论文平台为双 8452Y；Expert Deferral 的公开结果包含质量提升与下降两种情况。"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "配置中的并发上限不等于实际容量扫描。",
+    "new": "表中并发上限取自部署配置。"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "，分别保存论文所读范围和历史平台，正文采用资源分析而非跨平台性能排名",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "，多设备复制和通信收益仍需验证",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "受控查找任务与真实 Agent 质量结论分别报告。 真实Agent回放还出现提前结束及任务质量下降，此处容量对照只讨论受控复用机会；其耗时不能作同质量加速结论。",
+    "new": "容量对照采用受控查找任务；真实 Agent 回放中出现了提前结束及任务质量下降。"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "读取 144 MiB 与复用 141.75 MiB 分列，输出核验不等于 KV 逐位一致。",
+    "new": "读取量为 144 MiB，有效复用量为 141.75 MiB。"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "60 秒为观察窗口，不是所有故障的通用超时保证。",
+    "new": "实验观察窗口为 60 秒。"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "采用历史 vLLM v0.10.1.1 的阶段分析方法，不沿用其时间为当前部署预测。",
+    "new": "研究使用 vLLM v0.10.1.1。"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "；额外 trace 扰动使本批不适合性能排名",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "，保留当前接口支持范围与未测量项",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "，分别记录理论最短耗时、假设的额外耗时和尚未测量的项目",
+    "new": "，按载荷、设定带宽和串行准备时间计算迁移耗时"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "；价格不是设备报价",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "old": "[^platform]: [调度、模型路由与云端环境调研](../case-studies/platform-routing.md)，包含 ASI、RLBoost、DistRS、SpecBox 的阅读范围和产品快照。ASI 研究覆盖六个月、155,410 张 GPU；分配比例度量设备归属，不是 MFU 或完成量。相关研究汇总于[既有 survey](../research/2026-infra-survey/README.md)。计费公式使用给定的教学价格。",
+    "new": "[^platform]: [调度、模型路由与云端环境研究](../case-studies/platform-routing.md)，包含 ASI、RLBoost、DistRS、SpecBox。ASI 研究覆盖六个月、155,410 张 GPU，其分配比例度量设备归属。计费公式采用题设价格。"
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "old": "[^recovery]: [Qwen3-8B 抢占恢复实测](../experiments/ch11/11-04/README.md)，当前实验 11-5 的稳定证据路径；生成、收到、恢复采用的 token 分别计量，训练联动与扩容成本尚未测量。",
+    "new": "[^recovery]: [Qwen3-8B 抢占恢复实验](../experiments/ch11/11-04/README.md)，分别记录生成、客户端收到和恢复时采用的 token 数量。"
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "，本章未把其任务表现推广为通用 Agent 性能",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "[^ec-test]: Qwen3-VL-8B、256×256 合成测试图像的完整 EC 约 2 MiB，PNG 约 3.4 KiB；8 次 TCP 传输前后的数据逐位一致，未运行完整语言请求。特征直传的计时没有包含发送前已完成的编码，不能直接据此判断端侧收益。来源：[真实 Qwen3-VL-8B CPU 编码与传输](../experiments/ch12/12-03/README.md)。合成图像高度可压缩，运行环境为本机 TCP；不从中推断 WAN 收益。",
+    "new": "[^ec-test]: [Qwen3-VL-8B CPU 编码与本机 TCP 传输实验](../experiments/ch12/12-03/README.md)。输入为 256×256 的合成测试图像，完整 EC 约 2 MiB，PNG 约 3.4 KiB；8 次传输前后的数据逐位一致。编码在传输计时开始前完成，所列时间对应特征传输阶段。"
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "[^survey]: [既有 survey 的第十二章编辑结论](../research/2026-infra-survey/qa/editorial-ch06-13.md)、[框架覆盖记录](../research/2026-infra-survey/framework-coverage.md)、[FlexSP／llm.npu 的固定正文与源码核对](../references/framework-history/2026-09-09/sequence-and-npu/NOTES.md)。按既有读取范围使用，不将历史原型当作当前部署支持。",
+    "new": "[^survey]: [FlexSP／llm.npu 论文与实现资料](../references/framework-history/2026-09-09/sequence-and-npu/NOTES.md)。"
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "连接迁移、同时多路径与 FEC 分别判断。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "实现、负载与本地运行限制随原记录保留。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "[^wireless-survey]: [计算机网络的新黄金时代（三）](../references/files/documents/network-golden-3.md)提供 TACK、Link Turbo 与代理部署的历史背景；[NSDI 2026 survey](../research/2026-infra-survey/reading-nsdi-2026.md)将 BLADE 列为备查。具体标准与实验条件优先于历史文章中的简化表述。",
+    "new": "[^wireless-survey]: [计算机网络的新黄金时代（三）](../references/files/documents/network-golden-3.md)，介绍 TACK、Link Turbo 与代理部署的历史背景。"
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "30 次正式尝试含共同端点失败，复制并非 first-wins，不是实际无线测量。",
+    "new": "实验通过双进程、双 TCP 连接模拟两条传输路径，30 次正式尝试包含共同端点失败的情况。"
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "；4.4 ms 的观测差不足以单独证明稳定优势",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "区分两代负载、两个中位数之比与配对统计；分段中位数不可相加。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "，非三位置独立性能实测",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "本章地域方案为独立教学预算，没有引用实际市场价格。",
+    "new": "本章地域方案采用题设价格。"
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "不是历史服务规格",
+    "new": "均为题设值"
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "与历史 ASR 记录分开，静音设备回调不等同于声学测量。",
+    "new": ""
+  },
+  {
+    "file": "outlines/editorial-notes.md",
+    "old": "- 确实重要的实现差异或适用限制，以“需要注意的是，……”另起一段，放在相关推导完整结束处，并写明它怎样引出下一步分析。不能插入段中，也不能任意追加到段末或图注。",
+    "new": "- 发布内容包括正文、图注与脚注。编辑待办、取证进度、阅读范围、自我免责和“后续仍需验证”等作者工作说明移出发布内容，保留在编辑记录中；不能仅换成“需要注意的是”继续保留。\n- 必要的技术条件直接写入定义、题设与机制解释。重要限制应解释原因和结果，并接续当前问题；不要将提醒随意插入段中或追加在段末。"
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "old": "；更长输入与缓存条件不同，未合并作长度因果比较",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "old": "三分钟语音搜索是论文记载的历史需求预测，不是本书当代负载测量。",
+    "new": "三分钟语音搜索是论文记载的历史需求预测。"
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "old": "，不是该产品的复刻拓扑",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/01-初识 AI Infra.md",
+    "old": "；该记录的多卡布局不作为本节单卡运行配置",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "old": "论文的工具调用与真实前缀缓存限制单独保留。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/03-推理与训练负载.md",
+    "old": "[^aoi]: [作者材料中的 AOI 论文入口与读取范围](../case-studies/author-context-and-design.md)，采用动态观测问题与关键帧退化反例，不引用未经全文审计的性能倍率。",
+    "new": "[^aoi]: [AOI 论文与关键帧案例](../case-studies/author-context-and-design.md)。"
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "old": "本次补充的三槽流水",
+    "new": "三槽流水"
+  },
+  {
+    "file": "manuscripts/07-数据中心网络.md",
+    "old": "来源是官方项目中的用户提交记录；部分缺少完整拓扑、软件版本、二进制文件校验值或重复测量结果，不作为厂商认证基准。",
+    "new": "数据来自官方项目中的用户提交记录。"
+  },
+  {
+    "file": "manuscripts/07-数据中心网络.md",
+    "old": "；没有测量物理交换机队列",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "old": "归档 ID 8-7 对应当前练习 8-5；各槽串行 prefill 不作并发吞吐。",
+    "new": "各槽依次执行 prefill。"
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "old": "带观察器开销，用于说明事件先后，不作为通用取消时延。",
+    "new": "计时包含观察器开销。"
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "old": "实验目录沿用重组前编号；当前对应习题 10-7。 ",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "old": "此处比较机制与成本构成，不给出 OPD 相对 SFT 的普适加速倍数。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "old": "当前对应习题 10-8。 ",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "old": "。[^hardware]",
+    "new": "。"
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "old": "[^hardware]: [匹配训练日志的来源缺项](../experiments/ch10/10-04/README.md)。 既有资料尚无 Qwen3-8B／235B 在 A100、A800、H20 上同条件稳态全参训练日志；约 3.5 s/步的 H20 记录来自 LoRA。\n\n",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "old": "九组 36 个进程，采样 RSS 积分与观察窗口边界由现有程序复核；控制器与工具子进程属于不同实验，不跨运行相加。",
+    "new": "工具实验包含九组、36 个进程，累计内存占用由采样 RSS 对时间积分得到。"
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "old": "，当前实验 11-3 的稳定证据路径",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "old": "30 GB 是教学载荷，历史实例价格不是当前统一 SKU 报价。",
+    "new": "30 GB 是题设载荷，实例价格取自对应研究。"
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "old": "，当前实验 11-6 的证据。受控 CPU 进程结果不作为 CUDA 验证集群性能。",
+    "new": "。实验使用受控 CPU 进程。"
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "old": "原有 `ch13` 目录是稳定资料地址，对应保留的历史实验组织；正文使用经审计说明的预算条件。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "old": "，非生产测量",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "old": "本章新增的确定性教学设计",
+    "new": "确定性教学设计"
+  },
+  {
+    "file": "manuscripts/02-模型架构.md",
+    "old": "本章新增条件比较",
+    "new": "本章条件比较"
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "old": "本章新增条件比较",
+    "new": "本章条件比较"
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "已有 CPU",
+    "new": "CPU"
+  },
+  {
+    "file": "manuscripts/08-单实例推理.md",
+    "old": "本章新增条件比较",
+    "new": "本章条件比较"
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "old": "已有 CPU",
+    "new": "CPU"
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "old": "已有输入与保存",
+    "new": "输入与保存"
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "old": "已有异步保存",
+    "new": "异步保存"
+  },
+  {
+    "file": "manuscripts/10-训练系统.md",
+    "old": "已有 DCP",
+    "new": "DCP"
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "old": "本章新增条件比较",
+    "new": "本章条件比较"
+  },
+  {
+    "file": "manuscripts/11-资源调度与运行环境.md",
+    "old": "后续合格轨迹及限制",
+    "new": "任务退出状态记录"
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "本章新增条件比较",
+    "new": "本章条件比较"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "本章使用 200 GB/s 有效 DRAM 能力；较早案例笔记中的 100 GiB/s 是另一组假设，不混用其时间。",
+    "new": "本例采用 200 GB/s 的有效 DRAM 速率。"
+  },
+  {
+    "file": "manuscripts/09-分布式推理.md",
+    "old": "固定路由、有效能力、串行复制、逐卡额外可用空间，不包含真实在线迁移协议。",
+    "new": "算例固定路由、有效传输速率与逐卡额外可用空间，按串行复制计算准备时间。"
+  },
+  {
+    "file": "manuscripts/06-超节点.md",
+    "old": "仿真、原型和本书算术分别采用。",
+    "new": ""
+  },
+  {
+    "file": "manuscripts/04-加速器架构.md",
+    "old": "硬件演进与成本归因的采用范围另见",
+    "new": "硬件演进与成本归因见"
+  },
+  {
+    "file": "manuscripts/12-端边云协同.md",
+    "old": "本章 30 MB／5 MB／0.3 秒为教学输入，均为题设值。",
+    "new": "本章 30 MB／5 MB／0.3 秒为题设值。"
+  },
+  {
+    "file": "manuscripts/00-前言.md",
+    "old": "写一本关于快速发展领域的书，必须面对具体知识不断更新的事实。模型会改变，硬件会迭代，框架也会重新组织执行。书中的数字有各自的版本与条件，设计结论也需要随条件变化而复核。我更希望读者带走的是提出问题、建立估算和检验证据的习惯。遇到新的系统时，先问它要完成什么，再追踪计算、数据和等待，最后解释为什么选择这一种实现。",
+    "new": "我希望读者带走提出问题、建立估算和检验证据的习惯。遇到新的系统时，先问它要完成什么，再追踪计算、数据和等待，最后解释为什么选择这一种实现。"
+  }
+]

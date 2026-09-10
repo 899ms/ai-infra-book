@@ -1,6 +1,6 @@
 # 在线阅读与自动发布
 
-正文只维护 `manuscripts/01-*.md` 至 `12-*.md`，大纲只维护 `outlines/` 中的 Markdown。MkDocs Material 从这些源文件构建中文阅读网站，提供章节导航、全文搜索、数学公式、脚注、深色模式和手机阅读布局。
+正文维护在 `manuscripts/`，包含前言和十二章 Markdown；网站目录直接从正文生成。MkDocs Material 从这些源文件构建中文阅读网站，提供章节导航、全文搜索、数学公式、脚注、深色模式和手机阅读布局。
 
 ## 本地构建
 
@@ -16,7 +16,7 @@ python scripts/check_site.py
 
 输出全部位于被 Git 忽略的 `build/site/`。预览运行 `python scripts/build_site.py --serve`，打开 `http://127.0.0.1:8000`；修改正文后重新运行命令以重新整理源文件。临时 Markdown 位于 `build/docs/`，由构建器覆盖，不应手动维护。公式使用固定版本的 MathJax CDN，首次阅读需要网络。
 
-构建只复制正文、大纲与引用的图片；实验、计算记录和原始资料链接指向构建提交对应的 GitHub 文件，避免网站携带庞大的研究归档。缺失的本地引用或未下载的图片 LFS 指针会使构建失败。
+构建只复制正文与引用的图片；实验、计算记录和原始资料链接指向构建提交对应的 GitHub 文件，避免网站携带庞大的研究归档。缺失的本地引用或未下载的图片 LFS 指针会使构建失败。
 
 ## 推送即发布
 
@@ -37,7 +37,7 @@ PDF 在 Ubuntu 24.04 使用 Pandoc、XeLaTeX、Noto CJK 与 DejaVu 字体构建�
 
 <https://bojieli.github.io/ai-infra-book/>
 
-2026-09-10 尝试通过 API 启用时，GitHub 返回 `422: Your current plan does not support GitHub Pages for this repository.`。当前仓库为私有；需要支持私有仓库 Pages 的套餐，或经仓库所有者决定改为公开，才能完成启用。此限制不会影响 PDF、网站压缩包及 GitHub Releases 自动构建。
+首次发布前启用上述设置，再推送到 `main` 或手动运行工作流；部署成功后即可在线阅读。
 
 ## 下载和本地复现
 

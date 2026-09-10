@@ -1,0 +1,392 @@
+{
+  "figure_2_1": {
+    "positions": 4,
+    "layers": 3,
+    "evidence": "sequence-dependencies-book.json",
+    "note": "Dependency schematic; no measured time."
+  },
+  "figure_2_2": {
+    "dimensions": {
+      "num_hidden_layers": 36,
+      "hidden_size": 4096,
+      "intermediate_size": 12288,
+      "num_attention_heads": 32,
+      "num_key_value_heads": 8,
+      "head_dim": 128,
+      "vocab_size": 151936,
+      "tie_word_embeddings": false
+    },
+    "summary": {
+      "parameters": 8190735360,
+      "weight_resident_bytes": 16381470720,
+      "backbone_projection_ffn_flops": 113799453474816,
+      "causal_attention_matrix_flops": 19793625219072,
+      "rectangular_attention_matrix_flops": 39582418599936,
+      "matrix_flops": 133594323353600,
+      "scalar_flops": 191920152576,
+      "special_ops": {
+        "sin": 1048576,
+        "cos": 1048576,
+        "rsqrt": 12394496,
+        "negate": 4378853376,
+        "exp": 42283302912,
+        "compare_max": 38649987072,
+        "mask_decisions": 77309411328
+      },
+      "weight_read_once_per_operator_bytes": 15203919872,
+      "activation_operand_read_bytes": 680299471104,
+      "activation_operand_write_bytes": 668140348160,
+      "kv_bytes_per_token_per_request": 147456,
+      "kv_resident_before_bytes": 0,
+      "kv_resident_after_bytes": 1207959552,
+      "kv_new_write_bytes": 1207959552,
+      "kv_existing_history_unique_payload_bytes": 0,
+      "kv_attention_unique_payload_bytes": 1207959552,
+      "kv_logical_query_head_operand_bytes": 19793625219072,
+      "attention_score_tensor_per_layer_bytes": 8589934592,
+      "materialized_scores_probabilities_io_all_layers_bytes": 1236950581248,
+      "minimum_required_weight_and_kv_bytes": 17589430272
+    }
+  },
+  "figure_2_4": {
+    "history": 8192,
+    "qwen_variants_mib": [
+      4608,
+      1152,
+      144
+    ],
+    "k3_mla_paths_mib": [
+      216,
+      11520
+    ]
+  },
+  "figure_2_5": {
+    "history_resident_bytes": 61997056,
+    "compressor_buffer_bytes": 12206080,
+    "resident_bytes": 74203136,
+    "selected_history_payload_bytes": 28966912,
+    "components": {
+      "window_history_bytes": 5636096,
+      "compressed_history_bytes": 45350912,
+      "index_history_bytes": 11010048,
+      "main_compressor_buffer_bytes": 11862016,
+      "index_compressor_buffer_bytes": 344064,
+      "main_selected_payload_bytes": 17956864,
+      "index_scan_payload_bytes": 11010048,
+      "last_query_main_qk_pv_flops": 2298478592,
+      "last_query_index_dot_flops": 704643072,
+      "next_token_window_write_bytes": 44032,
+      "next_token_completed_entry_write_bytes": 0
+    }
+  },
+  "figure_2_7": {
+    "lengths": [
+      8192,
+      16384,
+      32768,
+      65536,
+      131072,
+      262144,
+      524288,
+      1048576
+    ],
+    "resident_bytes": {
+      "qwen": [
+        1207959552,
+        2415919104,
+        4831838208,
+        9663676416,
+        19327352832,
+        38654705664,
+        77309411328,
+        154618822656
+      ],
+      "v4": [
+        74203136,
+        130564096,
+        243286016,
+        468729856,
+        919617536,
+        1821392896,
+        3624943616,
+        7232045056
+      ],
+      "k3": [
+        680951808,
+        907444224,
+        1360429056,
+        2266398720,
+        4078338048,
+        7702216704,
+        14949974016,
+        29445488640
+      ]
+    },
+    "accounted_access_bytes": {
+      "qwen": [
+        1207959552,
+        2415919104,
+        4831838208,
+        9663676416,
+        19327352832,
+        38654705664,
+        77309411328,
+        154618822656
+      ],
+      "v4": [
+        28966912,
+        41287680,
+        65929216,
+        115212288,
+        213778432,
+        410910720,
+        805175296,
+        1593704448
+      ],
+      "k3": [
+        1094713344,
+        1321205760,
+        1774190592,
+        2680160256,
+        4492099584,
+        8115978240,
+        15363735552,
+        29859250176
+      ]
+    },
+    "prefill_matrix_tflops": [
+      133.5943233536,
+      231.125253357568,
+      1863.462762315776
+    ],
+    "scope": "Structural length extrapolation; partial state access; pinned compact K3 prefill, no measured runtime or quality."
+  },
+  "figure_2_8": {
+    "qwen_hidden": 4096,
+    "v4_sublayer_hidden": 4096,
+    "v4_residual_streams": 4,
+    "v4_experts": 256,
+    "v4_top_k": 6,
+    "v4_shared": 1
+  },
+  "figure_2_9": {
+    "capacity_rows": [
+      {
+        "matrix_bits": 16,
+        "capacity_bytes": 24000000000,
+        "weight_bytes": 16381470720,
+        "workspace_bytes": 2147483648,
+        "kv_bytes_per_request": 1207959552,
+        "available_for_kv_bytes": 5471045632,
+        "maximum_requests": 4,
+        "weights_and_workspace_fit": true,
+        "resident_at_maximum_bytes": 23360792576,
+        "next_request_exceeds_capacity": true
+      },
+      {
+        "matrix_bits": 8,
+        "capacity_bytes": 80000000000,
+        "weight_bytes": 73725919232,
+        "workspace_bytes": 2147483648,
+        "kv_bytes_per_request": 2684354560,
+        "available_for_kv_bytes": 4126597120,
+        "maximum_requests": 1,
+        "weights_and_workspace_fit": true,
+        "resident_at_maximum_bytes": 78557757440,
+        "next_request_exceeds_capacity": true
+      },
+      {
+        "matrix_bits": 4,
+        "capacity_bytes": 80000000000,
+        "weight_bytes": 39500398592,
+        "workspace_bytes": 2147483648,
+        "kv_bytes_per_request": 2684354560,
+        "available_for_kv_bytes": 38352117760,
+        "maximum_requests": 14,
+        "weights_and_workspace_fit": true,
+        "resident_at_maximum_bytes": 79228846080,
+        "next_request_exceeds_capacity": true
+      }
+    ],
+    "history_capacity": {
+      "history_tokens": [
+        8192,
+        32768
+      ],
+      "maximum_requests": [
+        14,
+        3
+      ]
+    }
+  },
+  "figure_2_10": {
+    "contract": {
+      "S": 0,
+      "P": 128,
+      "G": 4,
+      "B": 1,
+      "decode_forward_calls": 3,
+      "final_retained_positions": 131,
+      "first_output_from_input_stage": true
+    },
+    "matrix_tflops": [
+      1.82986932224,
+      3.397735284736,
+      12.719961440256,
+      27.12791361536
+    ],
+    "model_order": [
+      "qwen3-8b",
+      "deepseek-v4-flash",
+      "deepseek-v4-pro",
+      "kimi-k3"
+    ]
+  },
+  "figure_2_3": {
+    "query_heads": 4,
+    "kv_groups": [
+      4,
+      2,
+      1
+    ],
+    "scope": "Teaching schematic; equal history and head width."
+  },
+  "figure_2_6": {
+    "linear_layers": 30,
+    "full_attention_layers": 10,
+    "experts": 256,
+    "top_k": 8,
+    "shared": 1
+  },
+  "teaching_diagrams": {
+    "architecture": {
+      "layers": [
+        36,
+        40,
+        43,
+        93
+      ],
+      "hidden": [
+        4096,
+        2048,
+        4096,
+        7168
+      ],
+      "experts": [
+        0,
+        256,
+        256,
+        896
+      ]
+    },
+    "history": {
+      "schematic_H": 4,
+      "schematic_decode_steps": 4,
+      "read_counts": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "final_positions": 8,
+      "kv_bytes_per_position": 147456,
+      "shared_weight_bytes": 15136811008,
+      "batch_crossings": [
+        13,
+        51
+      ]
+    },
+    "expert_reuse": {
+      "batch": 64,
+      "top_k": 8,
+      "total_assignments": 512,
+      "unique_experts": [
+        256,
+        8
+      ],
+      "rows_per_expert": [
+        2,
+        64
+      ],
+      "expert_weight_MiB": 6,
+      "read_MiB": [
+        1536,
+        48
+      ]
+    },
+    "recurrence": {
+      "kind": "schematic linear outer-product update",
+      "history_list_positions": 6,
+      "state_shape": "fixed"
+    },
+    "resource_comparison": {
+      "source": "manuscripts/ch02/model-comparison.json",
+      "models": [
+        {
+          "model": "Qwen3-8B",
+          "total_parameters": 8190735360,
+          "parameter_groups": [
+            1244659712,
+            1509949440,
+            5435817984,
+            0,
+            308224
+          ],
+          "uniform_bf16_bytes": 16381470720,
+          "prefill_matrix_flops": 133594323353600,
+          "decode_matrix_flops": 19968622592,
+          "state_8192_bytes": 1207959552,
+          "selected_routed_expert_bf16_bytes": 0
+        },
+        {
+          "model": "Qwen3.6",
+          "total_parameters": 34660610688,
+          "parameter_groups": [
+            1017118720,
+            1283194880,
+            125829120,
+            32212254720,
+            22213248
+          ],
+          "uniform_bf16_bytes": 69321221376,
+          "prefill_matrix_flops": 52094951358464,
+          "decode_matrix_flops": 7331184832,
+          "state_8192_bytes": 232652800,
+          "selected_routed_expert_bf16_bytes": 2013265920
+        },
+        {
+          "model": "V4-Flash",
+          "total_parameters": 284332240471,
+          "parameter_groups": [
+            1059061760,
+            5084807168,
+            1082130432,
+            277025390592,
+            80850519
+          ],
+          "uniform_bf16_bytes": 568664480942,
+          "prefill_matrix_flops": 231125253357568,
+          "decode_matrix_flops": 29539565568,
+          "state_8192_bytes": 74203136,
+          "selected_routed_expert_bf16_bytes": 12985565184
+        },
+        {
+          "model": "K3（紧凑 MLA）",
+          "total_parameters": 2779484476000,
+          "parameter_groups": [
+            2348810240,
+            36179705856,
+            12881756160,
+            2722740830208,
+            5333373536
+          ],
+          "uniform_bf16_bytes": 5558968952000,
+          "prefill_matrix_flops": 1863462762315776,
+          "decode_matrix_flops": 249438187520,
+          "state_8192_bytes": 680951808,
+          "selected_routed_expert_bf16_bytes": 97240743936
+        }
+      ]
+    }
+  }
+}

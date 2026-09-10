@@ -1,0 +1,2608 @@
+{
+  "3-1": {
+    "kind": "teaching_structure",
+    "S": 6144,
+    "P": 2048,
+    "G": 4,
+    "kv_bytes_per_position": 147456,
+    "slots_after_calls": [
+      8192,
+      8193,
+      8194,
+      8195
+    ]
+  },
+  "3-2": {
+    "kind": "separate_teaching_and_measurement",
+    "A_fraction": [
+      0.5,
+      0.9,
+      0.1
+    ],
+    "prefill_positions_per_second": [
+      18432.0,
+      29900.8,
+      6963.2
+    ],
+    "decode_positions_per_second": [
+      4604.0,
+      1736.8,
+      7471.2
+    ],
+    "arrival_reports": [
+      {
+        "mode": "uniform",
+        "latency_p95_s": 299.38261461118236,
+        "ttft_p95_s": 242.91785090602934,
+        "initial_queue_wait_p95_s": 242.41786825610325,
+        "dispatch_lag_p95_s": 0.001856388058513403,
+        "dispatch_lag_max_s": 0.0031857150606811047,
+        "last_dispatch_s": 119.75022223009728,
+        "final_completion_s": 419.84554327698424,
+        "drain_after120_s": 299.84554327698424,
+        "outstanding_at120": 359,
+        "sampled_waiting_peak": 305,
+        "sampled_running_peak": 64,
+        "sampled_kv_usage_peak": 1.0,
+        "preemptions": 62,
+        "windows": [
+          {
+            "planned_window": 0,
+            "A": 120,
+            "B": 120,
+            "actual_dispatches_in_window": 240,
+            "completed_at_window_end": 55
+          },
+          {
+            "planned_window": 1,
+            "A": 120,
+            "B": 120,
+            "actual_dispatches_in_window": 240,
+            "completed_at_window_end": 121
+          }
+        ],
+        "ten_second_windows": [
+          {
+            "start_s": 0,
+            "end_s": 10,
+            "dispatched": 40,
+            "completed": 0,
+            "outstanding_at_end": 40
+          },
+          {
+            "start_s": 10,
+            "end_s": 20,
+            "dispatched": 40,
+            "completed": 10,
+            "outstanding_at_end": 70
+          },
+          {
+            "start_s": 20,
+            "end_s": 30,
+            "dispatched": 40,
+            "completed": 9,
+            "outstanding_at_end": 101
+          },
+          {
+            "start_s": 30,
+            "end_s": 40,
+            "dispatched": 40,
+            "completed": 14,
+            "outstanding_at_end": 127
+          },
+          {
+            "start_s": 40,
+            "end_s": 50,
+            "dispatched": 40,
+            "completed": 13,
+            "outstanding_at_end": 154
+          },
+          {
+            "start_s": 50,
+            "end_s": 60,
+            "dispatched": 40,
+            "completed": 9,
+            "outstanding_at_end": 185
+          },
+          {
+            "start_s": 60,
+            "end_s": 70,
+            "dispatched": 40,
+            "completed": 5,
+            "outstanding_at_end": 220
+          },
+          {
+            "start_s": 70,
+            "end_s": 80,
+            "dispatched": 40,
+            "completed": 2,
+            "outstanding_at_end": 258
+          },
+          {
+            "start_s": 80,
+            "end_s": 90,
+            "dispatched": 40,
+            "completed": 1,
+            "outstanding_at_end": 297
+          },
+          {
+            "start_s": 90,
+            "end_s": 100,
+            "dispatched": 40,
+            "completed": 19,
+            "outstanding_at_end": 318
+          },
+          {
+            "start_s": 100,
+            "end_s": 110,
+            "dispatched": 40,
+            "completed": 21,
+            "outstanding_at_end": 337
+          },
+          {
+            "start_s": 110,
+            "end_s": 120,
+            "dispatched": 40,
+            "completed": 18,
+            "outstanding_at_end": 359
+          }
+        ],
+        "differing_outputs_from_uniform": []
+      },
+      {
+        "mode": "phased",
+        "latency_p95_s": 299.4204078060575,
+        "ttft_p95_s": 258.87075425405055,
+        "initial_queue_wait_p95_s": 258.40431272494607,
+        "dispatch_lag_p95_s": 0.001950601115822792,
+        "dispatch_lag_max_s": 0.1633529351092875,
+        "last_dispatch_s": 119.75121911405586,
+        "final_completion_s": 418.67895890399814,
+        "drain_after120_s": 298.67895890399814,
+        "outstanding_at120": 349,
+        "sampled_waiting_peak": 316,
+        "sampled_running_peak": 64,
+        "sampled_kv_usage_peak": 1.0,
+        "preemptions": 24,
+        "windows": [
+          {
+            "planned_window": 0,
+            "A": 216,
+            "B": 24,
+            "actual_dispatches_in_window": 240,
+            "completed_at_window_end": 59
+          },
+          {
+            "planned_window": 1,
+            "A": 24,
+            "B": 216,
+            "actual_dispatches_in_window": 240,
+            "completed_at_window_end": 131
+          }
+        ],
+        "ten_second_windows": [
+          {
+            "start_s": 0,
+            "end_s": 10,
+            "dispatched": 40,
+            "completed": 0,
+            "outstanding_at_end": 40
+          },
+          {
+            "start_s": 10,
+            "end_s": 20,
+            "dispatched": 40,
+            "completed": 9,
+            "outstanding_at_end": 71
+          },
+          {
+            "start_s": 20,
+            "end_s": 30,
+            "dispatched": 40,
+            "completed": 11,
+            "outstanding_at_end": 100
+          },
+          {
+            "start_s": 30,
+            "end_s": 40,
+            "dispatched": 40,
+            "completed": 16,
+            "outstanding_at_end": 124
+          },
+          {
+            "start_s": 40,
+            "end_s": 50,
+            "dispatched": 40,
+            "completed": 7,
+            "outstanding_at_end": 157
+          },
+          {
+            "start_s": 50,
+            "end_s": 60,
+            "dispatched": 40,
+            "completed": 16,
+            "outstanding_at_end": 181
+          },
+          {
+            "start_s": 60,
+            "end_s": 70,
+            "dispatched": 40,
+            "completed": 12,
+            "outstanding_at_end": 209
+          },
+          {
+            "start_s": 70,
+            "end_s": 80,
+            "dispatched": 40,
+            "completed": 8,
+            "outstanding_at_end": 241
+          },
+          {
+            "start_s": 80,
+            "end_s": 90,
+            "dispatched": 40,
+            "completed": 18,
+            "outstanding_at_end": 263
+          },
+          {
+            "start_s": 90,
+            "end_s": 100,
+            "dispatched": 40,
+            "completed": 9,
+            "outstanding_at_end": 294
+          },
+          {
+            "start_s": 100,
+            "end_s": 110,
+            "dispatched": 40,
+            "completed": 9,
+            "outstanding_at_end": 325
+          },
+          {
+            "start_s": 110,
+            "end_s": 120,
+            "dispatched": 40,
+            "completed": 16,
+            "outstanding_at_end": 349
+          }
+        ],
+        "differing_outputs_from_uniform": []
+      }
+    ],
+    "fluid_queue": {
+      "service_steps_per_second": 6144,
+      "seconds": [
+        0.0,
+        60.0,
+        120.0,
+        132.9609375
+      ],
+      "backlog_steps": [
+        0,
+        0,
+        79632,
+        0
+      ]
+    }
+  },
+  "3-3": {
+    "kind": "measured_wall_and_conditional_state",
+    "rounds": [
+      {
+        "turn": 0,
+        "prompt_tokens": 206,
+        "output_tokens": 1200,
+        "cached_tokens": 0,
+        "uncached_tokens": 206,
+        "finish_reason": "length",
+        "tool": "invalid",
+        "measured_model_seconds": 36.37531170900911,
+        "measured_tool_seconds": 6.255996413528919e-05,
+        "replacement_model_seconds": 36.37531170900911,
+        "cached_prefill_matrix_flops": 2875476475904,
+        "cold_prefill_matrix_flops": 2875476475904,
+        "decode_matrix_flops": 18718299652096,
+        "retained_logical_kv_bytes": 207175680,
+        "hypothetical_tool_wait_kv_byte_seconds": 12960.90311050415
+      },
+      {
+        "turn": 1,
+        "prompt_tokens": 1443,
+        "output_tokens": 1016,
+        "cached_tokens": 1392,
+        "uncached_tokens": 51,
+        "finish_reason": "stop",
+        "tool": "write_file",
+        "measured_model_seconds": 26.42764005018398,
+        "measured_tool_seconds": 0.0033351972233504057,
+        "replacement_model_seconds": 26.42764005018398,
+        "cached_prefill_matrix_flops": 752367828992,
+        "cold_prefill_matrix_flops": 20661235220480,
+        "decode_matrix_flops": 16531245301760,
+        "retained_logical_kv_bytes": 362446848,
+        "hypothetical_tool_wait_kv_byte_seconds": 1208831.7210617065
+      },
+      {
+        "turn": 2,
+        "prompt_tokens": 1656,
+        "output_tokens": 383,
+        "cached_tokens": 1440,
+        "uncached_tokens": 216,
+        "finish_reason": "stop",
+        "tool": "run_tests",
+        "measured_model_seconds": 10.03444657404907,
+        "measured_tool_seconds": 0.07424405217170715,
+        "replacement_model_seconds": 10.03444657404907,
+        "cached_prefill_matrix_flops": 3199098159104,
+        "cold_prefill_matrix_flops": 23814862536704,
+        "decode_matrix_flops": 6198291660800,
+        "retained_logical_kv_bytes": 300515328,
+        "hypothetical_tool_wait_kv_byte_seconds": 22311475.690429688
+      },
+      {
+        "turn": 3,
+        "prompt_tokens": 1992,
+        "output_tokens": 134,
+        "cached_tokens": 1648,
+        "uncached_tokens": 344,
+        "finish_reason": "stop",
+        "tool": "finish",
+        "measured_model_seconds": 3.456244467990473,
+        "measured_tool_seconds": 6.058579310774803e-05,
+        "replacement_model_seconds": 3.456244467990473,
+        "cached_prefill_matrix_flops": 5149311107072,
+        "cold_prefill_matrix_flops": 28843999232000,
+        "decode_matrix_flops": 2174635409408,
+        "retained_logical_kv_bytes": 313344000,
+        "hypothetical_tool_wait_kv_byte_seconds": 18984.1947555542
+      }
+    ],
+    "summary": {
+      "turns": 4,
+      "input_tokens": 5297,
+      "cached_input_tokens": 4480,
+      "uncached_input_tokens": 817,
+      "output_tokens": 2733,
+      "cached_prefill_matrix_flops": 11976253571072,
+      "cold_prefill_matrix_flops": 76195573465088,
+      "decode_matrix_flops": 43622472024064,
+      "measured_model_seconds": 76.29364280123264,
+      "measured_tool_seconds": 0.0777023951523006,
+      "measured_other_seconds": 0.13893395266495645,
+      "measured_elapsed_seconds": 76.5102791490499,
+      "counterfactual_elapsed_seconds": 76.5102791490499,
+      "counterfactual_speedup": 1.0,
+      "hypothetical_tool_wait_kv_byte_seconds": 23552252.509357452,
+      "maximum_round_logical_kv_bytes": 362446848,
+      "evaluation_cases": 1013,
+      "value_and_input_passed": 1013,
+      "including_alias_check_passed": 710,
+      "actual_cache_peak_bytes": null
+    },
+    "counterfactual": {
+      "turns": 4,
+      "input_tokens": 5297,
+      "cached_input_tokens": 4480,
+      "uncached_input_tokens": 817,
+      "output_tokens": 2733,
+      "cached_prefill_matrix_flops": 11976253571072,
+      "cold_prefill_matrix_flops": 76195573465088,
+      "decode_matrix_flops": 43622472024064,
+      "measured_model_seconds": 76.29364280123264,
+      "measured_tool_seconds": 0.0777023951523006,
+      "measured_other_seconds": 0.13893395266495645,
+      "measured_elapsed_seconds": 76.5102791490499,
+      "counterfactual_elapsed_seconds": 58.32262329454534,
+      "counterfactual_speedup": 1.3118456411442927,
+      "hypothetical_tool_wait_kv_byte_seconds": 23552252.509357452,
+      "maximum_round_logical_kv_bytes": 362446848,
+      "evaluation_cases": 1013,
+      "value_and_input_passed": 1013,
+      "including_alias_check_passed": 710,
+      "actual_cache_peak_bytes": null
+    }
+  },
+  "3-4": {
+    "kind": "separate_mechanism_teaching_and_historical_reception",
+    "audio_chunks": [
+      {
+        "chunk": 0,
+        "capture_ready_ns": 20000000,
+        "model_start_ns": 20000000,
+        "model_end_ns": 32000000,
+        "send_start_ns": 32000000,
+        "send_end_ns": 33000000,
+        "arrival_ns": 38000000,
+        "deadline_ns": 78000000,
+        "deadline_miss": false,
+        "playback_start_ns": 78000000,
+        "playback_end_ns": 98000000,
+        "new_stall_ns": 0,
+        "playback_lateness_ns": 0
+      },
+      {
+        "chunk": 1,
+        "capture_ready_ns": 40000000,
+        "model_start_ns": 40000000,
+        "model_end_ns": 52000000,
+        "send_start_ns": 52000000,
+        "send_end_ns": 53000000,
+        "arrival_ns": 58000000,
+        "deadline_ns": 98000000,
+        "deadline_miss": false,
+        "playback_start_ns": 98000000,
+        "playback_end_ns": 118000000,
+        "new_stall_ns": 0,
+        "playback_lateness_ns": 0
+      },
+      {
+        "chunk": 2,
+        "capture_ready_ns": 60000000,
+        "model_start_ns": 60000000,
+        "model_end_ns": 72000000,
+        "send_start_ns": 72000000,
+        "send_end_ns": 73000000,
+        "arrival_ns": 123000000,
+        "deadline_ns": 118000000,
+        "deadline_miss": true,
+        "playback_start_ns": 123000000,
+        "playback_end_ns": 143000000,
+        "new_stall_ns": 5000000,
+        "playback_lateness_ns": 5000000
+      },
+      {
+        "chunk": 3,
+        "capture_ready_ns": 80000000,
+        "model_start_ns": 80000000,
+        "model_end_ns": 92000000,
+        "send_start_ns": 92000000,
+        "send_end_ns": 93000000,
+        "arrival_ns": 98000000,
+        "deadline_ns": 138000000,
+        "deadline_miss": false,
+        "playback_start_ns": 143000000,
+        "playback_end_ns": 163000000,
+        "new_stall_ns": 0,
+        "playback_lateness_ns": 5000000
+      },
+      {
+        "chunk": 4,
+        "capture_ready_ns": 100000000,
+        "model_start_ns": 100000000,
+        "model_end_ns": 112000000,
+        "send_start_ns": 112000000,
+        "send_end_ns": 113000000,
+        "arrival_ns": 118000000,
+        "deadline_ns": 158000000,
+        "deadline_miss": false,
+        "playback_start_ns": 163000000,
+        "playback_end_ns": 183000000,
+        "new_stall_ns": 0,
+        "playback_lateness_ns": 5000000
+      },
+      {
+        "chunk": 5,
+        "capture_ready_ns": 120000000,
+        "model_start_ns": 120000000,
+        "model_end_ns": 132000000,
+        "send_start_ns": 132000000,
+        "send_end_ns": 133000000,
+        "arrival_ns": 138000000,
+        "deadline_ns": 178000000,
+        "deadline_miss": false,
+        "playback_start_ns": 183000000,
+        "playback_end_ns": 203000000,
+        "new_stall_ns": 0,
+        "playback_lateness_ns": 5000000
+      },
+      {
+        "chunk": 6,
+        "capture_ready_ns": 140000000,
+        "model_start_ns": 140000000,
+        "model_end_ns": 152000000,
+        "send_start_ns": 152000000,
+        "send_end_ns": 153000000,
+        "arrival_ns": 158000000,
+        "deadline_ns": 198000000,
+        "deadline_miss": false,
+        "playback_start_ns": 203000000,
+        "playback_end_ns": 223000000,
+        "new_stall_ns": 0,
+        "playback_lateness_ns": 5000000
+      },
+      {
+        "chunk": 7,
+        "capture_ready_ns": 160000000,
+        "model_start_ns": 160000000,
+        "model_end_ns": 172000000,
+        "send_start_ns": 172000000,
+        "send_end_ns": 173000000,
+        "arrival_ns": 178000000,
+        "deadline_ns": 218000000,
+        "deadline_miss": false,
+        "playback_start_ns": 223000000,
+        "playback_end_ns": 243000000,
+        "new_stall_ns": 0,
+        "playback_lateness_ns": 5000000
+      }
+    ],
+    "base_summary": {
+      "chunks": 8,
+      "frame_rate_per_second": 50.0,
+      "pcm_chunk_bytes": 960,
+      "source_audio_duration_ns": 160000000,
+      "first_playback_from_time_zero_ns": 78000000,
+      "first_chunk_capture_to_playback_ns": 58000000,
+      "deadline_misses": 1,
+      "total_playback_stall_ns": 5000000,
+      "maximum_playback_lateness_ns": 5000000,
+      "baseline_playback_finish_ns": 243000000,
+      "baseline_ready_queue_peak_bytes": 2880,
+      "mute_effective_ns": null,
+      "interrupt_to_mute_ns": null,
+      "audible_after_interrupt_ns": null,
+      "cancelled_gpu_work": null
+    },
+    "large_buffer": {
+      "chunks": 8,
+      "frame_rate_per_second": 50.0,
+      "pcm_chunk_bytes": 960,
+      "source_audio_duration_ns": 160000000,
+      "first_playback_from_time_zero_ns": 98000000,
+      "first_chunk_capture_to_playback_ns": 78000000,
+      "deadline_misses": 0,
+      "total_playback_stall_ns": 0,
+      "maximum_playback_lateness_ns": 0,
+      "baseline_playback_finish_ns": 258000000,
+      "baseline_ready_queue_peak_bytes": 2880,
+      "mute_effective_ns": null,
+      "interrupt_to_mute_ns": null,
+      "audible_after_interrupt_ns": null,
+      "cancelled_gpu_work": null
+    },
+    "interrupt": {
+      "chunks": 8,
+      "frame_rate_per_second": 50.0,
+      "pcm_chunk_bytes": 960,
+      "source_audio_duration_ns": 160000000,
+      "first_playback_from_time_zero_ns": 78000000,
+      "first_chunk_capture_to_playback_ns": 58000000,
+      "deadline_misses": 1,
+      "total_playback_stall_ns": 5000000,
+      "maximum_playback_lateness_ns": 5000000,
+      "baseline_playback_finish_ns": 243000000,
+      "baseline_ready_queue_peak_bytes": 2880,
+      "mute_effective_ns": 130000000,
+      "interrupt_to_mute_ns": 7000000,
+      "audible_after_interrupt_ns": 7000000,
+      "cancelled_gpu_work": null
+    },
+    "historical_reception": {
+      "scope": "Historical receiver-arrival records; not a controlled model/network/buffer comparison",
+      "records": [
+        {
+          "record": "user-interruption-1-overlap-transcript.json",
+          "sha256": "d0aabb040e6ca6c28ef7c216e5a502cfcbe7dc9d86eb71270f51013eb3dba93b",
+          "all_audio_chunks": 115,
+          "initial_window_start_ms": 3001.978,
+          "initial_window_end_exclusive_ms": 7201.152,
+          "first_audio_arrival_ms": 3401.897,
+          "first_audio_after_first_user_stop_ms": 399.91899999999987,
+          "initial_window_audio_chunks": 42,
+          "initial_window_interarrival_ms": {
+            "count": 41,
+            "min": 1.0360000000000582,
+            "median": 93.88900000000012,
+            "max": 94.47999999999956
+          },
+          "initial_window_arrival_minus_previous_duration_ms": {
+            "count": 41,
+            "min": 0.04800000000068394,
+            "median": 1.006999999999607,
+            "max": 1.6049999999995634
+          },
+          "second_user_speech_window_audio_chunks": 9,
+          "second_user_speech_window_ms": [
+            7201.152,
+            10001.277
+          ],
+          "actual_first_playback_ms": null,
+          "cancel_ack_ms": null,
+          "physical_silence_latency_ms": null,
+          "compute_exit_ms": null,
+          "execution_evidence_error": "trace endpoint returned 503 Service Unavailable: {\"error\":\"service unavailable\"}\n",
+          "runtime_identity": {
+            "graph": {
+              "id": "scenario_conversation",
+              "revision": 1,
+              "fingerprint": "sha256:b2afedba0c8478c63884ff08279394cfdebbbf0416ef76b0f5b2b340bc79bbad"
+            },
+            "binding": "openrealtime.scenario_conversation",
+            "profile": "sha256:38c16bbe164b63fc78116b98ad7ab90b1d83f7ee43b8e9cb3826f2cf73b3e91d"
+          }
+        },
+        {
+          "record": "background-speech-1-overlap-transcript.json",
+          "sha256": "5bc942a345d18bdc9494547287352e93cb73e18a9caa255b0ace8e3ce4e957b7",
+          "all_audio_chunks": 48,
+          "initial_window_start_ms": 1402.165,
+          "initial_window_end_exclusive_ms": 5302.309,
+          "first_audio_arrival_ms": 1772.624,
+          "first_audio_after_first_user_stop_ms": 370.45900000000006,
+          "initial_window_audio_chunks": 39,
+          "initial_window_interarrival_ms": {
+            "count": 38,
+            "min": 0.7820000000001528,
+            "median": 93.80600000000004,
+            "max": 94.30000000000018
+          },
+          "initial_window_arrival_minus_previous_duration_ms": {
+            "count": 38,
+            "min": 0.17133333333397616,
+            "median": 0.9216666666667734,
+            "max": 1.425000000000182
+          },
+          "second_user_speech_window_audio_chunks": 9,
+          "second_user_speech_window_ms": [
+            5302.309,
+            6702.656
+          ],
+          "actual_first_playback_ms": null,
+          "cancel_ack_ms": null,
+          "physical_silence_latency_ms": null,
+          "compute_exit_ms": null,
+          "execution_evidence_error": "trace endpoint returned 503 Service Unavailable: {\"error\":\"service unavailable\"}\n",
+          "runtime_identity": {
+            "graph": {
+              "id": "scenario_conversation",
+              "revision": 1,
+              "fingerprint": "sha256:b2afedba0c8478c63884ff08279394cfdebbbf0416ef76b0f5b2b340bc79bbad"
+            },
+            "binding": "openrealtime.scenario_conversation",
+            "profile": "sha256:38c16bbe164b63fc78116b98ad7ab90b1d83f7ee43b8e9cb3826f2cf73b3e91d"
+          }
+        }
+      ]
+    },
+    "visual": {
+      "positions": 400,
+      "ec_bytes": 8192000,
+      "kv_bytes": 58982400
+    }
+  },
+  "3-5": {
+    "kind": "analytical_subaccounts",
+    "scenario": {
+      "batch": 1,
+      "tokens": 8192,
+      "supervised_tokens": 8192,
+      "head_strategy": "dense",
+      "gradient_bytes": 4,
+      "master_weight_bytes": 4,
+      "routing": null
+    },
+    "summary": {
+      "parameters": 8190735360,
+      "input_tokens": 8192,
+      "loss_tokens": 8192,
+      "expert_assignments_per_layer": 0,
+      "active_experts_per_layer": 0,
+      "executed_head_rows": 8192,
+      "forward_matrix_flops": 143789331054592,
+      "backward_matrix_flops": 287578662109184,
+      "training_matrix_flops": 431367993163776,
+      "attention_training_matrix_flops": 59380875657216,
+      "six_nd_flops": 402591024414720,
+      "matrix_minus_six_nd_flops": 28776968749056,
+      "matrix_to_six_nd_ratio": 1.0714794096338622,
+      "unsharded_parameter_state_bytes": 147433236480,
+      "activation_peak_bytes": null,
+      "complete_training_step_flops": null,
+      "predicted_step_seconds": null
+    },
+    "parameter_state_bytes": {
+      "bf16_weights": 16381470720,
+      "gradients": 32762941440,
+      "master_weights": 32762941440,
+      "adam_first_moment_fp32": 32762941440,
+      "adam_second_moment_fp32": 32762941440
+    },
+    "training_matrix_rows": [
+      {
+        "name": "q_proj",
+        "category": "linear",
+        "shapes": {
+          "input": [
+            8192,
+            4096
+          ],
+          "weight_storage": [
+            4096,
+            4096
+          ],
+          "output": [
+            8192,
+            4096
+          ],
+          "d_input_matmul": [
+            [
+              8192,
+              4096
+            ],
+            [
+              4096,
+              4096
+            ]
+          ],
+          "d_weight_matmul": [
+            [
+              4096,
+              8192
+            ],
+            [
+              8192,
+              4096
+            ]
+          ]
+        },
+        "repeats": 36,
+        "gradient_names": [
+          "d_input",
+          "d_weight"
+        ],
+        "forward_flops": 274877906944,
+        "gradient_each_flops": 274877906944,
+        "training_matrix_flops": 29686813949952
+      },
+      {
+        "name": "k_proj",
+        "category": "linear",
+        "shapes": {
+          "input": [
+            8192,
+            4096
+          ],
+          "weight_storage": [
+            1024,
+            4096
+          ],
+          "output": [
+            8192,
+            1024
+          ],
+          "d_input_matmul": [
+            [
+              8192,
+              1024
+            ],
+            [
+              1024,
+              4096
+            ]
+          ],
+          "d_weight_matmul": [
+            [
+              1024,
+              8192
+            ],
+            [
+              8192,
+              4096
+            ]
+          ]
+        },
+        "repeats": 36,
+        "gradient_names": [
+          "d_input",
+          "d_weight"
+        ],
+        "forward_flops": 68719476736,
+        "gradient_each_flops": 68719476736,
+        "training_matrix_flops": 7421703487488
+      },
+      {
+        "name": "v_proj",
+        "category": "linear",
+        "shapes": {
+          "input": [
+            8192,
+            4096
+          ],
+          "weight_storage": [
+            1024,
+            4096
+          ],
+          "output": [
+            8192,
+            1024
+          ],
+          "d_input_matmul": [
+            [
+              8192,
+              1024
+            ],
+            [
+              1024,
+              4096
+            ]
+          ],
+          "d_weight_matmul": [
+            [
+              1024,
+              8192
+            ],
+            [
+              8192,
+              4096
+            ]
+          ]
+        },
+        "repeats": 36,
+        "gradient_names": [
+          "d_input",
+          "d_weight"
+        ],
+        "forward_flops": 68719476736,
+        "gradient_each_flops": 68719476736,
+        "training_matrix_flops": 7421703487488
+      },
+      {
+        "name": "qk",
+        "category": "attention",
+        "shapes": {
+          "Q": [
+            1,
+            32,
+            8192,
+            128
+          ],
+          "K_shared": [
+            1,
+            8,
+            8192,
+            128
+          ],
+          "scores_rectangular": [
+            1,
+            32,
+            8192,
+            8192
+          ]
+        },
+        "repeats": 36,
+        "gradient_names": [
+          "d_Q",
+          "d_K"
+        ],
+        "forward_flops": 274911461376,
+        "gradient_each_flops": 274911461376,
+        "training_matrix_flops": 29690437828608
+      },
+      {
+        "name": "pv",
+        "category": "attention",
+        "shapes": {
+          "P": [
+            1,
+            32,
+            8192,
+            8192
+          ],
+          "V_shared": [
+            1,
+            8,
+            8192,
+            128
+          ],
+          "output": [
+            1,
+            32,
+            8192,
+            128
+          ]
+        },
+        "repeats": 36,
+        "gradient_names": [
+          "d_P",
+          "d_V"
+        ],
+        "forward_flops": 274911461376,
+        "gradient_each_flops": 274911461376,
+        "training_matrix_flops": 29690437828608
+      },
+      {
+        "name": "o_proj",
+        "category": "linear",
+        "shapes": {
+          "input": [
+            8192,
+            4096
+          ],
+          "weight_storage": [
+            4096,
+            4096
+          ],
+          "output": [
+            8192,
+            4096
+          ],
+          "d_input_matmul": [
+            [
+              8192,
+              4096
+            ],
+            [
+              4096,
+              4096
+            ]
+          ],
+          "d_weight_matmul": [
+            [
+              4096,
+              8192
+            ],
+            [
+              8192,
+              4096
+            ]
+          ]
+        },
+        "repeats": 36,
+        "gradient_names": [
+          "d_input",
+          "d_weight"
+        ],
+        "forward_flops": 274877906944,
+        "gradient_each_flops": 274877906944,
+        "training_matrix_flops": 29686813949952
+      },
+      {
+        "name": "gate_proj",
+        "category": "linear",
+        "shapes": {
+          "input": [
+            8192,
+            4096
+          ],
+          "weight_storage": [
+            12288,
+            4096
+          ],
+          "output": [
+            8192,
+            12288
+          ],
+          "d_input_matmul": [
+            [
+              8192,
+              12288
+            ],
+            [
+              12288,
+              4096
+            ]
+          ],
+          "d_weight_matmul": [
+            [
+              12288,
+              8192
+            ],
+            [
+              8192,
+              4096
+            ]
+          ]
+        },
+        "repeats": 36,
+        "gradient_names": [
+          "d_input",
+          "d_weight"
+        ],
+        "forward_flops": 824633720832,
+        "gradient_each_flops": 824633720832,
+        "training_matrix_flops": 89060441849856
+      },
+      {
+        "name": "up_proj",
+        "category": "linear",
+        "shapes": {
+          "input": [
+            8192,
+            4096
+          ],
+          "weight_storage": [
+            12288,
+            4096
+          ],
+          "output": [
+            8192,
+            12288
+          ],
+          "d_input_matmul": [
+            [
+              8192,
+              12288
+            ],
+            [
+              12288,
+              4096
+            ]
+          ],
+          "d_weight_matmul": [
+            [
+              12288,
+              8192
+            ],
+            [
+              8192,
+              4096
+            ]
+          ]
+        },
+        "repeats": 36,
+        "gradient_names": [
+          "d_input",
+          "d_weight"
+        ],
+        "forward_flops": 824633720832,
+        "gradient_each_flops": 824633720832,
+        "training_matrix_flops": 89060441849856
+      },
+      {
+        "name": "down_proj",
+        "category": "linear",
+        "shapes": {
+          "input": [
+            8192,
+            12288
+          ],
+          "weight_storage": [
+            4096,
+            12288
+          ],
+          "output": [
+            8192,
+            4096
+          ],
+          "d_input_matmul": [
+            [
+              8192,
+              4096
+            ],
+            [
+              4096,
+              12288
+            ]
+          ],
+          "d_weight_matmul": [
+            [
+              4096,
+              8192
+            ],
+            [
+              8192,
+              12288
+            ]
+          ]
+        },
+        "repeats": 36,
+        "gradient_names": [
+          "d_input",
+          "d_weight"
+        ],
+        "forward_flops": 824633720832,
+        "gradient_each_flops": 824633720832,
+        "training_matrix_flops": 89060441849856
+      },
+      {
+        "name": "lm_head",
+        "category": "linear",
+        "shapes": {
+          "input": [
+            8192,
+            4096
+          ],
+          "weight_storage": [
+            151936,
+            4096
+          ],
+          "output": [
+            8192,
+            151936
+          ],
+          "d_input_matmul": [
+            [
+              8192,
+              151936
+            ],
+            [
+              151936,
+              4096
+            ]
+          ],
+          "d_weight_matmul": [
+            [
+              151936,
+              8192
+            ],
+            [
+              8192,
+              4096
+            ]
+          ]
+        },
+        "repeats": 1,
+        "gradient_names": [
+          "d_input",
+          "d_weight"
+        ],
+        "forward_flops": 10196252360704,
+        "gradient_each_flops": 10196252360704,
+        "training_matrix_flops": 30588757082112
+      }
+    ]
+  },
+  "3-6": {
+    "kind": "teaching_analytical_cycle",
+    "base_stages": [
+      {
+        "name": "rollout_prefill",
+        "samples": 32,
+        "passes": 1,
+        "matrix_flops": 465142911336448
+      },
+      {
+        "name": "rollout_decode",
+        "samples": 32,
+        "passes": 255,
+        "matrix_flops": 129055881953280
+      },
+      {
+        "name": "reference_scoring",
+        "samples": 32,
+        "passes": 1,
+        "matrix_flops": 634943973621760
+      },
+      {
+        "name": "teacher_scoring",
+        "samples": 32,
+        "passes": 0,
+        "matrix_flops": 0
+      },
+      {
+        "name": "policy_update",
+        "samples": 16,
+        "passes": 1,
+        "matrix_flops": 952415960432640
+      }
+    ],
+    "low_acceptance_stages": [
+      {
+        "name": "rollout_prefill",
+        "samples": 64,
+        "passes": 1,
+        "matrix_flops": 930285822672896
+      },
+      {
+        "name": "rollout_decode",
+        "samples": 64,
+        "passes": 255,
+        "matrix_flops": 258111763906560
+      },
+      {
+        "name": "reference_scoring",
+        "samples": 64,
+        "passes": 1,
+        "matrix_flops": 1269887947243520
+      },
+      {
+        "name": "teacher_scoring",
+        "samples": 64,
+        "passes": 0,
+        "matrix_flops": 0
+      },
+      {
+        "name": "policy_update",
+        "samples": 16,
+        "passes": 1,
+        "matrix_flops": 952415960432640
+      }
+    ],
+    "base": {
+      "generated_samples": 32,
+      "accepted_samples": 16,
+      "acceptance_fraction": 0.5,
+      "generated_output_tokens": 8192,
+      "accepted_output_tokens": 4096,
+      "training_input_tokens_per_epoch": 20464,
+      "supervised_tokens_per_epoch": 4096,
+      "prefill_calls_per_sample": 1,
+      "decode_calls_per_sample": 255,
+      "first_decode_matrix_flops": 503704453120,
+      "last_decode_matrix_flops": 508498542592,
+      "rollout_matrix_flops": 594198793289728,
+      "cycle_matrix_flops": 2181558727344128,
+      "matrix_flops_per_accepted_sample": 136347420459008.0,
+      "matrix_flops_per_accepted_output_token": 532607111168.0,
+      "policy_parameter_state_bytes": 147433236480,
+      "bf16_weight_snapshot_bytes": 16381470720,
+      "independent_unicast_weight_sync_bytes": 16381470720,
+      "verifier_work": null,
+      "complete_cycle_flops": null,
+      "predicted_cycle_seconds": null
+    },
+    "low_acceptance": {
+      "generated_samples": 64,
+      "accepted_samples": 16,
+      "acceptance_fraction": 0.25,
+      "generated_output_tokens": 16384,
+      "accepted_output_tokens": 4096,
+      "training_input_tokens_per_epoch": 20464,
+      "supervised_tokens_per_epoch": 4096,
+      "prefill_calls_per_sample": 1,
+      "decode_calls_per_sample": 255,
+      "first_decode_matrix_flops": 1007408906240,
+      "last_decode_matrix_flops": 1016997085184,
+      "rollout_matrix_flops": 1188397586579456,
+      "cycle_matrix_flops": 3410701494255616,
+      "matrix_flops_per_accepted_sample": 213168843390976.0,
+      "matrix_flops_per_accepted_output_token": 832690794496.0,
+      "policy_parameter_state_bytes": 147433236480,
+      "bf16_weight_snapshot_bytes": 16381470720,
+      "independent_unicast_weight_sync_bytes": 16381470720,
+      "verifier_work": null,
+      "complete_cycle_flops": null,
+      "predicted_cycle_seconds": null
+    },
+    "scenario": {
+      "prompts": 8,
+      "samples_per_prompt": 4,
+      "prompt_tokens": 1024,
+      "output_tokens": 256,
+      "accepted_samples": 16,
+      "update_epochs": 1,
+      "reference_passes": 1,
+      "teacher_passes": 0,
+      "rollout_replicas": 1,
+      "head_strategy": "dense"
+    }
+  },
+  "3-7": {
+    "kind": "public_observations_and_conditional_proxy",
+    "records": [
+      {
+        "id": "2b855b55b",
+        "N": 2810000000.0,
+        "D": 55000000000.0,
+        "loss": 2.574117,
+        "split": "holdout",
+        "control_id": "C4-validation-gpt2-same-population-variable-budget",
+        "C_flops": 9.273e+20,
+        "N_shape_estimate": 2808901120,
+        "D_declared_budget": null,
+        "evaluation": {
+          "samples": 51200,
+          "sequence_length": 2048,
+          "seed": 1234,
+          "tokens": 104857600,
+          "file": "sources/scaling-real-points/hub/lm1-2b8-55b-c4-repetitions/2b855b55bc4/3431998.out",
+          "sha256": "0d25cd8e1a124d1ccb5cd1cc0965707645161c57bcea67a90d101d60e2dd8bce"
+        },
+        "coordinate_status": "author reported estimates",
+        "source_controls": [
+          "tokenizer",
+          "vocab",
+          "merges",
+          "validation",
+          "validation_split"
+        ],
+        "budget_source": null
+      },
+      {
+        "id": "8b7178b178b",
+        "N": 8670000000.0,
+        "D": 178000000000.0,
+        "loss": 2.336741,
+        "split": "holdout",
+        "control_id": "C4-validation-gpt2-same-population-variable-budget",
+        "C_flops": 9.25956e+21,
+        "N_shape_estimate": 8672194560,
+        "D_declared_budget": null,
+        "evaluation": {
+          "samples": 51200,
+          "sequence_length": 2048,
+          "seed": 1234,
+          "tokens": 104857600,
+          "file": "sources/scaling-real-points/hub/lm1-8b7-178b-c4-repetitions/8b7178b178b/3430821.out",
+          "sha256": "e87423b94776d752571a5ca59183110e5c2e0a43d6f9a28e533403b7fb05be69"
+        },
+        "coordinate_status": "author reported estimates",
+        "source_controls": [
+          "tokenizer",
+          "vocab",
+          "merges",
+          "validation",
+          "validation_split"
+        ],
+        "budget_source": null
+      },
+      {
+        "id": "1b1100m100m",
+        "N": 1096300000.0,
+        "D": 100000000.0,
+        "loss": 6.611002,
+        "split": "fit",
+        "control_id": "C4-validation-gpt2-same-population-variable-budget",
+        "C_flops": 6.5778e+17,
+        "N_shape_estimate": 1096250624,
+        "D_declared_budget": 99999744,
+        "evaluation": {
+          "samples": 6400,
+          "sequence_length": 2048,
+          "seed": 1234,
+          "tokens": 13107200,
+          "file": "sources/scaling-real-points/hub/lm1-misc/1b1100m100m/3324218.out",
+          "sha256": "63ed0dda91136068abdffe287579cde4be96f5293b8c119b1937f0e641ca409f"
+        },
+        "coordinate_status": "author reported estimates",
+        "source_controls": [
+          "tokenizer",
+          "vocab",
+          "merges",
+          "validation",
+          "validation_split"
+        ],
+        "budget_source": "sources/scaling-real-points/hub/lm1-misc/1b1100m100m/sbatch_1b1100m100m.sh"
+      },
+      {
+        "id": "14m100m100m",
+        "N": 14100000.0,
+        "D": 100000000.0,
+        "loss": 7.278144,
+        "split": "fit",
+        "control_id": "C4-validation-gpt2-same-population-variable-budget",
+        "C_flops": 8460000000000000.0,
+        "N_shape_estimate": 14136416,
+        "D_declared_budget": 99999744,
+        "evaluation": {
+          "samples": 6400,
+          "sequence_length": 2048,
+          "seed": 1234,
+          "tokens": 13107200,
+          "file": "sources/scaling-real-points/hub/lm1-misc/14m100m100m/logs/3163413.out",
+          "sha256": "f48ea24d544feb59e27ee9eb23ef43d7617c4673cb6f4f7fe13cf3ab48ec7e50"
+        },
+        "coordinate_status": "author reported estimates",
+        "source_controls": [
+          "tokenizer",
+          "vocab",
+          "merges",
+          "validation",
+          "validation_split"
+        ],
+        "budget_source": "sources/scaling-real-points/hub/lm1-misc/14m100m100m/sbatch_14m100m100m.sh"
+      },
+      {
+        "id": "196m1b51b5",
+        "N": 201236224.0,
+        "D": 1500000000.0,
+        "loss": 3.929866,
+        "split": "fit",
+        "control_id": "C4-validation-gpt2-same-population-variable-budget",
+        "C_flops": 1.811126016e+18,
+        "N_shape_estimate": 201192320,
+        "D_declared_budget": 1516070912,
+        "evaluation": {
+          "samples": 6400,
+          "sequence_length": 2048,
+          "seed": 1234,
+          "tokens": 13107200,
+          "file": "sources/scaling-real-points/hub/lm1-misc/196m1b51b5/logs/3163481.out",
+          "sha256": "e779a9e84551753deb738842cd90ffd6876ffbb73fbf0f2e21f5bfe7b15f0d46"
+        },
+        "coordinate_status": "author reported estimates",
+        "source_controls": [
+          "tokenizer",
+          "vocab",
+          "merges",
+          "validation",
+          "validation_split"
+        ],
+        "budget_source": "sources/scaling-real-points/hub/lm1-misc/196m1b51b5/sbatch_196m1b51b5.sh"
+      },
+      {
+        "id": "1b11b51b5",
+        "N": 1096300000.0,
+        "D": 1500000000.0,
+        "loss": 3.680017,
+        "split": "fit",
+        "control_id": "C4-validation-gpt2-same-population-variable-budget",
+        "C_flops": 9.8667e+18,
+        "N_shape_estimate": 1096250624,
+        "D_declared_budget": 1516070912,
+        "evaluation": {
+          "samples": 25600,
+          "sequence_length": 2048,
+          "seed": 1234,
+          "tokens": 52428800,
+          "file": "sources/scaling-real-points/hub/lm1-misc/1b11b51b5/logs/2809896.out",
+          "sha256": "02eb3e6900d7771d3ba74e1d521f7599163e484ea3793c40c57f5c2ccc43c59c"
+        },
+        "coordinate_status": "author reported estimates",
+        "source_controls": [
+          "tokenizer",
+          "vocab",
+          "merges",
+          "validation",
+          "validation_split"
+        ],
+        "budget_source": "sources/scaling-real-points/hub/lm1-misc/1b11b51b5/sbatch_1b11b51b5.sh"
+      },
+      {
+        "id": "1b112b12b",
+        "N": 1096300000.0,
+        "D": 12000000000.0,
+        "loss": 2.925644,
+        "split": "fit",
+        "control_id": "C4-validation-gpt2-same-population-variable-budget",
+        "C_flops": 7.89336e+19,
+        "N_shape_estimate": 1096250624,
+        "D_declared_budget": 12157779968,
+        "evaluation": {
+          "samples": 25600,
+          "sequence_length": 2048,
+          "seed": 1234,
+          "tokens": 52428800,
+          "file": "sources/scaling-real-points/hub/lm1-misc/1b112b12b/2820797.out",
+          "sha256": "729ed7c037d714775c03a90e91cb6876738810b8cbe7a7d344d86f881601d1df"
+        },
+        "coordinate_status": "author reported estimates",
+        "source_controls": [
+          "tokenizer",
+          "vocab",
+          "merges",
+          "validation",
+          "validation_split"
+        ],
+        "budget_source": "sources/scaling-real-points/hub/lm1-misc/1b112b12b/sbatch_1b112b12b.sh"
+      },
+      {
+        "id": "1b191b91b",
+        "N": 1096300000.0,
+        "D": 91000000000.0,
+        "loss": 2.636805,
+        "split": "fit",
+        "control_id": "C4-validation-gpt2-same-population-variable-budget",
+        "C_flops": 5.985798e+20,
+        "N_shape_estimate": 1096250624,
+        "D_declared_budget": 90964260864,
+        "evaluation": {
+          "samples": 25600,
+          "sequence_length": 2048,
+          "seed": 1234,
+          "tokens": 52428800,
+          "file": "sources/scaling-real-points/hub/lm1-misc/1b191b91b/logs/2833162.out",
+          "sha256": "1d72b2653f06c40ea18f44d6a22c5c125c75ad659f151daebd9478672ff876db"
+        },
+        "coordinate_status": "author reported estimates",
+        "source_controls": [
+          "tokenizer",
+          "vocab",
+          "merges",
+          "validation",
+          "validation_split"
+        ],
+        "budget_source": "sources/scaling-real-points/hub/lm1-misc/1b191b91b/sbatch_1b191b91b.sh"
+      }
+    ],
+    "law": {
+      "E": 1.2112421705646654,
+      "A": 1.2512538552831556,
+      "B": 0.5234301353650054,
+      "alpha": 0.1,
+      "beta": 0.45,
+      "N0": 1000000000.0,
+      "D0": 10000000000.0
+    },
+    "residuals": [
+      {
+        "id": "1b1100m100m",
+        "split": "fit",
+        "residual": -0.002204033842806652
+      },
+      {
+        "id": "14m100m100m",
+        "split": "fit",
+        "residual": 0.006975113490804041
+      },
+      {
+        "id": "196m1b51b5",
+        "split": "fit",
+        "residual": -0.02059659722379026
+      },
+      {
+        "id": "1b11b51b5",
+        "split": "fit",
+        "residual": 0.00021375587554173237
+      },
+      {
+        "id": "1b112b12b",
+        "split": "fit",
+        "residual": 0.007600562857554838
+      },
+      {
+        "id": "1b191b91b",
+        "split": "fit",
+        "residual": 0.008011198842696743
+      },
+      {
+        "id": "2b855b55b",
+        "split": "holdout",
+        "residual": 0.00860555677933128
+      },
+      {
+        "id": "8b7178b178b",
+        "split": "holdout",
+        "residual": 0.025968572228815212
+      }
+    ],
+    "fit_sse": 0.0005997233448120746,
+    "holdout_rmse": 0.019344538649002298,
+    "lifecycle": {
+      "calls": 0,
+      "rows": [
+        {
+          "N": 100000000.0,
+          "D": 298578849033.80475,
+          "feasible": true,
+          "predicted_loss": 2.8999999999999995,
+          "training_proxy_flops": 1.7914730942028284e+20,
+          "prefill_proxy_flops_per_call": 102400000000.0,
+          "decode_proxy_flops_per_call": 25400000000.0,
+          "training_cost": 179.14730942028285,
+          "setup_cost": 0,
+          "upfront_cost": 179.14730942028285,
+          "cost_per_call": 1.2780000000000002e-07,
+          "lifetime_inference_cost": 0.0,
+          "total_cost": 179.14730942028285,
+          "outside_fit_box": true,
+          "extrapolation_factors": {
+            "N": 1,
+            "D": 3.2810862531187337
+          }
+        },
+        {
+          "N": 500000000.0,
+          "D": 24819592197.315804,
+          "feasible": true,
+          "predicted_loss": 2.8999999999999995,
+          "training_proxy_flops": 7.445877659194742e+19,
+          "prefill_proxy_flops_per_call": 512000000000.0,
+          "decode_proxy_flops_per_call": 127000000000.0,
+          "training_cost": 74.45877659194743,
+          "setup_cost": 0,
+          "upfront_cost": 74.45877659194743,
+          "cost_per_call": 6.39e-07,
+          "lifetime_inference_cost": 0.0,
+          "total_cost": 74.45877659194743,
+          "outside_fit_box": false,
+          "extrapolation_factors": {
+            "N": 1,
+            "D": 1
+          }
+        },
+        {
+          "N": 1000000000.0,
+          "D": 14895647223.134563,
+          "feasible": true,
+          "predicted_loss": 2.9,
+          "training_proxy_flops": 8.937388333880738e+19,
+          "prefill_proxy_flops_per_call": 1024000000000.0,
+          "decode_proxy_flops_per_call": 254000000000.0,
+          "training_cost": 89.37388333880739,
+          "setup_cost": 0,
+          "upfront_cost": 89.37388333880739,
+          "cost_per_call": 1.278e-06,
+          "lifetime_inference_cost": 0.0,
+          "total_cost": 89.37388333880739,
+          "outside_fit_box": false,
+          "extrapolation_factors": {
+            "N": 1,
+            "D": 1
+          }
+        },
+        {
+          "N": 2810000000.0,
+          "D": 8595274071.065386,
+          "feasible": true,
+          "predicted_loss": 2.9,
+          "training_proxy_flops": 1.449163208381624e+20,
+          "prefill_proxy_flops_per_call": 2877440000000.0,
+          "decode_proxy_flops_per_call": 713740000000.0,
+          "training_cost": 144.91632083816242,
+          "setup_cost": 0,
+          "upfront_cost": 144.91632083816242,
+          "cost_per_call": 3.59118e-06,
+          "lifetime_inference_cost": 0.0,
+          "total_cost": 144.91632083816242,
+          "outside_fit_box": true,
+          "extrapolation_factors": {
+            "N": 2.5631670163276477,
+            "D": 1
+          }
+        }
+      ],
+      "crossovers": [
+        {
+          "left_N": 100000000.0,
+          "right_N": 500000000.0,
+          "calls": 204789774.70331654,
+          "status": "nonnegative_crossing"
+        },
+        {
+          "left_N": 100000000.0,
+          "right_N": 1000000000.0,
+          "calls": 78050274.80566463,
+          "status": "nonnegative_crossing"
+        },
+        {
+          "left_N": 100000000.0,
+          "right_N": 2810000000.0,
+          "calls": 9883694.131778907,
+          "status": "nonnegative_crossing"
+        },
+        {
+          "left_N": 500000000.0,
+          "right_N": 1000000000.0,
+          "calls": null,
+          "status": "negative_crossing"
+        },
+        {
+          "left_N": 500000000.0,
+          "right_N": 2810000000.0,
+          "calls": null,
+          "status": "negative_crossing"
+        },
+        {
+          "left_N": 1000000000.0,
+          "right_N": 2810000000.0,
+          "calls": null,
+          "status": "negative_crossing"
+        }
+      ],
+      "optimal_N": 500000000.0,
+      "status": "finite_candidate_optimum"
+    },
+    "crossing_calls": 204789774.70331654
+  },
+  "3-8": {
+    "kind": "reported_history_and_analytical_ratios",
+    "dense_rows": [
+      {
+        "input": {
+          "id": "llama1-7b",
+          "parameter_proxy": 6700000000,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": 1000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": 82432,
+          "gpu_family": "A100-80GB",
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "llama1-v1",
+          "source_location": "Tables 2 and 15",
+          "reported_training_flops": null,
+          "scope_notes": ""
+        },
+        "tokens_per_parameter_exact": "10000/67",
+        "proxy_flops": 40200000000000000000000,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "llama2-7b",
+          "parameter_proxy": 7000000000,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": 2000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": 184320,
+          "gpu_family": "A100-80GB",
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "llama2",
+          "source_location": "Tables 1 and 2",
+          "reported_training_flops": null,
+          "scope_notes": ""
+        },
+        "tokens_per_parameter_exact": "2000/7",
+        "proxy_flops": 84000000000000000000000,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "llama31-8b",
+          "parameter_proxy": 8000000000,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": 15000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": 1460000,
+          "gpu_family": "H100-80GB",
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "llama31-card",
+          "source_location": "Training energy use table",
+          "reported_training_flops": null,
+          "scope_notes": "15T is an approximate per-model comparison; family card says 15T+. GPU hours are model-card training totals."
+        },
+        "tokens_per_parameter_exact": "1875",
+        "proxy_flops": 720000000000000000000000,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "qwen25-7b-proxy",
+          "parameter_proxy": 7000000000,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": 18000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": null,
+          "gpu_family": null,
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "qwen25-v2",
+          "source_location": "Sections 3.1–3.2",
+          "reported_training_flops": null,
+          "scope_notes": "Family pretraining token scale applied to an explicit 7B label proxy; complete pretraining GPU hours not disclosed in these sources."
+        },
+        "tokens_per_parameter_exact": "18000/7",
+        "proxy_flops": 756000000000000000000000,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "qwen3-8b-proxy",
+          "parameter_proxy": 8000000000,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": 36000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": null,
+          "gpu_family": null,
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "qwen3",
+          "source_location": "Section 3; Table 21 is a DIFFERENT posttraining experiment",
+          "reported_training_flops": null,
+          "scope_notes": "Family approximate token scale and nominal 8B proxy, not config-exact parameter count. Table21 RL17920/distillation1800 hours are not pretraining hours."
+        },
+        "tokens_per_parameter_exact": "4500",
+        "proxy_flops": 1728000000000000000000000,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      }
+    ],
+    "ratios": [
+      149.2537313432836,
+      285.7142857142857,
+      1875.0,
+      2571.4285714285716,
+      4500.0
+    ],
+    "moe_rows": [
+      {
+        "input": {
+          "id": "deepseek-v3-pretraining",
+          "parameter_proxy": 37000000000,
+          "parameter_proxy_kind": "active_parameter_proxy",
+          "training_tokens": 14800000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": 2664000,
+          "gpu_family": "H800",
+          "gpu_count": 2048,
+          "gpu_count_role": "reported_configuration",
+          "source_id": "deepseek-v3",
+          "source_location": "Table 1 and section 3",
+          "reported_training_flops": null,
+          "scope_notes": "Only pretraining pairs with 14.8T. Context extension119000 and posttraining5000 GPUh separate; 2.788M excludes prior research/ablation costs.",
+          "total_parameters_reported": 671000000000,
+          "active_parameters_reported": 37000000000,
+          "field_source_ids": {
+            "total_parameters_reported": "deepseek-v3",
+            "active_parameters_reported": "deepseek-v3"
+          }
+        },
+        "tokens_per_parameter_exact": "400",
+        "proxy_flops": 3285600000000000000000000,
+        "proxy_kind": "active_parameter_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": "13875/256",
+          "conditional_constant_count_days": 54.19921875,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "conditional_on_constant_reported_configuration",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": 671000000000,
+          "active_reported": 37000000000,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "deepseek-v4-flash",
+          "parameter_proxy": 13000000000,
+          "parameter_proxy_kind": "active_parameter_proxy",
+          "training_tokens": 32000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": null,
+          "gpu_family": null,
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "deepseek-v4",
+          "source_location": "Section 4.2",
+          "reported_training_flops": null,
+          "scope_notes": "Approximate activated parameters are a proxy, not full attention/MTP/precision-aware FLOPs. Training GPU hours not inferred from deployment.",
+          "total_parameters_reported": 284000000000,
+          "active_parameters_reported": 13000000000,
+          "field_source_ids": {
+            "total_parameters_reported": "deepseek-v4",
+            "active_parameters_reported": "deepseek-v4"
+          }
+        },
+        "tokens_per_parameter_exact": "32000/13",
+        "proxy_flops": 2496000000000000000000000,
+        "proxy_kind": "active_parameter_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": 284000000000,
+          "active_reported": 13000000000,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "deepseek-v4-pro",
+          "parameter_proxy": 49000000000,
+          "parameter_proxy_kind": "active_parameter_proxy",
+          "training_tokens": 33000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": null,
+          "gpu_family": null,
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "deepseek-v4",
+          "source_location": "Section 4.2",
+          "reported_training_flops": null,
+          "scope_notes": "Approximate active-parameter proxy, not full training work.",
+          "total_parameters_reported": 1600000000000,
+          "active_parameters_reported": 49000000000,
+          "field_source_ids": {
+            "total_parameters_reported": "deepseek-v4",
+            "active_parameters_reported": "deepseek-v4"
+          }
+        },
+        "tokens_per_parameter_exact": "33000/49",
+        "proxy_flops": 9702000000000000000000000,
+        "proxy_kind": "active_parameter_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": 1600000000000,
+          "active_reported": 49000000000,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      }
+    ]
+  },
+  "3-9": {
+    "kind": "reported_gpu_hours_by_hardware_and_scope",
+    "history_rows": [
+      {
+        "input": {
+          "id": "llama1-7b",
+          "parameter_proxy": 6700000000,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": 1000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": 82432,
+          "gpu_family": "A100-80GB",
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "llama1-v1",
+          "source_location": "Tables 2 and 15",
+          "reported_training_flops": null,
+          "scope_notes": ""
+        },
+        "tokens_per_parameter_exact": "10000/67",
+        "proxy_flops": 40200000000000000000000,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "llama1-65b",
+          "parameter_proxy": 65200000000,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": 1400000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": 1022362,
+          "gpu_family": "A100-80GB",
+          "gpu_count": 2048,
+          "gpu_count_role": "reported_configuration",
+          "source_id": "llama1-v1",
+          "source_location": "Table 15; section 2.4",
+          "reported_training_flops": null,
+          "scope_notes": "Conditional constant-allocation duration; approximately 21 days is a separate narrative value."
+        },
+        "tokens_per_parameter_exact": "3500/163",
+        "proxy_flops": 547680000000000000000000,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": "511181/24576",
+          "conditional_constant_count_days": 20.800008138020832,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "conditional_on_constant_reported_configuration",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "llama2-7b",
+          "parameter_proxy": 7000000000,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": 2000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": 184320,
+          "gpu_family": "A100-80GB",
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "llama2",
+          "source_location": "Tables 1 and 2",
+          "reported_training_flops": null,
+          "scope_notes": ""
+        },
+        "tokens_per_parameter_exact": "2000/7",
+        "proxy_flops": 84000000000000000000000,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "llama2-70b",
+          "parameter_proxy": 70000000000,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": 2000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": 1720320,
+          "gpu_family": "A100-80GB",
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "llama2",
+          "source_location": "Tables 1 and 2",
+          "reported_training_flops": null,
+          "scope_notes": ""
+        },
+        "tokens_per_parameter_exact": "200/7",
+        "proxy_flops": 840000000000000000000000,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "llama31-8b",
+          "parameter_proxy": 8000000000,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": 15000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": 1460000,
+          "gpu_family": "H100-80GB",
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "llama31-card",
+          "source_location": "Training energy use table",
+          "reported_training_flops": null,
+          "scope_notes": "15T is an approximate per-model comparison; family card says 15T+. GPU hours are model-card training totals."
+        },
+        "tokens_per_parameter_exact": "1875",
+        "proxy_flops": 720000000000000000000000,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "llama31-70b",
+          "parameter_proxy": 70000000000,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": 15000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": 7000000,
+          "gpu_family": "H100-80GB",
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "llama31-card",
+          "source_location": "Training energy use table",
+          "reported_training_flops": null,
+          "scope_notes": "15T approximate; family says 15T+. GPU hours are model-card training totals."
+        },
+        "tokens_per_parameter_exact": "1500/7",
+        "proxy_flops": 6300000000000000000000000,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "llama31-405b",
+          "parameter_proxy": 405000000000,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": 15600000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": 30840000,
+          "gpu_family": "H100-80GB",
+          "gpu_count": 16384,
+          "gpu_count_role": "reported_maximum",
+          "source_id": "llama3",
+          "source_location": "Section 3; Table 4 and Llama3.1 model card",
+          "reported_training_flops": 38000000000000000000000000,
+          "scope_notes": "30.84M total model training GPU hours from model card; maximum16384 from report pretraining. Same-scope identity is not established by this cross-source transcription;78.43days is conditional under that additional assumption, not measured calendar time.",
+          "gpu_hours_count_scope_match": null,
+          "field_source_ids": {
+            "gpu_hours": "llama31-card",
+            "gpu_count": "llama3",
+            "reported_training_flops": "llama3",
+            "training_tokens": "llama3"
+          }
+        },
+        "tokens_per_parameter_exact": "1040/27",
+        "proxy_flops": 37908000000000000000000000,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": "9477/9500",
+        "duration": {
+          "conditional_constant_count_days_exact": "160625/2048",
+          "conditional_constant_count_days": 78.43017578125,
+          "conditional_calendar_lower_bound_days_exact": "160625/2048",
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "lower_bound_using_reported_maximum",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "qwen25-7b-proxy",
+          "parameter_proxy": 7000000000,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": 18000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": null,
+          "gpu_family": null,
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "qwen25-v2",
+          "source_location": "Sections 3.1–3.2",
+          "reported_training_flops": null,
+          "scope_notes": "Family pretraining token scale applied to an explicit 7B label proxy; complete pretraining GPU hours not disclosed in these sources."
+        },
+        "tokens_per_parameter_exact": "18000/7",
+        "proxy_flops": 756000000000000000000000,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "qwen3-8b-proxy",
+          "parameter_proxy": 8000000000,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": 36000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": null,
+          "gpu_family": null,
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "qwen3",
+          "source_location": "Section 3; Table 21 is a DIFFERENT posttraining experiment",
+          "reported_training_flops": null,
+          "scope_notes": "Family approximate token scale and nominal 8B proxy, not config-exact parameter count. Table21 RL17920/distillation1800 hours are not pretraining hours."
+        },
+        "tokens_per_parameter_exact": "4500",
+        "proxy_flops": 1728000000000000000000000,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "qwen35-397b",
+          "parameter_proxy": null,
+          "parameter_proxy_kind": "nominal_dense_proxy",
+          "training_tokens": null,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": null,
+          "gpu_family": null,
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "qwen35-blog",
+          "source_location": "Archived official launch page",
+          "reported_training_flops": null,
+          "scope_notes": "Native multimodal training; no closed token/GPU-hour combination in snapshot. Do not inherit Qwen3 36T."
+        },
+        "tokens_per_parameter_exact": null,
+        "proxy_flops": null,
+        "proxy_kind": "nominal_dense_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": null,
+          "active_reported": null,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "deepseek-v3-pretraining",
+          "parameter_proxy": 37000000000,
+          "parameter_proxy_kind": "active_parameter_proxy",
+          "training_tokens": 14800000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": 2664000,
+          "gpu_family": "H800",
+          "gpu_count": 2048,
+          "gpu_count_role": "reported_configuration",
+          "source_id": "deepseek-v3",
+          "source_location": "Table 1 and section 3",
+          "reported_training_flops": null,
+          "scope_notes": "Only pretraining pairs with 14.8T. Context extension119000 and posttraining5000 GPUh separate; 2.788M excludes prior research/ablation costs.",
+          "total_parameters_reported": 671000000000,
+          "active_parameters_reported": 37000000000,
+          "field_source_ids": {
+            "total_parameters_reported": "deepseek-v3",
+            "active_parameters_reported": "deepseek-v3"
+          }
+        },
+        "tokens_per_parameter_exact": "400",
+        "proxy_flops": 3285600000000000000000000,
+        "proxy_kind": "active_parameter_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": "13875/256",
+          "conditional_constant_count_days": 54.19921875,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "conditional_on_constant_reported_configuration",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": 671000000000,
+          "active_reported": 37000000000,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "deepseek-v4-flash",
+          "parameter_proxy": 13000000000,
+          "parameter_proxy_kind": "active_parameter_proxy",
+          "training_tokens": 32000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": null,
+          "gpu_family": null,
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "deepseek-v4",
+          "source_location": "Section 4.2",
+          "reported_training_flops": null,
+          "scope_notes": "Approximate activated parameters are a proxy, not full attention/MTP/precision-aware FLOPs. Training GPU hours not inferred from deployment.",
+          "total_parameters_reported": 284000000000,
+          "active_parameters_reported": 13000000000,
+          "field_source_ids": {
+            "total_parameters_reported": "deepseek-v4",
+            "active_parameters_reported": "deepseek-v4"
+          }
+        },
+        "tokens_per_parameter_exact": "32000/13",
+        "proxy_flops": 2496000000000000000000000,
+        "proxy_kind": "active_parameter_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": 284000000000,
+          "active_reported": 13000000000,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      },
+      {
+        "input": {
+          "id": "deepseek-v4-pro",
+          "parameter_proxy": 49000000000,
+          "parameter_proxy_kind": "active_parameter_proxy",
+          "training_tokens": 33000000000000,
+          "token_scope": "reported/approximate training scale; see scope notes",
+          "gpu_hours": null,
+          "gpu_family": null,
+          "gpu_count": null,
+          "gpu_count_role": null,
+          "source_id": "deepseek-v4",
+          "source_location": "Section 4.2",
+          "reported_training_flops": null,
+          "scope_notes": "Approximate active-parameter proxy, not full training work.",
+          "total_parameters_reported": 1600000000000,
+          "active_parameters_reported": 49000000000,
+          "field_source_ids": {
+            "total_parameters_reported": "deepseek-v4",
+            "active_parameters_reported": "deepseek-v4"
+          }
+        },
+        "tokens_per_parameter_exact": "33000/49",
+        "proxy_flops": 9702000000000000000000000,
+        "proxy_kind": "active_parameter_proxy",
+        "proxy_to_reported_flops_ratio_exact": null,
+        "duration": {
+          "conditional_constant_count_days_exact": null,
+          "conditional_constant_count_days": null,
+          "conditional_calendar_lower_bound_days_exact": null,
+          "calendar_lower_bound_days_exact": null,
+          "gpu_hours_count_scope_match": null,
+          "measured_calendar_days": null,
+          "interpretation": "unknown",
+          "assumption": "GPU hours and count cover the same scope; constant count for the conditional duration. A maximum only bounds elapsed time from below."
+        },
+        "mfu": null,
+        "parameter_context": {
+          "total_reported": 1600000000000,
+          "active_reported": 49000000000,
+          "note": "Reported rounded parameter labels; active proxy is not weight capacity."
+        }
+      }
+    ],
+    "stage_reports": [
+      {
+        "input": {
+          "model": "deepseek-v3",
+          "scope": "reported final training stages; excludes prior research",
+          "parts": {
+            "pretraining": 2664000,
+            "context_extension": 119000,
+            "posttraining": 5000
+          },
+          "reported_total": 2788000,
+          "source_id": "deepseek-v3"
+        },
+        "aggregation": "additive",
+        "summed_gpu_hours_exact": "2788000",
+        "reported_total_matches": true
+      },
+      {
+        "input": {
+          "model": "qwen3-8b-posttraining-experiment",
+          "scope": "alternative Table21 branches, NOT additive or pretraining total",
+          "alternatives": {
+            "reinforcement_learning": 17920,
+            "on_policy_distillation": 1800
+          },
+          "source_id": "qwen3"
+        },
+        "aggregation": "alternatives",
+        "summed_gpu_hours_exact": null,
+        "reported_total_matches": null
+      }
+    ],
+    "missing_is_zero": false
+  },
+  "teaching_diagrams": {
+    "success_cost": {
+      "teaching_assumption": true,
+      "trials": 100,
+      "successes": [
+        50,
+        80
+      ],
+      "relative_total_cost": [
+        100,
+        200
+      ],
+      "cost_per_success": [
+        2,
+        2.5
+      ]
+    },
+    "vision_shapes": {
+      "pixels": [
+        640,
+        640
+      ],
+      "patch_pixels": [
+        16,
+        16
+      ],
+      "patch_grid": [
+        40,
+        40
+      ],
+      "merge": [
+        2,
+        2
+      ],
+      "positions": 400,
+      "feature_groups": 4,
+      "feature_width": 2560,
+      "ec_bytes": 8192000,
+      "kv_bytes": 58982400
+    },
+    "tool_dependency": {
+      "model_seconds": [
+        2,
+        3
+      ],
+      "tool_seconds": [
+        6,
+        10
+      ],
+      "serial_seconds": 21,
+      "parallel_seconds": 15,
+      "retained_GiB": 1,
+      "tool_wait_GiB_s": [
+        16,
+        10
+      ]
+    }
+  }
+}

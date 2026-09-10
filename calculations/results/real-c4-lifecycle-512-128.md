@@ -17,9 +17,9 @@
 
 | 两个 N | 交叉调用数 | 状态 | 代回相对误差 |
 |---|---:|---|---:|
-| 1e+08 / 5e+08 | 204789774.70332453 | nonnegative_crossing | 1.3842678056547066e-16 |
-| 1e+08 / 1e+09 | 78050274.8056683 | nonnegative_crossing | 0.0 |
-| 1e+08 / 2.81e+09 | 9883694.131780138 | nonnegative_crossing | 0.0 |
+| 1e+08 / 5e+08 | 204789774.70331654 | nonnegative_crossing | 0.0 |
+| 1e+08 / 1e+09 | 78050274.80566463 | nonnegative_crossing | 0.0 |
+| 1e+08 / 2.81e+09 | 9883694.131778907 | nonnegative_crossing | 1.5753915659848396e-16 |
 | 5e+08 / 1e+09 | none | negative_crossing | not applicable |
 | 5e+08 / 2.81e+09 | none | negative_crossing | not applicable |
 | 1e+09 / 2.81e+09 | none | negative_crossing | not applicable |
@@ -56,9 +56,9 @@
 
 | 两个 N | 交叉调用数 | 状态 | 代回相对误差 |
 |---|---:|---|---:|
-| 1e+08 / 5e+08 | 205909997.21703523 | nonnegative_crossing | 0.0 |
-| 1e+08 / 1e+09 | 78570983.01130307 | nonnegative_crossing | 0.0 |
-| 1e+08 / 2.81e+09 | 10070988.642015502 | nonnegative_crossing | 0.0 |
+| 1e+08 / 5e+08 | 205909997.21703503 | nonnegative_crossing | 0.0 |
+| 1e+08 / 1e+09 | 78570983.01130292 | nonnegative_crossing | 1.497699469804655e-16 |
+| 1e+08 / 2.81e+09 | 10070988.642015388 | nonnegative_crossing | 1.5701317166092207e-16 |
 | 5e+08 / 1e+09 | none | negative_crossing | not applicable |
 | 5e+08 / 2.81e+09 | none | negative_crossing | not applicable |
 | 1e+09 / 2.81e+09 | none | negative_crossing | not applicable |
@@ -95,9 +95,9 @@
 
 | 两个 N | 交叉调用数 | 状态 | 代回相对误差 |
 |---|---:|---|---:|
-| 1e+08 / 5e+08 | 230557636.9189824 | nonnegative_crossing | 1.2713323836491406e-16 |
-| 1e+08 / 1e+09 | 89634399.22293428 | nonnegative_crossing | 1.382725499684393e-16 |
-| 1e+08 / 2.81e+09 | 13639656.005115308 | nonnegative_crossing | 0.0 |
+| 1e+08 / 5e+08 | 230557636.91899446 | nonnegative_crossing | 1.2713323836490943e-16 |
+| 1e+08 / 1e+09 | 89634399.22293983 | nonnegative_crossing | 1.3827254996843436e-16 |
+| 1e+08 / 2.81e+09 | 13639656.00511722 | nonnegative_crossing | 0.0 |
 | 5e+08 / 1e+09 | none | negative_crossing | not applicable |
 | 5e+08 / 2.81e+09 | none | negative_crossing | not applicable |
 | 1e+09 / 2.81e+09 | none | negative_crossing | not applicable |
@@ -134,9 +134,9 @@
 
 | 两个 N | 交叉调用数 | 状态 | 代回相对误差 |
 |---|---:|---|---:|
-| 1e+08 / 5e+08 | 231823823.35884184 | nonnegative_crossing | 1.2667020579564342e-16 |
-| 1e+08 / 1e+09 | 90220754.51966235 | nonnegative_crossing | 1.3778300459618611e-16 |
-| 1e+08 / 2.81e+09 | 13849062.965877406 | nonnegative_crossing | 1.4462614631002655e-16 |
+| 1e+08 / 5e+08 | 231823823.35885394 | nonnegative_crossing | 1.2667020579563876e-16 |
+| 1e+08 / 1e+09 | 90220754.51966783 | nonnegative_crossing | 0.0 |
+| 1e+08 / 2.81e+09 | 13849062.965879252 | nonnegative_crossing | 0.0 |
 | 5e+08 / 1e+09 | none | negative_crossing | not applicable |
 | 5e+08 / 2.81e+09 | none | negative_crossing | not applicable |
 | 1e+09 / 2.81e+09 | none | negative_crossing | not applicable |
@@ -173,9 +173,9 @@
 
 | 两个 N | 交叉调用数 | 状态 | 代回相对误差 |
 |---|---:|---|---:|
-| 1e+08 / 5e+08 | 204789774.70332453 | nonnegative_crossing | 1.3842678056547066e-16 |
-| 1e+08 / 1e+09 | 78050274.8056683 | nonnegative_crossing | 0.0 |
-| 1e+08 / 2.81e+09 | 9883694.131780138 | nonnegative_crossing | 0.0 |
+| 1e+08 / 5e+08 | 204789774.70331654 | nonnegative_crossing | 0.0 |
+| 1e+08 / 1e+09 | 78050274.80566463 | nonnegative_crossing | 0.0 |
+| 1e+08 / 2.81e+09 | 9883694.131778907 | nonnegative_crossing | 1.5753915659848396e-16 |
 | 5e+08 / 1e+09 | none | negative_crossing | not applicable |
 | 5e+08 / 2.81e+09 | none | negative_crossing | not applicable |
 | 1e+09 / 2.81e+09 | none | negative_crossing | not applicable |

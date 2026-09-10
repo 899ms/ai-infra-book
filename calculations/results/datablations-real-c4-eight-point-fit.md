@@ -32,10 +32,10 @@ Fit SSE 0.000599723345; fixed holdout RMSE 0.0193445386 nats/token.
 
 | Prespecified sensitivity | Status | Holdout RMSE |
 |---|---|---:|
-| shape_N | fit | 0.0191729701704482 |
-| declared_D | fit | 0.02261244803056678 |
-| both | fit | 0.022440654230306577 |
-| wider_grid | fit | 0.019344538649002794 |
+| shape_N | fit | 0.0191729701704489 |
+| declared_D | fit | 0.022612448030567067 |
+| both | fit | 0.022440654230307278 |
+| wider_grid | fit | 0.019344538649002298 |
 
 The shape-N sensitivity uses Appendix S estimates; declared-D uses available launch budgets and retains reported D where unavailable. Neither establishes exact checkpoint parameters or achieved token counters. The wider predetermined exponent grid is not selected by held-out error. C=6ND is analytical proxy compute.
 

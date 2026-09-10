@@ -1,0 +1,410 @@
+[
+  {
+    "section": "1.1.1",
+    "question": "一句请求需要哪些系统能力？",
+    "model": "应用目标到设备执行的逐层展开；跨层管理",
+    "example": "六层全景与同一生成请求",
+    "prediction": "区分需求、执行组织和物理资源；练习 1-1",
+    "action": "压缩组件罗列，围绕请求解释分工"
+  },
+  {
+    "section": "1.1.2",
+    "question": "数据在何时、经过哪里流动？",
+    "model": "模型加载一次、权重每步读取、状态随请求保存",
+    "example": "请求图与数据中心放大图",
+    "prediction": "指出加载与执行的不同频率；预测生成变长后的搬移",
+    "action": "按数据生命周期重写，保留物理拓扑"
+  },
+  {
+    "section": "1.2.1",
+    "question": "优化什么最有效？",
+    "model": "总耗时分解与 Amdahl 定律",
+    "example": "20 次寻道加 CPU 计算",
+    "prediction": "计算局部加速对总时间的影响",
+    "action": "从具体等待推导加速比"
+  },
+  {
+    "section": "1.2.2",
+    "question": "哪些资源数字能够换算成时间？",
+    "model": "容量 M、运算 F、接口读写 R；算力 Π、带宽 β",
+    "example": "H100 三项资源与资源模型图",
+    "prediction": "将每项需求对应到正确分母",
+    "action": "建立统一符号；配置出处移注释"
+  },
+  {
+    "section": "1.2.3",
+    "question": "总容量足够，为什么仍可能放不下？",
+    "model": "参数量乘位宽；逐卡容量约束；单位换算",
+    "example": "70B、80 GB、两卡均分",
+    "prediction": "改变位宽和预留量作容量选择；练习 1-2",
+    "action": "容量与放置先推导后代数值"
+  },
+  {
+    "section": "1.3.1",
+    "question": "单步生成到底使用多少数据与运算？",
+    "model": "M_W=b_W N；F≈2BN；R_W≈b_W N",
+    "example": "70B 一字节权重、单 token 输入",
+    "prediction": "增大 B 时区分常驻量与运算量",
+    "action": "用矩阵乘加解释 2N"
+  },
+  {
+    "section": "1.3.2",
+    "question": "算力、带宽和复用分别怎样改变性能？",
+    "model": "T≥max(F/Π,R/β)；I=F/R；批量转折点",
+    "example": "70B 的 B=1、8 及转折点曲线",
+    "prediction": "判断哪项资源主导；练习 1-3",
+    "action": "补转折点推导，重画预测曲线"
+  },
+  {
+    "section": "1.3.3",
+    "question": "简化模型如何由测量检验和修正？",
+    "model": "预测吞吐与单请求延迟；分离固定和增长开销",
+    "example": "Qwen3-8B 四档 batch 测量",
+    "prediction": "根据偏离提出可检验原因；练习 1-4",
+    "action": "测量围绕预测组织，移除运行叙事"
+  },
+  {
+    "section": "1.4.1",
+    "question": "需求扩大为何改变处理器选择？",
+    "model": "总需求乘单任务成本；通用与专用投入取舍",
+    "example": "TPU 语音需求",
+    "prediction": "预测需求降低或放宽时限后的选择",
+    "action": "历史案例服务资源配置关系"
+  },
+  {
+    "section": "1.4.2",
+    "question": "把工作移到网卡能省下什么？",
+    "model": "包率除以单核服务率；新增接口访问",
+    "example": "40 Gb/s 小包与 3—6 核",
+    "prediction": "区分省下的 CPU 与新增的 PCIe 代价",
+    "action": "围绕执行位置重写"
+  },
+  {
+    "section": "1.4.3",
+    "question": "增加设备后还缺少哪些条件？",
+    "model": "逐设备容量与跨设备依赖",
+    "example": "两卡分工与 Unified Bus",
+    "prediction": "判断容量可行后需要核算的通信",
+    "action": "以第一章模型闭合，桥接下一章"
+  },
+  {
+    "section": "2.1.1",
+    "question": "已知输入为什么可并行，生成为什么串行？",
+    "model": "沿位置与沿层的依赖；因果图",
+    "example": "四位置 RNN、Transformer 图",
+    "prediction": "在图上判定可并行节点；练习 2-1",
+    "action": "先计算依赖再命名模型"
+  },
+  {
+    "section": "2.1.2",
+    "question": "矩阵尺寸怎样变成资源需求？",
+    "model": "Y=XW；N_W=kn；F=2mkn；M_W=b_W kn",
+    "example": "Qwen3-8B；四模型总体表",
+    "prediction": "改变行数和宽度，预测容量与运算",
+    "action": "把通用线性层推导放在参数细表之前"
+  },
+  {
+    "section": "2.1.3",
+    "question": "注意力为什么会随历史长度增长？",
+    "model": "查询-历史位置对；N_pair=B[PS+P(P+1)/2]",
+    "example": "Qwen 的 Q/K/V 与因果三角",
+    "prediction": "同 BP 不同 P/S 时预测注意力变化",
+    "action": "定义变量、图像、求和逐层对应"
+  },
+  {
+    "section": "2.1.4",
+    "question": "一层与整模型怎样累计？",
+    "model": "SwiGLU 三个矩阵；投影线性项与历史交互项",
+    "example": "完整 Qwen 表与 8K 前向",
+    "prediction": "预测序列翻倍时各项变化；练习 2-2",
+    "action": "保留全表，补完整矩阵总量公式"
+  },
+  {
+    "section": "2.2.1",
+    "question": "缓存为什么能省去旧位置重算？",
+    "model": "因果不变性；保存 K/V；c_KV=2Ln_KV d_h b_KV",
+    "example": "每位置 144 KiB",
+    "prediction": "预测位宽、层数和历史长度变化",
+    "action": "解释不保存旧查询的原因"
+  },
+  {
+    "section": "2.2.2",
+    "question": "保存量与读取量为什么不同？",
+    "model": "共享权重、独立状态与临时数据；R_KV=Bc_KV H",
+    "example": "8K/2K 对应 batch 13/51",
+    "prediction": "求历史读取超过权重的转折点",
+    "action": "明确逻辑读取与具体存储接口"
+  },
+  {
+    "section": "2.2.3",
+    "question": "生成整个回答累计做多少工作？",
+    "model": "n_d=G−1；矩形与三角面积求和",
+    "example": "8K 输入、1024 次 decode",
+    "prediction": "输出长度变化后预测状态与累计读取；练习 2-3",
+    "action": "公式与阶梯图互相解释"
+  },
+  {
+    "section": "2.3.1",
+    "question": "多个查询怎样共享同一份历史？",
+    "model": "MHA/GQA/MQA 组数决定状态份数",
+    "example": "四查询头示意",
+    "prediction": "减少 KV 头后分别判断容量与查询工作",
+    "action": "按共享对象解释"
+  },
+  {
+    "section": "2.3.2",
+    "question": "压缩历史如何改变计算位置？",
+    "model": "q(cU_k)^T=(qU_k^T)c^T",
+    "example": "K3 紧凑与展开 MLA",
+    "prediction": "历史越长，上投影放在哪侧更省工作",
+    "action": "用结合律推导，代码差异移注释"
+  },
+  {
+    "section": "2.3.3",
+    "question": "少读历史为什么仍有索引和更新开销？",
+    "model": "窗口、完成压缩块、索引扫描分开计数",
+    "example": "V4 8192 历史",
+    "prediction": "预测历史翻倍与压缩块完成时的变化；练习 2-4",
+    "action": "移除实现进度，保留访问机制"
+  },
+  {
+    "section": "2.3.4",
+    "question": "固定状态如何保存不断到来的历史？",
+    "model": "外积递推；每步读旧写新",
+    "example": "K3 414 MiB 状态与 828 MiB 读写",
+    "prediction": "预测历史变长而状态不变时的资源",
+    "action": "加入读出与更新区别"
+  },
+  {
+    "section": "2.3.5",
+    "question": "混合结构的状态曲线为什么有截距？",
+    "model": "M_state=M_fixed+cH；固定项与线性项交点",
+    "example": "Qwen3.6 与 K3",
+    "prediction": "求短历史/长历史主导项；练习 2-5",
+    "action": "推导交点，曲线连到选择"
+  },
+  {
+    "section": "2.4.1",
+    "question": "模型大而单 token 计算小如何实现？",
+    "model": "E 个专家保存，k 个执行；N_total 与 N_active",
+    "example": "Qwen3.6 的 256 选 8",
+    "prediction": "改变 E/k/f 分别预测权重和计算",
+    "action": "以稠密 FFN 为出发点"
+  },
+  {
+    "section": "2.4.2",
+    "question": "相同 FLOPs 为何读取不同数量权重？",
+    "model": "Σt_e=Bk；非空专家数 U；R_W=Ub_W N_e",
+    "example": "512 行分散到 256 或 8 个专家",
+    "prediction": "根据路由分布求复用与读取",
+    "action": "公式对应专家图与表格"
+  },
+  {
+    "section": "2.4.3",
+    "question": "共享专家和潜空间投影改变哪项成本？",
+    "model": "全输入共同分支；降维专家与额外投影",
+    "example": "V4 与 K3",
+    "prediction": "预测专家宽度与共享分支变化；练习 2-6",
+    "action": "明确各分支的输入尺寸"
+  },
+  {
+    "section": "2.5.1",
+    "question": "相同参数预算为何有不同执行形状？",
+    "model": "Ld² 与 LEdf；深度依赖及专家粒度",
+    "example": "Qwen235 专家数/宽度对换",
+    "prediction": "预测权重集合和 GEMM 行数变化",
+    "action": "用等预算推导取代描述"
+  },
+  {
+    "section": "2.5.2",
+    "question": "连接方式为何增加临时状态？",
+    "model": "残差混合与跨层引用寿命",
+    "example": "mHC、AttnRes 图",
+    "prediction": "改变残差路数或保留块数预测空间",
+    "action": "解释层间临时状态与跨请求历史区别"
+  },
+  {
+    "section": "2.5.3",
+    "question": "预测多个 token 怎样换取更少串行轮次？",
+    "model": "每轮草稿成本+验证成本，除以接受输出数",
+    "example": "V4 MTP 与共享词表头",
+    "prediction": "求推测解码有收益的接受数阈值",
+    "action": "给成本不等式；后端细节移资料"
+  },
+  {
+    "section": "2.6.1",
+    "question": "怎样读完整模型表并解释差异？",
+    "model": "按层型和调用累计，参数分解与资源分解对应",
+    "example": "四主模型完整表；V3 参照",
+    "prediction": "从表推导一个变化场景并解释大小次序",
+    "action": "全表保留，前后加推导与比较问题"
+  },
+  {
+    "section": "2.6.2",
+    "question": "量化能增加多少可容纳请求？",
+    "model": "扣除权重与工作区后按请求状态向下取整",
+    "example": "24 GB Qwen8 与 80 GB 70B",
+    "prediction": "改历史/预留/位宽预测容量；练习 2-7",
+    "action": "算例给出完整代入式"
+  },
+  {
+    "section": "2.6.3",
+    "question": "同长度比较怎样转到同任务选择？",
+    "model": "统一调用长度与统一文本的两种问题",
+    "example": "四模型短请求与短语检索",
+    "prediction": "改 G、S 后重新比较；练习 2-8、2-9",
+    "action": "部署经过移注释，答案质量约束前置"
+  },
+  {
+    "section": "3.1.1",
+    "question": "单次资源需求如何变成服务时间线？",
+    "model": "prefill/decode 放到每个到达时刻",
+    "example": "S=6144/P=2048/G=4",
+    "prediction": "改变到达与批量解释共享机会；练习 3-1",
+    "action": "承接第二章的 M/F/R"
+  },
+  {
+    "section": "3.1.2",
+    "question": "怎样衡量用户真正等了多久？",
+    "model": "TTFT、TPOT、完成时间；状态时间积分",
+    "example": "输出事件与工具等待",
+    "prediction": "区分吞吐、延迟、成功任务费用",
+    "action": "先事件再指标公式"
+  },
+  {
+    "section": "3.1.3",
+    "question": "平均处理能力足够为什么仍积压？",
+    "model": "Q_next=max(0,Q+A−μΔt)",
+    "example": "两类请求两分钟到达",
+    "prediction": "改变突发长度/服务率预测积压；练习 3-2",
+    "action": "推导队列，测量检验等待机制"
+  },
+  {
+    "section": "3.2.1",
+    "question": "缓存命中后还有哪些工作？",
+    "model": "P_new=I−K；历史仍供新查询使用",
+    "example": "四轮代码任务缓存",
+    "prediction": "修改上下文位置预测重算长度",
+    "action": "只保留支撑缓存交换的数字"
+  },
+  {
+    "section": "3.2.2",
+    "question": "增加思考何时值得？",
+    "model": "C_success=C_attempt/p",
+    "example": "单价十分之一、用量二十倍",
+    "prediction": "求成功率增长是否抵偿成本；练习 3-3",
+    "action": "失败实验压缩，中心改为选择模型"
+  },
+  {
+    "section": "3.2.3",
+    "question": "工具反馈如何形成新负载？",
+    "model": "模型→工具→新输入的依赖图",
+    "example": "代码修复与检索",
+    "prediction": "改变返回内容和调用数预测开销",
+    "action": "以反馈改变输入解释循环"
+  },
+  {
+    "section": "3.2.4",
+    "question": "并行工具怎样改变时间与状态？",
+    "model": "串行求和、并行取最大；公共前缀+独立尾部",
+    "example": "Agent 时间与 10 s 工具",
+    "prediction": "关键路径和 byte·s；练习 3-4",
+    "action": "增加可计算的分支时序图"
+  },
+  {
+    "section": "3.3.1",
+    "question": "图片如何变成语言输入与状态？",
+    "model": "像素→patch→合并位置→特征宽度→KV",
+    "example": "640² 图像、400 位置",
+    "prediction": "图像边长翻倍后的 EC/KV；练习 3-5",
+    "action": "位置数与特征宽度分开推导"
+  },
+  {
+    "section": "3.3.2",
+    "question": "生成声音、图像的工作单位是什么？",
+    "model": "帧×帧内调用；位置×去噪步×引导分支",
+    "example": "Fish 与 Qwen-Image",
+    "prediction": "改变帧数/分辨率/步数的影响",
+    "action": "用调用次数模型贯穿"
+  },
+  {
+    "section": "3.3.3",
+    "question": "平均速度足够为何声音仍中断？",
+    "model": "缓冲=累计到达音频−累计播放",
+    "example": "音频到达与消费图",
+    "prediction": "迟到、预缓冲、打断后的需求",
+    "action": "讲清缓冲斜率和耗尽条件"
+  },
+  {
+    "section": "3.4.1",
+    "question": "训练为何增加计算和显存？",
+    "model": "Y、dX、dW 三次矩阵乘；参数状态与激活寿命",
+    "example": "Qwen BF16+FP32 Adam",
+    "prediction": "改变梯度精度/微批后的 M/F",
+    "action": "从求导需求推导新增状态"
+  },
+  {
+    "section": "3.4.2",
+    "question": "相同 token 数为何训练作用不同？",
+    "model": "输入位置、监督位置、累积微批与更新数",
+    "example": "预训练与 SFT 标签掩码",
+    "prediction": "给长度/标签/累积数求更新规模",
+    "action": "实验分类转为数据如何进入损失"
+  },
+  {
+    "section": "3.4.3",
+    "question": "6ND 怎样扩展到整模型训练？",
+    "model": "线性层三倍前向；注意力/输出头/重计算",
+    "example": "Qwen 8K 训练 431.368 TFLOPs",
+    "prediction": "长度/输出头范围变化；练习 3-6",
+    "action": "给粗算与分项误差来源"
+  },
+  {
+    "section": "3.5.1",
+    "question": "RL 为什么同时包含推理与训练？",
+    "model": "生成→反馈→更新→下一版本",
+    "example": "RL/OPD 依赖图",
+    "prediction": "增加教师/环境的新增工作",
+    "action": "模型角色按数据依赖引入"
+  },
+  {
+    "section": "3.5.2",
+    "question": "生成样本数和更新样本数为何不同？",
+    "model": "n_generate=n_keep/a；有效优势与梯度",
+    "example": "32 生成、16 保留",
+    "prediction": "样本通过率改变后的阶段规模",
+    "action": "说明浪费已发生与信号有效性"
+  },
+  {
+    "section": "3.5.3",
+    "question": "保持更新目标怎样计算额外生成？",
+    "model": "F_cycle(n)=n(F_gen+F_ref)+F_update",
+    "example": "32→64；2181.559→3410.701",
+    "prediction": "48 条与教师前向；练习 3-7",
+    "action": "将阶段表变成可代入函数"
+  },
+  {
+    "section": "3.6.1",
+    "question": "固定训练预算怎样选参数和数据？",
+    "model": "Scaling Law 代入 D=C/(6N) 求最优 N",
+    "example": "六点拟合、两点检验",
+    "prediction": "预算倍增后的 N/D 比例；练习 3-8",
+    "action": "先权衡再检验，移除拟合过程叙事"
+  },
+  {
+    "section": "3.6.2",
+    "question": "更多数据投入怎样影响部署选择？",
+    "model": "D/N；6ND；GPU 小时/卡数",
+    "example": "Llama/Qwen 相近规模",
+    "prediction": "区分算法投入与设备时间；练习 3-9、3-10",
+    "action": "数据围绕每参数训练与日历时间"
+  },
+  {
+    "section": "3.6.3",
+    "question": "前期训练何时被服务节省抵偿？",
+    "model": "C_life=C0+Qc；Q*=(C0a−C0b)/(cb−ca)",
+    "example": "训练更久的小模型",
+    "prediction": "给质量和调用量选择方案",
+    "action": "用生命周期交点收束三章"
+  }
+]

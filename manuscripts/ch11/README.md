@@ -18,7 +18,7 @@
 | 11-2 | 模型响应变慢对三类资源需求的不同影响 | [SVG](figure-11-capacity.svg) | [PNG](figure-11-capacity.png) | [PDF](figure-11-capacity.pdf) |
 | 11-3 | Agent 控制器、平台、模型服务与工具隔离边界 | [SVG](figure-11-2-boundary.svg) | [PNG](figure-11-2-boundary.png) | [PDF](figure-11-2-boundary.pdf) |
 | 11-4 | 不同环境内容加载方式的本地数据量 | [SVG](figure-11-pages.svg) | [PNG](figure-11-pages.png) | [PDF](figure-11-pages.pdf) |
-| 11-5 | 同一段模型等待中的内存保留与暂停恢复 | [SVG](figure-11-pause.svg) | [PNG](figure-11-pause.png) | [PDF](figure-11-pause.pdf) |
+| 11-5 | 同一段模型等待中的环境驻留与暂停恢复 | [SVG](figure-11-pause.svg) | [PNG](figure-11-pause.png) | [PDF](figure-11-pause.pdf) |
 | 11-6 | 全程保留环境与每轮重建的内存占用时间 | [SVG](figure-11-residency.svg) | [PNG](figure-11-residency.png) | [PDF](figure-11-residency.pdf) |
 | 11-7 | 准备提前量与调用等待的关系 | [SVG](figure-11-3-lifecycle.svg) | [PNG](figure-11-3-lifecycle.png) | [PDF](figure-11-3-lifecycle.pdf) |
 | 11-8 | 资源碎片与迁移整理前后的节点配置 | [SVG](figure-11-4-placement.svg) | [PNG](figure-11-4-placement.png) | [PDF](figure-11-4-placement.pdf) |
@@ -84,7 +84,7 @@ python manuscripts/ch11/check_reading.py
 | 11-5 | 代码任务经过模型服务与工具环境两条路径。控制器从模型取得参数，再向环境平台发起工具操作；执行结果成为下一轮输入。虚线框标出工具环境所在的执行节点。 | [SVG](figure-11-2-boundary.svg) | [PNG](figure-11-2-boundary.png) | [PDF](figure-11-2-boundary.pdf) |
 | 11-6 | 进程拥有独立地址空间，通过权限限制访问；同一节点上的进程共享宿主内核。 | [SVG](figure-11-isolation-0.svg) | [PNG](figure-11-isolation-0.png) | [PDF](figure-11-isolation-0.pdf) |
 | 11-7 | 容器为任务建立各自的资源视图和配额，底层仍使用同一宿主内核。 | [SVG](figure-11-isolation-1.svg) | [PNG](figure-11-isolation-1.png) | [PDF](figure-11-isolation-1.pdf) |
-| 11-8 | microVM 让每个任务环境运行独立客体内核，通过虚拟硬件访问宿主资源。 | [SVG](figure-11-isolation-2.svg) | [PNG](figure-11-isolation-2.png) | [PDF](figure-11-isolation-2.pdf) |
+| 11-8 | microVM 让每个任务环境运行独立虚拟机内核，通过虚拟硬件访问宿主资源。 | [SVG](figure-11-isolation-2.svg) | [PNG](figure-11-isolation-2.png) | [PDF](figure-11-isolation-2.pdf) |
 | 11-9 | 模板保存共享的文件与依赖，私有内容保存环境修改；程序运行时还会占用进程内存和缓冲区。模板安装量与活跃环境内存分别核算。 | [SVG](figure-11-template-runtime.svg) | [PNG](figure-11-template-runtime.png) | [PDF](figure-11-template-runtime.pdf) |
 | 11-10 | 四种方案采用相同的横轴尺度，比较每个环境本地保存的数据。另有一份共享的 2 GiB 模板，不计入各环境的柱长。数值来自例 11-2；管理开销为每环境 4 MiB。 | [SVG](figure-11-pages.svg) | [PNG](figure-11-pages.png) | [PDF](figure-11-pages.pdf) |
 | 11-11 | 第 10—19 s 等待模型时始终保留 2 GiB 环境，占用 18 GiB·秒。横轴与下一图一致。 | [SVG](figure-11-pause.svg) | [PNG](figure-11-pause.png) | [PDF](figure-11-pause.pdf) |
@@ -94,7 +94,7 @@ python manuscripts/ch11/check_reading.py
 | 11-15 | 按需创建：第 4 s 调用到达才开始准备，第 6 s 就绪，等待 2 s。蓝色为准备，虚线为调用时刻；以下四图使用相同横轴。 | [SVG](figure-11-3-lifecycle.svg) | [PNG](figure-11-3-lifecycle.png) | [PDF](figure-11-3-lifecycle.pdf) |
 | 11-16 | 预测正确且提前 1 s：从第 3 s 准备到第 5 s，调用在第 4 s 到达后仍需等 1 s。 | [SVG](figure-11-prewarm-1.svg) | [PNG](figure-11-prewarm-1.png) | [PDF](figure-11-prewarm-1.pdf) |
 | 11-17 | 预测正确且提前 2 s：准备恰好在第 4 s 调用到达时完成。 | [SVG](figure-11-prewarm-2.svg) | [PNG](figure-11-prewarm-2.png) | [PDF](figure-11-prewarm-2.pdf) |
-| 11-18 | 预测正确且提前 3 s：准备在第 3 s 完成，橙色部分为等待调用的 1 s 就绪空闲。 | [SVG](figure-11-prewarm-3.svg) | [PNG](figure-11-prewarm-3.png) | [PDF](figure-11-prewarm-3.pdf) |
+| 11-18 | 预测正确且提前 3 s：准备在第 3 s 完成，橙色部分为等待调用的 1 s 已就绪但尚未使用的时间。 | [SVG](figure-11-prewarm-3.svg) | [PNG](figure-11-prewarm-3.png) | [PDF](figure-11-prewarm-3.pdf) |
 | 11-19 | 预测错误：第 2—4 s 准备了不需要的环境（灰色）；第 4 s 取消后，再花 2 s 准备实际所需环境。此图采用立即取消、无资源争用的题设。 | [SVG](figure-11-prewarm-wrong.svg) | [PNG](figure-11-prewarm-wrong.png) | [PDF](figure-11-prewarm-wrong.pdf) |
 | 11-20 | 整理前：新作业需要同节点四张 A 型 GPU 与 16 核。节点 1 缺 CPU，节点 2 的 GPU 类型不符。 | [SVG](figure-11-4-placement.svg) | [PNG](figure-11-4-placement.png) | [PDF](figure-11-4-placement.pdf) |
 | 11-21 | 将占用 8 核的 CPU 任务从节点 1 迁到节点 2 后，节点 1 同时拥有四张 A 卡和 16 核，可以启动新作业。 | [SVG](figure-11-placement-after.svg) | [PNG](figure-11-placement-after.png) | [PDF](figure-11-placement-after.pdf) |
@@ -110,7 +110,7 @@ python manuscripts/ch11/check_reading.py
 | 11-31 | B 的成功任务成本随命中率提高而下降，在约 84.9% 处等于 A。两者的成本先按各自成功数归一化；本图只比较成本，下一图单独加入期限。 | [SVG](figure-11-7-routing.svg) | [PNG](figure-11-7-routing.png) | [PDF](figure-11-7-routing.pdf) |
 | 11-32 | 只有 B 命中的 4 s 路径满足 6 s 期限；再乘 98% 质量概率，按时成功比例为 0.98h。达到 90% 目标要求 h 至少约 91.8%。 | [SVG](figure-11-routing-deadline.svg) | [PNG](figure-11-routing-deadline.png) | [PDF](figure-11-routing-deadline.pdf) |
 | 11-33 | 自建总成本为 1,000＋0.002N，API 为 0.012N，其中 N 为提交任务数。两者成功率相同，并有足够能力满足期限。自建曲线起点较高、斜率较小，在 100,000 项时与 API 相交。 | [SVG](figure-11-purchase.svg) | [PNG](figure-11-purchase.png) | [PDF](figure-11-purchase.pdf) |
-| 11-34 | 外部系统已执行并提交操作 K，确认却丢失。恢复环境不会撤回外部效果；控制器按同一操作 ID 查询结果后接续任务。实线表示请求与执行，虚线表示确认及恢复查询。 | [SVG](figure-11-commit-ack.svg) | [PNG](figure-11-commit-ack.png) | [PDF](figure-11-commit-ack.pdf) |
+| 11-34 | 外部系统已执行并提交操作 K，确认却丢失。恢复环境不会撤回外部操作的结果；控制器按同一操作 ID 查询结果后接续任务。实线表示请求与执行，虚线表示确认及恢复查询。 | [SVG](figure-11-commit-ack.svg) | [PNG](figure-11-commit-ack.png) | [PDF](figure-11-commit-ack.pdf) |
 | 11-35 | 首次尝试在 10 s 后分为成功、局部修复、直接升级三类。框内比例以全部提交为分母；下一图展开修复的条件分支。 | [SVG](figure-11-retry-tree.svg) | [PNG](figure-11-retry-tree.png) | [PDF](figure-11-retry-tree.pdf) |
 | 11-36 | 把修复节点放大：进入此处的 12% 中，60% 修复成功，占全部提交 7.2%；40% 转入升级，占全部提交 4.8%。升级再用 8 s，因此后一条路径累计 22 s。 | [SVG](figure-11-retry-conditional.svg) | [PNG](figure-11-retry-conditional.png) | [PDF](figure-11-retry-conditional.pdf) |
 | 11-37 | 同一批提交任务换用恢复策略后的成本与结果。各柱均以相应策略的全部支出为分子，再分别除以通过测试的任务数或按时通过测试的任务数；只做首次尝试的成功率为 80%，有限恢复策略约为 99.7%，其中约 95.0% 的提交在 20 秒内成功。分支概率、成本和时间见例 11-8，期限用于评价而不强制停止执行。 | [SVG](figure-11-8-retry.svg) | [PNG](figure-11-8-retry.png) | [PDF](figure-11-8-retry.pdf) |

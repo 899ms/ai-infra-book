@@ -26,6 +26,9 @@ def run(command, *, cwd=HERE, log=None):
 def prepare(source, dest, assets, source_ref=None):
     text = source.read_text()
     number = int(source.name[:2])
+    if number == 0:
+        text = re.sub(r'^# 前言$', '# 前言 {.unnumbered}', text, flags=re.M)
+        text = re.sub(r'^(## .+)$', r'\1 {.unnumbered}', text, flags=re.M)
     text = re.sub(r'^# 第\s*\d+\s*章\s*(.*)$', rf'# \1 {{#chapter-{number}}}', text, flags=re.M)
     text = re.sub(r'<a id="([^"]+)"></a>\s*\n+(#{1,6} [^\n]+)',
                   lambda m: m[2]+' {#'+m[1]+'}', text)
@@ -81,9 +84,21 @@ def main():
         prepare(source,target,assets,args.source_ref)
         inputs.append(target)
     before = work / 'frontmatter.tex'
-    edition = f'第 {args.chapter} 章排版样张' if args.chapter else '全书审阅版'
+    edition = f'第 {args.chapter} 章排版样张' if args.chapter else 'v0.1'
     before.write_text('\\renewcommand{\\BookEdition}{'+edition+'}\n\\input{cover.tex}\n'
                      '\\pagenumbering{Roman}\n')
+    front_sources = []
+    if not args.chapter:
+        preface = MANUSCRIPTS / '00-前言.md'
+        prepared_preface = work / preface.name
+        prepare(preface, prepared_preface, assets, args.source_ref)
+        preface_tex = work / 'preface.tex'
+        run(['pandoc', str(prepared_preface), '--to=latex',
+             '--lua-filter='+str(HERE/'layout.lua'),
+             '--top-level-division=chapter', '-o', str(preface_tex)],
+            log=work / 'preface-pandoc.log')
+        before.write_text(before.read_text() + '\\input{' + str(preface_tex) + '}\n\\clearpage\n')
+        front_sources.append(preface)
     # mainmatter starts after the TOC, immediately before the first source chapter.
     first = inputs[0]
     first.write_text('```{=latex}\n\\clearpage\n\\pagenumbering{arabic}\n'
@@ -112,7 +127,7 @@ def main():
     warnings = [line for line in log.splitlines() if any(x in line for x in ['Overfull','Missing character:','undefined references','LaTeX Warning:'])]
     report = dict(output=str(output), source_ref=args.source_ref, chapters=[int(s.name[:2]) for s in sources],
                   engine='Pandoc + XeLaTeX / ElegantBook (AI Agent Book series template)',
-                  sources=[dict(path=str(p.relative_to(ROOT)),sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in sources],
+                  sources=[dict(path=str(p.relative_to(ROOT)),sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in front_sources + sources],
                   figure_count=len(assets),warnings=warnings)
     (output_dir/f'{name}-build.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
     if not args.chapter and shutil.which('pdfseparate') and shutil.which('pdftoppm'):

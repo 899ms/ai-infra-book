@@ -52,7 +52,7 @@ python manuscripts/ch01/build.py
 | 1-11 | 批内请求增加时，矩阵运算量按 $2BN$ 增长，权重读取保持每批 70 GB。约 148 个请求处两项下界相等，随后计算项主导。 | [SVG](figure-1-batch-transition.svg) | [PNG](figure-1-batch-transition.png) | [PDF](figure-1-batch-transition.pdf) |
 | 1-12 | 同一批量模型的理想输出吞吐。每批输出数除以时间下界得到曲线；竖虚线与前图对应同一个约 148 请求的转折点。 | [SVG](figure-1-batch-throughput.svg) | [PNG](figure-1-batch-throughput.png) | [PDF](figure-1-batch-throughput.pdf) |
 | 1-13 | Qwen3-8B 实测的整批输出吞吐。四档请求数等距排列，纵轴从零开始；模型、精度、输入输出长度和计时范围保持一致。 | [SVG](figure-1-measured-throughput.svg) | [PNG](figure-1-measured-throughput.png) | [PDF](figure-1-measured-throughput.pdf) |
-| 1-14 | 同一组实测中的每请求输出间隔。吞吐增加的同时，单个请求的平均间隔也在增大；两张图分别回答设备产出和用户等待的问题。 | [SVG](figure-1-measured-tpot.svg) | [PNG](figure-1-measured-tpot.png) | [PDF](figure-1-measured-tpot.pdf) |
+| 1-14 | 同一组实测中的每请求输出间隔。吞吐增加的同时，单个请求的平均间隔也在增大；两张图分别说明设备的输出速度和用户的等待时间。 | [SVG](figure-1-measured-tpot.svg) | [PNG](figure-1-measured-tpot.png) | [PDF](figure-1-measured-tpot.pdf) |
 | 1-15 | 专用处理器围绕反复出现的矩阵运算组织计算阵列和输入输出缓冲。缓冲是临时保存待计算或已算完数据的存储区域；三个方框及其箭头展示数据搬运方向。 | [SVG](figure-1-design-tpu.svg) | [PNG](figure-1-design-tpu.png) | [PDF](figure-1-design-tpu.pdf) |
 | 1-16 | 可编程网卡在数据进入主机前完成指定的包处理。图中实线跟踪数据；网卡承担的处理减少主机 CPU 的辅助工作。 | [SVG](figure-1-design-smartnic.svg) | [PNG](figure-1-design-smartnic.png) | [PDF](figure-1-design-smartnic.pdf) |
 | 1-17 | 统一互联连接不同设备的计算与存储资源。模型分工确定要交换什么，互联负责把数据送到后续使用它的设备。 | [SVG](figure-1-design-ub.svg) | [PNG](figure-1-design-ub.png) | [PDF](figure-1-design-ub.pdf) |

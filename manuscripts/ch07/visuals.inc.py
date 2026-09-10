@@ -79,7 +79,7 @@ save(f,'figure-7-9-window');data['7-9']={'kind':'derived teaching','transaction_
 f,ax=plt.subplots(figsize=(11,4.8));f.subplots_adjust(left=.18,right=.95,top=.82,bottom=.18)
 ax.broken_barh([(0,5)],(1.7,.5),facecolors=C['blue']);ax.broken_barh([(5,9)],(1.7,.5),facecolors=C['light'])
 ax.broken_barh([(0,8)],(.7,.5),facecolors='#f6e3c9');ax.broken_barh([(8,4)],(.7,.5),facecolors=C['orange']);ax.broken_barh([(12,2)],(.7,.5),facecolors=C['light'])
-for x,y,t in [(2.5,1.95,'发送中'),(9.5,1.95,'源缓冲可复用'),(4,.95,'目的缓冲保留'),(10,.95,'接收方使用')]:ax.text(x,y,t,ha='center',va='center',fontsize=11)
+for x,y,t in [(2.5,1.95,'发送中'),(9.5,1.95,'源缓冲可复用'),(4,.95,'目的缓冲占用'),(10,.95,'接收方使用')]:ax.text(x,y,t,ha='center',va='center',fontsize=11)
 ax.plot([6,6],[.2,1.35],color=C['red'],lw=1.5);ax.scatter([6],[.95],marker='x',s=75,c=C['red']);ax.text(6,.04,'6 μs 覆盖：新数据会替换旧数据',ha='center',fontsize=10,color=C['red'])
 ax.set(xlim=(0,14),ylim=(-.2,2.6),yticks=[1.95,.95],yticklabels=['源缓冲区','目的缓冲区'],xticks=[0,5,8,12,14],xlabel='时间 / μs',title='发送完成后，接收方可能还没有开始使用数据')
 save(f,'figure-7-10-lifetime');data['7-10']={'kind':'teaching ownership timeline','source_reusable_us':5,'consumer_start_us':8,'destination_reusable_us':12,'incorrect_overwrite_us':6}

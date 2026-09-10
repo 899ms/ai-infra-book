@@ -15,7 +15,7 @@ def check(name,condition):
  if not condition:errors.append(name)
 def close(x,y):return abs(x-y)<1e-8
 outline=(ROOT/'outlines/12-端边云协同.md').read_text()
-check('six_sections',re.findall(r'^## (12\.\d+) ',text,re.M)==[f'12.{i}' for i in range(1,7)])
+check('five_sections',re.findall(r'^## (12\.\d+) ',text,re.M)==[f'12.{i}' for i in range(1,6)])
 check('subsection_numbers_match_outline',re.findall(r'^### (12\.\d+\.\d+) ',text,re.M)==re.findall(r'^### (12\.\d+\.\d+) ',outline,re.M))
 check('eight_exercises',re.findall(r'^\*\*(12-\d+)\s',text,re.M)==[f'12-{i}' for i in range(1,9)])
 check('three_core_exercises',re.findall(r'^\*\*(12-\d+)[^\n]*〔核心',text,re.M)==['12-2','12-3','12-7'])

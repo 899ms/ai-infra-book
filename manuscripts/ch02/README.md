@@ -69,7 +69,7 @@ python manuscripts/ch02/build.py
 | 2-11 | 两种计算路径改变上投影的位置。展开路径先恢复上下文键，紧凑路径先变换当前查询，再直接读取潜变量；结合律保证对应点积可以按这两种次序计算。 | [SVG](figure-2-mla-paths.svg) | [PNG](figure-2-mla-paths.png) | [PDF](figure-2-mla-paths.pdf) |
 | 2-12 | Kimi K3 的 24 层 MLA 在相同 8K 上下文、BF16 下的两种保存量。紧凑路径保存上投影前的表示，展开路径保存各头的键和值。 | [SVG](figure-2-mla-capacity.svg) | [PNG](figure-2-mla-capacity.png) | [PDF](figure-2-mla-capacity.pdf) |
 | 2-13 | 上下文压缩与索引选择的先后关系。上方用八个位置、每四个合成一条演示压缩，下方展示一次查询先扫描索引再读取主状态的过程。 | [SVG](figure-2-5-sparse.svg) | [PNG](figure-2-5-sparse.png) | [PDF](figure-2-5-sparse.pdf) |
-| 2-14 | DeepSeek V4-Flash 在 8K 上下文下的四项状态。窗口、压缩上下文和索引是已保留的上下文；压缩缓冲保存尚在汇总或更新中的数据，单独计入容量。 | [SVG](figure-2-sparse-capacity.svg) | [PNG](figure-2-sparse-capacity.png) | [PDF](figure-2-sparse-capacity.pdf) |
+| 2-14 | DeepSeek V4-Flash 在 8K 上下文下的四项状态。窗口、压缩上下文和索引保存已处理的上下文信息；压缩缓冲保存尚在汇总或更新中的数据，单独计入容量。 | [SVG](figure-2-sparse-capacity.svg) | [PNG](figure-2-sparse-capacity.png) | [PDF](figure-2-sparse-capacity.pdf) |
 | 2-15 | 压缩比为四时的一次块完成过程。前几次输入更新同一块内缓冲，第四个位置到来后形成可供后续查询使用的压缩条目。 | [SVG](figure-2-compression-steps.svg) | [PNG](figure-2-compression-steps.png) | [PDF](figure-2-compression-steps.pdf) |
 | 2-16 | 固定矩阵的递推更新。新键和值的外积加入旧状态，矩阵形状保持不变；查询使用更新后的状态计算输出。本图采用简单累加递推。 | [SVG](figure-2-recurrence.svg) | [PNG](figure-2-recurrence.png) | [PDF](figure-2-recurrence.pdf) |
 | 2-17 | Qwen3.6 的两类层。配置决定每层采用线性或完整注意力，随后都执行路由专家和共享专家；上方两个分支分别表示线性注意力和完整注意力，模型分别有 30 层与 10 层。 | [SVG](figure-2-6-hybrid.svg) | [PNG](figure-2-6-hybrid.png) | [PDF](figure-2-6-hybrid.pdf) |
@@ -85,8 +85,8 @@ python manuscripts/ch02/build.py
 | 2-27 | 相同 8K 上下文下的每请求状态。上下文表示采用 BF16，递推矩阵和压缩缓冲采用相应实现的精度；各项合计对应表 2-C。 | [SVG](figure-2-resources-state.svg) | [PNG](figure-2-resources-state.png) | [PDF](figure-2-resources-state.pdf) |
 | 2-28 | 已有 8K／200K 上下文后再处理一个 token 的矩阵运算量。蓝、橙分别对应两种上下文长度，横轴为对数刻度，柱端标出 GFLOPs。沿用表 2-C 的 decode 路径，Kimi K3 的 KDA 使用递推、MLA 使用紧凑表示。星号表示 Qwen3-8B 的 200K 条件超过本章固定配置的未缩放上下文上限，仅按原结构外推。 | [SVG](figure-2-long-context-compute.svg) | [PNG](figure-2-long-context-compute.png) | [PDF](figure-2-long-context-compute.pdf) |
 | 2-29 | 权重、固定预留和一条请求 KV 的逐项容量。短竖线标出各设备容量；KV 采用 BF16、上下文长度 8192，固定预留为 2 GiB。 | [SVG](figure-2-9-capacity.svg) | [PNG](figure-2-9-capacity.png) | [PDF](figure-2-9-capacity.pdf) |
-| 2-30 | 70B 的 4-bit 方案在同一张 80 GB 设备上，上下文长度从 8K 增至 32K 时允许保留的独立请求数。每请求状态增加，使剩余空间容纳的请求数减少。 | [SVG](figure-2-history-capacity.svg) | [PNG](figure-2-history-capacity.png) | [PDF](figure-2-history-capacity.pdf) |
-| 2-31 | 从设备反推权重预算。24 GB 中先保留 4 条 8K 请求的 KV 和 2 GiB 工作区，余量给出 BF16 参数上界；图中容量均为十进制 GB。 | [SVG](figure-2-reverse-budget.svg) | [PNG](figure-2-reverse-budget.png) | [PDF](figure-2-reverse-budget.pdf) |
+| 2-30 | 70B 的 4-bit 方案在同一张 80 GB 设备上，上下文长度从 8K 增至 32K 时可同时容纳的独立请求数。每请求状态增加，使剩余空间容纳的请求数减少。 | [SVG](figure-2-history-capacity.svg) | [PNG](figure-2-history-capacity.png) | [PDF](figure-2-history-capacity.pdf) |
+| 2-31 | 从设备反推权重预算。24 GB 中先为 4 条 8K 请求的 KV 和 2 GiB 工作区预留空间，余量给出 BF16 参数上界；图中容量均为十进制 GB。 | [SVG](figure-2-reverse-budget.svg) | [PNG](figure-2-reverse-budget.png) | [PDF](figure-2-reverse-budget.pdf) |
 | 2-32 | 生成四个输出的调用顺序。prefill 处理 128 个输入并产生首输出，随后三次 decode 各将前一输出送回模型；最终保留 131 个位置。 | [SVG](figure-2-10-request.svg) | [PNG](figure-2-10-request.png) | [PDF](figure-2-10-request.pdf) |
 | 2-33 | 同一 128 输入、四输出请求的矩阵运算量。模型执行范围与缓存路径见本节题设；这是逐调用累计的计算量。 | [SVG](figure-2-request-compute.svg) | [PNG](figure-2-request-compute.png) | [PDF](figure-2-request-compute.pdf) |
 
@@ -110,7 +110,7 @@ python manuscripts/ch02/build.py
 | 2-11 | 两种计算路径改变上投影的位置。展开路径先恢复上下文键，紧凑路径先变换当前查询，再直接读取潜变量；结合律保证对应点积可以按这两种次序计算。 | [SVG](figure-2-mla-paths.svg) |
 | 2-12 | Kimi K3 的 24 层 MLA 在相同 8K 上下文、BF16 下的两种保存量。紧凑路径保存上投影前的表示，展开路径保存各头的键和值。 | [SVG](figure-2-mla-capacity.svg) |
 | 2-13 | 上下文压缩与索引选择的先后关系。上方用八个位置、每四个合成一条演示压缩，下方展示一次查询先扫描索引再读取主状态的过程。 | [SVG](figure-2-5-sparse.svg) |
-| 2-14 | DeepSeek V4-Flash 在 8K 上下文下的四项状态。窗口、压缩上下文和索引是已保留的上下文；压缩缓冲保存尚在汇总或更新中的数据，单独计入容量。 | [SVG](figure-2-sparse-capacity.svg) |
+| 2-14 | DeepSeek V4-Flash 在 8K 上下文下的四项状态。窗口、压缩上下文和索引保存已处理的上下文信息；压缩缓冲保存尚在汇总或更新中的数据，单独计入容量。 | [SVG](figure-2-sparse-capacity.svg) |
 | 2-15 | 压缩比为四时的一次块完成过程。前几次输入更新同一块内缓冲，第四个位置到来后形成可供后续查询使用的压缩条目。 | [SVG](figure-2-compression-steps.svg) |
 | 2-16 | 固定矩阵的递推更新。新键和值的外积加入旧状态，矩阵形状保持不变；查询使用更新后的状态计算输出。本图采用简单累加递推。 | [SVG](figure-2-recurrence.svg) |
 | 2-17 | Qwen3.6 的两类层。配置决定每层采用线性或完整注意力，随后都执行路由专家和共享专家；上方两个分支分别表示线性注意力和完整注意力，模型分别有 30 层与 10 层。 | [SVG](figure-2-6-hybrid.svg) |
@@ -128,7 +128,7 @@ python manuscripts/ch02/build.py
 | 2-29 | 相同 8K 上下文下的每请求状态。上下文表示采用 BF16，递推矩阵和压缩缓冲采用相应实现的精度；各项合计对应表 2-C。 | [SVG](figure-2-resources-state.svg) |
 | 2-30 | 已有 8K／200K 上下文后再处理一个 token 的矩阵运算量。蓝、橙分别对应两种上下文长度，横轴为对数刻度，柱端标出 GFLOPs。沿用表 2-C 的 decode 路径，Kimi K3 的 KDA 使用递推、MLA 使用紧凑表示。星号表示 Qwen3-8B 的 200K 条件超过本章固定配置的未缩放上下文上限，仅按原结构外推。 | [SVG](figure-2-long-context-compute.svg) |
 | 2-31 | 权重、固定预留和一条请求 KV 的逐项容量。短竖线标出各设备容量；KV 采用 BF16、上下文长度 8192，固定预留为 2 GiB。 | [SVG](figure-2-9-capacity.svg) |
-| 2-32 | 70B 的 4-bit 方案在同一张 80 GB 设备上，上下文长度从 8K 增至 32K 时允许保留的独立请求数。每请求状态增加，使剩余空间容纳的请求数减少。 | [SVG](figure-2-history-capacity.svg) |
-| 2-33 | 从设备反推权重预算。24 GB 中先保留 4 条 8K 请求的 KV 和 2 GiB 工作区，余量给出 BF16 参数上界；图中容量均为十进制 GB。 | [SVG](figure-2-reverse-budget.svg) |
+| 2-32 | 70B 的 4-bit 方案在同一张 80 GB 设备上，上下文长度从 8K 增至 32K 时可同时容纳的独立请求数。每请求状态增加，使剩余空间容纳的请求数减少。 | [SVG](figure-2-history-capacity.svg) |
+| 2-33 | 从设备反推权重预算。24 GB 中先为 4 条 8K 请求的 KV 和 2 GiB 工作区预留空间，余量给出 BF16 参数上界；图中容量均为十进制 GB。 | [SVG](figure-2-reverse-budget.svg) |
 | 2-34 | 生成四个输出的调用顺序。prefill 处理 128 个输入并产生首输出，随后三次 decode 各将前一输出送回模型；最终保留 131 个位置。 | [SVG](figure-2-10-request.svg) |
 | 2-35 | 同一 128 输入、四输出请求的矩阵运算量。模型执行范围与缓存路径见本节题设；这是逐调用累计的计算量。 | [SVG](figure-2-request-compute.svg) |

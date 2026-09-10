@@ -73,7 +73,7 @@ python3 -m venv /tmp/ch04-book-venv
 | 4-20 | 8 KiB 小消息的启动与传输。固定启动两微秒，带宽从 100 增至 200 GB/s 只缩短蓝色传输项。 | [SVG](figure-4-11-interconnect.svg) | [PNG](figure-4-11-interconnect.png) | [PDF](figure-4-11-interconnect.pdf) |
 | 4-21 | 2 MiB 消息在相同启动条件下的传输时间。较大的蓝色传输项使带宽翻倍带来更显著的收益；本图纵轴范围与小消息图分别标注。 | [SVG](figure-4-large-message.svg) | [PNG](figure-4-large-message.png) | [PDF](figure-4-large-message.pdf) |
 | 4-22 | 固定权重的同时，各请求仍独立读取 KV。题设每请求保留 8K 上下文，batch 从十三起 KV 读取超过共享权重读取。 | [SVG](figure-4-12-specialization.svg) | [PNG](figure-4-12-specialization.png) | [PDF](figure-4-12-specialization.pdf) |
-| 4-23 | 独立只读权重改变两条存储路径。上方权重与 KV 争用 HBM；下方 ROM 提供权重，HBM 保留可写状态。箭头表示读取，KV 还需写入新状态。 | [SVG](figure-4-rom-paths.svg) | [PNG](figure-4-rom-paths.png) | [PDF](figure-4-rom-paths.pdf) |
+| 4-23 | 独立只读权重改变两条存储路径。上方权重与 KV 争用 HBM；下方 ROM 提供权重，HBM 存放可写状态。箭头表示读取，KV 还需写入新状态。 | [SVG](figure-4-rom-paths.svg) | [PNG](figure-4-rom-paths.png) | [PDF](figure-4-rom-paths.pdf) |
 | 4-24 | 同一 Q 投影随输入行数增加的资源时间。计算量按行数增长，片外访问同时包含固定权重和增长的输入输出；从 179 行起计算项较长。 | [SVG](figure-4-13-roofline.svg) | [PNG](figure-4-13-roofline.png) | [PDF](figure-4-13-roofline.pdf) |
 | 4-25 | RTX PRO 6000 的投影总耗时。每个条件测十一轮、每轮十六次调用，取每轮平均耗时的中位数；计时包含提交与同步。 | [SVG](figure-4-14-performance.svg) | [PNG](figure-4-14-performance.png) | [PDF](figure-4-14-performance.pdf) |
 | 4-26 | 相同四个条件下另行采集的 DRAM 读取计数。单行均约 32 MiB，256 行复用为 256 bytes、轮换约 32.1 MiB。访问计数与常规计时分别测量。 | [SVG](figure-4-performance-traffic.svg) | [PNG](figure-4-performance-traffic.png) | [PDF](figure-4-performance-traffic.pdf) |

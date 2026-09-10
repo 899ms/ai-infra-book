@@ -6,6 +6,7 @@
 
 正文以十二章 Markdown 为唯一维护源，在线阅读网站由 GitHub Actions 自动构建。
 
+- [前言](manuscripts/00-前言.md)：写作缘起、UB 与数据中心网络经历，以及量化分析的方法。
 - [十二章正文与配图](manuscripts/README.md)。
 - [逐章 Markdown 大纲](outlines/README.md)：十二章的主张、推导、练习和配图。
 - [网站构建与发布说明](website/README.md)：push 到 main 后自动构建 PDF 与网站，发布 GitHub Release 和 GitHub Pages。

@@ -3,6 +3,54 @@ import numpy as np
 import matplotlib.pyplot as plt
 from figure_style import COL,STYLE,canvas,plot,text,box,arrow,Exporter
 
+def draw_encoder_paths(out):
+    """Show the same vision stages with the network boundary in two places."""
+    with plt.rc_context(STYLE):
+        for local, name in [(False, 'encoder-remote'), (True, 'encoder-local')]:
+            f, a = canvas(6.5)
+            # Two device lanes; vertical order follows the execution order.
+            for x, title in [(.02, '端侧设备'), (.59, '远端服务器')]:
+                box(a, x, .32, .39, .63, '', 'gray')
+                text(a, x + .195, .918, title, 13, ha='center', weight='medium')
+            a.plot([.5, .5], [.34, .95], color=COL['line'], lw=.8, ls=':')
+            text(a, .5, .983, '部署边界：上行 6.4 Mbit/s', 12, ha='center')
+            box(a, .045, .80, .34, .072, '压缩截图  0.8 MB', 'blue', 11)
+            x = .045 if local else .615
+            cx = x + .17
+            if not local:
+                box(a, .615, .80, .34, .072, '接收压缩图片', 'blue', 11)
+                arrow(a, (.385, .836), (.615, .836))
+                text(a, .50, .875, '图片', 11, ha='center')
+                text(a, .215, .68, '上传图片', 12, ha='center')
+                text(a, .215, .61, '0.8 MB ÷ 0.8 MB/s\n= 1.00 s', 11, ha='center')
+                text(a, .215, .45, '视觉计算在远端完成\n特征留在服务器内', 11, ha='center')
+            box(a, x, .684, .34, .076, '解码与预处理\n缩放至 640 × 640', 'blue', 11)
+            arrow(a, (cx, .80), (cx, .76))
+            box(a, x, .562, .34, .080, '视觉编码与图像块合并\n形成 400 个视觉位置', 'green', 11)
+            arrow(a, (cx, .684), (cx, .642))
+            box(a, x, .430, .34, .090, '最终投影 + 3 组 DeepStack\n完整 BF16 特征  8.192 MB', 'green', 11)
+            arrow(a, (cx, .562), (cx, .520))
+            if local:
+                box(a, .615, .430, .34, .090, '接收并还原四组特征\n形状、精度与模型匹配', 'green', 11)
+                arrow(a, (.385, .475), (.615, .475))
+                text(a, .5, .536, '完整特征', 11, ha='center')
+                text(a, .785, .77, '上传完整数值特征', 12, ha='center')
+                text(a, .785, .68, '8.192 MB ÷ 0.8 MB/s\n= 10.24 s', 11, ha='center')
+                text(a, .215, .363, '本地编码后序列化发送', 11, ha='center')
+            arrow(a, (.785, .430), (.785, .397))
+            arrow(a, (.785, .343), (.785, .307))
+            text(a, .785, .367, '送入远端语言模型', 11, ha='center')
+            # Both placements use identical downstream feature interfaces.
+            box(a, .02, .025, .96, .277, '', 'white')
+            text(a, .50, .272, '四组特征如何进入语言模型', 12, ha='center', weight='medium')
+            box(a, .045, .162, .39, .060, '最终投影  [400, 2560]', 'green', 11)
+            box(a, .565, .162, .39, .060, '与文本嵌入组成输入', 'purple', 11)
+            arrow(a, (.435, .192), (.565, .192))
+            box(a, .045, .072, .39, .060, 'DeepStack  3 × [400, 2560]', 'green', 11)
+            box(a, .565, .072, .39, .060, '分别注入对应的中间层', 'purple', 11)
+            arrow(a, (.435, .102), (.565, .102))
+            out.save(f, 'figure-12-' + name)
+
 def draw(here,data):
     out=Exporter(here)
     def save(f,n):out.save(f,'figure-12-'+n)
@@ -34,8 +82,7 @@ def draw(here,data):
         for x,y,l,c in [(.04,.63,'截图 v','blue'),(.62,.63,'上传与模型判断','green'),(.62,.18,'执行操作','orange'),(.04,.18,'更新界面 v+1','blue')]:box(a,x,y,.34,.21,l,c)
         for p,q in [((.38,.735),(.62,.735)),((.79,.63),(.79,.39)),((.62,.285),(.38,.285)),((.21,.39),(.21,.63))]:arrow(a,p,q)
         save(f,'5-agent')
-        for local,name in [(False,'encoder-remote'),(True,'encoder-local')]:
-            f,a=canvas(4.2);box(a,.04,.60,.34,.24,'端侧\n视觉编码' if local else '端侧\n压缩图片','green' if local else 'blue');box(a,.62,.60,.34,.24,'远端\n语言模型' if local else '远端\n视觉编码','green');arrow(a,(.38,.72),(.62,.72));text(a,.5,.39,'传完整特征：8.192 MB' if local else '传图片：0.8 MB',13,ha='center');text(a,.5,.20,'四组特征分别注入语言模型不同层' if local else '远端先编码，再进入语言模型',11,ha='center');save(f,name)
+        draw_encoder_paths(out)
         f,a=plot(3.3,left=.23);a.barh([1,0],[1,10.24],height=.5,color=[COL['blue'],COL['green']],edgecolor=COL['line']);a.set(yticks=[1,0],yticklabels=['压缩图片','完整特征'],xlabel='6.4 Mbit/s 上行发送时间（s）',xlim=(0,11.5));save(f,'6-placement')
         f,a=canvas(5.4)
         for row,(l,c) in enumerate([('图片：0.8 MB','blue'),('编码缓存 EC：7.8 MiB','green'),('视觉位置 KV：56.3 MiB','purple')]):

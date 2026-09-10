@@ -46,7 +46,7 @@ def draw(here,data):
             f,a=canvas(4.5);box(a,.04,.65,.35,.20,'GPU：BF16\n96 MiB','blue');box(a,.61,.23,.35,.20,'CPU：FP32\n192 MiB','green')
             if gpu:box(a,.04,.23,.35,.20,'GPU：FP32\n192 MiB','orange');arrow(a,(.215,.65),(.215,.43));arrow(a,(.39,.33),(.61,.33));text(a,.5,.52,'链路传 192 MiB',11,ha='center')
             else:box(a,.61,.65,.35,.20,'CPU：BF16\n96 MiB','blue');arrow(a,(.39,.75),(.61,.75));arrow(a,(.785,.65),(.785,.43));text(a,.5,.52,'链路传 96 MiB',11,ha='center')
-            text(a,.5,.08,'GPU 转换时同时保留 288 MiB' if gpu else '格式转换在 CPU 完成',12,ha='center');save(f,name)
+            text(a,.5,.08,'GPU 转换时同时占用 288 MiB' if gpu else '格式转换在 CPU 完成',12,ha='center');save(f,name)
         d=data['10-6'];f,a=plot(4.2)
         for k,l,c in [('total_gib','分片＋10 GiB 临时量','#267398'),('persistent_gib','训练状态分片','#388768')]:a.plot(d['participants'],d[k],label=l,color=c)
         a.axhline(24,ls='--',color='#a56c28',label='可用 24 GiB');a.set(xlabel='分片参与者数',ylabel='每卡容量（GiB）',ylim=(0,47));a.legend(frameon=False);save(f,'6-candidates')

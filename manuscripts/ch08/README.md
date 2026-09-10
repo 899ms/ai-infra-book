@@ -77,7 +77,7 @@ python3 -m venv /tmp/ch08-book-venv
 | 8-9 | 八个旧位置形成 4 × 8 = 32 个蓝色格，块内仍为 10 个绿色格。块长相同，总配对从 10 增至 42。 | [SVG](figure-8-attention-history.svg) | [PNG](figure-8-attention-history.png) | [PDF](figure-8-attention-history.pdf) |
 | 8-10 | 逻辑块 0、1、2 按顺序组成序列，块表分别指向物理块 2、0、3。物理块 1 为空闲，注意力按块表恢复逻辑顺序。 | [SVG](figure-8-page-map.svg) | [PNG](figure-8-page-map.png) | [PDF](figure-8-page-map.pdf) |
 | 8-11 | 四请求长度为 9、13、5、15，按每条最大 16 个位置预留，共分配 64 个位置。蓝色已用，灰色预留未用。 | [SVG](figure-8-5-pages.svg) | [PNG](figure-8-5-pages.png) | [PDF](figure-8-5-pages.pdf) |
-| 8-12 | 各请求分别分配 12、16、8、16 个位置，共 52 个。灰色尾槽从 22 减到 10。 | [SVG](figure-8-pages-paged.svg) | [PNG](figure-8-pages-paged.png) | [PDF](figure-8-pages-paged.pdf) |
+| 8-12 | 各请求分别分配 12、16、8、16 个位置，共 52 个。灰色的尾部未用位置从 22 减到 10。 | [SVG](figure-8-pages-paged.svg) | [PNG](figure-8-pages-paged.png) | [PDF](figure-8-pages-paged.pdf) |
 | 8-13 | A、B 的两个共同前缀块只保存一次，各自块表都指向它们。A、B 保留各自的私有尾块；四请求物理分配总量进一步降至 44 个位置。 | [SVG](figure-8-pages-shared.svg) | [PNG](figure-8-pages-shared.png) | [PDF](figure-8-pages-shared.pdf) |
 | 8-14 | A 结束后引用数从 2 降到 1，B 仍可使用；最后一个引用释放且设备已用完，块才能回到空闲池。 | [SVG](figure-8-reference-release.svg) | [PNG](figure-8-reference-release.png) | [PDF](figure-8-reference-release.pdf) |
 | 8-15 | 四位置尾块已有共同 a、b、c。分支分别追加 x、y，需要不同物理尾块；此前已填满的块继续共享。 | [SVG](figure-8-copy-on-write.svg) | [PNG](figure-8-copy-on-write.png) | [PDF](figure-8-copy-on-write.pdf) |
@@ -120,7 +120,7 @@ python3 -m venv /tmp/ch08-book-venv
 | 8-9 | 八个旧位置形成 4 × 8 = 32 个蓝色格，块内仍为 10 个绿色格。块长相同，总配对从 10 增至 42。 | [SVG](figure-8-attention-history.svg) |
 | 8-10 | 逻辑块 0、1、2 按顺序组成序列，块表分别指向物理块 2、0、3。物理块 1 为空闲，注意力按块表恢复逻辑顺序。 | [SVG](figure-8-page-map.svg) |
 | 8-11 | 四请求长度为 9、13、5、15，按每条最大 16 个位置预留，共分配 64 个位置。蓝色已用，灰色预留未用。 | [SVG](figure-8-5-pages.svg) |
-| 8-12 | 各请求分别分配 12、16、8、16 个位置，共 52 个。灰色尾槽从 22 减到 10。 | [SVG](figure-8-pages-paged.svg) |
+| 8-12 | 各请求分别分配 12、16、8、16 个位置，共 52 个。灰色的尾部未用位置从 22 减到 10。 | [SVG](figure-8-pages-paged.svg) |
 | 8-13 | A、B 的两个共同前缀块只保存一次，各自块表都指向它们。A、B 保留各自的私有尾块；四请求物理分配总量进一步降至 44 个位置。 | [SVG](figure-8-pages-shared.svg) |
 | 8-14 | A 结束后引用数从 2 降到 1，B 仍可使用；最后一个引用释放且设备已用完，块才能回到空闲池。 | [SVG](figure-8-reference-release.svg) |
 | 8-15 | 四位置尾块已有共同 a、b、c。分支分别追加 x、y，需要不同物理尾块；此前已填满的块继续共享。 | [SVG](figure-8-copy-on-write.svg) |

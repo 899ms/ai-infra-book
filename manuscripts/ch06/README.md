@@ -77,7 +77,7 @@ python3 -m venv /tmp/ch06-book-venv
 | 6-10 | 64 个 token、每 token 八个专家，共 512 次分派。均匀覆盖与集中选择的有效计算量相同，被选中专家的权重读取相差 16 倍。每个专家 BF16 权重为 36 MiB，批内读取一次。 | [SVG](figure-6-7-reuse.svg) | [PNG](figure-6-7-reuse.png) | [PDF](figure-6-7-reuse.pdf) |
 | 6-11 | 均匀使用 128 个专家时，四个 EP 组各处理 128 次 token—专家计算，合计读取 4.5 GiB 权重。 | [SVG](figure-6-8-expert-load.svg) | [PNG](figure-6-8-expert-load.png) | [PDF](figure-6-8-expert-load.pdf) |
 | 6-12 | 所选八个专家都在组 0：权重读取降到 288 MiB，512 次计算却全部压在同一组。 | [SVG](figure-6-expert-load-1.svg) | [PNG](figure-6-expert-load-1.png) | [PDF](figure-6-expert-load-1.pdf) |
-| 6-13 | 把同八个专家分散到四组，保留 288 MiB 的读取量，同时让四组各承担 128 次计算。三图纵轴范围相同。 | [SVG](figure-6-expert-load-2.svg) | [PNG](figure-6-expert-load-2.png) | [PDF](figure-6-expert-load-2.pdf) |
+| 6-13 | 把同八个专家分散到四组，将读取量维持在 288 MiB，同时让四组各承担 128 次计算。三图纵轴范围相同。 | [SVG](figure-6-expert-load-2.svg) | [PNG](figure-6-expert-load-2.png) | [PDF](figure-6-expert-load-2.pdf) |
 | 6-14 | 仅跟踪块 0 的一个元素：每经过一张卡，就加入该卡的贡献。三轮后得到 1111，保存在卡 3。其他三个块同时沿环推进。 | [SVG](figure-6-9-ring-rounds.svg) | [PNG](figure-6-9-ring-rounds.png) | [PDF](figure-6-9-ring-rounds.pdf) |
 | 6-15 | ReduceScatter 结束时，卡 0、1、2、3 分别持有块 1、2、3、0。接下来每轮转发一块，三轮后每卡都拥有四块完整结果。 | [SVG](figure-6-ring-gather.svg) | [PNG](figure-6-ring-gather.png) | [PDF](figure-6-ring-gather.pdf) |
 | 6-16 | 根据式（6-5）和环形归约模型绘制单步时间。本地内存访问随卡数增加而减少，归约时间则增加；0.20 ms 的其他串行处理时间保持不变。条形总长度为单步执行时间。 | [SVG](figure-6-10-tp-time.svg) | [PNG](figure-6-10-tp-time.png) | [PDF](figure-6-10-tp-time.pdf) |

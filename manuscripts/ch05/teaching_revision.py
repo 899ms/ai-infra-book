@@ -128,7 +128,7 @@ def draw(here, data):
         save(f,'figure-5-4-reduction')
 
         f,a=canvas(4.2)
-        title(a,'分开执行：中间结果经过下一层存储')
+        title(a,'分开执行：中间结果经过下一级存储')
         box(a,.04,.70,.25,.12,'SiLU(G)','green');box(a,.70,.70,.25,.12,'T × U','green')
         box(a,.36,.46,.28,.13,'完整 T\n24 MiB','orange')
         arrow(a,(.29,.755),(.39,.60));arrow(a,(.61,.60),(.70,.755))

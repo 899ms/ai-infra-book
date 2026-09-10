@@ -82,7 +82,7 @@ python3 -m venv /tmp/ch07-book-venv
 | 7-19 | 一项请求从分配记录开始占用槽位，经历传输与等待，完成状态被处理后归还记录。这里的 2 μs 覆盖完整占用区间。 | [SVG](figure-7-slot-lifetime.svg) | [PNG](figure-7-slot-lifetime.png) | [PDF](figure-7-slot-lifetime.pdf) |
 | 7-20 | 128 个槽位在约 0.82 μs 内全部用完，要等最早的槽位在 2 μs 释放后继续提交。313 个槽位足以覆盖等待。蓝色表示载荷发送，灰色表示链路空闲。 | [SVG](figure-7-9-window.svg) | [PNG](figure-7-9-window.png) | [PDF](figure-7-9-window.pdf) |
 | 7-21 | 蓝线只考虑链路和槽位，橙线再加入每 100 ns 发起一次请求的约束。增加槽位使蓝线升高，橙线仍受 2.56 GB/s 的提交速率限制。 | [SVG](figure-7-window-rate.svg) | [PNG](figure-7-window-rate.png) | [PDF](figure-7-window-rate.pdf) |
-| 7-22 | 源缓冲占用到 5 μs 发送完成；目的缓冲持续保留到 12 μs 消费者用完。绿色为 8–12 μs 的读取区间。虚线标出 6 μs 提前覆盖目的地址的错误操作。 | [SVG](figure-7-10-lifetime.svg) | [PNG](figure-7-10-lifetime.png) | [PDF](figure-7-10-lifetime.pdf) |
+| 7-22 | 源缓冲占用到 5 μs 发送完成；目的缓冲持续占用到 12 μs 消费者用完。绿色为 8–12 μs 的读取区间。虚线标出 6 μs 提前覆盖目的地址的错误操作。 | [SVG](figure-7-10-lifetime.svg) | [PNG](figure-7-10-lifetime.png) | [PDF](figure-7-10-lifetime.pdf) |
 | 7-23 | 两个应用端点分别保存身份与绑定记录，关系绑定指向同一目标的共享传输状态。共享部分维护传输进度，端点仍能区分各自请求。 | [SVG](figure-7-11-state.svg) | [PNG](figure-7-11-state.png) | [PDF](figure-7-11-state.pdf) |
 | 7-24 | 64 个端点访问 128 个目标。蓝色为端点记录，橙色为关系绑定，绿色为传输状态。虚线为 1 MiB 容量；八类隔离复制八份目标传输状态。 | [SVG](figure-7-state-capacity.svg) | [PNG](figure-7-state-capacity.png) | [PDF](figure-7-state-capacity.pdf) |
 | 7-25 | 将独立传输也排在发布之后：先写入 20 μs，恢复并使数据可见 80 μs，通知 2 μs，再执行独立传输 10 μs。 | [SVG](figure-7-12-ordering.svg) | [PNG](figure-7-12-ordering.png) | [PDF](figure-7-12-ordering.pdf) |

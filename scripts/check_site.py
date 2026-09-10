@@ -34,7 +34,9 @@ for path, page in pages.items():
             errors.append(f'{path.relative_to(ROOT)}: missing {link}')
         elif u.fragment and target in pages and unquote(u.fragment) not in pages[target].ids:
             errors.append(f'{path.relative_to(ROOT)}: missing anchor {link}')
-chapters = list((ROOT / 'manuscripts').glob('[0-9][0-9]-*.html'))
+chapters = [p for p in (ROOT / 'manuscripts').glob('[0-9][0-9]-*.html') if 1 <= int(p.name[:2]) <= 12]
+if not (ROOT / 'manuscripts/00-前言.html').exists():
+    errors.append('Missing preface')
 if len(chapters) != 12:
     errors.append(f'Expected 12 chapters, got {len(chapters)}')
 if not (ROOT / 'search/search_index.json').exists():

@@ -73,15 +73,15 @@ python3 -m venv /tmp/ch05-book-venv
 | 5-5 | 条形总长均表示 96 KiB。24 KiB 的工作集能放四份，80 KiB 的只能放一份。这里把输入缓冲和累加器合并计入一个教学预算；实际 GPU 的共享内存、寄存器分别受限，真实驻留数还取决于线程数等约束。 | [SVG](figure-5-tile-residency.svg) | [PNG](figure-5-tile-residency.png) | [PDF](figure-5-tile-residency.pdf) |
 | 5-6 | 同一列的 32 个不同字由 32 个 lane 同时请求。上半图行跨度为 32 个字，请求集中到同一 bank；下半图补齐为 33 个字，请求分散到 32 个 bank。图中画出前四个请求；假设每个 bank 每轮提供一个 32-bit 字，不计广播。 | [SVG](figure-5-3-banks.svg) | [PNG](figure-5-3-banks.png) | [PDF](figure-5-3-banks.pdf) |
 | 5-7 | 上行由一组处理完整一行，输入保留到归一化结束；下行把一行分为八段，先求局部和，再合并，最后重读输入并归一化。每行 4096 个 BF16 元素；图中仅画一行，推广到 1024 行时，第一阶段任务数由 1024 增至 8192。橙色框表示增加的原输入读取。 | [SVG](figure-5-4-reduction.svg) | [PNG](figure-5-4-reduction.png) | [PDF](figure-5-4-reduction.pdf) |
-| 5-8 | 上半图的完整 T 经过一次写出与一次读回；下半图中局部片段 t 直接传给乘法。两种方式仍读取 G、U 并写出 Z，图中省略这些共同的输入输出边。融合保持原来的中间舍入语义。 | [SVG](figure-5-fusion-path.svg) | [PNG](figure-5-fusion-path.png) | [PDF](figure-5-fusion-path.pdf) |
-| 5-9 | 每少保存一个 24 MiB 中间量，就少一次写出和一次读入，共 48 MiB。G、U 为 BF16，最终输出占 1 byte/元素，量化尺度预先给定。各方案保留相同的运算与舍入顺序。 | [SVG](figure-5-5-boundaries.svg) | [PNG](figure-5-5-boundaries.png) | [PDF](figure-5-5-boundaries.pdf) |
+| 5-8 | 上半图的完整 T 经过一次写出与一次读回；下半图中局部片段 t 直接传给乘法。两种方式仍读取 G、U 并写出 Z，图中省略这些共同的输入输出边。融合保持原来的中间结果的舍入规则。 | [SVG](figure-5-fusion-path.svg) | [PNG](figure-5-fusion-path.png) | [PDF](figure-5-fusion-path.pdf) |
+| 5-9 | 每少保存一个 24 MiB 中间量，就少一次写出和一次读入，共 48 MiB。G、U 为 BF16，最终输出占 1 byte/元素，量化尺度预先给定。各方案采用相同的运算与舍入顺序。 | [SVG](figure-5-5-boundaries.svg) | [PNG](figure-5-5-boundaries.png) | [PDF](figure-5-5-boundaries.pdf) |
 | 5-10 | 块 0 在 2–5 μs 使用槽 A，所以块 2 到 5 μs 才能开始写入 A。图中抽取三个时段；4–5 μs 的块 1 已在槽 B 中等待，尚未开始计算。颜色固定表示槽 A、B，文字说明当前读写的是哪个块。 | [SVG](figure-5-buffer-slots.svg) | [PNG](figure-5-buffer-slots.png) | [PDF](figure-5-buffer-slots.pdf) |
 | 5-11 | 两个输入槽交替复用，让搬运与计算重叠。每块搬运 2 μs、计算 3 μs，资源独立，忽略同步开销；同一颜色表示同一槽，计算读取结束后才能再次写入。 | [SVG](figure-5-6-fusion-buffer.svg) | [PNG](figure-5-6-fusion-buffer.png) | [PDF](figure-5-6-fusion-buffer.pdf) |
 | 5-12 | 上半图保存完整 S、P，两份 FP32 矩阵各占 256 MiB，写出与读回合计 1 GiB。下半图只传递已处理部分的最大值 m、指数和 ℓ、加权值 u；每处理完一个块，其分数缓冲即可复用。箭头概括处理顺序，完整计算还需读入 Q、K、V。 | [SVG](figure-5-attention-storage.svg) | [PNG](figure-5-attention-storage.png) | [PDF](figure-5-attention-storage.pdf) |
 | 5-13 | 两个块的分数分别为 0、ln 2，值分别为 1、3。最大值增大后，将旧指数和与旧加权值同时乘以 1/2，再加上新块的贡献，最后才做除法。箭头传递的是统计量，旧分数无需保留。 | [SVG](figure-5-7-online-softmax.svg) | [PNG](figure-5-7-online-softmax.png) | [PDF](figure-5-7-online-softmax.pdf) |
-| 5-14 | 快速缓冲为 128 KiB，序列长 8192、头维度 128，无掩码；每个点对应正文表格的一种 K/V 块大小。横轴为缓冲与下一层之间的访问量，纵轴为在线更新次数，采用对数刻度。从 b=64 的点移到 b=1 的点，读取减少，更新次数却约增至 43 倍。 | [SVG](figure-5-8-attention-tradeoff.svg) | [PNG](figure-5-8-attention-tradeoff.png) | [PDF](figure-5-8-attention-tradeoff.pdf) |
+| 5-14 | 快速缓冲为 128 KiB，序列长 8192、头维度 128，无掩码；每个点对应正文表格的一种 K/V 块大小。横轴为缓冲与下一级存储之间的访问量，纵轴为在线更新次数，采用对数刻度。从 b=64 的点移到 b=1 的点，读取减少，更新次数却约增至 43 倍。 | [SVG](figure-5-8-attention-tradeoff.svg) | [PNG](figure-5-8-attention-tradeoff.png) | [PDF](figure-5-8-attention-tradeoff.pdf) |
 | 5-15 | 循环层次确定存储寿命。外层选输出块，创建十六 KiB 累加器；内层 ko 反复读取 A、W 块，全部归约结束后再舍入并激活。 | [SVG](figure-5-9-polyhedral.svg) | [PNG](figure-5-9-polyhedral.png) | [PDF](figure-5-9-polyhedral.pdf) |
-| 5-16 | 同样两个部分和，先相加得到零，再做 SiLU 仍为零；先对各部分做 SiLU 再相加，得到约 0.4621。两个数说明变换越过归约后改变了函数。 | [SVG](figure-5-activation-order.svg) | [PNG](figure-5-activation-order.png) | [PDF](figure-5-activation-order.pdf) |
+| 5-16 | 同样两个部分和，先相加得到零，再做 SiLU 仍为零；先对各部分做 SiLU 再相加，得到约 0.4621。两个数说明把激活计算移到求和之前会改变结果。 | [SVG](figure-5-activation-order.svg) | [PNG](figure-5-activation-order.png) | [PDF](figure-5-activation-order.pdf) |
 | 5-17 | 一行分成两个块，后一块中的十决定整行尺度。第一项要先按这一尺度映射，再舍入到格式允许的值，最后反量化。 | [SVG](figure-5-quantization-scale.svg) | [PNG](figure-5-quantization-scale.png) | [PDF](figure-5-quantization-scale.pdf) |
 | 5-18 | 两种方案都先读完整输入以确定行尺度。保存 FP8 结果后十二列块合计重读 192 MiB；融合方案重读 FP16 输入 384 MiB。权重与输出另有相同的 204 MiB。 | [SVG](figure-5-10-quantization.svg) | [PNG](figure-5-10-quantization.png) | [PDF](figure-5-10-quantization.pdf) |
 | 5-19 | 形状 A 占比超过 2/3 时，新实现的总执行时间更短。A、B 原耗时均为 10 μs，新实现分别为 5、20 μs；调用串行，图中比较稳态执行。交点由两种实现的平均时间相等确定。 | [SVG](figure-5-11-feedback.svg) | [PNG](figure-5-11-feedback.png) | [PDF](figure-5-11-feedback.pdf) |
@@ -111,15 +111,15 @@ python3 -m venv /tmp/ch05-book-venv
 | 5-5 | 条形总长均表示 96 KiB。24 KiB 的工作集能放四份，80 KiB 的只能放一份。这里把输入缓冲和累加器合并计入一个教学预算；实际 GPU 的共享内存、寄存器分别受限，真实驻留数还取决于线程数等约束。 | [SVG](figure-5-tile-residency.svg) |
 | 5-6 | 同一列的 32 个不同字由 32 个 lane 同时请求。上半图行跨度为 32 个字，请求集中到同一 bank；下半图补齐为 33 个字，请求分散到 32 个 bank。图中画出前四个请求；假设每个 bank 每轮提供一个 32-bit 字，不计广播。 | [SVG](figure-5-3-banks.svg) |
 | 5-7 | 上行由一组处理完整一行，输入保留到归一化结束；下行把一行分为八段，先求局部和，再合并，最后重读输入并归一化。每行 4096 个 BF16 元素；图中仅画一行，推广到 1024 行时，第一阶段任务数由 1024 增至 8192。橙色框表示增加的原输入读取。 | [SVG](figure-5-4-reduction.svg) |
-| 5-8 | 上半图的完整 T 经过一次写出与一次读回；下半图中局部片段 t 直接传给乘法。两种方式仍读取 G、U 并写出 Z，图中省略这些共同的输入输出边。融合保持原来的中间舍入语义。 | [SVG](figure-5-fusion-path.svg) |
-| 5-9 | 每少保存一个 24 MiB 中间量，就少一次写出和一次读入，共 48 MiB。G、U 为 BF16，最终输出占 1 byte/元素，量化尺度预先给定。各方案保留相同的运算与舍入顺序。 | [SVG](figure-5-5-boundaries.svg) |
+| 5-8 | 上半图的完整 T 经过一次写出与一次读回；下半图中局部片段 t 直接传给乘法。两种方式仍读取 G、U 并写出 Z，图中省略这些共同的输入输出边。融合保持原来的中间结果的舍入规则。 | [SVG](figure-5-fusion-path.svg) |
+| 5-9 | 每少保存一个 24 MiB 中间量，就少一次写出和一次读入，共 48 MiB。G、U 为 BF16，最终输出占 1 byte/元素，量化尺度预先给定。各方案采用相同的运算与舍入顺序。 | [SVG](figure-5-5-boundaries.svg) |
 | 5-10 | 块 0 在 2–5 μs 使用槽 A，所以块 2 到 5 μs 才能开始写入 A。图中抽取三个时段；4–5 μs 的块 1 已在槽 B 中等待，尚未开始计算。颜色固定表示槽 A、B，文字说明当前读写的是哪个块。 | [SVG](figure-5-buffer-slots.svg) |
 | 5-11 | 两个输入槽交替复用，让搬运与计算重叠。每块搬运 2 μs、计算 3 μs，资源独立，忽略同步开销；同一颜色表示同一槽，计算读取结束后才能再次写入。 | [SVG](figure-5-6-fusion-buffer.svg) |
 | 5-12 | 上半图保存完整 S、P，两份 FP32 矩阵各占 256 MiB，写出与读回合计 1 GiB。下半图只传递已处理部分的最大值 m、指数和 ℓ、加权值 u；每处理完一个块，其分数缓冲即可复用。箭头概括处理顺序，完整计算还需读入 Q、K、V。 | [SVG](figure-5-attention-storage.svg) |
 | 5-13 | 两个块的分数分别为 0、ln 2，值分别为 1、3。最大值增大后，将旧指数和与旧加权值同时乘以 1/2，再加上新块的贡献，最后才做除法。箭头传递的是统计量，旧分数无需保留。 | [SVG](figure-5-7-online-softmax.svg) |
-| 5-14 | 快速缓冲为 128 KiB，序列长 8192、头维度 128，无掩码；每个点对应正文表格的一种 K/V 块大小。横轴为缓冲与下一层之间的访问量，纵轴为在线更新次数，采用对数刻度。从 b=64 的点移到 b=1 的点，读取减少，更新次数却约增至 43 倍。 | [SVG](figure-5-8-attention-tradeoff.svg) |
+| 5-14 | 快速缓冲为 128 KiB，序列长 8192、头维度 128，无掩码；每个点对应正文表格的一种 K/V 块大小。横轴为缓冲与下一级存储之间的访问量，纵轴为在线更新次数，采用对数刻度。从 b=64 的点移到 b=1 的点，读取减少，更新次数却约增至 43 倍。 | [SVG](figure-5-8-attention-tradeoff.svg) |
 | 5-15 | 循环层次确定存储寿命。外层选输出块，创建十六 KiB 累加器；内层 ko 反复读取 A、W 块，全部归约结束后再舍入并激活。 | [SVG](figure-5-9-polyhedral.svg) |
-| 5-16 | 同样两个部分和，先相加得到零，再做 SiLU 仍为零；先对各部分做 SiLU 再相加，得到约 0.4621。两个数说明变换越过归约后改变了函数。 | [SVG](figure-5-activation-order.svg) |
+| 5-16 | 同样两个部分和，先相加得到零，再做 SiLU 仍为零；先对各部分做 SiLU 再相加，得到约 0.4621。两个数说明把激活计算移到求和之前会改变结果。 | [SVG](figure-5-activation-order.svg) |
 | 5-17 | 一行分成两个块，后一块中的十决定整行尺度。第一项要先按这一尺度映射，再舍入到格式允许的值，最后反量化。 | [SVG](figure-5-quantization-scale.svg) |
 | 5-18 | 两种方案都先读完整输入以确定行尺度。保存 FP8 结果后十二列块合计重读 192 MiB；融合方案重读 FP16 输入 384 MiB。权重与输出另有相同的 204 MiB。 | [SVG](figure-5-10-quantization.svg) |
 | 5-19 | 形状 A 占比超过 2/3 时，新实现的总执行时间更短。A、B 原耗时均为 10 μs，新实现分别为 5、20 μs；调用串行，图中比较稳态执行。交点由两种实现的平均时间相等确定。 | [SVG](figure-5-11-feedback.svg) |

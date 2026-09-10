@@ -30,6 +30,7 @@ def stage():
             if not path.is_file():
                 raise FileNotFoundError(path)
             sources[path] = path.relative_to(ROOT)
+    sources[ROOT / 'manuscripts/00-前言.md'] = Path('manuscripts/00-前言.md')
     sources[ROOT / 'website/README.md'] = Path('website/README.md')
 
     def rewrite(source, output, url, image=False):
@@ -76,7 +77,7 @@ def stage():
     for name in ('math.js', 'reading.css'):
         shutil.copy2(ROOT / 'website' / name, DOCS / 'assets' / name)
     # JSON is valid YAML and avoids quoting problems in Chinese chapter titles.
-    nav = [{'首页': 'index.md'}, {'正文': [
+    nav = [{'首页': 'index.md'}, {'正文': [{'前言': 'manuscripts/00-前言.md'}] + [
         {f'{c["number"]}. {c["title"]}': f'manuscripts/{c["file"]}'} for c in catalog]},
         {'写作大纲': [{'大纲索引': 'outlines/README.md'}] + [
             {f'{c["number"]}. {c["title"]}': f'outlines/{c["file"]}'} for c in catalog]},

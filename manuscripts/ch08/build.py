@@ -13,6 +13,7 @@ HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1]
 parser=argparse.ArgumentParser();parser.add_argument('--font');args=parser.parse_args()
 import sys
 sys.path.insert(0,str(HERE.parent))
+from preview_output import preview_path
 from figure_style.typography import configure_font
 font,family=configure_font(args.font)
 plt.rcParams.update({'font.family':[family,'DejaVu Sans'],'font.size':11,'axes.unicode_minus':False,'svg.fonttype':'path','svg.hashsalt':'ch08-v1','pdf.fonttype':42,'axes.spines.top':False,'axes.spines.right':False,'figure.facecolor':'white','savefig.facecolor':'white'})
@@ -218,7 +219,6 @@ page=page.replace('</body>',zoom+'</body>')
 import sys
 sys.path.insert(0,str(HERE.parent))
 from teaching_reading import readable_diagrams
-from preview_output import preview_path
 page=readable_diagrams(page)
 hp.write_text(page)
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')

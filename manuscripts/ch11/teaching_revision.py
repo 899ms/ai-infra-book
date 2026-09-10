@@ -26,13 +26,13 @@ def draw(here,data):
         for i,l in enumerate(['进程','容器','microVM']):
             f,a=canvas(4.0);text(a,.04,.94,l+'的隔离边界',14);box(a,.04,.11,.92,.17,'宿主操作系统内核','gray')
             for j in range(2):
-                x=.04+j*.48;box(a,x,.39,.44,.40,'','blue' if i<2 else 'green');text(a,x+.22,.67,'任务 '+str(j),12,ha='center');text(a,x+.22,.50,['私有地址空间','私有视图与配额','独立客体内核'][i],11,ha='center');arrow(a,(x+.22,.39),(x+.22,.28))
+                x=.04+j*.48;box(a,x,.39,.44,.40,'','blue' if i<2 else 'green');text(a,x+.22,.67,'任务 '+str(j),12,ha='center');text(a,x+.22,.50,['私有地址空间','私有视图与配额','独立虚拟机内核'][i],11,ha='center');arrow(a,(x+.22,.39),(x+.22,.28))
             save(f,'isolation-'+str(i))
         f,a=canvas(4.2);box(a,.04,.62,.35,.24,'共享模板\n文件与依赖','blue');box(a,.61,.62,.35,.24,'环境私有内容\n修改页与管理数据','orange');box(a,.24,.13,.52,.24,'活跃环境内存\n进程、工作页与缓冲区','green')
-        arrow(a,(.215,.62),(.40,.37));arrow(a,(.785,.62),(.60,.37));text(a,.5,.48,'装入执行所需内容',11,ha='center');save(f,'template-runtime')
+        arrow(a,(.215,.62),(.40,.37));arrow(a,(.785,.62),(.60,.37));text(a,.5,.48,'加载执行所需内容',11,ha='center');save(f,'template-runtime')
         f,a=plot(4.0,left=.25);v=data['pages']['local_mib'];a.barh(range(4),v,color=COL['blue'],edgecolor=COL['line'])
         for i,x in enumerate(v):a.text(x+30,i,str(x),fontsize=11,va='center')
-        a.set(yticks=range(4),yticklabels=['完整复制','按需安装','仅私有页','保留热点页'],xlim=(0,2500),xlabel='每环境本地内容（MiB）');a.invert_yaxis();save(f,'pages')
+        a.set(yticks=range(4),yticklabels=['完整复制','按需加载','仅私有页','保留热点页'],xlim=(0,2500),xlabel='每环境本地内容（MiB）');a.invert_yaxis();save(f,'pages')
         for pause,name in [(False,'pause'),(True,'pause-release')]:
             f,a=plot(3.0,left=.21)
             for start,dur in ([(10,1),(18,1)] if pause else [(10,9)]):a.barh(0,dur,left=start,height=.5,color=COL['green'],edgecolor=COL['line'])

@@ -27,7 +27,7 @@ def draw(here,data):
         box(a,.12,.36,.31,.12,'首响应 TTFT','blue',11);box(a,.43,.36,.44,.12,'后续输出间隔','green')
         box(a,.12,.14,.75,.12,'完整请求时间','orange');save(f,'request-clocks')
         f,a=plot(3.1)
-        a.fill_between([0,10],[1,1],color=COL['blue'],edgecolor=COL['line']);a.set(xlim=(0,12),ylim=(0,1.5),xlabel='工具等待（s）',ylabel='保留的状态（GiB）',yticks=[0,.5,1])
+        a.fill_between([0,10],[1,1],color=COL['blue'],edgecolor=COL['line']);a.set(xlim=(0,12),ylim=(0,1.5),xlabel='工具等待（s）',ylabel='状态占用（GiB）',yticks=[0,.5,1])
         a.text(5,.5,'1 GiB × 10 s\n= 10 GiB·s',ha='center',va='center',fontsize=14);save(f,'state-time-area')
 
         d=data['3-2'];f,a=plot(3.5,left=.18)

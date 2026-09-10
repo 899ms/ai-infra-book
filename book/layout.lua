@@ -74,5 +74,10 @@ end
 
 -- Keep image scaling local to graphics; math never passes through graphicx.
 function Image(el)
+  -- The twelve-chapter roadmap is drawn at book width with 12pt labels.
+  -- Keep that reading size instead of shrinking it like a small inline diagram.
+  if el.src:match('figure%-1%-book%-roadmap%.') then
+    return pandoc.RawInline('latex', '\\includegraphics[width=.95\\linewidth,height=.60\\textheight,keepaspectratio]{' .. el.src .. '}')
+  end
   return pandoc.RawInline('latex', '\\infragraphic{' .. el.src .. '}')
 end

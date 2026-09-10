@@ -45,7 +45,7 @@ python manuscripts/ch03/build.py
 | --- | --- | --- | --- | --- |
 | 3-1 | 恢复 6144 个上下文位置，处理 2048 个新输入并生成四个输出。首输出来自 prefill，后续三次 decode 各追加一个位置；纵向表示调用次序，间距用于示意。 | [SVG](figure-3-1-stages.svg) | [PNG](figure-3-1-stages.png) | [PDF](figure-3-1-stages.pdf) |
 | 3-2 | 请求到达、首输出与末输出决定三个计时区间。首响应包含开始生成前的等待，输出间隔描述生成过程，完整请求时间从到达累计到结束。 | [SVG](figure-3-request-clocks.svg) | [PNG](figure-3-request-clocks.png) | [PDF](figure-3-request-clocks.pdf) |
-| 3-3 | 保留 1 GiB 状态等待十秒，对应面积为 10 GiB·s。横轴为状态存活时间，纵轴为占用空间；面积描述这段等待消耗的空间时间。 | [SVG](figure-3-state-time-area.svg) | [PNG](figure-3-state-time-area.png) | [PDF](figure-3-state-time-area.pdf) |
+| 3-3 | 1 GiB 状态持续占用空间十秒，对应面积为 10 GiB·s。横轴为状态存活时间，纵轴为占用空间；面积描述这段等待消耗的空间时间。 | [SVG](figure-3-state-time-area.svg) | [PNG](figure-3-state-time-area.png) | [PDF](figure-3-state-time-area.pdf) |
 | 3-4 | 相同两分钟总量的三种窗口组成。长输入类为 8192 输入、256 输出，长输出类为 1024 输入、2048 输出；两类混合比例改变阶段需求。 | [SVG](figure-3-2-workload-budget.svg) | [PNG](figure-3-2-workload-budget.png) | [PDF](figure-3-2-workload-budget.pdf) |
 | 3-5 | 三种窗口组成对应的输入与后续生成需求。输入数按 token 计，后续生成按每请求的一次 decode 步计；每请求首输出已计入 prefill。 | [SVG](figure-3-stage-demand.svg) | [PNG](figure-3-stage-demand.png) | [PDF](figure-3-stage-demand.pdf) |
 | 3-6 | 工作先进入队列，再由处理资源完成。到来快于处理时差额留在队列中；处理快于到来时，资源逐步消化已有积压。 | [SVG](figure-3-queue-mechanism.svg) | [PNG](figure-3-queue-mechanism.png) | [PDF](figure-3-queue-mechanism.pdf) |
@@ -66,7 +66,7 @@ python manuscripts/ch03/build.py
 | 3-21 | Qwen3-8B 全参数训练的参数相关状态。每参数包括两字节计算权重和四组四字节状态，共十八字节；激活和工作区由各自寿命另行核算。 | [SVG](figure-3-training-states.svg) | [PNG](figure-3-training-states.png) | [PDF](figure-3-training-states.pdf) |
 | 3-22 | Qwen3-8B 的 8192 输入全参数训练。全部位置执行词表头、没有重计算；按矩阵逐项累计，前向加反向为 431.368 TFLOPs。 | [SVG](figure-3-training-flops.svg) | [PNG](figure-3-training-flops.png) | [PDF](figure-3-training-flops.pdf) |
 | 3-23 | 强化学习中的角色和数据流。生成端产生回答，反馈环节评价结果，筛选后送给学习器更新；新权重再用于下一批生成。 | [SVG](figure-3-6-rl.svg) | [PNG](figure-3-6-rl.png) | [PDF](figure-3-6-rl.pdf) |
-| 3-24 | 保持十六条有效样本目标，生成数由三十二增到六十四。生成输入、后续生成和参考评分随全部回答增加，策略更新处理的样本数保持相同。 | [SVG](figure-3-rl-stage-work.svg) | [PNG](figure-3-rl-stage-work.png) | [PDF](figure-3-rl-stage-work.pdf) |
+| 3-24 | 保持十六条有效样本目标，生成数由三十二增到六十四。生成时的输入处理、后续解码和参考模型评分随回答总数增加，策略更新处理的样本数保持相同。 | [SVG](figure-3-rl-stage-work.svg) | [PNG](figure-3-rl-stage-work.png) | [PDF](figure-3-rl-stage-work.pdf) |
 | 3-25 | 八个公开 C4 观测的预测与实际损失。六点用于拟合，两点预先留出作检验；对角线表示预测等于观测，点到线的偏差反映误差。 | [SVG](figure-3-7-scaling.svg) | [PNG](figure-3-7-scaling.png) | [PDF](figure-3-7-scaling.pdf) |
 | 3-26 | 同一组预测误差的放大视图。F1—F6 为拟合点，H1—H2 为留出点；纵轴是预测减观测，保留正负号。 | [SVG](figure-3-scaling-residual.svg) | [PNG](figure-3-scaling-residual.png) | [PDF](figure-3-scaling-residual.pdf) |
 | 3-27 | 训练与服务累计成本的题设比较。截距是训练投入，斜率是单次调用成本；虚线标出超出拟合参数或数据范围的方案，竖线为约 2.048 亿次的成本交点。 | [SVG](figure-3-lifecycle-cost.svg) | [PNG](figure-3-lifecycle-cost.png) | [PDF](figure-3-lifecycle-cost.pdf) |
@@ -74,7 +74,7 @@ python manuscripts/ch03/build.py
 | 3-29 | MoE 的总参数与每 token 激活参数分别对应容量和部分计算需求。图中采用公开报告的总量与激活量，二者都使用十亿参数为单位。 | [SVG](figure-3-moe-history.svg) | [PNG](figure-3-moe-history.png) | [PDF](figure-3-moe-history.pdf) |
 | 3-30 | 采用 A100 80GB 的 Llama 训练用量。各柱是公开 GPU 小时，同一张图使用相同设备类别与线性尺度。 | [SVG](figure-3-9-gpu-hours.svg) | [PNG](figure-3-9-gpu-hours.png) | [PDF](figure-3-9-gpu-hours.pdf) |
 | 3-31 | 采用 H100 80GB 的 Llama 3.1 训练用量。纵轴分模型规模，横轴为百万 GPU 小时；设备类别与前图分开呈现。 | [SVG](figure-3-h100-hours.svg) | [PNG](figure-3-h100-hours.png) | [PDF](figure-3-h100-hours.pdf) |
-| 3-32 | DeepSeek-V3 采用 H800 的三个训练阶段。分别累计预训练、上下文扩展与后训练用量，保留各阶段的公开统计范围。 | [SVG](figure-3-v3-stage-hours.svg) | [PNG](figure-3-v3-stage-hours.png) | [PDF](figure-3-v3-stage-hours.pdf) |
+| 3-32 | DeepSeek-V3 采用 H800 的三个训练阶段。分别累计预训练、上下文扩展与后训练用量，沿用各阶段的公开统计范围。 | [SVG](figure-3-v3-stage-hours.svg) | [PNG](figure-3-v3-stage-hours.png) | [PDF](figure-3-v3-stage-hours.pdf) |
 
 
 ## V4／V4.1 会话修订后的当前图表
@@ -85,7 +85,7 @@ python manuscripts/ch03/build.py
 | --- | --- | --- |
 | 3-1 | 恢复 6144 个上下文位置，处理 2048 个新输入并生成四个输出。首输出来自 prefill，后续三次 decode 各追加一个位置；纵向表示调用次序，间距用于示意。 | [SVG](figure-3-1-stages.svg) |
 | 3-2 | 请求到达、首输出与末输出决定三个计时区间。首响应包含开始生成前的等待，输出间隔描述生成过程，完整请求时间从到达累计到结束。 | [SVG](figure-3-request-clocks.svg) |
-| 3-3 | 保留 1 GiB 状态等待十秒，对应面积为 10 GiB·s。横轴为状态存活时间，纵轴为占用空间；面积描述这段等待消耗的空间时间。 | [SVG](figure-3-state-time-area.svg) |
+| 3-3 | 1 GiB 状态持续占用空间十秒，对应面积为 10 GiB·s。横轴为状态存活时间，纵轴为占用空间；面积描述这段等待消耗的空间时间。 | [SVG](figure-3-state-time-area.svg) |
 | 3-4 | 相同两分钟总量的三种窗口组成。长输入类为 8192 输入、256 输出，长输出类为 1024 输入、2048 输出；两类混合比例改变阶段需求。 | [SVG](figure-3-2-workload-budget.svg) |
 | 3-5 | 三种窗口组成对应的输入与后续生成需求。输入数按 token 计，后续生成按每请求的一次 decode 步计；每请求首输出已计入 prefill。 | [SVG](figure-3-stage-demand.svg) |
 | 3-6 | 工作先进入队列，再由处理资源完成。到来快于处理时差额留在队列中；处理快于到来时，资源逐步消化已有积压。 | [SVG](figure-3-queue-mechanism.svg) |
@@ -96,7 +96,7 @@ python manuscripts/ch03/build.py
 | 3-11 | 两个工具存在前后依赖时的任务时间线。模型先运行两秒，工具 A 用六秒，工具 B 用十秒，模型最后运行三秒，总计二十一秒。 | [SVG](figure-3-tool-dependency.svg) |
 | 3-12 | 两个工具独立时可以同时开始，模型在较慢的工具 B 完成后继续，任务共十五秒。与前图使用相同时间尺度；工具工作总量仍为十六秒。 | [SVG](figure-3-tool-parallel.svg) |
 | 3-13 | 两个生成分支指向同一份公共前缀，并各自保存新增尾部。箭头表示引用关系，共享前缀只计一份容量。 | [SVG](figure-3-branch-state.svg) |
-| 3-14 | 同一批 8K 输入的专家矩阵 token 层数。普通全层路径执行 40 层；CED 路径执行 20 层编码器，并为最近 128 个 token 重放 20 层解码器。灰色说明项仍需另外计算；生成阶段执行完整主干。 | [SVG](figure-3-v41-ced.svg) |
+| 3-14 | 同一批 8K 输入中，各 token 经过的专家层数之和。普通全层路径执行 40 层；CED 路径执行 20 层编码器，并为最近 128 个 token 重放 20 层解码器。灰色说明项仍需另外计算；生成阶段执行完整主干。 | [SVG](figure-3-v41-ced.svg) |
 | 3-15 | 图像从像素网格变为模型位置。640 方图切成 40×40 个块，相邻 2×2 块合并成一个位置，形成 20×20、共 400 个位置。 | [SVG](figure-3-vision-shapes.svg) |
 | 3-16 | 位置数与每位置特征宽度分别计量。四组 2560 维 BF16 编码特征占 7.8125 MiB；这些位置进入语言模型后，另产生各层的 KV 状态。 | [SVG](figure-3-vision-state.svg) |
 | 3-17 | 可组合的多模态阶段。编码形成模型输入，语言模型生成回复，声学模块将回复转成音频，接收端缓冲与播放设备决定何时真正发声。 | [SVG](figure-3-4-realtime.svg) |
@@ -107,7 +107,7 @@ python manuscripts/ch03/build.py
 | 3-22 | Qwen3-8B 全参数训练的参数相关状态。每参数包括两字节计算权重和四组四字节状态，共十八字节；激活和工作区由各自寿命另行核算。 | [SVG](figure-3-training-states.svg) |
 | 3-23 | Qwen3-8B 的 8192 输入全参数训练。全部位置执行词表头、没有重计算；按矩阵逐项累计，前向加反向为 431.368 TFLOPs。 | [SVG](figure-3-training-flops.svg) |
 | 3-24 | 强化学习中的角色和数据流。生成端产生回答，反馈环节评价结果，筛选后送给学习器更新；新权重再用于下一批生成。 | [SVG](figure-3-6-rl.svg) |
-| 3-25 | 保持十六条有效样本目标，生成数由三十二增到六十四。生成输入、后续生成和参考评分随全部回答增加，策略更新处理的样本数保持相同。 | [SVG](figure-3-rl-stage-work.svg) |
+| 3-25 | 保持十六条有效样本目标，生成数由三十二增到六十四。生成时的输入处理、后续解码和参考模型评分随回答总数增加，策略更新处理的样本数保持相同。 | [SVG](figure-3-rl-stage-work.svg) |
 | 3-26 | 八个公开 C4 观测的预测与实际损失。六点用于拟合，两点预先留出作检验；对角线表示预测等于观测，点到线的偏差反映误差。 | [SVG](figure-3-7-scaling.svg) |
 | 3-27 | 同一组预测误差的放大视图。F1—F6 为拟合点，H1—H2 为留出点；纵轴是预测减观测，保留正负号。 | [SVG](figure-3-scaling-residual.svg) |
 | 3-28 | 训练与服务累计成本的题设比较。截距是训练投入，斜率是单次调用成本；虚线标出超出拟合参数或数据范围的方案，竖线为约 2.048 亿次的成本交点。 | [SVG](figure-3-lifecycle-cost.svg) |
@@ -115,4 +115,4 @@ python manuscripts/ch03/build.py
 | 3-30 | MoE 的总参数与每 token 激活参数分别对应容量和部分计算需求。图中采用公开报告的总量与激活量，二者都使用十亿参数为单位。 | [SVG](figure-3-moe-history.svg) |
 | 3-31 | 采用 A100 80GB 的 Llama 训练用量。各柱是公开 GPU 小时，同一张图使用相同设备类别与线性尺度。 | [SVG](figure-3-9-gpu-hours.svg) |
 | 3-32 | 采用 H100 80GB 的 Llama 3.1 训练用量。纵轴分模型规模，横轴为百万 GPU 小时；设备类别与前图分开呈现。 | [SVG](figure-3-h100-hours.svg) |
-| 3-33 | DeepSeek-V3 采用 H800 的三个训练阶段。分别累计预训练、上下文扩展与后训练用量，保留各阶段的公开统计范围。 | [SVG](figure-3-v3-stage-hours.svg) |
+| 3-33 | DeepSeek-V3 采用 H800 的三个训练阶段。分别累计预训练、上下文扩展与后训练用量，沿用各阶段的公开统计范围。 | [SVG](figure-3-v3-stage-hours.svg) |

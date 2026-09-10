@@ -9,6 +9,17 @@ def draw(ch,out):
     data=json.loads((ROOT/'calculations/results/v41-throughline.json').read_text())
     with plt.rc_context(STYLE):
         if ch==2:
+            f,a=canvas(5.5)
+            box(a,.05,.82,.90,.11,'提示 token → 编码器 20 层','blue')
+            box(a,.05,.53,.40,.16,'编码器末层表示\n投影为全局 KV','green')
+            box(a,.56,.53,.39,.16,'提示末尾 ≤128 位置\n取编码器输出','orange',11)
+            arrow(a,(.25,.82),(.25,.69));arrow(a,(.75,.82),(.75,.69))
+            box(a,.56,.25,.39,.16,'解码器 20 层重放\n构建局部 SWA','orange',11)
+            arrow(a,(.75,.53),(.75,.41));arrow(a,(.45,.61),(.56,.33))
+            text(a,.26,.34,'全局 KV 供解码器读取',11,ha='center')
+            box(a,.05,.04,.90,.12,'生成新位置：编码器 → 解码器 → 输出','purple',11)
+            arrow(a,(.75,.25),(.75,.16))
+            out.save(f,'figure-2-v41-ced-path')
             f,a=canvas(5.1)
             text(a,.245,.95,'V4：逐层保存',14,ha='center');text(a,.755,.95,'V4.1：跨层共享',14,ha='center')
             for i in range(3):
@@ -53,18 +64,19 @@ def draw(ch,out):
                 ax.set(yticks=[1,0],yticklabels=['V4 Flash','V4.1 Flash'],xlim=(0,34),ylim=(-.65,1.7),xticks=[0,10,20,30],xlabel='MiB');ax.set_title(title,fontsize=13)
             out.save(f,'figure-5-v41-traffic')
         elif ch==8:
-            f,a=canvas(5.3)
-            text(a,.04,.95,'工具返回：先恢复，再处理新增输入',14)
-            for y,head,tail,c in [(.70,'全局命中 + SWA 命中','直接复用状态','green'),(.42,'全局命中 + SWA 未命中','重放最近 128 token\n近似恢复 SWA','orange'),(.14,'全局 KV 未命中','重算缺失前缀','orange')]:
-                box(a,.03,y,.46,.17,head,'blue',11)
-                box(a,.59,y,.38,.17,tail,c,11);arrow(a,(.49,y+.085),(.59,y+.085))
-            text(a,.5,.055,'模型版本、位置、输入与恢复材料保持一致',11,ha='center')
+            f,a=canvas(5.9)
+            text(a,.04,.95,'先判断编码器前缀状态',14)
+            for y,left,right in [(.74,'全局与编码器 SWA 命中','编码器处理新输入'),(.52,'仅全局 KV 命中','重放前缀末尾窗口\n再处理新输入'),(.30,'全局 KV 未命中','编码器重算缺失前缀\n再处理新输入')]:
+                box(a,.03,y,.44,.15,left,'blue',11)
+                box(a,.58,y,.39,.15,right,'orange',11);arrow(a,(.47,y+.075),(.58,y+.075))
+            text(a,.5,.23,'三条路径都继续执行',11,ha='center')
+            box(a,.03,.055,.94,.12,'解码器末尾窗口重放 → 构建 SWA → 生成','purple',11)
             out.save(f,'figure-8-v41-recovery')
         elif ch==9:
             f,a=plot(4.1,left=.25,bottom=.20)
             route=data['routing'];transfer=route['remote_transfer_ms'];replay=route['remote_replay_ms']
             a.barh(2,10,height=.52,color=COL['gray'],edgecolor=COL['line']);a.barh(1,transfer,height=.52,color=COL['blue'],edgecolor=COL['line']);a.barh(1,replay,left=transfer,height=.52,color=COL['orange'],edgecolor=COL['line']);a.barh(0,20,height=.52,color=COL['gray'],edgecolor=COL['line'])
             a.text(10.4,2,'10 ms',va='center',fontsize=11);a.text(route['remote_ready_ms']+.4,1,'12.666 ms',va='center',fontsize=11);a.text(20.4,0,'20 ms',va='center',fontsize=11)
-            a.text(2.3,1,'传输',ha='center',va='center',fontsize=11);a.text(8.7,1,'局部恢复',ha='center',va='center',fontsize=11)
-            a.set(yticks=[2,1,0],yticklabels=['A：较短队列','B：取回与恢复','A：较长队列'],xlim=(0,26),ylim=(-.7,2.9),xlabel='开始后续处理前的等待（ms）')
+            a.text(2.3,1,'传输',ha='center',va='center',fontsize=11);a.text(8.7,1,'编码器恢复',ha='center',va='center',fontsize=11)
+            a.set(yticks=[2,1,0],yticklabels=['A：较短队列','B：取回与恢复','A：较长队列'],xlim=(0,26),ylim=(-.7,2.9),xlabel='两条路径不同的准备时间（ms）')
             out.save(f,'figure-9-v41-routing')

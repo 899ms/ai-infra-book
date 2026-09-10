@@ -15,8 +15,9 @@ outline=(ROOT/'outlines/08-单实例推理.md').read_text()
 check(re.findall(r'^#{2,3} (8\.[^\n]+)',raw,re.M)==re.findall(r'^#{2,3} (8\.[^\n]+)',outline,re.M),'Outline headings differ')
 check(re.findall(r'^> \*\*练习 (8-\d+)',raw,re.M)==[f'8-{i}' for i in range(1,10)],'Exercise sequence')
 check(re.findall(r'^> \*\*练习 (8-\d+) · 核心',raw,re.M)==['8-2','8-4','8-9'],'Core selection')
-check(re.findall(r'^\*图 (8-\d+)：',raw,re.M)==[f'8-{i}' for i in range(1,16)],'External caption sequence')
-check(len(re.findall(r'^!\[',raw,re.M))==15,'Image count')
+figure_count=len(load(HERE/'figure-index.json'))
+check(re.findall(r'^\*图 (8-\d+)：',raw,re.M)==[f'8-{i}' for i in range(1,figure_count+1)],'External caption sequence')
+check(len(re.findall(r'^!\[',raw,re.M))==figure_count,'Image count')
 refs=re.findall(r'\[\^([^\]]+)\](?!:)',raw);defs=re.findall(r'^\[\^([^\]]+)\]:',raw,re.M);check(set(refs)==set(defs),'Footnote coverage');check(len(defs)==len(set(defs)),'Duplicate footnote')
 for u in re.findall(r'\]\(([^)]+)\)',raw):
  if re.match(r'\w+:',u):continue
@@ -28,8 +29,9 @@ for p in HERE.glob('figure-*.svg'):
  with Image.open(p.with_suffix('.png')) as im:im.verify()
 for row in load(HERE/'sources.json')['sources']:check(hashlib.sha256((ROOT/row['path']).read_bytes()).hexdigest()==row['sha256'],'Source hash '+row['path'])
 for row in load(HERE/'manifest.json')['outputs']:check(hashlib.sha256((ROOT/row['path']).read_bytes()).hexdigest()==row['sha256'],'Output hash '+row['path'])
-check(not load(HERE/'figure-layout-check.json')['text_extent_warnings'],'Figure extent warnings')
-check('MATHPLACEHOLDER' not in page and 'katex-error' not in page,'Unrendered math');check(page.count('src="data:image/png;base64,')==15,'Offline image embedding');check('url(fonts/' not in page,'External math font')
+layout=load(HERE/'teaching-layout-validation.json')
+check(len(layout)==figure_count and all(x['width_pt']==420 and x['min_label_pt']>=11 and not x['text_extent_warnings'] for x in layout),'Book-size readable figures')
+check('MATHPLACEHOLDER' not in page and 'katex-error' not in page,'Unrendered math');check(page.count('src="data:image/png;base64,')==figure_count,'Offline image embedding');check('url(fonts/' not in page,'External math font')
 ids=re.findall(r'\bid="([^"]+)"',page);check(len(ids)==len(set(ids)),'Duplicate HTML IDs')
 for ref in re.findall(r'href="#([^"]+)"',page):check(html.unescape(unquote(ref)) in ids,'HTML anchor '+ref)
 # Independent small calculations supporting the prose; compare figure payloads to archived data.
@@ -68,5 +70,5 @@ example=d['verification_example'];check(example['output']==example['draft'][:exa
 reference={r['name']:r for r in load(HERE/'teaching-validation.json')['design_candidates']}
 for r in d['design_plane']['configurations']:
  check(all(abs(r[k]-reference[r['name']][k])<1e-12 for k in ['memory_gib','time_s']),'Configuration diagram '+r['name'])
-report={'passed':not errors,'checks':checks,'sections':6,'subsections':22,'exercises':9,'figures':15,'formulas':load(HERE/'math-validation.json')['expressions'],'chinese_characters':len(re.findall(r'[\u4e00-\u9fff]',raw)),'errors':errors}
+report={'passed':not errors,'checks':checks,'sections':6,'subsections':22,'exercises':9,'figures':figure_count,'formulas':load(HERE/'math-validation.json')['expressions'],'chinese_characters':len(re.findall(r'[\u4e00-\u9fff]',raw)),'errors':errors}
 (HERE/'validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');print(json.dumps(report,ensure_ascii=False,indent=2));sys.exit(bool(errors))

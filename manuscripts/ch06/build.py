@@ -244,6 +244,12 @@ keys={'6-1':'placement','6-2':'tp_pipeline','6-3':'expert_reuse','6-4':'collecti
 data={keys.get(k,k):v for k,v in data.items()}
 (HERE/'figure-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
 (HERE/'figure-layout-check.json').write_text(json.dumps({'text_extent_warnings':layout},ensure_ascii=False,indent=2)+'\n')
+import sys
+sys.path.insert(0,str(HERE.parent))
+from teaching_revision import draw as draw_teaching
+teaching_outputs,teaching_checks=draw_teaching(HERE,data)
+outputs=list(dict.fromkeys(outputs+teaching_outputs))
+figure_catalog["figures"]=json.loads((HERE/"figure-index.json").read_text())
 # Render formulas on the build machine; bundle all image/font bytes into HTML.
 md=HERE.parent/'06-超节点.md';raw=md.read_text();maths=[]
 def protect(match):
@@ -263,10 +269,15 @@ body=re.sub(r'<table>(.*?)</table>',r'<div class="table-scroll"><table>\1</table
 for p in outputs:
  if p.suffix=='.svg':body=body.replace('src="ch06/'+p.name+'"','src="data:image/png;base64,'+base64.b64encode(p.with_suffix('.png').read_bytes()).decode()+'"')
 css='''*{box-sizing:border-box}body{margin:0;background:#f7f7f4;color:#243640;font:18px/1.95 Georgia,"Songti SC",serif}main{max-width:1020px;margin:auto;padding:48px 46px 85px;background:#fff}h1,h2,h3{font-family:Arial,"PingFang SC",sans-serif;line-height:1.45;color:#183949}h1{font-size:36px}h2{font-size:28px;border-top:1px solid #d5e1e4;margin-top:65px;padding-top:26px}h3{font-size:23px;margin-top:38px}a{color:#286b98;text-underline-offset:3px;overflow-wrap:anywhere}img{display:block;width:100%;height:auto;margin:28px auto 10px}em{font-size:15px;color:#546e7a}table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.7;margin:22px 0}td,th{padding:10px 12px;border-bottom:1px solid #d5e1e4;text-align:left}th{background:#edf4f6}blockquote{margin:27px 0;padding:14px 24px;border-left:4px solid #16857b;background:#f0f7f4;font-size:16px}code{font:0.85em/1.6 Menlo,monospace;background:#f0f4f6;overflow-wrap:anywhere}pre{overflow-x:auto;padding:16px;max-width:100%}nav{font:16px/1.9 Arial,"PingFang SC",sans-serif;background:#eff5f7;padding:18px 24px}nav a{display:block}.footnote{font-size:14px;line-height:1.8}.footnote li{margin-bottom:13px}.table-scroll{overflow-x:auto;max-width:100%}.katex{font-size:1.04em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:12px 0}@media(max-width:650px){table{min-width:600px}main{padding:24px 18px}body{font-size:17px}h1{font-size:29px}h2{font-size:25px}h3{font-size:21px}}@media print{main{max-width:none;padding:0}h2,h3{break-after:avoid}img,blockquote{break-inside:avoid}body{font-size:11pt}}'''
+css+='main{max-width:760px;padding-left:24px;padding-right:24px}img{max-width:720px}@media print{img{width:420pt;max-width:100%}}'
 nav=''.join('<a href="#'+ident+'">'+title+'</a>' for ident,title in re.findall(r'<h2 id="([^"]+)">(6\.\d+ [^<]+)</h2>',body))
 page='<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第 6 章 超节点</title><style>'+css+math_css+'</style></head><body><main><nav aria-label="本章目录">'+nav+'</nav>'+body+'</main></body></html>'
+import sys
+sys.path.insert(0,str(HERE.parent))
+from teaching_reading import readable_diagrams
+page=readable_diagrams(page)
 hp=md.with_suffix('.html');hp.write_text(page)
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')
-artifacts=outputs+[HERE/'visual_examples.py',HERE/'figure-catalog.json',HERE/'figure-data.json',HERE/'continuity-model.json',HERE/'continuity_model.py',hp,md]
+artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'visual_examples.py',HERE/'figure-catalog.json',HERE/'figure-data.json',HERE/'continuity-model.json',HERE/'continuity_model.py',hp,md]
 (HERE/'manifest.json').write_text(json.dumps({'chapter':6,'generator':'manuscripts/ch06/build.py','figures':len(figure_catalog['figures']),'supplementary_figures':1,'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(outputs)} image files, {len(maths)} formulas, offline HTML; {len(layout)} extent warnings.')

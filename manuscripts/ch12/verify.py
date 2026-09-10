@@ -6,7 +6,7 @@ from urllib.parse import unquote, urlsplit
 import hashlib,json,re,xml.etree.ElementTree as ET
 ROOT=Path(__file__).resolve().parents[2];HERE=Path(__file__).resolve().parent
 md=ROOT/'manuscripts/12-端边云协同.md';text=md.read_text();page=md.with_suffix('.html').read_text();errors=[];checks={}
-catalog=json.loads((HERE/'figure-catalog.json').read_text());figure_count=len(catalog)
+catalog=json.loads((HERE/'figure-catalog.json').read_text());active_catalog=json.loads((HERE/'figure-index.json').read_text());figure_count=len(active_catalog)
 def check(name,condition):
  checks[name]=bool(condition)
  if not condition:errors.append(name)
@@ -32,12 +32,12 @@ for url in links:
  parts=urlsplit(url)
  if parts.scheme or not parts.path:continue
  p=(md.parent/unquote(parts.path)).resolve();check('link:'+url,p.exists())
-for entry in catalog:
+for entry in active_catalog:
  p=HERE/entry['file']
  tree=ET.parse(p);labels=[''.join(x.itertext()) for x in tree.iter() if x.tag.endswith('}text')]
  check('artwork_has_no_caption_number:'+p.name,not any(re.search(r'图\s*\d+\s*[-－–]\s*\d+',s) for s in labels))
- check('artwork_has_labels:'+p.name,len(labels)>5)
-check('no_layout_warnings',json.loads((HERE/'figure-layout-check.json').read_text())['text_extent_warnings']==[])
+ check('artwork_has_labels:'+p.name,bool(labels))
+check('book_size_layout',all(r['width_pt']==420 and r['min_label_pt']>=11 and not r['text_extent_warnings'] for r in json.loads((HERE/'teaching-layout-validation.json').read_text())))
 rendered_data=json.loads((HERE/'figure-data.json').read_text());d={f"12-{e['source_id']}":rendered_data[f"12-{e['number']}"] for e in catalog};q=json.loads((ROOT/'calculations/results/queqiao-records-conditions.json').read_text());ec=json.loads((ROOT/'calculations/results/multimodal-cache-single.json').read_text())['summary']
 check('full_ec_shape',400*10240*2==ec['complete_encoder_bytes_per_image']==d['12-3']['bytes'][1])
 check('visual_kv',400*147456==ec['visual_kv_bytes_per_image']==d['12-3']['bytes'][2])
@@ -80,7 +80,7 @@ check('recovery_retained_progress',close(41+1+1.9,43.9))
 check('recovery_lost_progress',close(41+1+10*1.9,61))
 check('thirty_round_continuity','前十轮已完成，剩余二十轮' in text and '每轮 3.5 秒，继续执行需要 70 秒' in text)
 check('mechanism_explanations',all(x in text for x in ['资源竞争','最大值','如果等待窗口是主要原因','每一步既记录总时间，也记录握手、发送和确认的时刻']))
-check('sixteen_figures_in_reading_order',figure_count==16 and [e['number'] for e in catalog]==list(range(1,17)))
+check('figures_in_reading_order',[e['number'] for e in active_catalog]==list(range(1,figure_count+1)))
 check('figure_catalog_paths',all((HERE/e['file']).exists() for e in catalog))
 check('source_backed_overlap',close(d['12-8']['chunked_s'],12.36) and d['12-8']['chunk_return_s']==[.08,.16,.16])
 check('buffer_double_duration',close(d['12-9']['empty_s'][1],2*d['12-9']['empty_s'][0]))

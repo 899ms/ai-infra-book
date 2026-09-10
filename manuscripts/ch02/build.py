@@ -243,6 +243,10 @@ css+=' main{max-width:760px}img{max-width:720px}@media print{img{width:420pt;max
 css+=math_css+' .katex{font-size:1.04em;position:relative}.katex .katex-mathml{contain:strict}.katex-display{overflow-x:auto;overflow-y:hidden;padding:14px 0}.table-scroll{overflow-x:auto;max-width:100%}td{min-width:120px}td .katex{white-space:nowrap}@media(max-width:650px){table{display:table}td{min-width:145px}}'
 nav=''.join('<a href="#'+ident+'">'+title+'</a>' for ident,title in re.findall(r'<h2 id="([^"]+)">(2\.\d+ [^<]+)</h2>',body))
 page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>第 2 章 模型架构</title><style>'+css+'</style><main><nav>'+nav+'</nav>'+body+'</main></html>'
+import sys
+sys.path.insert(0,str(HERE.parent))
+from teaching_reading import readable_diagrams
+page=readable_diagrams(page)
 html_path=HERE.parent/'02-模型架构.html';html_path.write_text(page)
 artifacts=out+[HERE/'figure-data.json',HERE/'model-comparison.json',HERE/'model-comparison.md',HERE/'comparison-v4-decode.json',html_path,md]
 manifest={'chapter':2,'generator':'manuscripts/ch02/build.py','font_family':family,'figures':len(re.findall(r'!\[',raw)),'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]}

@@ -19,6 +19,7 @@ with sync_playwright() as p:
             assert result['scrollWidth']<=width,result
             assert len(result['images'])==expected and all(i['loaded'] for i in result['images']),result
             assert not result['mathErrors'] and not result['brokenAnchors'],result
+            if width==390:assert all(i['width']>=559 for i in result['images']), 'Mobile diagram labels must stay at book scale'
             page.screenshot(path=str(target/f'reading-{width}.png'))
             if width==1440:page.pdf(path=str(target/'chapter.pdf'),format='A4',print_background=True,margin={'top':'18mm','bottom':'18mm','left':'18mm','right':'18mm'})
             page.close()
@@ -31,6 +32,7 @@ with sync_playwright() as p:
             x=(i%3)*400+(400-im.width)//2;y=(i//3)*410+22
             sheet.paste(im,(x,y));d.text(((i%3)*400+8,(i//3)*410+5),f'{n}-{i+1}',fill='black')
         sheet.save(target/'contact-sheet.png')
+        (ROOT/f'ch{n:02}'/'teaching-browser-validation.json').write_text(json.dumps([r for r in records if r['chapter']==n],ensure_ascii=False,indent=2)+'\n')
     browser.close()
 (review/'browser-validation.json').write_text(json.dumps(records,ensure_ascii=False,indent=2)+'\n')
 print(json.dumps([dict(chapter=r['chapter'],width=r['width'],figures=len(r['images']),math=r['mathCount'],status='passed') for r in records]))

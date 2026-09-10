@@ -132,6 +132,11 @@ draw_additions(plt, C, canvas, box, arrow, save, data)
 (HERE/'figure-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
 (HERE/'figure-layout-check.json').write_text(json.dumps({'outside_canvas_text':extent_issues},ensure_ascii=False,indent=2)+'\n')
 
+import sys
+sys.path.insert(0,str(HERE.parent))
+from teaching_revision import draw as draw_revision
+outputs.extend(draw_revision(HERE,data,teaching))
+outputs=list(dict.fromkeys(outputs))
 md=HERE.parent/'04-加速器架构.md';raw=md.read_text()
 maths=[]
 def protect_math(match):
@@ -157,10 +162,15 @@ body=re.sub(r'<table>(.*?)</table>',r'<div class="table-scroll"><table>\1</table
 for p in outputs:
  if p.suffix=='.svg':body=body.replace('src="ch04/'+p.name+'"','src="data:image/png;base64,'+base64.b64encode(p.with_suffix('.png').read_bytes()).decode()+'"')
 css='''body{margin:0;background:#fafaf8;color:#243640;font:18px/1.95 Georgia,"Songti SC",serif}main{max-width:960px;margin:auto;padding:50px 38px 90px;background:white}h1,h2,h3{font-family:Arial,"PingFang SC",sans-serif;line-height:1.45;color:#163747}h1{font-size:36px}h2{font-size:28px;border-top:1px solid #d5e1e4;margin-top:65px;padding-top:28px}h3{font-size:23px;margin-top:40px}p{margin:1em 0}a{color:#246f91;text-underline-offset:3px}img{display:block;width:100%;height:auto;margin:26px auto 10px}em{font-size:15px;color:#55707d}table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.7;margin:24px 0}td,th{padding:10px 12px;border-bottom:1px solid #d5e1e4;text-align:left}th{background:#edf4f6}blockquote{margin:28px 0;padding:16px 24px;border-left:4px solid #138b83;background:#f1f8f6;font-size:16px}code{font:0.85em/1.65 Menlo,monospace;background:#f0f4f6;overflow-wrap:anywhere}pre{white-space:pre-wrap}.equation{font:20px/1.8 Georgia,"Songti SC",serif;text-align:center;background:#f7f9fa;padding:18px 12px;margin:25px 0;overflow-wrap:anywhere}nav{font:16px/1.9 Arial,"PingFang SC",sans-serif;background:#f0f6f8;padding:18px 24px}nav a{display:block}.footnote{font-size:14px;line-height:1.8}.footnote li{margin-bottom:12px}@media(max-width:650px){main{padding:25px 18px}body{font-size:17px}table{display:block;overflow-x:auto}h1{font-size:29px}h2{font-size:25px}.equation{font-size:17px}}@media print{main{max-width:none;padding:0}h2,h3{break-after:avoid}img,blockquote{break-inside:avoid}body{font-size:11pt}}'''
+css+=' main{max-width:760px}img{max-width:720px}@media print{img{width:420pt;max-width:100%}}'
 css+=math_css+' .katex{font-size:1.04em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:12px 0}.table-scroll{overflow-x:auto;max-width:100%}@media(max-width:650px){table{display:table}}'
 nav=''.join('<a href="#'+ident+'">'+title+'</a>' for ident,title in re.findall(r'<h2 id="([^"]+)">(4\.\d+ [^<]+)</h2>',body))
 page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第 4 章 加速器架构</title><style>'+css+'</style><main><nav>'+nav+'</nav>'+body+'</main></html>'
+import sys
+sys.path.insert(0,str(HERE.parent))
+from teaching_reading import readable_diagrams
+page=readable_diagrams(page)
 html_path=HERE.parent/'04-加速器架构.html';html_path.write_text(page)
 artifacts=outputs+[HERE/'figure-data.json',HERE/'teaching-data.json',html_path,md]
-(HERE/'manifest.json').write_text(json.dumps({'chapter':4,'generator':'manuscripts/ch04/build.py','figures':14,'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
+(HERE/'manifest.json').write_text(json.dumps({'chapter':4,'generator':'manuscripts/ch04/build.py','figures':len(re.findall(r'!\[',raw)),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(outputs)} figure files and reading HTML; {len(extent_issues)} text extent warnings.')

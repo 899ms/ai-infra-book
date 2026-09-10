@@ -48,6 +48,8 @@ class Exporter:
         labels=list(fig.texts)
         for ax in fig.axes:
             labels.extend(ax.texts)
+            legend=ax.get_legend()
+            if legend is not None: labels.extend(legend.get_texts())
             if ax.axison:
                 labels.extend([ax.title,ax.xaxis.label,ax.yaxis.label])
                 for axis in [ax.xaxis,ax.yaxis]:

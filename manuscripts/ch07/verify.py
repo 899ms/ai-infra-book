@@ -22,7 +22,8 @@ check('outline section and subsection coverage', headings(s) == headings(o) and 
 ex = re.findall(r'^> \*\*实验 7-(\d+) · (核心|延伸)', s, re.M)
 check('ten exercises with core 3, 7, 10', [int(x[0]) for x in ex] == list(range(1,11)) and [int(x[0]) for x in ex if x[1]=='核心'] == [3,7,10])
 figs = re.findall(r'!\[[^\]]*\]\(([^)]+)\)', s)
-check('twenty-one external captions', len(figs)==21 and re.findall(r'^\*图 7-(\d+)：',s,re.M)==[str(i) for i in range(1,22)])
+index=read(HERE/'figure-index.json')
+check('active figures and sequential external captions',len(figs)==len(index) and re.findall(r'^\*图 7-(\d+)：',s,re.M)==[str(i) for i in range(1,len(index)+1)])
 for f in figs:
     p = md.parent / f
     text = ''.join(ET.parse(p).getroot().itertext())
@@ -41,8 +42,9 @@ for name,key in [('sources.json','sources'),('manifest.json','outputs')]:
     mismatches = [x['path'] for x in read(HERE/name)[key] if hashlib.sha256((ROOT/x['path']).read_bytes()).hexdigest()!=x['sha256']]
     check(name+' SHA256 integrity', not mismatches)
     if mismatches: checks[-1]['mismatches']=mismatches
-check('formula rendering', read(HERE/'math-validation.json')['errors']==[] and read(HERE/'math-validation.json')['expressions']==98)
-check('figure text within canvas', read(HERE/'figure-layout-check.json')['text_extent_warnings']==[])
+check('formula rendering', read(HERE/'math-validation.json')['errors']==[] and read(HERE/'math-validation.json')['expressions']==len(re.findall(r'\$\$[\s\S]*?\$\$|\$[^$\n]+\$',s)))
+layout=read(HERE/'teaching-layout-validation.json')
+check('book-size visible text',len(layout)==len(figs) and all(x['width_pt']==420 and x['min_label_pt']>=11 and not x['text_extent_warnings'] for x in layout))
 d = read(HERE/'figure-data.json')
 
 check('cut bound and strong scaling', close(d['7-2']['cut_ms'],336*2**20/40e9*1000) and all(close(t,20/n) for n,t in zip(d['7-2']['device_multipliers'],d['7-2']['compute_ms'])))
@@ -108,7 +110,7 @@ check('multipath diagrams preserve arrival and delivery',all(v=={k:read(ROOT/('c
 check('step diagram starts update after both dependencies',all(close(v['update_start_ms'],max(20,v['ready_ms']+v['comm_ms'])) and close(v['finish_ms'],v['update_start_ms']+2) for v in d['7-20']['cases']))
 check('message curves preserve startup and payload',all(close(t,70+1.75*m/25e9*1e6) for m,t in zip(d['7-21']['input_bytes'],d['7-21']['baseline_us'])))
 check('standalone captions and no editing placeholders',not re.search(r'^\*图 7-\d+：.*\*\S',s,re.M) and 'NEW' not in prose)
-check('caption numbers agree with figure files',all(int(re.search(r'figure-7-(\d+)',f)[1])==i for i,f in enumerate(figs,1)))
+check('caption order agrees with active index',[Path(f).stem for f in figs]==[x['name'] for x in index])
 
 result={'passed':all(c['passed'] for c in checks),'checks':checks,'missing_local_links':missing,'scope':'Chapter 7 only; source and arithmetic checks do not establish GPU performance.'}
 (HERE/'validation.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')

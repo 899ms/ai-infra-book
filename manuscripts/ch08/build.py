@@ -186,6 +186,11 @@ data['service']={'source':'experiments/ch08/08-09/analysis.json','groups':ordere
 from illustrations import draw
 draw(save, canvas, box, arrow, C, data)
 (HERE/'figure-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n');(HERE/'figure-layout-check.json').write_text(json.dumps({'text_extent_warnings':warnings},ensure_ascii=False,indent=2)+'\n')
+import sys
+sys.path.insert(0,str(HERE.parent))
+from teaching_revision import draw as draw_teaching
+teaching_outputs,teaching_checks=draw_teaching(HERE,data)
+outputs=list(dict.fromkeys(outputs+teaching_outputs))
 # Offline HTML: render KaTeX locally and embed all image/font bytes.
 md=HERE.parent/'08-单实例推理.md';raw=md.read_text();maths=[]
 def protect(m):
@@ -208,8 +213,13 @@ const view=document.getElementById('figure-view'),content=document.getElementByI
 for(const img of document.querySelectorAll('main img')){img.tabIndex=0;img.setAttribute('role','button');img.setAttribute('aria-label',img.alt+'，点击放大');const show=()=>{content.replaceChildren(img.cloneNode());content.firstChild.removeAttribute('role');content.firstChild.removeAttribute('tabindex');view.showModal();};img.addEventListener('click',show);img.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show();}});}
 document.getElementById('close-figure').onclick=()=>view.close();view.addEventListener('close',()=>content.replaceChildren());
 </script>'''
-page=page.replace('</body>',zoom+'</body>');hp.write_text(page)
+page=page.replace('</body>',zoom+'</body>')
+import sys
+sys.path.insert(0,str(HERE.parent))
+from teaching_reading import readable_diagrams
+page=readable_diagrams(page)
+hp.write_text(page)
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')
-artifacts=outputs+[HERE/'figure-data.json',md,hp]
+artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',md,hp]
 (HERE/'manifest.json').write_text(json.dumps({'chapter':8,'generator':'manuscripts/ch08/build.py','figures':len(outputs)//3,'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(outputs)} images; {len(maths)} formulas; {len(warnings)} extent warnings.')

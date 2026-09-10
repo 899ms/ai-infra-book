@@ -191,7 +191,15 @@ data={('5-'+str(new_keys[k]) if k in new_keys else k):v for k,v in data.items()}
 data=dict(sorted(data.items(),key=lambda kv:int(kv[0].split('-')[1])))
 
 revision_outputs,revision_checks=draw_teaching_revision(HERE,data)
+import sys
+sys.path.insert(0,str(HERE.parent))
+from full_teaching_revision import draw as draw_full_revision
+full_outputs,full_checks=draw_full_revision(HERE,data)
+revision_outputs.extend(full_outputs)
+revision_checks.extend(full_checks)
+(HERE/'teaching-layout-check.json').write_text(json.dumps(revision_checks,ensure_ascii=False,indent=2)+'\n')
 outputs.extend(revision_outputs)
+outputs=list(dict.fromkeys(outputs))
 warnings.extend({'figure':c['figure'],'text':t} for c in revision_checks for t in c['text_extent_warnings'])
 revision_names={p.stem for p in revision_outputs}
 
@@ -223,9 +231,14 @@ body=re.sub(r'<p>(<img [^>]*src="ch05/([^"]+)"[^>]*>)</p>\s*<p><em>([\s\S]*?)</e
 for p in outputs:
  if p.suffix=='.svg':body=body.replace('src="ch05/'+p.name+'"','src="data:image/png;base64,'+base64.b64encode(p.with_suffix('.png').read_bytes()).decode()+'"')
 css='''body{margin:0;background:#fafaf8;color:#243640;font:18px/1.95 Georgia,"Songti SC",serif}main{max-width:960px;margin:auto;padding:50px 38px 90px;background:white}h1,h2,h3{font-family:Arial,"PingFang SC",sans-serif;line-height:1.45;color:#163747}h1{font-size:36px}h2{font-size:28px;border-top:1px solid #d5e1e4;margin-top:65px;padding-top:28px}h3{font-size:23px;margin-top:40px}p{margin:1em 0}a{color:#246f91;text-underline-offset:3px}img{display:block;width:100%;height:auto;margin:26px auto 10px}em{font-size:15px;color:#55707d}table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.7;margin:24px 0}td,th{padding:10px 12px;border-bottom:1px solid #d5e1e4;text-align:left}th{background:#edf4f6}blockquote{margin:28px 0;padding:16px 24px;border-left:4px solid #138b83;background:#f1f8f6;font-size:16px}code{font:0.85em/1.65 Menlo,monospace;background:#f0f4f6;overflow-wrap:anywhere}pre{white-space:pre;overflow-x:auto;padding:16px;border:1px solid #d5e1e4;max-width:100%;box-sizing:border-box}nav{font:16px/1.9 Arial,"PingFang SC",sans-serif;background:#f0f6f8;padding:18px 24px}nav a{display:block}.footnote{font-size:14px;line-height:1.8}.footnote li{margin-bottom:12px}.table-scroll{overflow-x:auto;max-width:100%}.katex{font-size:1.04em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:12px 0}@media(max-width:650px){main{padding:25px 18px}body{font-size:17px}h1{font-size:29px}h2{font-size:25px}}@media print{main{max-width:none;padding:0}h2,h3{break-after:avoid}img,blockquote{break-inside:avoid}body{font-size:11pt}}'''
+css+=' main{max-width:760px}'
 css+='''figure{margin:28px auto}figcaption{font:15px/1.8 Arial,"PingFang SC",sans-serif;color:#50616a;margin-top:12px}.teaching-figure{max-width:720px}.teaching-figure img{margin:0;width:100%;height:auto}.diagram-hint{display:none}.diagram-scroll{overflow-x:auto} @media(max-width:650px){.teaching-figure img{width:560px;min-width:560px;max-width:none}.diagram-hint{display:block;font:13px/1.6 Arial,"PingFang SC",sans-serif;color:#50616a;margin:6px 0}} @media print{.teaching-figure{width:148.167mm;max-width:100%;break-inside:avoid}.teaching-figure img{width:100%;min-width:0}.diagram-scroll{overflow:visible}.diagram-hint{display:none}figcaption{font-size:9pt}body{line-height:1.75}h1{font-size:20pt;margin:0 0 18pt}h2{font-size:16pt;margin:20pt 0 10pt;padding-top:10pt}h3{font-size:13pt;margin:16pt 0 8pt}p{margin:.75em 0;orphans:3;widows:3}figure{margin:14pt auto}.katex-display,pre{break-inside:avoid}.katex-display{padding:5pt 0}table{font-size:10pt}th,td{padding:6pt}.footnote{font-size:9pt;margin-top:20pt}}'''
 nav=''.join('<a href="#'+ident+'">'+title+'</a>' for ident,title in re.findall(r'<h2 id="([^"]+)">(5\.\d+ [^<]+)</h2>',body))
 page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第 5 章 算子与运行时</title><style>'+css+math_css+'</style><main><nav>'+nav+'</nav>'+body+'</main></html>'
+import sys
+sys.path.insert(0,str(HERE.parent))
+from teaching_reading import readable_diagrams
+page=readable_diagrams(page)
 html_path=HERE.parent/'05-算子与运行时.html';html_path.write_text(page)
 section_start=re.search(r'<h2 id="[^"]+">5\.2 ',body).start()
 section_end=re.search(r'<h2 id="[^"]+">5\.4 ',body).start()

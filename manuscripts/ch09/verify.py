@@ -12,8 +12,9 @@ def val(x):return float(Fraction(str(x)))
 md=HERE.parent/'09-分布式推理.md';s=md.read_text();html=md.with_suffix('.html').read_text();outline=(ROOT/'outlines/09-分布式推理.md').read_text()
 check(re.findall(r'^#{2,3} (9\.[\d.]+ .+)$',s,re.M)==re.findall(r'^#{2,3} (9\.[\d.]+ .+)$',outline,re.M),'All seven sections and 24 subsection headings match outline')
 check(re.findall(r'^\*\*9-(\d+)\s',s,re.M)==[str(i) for i in range(1,11)],'Ten chapter exercises retained')
-check(re.findall(r'^\*图 (9-\d+)\s',s,re.M)==[f'9-{i}' for i in range(1,18)],'Seventeen outside captions in order')
-check(len(re.findall(r'!\[.*?\]\(ch09/figure-',s))==17,'Seventeen figures included')
+index=json.loads((HERE/'figure-index.json').read_text());count=len(index)
+check(re.findall(r'^\*图 (9-\d+)：',s,re.M)==[f'9-{i}' for i in range(1,count+1)],'Sequential external captions')
+check(len(re.findall(r'!\[.*?\]\(ch09/figure-',s))==count,'Active figures included')
 ids=set(re.findall(r'\[\^([^\]]+)\]:',s));uses=set(re.findall(r'\[\^([^\]]+)\](?!:)',s));check(ids==uses,'All citations defined and used')
 for match in re.findall(r'\]\(([^)]+)\)',s):
  parts=urlsplit(match)
@@ -21,14 +22,16 @@ for match in re.findall(r'\]\(([^)]+)\)',s):
  path=(md.parent/unquote(parts.path)).resolve();check(path.exists(),'Local reference '+match)
 for source in json.loads((HERE/'sources.json').read_text())['sources']:
  path=ROOT/source['path'];check(path.exists() and hashlib.sha256(path.read_bytes()).hexdigest()==source['sha256'],'Source lock '+source['path'])
-for p in HERE.glob('figure-*.svg'):
+for entry in index:
+ p=HERE/(entry['name']+'.svg')
  root=ET.parse(p).getroot();text=' '.join(root.itertext());check(not re.search(r'图\s*\d+\s*[-–]\s*\d+',text),'No caption number inside '+p.name)
  for ext in ['png','pdf']:check(p.with_suffix('.'+ext).stat().st_size>1000,'Export '+p.with_suffix('.'+ext).name)
-check(len(list(HERE.glob('figure-*.svg')))==17,'Exactly seventeen vector figures')
-check(html.count('src="data:image/png;base64,')==17,'Reading HTML contains all seventeen embedded images')
+check(len(index)==count,'Active vector figure index')
+check(html.count('src="data:image/png;base64,')==count,'Reading HTML embeds all active figures')
 math=json.loads((HERE/'math-validation.json').read_text());check(math['expressions']>=80 and not math['errors'],'KaTeX parsed all inline and display formulas')
 check('MATHPLACEHOLDER' not in html and 'katex-error' not in html,'No unrendered math')
-check(not json.loads((HERE/'figure-layout-check.json').read_text())['text_extent_warnings'],'All figure text within canvas')
+layout=json.loads((HERE/'teaching-layout-validation.json').read_text())
+check(len(layout)==count and all(x['width_pt']==420 and x['min_label_pt']>=11 and not x['text_extent_warnings'] for x in layout),'Book-size readable labels')
 # Independently check the chapter's key arithmetic against frozen results.
 V=2*36*8192*8*128*2;check(V==1207959552,'GQA KV bytes');check(V/2**30==1.125,'Binary capacity conversion')
 handoff=read('pd-af-handoff-qwen8')['summary'];check(handoff['pd_snapshot_bytes']==V,'PD frozen payload');A=2*36*4096*2;check(A==589824==handoff['af_total_bytes'],'AF directional payload sum');check(36*2==handoff['af_directional_messages'],'AF message count')
@@ -97,5 +100,5 @@ check(fig['new-overlap']['pipeline_ms']==.8 and fig['new-overlap']['serial_ms']=
 
 for record in json.loads((HERE/'manifest.json').read_text())['outputs']:
  p=ROOT/record['path'];check(hashlib.sha256(p.read_bytes()).hexdigest()==record['sha256'],'Artifact hash '+p.name)
-report={'status':'passed' if all(c['passed'] for c in checks) else 'failed','checks':len(checks),'errors':[c['name'] for c in checks if not c['passed']],'sections':7,'subsections':24,'figures':17,'exercises':10,'cjk_characters':sum('\u4e00'<=x<='\u9fff' for x in s),'new_gpu_measurements':False}
+report={'status':'passed' if all(c['passed'] for c in checks) else 'failed','checks':len(checks),'errors':[c['name'] for c in checks if not c['passed']],'sections':7,'subsections':24,'figures':count,'exercises':10,'cjk_characters':sum('\u4e00'<=x<='\u9fff' for x in s),'new_gpu_measurements':False}
 (HERE/'validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');print(json.dumps(report,ensure_ascii=False,indent=2));raise SystemExit(bool(report['errors']))

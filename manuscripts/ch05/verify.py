@@ -12,10 +12,11 @@ heads=lambda t:re.findall(r'^#{2,3} (5\.\d+(?:\.\d+)?) (.+)$',t,re.M)
 check(heads(s)==heads(outline),'outline heading correspondence')
 check(re.findall(r'^> \*\*实验 (5-\d+)',s,re.M)==[f'5-{i}' for i in range(1,10)],'nine ordered exercises')
 check(re.findall(r'^> \*\*实验 (5-\d+) · 核心',s,re.M)==['5-2','5-8','5-9'],'core exercises')
-check(len(re.findall(r'^!\[图 5-',s,re.M))==23,'twenty-three illustrations')
-check(len(re.findall(r'^\*图 5-\d+：',s,re.M))==23,'twenty-three external captions')
-check(len(re.findall(r'<img ',page))==23,'twenty-three embedded images')
-check(re.findall(r'^!\[图 (5-\d+)',s,re.M)==[f'5-{i}' for i in range(1,24)],'figure reading order')
+figure_count=len(json.loads((HERE/'figure-index.json').read_text()))
+check(len(re.findall(r'^!\[图 5-',s,re.M))==figure_count,'all illustrations')
+check(len(re.findall(r'^\*图 5-\d+：',s,re.M))==figure_count,'all external captions')
+check(len(re.findall(r'<img ',page))==figure_count,'all embedded images')
+check(re.findall(r'^!\[图 (5-\d+)',s,re.M)==[f'5-{i}' for i in range(1,figure_count+1)],'figure reading order')
 check(re.findall(r'^\*\*例 (5-\d+)',s,re.M)==[f'5-{i}' for i in range(1,13)],'twelve ordered worked examples')
 check(s.index('## 习题与配套实验')<s.index('> **实验 5-1'),'exercises after main exposition')
 check(s.index('### 5.6.1 热点占比')<s.index('### 5.6.3 综合案例'),'principle before request case')
@@ -100,10 +101,10 @@ check(np.allclose(figdata['5-15']['completion_us'],[2*5+8*(prod+consume),5+prod+
 
 # New diagrams must preserve the shared capacity, traffic and lifetime models.
 index=json.loads((HERE/'figure-index.json').read_text())
-check([z['number'] for z in index]==[f'5-{i}' for i in range(1,24)],'index matches caption order')
-check(sum(z['revised'] for z in index)==13,'thirteen revised section figures')
+check([z['number'] for z in index]==[f'5-{i}' for i in range(1,figure_count+1)],'index matches caption order')
+check(sum(z['revised'] for z in index)==figure_count,'all figures use revised layout')
 layout=json.loads((HERE/'teaching-layout-check.json').read_text())
-check(len(layout)==13 and all(z['width_pt']==420 and z['min_label_pt']>=11 and not z['text_extent_warnings'] for z in layout),'book-size revised labels and extents')
+check(len(layout)==figure_count and all(z['width_pt']==420 and z['min_label_pt']>=11 and not z['text_extent_warnings'] for z in layout),'book-size revised labels and extents')
 for z in index:
  if z['revised']:
   check((HERE/Path(z['asset']).with_suffix('.pdf')).exists(),'print PDF '+z['asset'])
@@ -140,5 +141,5 @@ for r,winner in [(64,'generic'),(65,'bucket'),(89,'bucket'),(90,'specialized')]:
 trace=json.loads((ROOT/'experiments/ch05/05-08/results/trace-analysis.json').read_text())['ranges'][:4]
 check([z['kernel_count'] for z in trace]==[18,15,18,15],'trace kernel counts')
 check([z['launch_api_count']-z['graph_launch_count'] for z in trace]==[18,15,0,0],'trace kernel launch distinction')
-report={'status':'passed' if not errors else 'failed','sections':len(re.findall(r'^## 5\.\d+ ',s,re.M)),'subsections':len(re.findall(r'^### 5\.\d+\.\d+ ',s,re.M)),'exercises':9,'worked_examples':12,'figures':23,'local_links':links,'footnotes':len(defs),'han_characters':len(re.findall(r'[\u4e00-\u9fff]',s)),'numerical_checks':'worked-example thresholds; RMSNorm input/gamma traffic; rectangular tile and prefetch exercises; critical path; tile capacity/traffic; quantization rereads; double-buffer dependencies and slot lifetimes; workload and payback thresholds; graph payload limit; persistent task schedule; attention budget; online softmax; ragged GEMM; activation counterexample; specialization thresholds; trace counts','errors':errors}
+report={'status':'passed' if not errors else 'failed','sections':len(re.findall(r'^## 5\.\d+ ',s,re.M)),'subsections':len(re.findall(r'^### 5\.\d+\.\d+ ',s,re.M)),'exercises':9,'worked_examples':12,'figures':figure_count,'local_links':links,'footnotes':len(defs),'han_characters':len(re.findall(r'[\u4e00-\u9fff]',s)),'numerical_checks':'worked-example thresholds; RMSNorm input/gamma traffic; rectangular tile and prefetch exercises; critical path; tile capacity/traffic; quantization rereads; double-buffer dependencies and slot lifetimes; workload and payback thresholds; graph payload limit; persistent task schedule; attention budget; online softmax; ragged GEMM; activation counterexample; specialization thresholds; trace counts','errors':errors}
 (HERE/'validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');print(json.dumps(report,ensure_ascii=False,indent=2));raise SystemExit(bool(errors))

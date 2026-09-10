@@ -180,4 +180,9 @@ from models import compute
 (HERE/'teaching-data.json').write_text(json.dumps(compute(ROOT),ensure_ascii=False,indent=2)+'\n')
 (HERE/'figure-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
 (HERE/'figure-layout-check.json').write_text(json.dumps({'text_extent_warnings':layout},ensure_ascii=False,indent=2)+'\n')
+import sys
+sys.path.insert(0,str(HERE.parent))
+from teaching_revision import draw as draw_teaching
+teaching_outputs,teaching_checks=draw_teaching(HERE,data)
+outputs=list(dict.fromkeys(outputs+teaching_outputs))
 exec(compile((HERE/'render.inc.py').read_text(),str(HERE/'render.inc.py'),'exec'))

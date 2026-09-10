@@ -133,6 +133,11 @@ save(f,'figure-11-8-retry');data['11-8']={'kind':'teaching_from_locked_calculati
 from extra_figures import draw
 draw(save,C,data,canvas,box,arrow,json.loads((HERE/'platform-design.json').read_text()),lifecycle)
 
+import sys
+sys.path.insert(0,str(HERE.parent))
+from teaching_revision import draw as draw_teaching
+teaching_outputs,teaching_checks=draw_teaching(HERE,data)
+outputs=list(dict.fromkeys(outputs+teaching_outputs))
 (HERE/'figure-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
 (HERE/'figure-layout-check.json').write_text(json.dumps({'text_extent_warnings':warnings},ensure_ascii=False,indent=2)+'\n')
 
@@ -155,10 +160,15 @@ for p in outputs:
  if p.suffix=='.svg':body=body.replace('src="ch11/'+p.name+'"','src="data:image/png;base64,'+base64.b64encode(p.with_suffix('.png').read_bytes()).decode()+'"')
 body=re.sub(r'<p>(<img [^>]+>)</p>\s*<p><em>(图 11-[\s\S]*?)</em></p>',r'<figure>\1<figcaption>\2</figcaption></figure>',body)
 css='''figure{margin:32px 0}figcaption{font:15px/1.8 Arial,"PingFang SC",sans-serif;color:#506975;padding:8px 0}body{margin:0;background:#fafaf8;color:#243640;font:18px/1.95 Georgia,"Songti SC",serif}main{max-width:960px;margin:auto;padding:50px 38px 90px;background:white}h1,h2,h3{font-family:Arial,"PingFang SC",sans-serif;line-height:1.45;color:#163747}h1{font-size:36px}h2{font-size:28px;border-top:1px solid #d5e1e4;margin-top:65px;padding-top:28px}h3{font-size:23px;margin-top:40px}p{margin:1em 0}a{color:#246f91;text-underline-offset:3px}img{display:block;width:100%;height:auto;margin:26px auto 10px}em{font-size:15px;color:#55707d}table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.7;margin:24px 0}td,th{padding:10px 12px;border-bottom:1px solid #d5e1e4;text-align:left}th{background:#edf4f6}blockquote{margin:28px 0;padding:16px 24px;border-left:4px solid #138b83;background:#f1f8f6;font-size:16px}code{font:0.85em/1.65 Menlo,monospace;background:#f0f4f6;overflow-wrap:anywhere}pre{white-space:pre;overflow-x:auto;padding:16px;border:1px solid #d5e1e4;max-width:100%;box-sizing:border-box}nav{font:16px/1.9 Arial,"PingFang SC",sans-serif;background:#f0f6f8;padding:18px 24px}nav a{display:block}.footnote{font-size:14px;line-height:1.8}.footnote li{margin-bottom:12px}.table-scroll{overflow-x:auto;max-width:100%}.katex{font-size:1.04em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:12px 0}@media(max-width:650px){main{padding:25px 18px}body{font-size:17px}h1{font-size:29px}h2{font-size:25px}}@media print{main{max-width:none;padding:0}h2,h3{break-after:avoid}img,blockquote{break-inside:avoid}body{font-size:11pt}}'''
+css+='*{box-sizing:border-box}main{max-width:760px;padding-left:24px;padding-right:24px}img{max-width:720px}a{overflow-wrap:anywhere}@media print{img{width:420pt;max-width:100%}}'
 nav=''.join('<a href="#'+ident+'">'+title+'</a>' for ident,title in re.findall(r'<h2 id="([^"]+)">(11\.\d+ [^<]+)</h2>',body))
 page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第 11 章 资源调度与运行环境</title><style>'+css+math_css+'</style><main><nav>'+nav+'</nav>'+body+'</main></html>'
+import sys
+sys.path.insert(0,str(HERE.parent))
+from teaching_reading import readable_diagrams
+page=readable_diagrams(page)
 html_path=HERE.parent/'11-资源调度与运行环境.html';html_path.write_text(page)
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')
-artifacts=outputs+[HERE/'figure-data.json',HERE/'platform-design.json',HERE/'platform_design.py',HERE/'extra_figures.py',HERE/'figure-order.json',html_path,md]
-(HERE/'manifest.json').write_text(json.dumps({'chapter':11,'generator':'manuscripts/ch11/build.py','figures':len(outputs)//3,'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
+artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',HERE/'platform-design.json',HERE/'platform_design.py',HERE/'extra_figures.py',HERE/'figure-order.json',html_path,md]
+(HERE/'manifest.json').write_text(json.dumps({'chapter':11,'generator':'manuscripts/ch11/build.py','figures':len(teaching_checks),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(outputs)} figure files, {len(maths)} equations and offline HTML; {len(warnings)} layout warnings.')

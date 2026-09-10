@@ -22,7 +22,8 @@ check('outline section and subsection coverage', headings(s) == headings(o) and 
 ex = re.findall(r'^> \*\*实验 6-(\d+) · (核心|延伸)', s, re.M)
 check('ten exercises with core 2, 3, 10', [int(x[0]) for x in ex] == list(range(1,11)) and [int(x[0]) for x in ex if x[1]=='核心'] == [2,3,10])
 figs = re.findall(r'!\[[^\]]*\]\(([^)]+)\)', s)
-check('twenty-one external captions', len(figs)==21 and re.findall(r'^\*图 6-(\d+)：',s,re.M)==[str(i) for i in range(1,22)])
+index=read(HERE/'figure-index.json')
+check('active figures and sequential external captions', len(figs)==len(index) and re.findall(r'^\*图 6-(\d+)：',s,re.M)==[str(i) for i in range(1,len(index)+1)])
 for f in figs:
     p = md.parent / f
     text = ''.join(ET.parse(p).getroot().itertext())
@@ -42,7 +43,8 @@ for name,key in [('sources.json','sources'),('manifest.json','outputs')]:
     check(name+' SHA256 integrity', not mismatches)
     if mismatches: checks[-1]['mismatches']=mismatches
 check('formula rendering', read(HERE/'math-validation.json')['errors']==[] and read(HERE/'math-validation.json')['expressions']==len(re.findall(r'\$\$[\s\S]*?\$\$|\$[^$\n]+\$',s)))
-check('figure text within canvas', read(HERE/'figure-layout-check.json')['text_extent_warnings']==[])
+layout=read(HERE/'teaching-layout-validation.json')
+check('book-size figures and visible labels',len(layout)==len(figs) and all(x['width_pt']==420 and x['min_label_pt']>=11 and not x['text_extent_warnings'] for x in layout))
 d = read(HERE/'figure-data.json')
 check('single-card capacity arithmetic', sum(d['placement']['capacity_bytes'][0])==16381470720+147456*8193+2**31)
 check('TP8 capacity matches saved placement', sum(d['placement']['capacity_bytes'][1])==d['placement']['tp8_saved_max_bytes'])

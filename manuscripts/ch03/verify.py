@@ -11,8 +11,8 @@ check(heads(s)==heads(outline),'outline headings differ')
 labs=sorted(set(map(int,re.findall(r'\*\*练习 3-(\d+)',s))))
 check(labs==list(range(1,11)),'ten exercises missing')
 figs=re.findall(r'!\[[^\]]*\]\((ch03/[^)]+\.svg)\)',s)
-check(len(figs)==12,'twelve figures missing')
-check(len(re.findall(r'^\*图 3-\d+：',s,re.M))==12,'external captions missing')
+index=json.loads((HERE/'figure-index.json').read_text());check(figs==[z['asset'] for z in index],'Figure index matches reading order')
+check(re.findall(r'^\*图 (3-\d+)',s,re.M)==[z['figure'] for z in index],'External caption sequence')
 check(not re.search(r'<(?:sub|sup)\b',s),'manual formula sub/sup')
 for link in re.findall(r'\]\(([^)]+)\)',s):
  u=urllib.parse.urlsplit(link)
@@ -26,7 +26,9 @@ for p in HERE.glob('figure-*.svg'):
  check(not re.search(r'图\s*3[-−]\d',texts),'embedded figure number '+p.name)
 check(not json.loads((HERE/'figure-layout-check.json').read_text())['outside_canvas_text'],'figure extent warnings')
 math=json.loads((HERE/'math-validation.json').read_text());check(not math['errors'],'math errors')
-for z in json.loads((HERE/'browser-validation.json').read_text()):
- check(z['width']==z['documentWidth'] and z['imagesLoaded'] and z['images']==12 and z['mathErrors']==0 and not z['unresolvedMath'],'browser check')
+for z in json.loads((HERE/'teaching-browser-validation.json').read_text()):
+ check(z['width']==z['scrollWidth'] and all(i['loaded'] for i in z['images']) and len(z['images'])==len(figs) and z['mathErrors']==0 and not z['brokenAnchors'],'browser check')
+layout=json.loads((HERE/'teaching-layout-validation.json').read_text())
+check(len(layout)==len(figs) and all(z['width_pt']==420 and z['min_label_pt']>=11 and not z['text_extent_warnings'] for z in layout),'book-size figure typography')
 report={'chapter':3,'headings':len(heads(s)),'exercises':labs,'figures':len(figs),'math_expressions':math['expressions'],'chinese_characters':len(re.findall(r'[\u4e00-\u9fff]',s)),'errors':errors}
 (HERE/'validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');print(json.dumps(report,ensure_ascii=False));raise SystemExit(bool(errors))

@@ -114,6 +114,11 @@ for i,(relationship,subset) in enumerate(zip(relationships,plotted),1):
  data[f'12-{i}']['relationship']=relationship;data[f'12-{i}']['plotted_subset']=subset;data[f'12-{i}']['axes_count']=1;data[f'12-{i}']['kind']='single_relationship';data[f'12-{i}']['supporting_values_note']='Only plotted_subset is drawn; other saved values support prose and evidence notes.'
 exec(compile((HERE/'draw-concepts.py').read_text(),str(HERE/'draw-concepts.py'),'exec'),globals())
 data={f'12-{number_map[int(k.split("-")[1])]}':v for k,v in data.items()}
+import sys
+sys.path.insert(0,str(HERE.parent))
+from teaching_revision import draw as draw_teaching
+teaching_outputs,teaching_checks=draw_teaching(HERE,data)
+outputs=list(dict.fromkeys(outputs+teaching_outputs))
 (HERE/'figure-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
 (HERE/'figure-layout-check.json').write_text(json.dumps({'text_extent_warnings':layout},ensure_ascii=False,indent=2)+'\n')
 # HTML contains images, mathematical markup and font bytes; source links stay repository-relative.
@@ -139,10 +144,15 @@ for p in outputs:
 css='''*{box-sizing:border-box}body{margin:0;background:#f7f7f4;color:#243640;font:18px/1.95 Georgia,"Songti SC",serif}main{max-width:1020px;margin:auto;padding:48px 46px 85px;background:#fff}h1,h2,h3{font-family:Arial,"PingFang SC",sans-serif;line-height:1.45;color:#183949}h1{font-size:36px}h2{font-size:28px;border-top:1px solid #d5e1e4;margin-top:65px;padding-top:26px}h3{font-size:23px;margin-top:38px}a{color:#286b98;text-underline-offset:3px;overflow-wrap:anywhere}figure{margin:30px 0}img{display:block;width:100%;height:auto;margin:0 auto 10px}figcaption{font:15px/1.85 Arial,"PingFang SC",sans-serif;color:#546e7a}table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.7;margin:22px 0}td,th{padding:10px 12px;border-bottom:1px solid #d5e1e4;text-align:left}th{background:#edf4f6}code{font:0.85em/1.6 Menlo,monospace;background:#f0f4f6;overflow-wrap:anywhere}pre{overflow-x:auto;padding:16px;max-width:100%}nav{font:16px/1.9 Arial,"PingFang SC",sans-serif;background:#eff5f7;padding:18px 24px}nav a{display:block}.footnote{font-size:14px;line-height:1.8}.footnote li{margin-bottom:13px}.table-scroll{overflow-x:auto;max-width:100%}.katex{font-size:1.04em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:12px 0}@media(max-width:650px){main{padding:24px 18px}body{font-size:17px}h1{font-size:29px}h2{font-size:25px}h3{font-size:21px}}@media print{main{max-width:none;padding:0}h2,h3{break-after:avoid}figure{break-inside:avoid}body{font-size:11pt}}'''
 css+='figure img{cursor:zoom-in}figure img:focus{outline:2px solid #286b98}dialog{width:96vw;height:92vh;max-width:none;max-height:none;border:0;padding:18px;background:white}dialog::backdrop{background:#102a3bcc}.viewer-scroll{overflow:auto;height:calc(100% - 45px)}.viewer-scroll img{width:1100px;max-width:none;margin:0}.viewer-close{display:block;margin:0 0 10px auto;padding:7px 18px;font-size:16px} @media print{dialog{display:none}}'
 viewer='<dialog id="figure-viewer" aria-label="放大插图"><button class="viewer-close" type="button">关闭</button><div class="viewer-scroll"></div></dialog><script>const viewer=document.getElementById("figure-viewer"),area=viewer.querySelector(".viewer-scroll");function openFigure(img){const copy=img.cloneNode();copy.removeAttribute("tabindex");copy.removeAttribute("role");area.replaceChildren(copy);viewer.showModal()}document.querySelectorAll("figure img").forEach(img=>{img.tabIndex=0;img.setAttribute("role","button");img.setAttribute("aria-label","放大插图："+img.alt);img.addEventListener("click",()=>openFigure(img));img.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openFigure(img)}})});viewer.querySelector("button").onclick=()=>viewer.close();viewer.addEventListener("close",()=>area.replaceChildren());</script>'
+css+='main{max-width:760px;padding-left:24px;padding-right:24px}img{max-width:720px}@media print{img{width:420pt;max-width:100%}}'
 nav=''.join('<a href="#'+ident+'">'+title+'</a>' for ident,title in re.findall(r'<h2 id="([^"]+)">([^<]+)</h2>',body))
 page='<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第 12 章 端边云协同</title><style>'+css+math_css+'</style></head><body><main><nav aria-label="本章目录">'+nav+'</nav>'+body+'</main>'+viewer+'</body></html>'
+import sys
+sys.path.insert(0,str(HERE.parent))
+from teaching_reading import readable_diagrams
+page=readable_diagrams(page)
 hp=md.with_suffix('.html');hp.write_text(page)
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')
-artifacts=outputs+[HERE/'figure-data.json',HERE/'figure-catalog.json',hp,md]
-(HERE/'manifest.json').write_text(json.dumps({'chapter':12,'generator':'manuscripts/ch12/build.py','figures':len(catalog),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
-print(json.dumps({'figures':len(catalog),'maths':len(maths),'layout_warnings':len(layout),'html':str(hp)},ensure_ascii=False))
+artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',HERE/'figure-catalog.json',hp,md]
+(HERE/'manifest.json').write_text(json.dumps({'chapter':12,'generator':'manuscripts/ch12/build.py','figures':len(teaching_checks),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
+print(json.dumps({'figures':len(teaching_checks),'maths':len(maths),'layout_warnings':len(layout),'html':str(hp)},ensure_ascii=False))

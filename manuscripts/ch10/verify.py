@@ -9,12 +9,13 @@ s=(HERE.parent/'10-训练系统.md').read_text();page=(HERE.parent/'10-训练系
 def check(ok,msg):
  if not ok:errors.append(msg)
 def calc(n):return json.loads((ROOT/'calculations/results'/f'{n}.json').read_text())
+figure_count=len(json.loads((HERE/'figure-index.json').read_text()))
 heads=re.findall(r'^### (10\.\d+\.\d+)',s,re.M);expected=re.findall(r'^### (10\.\d+\.\d+)',(ROOT/'outlines/10-训练系统.md').read_text(),re.M)
 check(heads==expected,'outline subsection alignment')
 check(re.findall(r'^> \*\*习题 (10-\d+)',s,re.M)==[f'10-{i}' for i in range(1,11)],'exercise sequence')
 check(re.findall(r'^> \*\*习题 (10-\d+) · 综合设计',s,re.M)==['10-3','10-7','10-10'],'integrative design exercises')
-check(re.findall(r'^\*图 (10-\d+)：',s,re.M)==[f'10-{i}' for i in range(1,21)],'external caption sequence')
-check(len(re.findall(r'!\[',s))==20,'twenty figures')
+check(re.findall(r'^\*图 (10-\d+)：',s,re.M)==[f'10-{i}' for i in range(1,figure_count+1)],'external caption sequence')
+check(len(re.findall(r'!\[',s))==figure_count,'active figures')
 for rec in json.loads((HERE/'sources.json').read_text())['sources']:
  check(hashlib.sha256((ROOT/rec['path']).read_bytes()).hexdigest()==rec['sha256'],'source hash: '+rec['path'])
 manifest=json.loads((HERE/'manifest.json').read_text())
@@ -33,10 +34,10 @@ for u in re.findall(r'\]\(([^)]+)\)',s):
  check(target.exists(),'missing link '+u)
 for marker in re.findall(r'\[\^([^\]]+)\]',s):check(f'[^{marker}]:' in s,'undefined footnote '+marker)
 check('MATHPLACEHOLDER' not in page,'unrendered math')
-check(page.count('src="data:image/png;base64,')==20,'embedded image count')
+check(page.count('src="data:image/png;base64,')==figure_count,'embedded image count')
 check(len(re.findall(r'<nav[^>]*>.*?</nav>',page,re.S))==1,'navigation')
 mathreport=json.loads((HERE/'math-validation.json').read_text());check(not mathreport['errors'],'math errors')
-layout=json.loads((HERE/'figure-layout-check.json').read_text());check(not layout['text_extent_warnings'],'figure text extent warnings')
+layout=json.loads((HERE/'teaching-layout-validation.json').read_text());check(len(layout)==figure_count and all(not r['text_extent_warnings'] and r['width_pt']==420 and r['min_label_pt']>=11 for r in layout),'book-size figure layout')
 # Recompute the key decision examples independently of drawing code.
 N=8190735360;check(16*N==calc('training-state-book')['summary']['unsharded_persistent_bytes'],'Adam total')
 F=calc('training-deadline-book')['summary']['task_training_matrix_flops'];check(math.ceil(F/(165.2e12*30*86400))==13,'4090 peak count')
@@ -107,6 +108,6 @@ rl=d['rl_supply_flow'];check(min(rl['learn_capacity'],rl['retained_fraction']*mi
 cycle=d['rl_async_cycle'];check(cycle['overlapped_period_seconds']==max(cycle['generate_seconds'],cycle['learn_seconds'])+cycle['sync_seconds'],'async timeline')
 for row in d['task_deadline_breakdown']['rows']:check(math.isclose(sum(row['days']),row['finish_days']),'deadline bars add to finish time')
 figrefs=[int(n) for n in re.findall(r'图 10-(\d+)',s)]
-check(all(1<=n<=20 for n in figrefs),'figure references within chapter sequence')
-report={'status':'passed' if not errors else 'failed','sections':6,'subsections':len(heads),'exercises':10,'figures':20,'image_files':sum(Path(r['path']).suffix in ['.svg','.png','.pdf'] for r in manifest['outputs']),'formulas':mathreport['expressions'],'source_files':len(json.loads((HERE/'sources.json').read_text())['sources']),'chinese_characters':len(re.findall(r'[\u4e00-\u9fff]',s)),'errors':errors}
+check(all(1<=n<=figure_count for n in figrefs),'figure references within chapter sequence')
+report={'status':'passed' if not errors else 'failed','sections':6,'subsections':len(heads),'exercises':10,'figures':figure_count,'image_files':sum(Path(r['path']).suffix in ['.svg','.png','.pdf'] for r in manifest['outputs']),'formulas':mathreport['expressions'],'source_files':len(json.loads((HERE/'sources.json').read_text())['sources']),'chinese_characters':len(re.findall(r'[\u4e00-\u9fff]',s)),'errors':errors}
 (HERE/'validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');print(json.dumps(report,ensure_ascii=False,indent=2));raise SystemExit(bool(errors))

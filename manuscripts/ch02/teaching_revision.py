@@ -76,26 +76,28 @@ def draw(here,data):
         a.set(xlim=(0,64),ylim=(0,75),xlabel='批内请求数',ylabel='逻辑读取量（GiB）');a.legend(frameon=False)
         save(f,'history-batch')
 
-        f,a=canvas(5.4)
+        f,a=canvas(5.6)
         for row,(title,groups) in enumerate([('MHA：每个查询各有一组 KV',4),('GQA：每两个查询共用一组 KV',2),('MQA：四个查询共用一组 KV',1)]):
-            y=.68-row*.31;text(a,.04,y+.25,title,14)
+            top=.95-row*.32;text(a,.04,top,title,14)
             for j in range(4):
-                x=.10+j*.225;box(a,x,y+.08,.15,.08,f'Q{j+1}','orange',11)
+                x=.10+j*.225;box(a,x,top-.13,.15,.07,f'Q{j+1}','orange',11)
                 g=j if groups==4 else j//2 if groups==2 else 0;dest=.10+(g+.5)*.825/groups
-                arrow(a,(x+.075,y+.08),(dest,y+.012))
+                arrow(a,(x+.075,top-.13),(dest,top-.20))
             for g in range(groups):
-                x=.10+g*.825/groups;box(a,x,y-.09,.825/groups-.02,.095,f'KV {g+1}','blue',11)
+                x=.10+g*.825/groups;box(a,x,top-.28,.825/groups-.02,.08,f'KV {g+1}','blue',11)
         save(f,'3-sharing')
         bars('4-cache',['MHA：32 组','GQA：8 组','MQA：1 组'],data['figure_2_4']['qwen_variants_mib'],'8K 历史容量（MiB）')
 
         f,a=canvas(4.8)
-        for i,title in enumerate(['先展开每个历史位置','先变换当前查询']):
-            y=.57-i*.46;text(a,.04,y+.34,title,14)
-            box(a,.04,y+.09,.25,.13,'潜变量 c','blue');box(a,.38,y+.09,.25,.13,'展开键 K' if i==0 else '变换后查询','orange');box(a,.72,y+.09,.24,.13,'计算分数','green')
-            if i==0:
-                arrow(a,(.29,y+.155),(.38,y+.155));arrow(a,(.63,y+.155),(.72,y+.155));text(a,.35,y+.02,'各历史位置分别上投影',11)
-            else:
-                arrow(a,(.29,y+.155),(.72,y+.155));arrow(a,(.50,y+.08),(.84,y-.03));text(a,.04,y-.035,'保存 c；当前查询先乘上投影矩阵的转置',11)
+        text(a,.04,.94,'路径一：先展开每个历史位置',14)
+        box(a,.04,.69,.25,.13,'潜变量 c','blue');box(a,.38,.69,.25,.13,'展开键 K','green');box(a,.72,.69,.24,.13,'点积分数','purple')
+        arrow(a,(.29,.755),(.38,.755));arrow(a,(.63,.755),(.72,.755))
+        text(a,.32,.60,'历史先计算 K = c Uₖ',12)
+        text(a,.04,.46,'路径二：先变换当前查询',14)
+        box(a,.04,.22,.25,.13,'当前查询 q','orange');box(a,.38,.22,.25,.13,'变换后查询','orange');box(a,.72,.22,.24,.13,'点积分数','purple')
+        arrow(a,(.29,.285),(.38,.285));arrow(a,(.63,.285),(.72,.285))
+        box(a,.71,.035,.25,.10,'潜变量 c','blue');arrow(a,(.835,.135),(.835,.22))
+        text(a,.04,.09,'查询先计算 q Uₖᵀ',12)
         save(f,'mla-paths')
         bars('mla-capacity',['紧凑潜变量','展开各头 KV'],data['figure_2_4']['k3_mla_paths_mib'],'K3 的 24 层 MLA 状态（MiB）')
 

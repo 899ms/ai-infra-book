@@ -7,7 +7,7 @@ review=r/'reviews/ch05-52-53-teaching-2026-09-10';review.mkdir(exist_ok=True)
 with sync_playwright() as p:
  chrome=Path('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')
  browser=p.chromium.launch(**({'executable_path':str(chrome)} if chrome.exists() else {}),headless=True)
- for name,count in [('05-算子与运行时.html',23),('05-算子与运行时-5.2-5.3.html',13)]:
+ for name,count in [('05-算子与运行时.html',len(json.loads((d/'figure-index.json').read_text()))),('05-算子与运行时-5.2-5.3.html',13)]:
   for width in [1440,390]:
    page=browser.new_page(viewport={'width':width,'height':1050},device_scale_factor=1)
    page.goto((r/'manuscripts'/name).as_uri());page.wait_for_load_state('load')
@@ -15,7 +15,7 @@ with sync_playwright() as p:
    result.update(page=name,expectedImages=count);records.append(result)
    assert result['scrollWidth']<=width and result['mathErrors']==0 and len(result['images'])==count and all(i['loaded'] for i in result['images'])
    assert not result['brokenAnchors'], result['brokenAnchors']
-   assert len(result['teachingFigures'])==13
+   assert len(result['teachingFigures'])==count
    if width==390:assert all(z['width']>=560 and z['scrollable'] for z in result['teachingFigures'])
    if count==13:
     page.screenshot(path=str(review/f'reading-{width}.png'))

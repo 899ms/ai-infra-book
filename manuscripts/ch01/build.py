@@ -288,6 +288,10 @@ css+=math_css+' .katex{font-size:1.04em}.katex-display{overflow-x:auto;overflow-
 heads=re.findall(r'<h2 id="([^"]+)">([^<]+)</h2>',body)
 nav='<nav class="nav" aria-label="本章目录">'+''.join(f'<a href="#{html.escape(k)}">{html.escape(v)}</a>' for k,v in heads)+'</nav>'
 page='<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第 1 章 初识 AI Infra</title><style>'+css+'</style></head><body><main><div class="edition">AI INFRA · 第一章图文修订 · 2026-09-10</div>'+nav+body+'</main></body></html>'
+import sys
+sys.path.insert(0,str(HERE.parent))
+from teaching_reading import readable_diagrams
+page=readable_diagrams(page)
 ht=md.with_suffix('.html');ht.write_text(page);outputs.append(ht)
 manifest={'source_lock':'sources.json','font':str(font_path),'matplotlib':matplotlib.__version__,
  'chapter':{'file':str(md.relative_to(ROOT)),'sha256':hashlib.sha256(md.read_bytes()).hexdigest()},

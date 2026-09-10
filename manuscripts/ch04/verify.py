@@ -17,7 +17,7 @@ check(re.findall(r'\*\*实验 4-(\d+)',s)==list(map(str,range(1,8))),'exercise i
 check(re.findall(r'\*\*实验 (4-\d+) · 核心',s)==['4-1','4-4','4-5'],'core selection')
 check(len(re.findall(r'\*\*例 4-\d+',s))==3,'worked examples')
 figs=re.findall(r'!\[[^\]]*\]\((ch04/[^)]+\.svg)\)',s)
-check(len(figs)==14,'fourteen figures');check(re.findall(r'^\*图 4-(\d+)：',s,re.M)==list(map(str,range(1,15))),'captions outside images')
+index=json.loads((HERE/'figure-index.json').read_text());check(figs==[z['asset'] for z in index],'Figure index matches reading order');check(re.findall(r'^\*图 (4-\d+)',s,re.M)==[z['figure'] for z in index],'Caption sequence')
 check(not re.search(r'(?<!提)供数',s),'opaque terminology');check('配图计划' not in s,'unfinished figure placeholder')
 for p in [md,*HERE.glob('*.md')]:
  for u in re.findall(r'\]\(([^)]+)\)',p.read_text()):
@@ -35,7 +35,10 @@ for p in HERE.glob('figure-*.svg'):
  check(not re.search(r'图\s*\d+\s*[-−]\s*\d+',text),'embedded caption '+p.name)
 check(not json.loads((HERE/'figure-layout-check.json').read_text())['outside_canvas_text'],'outside canvas labels')
 m=json.loads((HERE/'math-validation.json').read_text());check(not m['errors'],'KaTeX errors')
-for r in json.loads((HERE/'browser-validation.json').read_text()):check(r['width']==r['documentWidth'] and r['images']==14 and r['imagesLoaded'] and r['mathErrors']==0 and not r['unresolvedMath'] and r['navLinks']==7,'browser rendering')
+for r in json.loads((HERE/'teaching-browser-validation.json').read_text()):
+ check(r['width']==r['scrollWidth'] and len(r['images'])==len(figs) and all(i['loaded'] for i in r['images']) and not r['mathErrors'] and not r['brokenAnchors'],'browser rendering')
+layout=json.loads((HERE/'teaching-layout-validation.json').read_text())
+check(len(layout)==len(figs) and all(z['width_pt']==420 and z['min_label_pt']>=11 and not z['text_extent_warnings'] for z in layout),'book-size figure typography')
 # Closed forms reconstructed independently of the calculation modules.
 for M in [1,256]:
  q=calc(f'projection-qwen3-8b-rtx4090-b{M}')['summary'];F=2*M*4096**2;V=2*(M*4096+4096**2+M*4096)

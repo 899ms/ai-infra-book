@@ -46,13 +46,10 @@ jobs:
           if-no-files-found: error
 
   pdf:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    # Match local Apple fonts (Songti SC, Menlo, Arial Unicode MS and Heiti SC).
+    runs-on: macos-15
+    timeout-minutes: 60
     steps:
-      - name: Free disk space for TeX
-        run: |
-          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/share/boost /opt/hostedtoolcache/CodeQL
-          df -h /
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
@@ -61,16 +58,19 @@ jobs:
         run: git lfs pull --include="manuscripts/**/*.pdf,manuscripts/**/*.png,manuscripts/figure_style/fonts/**" --exclude=""
       - name: Install Pandoc, XeLaTeX and fonts
         run: |
-          sudo apt-get update
-          sudo apt-get install -y lmodern pandoc texlive-xetex texlive-lang-chinese texlive-latex-extra texlive-fonts-extra texlive-fonts-recommended texlive-science texlive-bibtex-extra fonts-texgyre fonts-noto-cjk fonts-dejavu-core poppler-utils ghostscript
-          sudo apt-get clean
-          curl --fail --location --retry 3 --output /tmp/pandoc.deb https://github.com/jgm/pandoc/releases/download/3.7.0.2/pandoc-3.7.0.2-1-amd64.deb
-          sudo dpkg -i /tmp/pandoc.deb
+          brew install texlive poppler ghostscript
+          curl --fail --location --retry 3 --output "$RUNNER_TEMP/pandoc.pkg" "https://github.com/jgm/pandoc/releases/download/3.7.0.2/pandoc-3.7.0.2-$(uname -m)-macOS.pkg"
+          sudo installer -pkg "$RUNNER_TEMP/pandoc.pkg" -target /
+          # The pinned installer puts Pandoc in /usr/local/bin.
+          export PATH="/usr/local/bin:$PATH"
+          echo "/usr/local/bin" >> "$GITHUB_PATH"
           pandoc --version
           for package in lmodern.sty biblatex.sty pzdr.tfm ctex.sty newtxmath.sty esint.sty adforn.sty fvextra.sty placeins.sty xurl.sty tcolorbox.sty; do
             kpsewhich "$package"
           done
           pip install -r book/requirements-ci.txt
+      - name: Check local Mac font parity
+        run: python book/check_build_fonts.py
       - name: Build full book PDF
         env:
           BOOK_SOURCE_REF: ${{ github.sha }}
@@ -107,28 +107,22 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          pattern: book-*-download
+          name: book-pdf-download
           path: dist
-          merge-multiple: true
-      - name: Create checksums and release notes
+      - name: Create release notes
         env:
           SOURCE_SHA: ${{ github.sha }}
           REPOSITORY: ${{ github.repository }}
         run: |
-          cd dist
-          sha256sum AI-Infra-Book* ai-infra-book-site.tar.gz pdf-validation.json > SHA256SUMS
           python - <<'PY'
           import os
           from pathlib import Path
           sha = os.environ['SOURCE_SHA']
           repo = os.environ['REPOSITORY']
-          Path('../release-notes.md').write_text(
+          Path('release-notes.md').write_text(
               f'自动从 main 提交 [{sha}](https://github.com/{repo}/commit/{sha}) 构建。\n\n'
-              '- `AI-Infra-Book.pdf`：十二章全书 PDF。\n'
-              '- `AI-Infra-Book-Cover.pdf/png`：封面。\n'
-              '- `ai-infra-book-site.tar.gz`：同一提交构建的阅读网站。\n'
-              '- `AI-Infra-Book-build.json`、`pdf-validation.json`：来源与校验记录。\n'
-              '- `SHA256SUMS`：附件校验值。\n')
+              '下载 `AI-Infra-Book.pdf` 阅读完整十二章全书。\n\n'
+              '在线阅读：https://bojieli.github.io/ai-infra-book/\n')
           PY
       - name: Publish release for this commit
         env:
@@ -140,8 +134,14 @@ jobs:
           if ! gh release view "$tag" >/dev/null 2>&1; then
             gh release create "$tag" --target "$SOURCE_SHA" --title "Book ${SOURCE_SHA:0:12}" --notes-file release-notes.md --draft
           fi
-          gh release upload "$tag" dist/* --clobber
-          gh release edit "$tag" --draft=false --latest
+          gh release upload "$tag" dist/AI-Infra-Book.pdf --clobber
+          # Remove legacy build extras if this commit's release is being rerun.
+          for asset in AI-Infra-Book-build.json AI-Infra-Book-Cover.pdf AI-Infra-Book-Cover.png ai-infra-book-site.tar.gz pdf-validation.json SHA256SUMS; do
+            if gh release view "$tag" --json assets --jq '.assets[].name' | grep -Fxq "$asset"; then
+              gh release delete-asset "$tag" "$asset" --yes
+            fi
+          done
+          gh release edit "$tag" --notes-file release-notes.md --draft=false --latest
 
   deploy:
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')

@@ -24,12 +24,12 @@ python scripts/check_site.py
 
 1. 从同一提交的 Markdown 构建网站与十二章全书 PDF。
 2. 检查网站链接、图片、PDF 章节、文字及字体；保存 PDF 日志和代表页面预览。
-3. 创建 `build-<完整提交 SHA>` 对应的 GitHub Release，上传全书 PDF、封面 PDF/PNG、网站压缩包、来源记录、校验结果和 `SHA256SUMS`。重复运行同一提交会覆盖该 Release 的附件。
+3. 创建 `build-<完整提交 SHA>` 对应的 GitHub Release，只上传完整的 `AI-Infra-Book.pdf`。重复运行同一提交会更新全书 PDF 并移除旧的辅助附件。封面、网站压缩包、来源和校验记录保留在 Actions 产物中。
 4. 将网站部署到 GitHub Pages。只有 PDF 和网站都构建成功后才发布；Release 与 Pages 分别执行，Pages 设置问题不会阻止 Release 附件发布。
 
 不需要手工打标签或创建 Release。也可在默认分支手动运行 `Build and publish book` 工作流。Pull Request 只构建、检查和上传 Actions 产物，不发布 Release 或 Pages。GitHub Actions 同一分支的发布串行执行；快速连续推送时，GitHub 可能替换尚未启动的待运行任务，以最新提交为准。
 
-PDF 在 Ubuntu 24.04 使用 Pandoc、XeLaTeX、Noto CJK 与 DejaVu 字体构建。Apple 字体可用时本地编译仍沿用 Apple 字体；项目提供的思源黑体用于中文粗体与图注。发布版中的资料链接指向该提交的 GitHub 文件，下载 PDF 后仍可访问来源（私有仓库需要登录）。
+PDF 在 macOS 15 使用 Pandoc 3.7.0.2 和 Homebrew TeX Live / XeLaTeX 构建，与本地一致使用 Songti SC 正文、Menlo 代码，以及 Arial Unicode MS / Heiti SC 特殊字符；项目提供的思源黑体用于中文粗体与图注。编译前检查必需字体，编译后核对实际 PDF 字体，防止缺少字体时静默替换。发布版中的资料链接指向该提交的 GitHub 文件，下载 PDF 后仍可访问来源（私有仓库需要登录）。
 
 ## GitHub Pages 首次启用
 
@@ -41,7 +41,7 @@ PDF 在 Ubuntu 24.04 使用 Pandoc、XeLaTeX、Noto CJK 与 DejaVu 字体构建�
 
 ## 下载和本地复现
 
-从仓库 [Releases](https://github.com/bojieli/ai-infra-book/releases) 下载 PDF，或解压 `ai-infra-book-site.tar.gz` 后运行 `python -m http.server` 阅读网站。
+从仓库 [Releases](https://github.com/bojieli/ai-infra-book/releases) 下载唯一的全书附件 `AI-Infra-Book.pdf`。网站可直接通过 GitHub Pages 阅读；如需离线网站，从 Actions 的 `book-site-download` 产物取得 `ai-infra-book-site.tar.gz`，解压后运行 `python -m http.server`。
 
 已有 PDF 编译依赖时，在仓库根目录运行：
 

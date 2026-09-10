@@ -51,10 +51,12 @@ bash book/build_pdf.sh --chapter 2
 
 普通正文维持宋体；中文粗体（包括 Markdown 粗体、章标题和各级小节标题）映射到真正的思源黑体 Bold，不再对宋体做合成加粗。图注与所有章节配图也统一为思源黑体。拉丁字母与原生公式保留原模板字体。
 
-字体随项目提供并嵌入 PDF；SVG 图中文字转为矢量轮廓，避免阅读端缺少字体时回退。可运行 `python3 book/check_typography.py`（需 PyMuPDF）核对所有正文引用的配图及成书字体，并输出第二章字体预览。字体来源和许可证见 [字体说明](../manuscripts/figure_style/fonts/README.md)。
+思源黑体随项目提供，Apple 字体使用 macOS 系统安装版本；使用的字体嵌入 PDF。SVG 图中文字转为矢量轮廓，避免阅读端缺少字体时回退。可运行 `python3 book/check_typography.py`（需 PyMuPDF）核对所有正文引用的配图及成书字体，并输出第二章字体预览。字体来源和许可证见 [字体说明](../manuscripts/figure_style/fonts/README.md)。
 
 ## 自动构建与 Release
 
-每次 push 到 `main`，工作流在 Ubuntu 24.04 上从当前 Markdown 自动编译十二章全书、封面 PDF/PNG，检查章节与字体并保存样页和日志。PDF 与网站构建都通过后，自动创建该提交对应的 GitHub Release，并部署网站至 Pages；完整说明见 [发布流程](../website/README.md)。
+每次 push 到 `main`，工作流在 macOS 15 上从当前 Markdown 自动编译十二章全书、封面 PDF/PNG，检查章节与字体并保存样页和日志。PDF 与网站构建都通过后，自动创建该提交对应的 GitHub Release，并部署网站至 Pages；完整说明见 [发布流程](../website/README.md)。
 
-云端输出写入 `build/pdf/`，不回写仓库中的 PDF。使用 `--source-ref` 参数的发布版会将资料链接改为对应提交的 GitHub 链接。Linux 上用 DejaVu Sans Mono 替代不可用的 Menlo；导入的系列模板原件保持不变。
+云端输出写入 `build/pdf/`，不回写仓库中的 PDF。使用 `--source-ref` 参数的发布版会将资料链接改为对应提交的 GitHub 链接。发布构建与本地均使用 Songti SC、Menlo、Arial Unicode MS 和 Heiti SC；通过 Homebrew 安装 TeX Live，Pandoc 固定为 3.7.0.2。编译前运行 `python3 book/check_build_fonts.py` 检查字体是否齐全，编译后检查 PDF 实际使用的字体，缺失或回退即失败。导入的系列模板原件保持不变。
+
+GitHub Release 只上传完整的 `AI-Infra-Book.pdf`。封面、来源记录、校验结果以及网站压缩包保留在 Actions 的构建产物中，日志与样页保留在诊断产物中，不作为 Release 下载附件。

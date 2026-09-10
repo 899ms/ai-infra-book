@@ -62,8 +62,14 @@ jobs:
       - name: Install Pandoc, XeLaTeX and fonts
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends pandoc texlive-xetex texlive-lang-chinese texlive-latex-extra texlive-fonts-extra texlive-fonts-recommended texlive-science fonts-texgyre fonts-noto-cjk fonts-dejavu-core poppler-utils ghostscript
+          sudo apt-get install -y --no-install-recommends pandoc texlive-xetex texlive-lang-chinese texlive-latex-extra texlive-fonts-extra texlive-fonts-recommended texlive-science texlive-bibtex-extra fonts-texgyre fonts-noto-cjk fonts-dejavu-core poppler-utils ghostscript
           sudo apt-get clean
+          curl --fail --location --retry 3 --output /tmp/pandoc.deb https://github.com/jgm/pandoc/releases/download/3.7.0.2/pandoc-3.7.0.2-1-amd64.deb
+          sudo dpkg -i /tmp/pandoc.deb
+          pandoc --version
+          for package in biblatex.sty pzdr.tfm ctex.sty newtxmath.sty esint.sty adforn.sty fvextra.sty placeins.sty xurl.sty tcolorbox.sty; do
+            kpsewhich "$package"
+          done
           pip install -r book/requirements-ci.txt
       - name: Build full book PDF
         env:

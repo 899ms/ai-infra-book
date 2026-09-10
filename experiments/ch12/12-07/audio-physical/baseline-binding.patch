@@ -1,0 +1,29 @@
+--- a/internal/baseline/baseline.go
++++ b/internal/baseline/baseline.go
+@@ -31,6 +31,7 @@
+ 	"time"
+ 
+ 	"github.com/apernet/quic-go"
++	"github.com/bojieli/queqiao/internal/netbind"
+ 	wancongestion "github.com/bojieli/queqiao/internal/congestion"
+ 	"github.com/bojieli/queqiao/internal/socks5"
+ )
+@@ -411,7 +412,7 @@
+ 	if c.cfg.LocalAddress == "" {
+ 		return quic.DialAddr(ctx, c.cfg.RemoteAddr, tlsCfg, c.cfg.Transport.quicConfig())
+ 	}
+-	local, err := net.ResolveUDPAddr("udp", net.JoinHostPort(c.cfg.LocalAddress, "0"))
++	binding, err := netbind.ResolveWithInterface(c.cfg.LocalAddress)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("resolve local address: %w", err)
+ 	}
+@@ -419,7 +420,8 @@
+ 	if err != nil {
+ 		return nil, fmt.Errorf("resolve remote address: %w", err)
+ 	}
+-	packet, err := net.ListenUDP("udp", local)
++	listener := net.ListenConfig{Control: netbind.InterfaceControl(binding.InterfaceName)}
++	packet, err := listener.ListenPacket(ctx, "udp", net.JoinHostPort(binding.Addr.String(), "0"))
+ 	if err != nil {
+ 		return nil, fmt.Errorf("bind local address: %w", err)
+ 	}

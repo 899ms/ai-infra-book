@@ -21,6 +21,6 @@ KV量化融合在[缓存写入kernel](native/triton_reshape_and_cache_flash.py)�
 
 BF16、FP8 的原始 nsys-rep 报告仅保留在本地。仓库公开脱敏后的 [BF16 SQLite](bf16.sqlite)、[FP8 SQLite](fp8.sqlite) 及命令／版本记录；性能事件保持不变，原件与公开版哈希见 [归档说明](../trace-publication.json)。命令显式启用trace-fork-before-exec，捕获实际执行模型的子进程；NVTX区间内每个kernel、API和memcpy均在[analysis.json](analysis.json)。分析检查输入、源码、配置与原基线匹配，以及校准后的36层KV scales未变。原安装模块副本带[哈希](native/manifest.json)。
 
-复现：在本实验目录设置NSYS为Nsight Systems 2026.4.1 CLI，再用vLLM环境运行`python collect_profile.py`；profiles/bf16与profiles/fp8须不存在。采集完成后运行`python analyze_profiles.py`及`python plot_profiles.py`（绘图需matplotlib）。两份公开 SQLite 导出和失败记录由独立 profile-manifest.json 核验；本地原始报告不属于公开文件清单。
+复现：在本实验目录设置NSYS为Nsight Systems 2026.4.1 CLI，再用vLLM环境运行`python collect_profile.py`；profiles/bf16与profiles/fp8须不存在。采集完成后运行`python analyze_profiles.py`及`python plot_profiles.py`（绘图需matplotlib）。两份公开 SQLite 导出及最终成功采集记录由独立 profile-manifest.json 核验；本地原始报告不属于公开文件清单。
 
-最终采集使用 collect_profile.py 入口与子进程跟踪，profiles/analysis.json 保存 BF16 和 FP8 的 kernel 分析。相邻 profiles-capture-failed 中的实际请求已完成，因缺少 fork 子进程跟踪未生成 Nsight 报告，该有效请求记录保留。原 run.py、probe.py 和两格式测量清单保持原样。
+最终采集使用 collect_profile.py 入口与子进程跟踪，profiles/analysis.json 保存 BF16 和 FP8 的 kernel 分析。同一采集条件只保留最终成功记录。原 run.py、probe.py 和两格式测量清单保持原样。

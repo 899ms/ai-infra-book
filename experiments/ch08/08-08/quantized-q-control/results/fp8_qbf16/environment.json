@@ -1,0 +1,30 @@
+{
+  "config": {
+    "model": "/home/ubuntu/.cache/huggingface/hub/models--Qwen--Qwen3-8B/snapshots/b968826d9c46dd6066d109eabc6255188de91218",
+    "dtype": "bfloat16",
+    "quantization": "fp8",
+    "kv_cache_dtype": "fp8_e4m3",
+    "calculate_kv_scales": false,
+    "max_model_len": 16384,
+    "max_num_seqs": 4,
+    "max_num_batched_tokens": 16384,
+    "enable_chunked_prefill": true,
+    "enable_prefix_caching": false,
+    "enforce_eager": true,
+    "async_scheduling": false,
+    "gpu_memory_utilization": 0.3,
+    "kv_cache_memory_bytes": 8589934592,
+    "seed": 808,
+    "attention_backend": "TRITON_ATTN",
+    "worker_extension_cls": "probe_qbf16.KVQBF16Probe"
+  },
+  "torch": "2.11.0+cu130",
+  "vllm": "0.23.0",
+  "hashes": {
+    "run.py": "5f0f0fe39ee7d7b468676ec0982ea001675b9a4210007d0c9c0192274f5649f7",
+    "probe.py": "4573bef5cb8f0eec3d656ea5aff2fa4f25b124f7b2fe751fad53721b64b15bc7",
+    "probe_qbf16.py": "6b1d52231578d2597522e4bc0cbbb08612314ff7fa1d980f661c84debeb570be"
+  },
+  "input_sha256": "266d2962df37194fa68c6e7417236767897ea78a97710227e0a29fe24685debe",
+  "scope": "Online FP8 weights held fixed; same original BF16 checkpoint. Explicit independent calibration before warmups; first attention call computes scales once. Synthetic exact retrieval quality, not general task quality."
+}

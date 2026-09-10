@@ -1,5 +1,7 @@
 # 实验8-5：Qwen3-8B / DFlash 真实对照（第一轮）
 
+> 当前大纲对应实验 8-7；本目录与原始记录沿用归档编号 8-5。见[编号映射](../../../research/ch08-reorganization-2026-09-10/README.md)。
+
 本目录是主实验session授权的独立worker产物。原题要求固定DFlash检查点、草稿/验证/回退与产出记录、块长/输入长度/并发扫描，以及动态预算等扩展。inventory原状态为pending_measurement、evidence为空。本轮仅回填所完成的真实引擎范围，不代表8-5全部完成，不进行跨session最终审计。
 
 

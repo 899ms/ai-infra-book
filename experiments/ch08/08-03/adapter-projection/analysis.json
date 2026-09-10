@@ -1,0 +1,40 @@
+{
+  "rows": 512,
+  "input_shape": [
+    512,
+    4096
+  ],
+  "output_shape": [
+    512,
+    6144
+  ],
+  "checks": [
+    {
+      "adapter": "a",
+      "changed_q_elements": 2075974,
+      "total_q_elements": 2097152,
+      "kv_exact": true,
+      "runtime_weights_exact": true,
+      "delta_relative_l2": 0.013270718208325776,
+      "delta_threshold": 0.02,
+      "delta_passed": true,
+      "output_relative_l2": 0.0016808518531896347,
+      "observed_delta_l2": 9.20900032168773,
+      "fp64_delta_l2": 9.203347255770774
+    },
+    {
+      "adapter": "b",
+      "changed_q_elements": 2074420,
+      "total_q_elements": 2097152,
+      "kv_exact": true,
+      "runtime_weights_exact": true,
+      "delta_relative_l2": 0.014140844355796198,
+      "delta_threshold": 0.02,
+      "delta_passed": true,
+      "output_relative_l2": 0.0016572764836491382,
+      "observed_delta_l2": 8.527574753417845,
+      "fp64_delta_l2": 8.523431786428066
+    }
+  ],
+  "scope": "Full first-layer QKV projection for real input; not all-layer numeric validation or task quality"
+}

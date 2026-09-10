@@ -1,0 +1,74 @@
+{
+  "request_id": "n512-r0",
+  "prompt_tokens": 7235,
+  "output_tokens": 46,
+  "finish_reason": "stop",
+  "answer": "{\"k0064\": \"915819\", \"k0256\": \"358610\", \"k0447\": \"659277\"}",
+  "expected": {
+    "k0064": "915819",
+    "k0256": "358610",
+    "k0447": "659277"
+  },
+  "strict_answer_correct": true,
+  "steps": [
+    {
+      "id": "A",
+      "label": "Task and messages",
+      "layer": [
+        1,
+        2
+      ],
+      "role": "Define the requested answer and prepare model input",
+      "evidence": "cases.json: n512-r0 messages and expected"
+    },
+    {
+      "id": "B",
+      "label": "Tokenize and submit",
+      "layer": [
+        2,
+        3
+      ],
+      "role": "Translate messages to token IDs and submit the request",
+      "evidence": "driver.py: apply_chat_template and engine.generate; request prompt IDs match"
+    },
+    {
+      "id": "C",
+      "label": "Organize execution",
+      "layer": [
+        3
+      ],
+      "role": "Inference engine organizes request execution and cache capacity",
+      "evidence": "environment.json: max_num_seqs=1, chunked prefill, KV config; not a scheduler trace"
+    },
+    {
+      "id": "D",
+      "label": "Execute model operations",
+      "layer": [
+        4
+      ],
+      "role": "Runtime dispatches model operations",
+      "evidence": "driver.py uses vLLM; TRITON_ATTN configured; individual kernel timing is not supplied"
+    },
+    {
+      "id": "E",
+      "label": "Compute and resident data",
+      "layer": [
+        5
+      ],
+      "role": "CPU prepares/control; GPU executes; device memory holds model data and KV",
+      "evidence": "successful RTX source run and its configuration; per-stage residency/traffic is not measured here"
+    },
+    {
+      "id": "F",
+      "label": "Decode and check answer",
+      "layer": [
+        2,
+        1
+      ],
+      "role": "Decode returned tokens; application checks the requested result",
+      "evidence": "driver.py checks decode; requests.jsonl contains final text; run.py validates exact JSON"
+    }
+  ],
+  "layer6": "Interconnect/data-center layer: no cross-host transfer or bandwidth measurement in this evidence; do not invent one.",
+  "scope": "Existing single-host native request, reused for reading exercise. No new inference; no per-stage time attribution."
+}

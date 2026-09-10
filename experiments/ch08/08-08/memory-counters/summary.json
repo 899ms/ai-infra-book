@@ -1,0 +1,43 @@
+{
+  "reports": [
+    {
+      "format": "bf16",
+      "kernel": "kernel_unified_attention",
+      "grid": "(1, 8, 16)",
+      "block": "(128, 1, 1)",
+      "metrics": {
+        "dram__bytes_op_read.sum": 29667840.0,
+        "dram__bytes_op_write.sum": 342528.0,
+        "lts__t_bytes.sum": 30466112.0,
+        "gpu__time_duration.sum": 31904.0
+      },
+      "replay_passes": 1,
+      "warmup_passes": 0,
+      "request_output_ids": [
+        4913,
+        74
+      ],
+      "scope": "First decode-layer unified-attention body only; 16 segments; subsequent reduction excluded."
+    },
+    {
+      "format": "fp8",
+      "kernel": "kernel_unified_attention",
+      "grid": "(1, 8, 16)",
+      "block": "(128, 1, 1)",
+      "metrics": {
+        "dram__bytes_op_read.sum": 14845184.0,
+        "dram__bytes_op_write.sum": 321536.0,
+        "lts__t_bytes.sum": 15623008.0,
+        "gpu__time_duration.sum": 21152.0
+      },
+      "replay_passes": 1,
+      "warmup_passes": 0,
+      "request_output_ids": [
+        4913,
+        74
+      ],
+      "scope": "First decode-layer unified-attention body only; 16 segments; subsequent reduction excluded."
+    }
+  ],
+  "scope": "Actual hardware counters; shared GPU, cache-control none, clock-control none. Do not multiply by layers or equate to end-to-end bytes/time."
+}

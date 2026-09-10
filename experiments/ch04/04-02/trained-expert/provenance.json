@@ -1,0 +1,42 @@
+{
+  "snapshot": "/home/ubuntu/.cache/huggingface/hub/models--Qwen--Qwen3-VL-30B-A3B-Instruct-FP8/snapshots/d9748a51ae66354c4dad665aab2c71f26cf2c8cd",
+  "checkpoint_key": "model.language_model.layers.0.mlp.experts.gate_up_proj",
+  "expert_index": 0,
+  "shard": "model-00001-of-00004.safetensors",
+  "shape": [
+    2048,
+    1536
+  ],
+  "scale_shape": [
+    16,
+    12
+  ],
+  "block_shape": [
+    128,
+    128
+  ],
+  "original_dtype": "torch.float8_e4m3fn",
+  "cpu_pack_s": 0.022021339973434806,
+  "cpu_threads": 4,
+  "pack_scope": "FP32 column scale/requantize/clamp/INT8 cast on CPU; excludes source reading and FP8 decode",
+  "hashes": {
+    "config.json": "e52cea0eb24df634274d028d969b513edeced033988eb4528d1e8d2a08dd025d",
+    "model.safetensors.index.json": "63d9c0cf07b794e290164ba140c4d719ad2a129966f95d7921599eb0047d1dd3"
+  },
+  "tensor_hashes": {
+    "checkpoint_fp8": "aed320b5b04a6a7000659877f740e9448ab7c0a77bb430013ddf919fcd16ca23",
+    "checkpoint_scale": "cd1a4415f0c7d844488a03e297afdc1f1faf54e30560e661c9e120d251fdd5ea",
+    "reference_fp32": "d3065f97c27e73f1190ff513c6f403d3f088090eb06a50d3bd310067a28b9899",
+    "int8_weight": "3087800e30b5981704c8311ab44a8cc4f28325774bb0538f17e4f6b1c7926b53",
+    "int8_scale": "5c21a23b2a9f7d9f1b1fa0caa99f733609b19c44fd93df8618f7cdc576e66d81"
+  },
+  "artifact_sha256": "e00e420b70541b7c4f5ead3ab396c962c0f6feaa5257c66084a20612dad396cb",
+  "scope": "Actual first expert gate_up checkpoint matrix; source is already FP8, not original pre-quantization BF16; activations remain synthetic.",
+  "serialization_compaction": {
+    "executed_artifact_sha256": "50e3735cfc0f825c218b9c5c71ca7e1d3a02739a76ee74a81ddf080493be0414",
+    "original_file_bytes": 418488718,
+    "final_file_bytes": 18884134,
+    "all_tensor_hashes_unchanged": true,
+    "reason": "Clone checkpoint slice before saving to exclude unused backing storage; no model or timing rerun"
+  }
+}

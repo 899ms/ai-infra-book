@@ -1,5 +1,7 @@
 # 8-7 Mac Qwen3-8B 实际生成与独立 KV 槽（小模型变体）
 
+> 当前大纲对应实验 8-5；本目录与原始记录沿用归档编号 8-7。见[编号映射](../../../research/ch08-reorganization-2026-09-10/README.md)。
+
 官方Qwen/Qwen3-8B-MLX-4bit，固定revision383413e909f3bc5303ce195ebbdf0339c5a1a2a3，在M2 Max96GiB实际加载并生成。MLX0.32.2、mlx-lm0.31.3、Transformers5.16.1；完整环境与模型配置保留。不是235B/R1、vLLM卸载或完整8-7所有变体。
 
 ## 实际结果

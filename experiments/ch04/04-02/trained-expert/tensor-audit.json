@@ -1,0 +1,60 @@
+{
+  "blocks_checked": 192,
+  "source_tensor_hashes": true,
+  "all_shapes_same_weights": true,
+  "cpu_reference": "FP64 matmul of synthetic input and decoded checkpoint matrix",
+  "rows": [
+    {
+      "m": 1,
+      "checks": {
+        "int8_direct": {
+          "relative_l2_to_cpu_fp64": 0.01113661398874468,
+          "passed": true
+        },
+        "int8_dequant_bf16": {
+          "relative_l2_to_cpu_fp64": 0.011595847551401174,
+          "passed": true
+        }
+      }
+    },
+    {
+      "m": 8,
+      "checks": {
+        "int8_direct": {
+          "relative_l2_to_cpu_fp64": 0.012142144092870942,
+          "passed": true
+        },
+        "int8_dequant_bf16": {
+          "relative_l2_to_cpu_fp64": 0.012611400525892089,
+          "passed": true
+        }
+      }
+    },
+    {
+      "m": 64,
+      "checks": {
+        "int8_direct": {
+          "relative_l2_to_cpu_fp64": 0.012079582895806112,
+          "passed": true
+        },
+        "int8_dequant_bf16": {
+          "relative_l2_to_cpu_fp64": 0.012534047079910054,
+          "passed": true
+        }
+      }
+    },
+    {
+      "m": 512,
+      "checks": {
+        "int8_direct": {
+          "relative_l2_to_cpu_fp64": 0.012082337614825226,
+          "passed": true
+        },
+        "int8_dequant_bf16": {
+          "relative_l2_to_cpu_fp64": 0.012421494772664906,
+          "passed": true
+        }
+      }
+    }
+  ]
+}

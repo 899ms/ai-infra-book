@@ -1,0 +1,833 @@
+{
+  "conditions": [
+    {
+      "label": "activation-prefill-m1",
+      "variant": "activation",
+      "phase": "prefill",
+      "m": 1,
+      "checks": {
+        "direct": {
+          "relative_l2": 0.015310639515519142,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2": 0.01555376686155796,
+          "passed": true
+        }
+      },
+      "stages": {
+        "direct": {
+          "device_ms": {
+            "median": 2.1630144119262695,
+            "min": 2.1303743362426757,
+            "max": 2.4124895095825196
+          },
+          "wall_ms": {
+            "median": 2.1665102103725076,
+            "min": 2.1338666090741754,
+            "max": 2.416013809852302
+          }
+        },
+        "dequant": {
+          "device_ms": {
+            "median": 1.908732795715332,
+            "min": 1.8710559844970702,
+            "max": 2.5617792129516603
+          },
+          "wall_ms": {
+            "median": 1.917023304849863,
+            "min": 1.874510501511395,
+            "max": 2.5654097087681293
+          }
+        },
+        "activation_quant": {
+          "device_ms": {
+            "median": 0.6757343769073486,
+            "min": 0.6551487922668457,
+            "max": 0.762998390197754
+          },
+          "wall_ms": {
+            "median": 0.678848777897656,
+            "min": 0.6582895061001182,
+            "max": 0.7665674202144146
+          }
+        },
+        "weight_dequant": {
+          "device_ms": {
+            "median": 0.46975040435791016,
+            "min": 0.45838079452514646,
+            "max": 0.9651776313781738
+          },
+          "wall_ms": {
+            "median": 0.4729952896013856,
+            "min": 0.4615473095327616,
+            "max": 0.969162886030972
+          }
+        }
+      },
+      "kernel_events": 199,
+      "weight_scale_unique_storage_bytes": 6144,
+      "activation_scale_bytes": 64
+    },
+    {
+      "label": "activation-prefill-m8",
+      "variant": "activation",
+      "phase": "prefill",
+      "m": 8,
+      "checks": {
+        "direct": {
+          "relative_l2": 0.01835680939257145,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2": 0.018572047352790833,
+          "passed": true
+        }
+      },
+      "stages": {
+        "direct": {
+          "device_ms": {
+            "median": 3.0482912063598633,
+            "min": 3.0133567810058595,
+            "max": 3.077756881713867
+          },
+          "wall_ms": {
+            "median": 3.05242829490453,
+            "min": 3.017363394610584,
+            "max": 3.081751288846135
+          }
+        },
+        "dequant": {
+          "device_ms": {
+            "median": 2.766422462463379,
+            "min": 2.7146175384521483,
+            "max": 2.8369407653808594
+          },
+          "wall_ms": {
+            "median": 2.770462492480874,
+            "min": 2.7188668958842754,
+            "max": 2.842337219044566
+          }
+        },
+        "activation_quant": {
+          "device_ms": {
+            "median": 1.1785599708557128,
+            "min": 1.163702392578125,
+            "max": 1.1964863777160644
+          },
+          "wall_ms": {
+            "median": 1.18252569809556,
+            "min": 1.1680086143314838,
+            "max": 1.2007050914689898
+          }
+        },
+        "weight_dequant": {
+          "device_ms": {
+            "median": 0.5953983783721923,
+            "min": 0.5883808135986328,
+            "max": 0.6286784172058105
+          },
+          "wall_ms": {
+            "median": 0.5994850071147084,
+            "min": 0.591870304197073,
+            "max": 0.6328623974695802
+          }
+        }
+      },
+      "kernel_events": 232,
+      "weight_scale_unique_storage_bytes": 6144,
+      "activation_scale_bytes": 512
+    },
+    {
+      "label": "activation-prefill-m64",
+      "variant": "activation",
+      "phase": "prefill",
+      "m": 64,
+      "checks": {
+        "direct": {
+          "relative_l2": 0.01844736747443676,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2": 0.018659619614481926,
+          "passed": true
+        }
+      },
+      "stages": {
+        "direct": {
+          "device_ms": {
+            "median": 2.4796384811401366,
+            "min": 2.4451040267944335,
+            "max": 2.5146080017089845
+          },
+          "wall_ms": {
+            "median": 2.4838099954649806,
+            "min": 2.449182397685945,
+            "max": 2.5190791115164757
+          }
+        },
+        "dequant": {
+          "device_ms": {
+            "median": 2.174064064025879,
+            "min": 2.1612031936645506,
+            "max": 2.3364032745361327
+          },
+          "wall_ms": {
+            "median": 2.1781118120998144,
+            "min": 2.165367593988776,
+            "max": 2.3405782179906964
+          }
+        },
+        "activation_quant": {
+          "device_ms": {
+            "median": 0.6169312000274658,
+            "min": 0.6026559829711914,
+            "max": 0.6205632209777832
+          },
+          "wall_ms": {
+            "median": 0.6208398146554828,
+            "min": 0.6064114859327674,
+            "max": 0.6246944889426231
+          }
+        },
+        "weight_dequant": {
+          "device_ms": {
+            "median": 0.5956223964691162,
+            "min": 0.5878431797027588,
+            "max": 0.5979872226715088
+          },
+          "wall_ms": {
+            "median": 0.5995562067255378,
+            "min": 0.5915229208767414,
+            "max": 0.6019755033776164
+          }
+        }
+      },
+      "kernel_events": 200,
+      "weight_scale_unique_storage_bytes": 6144,
+      "activation_scale_bytes": 4096
+    },
+    {
+      "label": "activation-prefill-m512",
+      "variant": "activation",
+      "phase": "prefill",
+      "m": 512,
+      "checks": {
+        "direct": {
+          "relative_l2": 0.018606655299663544,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2": 0.018771331757307053,
+          "passed": true
+        }
+      },
+      "stages": {
+        "direct": {
+          "device_ms": {
+            "median": 2.5110143661499023,
+            "min": 2.473040008544922,
+            "max": 2.6759807586669924
+          },
+          "wall_ms": {
+            "median": 2.5153239956125617,
+            "min": 2.476949989795685,
+            "max": 2.6803981978446245
+          }
+        },
+        "dequant": {
+          "device_ms": {
+            "median": 2.1499488830566404,
+            "min": 2.0801376342773437,
+            "max": 2.1900863647460938
+          },
+          "wall_ms": {
+            "median": 2.1538306027650833,
+            "min": 2.083987812511623,
+            "max": 2.193957893177867
+          }
+        },
+        "activation_quant": {
+          "device_ms": {
+            "median": 0.6153664112091064,
+            "min": 0.6110496044158935,
+            "max": 0.628879976272583
+          },
+          "wall_ms": {
+            "median": 0.6193927954882383,
+            "min": 0.6150439148768783,
+            "max": 0.6355556892231107
+          }
+        },
+        "weight_dequant": {
+          "device_ms": {
+            "median": 0.5957087993621826,
+            "min": 0.5731391906738281,
+            "max": 0.6100319862365723
+          },
+          "wall_ms": {
+            "median": 0.5996285937726498,
+            "min": 0.5769930081441998,
+            "max": 0.6145239109173417
+          }
+        }
+      },
+      "kernel_events": 199,
+      "weight_scale_unique_storage_bytes": 6144,
+      "activation_scale_bytes": 32768
+    },
+    {
+      "label": "activation-decode-m1",
+      "variant": "activation",
+      "phase": "decode",
+      "m": 1,
+      "checks": {
+        "direct": {
+          "relative_l2": 0.019211122766137123,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2": 0.019349444657564163,
+          "passed": true
+        }
+      },
+      "stages": {
+        "direct": {
+          "device_ms": {
+            "median": 2.810063934326172,
+            "min": 2.744223976135254,
+            "max": 2.885443115234375
+          },
+          "wall_ms": {
+            "median": 2.8144740033894777,
+            "min": 2.7486848877742887,
+            "max": 2.8898783959448338
+          }
+        },
+        "dequant": {
+          "device_ms": {
+            "median": 2.516499137878418,
+            "min": 2.4652191162109376,
+            "max": 2.5784000396728515
+          },
+          "wall_ms": {
+            "median": 2.5207456899806857,
+            "min": 2.469525206834078,
+            "max": 2.5826659984886646
+          }
+        },
+        "activation_quant": {
+          "device_ms": {
+            "median": 0.8619808197021485,
+            "min": 0.8522015571594238,
+            "max": 0.8893888473510743
+          },
+          "wall_ms": {
+            "median": 0.8660543011501431,
+            "min": 0.8561940863728523,
+            "max": 0.8936863159760833
+          }
+        },
+        "weight_dequant": {
+          "device_ms": {
+            "median": 0.6192927837371827,
+            "min": 0.6084288120269775,
+            "max": 0.6250080108642578
+          },
+          "wall_ms": {
+            "median": 0.6236041896045208,
+            "min": 0.612937705591321,
+            "max": 0.6294551072642207
+          }
+        }
+      },
+      "kernel_events": 199,
+      "weight_scale_unique_storage_bytes": 6144,
+      "activation_scale_bytes": 64
+    },
+    {
+      "label": "activation-decode-m8",
+      "variant": "activation",
+      "phase": "decode",
+      "m": 8,
+      "checks": {
+        "direct": {
+          "relative_l2": 0.018480494618415833,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2": 0.018667856231331825,
+          "passed": true
+        }
+      },
+      "stages": {
+        "direct": {
+          "device_ms": {
+            "median": 3.2542591094970703,
+            "min": 3.195337677001953,
+            "max": 4.18048324584961
+          },
+          "wall_ms": {
+            "median": 3.2588033005595207,
+            "min": 3.1995286932215095,
+            "max": 4.185031307861209
+          }
+        },
+        "dequant": {
+          "device_ms": {
+            "median": 3.030175971984863,
+            "min": 2.9207839965820312,
+            "max": 4.465292739868164
+          },
+          "wall_ms": {
+            "median": 3.0346956104040146,
+            "min": 2.9251822037622333,
+            "max": 4.4708156026899815
+          }
+        },
+        "activation_quant": {
+          "device_ms": {
+            "median": 1.3655455589294434,
+            "min": 1.191385555267334,
+            "max": 2.220729637145996
+          },
+          "wall_ms": {
+            "median": 1.3698471942916512,
+            "min": 1.1962077114731073,
+            "max": 2.22501449752599
+          }
+        },
+        "weight_dequant": {
+          "device_ms": {
+            "median": 0.6325503826141358,
+            "min": 0.6044928073883057,
+            "max": 0.6880320072174072
+          },
+          "wall_ms": {
+            "median": 0.6379479076713324,
+            "min": 0.6086312932893634,
+            "max": 0.6924059009179473
+          }
+        }
+      },
+      "kernel_events": 232,
+      "weight_scale_unique_storage_bytes": 6144,
+      "activation_scale_bytes": 512
+    },
+    {
+      "label": "both-prefill-m1",
+      "variant": "both",
+      "phase": "prefill",
+      "m": 1,
+      "checks": {
+        "direct": {
+          "relative_l2": 0.014401396736502647,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2": 0.014597108587622643,
+          "passed": true
+        }
+      },
+      "stages": {
+        "direct": {
+          "device_ms": {
+            "median": 2.87677116394043,
+            "min": 2.8495904922485353,
+            "max": 3.4786529541015625
+          },
+          "wall_ms": {
+            "median": 2.8811638010665774,
+            "min": 2.8543598018586636,
+            "max": 3.48325960803777
+          }
+        },
+        "dequant": {
+          "device_ms": {
+            "median": 2.553059196472168,
+            "min": 2.4774496078491213,
+            "max": 3.001875114440918
+          },
+          "wall_ms": {
+            "median": 2.5572289945557714,
+            "min": 2.482401207089424,
+            "max": 3.006002795882523
+          }
+        },
+        "activation_quant": {
+          "device_ms": {
+            "median": 0.8901632308959961,
+            "min": 0.8604512214660645,
+            "max": 1.2348959922790528
+          },
+          "wall_ms": {
+            "median": 0.8944964036345482,
+            "min": 0.8649226976558566,
+            "max": 1.2392051052302122
+          }
+        },
+        "weight_dequant": {
+          "device_ms": {
+            "median": 0.6119711875915528,
+            "min": 0.6061471939086914,
+            "max": 1.148755168914795
+          },
+          "wall_ms": {
+            "median": 0.6163211073726416,
+            "min": 0.6105824839323759,
+            "max": 1.1532354168593884
+          }
+        }
+      },
+      "kernel_events": 199,
+      "weight_scale_unique_storage_bytes": 98304,
+      "activation_scale_bytes": 64
+    },
+    {
+      "label": "both-prefill-m8",
+      "variant": "both",
+      "phase": "prefill",
+      "m": 8,
+      "checks": {
+        "direct": {
+          "relative_l2": 0.017295649275183678,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2": 0.017553864046931267,
+          "passed": true
+        }
+      },
+      "stages": {
+        "direct": {
+          "device_ms": {
+            "median": 3.3386913299560548,
+            "min": 3.1369951248168944,
+            "max": 3.3711071014404297
+          },
+          "wall_ms": {
+            "median": 3.3428538125008345,
+            "min": 3.1411750009283423,
+            "max": 3.37543620262295
+          }
+        },
+        "dequant": {
+          "device_ms": {
+            "median": 3.0716352462768555,
+            "min": 2.880544090270996,
+            "max": 3.1219263076782227
+          },
+          "wall_ms": {
+            "median": 3.076011105440557,
+            "min": 2.885073097422719,
+            "max": 3.127326094545424
+          }
+        },
+        "activation_quant": {
+          "device_ms": {
+            "median": 1.2562368392944336,
+            "min": 1.224307155609131,
+            "max": 1.2860575675964356
+          },
+          "wall_ms": {
+            "median": 1.2606434058398008,
+            "min": 1.2285801116377115,
+            "max": 1.2908433796837926
+          }
+        },
+        "weight_dequant": {
+          "device_ms": {
+            "median": 0.6235040187835693,
+            "min": 0.6067488193511963,
+            "max": 0.6376480102539063
+          },
+          "wall_ms": {
+            "median": 0.6281860172748566,
+            "min": 0.6112317787483335,
+            "max": 0.6420733872801065
+          }
+        }
+      },
+      "kernel_events": 232,
+      "weight_scale_unique_storage_bytes": 98304,
+      "activation_scale_bytes": 512
+    },
+    {
+      "label": "both-prefill-m64",
+      "variant": "both",
+      "phase": "prefill",
+      "m": 64,
+      "checks": {
+        "direct": {
+          "relative_l2": 0.017475197091698647,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2": 0.017705919221043587,
+          "passed": true
+        }
+      },
+      "stages": {
+        "direct": {
+          "device_ms": {
+            "median": 2.6598688125610352,
+            "min": 2.639683151245117,
+            "max": 2.686198425292969
+          },
+          "wall_ms": {
+            "median": 2.6643363060429692,
+            "min": 2.644460811279714,
+            "max": 2.6912222849205136
+          }
+        },
+        "dequant": {
+          "device_ms": {
+            "median": 2.352604866027832,
+            "min": 2.326095962524414,
+            "max": 2.405516815185547
+          },
+          "wall_ms": {
+            "median": 2.356951287947595,
+            "min": 2.3307615891098976,
+            "max": 2.410063915885985
+          }
+        },
+        "activation_quant": {
+          "device_ms": {
+            "median": 0.6524064064025878,
+            "min": 0.6338719844818115,
+            "max": 0.6591551780700684
+          },
+          "wall_ms": {
+            "median": 0.6579214939847589,
+            "min": 0.63824278768152,
+            "max": 0.6633462850004435
+          }
+        },
+        "weight_dequant": {
+          "device_ms": {
+            "median": 0.6153120040893555,
+            "min": 0.606438398361206,
+            "max": 0.6272096157073974
+          },
+          "wall_ms": {
+            "median": 0.6203434895724058,
+            "min": 0.61105249915272,
+            "max": 0.6317574065178633
+          }
+        }
+      },
+      "kernel_events": 200,
+      "weight_scale_unique_storage_bytes": 98304,
+      "activation_scale_bytes": 4096
+    },
+    {
+      "label": "both-prefill-m512",
+      "variant": "both",
+      "phase": "prefill",
+      "m": 512,
+      "checks": {
+        "direct": {
+          "relative_l2": 0.01765240542590618,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2": 0.017833523452281952,
+          "passed": true
+        }
+      },
+      "stages": {
+        "direct": {
+          "device_ms": {
+            "median": 2.672115135192871,
+            "min": 2.6402751922607424,
+            "max": 2.6993568420410154
+          },
+          "wall_ms": {
+            "median": 2.676293207332492,
+            "min": 2.6444140123203397,
+            "max": 2.703829505480826
+          }
+        },
+        "dequant": {
+          "device_ms": {
+            "median": 2.370591926574707,
+            "min": 2.3114879608154295,
+            "max": 2.4097408294677733
+          },
+          "wall_ms": {
+            "median": 2.374933520331979,
+            "min": 2.315746108070016,
+            "max": 2.4139035027474165
+          }
+        },
+        "activation_quant": {
+          "device_ms": {
+            "median": 0.6469024181365967,
+            "min": 0.637337589263916,
+            "max": 0.6615295886993409
+          },
+          "wall_ms": {
+            "median": 0.6537068169564009,
+            "min": 0.6417175987735391,
+            "max": 0.6660843035206199
+          }
+        },
+        "weight_dequant": {
+          "device_ms": {
+            "median": 0.6110367774963379,
+            "min": 0.6036352157592774,
+            "max": 0.6326079845428467
+          },
+          "wall_ms": {
+            "median": 0.615405710414052,
+            "min": 0.6076661171391606,
+            "max": 0.6369719048961997
+          }
+        }
+      },
+      "kernel_events": 199,
+      "weight_scale_unique_storage_bytes": 98304,
+      "activation_scale_bytes": 32768
+    },
+    {
+      "label": "both-decode-m1",
+      "variant": "both",
+      "phase": "decode",
+      "m": 1,
+      "checks": {
+        "direct": {
+          "relative_l2": 0.018273163586854935,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2": 0.018529921770095825,
+          "passed": true
+        }
+      },
+      "stages": {
+        "direct": {
+          "device_ms": {
+            "median": 2.8794624328613283,
+            "min": 2.8362943649291994,
+            "max": 2.962656021118164
+          },
+          "wall_ms": {
+            "median": 2.8839926002547145,
+            "min": 2.8406628873199224,
+            "max": 2.9668826842680573
+          }
+        },
+        "dequant": {
+          "device_ms": {
+            "median": 2.5892671585083007,
+            "min": 2.561270332336426,
+            "max": 3.0167808532714844
+          },
+          "wall_ms": {
+            "median": 2.5938356993719935,
+            "min": 2.5655694073066115,
+            "max": 3.02393299061805
+          }
+        },
+        "activation_quant": {
+          "device_ms": {
+            "median": 0.8799519538879395,
+            "min": 0.8687135696411132,
+            "max": 0.9135199546813965
+          },
+          "wall_ms": {
+            "median": 0.8844051044434309,
+            "min": 0.8733493974432349,
+            "max": 0.917764799669385
+          }
+        },
+        "weight_dequant": {
+          "device_ms": {
+            "median": 0.6106239795684815,
+            "min": 0.6049888134002686,
+            "max": 0.6273151874542237
+          },
+          "wall_ms": {
+            "median": 0.615555583499372,
+            "min": 0.609296397306025,
+            "max": 0.6317343795672059
+          }
+        }
+      },
+      "kernel_events": 199,
+      "weight_scale_unique_storage_bytes": 98304,
+      "activation_scale_bytes": 64
+    },
+    {
+      "label": "both-decode-m8",
+      "variant": "both",
+      "phase": "decode",
+      "m": 8,
+      "checks": {
+        "direct": {
+          "relative_l2": 0.017467055469751358,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2": 0.017737656831741333,
+          "passed": true
+        }
+      },
+      "stages": {
+        "direct": {
+          "device_ms": {
+            "median": 3.2872127532958983,
+            "min": 3.2292896270751954,
+            "max": 3.3298976898193358
+          },
+          "wall_ms": {
+            "median": 3.291653306223452,
+            "min": 3.2337261829525232,
+            "max": 3.334419406019151
+          }
+        },
+        "dequant": {
+          "device_ms": {
+            "median": 3.0237056732177736,
+            "min": 2.9402624130249024,
+            "max": 3.779199981689453
+          },
+          "wall_ms": {
+            "median": 3.0320379184558988,
+            "min": 2.9444684041664004,
+            "max": 3.7840961012989283
+          }
+        },
+        "activation_quant": {
+          "device_ms": {
+            "median": 1.2338272094726563,
+            "min": 1.216908836364746,
+            "max": 1.250755214691162
+          },
+          "wall_ms": {
+            "median": 1.2385156005620956,
+            "min": 1.221225899644196,
+            "max": 1.2551066000014544
+          }
+        },
+        "weight_dequant": {
+          "device_ms": {
+            "median": 0.6109280109405517,
+            "min": 0.6062784194946289,
+            "max": 0.6203487873077392
+          },
+          "wall_ms": {
+            "median": 0.6153924157842994,
+            "min": 0.6106239045038819,
+            "max": 0.6253993138670921
+          }
+        }
+      },
+      "kernel_events": 232,
+      "weight_scale_unique_storage_bytes": 98304,
+      "activation_scale_bytes": 512
+    }
+  ],
+  "scope": "Actual observed inputs; group size fixed at128; 16 INT8 partial products versus one BF16 product after reconstruction; no model-level quality or optimal kernel claim."
+}

@@ -1,0 +1,173 @@
+{
+  "rows": [
+    {
+      "label": "activation-prefill-m1",
+      "input_source_exact": true,
+      "checks": {
+        "direct": {
+          "relative_l2_to_cpu_fp64": 0.015310637749821622,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2_to_cpu_fp64": 0.015553766441947626,
+          "passed": true
+        }
+      }
+    },
+    {
+      "label": "activation-prefill-m8",
+      "input_source_exact": true,
+      "checks": {
+        "direct": {
+          "relative_l2_to_cpu_fp64": 0.018356808078248486,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2_to_cpu_fp64": 0.0185720451727418,
+          "passed": true
+        }
+      }
+    },
+    {
+      "label": "activation-prefill-m64",
+      "input_source_exact": true,
+      "checks": {
+        "direct": {
+          "relative_l2_to_cpu_fp64": 0.018447364596895797,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2_to_cpu_fp64": 0.018659617742038025,
+          "passed": true
+        }
+      }
+    },
+    {
+      "label": "activation-prefill-m512",
+      "input_source_exact": true,
+      "checks": {
+        "direct": {
+          "relative_l2_to_cpu_fp64": 0.018606655417403244,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2_to_cpu_fp64": 0.01877133168843566,
+          "passed": true
+        }
+      }
+    },
+    {
+      "label": "activation-decode-m1",
+      "input_source_exact": true,
+      "checks": {
+        "direct": {
+          "relative_l2_to_cpu_fp64": 0.019211126715976475,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2_to_cpu_fp64": 0.019349447434509844,
+          "passed": true
+        }
+      }
+    },
+    {
+      "label": "activation-decode-m8",
+      "input_source_exact": true,
+      "checks": {
+        "direct": {
+          "relative_l2_to_cpu_fp64": 0.018480494610644504,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2_to_cpu_fp64": 0.01866785637734717,
+          "passed": true
+        }
+      }
+    },
+    {
+      "label": "both-prefill-m1",
+      "input_source_exact": true,
+      "checks": {
+        "direct": {
+          "relative_l2_to_cpu_fp64": 0.014401395009382135,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2_to_cpu_fp64": 0.014597106303779481,
+          "passed": true
+        }
+      }
+    },
+    {
+      "label": "both-prefill-m8",
+      "input_source_exact": true,
+      "checks": {
+        "direct": {
+          "relative_l2_to_cpu_fp64": 0.017295646962731753,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2_to_cpu_fp64": 0.01755386135791825,
+          "passed": true
+        }
+      }
+    },
+    {
+      "label": "both-prefill-m64",
+      "input_source_exact": true,
+      "checks": {
+        "direct": {
+          "relative_l2_to_cpu_fp64": 0.017475195891122525,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2_to_cpu_fp64": 0.017705917645372108,
+          "passed": true
+        }
+      }
+    },
+    {
+      "label": "both-prefill-m512",
+      "input_source_exact": true,
+      "checks": {
+        "direct": {
+          "relative_l2_to_cpu_fp64": 0.01765240607927568,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2_to_cpu_fp64": 0.0178335229902923,
+          "passed": true
+        }
+      }
+    },
+    {
+      "label": "both-decode-m1",
+      "input_source_exact": true,
+      "checks": {
+        "direct": {
+          "relative_l2_to_cpu_fp64": 0.018273170129920344,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2_to_cpu_fp64": 0.01852992664245654,
+          "passed": true
+        }
+      }
+    },
+    {
+      "label": "both-decode-m8",
+      "input_source_exact": true,
+      "checks": {
+        "direct": {
+          "relative_l2_to_cpu_fp64": 0.017467057977110904,
+          "passed": true
+        },
+        "dequant": {
+          "relative_l2_to_cpu_fp64": 0.017737658430305423,
+          "passed": true
+        }
+      }
+    }
+  ],
+  "reference": "CPU FP64 on original real input and decoded checkpoint weights; INT8 direct also checked against dequantized operand product"
+}

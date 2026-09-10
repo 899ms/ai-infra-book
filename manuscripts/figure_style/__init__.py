@@ -7,10 +7,10 @@ from matplotlib.patches import FancyBboxPatch, FancyArrowPatch, Rectangle
 
 COL = dict(ink='#252525', line='#454545', blue='#CBE3F3', green='#CFE8DB',
            orange='#F9DEC0', purple='#DDCDE8', gray='#EEEEEE', white='#FFFFFF')
-STYLE = {'font.size':12, 'text.color':COL['ink'], 'axes.labelcolor':COL['ink'],
+STYLE = {'font.size':12, 'font.weight':'normal', 'axes.titleweight':'medium', 'text.color':COL['ink'], 'axes.labelcolor':COL['ink'],
          'axes.edgecolor':COL['line'], 'xtick.color':COL['ink'], 'ytick.color':COL['ink'],
          'axes.labelsize':12, 'axes.titlesize':14, 'xtick.labelsize':11,
-         'ytick.labelsize':11, 'legend.fontsize':11, 'svg.fonttype':'none',
+         'ytick.labelsize':11, 'legend.fontsize':11, 'svg.fonttype':'path',
          'pdf.fonttype':42, 'figure.facecolor':'white', 'savefig.facecolor':'white'}
 
 def canvas(height=3.6):

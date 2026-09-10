@@ -101,9 +101,9 @@ def draw(ch,save,root):
   for y,title,success,cost in [(.56,'原系统',50,100),(.19,'新系统',80,200)]:
    a.text(.04,y+.21,title,fontsize=13,weight='bold')
    for j in range(100):a.add_patch(Rectangle((.04+(j%20)*.044,y+(j//20)*.031),.036,.022,color=TEAL if j<success else GRAY))
-   a.text(.04,y-.055,f'成功 {success} 次；模型费用共 {cost} 单位',fontsize=12)
-  a=axs[1];a.set_title('B  总费用 ÷ 成功数',loc='left',fontsize=15,pad=18)
-  a.bar(['原系统','新系统'],[2,2.5],color=[BLUE,ORANGE],width=.5);a.set(ylabel='每个成功任务的模型费用（相对单位）',ylim=(0,3.5))
+   a.text(.04,y-.055,f'成功 {success} 次；模型成本共 {cost} 单位',fontsize=12)
+  a=axs[1];a.set_title('B  总成本 ÷ 成功数',loc='left',fontsize=15,pad=18)
+  a.bar(['原系统','新系统'],[2,2.5],color=[BLUE,ORANGE],width=.5);a.set(ylabel='每个成功任务的模型成本（相对单位）',ylim=(0,3.5))
   for x,t,y in [(0,'100 / 50 = 2',2),(1,'200 / 80 = 2.5',2.5)]:a.text(x,y+.12,t,ha='center',fontsize=13)
   save(f,'figure-3-success-cost');meta['success_cost']={'teaching_assumption':True,'trials':100,'successes':[50,80],'relative_total_cost':[100,200],'cost_per_success':[2,2.5]}
   f,axs=plt.subplots(1,2,figsize=(14,8));f.subplots_adjust(left=.05,right=.96,wspace=.16,bottom=.08,top=.92)

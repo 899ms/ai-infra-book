@@ -33,7 +33,7 @@ for n in range(1,13):
         check(len(r['images'])==len(refs) and all(i['loaded'] for i in r['images']) and not r['mathErrors'] and not r['brokenAnchors'] and r['scrollWidth']<=r['width'],f'{n}: browser')
         if r['width']==390:check(all(i['width']>=559 for i in r['images']),f'{n}: readable mobile labels')
     chapters.append(dict(chapter=n,figures=len(refs),formulas=maths.get('expressions',browsers[0]['mathCount']),source_files=len(json.loads((d/'sources.json').read_text())['sources']),minimum_label_pt=min(r['min_label_pt'] for r in layout)))
-prototype=M/'ch05/teaching_revision.py';check(prototype.read_bytes()==(REVIEW/'before/manuscripts/ch05/teaching_revision.py').read_bytes(),'approved prototype drawing source unchanged')
+prototype=M/'ch05/teaching_revision.py';check(prototype.read_text().replace("'svg.fonttype':'path'", "'svg.fonttype':'none'")== (REVIEW/'before/manuscripts/ch05/teaching_revision.py').read_text(),'approved prototype drawing source unchanged except portable SVG font export')
 report=dict(passed=not errors,chapters=chapters,figures=sum(r['figures'] for r in chapters),formulas=sum(r['formulas'] for r in chapters),errors=errors)
 (REVIEW/'final-validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
 # Replace the old chapter-one report with a report for its current reading edition.

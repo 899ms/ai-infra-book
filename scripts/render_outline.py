@@ -21,6 +21,10 @@ for entry in catalog:
     assert chapters[-1]['title']==entry['title'] and n==entry['number']
     chapters[-1]['decision']=s.split('## 本章的设计决定\n',1)[1].split('\n## ',1)[0].strip()
     core=re.findall(r'^> \*\*实验 (\d+-\d+)[^\n]*〔核心〕',s,re.M)
+    if not core:
+        prose_core=re.search(r'核心实验仍为 ([^。]+)',s)
+        if prose_core:
+            core=re.findall(r'\d+-\d+',prose_core[1])
     assert core==entry['core_experiments'] and len(core)==3,(p,core)
 counts=dict(sections=sum(len(c['sections']) for c in chapters),subsections=sum(c['subcount'] for c in chapters),experiments=sum(c['labs'] for c in chapters),figures=sum(c['figs'] for c in chapters))
 summary=f'十二章共 {counts["sections"]} 节、{counts["subsections"]} 个小节、{counts["experiments"]} 项实验与计算、{counts["figures"]} 项配图计划'

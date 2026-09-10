@@ -12,4 +12,12 @@ def readable_diagrams(page):
     if 'class="diagram-scroll"' not in page:
         page=re.sub(r'<img\b[^>]*>',lambda m:'<span class="book-diagram-scroll" style="display:block" tabindex="0" role="region" aria-label="配图；窄屏可横向滚动查看">'+m[0]+'</span>',page)
     page=page.replace('</style>',CSS+'</style>',1)
+    # Markdown emits endnotes after the body; keep the chapter conclusion last.
+    notes=re.search(r'<div class="footnote">.*?</div>',page,re.S)
+    summary=re.search(r'<h2\b[^>]*>本章小结</h2>',page)
+    if notes and summary:
+        block=notes[0]
+        page=page[:notes.start()]+page[notes.end():]
+        summary=re.search(r'<h2\b[^>]*>本章小结</h2>',page)
+        page=page[:summary.start()]+block+'\n'+page[summary.start():]
     return page

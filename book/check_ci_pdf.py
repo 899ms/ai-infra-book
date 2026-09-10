@@ -37,7 +37,8 @@ def main():
     required = ('Songti-SC-Regular', 'Menlo-Regular', 'SourceHanSansCN-Regular',
                 'SourceHanSansCN-Bold', 'LMRoman10-Regular', 'LatinModernMath-Regular')
     missing = [font for font in required if not any(font in actual for actual in fonts)]
-    fallbacks = [font for font in fonts if 'NotoSansCJK' in font or 'DejaVuSans' in font]
+    # Figure PDFs may intentionally contain DejaVu Sans mathematical glyphs.
+    fallbacks = [font for font in fonts if 'NotoSansCJK' in font or 'DejaVuSansMono' in font]
     if missing or fallbacks:
         raise SystemExit(f'PDF font parity failed: missing={missing}, fallbacks={fallbacks}')
     pages = sorted({0, min(8, len(doc)-1), len(doc)//2, len(doc)-1})

@@ -1,0 +1,155 @@
+#!/usr/bin/env python3
+"""Build original chapter-nine diagrams and a self-contained reading edition."""
+from pathlib import Path
+from fractions import Fraction
+import argparse,base64,hashlib,html,json,re,subprocess
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from matplotlib import font_manager
+from matplotlib.patches import FancyBboxPatch,FancyArrowPatch,Rectangle
+import numpy as np
+import markdown
+HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1]
+parser=argparse.ArgumentParser();parser.add_argument('--font');args=parser.parse_args()
+font=next((Path(p) for p in [args.font,'/System/Library/Fonts/Supplemental/Arial Unicode.ttf','/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'] if p and Path(p).exists()),None)
+if font is None:raise SystemExit('A CJK font is required; use --font')
+font_manager.fontManager.addfont(str(font));family=font_manager.FontProperties(fname=str(font)).get_name()
+plt.rcParams.update({'font.family':family,'font.size':11,'axes.unicode_minus':False,'svg.fonttype':'none','svg.hashsalt':'ch09-v1','axes.spines.top':False,'axes.spines.right':False,'figure.facecolor':'white','savefig.facecolor':'white','text.color':'#243c48','axes.labelcolor':'#243c48','pdf.fonttype':42})
+C={'ink':'#243c48','blue':'#286b98','teal':'#16857b','orange':'#b87530','red':'#a95159','pale':'#edf4f7','green':'#eaf5f0','sand':'#fcf1e5','line':'#bcced4','muted':'#536b78'}
+outputs=[];data={};layout=[]
+for source in json.loads((HERE/'sources.json').read_text())['sources']:
+ p=ROOT/source['path']
+ if hashlib.sha256(p.read_bytes()).hexdigest()!=source['sha256']:raise SystemExit('Source changed; review before rebuilding: '+str(p))
+def calc(name):return json.loads((ROOT/'calculations/results'/f'{name}.json').read_text())
+def num(v):return float(Fraction(str(v)))
+def canvas(h=7):
+ f,a=plt.subplots(figsize=(12,h));f.subplots_adjust(left=.035,right=.965,bottom=.05,top=.96);a.set(xlim=(0,1),ylim=(0,1));a.axis('off');return f,a
+def box(a,x,y,w,h,title,body='',col='pale',fs=12):
+ a.add_patch(FancyBboxPatch((x,y),w,h,boxstyle='round,pad=.004,rounding_size=.01',ec=C['line'],fc=C[col]))
+ a.text(x+w/2,y+h*(.68 if body else .5),title,ha='center',va='center',fontsize=fs,weight='bold')
+ if body:a.text(x+w/2,y+h*.25,body,ha='center',va='center',fontsize=10,color=C['muted'],linespacing=1.5)
+def arrow(a,p,q,col='teal',rad=0,style='-'):
+ a.add_patch(FancyArrowPatch(p,q,arrowstyle='-|>',mutation_scale=13,lw=1.5,color=C[col],connectionstyle=f'arc3,rad={rad}',linestyle=style))
+def label(a,x,y,t,fs=13):a.text(x,y,t,fontsize=fs,weight='bold',va='top')
+def save(f,name):
+ f.canvas.draw();renderer=f.canvas.get_renderer()
+ for t in f.findobj(matplotlib.text.Text):
+  if not t.get_visible() or not t.get_text():continue
+  b=t.get_window_extent(renderer)
+  if b.x0<0 or b.y0<0 or b.x1>f.bbox.width or b.y1>f.bbox.height:layout.append({'figure':name,'text':t.get_text()})
+ for ext in ['svg','png','pdf']:
+  p=HERE/f'{name}.{ext}';f.savefig(p,dpi=180,bbox_inches='tight',pad_inches=.17);outputs.append(p)
+ plt.close(f)
+# No figure number or outside caption is painted onto any figure.
+f,a=canvas(7)
+label(a,.02,.97,'沿同一请求改变计算位置')
+xs=[.025,.255,.485,.715];titles=['E：视觉编码','P：处理新输入','D：逐步生成','工具 → 下一轮 P'];bodies=['可选阶段，产生 EC','建立输入 KV','读取并增长 KV','保留历史，加入新结果']
+for i,x in enumerate(xs):
+ box(a,x,.69,.205,.15,titles[i],bodies[i],fs=12)
+ if i<3:arrow(a,(x+.21,.765),(xs[i+1]-.008,.765))
+label(a,.02,.55,'状态寿命与交接频次')
+rows=[('权重','跨请求保留；复制或重配置时准备',.39,'blue'),('激活','相邻算子间传递；AF 中逐层往返',.27,'teal'),('KV','跨 token 增长；PD 交接、跨轮复用',.15,'orange'),('EC','由图像与编码配置确定，可独立缓存',.03,'red')]
+for title,body,y,col in rows:
+ a.add_patch(Rectangle((.03,y),.015,.073,color=C[col]));a.text(.065,y+.037,title,va='center',weight='bold');a.text(.21,y+.037,body,va='center',fontsize=12)
+save(f,'figure-9-1-state');data['9-1']={'type':'conceptual','stages':titles,'states':[x[0] for x in rows]}
+# PD pool: exact frozen enumeration.
+z=calc('pd-pool-book');f=plt.figure(figsize=(12,9));a=f.add_axes([.04,.70,.92,.26]);a.set(xlim=(0,1),ylim=(0,1));a.axis('off')
+box(a,.025,.30,.29,.47,'P 池：完整模型','独立调度 prefill',col='pale');box(a,.68,.30,.29,.47,'D 池：完整模型','独立调度 decode',col='green');arrow(a,(.325,.53),(.67,.53),'orange');a.text(.50,.69,'KV 快照 →',ha='center',color=C['orange'],fontsize=12);a.text(.50,.25,'源端保留 / 目的端接收',ha='center',fontsize=10)
+ax=f.add_axes([.16,.13,.56,.49]);grid=np.zeros((5,5))
+rows=z['pool_assignments'];data['9-2']={'type':'frozen_calculation','source':'pd-pool-book','assignments':rows}
+for row in rows:
+ pa=row['prefill_workers']['prefill-oriented'];pb=row['prefill_workers']['decode-oriented']
+ grid[pb,pa]=num(row['bound_requests_per_second_exact'])
+ assert abs(grid[pb,pa]-min(2*pa+.5*pb,.5*(4-pa)+2*(4-pb),25e9/1207959552))<1e-12
+im=ax.imshow(grid,origin='lower',cmap='YlGnBu',vmin=0,vmax=8)
+for j in range(5):
+ for i in range(5):ax.text(i,j,f'{grid[j,i]:g}',ha='center',va='center',color='white' if grid[j,i]>4 else C['ink'],fontsize=13)
+ax.set(xticks=range(5),yticks=range(5),xlabel='分给 P 的 A 类 worker 数',ylabel='分给 P 的 B 类 worker 数');ax.set_title('固定八个 worker：整数配比',loc='left',fontsize=13,pad=15)
+cax=f.add_axes([.75,.13,.025,.49]);f.colorbar(im,cax=cax).set_label('请求率上界 / 请求·s⁻¹');f.text(.17,.035,'每类各四个，其余分给 D；共置上界为 3.2 请求/s',fontsize=11)
+save(f,'figure-9-2-pd')
+# Local CPU/GPU execution.
+f,a=canvas(8)
+label(a,.025,.96,'权重交接：GPU 执行专家')
+box(a,.03,.70,.25,.14,'CPU DRAM','专家权重',col='sand');box(a,.39,.70,.24,.14,'GPU 权重缓冲','等待载荷就绪');box(a,.75,.70,.22,.14,'GPU 专家计算','输出激活',col='green');arrow(a,(.285,.77),(.38,.77),'orange');arrow(a,(.635,.77),(.74,.77));a.text(.335,.86,'W',ha='center',color=C['orange'])
+label(a,.025,.56,'激活交接：CPU 就地计算专家')
+box(a,.03,.30,.25,.15,'GPU attention','输入激活 X');box(a,.39,.30,.24,.15,'CPU 专家计算','本地读取权重',col='sand');box(a,.75,.30,.22,.15,'同步合并','继续下一层',col='green');arrow(a,(.285,.375),(.38,.375));arrow(a,(.635,.375),(.74,.375));a.text(.335,.465,'X',ha='center',color=C['teal']);a.text(.69,.465,'Y',ha='center',color=C['teal'])
+box(a,.39,.04,.24,.14,'GPU 常驻专家','可执行独立分支');arrow(a,(.17,.295),(.385,.11),rad=.15);arrow(a,(.635,.11),(.86,.295),rad=.15)
+save(f,'figure-9-3-local');data['9-3']={'type':'conceptual','weight_payload_MiB_per_expert':36,'activation_roundtrip_bytes_per_assignment':16384}
+# Handoff dependency shapes and matched payload control.
+z=calc('pd-af-handoff-qwen8');f=plt.figure(figsize=(12,8));a=f.add_axes([.04,.54,.92,.42]);a.set(xlim=(0,1),ylim=(0,1));a.axis('off')
+label(a,.015,.98,'必要依赖〔上部不按耗时比例〕')
+for x,t,b in [(.03,'Prefill','生成输入 KV'),(.38,'一次交接','1.125 GiB'),(.73,'Decode 循环','历史本地增长')]:box(a,x,.61,.23,.21,t,b,fs=12)
+arrow(a,(.265,.715),(.375,.715),'orange');arrow(a,(.615,.715),(.725,.715),'orange')
+a.text(.02,.34,'AF：',weight='bold')
+for i,txt in enumerate(['A₁','F₁','A₂','F₂','…','A₃₆','F₃₆']):
+ x=.13+i*.12;box(a,x,.20,.09,.23,txt,col='green' if txt.startswith('F') else 'pale')
+ if i<6:arrow(a,(x+.095,.315),(x+.113,.315),'teal')
+a.text(.50,.04,'每层发送输入并返回结果；下一层依赖汇合',ha='center',fontsize=11)
+ax=f.add_axes([.17,.16,.77,.25]);base=1207959552/25e9*1000;start=[.005,.360];y=np.arange(2)
+ax.barh(y,[base,base],color=C['blue'],height=.43,label='相同载荷');ax.barh(y,start,left=[base,base],color=C['orange'],height=.43,label='启动与同步');ax.set(yticks=y,yticklabels=['1 次消息','72 次消息'],xlabel='串行交接时间 / ms',xlim=(0,55),ylim=(-.6,1.8));ax.set_xticks([0,10,20,30,40,50]);ax.invert_yaxis();ax.legend(frameon=False,ncol=2,loc='lower right');ax.text(49,.05,f'{base+.005:.3f}',fontsize=10);ax.text(49,1.05,f'{base+.360:.3f}',fontsize=10)
+save(f,'figure-9-4-handoff');data['9-4']={'type':'frozen_and_byte_matched','summary':z['summary'],'same_payload_ms':[base+.005,base+.360]}
+# Expert reuse teaching curve, verify boundary against stored rational results.
+m=np.arange(1,161);W=37748736;tasks=8*m;cpu=(16*5e-6+tasks*16384/25e9+np.maximum(tasks*37748736/2e12,8*W/200e9))*1e3;gpu=(8*5e-6+8*W/25e9+np.maximum(tasks*37748736/100e12,8*W/1e12))*1e3
+for k in [78,79]:
+ z=calc('expert-locality-boundary'+str(k))['summary'];assert abs(cpu[k-1]-num(z['cpu_service_ns_exact'])/1e6)<1e-9;assert abs(gpu[k-1]-num(z['weight_copy_service_ns_exact'])/1e6)<1e-9
+f,ax=plt.subplots(figsize=(12,6));f.subplots_adjust(left=.10,right=.96,bottom=.17,top=.88);ax.plot(m,cpu,color=C['teal'],lw=2.3,label='CPU 就地计算＋激活交接');ax.plot(m,gpu,color=C['orange'],lw=2.3,label='搬一次权重＋GPU 计算');ax.axvline(78.5,color=C['line'],ls='--');ax.annotate('78 / 79：题设中的选择翻转',xy=(78.5,12.42),xytext=(88,7),arrowprops={'arrowstyle':'->','color':C['muted']},fontsize=11);ax.set(xlabel='每个热点专家的 token 数',ylabel='八专家串行资源模型 / ms',xlim=(1,160),ylim=(0,28));ax.set_title('相同八个专家：计算量增长，权重载荷不变',loc='left',fontsize=14,pad=15);ax.legend(frameon=False);ax.grid(alpha=.15)
+save(f,'figure-9-5-reuse');data['9-5']={'type':'declared_model','tokens_per_expert':m.tolist(),'cpu_ms':cpu.tolist(),'weight_copy_gpu_ms':gpu.tolist(),'scenario':calc('expert-locality-boundary78')['scenario']}
+# Padding and payback are independent panels.
+z=calc('replica-payback-book')['summary'];f,axs=plt.subplots(1,2,figsize=(12,6));f.subplots_adjust(left=.08,right=.97,bottom=.19,top=.87,wspace=.30)
+ax=axs[0];counts=np.array([32,16,8,4,2,1,1,0]);x=np.arange(8);ax.bar(x,counts,color=C['blue'],label='有效任务行');ax.bar(x,32-counts,bottom=counts,color=C['sand'],edgecolor=C['orange'],label='全部补齐的额外行');ax.set(xticks=x,xlabel='本地专家编号',ylabel='任务行数',ylim=(0,43));ax.set_title('有效 64 行；两种补齐为 224 / 256',fontsize=12,loc='left');ax.legend(frameon=False,fontsize=10)
+ax=axs[1];n=np.arange(1,65);setup=num(z['serialized_copy_setup_ns_exact'])/1e6;delta=num(z['per_batch_saving_ns_exact'])/1e6;ax.plot(n,n*delta-setup,color=C['teal'],lw=2);ax.axhline(0,color=C['line']);ax.scatter([27],[27*delta-setup],color=C['orange']);ax.annotate('第 27 批开始严格获益',(27,27*delta-setup),xytext=(25,10),fontsize=10,arrowprops={'arrowstyle':'->'});ax.set(xlabel='热点持续的批数',ylabel='累计净节省 / ms',xlim=(1,64),ylim=(-12,18));ax.set_title('另一个冻结场景：七份物理副本',fontsize=12,loc='left');ax.set_xticks([10,20,30,40,50,60]);ax.grid(alpha=.15)
+save(f,'figure-9-6-experts');data['9-6']={'type':'independent_controls','padding_counts':counts.tolist(),'padded_nonempty':224,'padded_all':256,'replica_summary':z}
+# Cache tiers plus exact restart counts.
+f,a=canvas(8);label(a,.02,.97,'层次决定路径，身份决定是否可用')
+for x,t,b,c in [(.025,'GPU HBM','活跃状态与本地命中','pale'),(.365,'主机 DRAM','私有或配置共享','green'),(.705,'SSD / 远端存储','持久化与跨实例复用','sand')]:box(a,x,.69,.27,.17,t,b,c)
+for x in [.30,.64]:arrow(a,(x,.805),(x+.06,.805),'orange');arrow(a,(x+.06,.73),(x,.73),'teal')
+a.text(.50,.60,'写入完成 → 发布位置 → 查询身份 → 取回 → 消费',ha='center',fontsize=12)
+box(a,.025,.31,.27,.14,'连续前缀可用','从匹配边界继续执行',col='green');box(a,.705,.31,.27,.14,'缺失 / 损坏 / 不兼容','回退重算并处理坏状态',col='sand');arrow(a,(.16,.68),(.16,.46));arrow(a,(.84,.68),(.84,.46),'red',style='--')
+z=calc('cache-restart-book')['summary'];a.text(.025,.19,'已有正常重启记录',weight='bold',fontsize=13)
+for x,title,body in [(.025,'实际读入','1024 位置 / 144 MiB'),(.365,'有效复用','1008 位置 / 141.75 MiB'),(.705,'差额','16 位置 / 2.25 MiB')]:box(a,x,.025,.27,.11,title,body,fs=11)
+save(f,'figure-9-7-cache');data['9-7']={'type':'conceptual_and_observed','restart_summary':z}
+# Composition diagram keeps alternatives distinct.
+f,a=canvas(8)
+box(a,.025,.69,.24,.16,'P 实例','完整输入历史',col='pale');box(a,.73,.69,.24,.16,'D 实例','本地读取并增长',col='green');arrow(a,(.275,.80),(.72,.80),'orange');a.text(.50,.87,'直接 KV 交接',ha='center',color=C['orange'])
+box(a,.38,.42,.24,.16,'共享 KV 池','保存、发布与回收',col='sand');arrow(a,(.16,.68),(.375,.50),'orange',rad=.10);arrow(a,(.625,.50),(.85,.68),'orange',rad=.10);a.text(.24,.55,'写入',color=C['orange']);a.text(.72,.55,'取回',color=C['orange']);arrow(a,(.90,.68),(.625,.44),'orange',rad=-.22);a.text(.91,.49,'生成状态\n另行发布',ha='center',fontsize=10)
+box(a,.025,.07,.24,.16,'下一轮 P','新输入＋可用前缀');arrow(a,(.375,.46),(.15,.24),'orange',rad=.10);box(a,.73,.07,.24,.16,'FFN / 专家池','按层执行',col='pale');arrow(a,(.97,.69),(.97,.24),'teal',rad=-.20);arrow(a,(.82,.24),(.82,.68),'teal',rad=.25);a.text(.66,.28,'激活往返\n逐层发生',ha='center',fontsize=11,color=C['teal']);a.text(.36,.10,'KV：跨阶段 / 跨轮\n激活：相邻算子依赖',fontsize=12)
+save(f,'figure-9-8-composition');data['9-8']={'type':'conceptual_alternative_paths','paths':['P-D','P-pool-D','D-pool-nextP','D-FFN-D']}
+# Service lifecycle and route choices are separate declared models.
+f,axs=plt.subplots(1,2,figsize=(12,6.5));f.subplots_adjust(left=.08,right=.97,bottom=.18,top=.86,wspace=.34)
+ax=axs[0];tt=np.linspace(0,55,551);series={}
+for mu,col in [(8,'teal'),(5,'orange')]:
+ q=np.where(tt<=10,4*tt,np.maximum(0,40-(mu-4)*(tt-10)));series[str(mu)]=q.tolist();ax.plot(tt,q,label=f'就绪后 {mu} 请求/s',color=C[col],lw=2)
+ax.axvline(10,color=C['line'],ls='--');ax.text(11,43,'引擎就绪',fontsize=10);ax.set(xlabel='从启动开始的时间 / s',ylabel='积压请求数〔连续流体近似〕',ylim=(0,50),xlim=(0,55));ax.set_title('启动 10 s；持续到达 4 请求/s',fontsize=12,loc='left');ax.legend(frameon=False,fontsize=10)
+V=1207959552;times=[260,200,(.010+V/5e9+V/25e9+.010)*1000,(.010+V/20e9+V/25e9+.010)*1000]
+ax=axs[1];ax.barh(range(4),times,color=[C['blue'],C['muted'],C['orange'],C['teal']],height=.53);ax.set(yticks=range(4),yticklabels=['A 本地命中','B 重算','B 远端 5 GB/s','B 远端 20 GB/s'],xlabel='首 token 时间 / ms',xlim=(0,370));ax.set_xticks([0,100,200,300]);ax.invert_yaxis();ax.set_title('同一前缀：取回与排队的选择',fontsize=12,loc='left')
+for i,v in enumerate(times):ax.text(v+5,i,f'{v:.2f}',va='center',fontsize=10)
+save(f,'figure-9-9-service');data['9-9']={'type':'two_declared_controls','startup_s':10,'arrival_rps':4,'time_s':tt.tolist(),'queues':series,'route_ttft_ms':times,'route_sources':['cache-route-book','cache-route-fast-remote']}
+(HERE/'figure-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n');(HERE/'figure-layout-check.json').write_text(json.dumps({'text_extent_warnings':layout},ensure_ascii=False,indent=2)+'\n')
+
+# Render formulas on the build machine; bundle all image/font bytes into HTML.
+md=HERE.parent/'09-分布式推理.md';raw=md.read_text();maths=[]
+def protect(match):
+ text=match[0];display=text.startswith('$$');latex=text[2:-2] if display else text[1:-1];token=f'MATHPLACEHOLDER{len(maths)}END';maths.append({'latex':latex.strip(),'display':display,'token':token});return '\n\n'+token+'\n\n' if display else token
+protected=re.sub(r'\$\$[\s\S]*?\$\$|\$[^$\n]+\$',protect,raw)
+body=markdown.markdown(protected,extensions=['tables','footnotes','fenced_code','toc'],output_format='html')
+node="const fs=require('fs'),k=require(process.argv[1]);const a=JSON.parse(fs.readFileSync(0,'utf8'));process.stdout.write(JSON.stringify(a.map(x=>k.renderToString(x.latex,{displayMode:x.display,throwOnError:true,output:'htmlAndMathml'}))))"
+res=subprocess.run(['node','-e',node,str(HERE.parent/'ch06/vendor/katex/katex.js')],input=json.dumps(maths),text=True,capture_output=True)
+if res.returncode:raise SystemExit(res.stderr)
+for entry,rendered in zip(maths,json.loads(res.stdout)):
+ body=body.replace('<p>'+entry['token']+'</p>',rendered) if entry['display'] else body.replace(entry['token'],rendered)
+math_css=(HERE.parent/'ch06/vendor/katex/katex.min.css').read_text()
+def font_url(m):
+ p=HERE.parent/'ch06/vendor/katex'/m[1];return 'url(data:font/'+p.suffix[1:]+';base64,'+base64.b64encode(p.read_bytes()).decode()+')'
+math_css=re.sub(r'url\((fonts/[^)]+)\)',font_url,math_css)
+body=re.sub(r'<table>(.*?)</table>',r'<div class="table-scroll"><table>\1</table></div>',body,flags=re.S)
+for p in outputs:
+ if p.suffix=='.svg':body=body.replace('src="ch09/'+p.name+'"','src="data:image/png;base64,'+base64.b64encode(p.with_suffix('.png').read_bytes()).decode()+'"')
+css='''*{box-sizing:border-box}body{margin:0;background:#f7f7f4;color:#243640;font:18px/1.95 Georgia,"Songti SC",serif}main{max-width:1020px;margin:auto;padding:48px 46px 85px;background:#fff}h1,h2,h3{font-family:Arial,"PingFang SC",sans-serif;line-height:1.45;color:#183949}h1{font-size:36px}h2{font-size:28px;border-top:1px solid #d5e1e4;margin-top:65px;padding-top:26px}h3{font-size:23px;margin-top:38px}a{color:#286b98;text-underline-offset:3px;overflow-wrap:anywhere}img{display:block;width:100%;height:auto;margin:28px auto 10px}em{font-size:15px;color:#546e7a}table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.7;margin:22px 0}td,th{padding:10px 12px;border-bottom:1px solid #d5e1e4;text-align:left}th{background:#edf4f6}blockquote{margin:27px 0;padding:14px 24px;border-left:4px solid #16857b;background:#f0f7f4;font-size:16px}code{font:0.85em/1.6 Menlo,monospace;background:#f0f4f6;overflow-wrap:anywhere}pre{overflow-x:auto;padding:16px;max-width:100%}nav{font:16px/1.9 Arial,"PingFang SC",sans-serif;background:#eff5f7;padding:18px 24px}nav a{display:block}.footnote{font-size:14px;line-height:1.8}.footnote li{margin-bottom:13px}.table-scroll{overflow-x:auto;max-width:100%}.katex{font-size:1.04em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:12px 0}@media(max-width:650px){main{padding:24px 18px}body{font-size:17px}h1{font-size:29px}h2{font-size:25px}h3{font-size:21px}}@media print{main{max-width:none;padding:0}h2,h3{break-after:avoid}img,blockquote{break-inside:avoid}body{font-size:11pt}}'''
+nav=''.join('<a href="#'+ident+'">'+title+'</a>' for ident,title in re.findall(r'<h2 id="([^"]+)">(9\.\d+ [^<]+)</h2>',body))
+page='<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第 9 章 分布式推理</title><style>'+css+math_css+'</style></head><body><main><nav aria-label="本章目录">'+nav+'</nav>'+body+'</main></body></html>'
+hp=md.with_suffix('.html');hp.write_text(page)
+(HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')
+artifacts=outputs+[HERE/'figure-data.json',hp,md]
+(HERE/'manifest.json').write_text(json.dumps({'chapter':9,'generator':'manuscripts/ch09/build.py','figures':9,'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
+print(f'Built {len(outputs)} image files, {len(maths)} formulas, offline HTML; {len(layout)} extent warnings.')

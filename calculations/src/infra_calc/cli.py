@@ -26,6 +26,7 @@ from .topics import trace_resource_bridge
 from .topics import request_hardware_bridge
 from .topics import v4_mtp_forward
 from .topics import trace_cache_lifecycle
+from .topics import v41_flash, kv_comparison
 from .topics import qwen36_forward, qwen36_capacity, memory_pool_access
 from .topics import supernode_cohort_cost
 from .topics import hierarchical_gradient
@@ -317,6 +318,12 @@ def parser() -> argparse.ArgumentParser:
     profiles = sub.add_parser("workload-profiles", help="Archived 02-08 request distributions and nearest-rank p95")
     profiles.add_argument("--format", choices=("json", "md"), default="json")
     profiles.add_argument("--output", type=Path)
+    for name in ("v41-flash", "kv-comparison"):
+        cache_parser = sub.add_parser(name, help="Pinned checkpoint/cache metrics with explicit layout and decode scope")
+        cache_parser.add_argument("--length", type=int, default=8192)
+        cache_parser.add_argument("--batch", type=int, default=1)
+        cache_parser.add_argument("--format", choices=("json", "md"), default="json")
+        cache_parser.add_argument("--output", type=Path)
     for qwen_command, description in (("qwen36-forward", "Qwen3.6-35B-A3B real text operator ledger"),
                                   ("qwen36-capacity", "Qwen3.6 checkpoint and persistent-state capacity screen")):
         qwen_parser = sub.add_parser(qwen_command, help=description)
@@ -989,6 +996,7 @@ def model_list() -> list[dict]:
                 or upstream == 'config.json' or upstream.endswith('/config.json')):
             configurations.setdefault(row['model'], []).append(row)
     stage_commands = {
+        'deepseek-v4.1-flash': ['v41-flash', 'kv-comparison'],
         'qwen3-vl-4b': ['vision-encoding', 'vl-request', 'multimodal-cache'],
         'qwen3-omni-30b-a3b-instruct': ['omni-understanding', 'omni-vision-encoding', 'omni-audio-encoder', 'omni-audio'],
         'fish-audio-s2-pro': ['omni-audio'],
@@ -1268,6 +1276,8 @@ def main(argv: list[str] | None = None) -> None:
             result = growing_remote_kv.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
         elif args.command == "memory-pool-access":
             result = memory_pool_access.calculate(copies=args.copies)
+        elif args.command in ("v41-flash", "kv-comparison"):
+            result = (v41_flash if args.command == "v41-flash" else kv_comparison).calculate(args.length, args.batch)
         elif args.command == "qwen36-forward":
             result = qwen36_forward.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
         elif args.command == "qwen36-capacity":

@@ -1,0 +1,174 @@
+[
+  {
+    "length": 8192,
+    "rows": [
+      {
+        "model": "deepseek-v4-flash",
+        "layout": "FP8/BF16 main + MXFP4 index",
+        "global_growth_bytes_per_token_per_request": "14057/4",
+        "global_history_bytes": 28788736,
+        "local_window_bytes": 3214336,
+        "recurrent_state_bytes": 0,
+        "convolution_state_bytes": 0,
+        "accounted_resident_bytes": 32003072,
+        "next_token_resident_growth_bytes": 0,
+        "next_token_cache_write_bytes": 25112,
+        "decode_main_history_read_bytes": 10241024,
+        "decode_index_history_read_bytes": 2924544,
+        "decode_recurrent_read_bytes": 0,
+        "decode_recurrent_write_bytes": 0,
+        "decode_conv_read_once_bytes": 0,
+        "decode_selected_history_read_bytes": 13165568,
+        "note": "CSA top-k main read plus full index scan; HCA reads all compressed entries. Shared latent counted once per attention layer for QK/PV. Compressor buffers/updates excluded. Production main 584B includes scale padding; reference is BF16."
+      },
+      {
+        "model": "deepseek-v4.1-flash",
+        "layout": "FP4 global + FP8 SWA + MXFP4 index",
+        "global_growth_bytes_per_token_per_request": "890",
+        "global_history_bytes": 7290880,
+        "local_window_bytes": 2703360,
+        "recurrent_state_bytes": 0,
+        "convolution_state_bytes": 0,
+        "accounted_resident_bytes": 9994240,
+        "next_token_resident_growth_bytes": 356,
+        "next_token_cache_write_bytes": 21476,
+        "decode_main_history_read_bytes": 8306688,
+        "decode_index_history_read_bytes": 3620864,
+        "decode_recurrent_read_bytes": 0,
+        "decode_recurrent_write_bytes": 0,
+        "decode_conv_read_once_bytes": 0,
+        "decode_selected_history_read_bytes": 11927552,
+        "note": "4 KV owners, 8 indexing layers, 30 reuse layers; production candidate-limited index read (<= 16384 entries for later indexers). Per-layer logical reads count shared cache repeatedly; unique union/actual HBM unknown. Released reference scans full BF16 index before masking (13631488 B), unlike production selective read. Compressor/candidate/top-k metadata excluded."
+      }
+    ]
+  },
+  {
+    "length": 131072,
+    "rows": [
+      {
+        "model": "deepseek-v4-flash",
+        "layout": "FP8/BF16 main + MXFP4 index",
+        "global_growth_bytes_per_token_per_request": "14057/4",
+        "global_history_bytes": 460619776,
+        "local_window_bytes": 3214336,
+        "recurrent_state_bytes": 0,
+        "convolution_state_bytes": 0,
+        "accounted_resident_bytes": 463834112,
+        "next_token_resident_growth_bytes": 0,
+        "next_token_cache_write_bytes": 25112,
+        "decode_main_history_read_bytes": 21453824,
+        "decode_index_history_read_bytes": 46792704,
+        "decode_recurrent_read_bytes": 0,
+        "decode_recurrent_write_bytes": 0,
+        "decode_conv_read_once_bytes": 0,
+        "decode_selected_history_read_bytes": 68246528,
+        "note": "CSA top-k main read plus full index scan; HCA reads all compressed entries. Shared latent counted once per attention layer for QK/PV. Compressor buffers/updates excluded. Production main 584B includes scale padding; reference is BF16."
+      },
+      {
+        "model": "deepseek-v4.1-flash",
+        "layout": "FP4 global + FP8 SWA + MXFP4 index",
+        "global_growth_bytes_per_token_per_request": "890",
+        "global_history_bytes": 116654080,
+        "local_window_bytes": 2703360,
+        "recurrent_state_bytes": 0,
+        "convolution_state_bytes": 0,
+        "accounted_resident_bytes": 119357440,
+        "next_token_resident_growth_bytes": 356,
+        "next_token_cache_write_bytes": 21476,
+        "decode_main_history_read_bytes": 8306688,
+        "decode_index_history_read_bytes": 26738688,
+        "decode_recurrent_read_bytes": 0,
+        "decode_recurrent_write_bytes": 0,
+        "decode_conv_read_once_bytes": 0,
+        "decode_selected_history_read_bytes": 35045376,
+        "note": "4 KV owners, 8 indexing layers, 30 reuse layers; production candidate-limited index read (<= 16384 entries for later indexers). Per-layer logical reads count shared cache repeatedly; unique union/actual HBM unknown. Released reference scans full BF16 index before masking (218103808 B), unlike production selective read. Compressor/candidate/top-k metadata excluded."
+      }
+    ]
+  },
+  {
+    "length": 204800,
+    "rows": [
+      {
+        "model": "deepseek-v4-flash",
+        "layout": "FP8/BF16 main + MXFP4 index",
+        "global_growth_bytes_per_token_per_request": "14057/4",
+        "global_history_bytes": 719718400,
+        "local_window_bytes": 3214336,
+        "recurrent_state_bytes": 0,
+        "convolution_state_bytes": 0,
+        "accounted_resident_bytes": 722932736,
+        "next_token_resident_growth_bytes": 0,
+        "next_token_cache_write_bytes": 25112,
+        "decode_main_history_read_bytes": 28181504,
+        "decode_index_history_read_bytes": 73113600,
+        "decode_recurrent_read_bytes": 0,
+        "decode_recurrent_write_bytes": 0,
+        "decode_conv_read_once_bytes": 0,
+        "decode_selected_history_read_bytes": 101295104,
+        "note": "CSA top-k main read plus full index scan; HCA reads all compressed entries. Shared latent counted once per attention layer for QK/PV. Compressor buffers/updates excluded. Production main 584B includes scale padding; reference is BF16."
+      },
+      {
+        "model": "deepseek-v4.1-flash",
+        "layout": "FP4 global + FP8 SWA + MXFP4 index",
+        "global_growth_bytes_per_token_per_request": "890",
+        "global_history_bytes": 182272000,
+        "local_window_bytes": 2703360,
+        "recurrent_state_bytes": 0,
+        "convolution_state_bytes": 0,
+        "accounted_resident_bytes": 184975360,
+        "next_token_resident_growth_bytes": 356,
+        "next_token_cache_write_bytes": 21476,
+        "decode_main_history_read_bytes": 8306688,
+        "decode_index_history_read_bytes": 39272448,
+        "decode_recurrent_read_bytes": 0,
+        "decode_recurrent_write_bytes": 0,
+        "decode_conv_read_once_bytes": 0,
+        "decode_selected_history_read_bytes": 47579136,
+        "note": "4 KV owners, 8 indexing layers, 30 reuse layers; production candidate-limited index read (<= 16384 entries for later indexers). Per-layer logical reads count shared cache repeatedly; unique union/actual HBM unknown. Released reference scans full BF16 index before masking (340787200 B), unlike production selective read. Compressor/candidate/top-k metadata excluded."
+      }
+    ]
+  },
+  {
+    "length": 1048576,
+    "rows": [
+      {
+        "model": "deepseek-v4-flash",
+        "layout": "FP8/BF16 main + MXFP4 index",
+        "global_growth_bytes_per_token_per_request": "14057/4",
+        "global_history_bytes": 3684958208,
+        "local_window_bytes": 3214336,
+        "recurrent_state_bytes": 0,
+        "convolution_state_bytes": 0,
+        "accounted_resident_bytes": 3688172544,
+        "next_token_resident_growth_bytes": 0,
+        "next_token_cache_write_bytes": 25112,
+        "decode_main_history_read_bytes": 105176064,
+        "decode_index_history_read_bytes": 374341632,
+        "decode_recurrent_read_bytes": 0,
+        "decode_recurrent_write_bytes": 0,
+        "decode_conv_read_once_bytes": 0,
+        "decode_selected_history_read_bytes": 479517696,
+        "note": "CSA top-k main read plus full index scan; HCA reads all compressed entries. Shared latent counted once per attention layer for QK/PV. Compressor buffers/updates excluded. Production main 584B includes scale padding; reference is BF16."
+      },
+      {
+        "model": "deepseek-v4.1-flash",
+        "layout": "FP4 global + FP8 SWA + MXFP4 index",
+        "global_growth_bytes_per_token_per_request": "890",
+        "global_history_bytes": 933232640,
+        "local_window_bytes": 2703360,
+        "recurrent_state_bytes": 0,
+        "convolution_state_bytes": 0,
+        "accounted_resident_bytes": 935936000,
+        "next_token_resident_growth_bytes": 356,
+        "next_token_cache_write_bytes": 21476,
+        "decode_main_history_read_bytes": 8306688,
+        "decode_index_history_read_bytes": 182714368,
+        "decode_recurrent_read_bytes": 0,
+        "decode_recurrent_write_bytes": 0,
+        "decode_conv_read_once_bytes": 0,
+        "decode_selected_history_read_bytes": 191021056,
+        "note": "4 KV owners, 8 indexing layers, 30 reuse layers; production candidate-limited index read (<= 16384 entries for later indexers). Per-layer logical reads count shared cache repeatedly; unique union/actual HBM unknown. Released reference scans full BF16 index before masking (1744830464 B), unlike production selective read. Compressor/candidate/top-k metadata excluded."
+      }
+    ]
+  }
+]

@@ -24,6 +24,7 @@ python3 -m unittest discover -s calculations/tests -v
 | Qwen3-8B、Qwen3-32B | 已下载，固定 revision | 完整 Dense 逻辑算子图、参数／矩阵／普通算术、逐算子载荷、KV、连续 decode | 后端 tile／实际 HBM／工作区测量 |
 | Qwen3-30B-A3B、Qwen3-235B-A22B | 已下载，含 checkpoint 索引 | 完整 MoE 逻辑前向、官方索引权重核对、每专家矩阵、路由与专家并集、GQA 状态 | 实际 grouped kernel／HBM、专家并行通信 |
 | DeepSeek-V4-Flash、DeepSeek-V4-Pro | 已下载，含 inference config/model/kernel | 基础前向汇总、注意力／压缩／索引、专家、mHC、完整 checkpoint 元数据与混合格式核对、已知 sparse/expert tile | 其余投影量化与 tile、运行时实际驻留／访存、MTP 执行 |
+| DeepSeek-V4.1-Flash | 2026-09-10 官方 config、论文、源码、48 分片头及索引固定 revision | `v41-flash` 权重组件核对、共享全局 KV、CED/参考路径专家子账；`kv-comparison` 逐 token 存储与 decode 读取 | 完整前向、Engram/视觉/DSpark 执行、实测 HBM/吞吐与部署容量 |
 | Kimi K3 | 已下载，含 text/vision config 和参考源码 | 文本前向汇总、24 MLA／69 KDA、递推与块式数学算法、短卷积、潜空间专家、AttnRes、状态 | 解决 A_log 配置／checkpoint 形状差异、运行时量化转换、融合 kernel／访存、视觉／MTP 执行 |
 | DeepSeek-V3 | config与参考实现已锁 | `v3-forward`基础前向账 | 完整FP8存储/运行时及MTP路径 |
 | Qwen3.5-397B-A17B | config、实现、index及94分片元数据已锁 | 基础文本1038张量形状与checkpoint相符；视觉/MTP存储分账 | `qwen35-forward`提供基础文本参考路径、8场景及补充语句表；非完整运行时性能 |
@@ -1043,3 +1044,10 @@ python3 calculations/calc.py plot-shared-airtime
 JSON分列端到端传输、同PN的MAC尝试、预约、DATA接收和MAC反馈。上行ACK在client无线发送起点冻结，下行ACK在server WAN发送起点冻结，AP不得用未来server状态更新ACK。MAC重试不再次发送端到端包或交付相同字节。45µs RXSTART监视器不是完整MAC ACK超时，未知完整超时的profile拒绝失败模拟。Markdown只在完整成功PHY交换时给PSDU/RF分层总账，否则保留实际观测服务与WAN串行量；不把前导按IP字节比例分摊。
 
 图12-5首面板并列完整业务与有限扫描的资源/时限结果。无线和WAN可流水重叠，服务秒不能直接相加为响应；音频按时、截图动作有效性单列。当前是声明全局FIFO、单帧、无随机DCF/聚合/加密的参考模型，不是实测Wi-Fi、完整TACK或多路径费用能耗计算。
+
+
+## 跨模型 KV 与 V4.1 Flash
+
+`python3 calculations/calc.py kv-comparison --length 8192 --batch 1 --format md` 将 12 个模型、15 种缓存路径的全局 B/token、给定长度容量、decode 主历史读、index 扫描、递推状态读写及追加写入分列；精度、参考/生产路径、上下文上限都保留。默认[8K 表](results/kv-comparison-n8192-b1.md)，另有[128K](results/kv-comparison-n131072-b1.md)、[1M](results/kv-comparison-n1048576-b1.md)及边界/batch 场景。
+
+`python3 calculations/calc.py v41-flash --format md` 核对[新版权重与结构](results/v41-flash-n8192-b1.md)。官方全局 KV 3,514.25→890 B/token 的复算、参考代码与论文服务路径差别、能力对照和保留旧例子的理由见[调研说明](research/deepseek-v41-flash/README.md)。完整权重值未下载；已下载全部分片头及索引以完成静态存储和形状核对。两组新场景已接入统一 reproduce，也可运行 `python3 calculations/research/deepseek-v41-flash/reproduce.py` 仅生成本次结果。

@@ -1,0 +1,77 @@
+{
+  "assumptions": [
+    "BF16 Qwen3-8B; no weight tying",
+    "One active dense weight scan per batch; excludes token embedding lookup, KV writes and other traffic",
+    "8192 historical positions; no prefix sharing",
+    "ROM independent and sufficiently fast; memory-only ratio is not measured end-to-end speedup",
+    "24 decimal GB, 2 GiB fixed workspace; admission is a static state bound"
+  ],
+  "sources": [
+    {
+      "path": "calculations/configs/models/qwen3-8b/config.json",
+      "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+    },
+    {
+      "path": "calculations/sources/qwen3-8b/model.safetensors.index.json",
+      "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+    }
+  ],
+  "weights_bytes": 16381470720,
+  "active_weight_scan_bytes": 15136811008,
+  "kv_per_token_bytes": 147456,
+  "kv_8k_bytes": 1207959552,
+  "batches": [
+    {
+      "batch": 1,
+      "old_hbm_read_bytes": 16344770560,
+      "new_hbm_read_bytes": 1207959552,
+      "memory_only_ratio": 13.530892266167534,
+      "old_per_output_bytes": 16344770560.0,
+      "new_per_output_bytes": 1207959552
+    },
+    {
+      "batch": 16,
+      "old_hbm_read_bytes": 34464163840,
+      "new_hbm_read_bytes": 19327352832,
+      "memory_only_ratio": 1.7831807666354709,
+      "old_per_output_bytes": 2154010240.0,
+      "new_per_output_bytes": 1207959552
+    }
+  ],
+  "weight_kv_crossover_8k": 12.530892266167534,
+  "weight_kv_crossover_32k": 3.1327230665418835,
+  "old_static_capacity": 4,
+  "new_static_capacity": 18,
+  "bf16_parameter_bound_fixed_4x8k": 8510339072.0,
+  "kv_bandwidth_at_10000_tokens_per_second": 12079595520000,
+  "host_overlap_step_us": [
+    100,
+    20
+  ],
+  "network_us": {
+    "1MB_100GBps": 15.0,
+    "1MB_200GBps": 10.0,
+    "10KB_100GBps": 5.1,
+    "10KB_200GBps": 5.05
+  },
+  "pd_instances": {
+    "before": [
+      1,
+      4
+    ],
+    "after_decode_4x": [
+      1,
+      1
+    ]
+  },
+  "environment_extra_wait_s": [
+    0,
+    5
+  ],
+  "task_seconds": [
+    10,
+    2.8,
+    2
+  ],
+  "task_speedup": 3.5714285714285716
+}

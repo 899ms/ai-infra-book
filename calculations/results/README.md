@@ -1844,3 +1844,12 @@ V4共享专家FP8复制坐标：
 - [v4-optimizer-flash-mtp-declared-row-muon](v4-optimizer-flash-mtp-declared-row-muon.md)
 - [v4-optimizer-flash-stored-matrices](v4-optimizer-flash-stored-matrices.md)
 - [v4-optimizer-pro-base-declared-row-muon](v4-optimizer-pro-base-declared-row-muon.md)
+
+## 2026-09-10：V4.1 Flash 与跨模型 KV
+
+- [8K 跨模型存储与 decode 读取](kv-comparison-n8192-b1.md)：12 个模型、15 条精度/执行路径。
+- [128K 对照](kv-comparison-n131072-b1.md)与[1M 对照](kv-comparison-n1048576-b1.md)：超出官方 config 上限的模型明确跳过。
+- [V4.1 Flash 权重与结构](v41-flash-n8192-b1.md)：48 分片头、96,085 张量、全局 KV、分阶段专家子账。
+- [调研与复算说明](../research/deepseek-v41-flash/README.md)：保留两代的理由、官方 3,514→890 的复算、覆盖范围和验证方法。
+
+本组 9 场景/18 产物由专题脚本刷新，并已登记公共 reproduce；未因此重跑其他全书实验或更新旧全局 manifest。

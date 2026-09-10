@@ -21,6 +21,7 @@ from .topics import trace_resource_bridge
 from .topics import request_hardware_bridge
 from .topics import v4_mtp_forward
 from .topics import trace_cache_lifecycle
+from .topics import v41_flash, kv_comparison
 from .topics import qwen36_forward, qwen36_capacity, memory_pool_access
 from .topics import supernode_cohort_cost
 from .topics import hierarchical_gradient
@@ -531,7 +532,7 @@ def run() -> dict:
             (output / 'memory-pool-layout.svg').write_text(memory_pool_access.layout_svg(result))
             artifacts.append('results/memory-pool-layout.svg')
     qwen36_rows = []
-    for group, module in (("qwen36_forward", qwen36_forward), ("qwen36_capacity", qwen36_capacity)):
+    for group, module in (("v41_flash", v41_flash), ("kv_comparison", kv_comparison), ("qwen36_forward", qwen36_forward), ("qwen36_capacity", qwen36_capacity)):
         for row in scenarios.get(group, []):
             result = module.calculate(**row["inputs"])
             save(row["id"], result)

@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "cache_cases": [
+    {
+      "length": 8192,
+      "models": [
+        {
+          "model": "deepseek-v4-flash",
+          "layout": "FP8/BF16 main + MXFP4 index",
+          "global_growth_bytes_per_token_per_request": "14057/4",
+          "global_history_bytes": 28788736,
+          "local_window_bytes": 3214336,
+          "recurrent_state_bytes": 0,
+          "convolution_state_bytes": 0,
+          "accounted_resident_bytes": 32003072,
+          "next_token_resident_growth_bytes": 0,
+          "next_token_cache_write_bytes": 25112,
+          "decode_main_history_read_bytes": 10241024,
+          "decode_index_history_read_bytes": 2924544,
+          "decode_recurrent_read_bytes": 0,
+          "decode_recurrent_write_bytes": 0,
+          "decode_conv_read_once_bytes": 0,
+          "decode_selected_history_read_bytes": 13165568,
+          "note": "CSA top-k main read plus full index scan; HCA reads all compressed entries. Shared latent counted once per attention layer for QK/PV. Compressor buffers/updates excluded. Production main 584B includes scale padding; reference is BF16."
+        },
+        {
+          "model": "deepseek-v4.1-flash",
+          "layout": "FP4 global + FP8 SWA + MXFP4 index",
+          "global_growth_bytes_per_token_per_request": "890",
+          "global_history_bytes": 7290880,
+          "local_window_bytes": 2703360,
+          "recurrent_state_bytes": 0,
+          "convolution_state_bytes": 0,
+          "accounted_resident_bytes": 9994240,
+          "next_token_resident_growth_bytes": 356,
+          "next_token_cache_write_bytes": 21476,
+          "decode_main_history_read_bytes": 8306688,
+          "decode_index_history_read_bytes": 3620864,
+          "decode_recurrent_read_bytes": 0,
+          "decode_recurrent_write_bytes": 0,
+          "decode_conv_read_once_bytes": 0,
+          "decode_selected_history_read_bytes": 11927552,
+          "note": "4 KV owners, 8 indexing layers, 30 reuse layers; production candidate-limited index read (<= 16384 entries for later indexers). Per-layer logical reads count shared cache repeatedly; unique union/actual HBM unknown. Released reference scans full BF16 index before masking (13631488 B), unlike production selective read. Compressor/candidate/top-k metadata excluded."
+        }
+      ]
+    },
+    {
+      "length": 131072,
+      "models": [
+        {
+          "model": "deepseek-v4-flash",
+          "layout": "FP8/BF16 main + MXFP4 index",
+          "global_growth_bytes_per_token_per_request": "14057/4",
+          "global_history_bytes": 460619776,
+          "local_window_bytes": 3214336,
+          "recurrent_state_bytes": 0,
+          "convolution_state_bytes": 0,
+          "accounted_resident_bytes": 463834112,
+          "next_token_resident_growth_bytes": 0,
+          "next_token_cache_write_bytes": 25112,
+          "decode_main_history_read_bytes": 21453824,
+          "decode_index_history_read_bytes": 46792704,
+          "decode_recurrent_read_bytes": 0,
+          "decode_recurrent_write_bytes": 0,
+          "decode_conv_read_once_bytes": 0,
+          "decode_selected_history_read_bytes": 68246528,
+          "note": "CSA top-k main read plus full index scan; HCA reads all compressed entries. Shared latent counted once per attention layer for QK/PV. Compressor buffers/updates excluded. Production main 584B includes scale padding; reference is BF16."
+        },
+        {
+          "model": "deepseek-v4.1-flash",
+          "layout": "FP4 global + FP8 SWA + MXFP4 index",
+          "global_growth_bytes_per_token_per_request": "890",
+          "global_history_bytes": 116654080,
+          "local_window_bytes": 2703360,
+          "recurrent_state_bytes": 0,
+          "convolution_state_bytes": 0,
+          "accounted_resident_bytes": 119357440,
+          "next_token_resident_growth_bytes": 356,
+          "next_token_cache_write_bytes": 21476,
+          "decode_main_history_read_bytes": 8306688,
+          "decode_index_history_read_bytes": 26738688,
+          "decode_recurrent_read_bytes": 0,
+          "decode_recurrent_write_bytes": 0,
+          "decode_conv_read_once_bytes": 0,
+          "decode_selected_history_read_bytes": 35045376,
+          "note": "4 KV owners, 8 indexing layers, 30 reuse layers; production candidate-limited index read (<= 16384 entries for later indexers). Per-layer logical reads count shared cache repeatedly; unique union/actual HBM unknown. Released reference scans full BF16 index before masking (218103808 B), unlike production selective read. Compressor/candidate/top-k metadata excluded."
+        }
+      ]
+    }
+  ],
+  "ced": {
+    "input_tokens": 8192,
+    "encoder_layers": 20,
+    "decoder_layers": 20,
+    "replay_tokens": 128,
+    "full_token_layers": 327680,
+    "ced_token_layers": 166400,
+    "ratio": 0.5078125
+  },
+  "transfer": {
+    "length": 131072,
+    "bandwidth_bytes_per_second": 25000000000.0,
+    "global_only_ms": {
+      "deepseek-v4-flash": 18.42479104,
+      "deepseek-v4.1-flash": 4.6661632
+    },
+    "saved_ms": 13.758627839999999
+  },
+  "routing": {
+    "local_queue_ms": [
+      10,
+      20
+    ],
+    "remote_replay_ms": 8.0,
+    "remote_transfer_ms": 4.6661632,
+    "remote_ready_ms": 12.6661632
+  },
+  "assumptions": [
+    "B=1, visible snapshot includes current query; 8K=8192,128K=131072.",
+    "Use published production cache layouts; per-layer logical operand payload is not measured HBM traffic.",
+    "Resident cache excludes weights, compressor/allocator/candidate buffers, workspaces and parallel replication.",
+    "CED counts expert-matrix token-layers for cold input; global KV projection and other components excluded.",
+    "25 GB/s is a teaching effective bandwidth, global cache only; transfer is serialized for the routing example.",
+    "8 ms local-state replay and 10/20 ms queue times are teaching assumptions, not V4.1 measurements.",
+    "Routing holds subsequent input processing and generation cost equal and compares only preparation time."
+  ],
+  "sources": [
+    {
+      "path": "calculations/src/infra_calc/topics/kv_comparison.py",
+      "sha256": "c458b0faccc9b6f7f93b6d3ece766b246726841c782507f0ab5beed7193c453c"
+    },
+    {
+      "path": "calculations/configs/models/deepseek-v4-flash/config.json",
+      "sha256": "b628e63398a645abc711d92207f8737dd8140f7a4ef1e0a5b3616019e0ddd818"
+    },
+    {
+      "path": "calculations/configs/models/deepseek-v4.1-flash/config.json",
+      "sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879"
+    },
+    {
+      "path": "calculations/sources/deepseek-v4.1-flash/FlashMLA-README.md",
+      "sha256": "3830a7de0bf949cab8376e759bc840dd3c0ea3de9302e96d6c62e0cb55f2ef07"
+    },
+    {
+      "path": "calculations/sources/deepseek-v4.1-flash/DeepSeek_V41_Tech_Report.pdf",
+      "sha256": "ba68e2e40408125ae6d2f63a9a241b61c73910691c74ec1a2a7023c851eac08d"
+    },
+    {
+      "path": "calculations/v41_throughline.py",
+      "sha256": "5d90929ad759a3fb4f1bd92415065dc317221bc87d1e3215b766e8d863b756b0"
+    }
+  ]
+}

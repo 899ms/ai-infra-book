@@ -6,6 +6,9 @@ from fractions import Fraction
 
 
 def markdown(result: dict) -> str:
+    if result.get("calculation") in ("v41-flash", "kv-comparison"):
+        from .topics import v41_flash, kv_comparison
+        return (v41_flash if result["calculation"] == "v41-flash" else kv_comparison).markdown(result)
     if "wireless_attempts" in result and "wireless_summary" in result:
         from .transport.airtime_report import markdown as render
         return render(result)

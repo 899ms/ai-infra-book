@@ -1,0 +1,883 @@
+                Azure Accelerated Networking:
+                SmartNICs in the Public Cloud
+ Daniel Firestone, Andrew Putnam, Sambhrama Mundkur, Derek Chiou, Alireza Dabagh,
+      Mike Andrewartha, Hari Angepat, Vivek Bhanu, Adrian Caulfield, Eric Chung,
+    Harish Kumar Chandrappa, Somesh Chaturmohta, Matt Humphrey, Jack Lavier,
+Norman Lam, Fengfen Liu, Kalin Ovtcharov, Jitu Padhye, Gautham Popuri, Shachar Raindel,
+    Tejas Sapre, Mark Shaw, Gabriel Silva, Madhan Sivakumar, Nisheeth Srivastava,
+     Anshuman Verma, Qasim Zuhair, Deepak Bansal, Doug Burger, Kushagra Vaid,
+                     David A. Maltz, and Albert Greenberg, Microsoft
+                 https://www.usenix.org/conference/nsdi18/presentation/firestone
+
+              This paper is included in the Proceedings of the
+                  15th USENIX Symposium on Networked
+              Systems Design and Implementation (NSDI ’18).
+                            April 9–11, 2018 • Renton, WA, USA
+                                     ISBN 978-1-939133-01-4
+
+
+
+                                                   Open access to the Proceedings of
+                                              the 15th USENIX Symposium on Networked
+                                                 Systems Design and Implementation
+                                                        is sponsored by USENIX.
+           Azure Accelerated Networking: SmartNICs in the Public Cloud
+          Daniel Firestone Andrew Putnam Sambhrama Mundkur Derek Chiou Alireza Dabagh
+               Mike Andrewartha Hari Angepat Vivek Bhanu Adrian Caulfield Eric Chung
+       Harish Kumar Chandrappa Somesh Chaturmohta Matt Humphrey Jack Lavier Norman Lam
+        Fengfen Liu Kalin Ovtcharov Jitu Padhye Gautham Popuri Shachar Raindel Tejas Sapre
+    Mark Shaw Gabriel Silva Madhan Sivakumar Nisheeth Srivastava Anshuman Verma Qasim Zuhair
+             Deepak Bansal Doug Burger Kushagra Vaid David A. Maltz Albert Greenberg
+                                                       Microsoft
+                       Abstract                               all virtual networking features, such as private virtual net-
+                                                              works with customer supplied address spaces, scalable L4
+Modern cloud architectures rely on each server running its    load balancers, security groups and access control lists
+own networking stack to implement policies such as tun-       (ACLs), virtual routing tables, bandwidth metering, QoS,
+neling for virtual networks, security, and load balancing.    and more. These features are the responsibility of the host
+However, these networking stacks are becoming increas-        platform, which typically means software running in the
+ingly complex as features are added and as network speeds     hypervisor.
+increase. Running these stacks on CPU cores takes away           The cost of providing these services continues to in-
+processing power from VMs, increasing the cost of run-        crease. In the span of only a few years, we increased net-
+ning cloud services, and adding latency and variability to    working speeds by 40x and more, from 1GbE to 40GbE+,
+network performance.                                          and added countless new features. And while we built in-
+   We present Azure Accelerated Networking (AccelNet),        creasingly well-tuned and efficient host SDN packet pro-
+our solution for offloading host networking to hardware,      cessing capabilities, running this stack in software on the
+using custom Azure SmartNICs based on FPGAs. We               host requires additional CPU cycles. Burning CPUs for
+define the goals of AccelNet, including programmability       these services takes away from the processing power avail-
+comparable to software, and performance and efficiency        able to customer VMs, and increases the overall cost of
+comparable to hardware. We show that FPGAs are the best       providing cloud services.
+current platform for offloading our networking stack as          Single Root I/O Virtualization (SR-IOV) [4, 5] has been
+ASICs do not provide sufficient programmability, and em-      proposed to reduce CPU utilization by allowing direct ac-
+bedded CPU cores do not provide scalable performance,         cess to NIC hardware from the VM. However, this di-
+especially on single network flows.                           rect access would bypass the host SDN stack, making
+   Azure SmartNICs implementing AccelNet have been            the NIC responsible for implementing all SDN policies.
+deployed on all new Azure servers since late 2015 in a        Since these policies change rapidly (weeks to months), we
+fleet of >1M hosts. The AccelNet service has been avail-      required a solution that could provide software-like pro-
+able for Azure customers since 2016, providing consis-        grammability while providing hardware-like performance.
+tent <15µs VM-VM TCP latencies and 32Gbps through-               In this paper we present Azure Accelerated Network-
+put, which we believe represents the fastest network avail-   ing (AccelNet), our host SDN stack implemented on the
+able to customers in the public cloud. We present the         FPGA-based Azure SmartNIC. AccelNet provides near-
+design of AccelNet, including our hardware/software co-       native network performance in a virtualized environment,
+design model, performance results on key workloads, and       offloading packet processing from the host CPU to the
+experiences and lessons learned from developing and de-       Azure SmartNIC. Building upon the software-based VFP
+ploying AccelNet on FPGA-based Azure SmartNICs.               host SDN platform [6], and the hardware and software in-
+                                                              frastructure of the Catapult program [7, 8], AccelNet pro-
+1   Introduction                                              vides the performance of dedicated hardware, with the
+The public cloud is the backbone behind a massive and         programmability of software running in the hypervisor.
+rapidly growing percentage of online software services [1,    Our goal is to present both our design and our experiences
+2, 3]. In the Microsoft Azure cloud alone, these services     running AccelNet in production at scale, and lessons we
+consume millions of processor cores, exabytes of stor-        learned.
+age, and petabytes of network bandwidth. Network per-
+formance, both bandwidth and latency, is critical to most
+                                                              2    Background
+cloud workloads, especially interactive customer-facing       2.1 Traditional Host Network Processing
+workloads.                                                      In the traditional device sharing model of a virtualized
+   As a large public cloud provider, Azure has built its      environment such as the public cloud, all network I/O to
+cloud network on host-based software-defined network-         and from a physical device is exclusively performed in the
+ing (SDN) technologies, using them to implement almost        host software partition of the hypervisor. Every packet
+
+
+USENIX Association                 15th USENIX Symposium on Networked Systems Design and Implementation              51
+                                                               to the right VF based on the MAC address. All data pack-
+                                                               ets flow directly between the VM operating system and
+                                                               the VF, bypassing the host networking stack entirely. This
+                                                               provides improved throughput, reduced CPU utilization,
+                                                               lower latency, and improved scalability.
+                                                                  However, bypassing the hypervisor brings on a new set
+                                                               of challenges since it also bypasses all host SDN pol-
+                                                               icy such as that implemented in VFP. Without additional
+                                                               mechanisms, these important functions cannot be per-
+     Figure 1: An SR-IOV NIC with a PF and VFs.
+                                                               formed as the packets are not processed by the SDN stack
+sent and received by a VM is processed by the Virtual          in the host.
+Switch (vSwitch) in the host networking stack. Receiv-         2.4 Generic Flow Table Offload
+ing packets typically involves the hypervisor copying each        One of AccelNet’s goals was to find a way to make
+packet into a VM-visible buffer, simulating a soft inter-      VFP’s complex policy compatible with SR-IOV. The
+rupt to the VM, and then allowing the VM’s OS stack to         mechanism we use in VFP to enforce policy and filtering
+continue network processing. Sending packets is similar,       in an SR-IOV environment is called Generic Flow Tables
+but in the opposite order. Compared to a non-virtualized       (GFT). GFT is a match-action language that defines trans-
+environment, this additional host processing: reduces per-     formation and control operations on packets for one spe-
+formance, requires additional changes in privilege level,      cific network flow. Conceptually, GFT is comprised of a
+lowers throughput, increases latency and latency variabil-     single large table that has an entry for every active network
+ity, and increases host CPU utilization.                       flow on a host. GFT flows are defined based on the VFP
+2.2 Host SDN                                                   unified flows (UF) definition, matching a unique source
+   In addition to selling VMs, cloud vendors selling           and destination L2/L3/L4 tuple, potentially across multi-
+Infrastructure-as-a-Service (IaaS) have to provide rich net-   ple layers of encapsulation, along with a header transpo-
+work semantics, such as private virtual networks with cus-     sition (HT) action specifying how header fields are to be
+tomer supplied address spaces, scalable L4 load balancers,     added/removed/changed.
+security groups and ACLs, virtual routing tables, band-           Whenever the GFT table does not contain an entry for a
+width metering, QoS, and more. These semantics are suf-        network flow (such as when a new network flow is started),
+ficiently complex and change too frequently that it isn’t      the flow can be vectored to the VFP software running on
+feasible to implement them at scale in traditional switch      the host. VFP then processes all SDN rules for the first
+hardware. Instead, these are implemented on each host in       packet of a flow, using a just-in-time flow action compiler
+the vSwitch. This scales well with the number of servers,      to create stateful exact-match rules for each UF (e.g. each
+and allows the physical network to be simple, scalable and     TCP/UDP flow), and creating a composite action encom-
+very fast.                                                     passing all of the programmed policies for that flow. VFP
+   The Virtual Filtering Platform (VFP) is our cloud-scale     then populates the new entry in the GFT table and delivers
+programmable vSwitch, providing scalable SDN policy            the packet for processing.
+for Azure. It is designed to handle the programmabil-             Once the actions for a flow have been populated in the
+ity needs of Azure’s many SDN applications, providing          GFT table, every subsequent packet will be processed by
+a platform for multiple SDN controllers to plumb com-          the GFT hardware, providing the performance benefits of
+plex, stateful policy via match-action tables. Details about   SR-IOV, but with full policy and filtering enforcement of
+VFP and how it implements virtual networks in software         VFP’s software SDN stack.
+in Azure can be found in [6].
+                                                               3   Design Goals and Rationale
+2.3 SR-IOV
+   Many performance bottlenecks caused by doing packet         We defined the GFT model in 2013-2014, but there are
+processing in the hypervisor can be overcome by using          numerous options for building a complete solution across
+hardware that supports SR-IOV. SR-IOV-compliant hard-          hardware and software. We began with the following goals
+ware provides a standards-based foundation for efficiently     and constraints as we set out to build hardware offloads for
+and securely sharing PCI Express (PCIe) device hardware        host SDN:
+among multiple VMs. The host connects to a privileged          1. Don’t burn host CPU cores
+physical function (PF), while each virtual machine con-           Azure, like its competitors, sells VMs directly to cus-
+nects to its own virtual function (VF). A VF is exposed as     tomers as an IaaS offering, and competes on the price of
+a unique hardware device to each VM, allowing the VM           those VMs. Our profitability in IaaS is the difference be-
+direct access to the actual hardware, yet still isolating VM   tween the price a customer pays for a VM and what it costs
+data from other VMs. As illustrated in Figure 1 , an SR-       us to host one. Since we have fixed costs per server, the
+IOV NIC contains an embedded switch to forward packets         best way to lower the cost of a VM is to pack more VMs
+
+
+52   15th USENIX Symposium on Networked Systems Design and Implementation                          USENIX Association
+onto each host server. Thus, most clouds typically deploy                 associated actions allows for a tractable hardware design
+the largest number of CPU cores reasonably possible at a                  with the full performance of a native SR-IOV hardware
+given generation of 2-socket (an economical and perfor-                   solution on all but the first packet of each flow.
+mant standard) blades. At the time of writing this paper,                 4. Support new SDN workloads and primitives over time
+a physical core (2 hyperthreads) sells for $0.10-0.11/hr1 ,
+                                                                             VFP continues to evolve, supporting new requirements
+or a maximum potential revenue of around $900/yr, and
+                                                                          and new policies, and AccelNet must be able to evolve
+$4500 over the lifetime of a server (servers typically last
+                                                                          along with VFP. We were, and continue to be, very wary
+3 to 5 years in our datacenters). Even considering that
+                                                                          of designs that locked us into a fixed set of flow actions.
+some fraction of cores are unsold at any time and that
+                                                                          Not only does AccelNet need to support adding/changing
+clouds typically offer customers a discount for commit-
+                                                                          actions, but the underlying platform should allow for new
+ted capacity purchases, using even one physical core for
+                                                                          workloads that don’t map neatly to a single exact-match
+host networking is quite expensive compared to dedicated
+                                                                          table.
+hardware. Our business fundamentally relies on selling as
+many cores per host as possible to customer VMs, and so                   5. Rollout new functionality to the entire fleet
+we will go to great lengths to minimize host overheads.                      A corollary to the previous requirement, the AccelNet
+Thus, running a high-speed SDN datapath using host CPU                    platform needed to enable frequent deployment of new
+cores should be avoided.                                                  functionality in the existing hardware fleet, not just on new
+2. Maintain host SDN programmability of VFP                               servers. Customers should not have to move their exist-
+                                                                          ing deployments to new VM types to enable new features.
+   VFP is highly programmable, including a multi-
+                                                                          Similarly, maintaining the same SDN functionality across
+controller model, stateful flow processing, complex
+                                                                          hardware generations makes development, qualification,
+matching capabilities for large numbers of rules, complex
+                                                                          and deployment easier for us.
+rule-processing and match actions, and the ability to eas-
+ily add new rules. This level of programmability was a key                6. Provide high single-connection performance
+factor in Azure’s ability to give customers highly config-                   From our experience with software-based SDN, we
+urable and feature-rich virtual networks, and enabling in-                knew that network processing on a single CPU core gen-
+novation with new virtual networking features over time.                  erally cannot achieve peak bandwidth at 40Gb and higher.
+We did not want to sacrifice this programmability and                     A good way to scale throughput past the limit of what
+flexibility for the performance of SR-IOV — in fact we                    one core can process is to break single connections into
+wanted SDN controllers to continue targeting VFP with-                    multiple parallel connections, utilizing multiple threads to
+out any knowledge that the policy was being offloaded.                    spread load to multiple cores. However, spreading traffic
+This would also maintain compatibility on host servers                    across multiple connections requires substantial changes
+that do not have the necessary hardware for AccelNet.                     to customer applications. And even for the apps that im-
+   Offloading every rule to hardware is neither feasible nor              plement multiple connections, we saw that many do not
+desirable, as it would either constrain SDN policy or re-                 scale well over many flows because flows are often bursty
+quire hardware logic to be updated every time a new rule                  — apps will dump large messages onto one flow while
+was created. However, we concluded that offloading all                    others remain idle.
+rules is unnecessary. Most SDN policies do not change                        An explicit goal of AccelNet is to allow applications
+during the duration of the flow. So all policies can be                   to achieve near-peak bandwidths without parallelizing the
+enforced in VFP software on the first packet of a new                     network processing in their application.
+TCP/UDP flow, after which the actions for that flow can
+                                                                          7. Have a path to scale to 100GbE+
+be cached as an exact-match lookup. Even for short flows,
+                                                                             We designed AccelNet for a 2015 server generation that
+we typically observe at least 7-10 packets including hand-
+                                                                          was going to deploy 40GbE widely. But we knew that
+shakes, so processing only the first packet in software still
+                                                                          the number of cores per server and the networking band-
+allows the majority to be offloaded (if the offload action is
+                                                                          widths would continue to increase in future generations,
+fast and efficient).
+                                                                          with speeds of 100GbE and above likely in the near fu-
+3. Achieve the latency, throughput, and utilization of SR-                ture. We wanted a SmartNIC design that would continue
+IOV hardware                                                              to scale efficiently as network speeds and the number of
+   Basic SR-IOV NICs set an initial bar for what is pos-                  VMs increase.
+sible with hardware-virtualized networking — bypassing
+                                                                          8. Retain Serviceability
+the host SDN stack and schedulers entirely to achieve
+low (and consistent) latency, high throughput, and no host                   VFP was designed to be completely serviceable in the
+CPU utilization. Offloading only exact match flows with                   background without losing any flow state, and supports
+                                                                          live migration of all flow state with a VM being migrated.
+   1 Azure D v3 series or AWS EC2 m4 series instances, with price vary-   We wanted our SmartNIC software and hardware stack to
+ing slightly by region                                                    have the same level of serviceability.
+
+
+USENIX Association                        15th USENIX Symposium on Networked Systems Design and Implementation                   53
+4     SmartNIC Hardware Design                                    4.1.2   Multicore SoC-based NICs
+
+4.1     Hardware Options                                             Multicore SoC-based NICs use a sea of embedded CPU
+                                                                  cores to process packets, trading some performance to
+   Based on the above goals, we proceeded to evaluate dif-        provide substantially better programmability than ASIC
+ferent hardware designs for our SmartNIC architecture.            designs. These designs became widely available in the
+   Traditionally Microsoft worked with network ASIC               10GbE NIC generation. Some, like Cavium [13], used
+vendors, such as Intel, Mellanox, Broadcom, and others,           general purpose CPU cores (MIPS, later ARM64), while
+to implement offloads for host networking in Windows —            others, like Netronome [14] and Tilera, had specific cores
+for example TCP checksum and segmentation offloads in             for network processing. Within this space, we much pre-
+the 1990s [9], Receive-Side Scaling (RSS) [10] and Vir-           ferred the general purpose SoCs — based on our evalua-
+tual Machine Queues (VMQ) [11] for multicore scalabil-            tion that they were easier to program (you could take stan-
+ity in the 2000s, and more recently stateless offloads for        dard DPDK-style code and run it in a familiar Linux en-
+NVGRE and VxLAN encapsulation for virtual network-                vironment). To our surprise, these didn’t have much of a
+ing scenarios for Azure in the 2010s [12]. In fact, GFT           drawback in performance compared to similar-generation
+was originally designed to be implemented by ASIC ven-            ASIC designs.
+dors as an exact match-action table in conjunction with              However, at higher network speeds of 40GbE and
+SR-IOV, and we shared early design ideas widely in the            above, the number of cores increases significantly. The
+industry to see if vendors could meet our requirements.           on-chip network and schedulers to scatter and gather pack-
+After time, our enthusiasm for this approach waned as no          ets becomes increasingly complex and inefficient. We saw
+designs were emerging that could meet all of the design           often 10 µs or more delays associated with getting packets
+goals and constraints laid out in Section 3.                      into a core, processing the packet, and back out to the net-
+                                                                  work — significantly higher latency than ASICs, and with
+   One major problem for SmartNIC vendors is that SR-
+                                                                  significantly more variability. And stateful flows tend to
+IOV is an example of an all-or-nothing offload. If any
+                                                                  be mapped to only one core/thread to prevent state shar-
+needed SDN feature cannot be handled successfully in the
+                                                                  ing and out-of-order processing within a single flow. Thus
+SmartNIC, the SDN stack must revert to sending flows
+                                                                  individual network flow performance does not improve
+back through the software-based SDN stack, losing nearly
+                                                                  much because embedded CPUs are not increasing perfor-
+all of the performance benefit of SR-IOV offload.
+                                                                  mance at the same pace as network bandwidths. This leads
+   We saw four different possible directions emerge:              to the problem of developers having to spread their traffic
+ASICs, SoCs, FPGAs, and sticking with existing CPUs.              across multiple flows, as discussed in Section 3, limiting
+                                                                  the performance advantage of faster networks to only the
+4.1.1     ASIC-based NICs                                         most parallel workloads.
+                                                                     The future of SoC-style network offload is also ques-
+   Custom ASIC designs for SDN processing provide the             tionable. At 10GbE, the total package was tolerable,
+highest performance potential. However, they suffer from          with a few general purpose SoC cores being sufficient.
+a lack of programmability and adaptability over time. In          40GbE required nearly 4x the cores, though several ven-
+particular, the long time span between requirement spec-          dors still created viable solutions. Still, 40GbE parts with
+ifications and the arrival of silicon was on the order of         software-based datapaths are already surprisingly large,
+1-2 years, and in that span requirements continued to             power hungry, and expensive, and their scalability for
+change, making the new silicon already behind the soft-           100GbE, 200GbE, and 400GbE looks bleak.
+ware requirements. ASIC designs must continue to pro-                So while we found that the SoC approach has the ad-
+vide all functionality for the 5 year lifespan of a server        vantage of a familiar programming model, the single-flow
+(it’s not feasible to retrofit most servers at our scale). All-   performance, higher latency, and poor scalability at higher
+or-nothing offloading means that the specifications for an        network speeds left us looking for another solution.
+ASIC design laid out today must meet all the SDN require-
+ments for 7 years into the future.                                4.1.3   FPGAs
+   ASIC vendors often add embedded CPU cores to han-                 Field programmable gate arrays (FPGAs) are reconfig-
+dle new functionality. These cores can quickly become a           urable hardware devices composed of small generic logic
+performance bottleneck compared to rest of the NIC pro-           blocks and memories, all connected by a statically config-
+cessing hardware. In addition, these cores can be expected        ured network. Programmers write code to assemble the
+to take an increasing burden of the processing over time as       generic logic and memory into ”soft logic” circuits, form-
+new functionality is added, exacerbating the performance          ing custom application-specific processing engines — bal-
+bottleneck. These cores are also generally programmed             ancing the performance of ASICs with the programmabil-
+via firmware updates to the NIC, which is handled by the          ity of SoC NICs.
+ASIC vendors and slows the deployment of new features.               In contrast to CPUs like those on SoC-based NICs, an
+
+
+54      15th USENIX Symposium on Networked Systems Design and Implementation                         USENIX Association
+                          Figure 2: Azure SmartNIC boards with Bump-in-the-Wire Architecture
+
+
+FPGA is programmed only with the essential elements             in routers, cellular applications, and appliances, they were
+to complete the application, and can even take advan-           not commonly used as NICs or in datacenter servers, and
+tage of application characteristics such as the maximum         the team didn’t have significant experience programming
+size of the data to reduce bus widths and storage require-      or using FPGAs in production settings. A number of ques-
+ments. There are many studies that demonstrate FPGA             tions below had to be answered before we decided to go
+can accelerate applications several orders of magnitude         down this path:
+over pure software implementations for a wide range of          1. Aren’t FPGAs much bigger than ASICs?
+application spaces from microprocessor simulation [15],
+                                                                   The generic logic portions of FPGAs are roughly 10x-
+genomics [16], machine learning [17], networking, pattern
+                                                                20x bigger than identical logic in ASICs, since pro-
+matching, graph processing, and so on.
+                                                                grammable memories (look up tables, or LUTs) are used
+   The key characteristics of FPGAs that made it at-
+                                                                instead of gates, and a programmable network of wires
+tractive for AccelNet were the programmability to adapt
+                                                                and muxes are used instead of dedicated wires to connect
+to new features, the performance and efficiency of cus-
+                                                                components together. If the FPGA design were simply
+tomized hardware, and the ability to create deep process-
+                                                                generic logic, we should expect to need 10-20x more sili-
+ing pipelines, which improve single-flow performance.
+                                                                con area than an ASIC. However, FPGAs have numerous
+   When we evaluated SmartNIC options, Microsoft had            hardened blocks, such as embedded SRAMs, transceivers,
+already done the work to deploy FPGAs as datacenter ac-         and I/O protocol blocks, all of which are custom compo-
+celerators for project Catapult [7] — we had a success-         nents nearly identical to those found in custom ASICs.
+ful multi-thousand node cluster of networked FPGAs do-
+                                                                   Looking at a modern NIC, the packet processing logic
+ing search ranking for Bing, with greatly-improved per-
+                                                                is not generally the largest part. Instead, size is usually
+formance and lowered costs, and with a network transport
+                                                                dominated by SRAM memory (e.g. to hold flow contexts
+layer running between the FPGAs within a rack. This
+                                                                and packet buffers), transceivers to support I/O (40GbE,
+led us to believe that FPGAs could be a viable option at
+                                                                50GbE, PCIe Gen3), and logic to drive these interfaces
+scale for SmartNIC, as they had the potential to solve our
+                                                                (MAC+PCS for Ethernet, PCIe controllers, DRAM con-
+dilemma of wanting the performance characteristics of an
+                                                                trollers), all of which can be hard logic on an FPGA
+ASIC, but the programmability and reconfigurability in-
+                                                                as well. Furthermore, modern ASIC designs often in-
+herent in a software solution like an SoC.
+                                                                clude significant extra logic and configurability (and even
+4.1.4   Burn host cores                                         embedded CPU cores) to accommodate different require-
+   We still evaluated all options against our original strat-   ments from different customers. This extra logic is needed
+egy of just using host cores to run our SDN stack, espe-        to maximize volumes, handle changing requirements, and
+cially as technologies such as DPDK [18] showed that we         address inevitable bugs. Prior work demonstrates that such
+could lower the cost of packet processing significantly by      configurability can add an order of magnitude of area to
+bypassing the OS networking stack and running cores in          ASIC logic [19]. So the trend has been for FPGAs to in-
+poll-mode. This option beat out ASICs given we couldn’t         clude more and more custom logic, while ASICs include
+get ASICs to meet our programmability requirements, but         more and more programmable logic, closing the efficiency
+the cost and performance overhead of burning cores to our       gap between the two alternatives.
+VM hosting costs was sufficiently high as outlined in Sec-         In practice, we believe for these applications FPGAs
+tion 3 that even the inefficient multicore SoCs were a bet-     should be around 2-3x larger than similarly functioned
+ter approach.                                                   ASICs, which we feel is reasonable for the massively in-
+4.2 Evaluating FPGAs as SmartNICs                               creased programmability and configurability.
+   FPGAs seemed like a great option from our initial anal-      2. Aren’t FPGAs very expensive?
+ysis, but our host networking group, who had until then            While we cannot disclose vendor pricing publicly, the
+operated entirely as a software group, was initially skepti-    FPGA market is competitive (with 2 strong vendors), and
+cal — even though FPGAs are widely used in networking           we’re able to purchase at significant volumes at our scale.
+
+
+USENIX Association                  15th USENIX Symposium on Networked Systems Design and Implementation              55
+In our experience, our scale allows non-recoverable engi-        of this functionality is now common for FPGA vendors to
+neering costs to be amortized, and the cost of the silicon       support, at the time it wasn’t. This project would not have
+becomes dominated by the silicon area and yield. Total sil-      been feasible without the prior Catapult work.
+icon area in a server tends to be dominated by CPUs, flash,      5. Isn’t my code locked in to a single FPGA vendor?
+and DRAM, and yields are typically good for FPGAs due               Today’s FPGA development is done almost entirely
+to their regular structure.                                      in hardware description languages like SystemVerilog
+3. Aren’t FPGAs hard to program?                                 (which we use), which are portable if the original devel-
+   This question was the source of the most skepticism           opment was done with the intention to facilitate porting.
+from the host networking team, who were not at the time          There are vendor-specific details, for example Intel FP-
+in the business of digital logic design or Verilog program-      GAs have 40b wide SRAMs versus Xilinx’s 36b SRAMs,
+ming. FPGAs can provide incredible performance com-              but once such details are accounted for, compiling code
+pared to a CPU for programmable logic, but only if hard-         for a different FPGA is not that difficult. As a proof point
+ware designers really think through efficient pipeline de-       of portability, project Catapult was first developed on Xil-
+signs for an application and lay them out as such. The           inx FPGAs, but was ported over to Altera FPGAs before
+project was originally assisted by the Catapult team in Mi-      our original pilot.
+crosoft Research, but eventually we built our own FPGA           4.3 SmartNIC System Architecture
+team in Azure Networking for SmartNIC. The team is                  Even after selecting FPGAs as the path forward, there
+much smaller than a typical ASIC design team, with the           were still major questions about how to integrate it —
+AccelNet team averaging fewer than 5 FPGA developers             where should the FPGA fit in our system architecture for
+on the project at any given time.                                our first SmartNIC, and which functions should it include?
+   Our experience on AccelNet as well as other projects          The original Catapult FPGA accelerator [7] was deliber-
+within Microsoft, such as Bing Ranking [7, 8] for web            ately not attached the data center network to avoid being a
+search, LZ77 for data compression [20], and Brain-               component that could take down a server, and instead was
+Wave [17] for machine learning, demonstrate that pro-            connected over an in-rack backend torus network. This
+gramming FPGAs is very tractable for production-scale            was not ideal for use in SDN offload, since the FPGA
+cloud workloads. The exact same hardware was used in             needed to be on the network path to implement VFP func-
+all four of these applications, showing the programmabil-        tionality.
+ity and flexibility of the Azure SmartNIC expands well              Another option was to build a full NIC, including SR-
+beyond SDN and network processing capabilities. This             IOV, inside the FPGA — but this would have been a sig-
+bodes well as we seek to add new functionality in years          nificant undertaking (including getting drivers into all our
+to come. Investment in strong development teams, infras-         VM SKUs), and would require us to implement unre-
+tructure, simulation capabilities, and tools is essential, but   lated functionality that our currently deployed NICs han-
+much of this can be shared across different teams.               dle, such as RDMA[14]. Instead we decided to augment
+   We have found the most important element to success-          the current NIC functionality with an FPGA, and initially
+fully programming FPGAs has been to have the hardware            focus FPGA development only on the features needed for
+and software teams work together in one group, and use           offload of SDN.
+software development methodologies (e.g. Agile develop-             The converged architecture places the FPGA as a bump-
+ment) rather than hardware (e.g. Waterfall) models. The          in-the-wire between the NIC and the Top of Rack (TOR)
+flexibility of the FPGA allows us to code, deploy, learn,        switch, making the FPGA a filter on the network. A cable
+and revise at a much faster interval than is possible for any    connects the NIC to the FPGA and another cable connects
+other type of hardware desig. This hardware/software co-         the FPGA to the TOR. The FPGA is also connected by
+design model is what enables hardware performance with           2 Gen3x8 PCIe connections to the CPUs, useful for ac-
+software-like flexibility.                                       celerator workloads like AI and web search. When used
+4. Can FPGAs be deployed at hyperscale?                          as an accelerator, the network connection (along with an
+   Getting FPGAs into our data centers was not an easy           RDMA-like lossless transport layer using DCQCN [21])
+effort — when project Catapult started this was just not a       allows scaling to workloads such as large DNN models
+common use case for FPGAs, and the team had to work              that don’t fit on one chip. The resulting first generation
+through numerous technical, logistical, and team structure       Azure SmartNIC, deployed in all Azure compute servers
+issues. However by the time we began SmartNIC, Cata-             beginning in 2015, is shown in Figure 2(a).
+pult had worked out many of the common infrastructure               The second generation of SmartNIC, running at 50GbE,
+details that were needed for a hyperscale deployment. The        Figure 2(b), is designed for the Azure Project Olympus
+Catapult shell and associated software libraries abstracted      OCP servers [22]. We integrated a standard NIC with SR-
+away underlying hardware-specific details and allowed            IOV on the same board as the FPGA, keeping the same
+both hardware and software development for SmartNIC to           bump-in-the-wire architecture, but eliminating the sepa-
+focus largely on application functionality. Though much          rate NIC board and the cable between the NIC and the
+
+
+56   15th USENIX Symposium on Networked Systems Design and Implementation                           USENIX Association
+FPGA, reducing cost, and upgrading to a newer Intel Ar-
+ria 10 FPGA.
+5   AccelNet System Design
+The control plane for AccelNet is largely unchanged from
+the original VFP design in [6], and remains almost entirely
+in the hypervisor. It remains responsible for the creation
+and deletion of flows from the flow table, along with de-
+termining the associated policy for each flow. The data
+plane for AccelNet is offloaded to the FPGA SmartNIC.
+The driver for the NIC is augmented with a filter driver
+called the GFT Lightweight Filter (LWF), which abstracts
+the details of the split NIC/FPGA hardware from VFP to
+make the SmartNIC appear as a single NIC with both full
+SR-IOV and GFT support, and to help in serviceability, as
+discussed in detail in Section 7.1.
+5.1 Software Design
+   While the vast majority of the packet processing work-
+load for GFT falls onto the FPGA hardware, software
+remains responsible for control operations, including the
+setup/teardown of flows, health monitoring, and enabling
+serviceability so that flows can continue during updates to
+VMs and the FPGA hardware. A high-level view of our
+architecture is shown in Figure 3. The flow table may not
+contain a matching rule for a given packet. In these cases,
+the offload hardware will send the packet to the software      Figure 3: The SmartNIC GFT architecture, showing the
+layer as an Exception Packet. Exception packets are most       flow of exception packets from the FPGA to software to
+common on the first packet of a network flow, when the         establish a flow offloaded in hardware
+flow is just getting established.
+   A special virtual port (vPort) dedicated to the hypervi-    on SmartNIC Gen1, though the same structure (with dif-
+sor is established for exception packets. When the FPGA        ferent values) applies to Gen2.
+receives an exception packet, it overloads the 802.1Q             The design of the GFT implementation on FPGA can
+VLAN ID tag in the packet to specify that it is an ex-         be divided into 2 deeply pipelined packet processing units,
+ception path packet, and forwards the packet to the hy-        each comprised of four major pipeline stages: (1) a store
+pervisor vPort. VFP monitors this port and performs the        and forward packet buffer, (2) a parser, (3) a flow lookup
+necessary flow creation tasks after determining the appro-     and match, and (4) a flow action. A high-level view of our
+priate policy for the packet’s flow. If the exception packet   system architecture is shown in Figure 4.
+was destined for a VM on the same host, the VFP software          The Parser stage parses the aggregated header informa-
+can deliver the packet directly to the VM. If the exception    tion from each packet to determine its encapsulation type.
+packet was outbound (sent by a VM for a remote desti-          We currently support parsing and acting on up to 3 groups
+nation), then the VFP software must resend the packet to       of L2/L3/L4 headers (9 headers total, and 310 possible
+the SmartNIC, which it can do using the same dedicated         combinatons). The output of the parser is a key that is
+hypervisor vPort.                                              unique for each network flow.
+   VFP also needs to be aware of terminated connections           The third processing stage is Match, which looks up
+so that stale connection rules do not match to new net-        the rules for the packet based on the unique key from the
+work flows. When the FPGA detects termination packets          Parser stage. Matching computes the Toeplitz hash [23] of
+such as TCP packets with SYN, RST or FIN flag set, it          the key, and uses that as the cache index. We use a 2-level
+duplicates the packet — sending the original packet to its     caching system with an L1 cache stored on-chip, and an
+specified destination, and an identical copy of the packet     L2 cache stored in FPGA-attached private DRAM.
+to the dedicated hypervisor vPort. VFP uses this packet to        The L1 cache is structured as a direct-mapped cache
+track TCP state and delete rules from the flow table.          supporting 2,048 flows.        We experimented with 2-
+5.2 FPGA Pipeline Design                                       way set associative caches and simpler hash algo-
+   The GFT datapath design was implemented on the              rithms than the Toeplitz hash [24], but found that the
+Azure SmartNIC hardware described in 4.3. For the re-          more computationally-intensive but less collision-prone
+mainder of this section we focus on the implementation         Toeplitz hash coupled with the simpler direct-mapped
+
+
+USENIX Association                 15th USENIX Symposium on Networked Systems Design and Implementation             57
+                                                              AccelNet VMs in an Azure datacenter, running on In-
+                                                              tel Xeon E5-2673 v4 (Broadwell at 2.3 Ghz) CPUs with
+                                                              40Gbps Gen1 SmartNICs. Sender and receiver VMs are
+                                                              in the same datacenter and cross a Clos network of 5 stan-
+                                                              dard switching ASICs between each other. We created no
+                                                              special configuration and the results, in Figure 5, should be
+                                                              reproduceable by any Azure customer using large Dv2 or
+                                                              Dv3 series Azure VMs. VFP policy applied to these VMs
+                                                              includes network virtualization, stateful NAT and stateful
+Figure 4: Block diagram of the GFT processing pipeline        ACLs, metering, QoS, and more.
+                                                                 We measure one-way latency between two Windows
+cache resulted in better overall performance.                 Server 2016 VMs using registered I/O sockets [25] by
+   The L2 cache is structured as an 8-way set-associative     sending 1 million 4-byte pings sequentially over active
+cache, with support for O(1M) flows. Total number of          TCP connections and measuring response time. With our
+supported flows is limited only by the DRAM capacity.         tuned software stack without AccelNet, we see an aver-
+   The final component is the Action stage, which takes       age of 50µs, with a P99 around 100µs and P99.9 around
+the parameters looked up from the flow table, and then per-   300µs. With AccelNet, our average is 17µs with P99 of
+forms the specified transformations on the packet header.     25µs and P99.9 of 80µs — both latency and variance are
+The Action block uses microcode to specify the exact be-      much lower.
+haviors of actions, enabling easy updates to actions with-       Azure offers VM sizes with up to 32Gbps of network
+out recompilation of the FPGA image. Only when entirely       capacity. With pairs of both Ubuntu 16.04 VMs and Win-
+new actions are added will the FPGA need to be recom-         dows 10 VMs with TCP congestion control set to CU-
+piled and a new bitstream loaded.                             BIC [26] and a 1500 Byte MTU, we consistently measure
+   Non-trivial software-programmable Quality-of-Service       31Gbps on a single connection between VMs with 0% as-
+guarantees can be implemented as optional components of       sociated CPU utilization in the host. Without AccelNet
+the processing pipeline. For example, rate limiting can be    we see around 5Gbps on a single connection and multiple
+done on a per-flow basis using a packet buffer in DRAM.       cores utilized in the host with enough connections run-
+Full description of our QoS frameworks and actions is be-     ning (∼8) to achieve line rate. Because we don’t have to
+yond the scope of this paper. In total, the GFT role uses     scale across multiple cores, we believe we can scale sin-
+about 1/3 of the logic of the Intel Stratix V D5 chip that    gle connection performance to 50/100Gb line rate using
+we used in the Gen1 SmartNICs.                                our current architecture as we continue to increase net-
+5.3 Flow tracking and reconciliation                          work speeds with ever-larger VMs.
+   VFP is used by overlying controllers and monitoring           For an example of a real world application, we deployed
+layers to track per-flow connection state and data. GFT       AccelNet to our Azure SQL DB fleet, which runs in VM
+keeps track of all per-connection byte/flow counters, such    instances, and ran SQL queries from an AccelNet VM in
+as TCP sequence/ack numbers and connection state, and         the same DC against an in-memory DB replicated across
+timestamps of the last time a flow got a packet. It period-   multiple nodes for high availability (both reads and writes
+ically transmits all flow state to VFP via DMA transfers      to the service traverse multiple network hops). Average
+over PCIe, allowing VFP to ensure proper flow configura-      end-to-end read times went from ∼1ms to ∼300µs, and
+tions, and to perform actions such as the cleanup of inac-    P99 read and write times dropped by over half as a result
+tive flows.                                                   of reduced jitter in the network. Replication and seeding
+   GFT must also perform reconciliation so that flow ac-      jobs that were often bound by the performance of a burst
+tions get updated when VFP policy changes. Like VFP’s         on a single connection ran over 2x faster.
+unified flow table, GFT maintains a generation ID of the         Figure 6 shows comparative performance of AccelNet
+policy state on a system, and tracks what the generation ID   compared to other public cloud offerings that we mea-
+when the rules for each flow were created. When a con-        sured on latest generation Intel Skylake-based instances
+troller plumbs new policy to VFP, the generation ID on        (Fs72 v2 on Azure, c5.18xlarge on AWS, n1-highcpu-64
+SmartNIC is incremented. Flows are then updated lazily        on GCP, measured in November 2017). All tests used un-
+by marking the first packet of each flow as an exception      modified Ubuntu 16.04 images provided by the platform
+packet, and having VFP update the flow with the new pol-      with busy poll enabled. We used the open source tools
+icy actions.                                                  sockperf and iperf to measure latency and through-
+                                                              put, respectively. In our measurements, AccelNet had the
+6    Performance Results                                      lowest latencies, highest throughput, and lowest tail laten-
+Azure Accelerated Networking has been available since         cies (measured as percentiles of all pings over multiple
+2016. Performance results are measured on normal Azure        10-second runs of continuous ping-pong on established
+
+
+58   15th USENIX Symposium on Networked Systems Design and Implementation                         USENIX Association
+                             Figure 5: Selected performance data from Azure AccelNet VMs
+
+
+TCP connections) of the instances we measured, includ-             We accomplished online serviceability by turning off
+ing a consistent 10µs average latency between our Linux         hardware acceleration and switching back to synthetic
+VMs. To test the performance of userspace I/O such as           vNICs to maintain connectivity when we want to ser-
+DPDK, we used a userspace TCP stack based on the open           vice the SmartNICs or the software components that drive
+source VMA library [27], which achieved about 5µs la-           them, or when live migrating a VM. However, since Ac-
+tency pinging standard TCP sockets between our produc-          celNet is exposed directly into the VM in the form of
+tion VMs.                                                       VFs, we must ensure that none of the applications break
+   VFP is widely used in our fleet to run software gate-        when the VF is revoked and the datapath is switched to
+ways bridging between our SDN and external networks,            synthetic mode. To satisfy this requirement, we do not
+such as ExpressRoute [28] circuits to customer datacen-         expose the VF to the upper protocol stack in the VM di-
+ters. We used the programmable forwarding and QoS in            rectly. Instead, when the VF comes up, our synthetic NIC
+our FPGA GFT implementation to offload all forward-             driver, the Hyper-V Network Virtual Service Consumer
+ing (after first packet on a flow) to the SmartNIC. Includ-     (NetVSC), marks the VF as its slave, either by using the
+ing encap/decap, stateful ACLs/NAT and metering, QoS,           slave mode present in the kernel for Linux VMs, or by
+and forwarding, we saw a gateway forwarding line-rate           binding to the NetVSC’s upper NDIS edge in Windows
+32Gbps traffic (even with just one flow), and consistent        VMs. We call this transparent bonding — the TCP/IP
+<5s latency with 0% host CPU utilization. Our prior gate-       stack is bound only to the synthetic NIC. When VF is ac-
+way required multiple connections to hit line rate, burned      tive, the synthetic adapter automatically issues sends over
+CPU cores, and could spike to 100-200µs latency (in-            the VF adapter rather than sending it through the synthetic
+cluding going to and from a VM) depending on system             path to the host. For receives, the synthetic adapter for-
+scheduling behavior. We believe this platform will let us       wards all receives from both the VF and synthetic path up
+create many more accelerated programmable appliances.           the stack. When the VF is revoked for servicing, all trans-
+   Using configurable power regulators on our SmartNIC,         mit traffic switches to the synthetic path automatically, and
+we’ve measured the power draw of our Gen1 board in-             the upper stack is not even aware of the VF’s revocation
+cluding all components in operational servers at 17-19W         or later reassignment. Figure 7 shows the accelerated data
+depending on traffic load. This is well below the 25W           path and synthetic data path. The network stack is com-
+power allowed for a typical PCIe expansion slot, and on         pletely transparent to the current data path since NetVSC
+par with or less than other SmartNIC designs we’ve seen.        provides transparent bonding.
+                                                                   One of the benefits of SR-IOV is that VMs can use ker-
+7     Operationalization                                        nel bypass techniques like DPDK (Data Plane Develop-
+                                                                ment Kit) [18] or RDMA (Remote Direct Memory Ac-
+7.1   Serviceability                                            cess) to directly interface with hardware via the VF, but
+   As with any other feature that is being built for the pub-   we needed to consider serviceability for them too when
+lic cloud, serviceability, diagnostics and monitoring are       the VF is revoked, and the VM is potentially live-migrated
+key aspects of accelerated networking. The fact that both       elsewhere. We needed these applications to transparently
+software and hardware are serviceable makes this particu-       fall back to a non-accelerated code path for that brief time
+lar scenario deployable for us. As discussed in [6], VFP is     period.
+already fully serviceable while keeping existing TCP con-          We found that there is no built-in fallback mechanism
+nections alive, and supports VM live migration with exist-      for many DPDK applications. So, we use a failsafe PMD
+ing connections. With AccelNet, we needed to extend this        (Poll Mode Driver) which acts as a bond between the VF
+serviceability as well — TCP flows and vNICs should sur-        PMD and a PMD on the synthetic interface. When the
+vive FPGA reconfiguration, FPGA driver updates, NIC PF          VF is active, the failsafe PMD operates over the VF PMD,
+driver updates (which bring down VFs), and GFT driver           thereby bypassing the VM kernel and the host software
+updates.                                                        stack. When the VF is revoked for serviceability, the
+
+
+USENIX Association                  15th USENIX Symposium on Networked Systems Design and Implementation               59
+Figure 6: Performance of AccelNet VM-VM latencies vs. Amazon AWS Enhanced Networking and Google GCP An-
+dromeda on Intel Skylake generation hardware.
+
+
+                                                                        upcoming maintenance and update events to the VM to
+                                                                        enable it to prepare or move traffic elsewhere. If a VM is
+                                                                        running behind the Azure load balancer, we can remove it
+                                                                        from the active load balanced set during an update so that
+                                                                        new external TCP/UDP flows are directed elsewhere for
+                                                                        the duration of the update window.
+
+                                                                        7.2   Monitoring and Diagnostics
+                                                                           Monitoring is key to the reliability of a system like Ac-
+                                                                        celNet at scale. Detection of early warning signs from
+            Synthetic data path   Accelerated data path   Transparent   both hardware and software and correcting them in an au-
+                                                                        tomated fashion is necessary to achieve production-quality
+Figure 7: Transparent bonding between an SR-IOV inter-
+                                                                        reliability. We collect metrics from each component of
+face and a synthetic interface
+                                                                        AccelNet, including VFP, GFT, the SmartNIC and its
+                                                                        driver, and the SR-IOV NIC and its driver — we have
+failsafe PMD starts operating over the synthetic path and
+                                                                        over 500 metrics per host (of which many are per-VM)
+packets flow through the VMBUS channels. Since the fail-
+                                                                        collected in our scalable central monitoring system. Alerts
+safe PMD exposes all DPDK APIs, the application does
+                                                                        and actions are triggered by combinations of these and we
+not see any difference except for a drop in performance
+                                                                        are constantly tweaking thresholds and actions as we get
+for a short period of time.
+                                                                        more experience and data over time with the system.
+   For RDMA applications, this form of serviceability is
+                                                                           For diagnostics, we built programmable packet capture
+harder and potentially involves many more queues. In
+                                                                        and tracing services at every interface on the SmartNIC —
+practice, we found all our common RDMA applications
+                                                                        packet headers and data can be sampled at NIC/ToR ports
+are designed to gracefully fall back to TCP anyways, so
+                                                                        on ingress/egress. We built a metadata interface along the
+we issue completions closing all RDMA queue pairs and
+                                                                        network bus inside SmartNIC so that any module can emit
+let the app fail over to TCP. This isn’t an issue for currently
+                                                                        diagnostic data about what exactly happened to a packet at
+known workloads, but app-level transparency for RDMA
+                                                                        that module, which is included in the capture. For exam-
+serviceability remains an open question for the future if
+                                                                        ple, in GFT we can trace how a packet was parsed, what
+apps ever take a hard dependency on RDMA QPs staying
+                                                                        flow it matched, what action it took, etc. We can collect
+alive.
+                                                                        hardware timestamps for these for accurate latency anal-
+   Support for transparent VF bonding has been commit-
+                                                                        ysis. We also expose diagnostic information on key state
+ted upstream in the Linux kernel (for NetVSC) and to
+                                                                        machines as well as extensive counters, and automatically
+dpdk.org for DPDK, and is natively available in Windows
+                                                                        dump all critical internal state on an error.
+Server 2012 and later VMs. We’ve issued regular fleet-
+wide updates to all parts of the AccelNet stack, (VFP
+                                                                        8     Experiences
+through GFT, the FPGA, and the PF driver), and found
+that transparent bonding works well in practice for our                 Azure SmartNICs and AccelNet have been deployed at
+customers. While there is a short performance degrada-                  scale for multiple years, with hundreds of thousands of
+tion while the synthetic path is active, apps stay alive and            customer VMs across our fleet. In our experience, Accel-
+handle this well as they don’t see a change in the network              Net has improved network performance across the board
+adapter they’re bound to, or on active TCP connections. If              for our customers without negatively impacting reliabil-
+an application is sensitive to this, we let VMs subscribe to            ity or serviceability, and offering better throughput and
+an instance metadata service that sends notifications about             latency than anything else we’ve measured in the public
+
+
+60   15th USENIX Symposium on Networked Systems Design and Implementation                                  USENIX Association
+cloud. We believe our design accomplished all the goals       have worked in an ASIC development flow. A small se-
+we set out in Section 3 :                                     lection of examples include:
+ 1. We stopped burning CPU cores to run the network           • We’ve repeatedly extended our TCP state machine with
+    datapath for AccelNet VMs. Host cores show less              more precise seq/ack tracking of every TCP flow in our
+    than 1% utilization used for exception processing.           system for various functional and diagnostic purposes.
+ 2. SDN controllers have continued to add and program            For example, an ask to inject TCP resets into active
+    new policy in VFP, agnostic of the hardware offload          flows based on idle timeouts and other parameters ne-
+    now underneath.                                              cessitated VFP being aware of the latest valid sequence
+ 3. We measured the overhead of the FPGA on latency              numbers of every flow.
+    as <1µs vs our SR-IOV NIC alone, and achieve line         • We created a number of new packet forwarding and du-
+    rate. This is much better than CPU cores alone.              plication actions, for example supporting tap interfaces
+ 4. We’ve continued to add new actions and primitives to         with their own encapsulation and SDN policy, complex
+    GFT on the FPGA to support new workloads, as well            forwarding actions for offloading gateways and soft-
+    as new QoS primitives and more.                              ware routers to hardware, and multicast semantics using
+ 5. Changes have been rolled out across multiple types           fast hardware replication on a unicast underlay.
+    of servers and SmartNIC hardware.                         • We added SDN actions such as NAT46 with custom
+ 6. We can achieve line rate on a single connection.             translation logic for our internal workloads, support for
+ 7. We believe our design scales well to 100Gb+.                 virtualizing RDMA, and new overlay header formats.
+ 8. We have done production servicing of our FPGA im-         • As we saw pressure to improve connection setup per-
+    age and drivers regularly for years, without nega-           formance, we repeatedly iterated on our offload path,
+    tively impacting VMs or applications.                        moving many functions such as hashing and table in-
+                                                                 sertion of flows from software into hardware over time
+8.1 Are FPGAs Datacenter-Ready?
+                                                                 based on production telemetry.
+   One question we are often asked is if FPGAs are ready      • We’ve used the FPGAs to add constant new datapath
+to serve as SmartNICs more broadly outside Microsoft.            diagnostics at line rate, including programmable packet
+We certainly do not claim that FPGAs are always the best         captures, packet tracing through stages in our FPGA for
+and only solution for accelerating networking in all cloud       latency and correctness analysis, and extensive counters
+environments. The development effort for FPGA pro-               and telemetry of the kind that require support in hard-
+gramming is certainly higher than software — though can          ware in the datapath. This is our most constant source
+be made quite tractable and agile with a talented hardware       of iteration.
+team and support from multiple stakeholders.
+                                                              8.3 Lessons Learned
+   When Microsoft started Catapult, FPGAs were far from
+cloud-ready. Because SmartNIC shares a common devel-            Since beginning the Azure Accelerated Networking
+opment environment and history with Catapult, much of         project, we learned a number of other lessons of value:
+the development effort was shared across teams. We’ve         • Design for serviceability upfront. The topics in Sec-
+observed that necessary tooling, basic IP blocks, and gen-      tion 7 were the hardest of anything here to get right.
+eral support have dramatically improved over the last few       They worked only because the entire system, from hard-
+years. But this would still be a daunting task for a new        ware to software to VM integration, were designed to be
+team. We didn’t find that the higher level languages for        serviceable and monitorable from day 1. Serviceability
+FPGAs we experimented with produced efficient results           cannot be bolted on later.
+for our designs, but our trained hardware developers had      • Use a unified development team. If you want Hard-
+no trouble rapidly iterating on our SystemVerilog code.         ware/Software co-design, hardware devs should in the
+   The scale of Azure is large enough to justify the mas-       same team as software devs. We explicitly built our
+sive development efforts — we achieved a level of perfor-       hardware team inside the existing Azure host network-
+mance and efficiency simply not possible with CPUs, and         ing group, rather than the traditional approach of having
+programmability far beyond an ASIC, at a cost that was          separate groups for HW and SW, to encourage frequent
+reasonable because of our volume. But we don’t expect           collaboration and knowledge sharing.
+this to be a natural choice for anyone beyond a large-scale   • Use software development techniques for FPGAs.
+cloud vendor until the ecosystem evolves further.               One thing that helped our agility was viewing the host
+                                                                networking datapath stack as a single stack and ship
+8.2 Changes Made                                                vehicle across VFP and FPGA, reducing complex roll-
+   As we expected, we continued adding all kinds of ac-         out dependencies and schedule mismatch. As much as
+tions over time as the SDN stack evolved that we could          possible, we treated and shipped hardware logic as if
+never have predicted when we started, such as new stateful      it was software. Going through iterative rings of soft-
+tunneling modes and state tracking. We believe respond-         ware qualification meant we didn’t need ASIC-levels of
+ing to these rapidly shifting requirements would never          specification and verification up front and we could be
+
+
+USENIX Association                 15th USENIX Symposium on Networked Systems Design and Implementation             61
+  more agile. A few minutes in a live environment cov-        out requiring many cores. A newer trend is to combine
+  ers far more time and more scenarios than typical RTL       an ASIC supporting some match-action function with a
+  verification flows could ever hope to cover.                small SoC supporting a DPDK-style datapath for on-core
+• Better perf means better reliability. One of the            packet processing. But we don’t ultimately see that this
+  biggest benefits of AccelNet for VMs is that the net-       solves the dilemma of ASICs vs CPUs — if you have
+  work datapath no longer shares cores or resources with      a widely-applied action that the ASIC can’t handle, you
+  the rest of the host, and is not subject to transient is-   have to send all your packets up to the CPUs, and now
+  sues — we’ve seen much more reliable performance            your CPUs have to handle line rate processing.
+  and lower variance as a result.                                Others [31] show that they can improve the performance
+• HW/SW co-design is best when iterative. ASIC de-            of software stacks entirely in the host and suggest burning
+  velopment traditionally means designing a specification     cores to do host SDN. While we believe this in practice re-
+  and test methodology for everything that a system could     quires multiple cores at line rate for our workloads, in IaaS
+  possibly want to do over its lifetime upfront. FPGAs        even taking a very small number of cores is too costly for
+  allowed our hardware developers to be far more agile        this to make sense for us, and the performance and latency
+  in their approach. We can deploy designs directly to        aren’t optimal. With FPGAs, we’ve found we’re able to
+  customers, collect data from real workloads with de-        achieve sufficient programmability and agility in practice.
+  tailed counters, and use those to decide what functions     Offloading functionality to the switches as in [32] was also
+  should be in hardware vs. software in the next release,     explored, but since we have to store complex actions for
+  and where performance bottlenecks are. More impor-          every TCP connection in our system, and with the increase
+  tantly, we can allow the specifications to evolve con-      of VM and container density on a node, we found the min
+  stantly throughout the development process. For exam-       set of policy needed to be offloaded, even when reasonably
+  ple, we changed the hashing and caching strategies sev-     compressed, is at least 2 orders of magnitude more than
+  eral times after the initial release.                       even the latest programmable switch ASICs can store in
+• Failure rates remain low, and were in line with other       SRAM - at NIC speeds we can scale out to GBs of DRAM.
+  passive parts in the system, with the most frequently          Another recent suggestion is to use P4 engines [33],
+  failing part being DRAM. Overall the FPGAs were re-         thus far mostly implemented in switches, to create Smart-
+  liable in datacenters worldwide.                            NICs. The P4 specification offers flexible parsing and
+• Upper layers should be agnostic of offloads. Because        relatively flexible actions, many of which are similar to
+  VFP abstracted out whether SDN policy was being of-         GFT. In fact, P4 could potentially serve as a way to spec-
+  floaded or not from controllers and upper layers, Accel-    ify some of the GFT processing flow. However, there are
+  Net was much less disruptive to deploy.                     other SDN functions outside the scope of existing P4 en-
+• Mitigating Spectre performance impact. In the               gines and even the P4 language specification that are im-
+  wake of the Meltdown and Spectre attacks on our             portant for us to implement in AccelNet — functions such
+  CPUs, CPU-based I/O was impacted by common miti-            as scheduling, QoS, background state updates, any kind
+  gations [29]. Because AccelNet bypasses the host and        of programmable transport layer, and a variety of com-
+  CPUs entirely, our AccelNet customers saw signifi-          plex policies outside the scope of simple packet transfor-
+  cantly less impact to network performance, and many         mations. While we expect the P4 language to be extended
+  redeployed older tenants to AccelNet-capable hardware       to include many of these, using a programmable fabric like
+  just to avoid these impacts.                                an FPGA to implement GFT or P4 functionality remains
+                                                              a good choice given the evolving nature of the SDN and
+9    Related Work                                             cloud space. We expect much of the functionality outside
+                                                              of the core packet processor to harden over time, but ex-
+Since we first deployed Azure SmartNICs and announced
+                                                              pect SDN to remain soft for the foreseeable future.
+them at the Open Networking Summit in 2015, we’ve seen
+numerous different programmable NIC solutions with            10    Conclusion and Future Work
+vSwitch offload come to market (recently many of these        We detailed the Azure SmartNIC, our FPGA-based pro-
+are labeled as “Smart NICs” too). Most follow the trends      grammable NIC, as well as Accelerated Networking, our
+we discussed in 4.1. Some [30] are based on ASICs with        service for high performance networking providing cloud-
+internal match-action tables — these tend to not be very      leading network performance, and described our experi-
+flexible or support some of the more advanced actions         ences building and deploying them.
+we’ve implemented over time in GFT, and give little room         This paper describes primarily functions we were al-
+for growth as actions and policy change. Others [13, 14]      ready doing in software in host SDN and offloaded to
+do datapath processing entirely in embedded cores, either     hardware for great performance. Future work will de-
+general purpose CPUs or network-specific ones, but we’ve      scribe entirely new functionality we’ve found we can sup-
+found the performance of this model is not great and we       port now that we have programmable NICs on every host.
+don’t see a path to scale this to 100G and beyond with-
+
+
+62   15th USENIX Symposium on Networked Systems Design and Implementation                         USENIX Association
+Acknowledgements                                                         [11] Microsoft.  Virtual Machine Queue (VMQ).     https:
+   We thank our shepherd Arvind Krishnamurthy and the                         //msdn.microsoft.com/en-us/windows/hardware/
+                                                                              drivers/network/virtual-machine-queue--vmq-,    Apr
+anonymous reviewers for their many helpful comments                           2017.
+that greatly improved the final paper.
+                                                                         [12] Microsoft.    Network Virtualization using Generic Routing
+   Azure Accelerated Networking represents the work of                        Encapsulation (NVGRE) Task Offload.        https://docs.
+many engineers, architects, product managers, and leaders                     microsoft.com/en-us/windows-hardware/drivers/
+across Azure and Microsoft Research over several years,                       network/network-virtualization-using-generic-
+more than we can list here. We thank the entire Azure                         routing-encapsulation--nvgre--task-offload,           Apr
+                                                                              2017.
+Networking, Server Infrastructure, and Compute teams for
+their support in developing, iterating on, and deploying                 [13] Cavium.   Cavium LiquidIO II Network Appliance Smart
+                                                                              NICs.   http://www.cavium.com/LiquidIO-II_Network_
+SmartNICs and the Accelerated Networking service.                             Appliance_Adapters.html.
+   We thank Parveen Patel, Pankaj Garg, Peter Carlin,
+                                                                         [14] Netronome. Open vSwitch Offload and Acceleration with Ag-
+Tomas Talius, Jurgen Thomas, and Hemant Kumar for                             ilio CX SmartNICs. https://www.netronome.com/media/
+their invaluable early feedback in deploying preview ver-                     redactor_files/WP_OVS_Benchmarking.pdf.
+sions of our service, and KY Srinivasan, Stephen Hem-                    [15] Derek Chiou, Dam Sunwoo, Joonsoo Kim, Nikhil A. Patil, William
+minger, Josh Poulson, Simon Xiao, and Haiyang Zhang                           Reinhart, Darrel Eric Johnson, Jebediah Keefe, and Hari Angepat.
+for supporting our Linux VM ecosystem’s move to Accel-                        Fpga-accelerated simulation technologies (fast): Fast, full-system,
+Net. Finally, in addition to our leaders in the author list,                  cycle-accurate simulators. In Proceedings of the 40th Annual
+                                                                              IEEE/ACM International Symposium on Microarchitecture, MI-
+we thank Yousef Khalidi, Mark Russinovich, and Jason                          CRO 40, pages 249–261, Washington, DC, USA, 2007. IEEE
+Zander for their support.                                                     Computer Society.
+
+References                                                               [16] Yatish Turakhia, Kevin Jie Zheng, Gill Bejerano, and William J.
+                                                                              Dally. Darwin: A hardware-acceleration framework for genomic
+ [1] Microsoft Azure. http://azure.microsoft.com, 2018.
+                                                                              sequence alignment. bioRxiv, 2017.
+ [2] Amazon. Amazon Web Services. http://aws.amazon.com,
+                                                                         [17] Eric Chung, Jeremy Fowers, Kalin Ovtcharov, Michael Pa-
+     2018.
+                                                                              pamichael, Adrian Caulfield, Todd Massengil, Ming Liu, Daniel
+ [3] Google. Google Cloud Platform. http://cloud.google.com,                  Lo, Shlomi Alkalay, Michael Haselman, Christian Boehn, Oren
+     2018.                                                                    Firestein, Alessandro Forin, Kang Su Gatlin, Mahdi Ghandi,
+ [4] Microsoft.   Overview of Single Root I/O Virtualiza-                     Stephen Heil, Kyle Holohan, Tamas Juhasz, Ratna Kumar Kovvuri,
+     tion (SR-IOV).       https://msdn.microsoft.com/en-                      Sitaram Lanka, Friedel van Megen, Dima Mukhortov, Prerak Patel,
+     us/windows/hardware/drivers/network/overview-                            Steve Reinhardt, Adam Sapek, Raja Seera, Balaji Sridharan, Lisa
+     of-single-root-i-o-virtualization--sr-iov-,     Apr                      Woods, Phillip Yi-Xiao, Ritchie Zhao, and Doug Burger. Acceler-
+     2017.                                                                    ating Persistent Neural Networks at Datacenter Scale. In Hot Chips
+                                                                              27, 2017.
+ [5] Y. Dong, X. Yang, X. Li, J. Li, K. Tian, and H. Guan. High
+     performance network virtualization with sr-iov. In HPCA - 16        [18] DPDK. DPDK: Data Plane Development Kit. http://dpdk.
+     2010 The Sixteenth International Symposium on High-Performance           org/about, 2018.
+     Computer Architecture, pages 1–10, Jan 2010.                        [19] Gokhan Sayilar and Derek Chiou. Cryptoraptor: High throughput
+ [6] Daniel Firestone. VFP: A virtual switch platform for host SDN            reconfigurable cryptographic processor. In Proceedings of the 2014
+     in the public cloud. In 14th USENIX Symposium on Networked               IEEE/ACM International Conference on Computer-Aided Design,
+     Systems Design and Implementation (NSDI 17), pages 315–328,              ICCAD ’14, pages 154–161, Piscataway, NJ, USA, 2014. IEEE
+     Boston, MA, 2017. USENIX Association.                                    Press.
+ [7] Andrew Putnam, Adrian M. Caulfield, Eric S. Chung, Derek Chiou,     [20] J. Fowers, J. Y. Kim, D. Burger, and S. Hauck. A scalable
+     Kypros Constantinides, John Demme, Hadi Esmaeilzadeh, Jeremy             high-bandwidth architecture for lossless compression on fpgas.
+     Fowers, Jan Gray, Michael Haselman, Scott Hauck, Stephen                 In 2015 IEEE 23rd Annual International Symposium on Field-
+     Heil, Amir Hormati, Joo-Young Kim, Sitaram Lanka, James R.               Programmable Custom Computing Machines, pages 52–59, May
+     Larus, Eric Peterson, Gopi Prashanth, Aaron Smith, Jason Thong,          2015.
+     Phillip Yi Xiao, and Doug Burger. A Reconfigurable Fabric for Ac-
+     celerating Large-Scale Datacenter Services. In International Sym-   [21] Yibo Zhu, Haggai Eran, Daniel Firestone, Chuanxiong Guo, Ma-
+     posium on Computer Architecture (ISCA), 2014.                            rina Lipshteyn, Yehonatan Liron, Jitendra Padhye, Shachar Rain-
+                                                                              del, Mohamad Haj Yahia, and Ming Zhang. Congestion control
+ [8] A. M. Caulfield, E. S. Chung, A. Putnam, H. Angepat, J. Fowers,          for large-scale rdma deployments. In Proceedings of the 2015
+     M. Haselman, S. Heil, M. Humphrey, P. Kaur, J. Y. Kim, D. Lo,            ACM Conference on Special Interest Group on Data Communica-
+     T. Massengill, K. Ovtcharov, M. Papamichael, L. Woods, S. Lanka,         tion, SIGCOMM ’15, pages 523–536, New York, NY, USA, 2015.
+     D. Chiou, and D. Burger. A cloud-scale acceleration architecture.        ACM.
+     In 2016 49th Annual IEEE/ACM International Symposium on Mi-
+     croarchitecture (MICRO), pages 1–13, Oct 2016.                      [22] Microsoft. Server/ProjectOlympus. www.opencompute.org/
+                                                                              wiki/Server/ProjectOlympus, 2018.
+ [9] Microsoft. TCP/IP Offload. https://docs.microsoft.com/
+     en-us/windows-hardware/drivers/network/tcp-ip-                      [23] P. P. Deepthi and P. S. Sathidevi. Design, implementation and anal-
+     offload, Apr 2017.                                                       ysis of hardware efficient stream ciphers using lfsr based hash func-
+                                                                              tions. Comput. Secur., 28(3-4):229–241, May 2009.
+[10] Microsoft.     Introduction to Receive Side Scaling.
+     https://docs.microsoft.com/en-us/windows-                           [24] Microsoft. RSS Hashing Functions. https://docs.microsoft.
+     hardware/drivers/network/introduction-to-receive-                        com/en-us/windows-hardware/drivers/network/rss-
+     side-scaling, Apr 2017.                                                  hashing-functions, Apr 2017.
+
+
+
+USENIX Association                       15th USENIX Symposium on Networked Systems Design and Implementation                               63
+[25] Microsoft.    Registered Input/Output (RIO) API Ex-
+     tensions.        https://technet.microsoft.com/en-
+     us/library/hh997032(v=ws.11).aspx, Aug 2016.
+[26] Injong Rhee, Lisong Xu, Sangtae Ha, Alexander Zimmermann,
+     Lars Eggert, and Richard Scheffenegger. CUBIC for Fast Long-
+     Distance Networks. RFC 8312, February 2018.
+[27] Messaging Accelerator (VMA).           https://github.com/
+     Mellanox/libvma, 2018.
+[28] Microsoft. ExpressRoute overview. https://docs.microsoft.
+     com/en-us/azure/expressroute/expressroute-
+     introduction, Oct 2017.
+[29] Microsoft. Securing Azure customers from CPU vulnerability.
+     https://azure.microsoft.com/en-us/blog/securing-
+     azure-customers-from-cpu-vulnerability/, 2018.
+[30] Chloe Jian Ma and Erez Cohen.     OpenStack and OVS:
+     From Love-Hate Relationship to Match Made in Heaven.
+     https://events.static.linuxfound.org/sites/events/
+     files/slides/Mellanox%20OPNFV%20Presentation%20on%
+     20OVS%20Offload%20Nov%2012th%202015.pdf, Nov 2012.
+[31] Jad Naous, David Erickson, G. Adam Covington, Guido Appen-
+     zeller, and Nick McKeown. Implementing an openflow switch on
+     the netfpga platform. In Proceedings of the 4th ACM/IEEE Sym-
+     posium on Architectures for Networking and Communications Sys-
+     tems, ANCS ’08, pages 1–9, New York, NY, USA, 2008. ACM.
+[32] Rui Miao, Hongyi Zeng, Changhoon Kim, Jeongkeun Lee, and
+     Minlan Yu. Silkroad: Making stateful layer-4 load balancing fast
+     and cheap using switching asics. In Proceedings of the Confer-
+     ence of the ACM Special Interest Group on Data Communication,
+     SIGCOMM ’17, pages 15–28, New York, NY, USA, 2017. ACM.
+[33] Pat Bosshart, Dan Daly, Glen Gibb, Martin Izzard, Nick McKeown,
+     Jennifer Rexford, Cole Schlesinger, Dan Talayco, Amin Vahdat,
+     George Varghese, and David Walker. P4: Programming protocol-
+     independent packet processors. SIGCOMM Comput. Commun.
+     Rev., 44(3):87–95, July 2014.
+
+
+
+
+64   15th USENIX Symposium on Networked Systems Design and Implementation   USENIX Association
+

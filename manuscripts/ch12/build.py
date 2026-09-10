@@ -13,10 +13,11 @@ import markdown
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
 parser=argparse.ArgumentParser();parser.add_argument('--font');args=parser.parse_args()
-font=next((Path(p) for p in [args.font,'/System/Library/Fonts/Supplemental/Arial Unicode.ttf','/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'] if p and Path(p).exists()),None)
-if font is None:raise SystemExit('Install a CJK font or pass --font')
-font_manager.fontManager.addfont(str(font));family=font_manager.FontProperties(fname=str(font)).get_name()
-plt.rcParams.update({'font.family':family,'font.size':11,'axes.unicode_minus':False,'svg.fonttype':'none','svg.hashsalt':'ch12-edge-v1','axes.spines.top':False,'axes.spines.right':False,'figure.facecolor':'white','savefig.facecolor':'white','text.color':'#203c48','axes.labelcolor':'#203c48','pdf.fonttype':42})
+import sys
+sys.path.insert(0,str(HERE.parent))
+from figure_style.typography import configure_font
+font,family=configure_font(args.font)
+plt.rcParams.update({'font.family':[family,'DejaVu Sans'],'font.size':11,'axes.unicode_minus':False,'svg.fonttype':'path','svg.hashsalt':'ch12-edge-v1','axes.spines.top':False,'axes.spines.right':False,'figure.facecolor':'white','savefig.facecolor':'white','text.color':'#203c48','axes.labelcolor':'#203c48','pdf.fonttype':42})
 C={'ink':'#203c48','blue':'#286b98','teal':'#16857b','orange':'#bc722b','red':'#a94c52','pale':'#eef4f7','light':'#eaf5f1','sand':'#fbf0e5','line':'#c3d0d7','muted':'#546e7a'}
 for x in json.loads((HERE/'sources.json').read_text())['sources']:
  if hashlib.sha256((ROOT/x['path']).read_bytes()).hexdigest()!=x['sha256']:raise SystemExit('Review changed source: '+x['path'])
@@ -153,6 +154,8 @@ from teaching_reading import readable_diagrams
 page=readable_diagrams(page)
 hp=md.with_suffix('.html');hp.write_text(page)
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')
-artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',HERE/'figure-catalog.json',hp,md]
+from book_assets import sync_figure_index
+active_assets=sync_figure_index(HERE)
+artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',HERE/'figure-catalog.json',hp,md]+active_assets
 (HERE/'manifest.json').write_text(json.dumps({'chapter':12,'generator':'manuscripts/ch12/build.py','figures':len(teaching_checks),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
 print(json.dumps({'figures':len(teaching_checks),'maths':len(maths),'layout_warnings':len(layout),'html':str(hp)},ensure_ascii=False))

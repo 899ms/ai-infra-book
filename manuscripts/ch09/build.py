@@ -12,10 +12,11 @@ import numpy as np
 import markdown
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1]
 parser=argparse.ArgumentParser();parser.add_argument('--font');args=parser.parse_args()
-font=next((Path(p) for p in [args.font,'/System/Library/Fonts/Supplemental/Arial Unicode.ttf','/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'] if p and Path(p).exists()),None)
-if font is None:raise SystemExit('A CJK font is required; use --font')
-font_manager.fontManager.addfont(str(font));family=font_manager.FontProperties(fname=str(font)).get_name()
-plt.rcParams.update({'font.family':family,'font.size':11,'axes.unicode_minus':False,'svg.fonttype':'none','svg.hashsalt':'ch09-v1','axes.spines.top':False,'axes.spines.right':False,'figure.facecolor':'white','savefig.facecolor':'white','text.color':'#243c48','axes.labelcolor':'#243c48','pdf.fonttype':42})
+import sys
+sys.path.insert(0,str(HERE.parent))
+from figure_style.typography import configure_font
+font,family=configure_font(args.font)
+plt.rcParams.update({'font.family':[family,'DejaVu Sans'],'font.size':11,'axes.unicode_minus':False,'svg.fonttype':'path','svg.hashsalt':'ch09-v1','axes.spines.top':False,'axes.spines.right':False,'figure.facecolor':'white','savefig.facecolor':'white','text.color':'#243c48','axes.labelcolor':'#243c48','pdf.fonttype':42})
 C={'ink':'#243c48','blue':'#286b98','teal':'#16857b','orange':'#b87530','red':'#a95159','pale':'#edf4f7','green':'#eaf5f0','sand':'#fcf1e5','line':'#bcced4','muted':'#536b78'}
 outputs=[];data={};layout=[]
 for source in json.loads((HERE/'sources.json').read_text())['sources']:
@@ -55,7 +56,7 @@ for x in [.54,.78]:
 label(a,.025,.49,'PD：按生成阶段分工')
 box(a,.025,.16,.18,.18,'P 服务池','处理输入',col='pale')
 box(a,.29,.16,.18,.18,'D 服务池','逐步生成',col='green')
-arrow(a,(.21,.25),(.285,.25));a.text(.245,.36,'历史 KV',ha='center',fontsize=11)
+arrow(a,(.21,.25),(.285,.25));a.text(.245,.36,'上下文 KV',ha='center',fontsize=11)
 label(a,.53,.49,'AF：按层内算子分工')
 box(a,.54,.16,.19,.18,'Attention','注意力计算',col='pale')
 box(a,.79,.16,.19,.18,'FFN／专家','前馈计算',col='green')
@@ -137,9 +138,9 @@ save(f,'figure-9-12-cache');data['9-12']={'type':'observed_usable_prefix_pages',
 
 # Direct and pooled transfers compare exactly the same state object.
 f,a=canvas(7)
-box(a,.025,.71,.21,.16,'P','生成历史 KV');box(a,.755,.71,.21,.16,'D','读取历史 KV',col='green');arrow(a,(.245,.79),(.745,.79),'orange');a.text(.50,.86,'1.125 GiB',ha='center',color=C['orange'],fontsize=12)
+box(a,.025,.71,.21,.16,'P','生成上下文 KV');box(a,.755,.71,.21,.16,'D','读取上下文 KV',col='green');arrow(a,(.245,.79),(.745,.79),'orange');a.text(.50,.86,'1.125 GiB',ha='center',color=C['orange'],fontsize=12)
 a.text(.025,.96,'直接交接',fontsize=14,weight='bold')
-box(a,.025,.36,.21,.16,'P','生成历史 KV');box(a,.39,.36,.21,.16,'共享池','保存后发布',col='sand');box(a,.755,.36,.21,.16,'D','读取历史 KV',col='green')
+box(a,.025,.36,.21,.16,'P','生成上下文 KV');box(a,.39,.36,.21,.16,'共享池','保存后发布',col='sand');box(a,.755,.36,.21,.16,'D','读取上下文 KV',col='green')
 for x in [.245,.61]:arrow(a,(x,.44),(x+.135,.44),'orange');a.text(x+.065,.55,'1.125 GiB',ha='center',color=C['orange'],fontsize=11)
 a.text(.025,.62,'经池中转',fontsize=14,weight='bold')
 box(a,.755,.055,.21,.14,'后续实例','取回，替代重算',col='green');arrow(a,(.50,.35),(.75,.125),'teal',rad=.12);a.text(.43,.15,'再次复用同一对象',fontsize=12,color=C['teal'])
@@ -191,6 +192,8 @@ from teaching_reading import readable_diagrams
 page=readable_diagrams(page)
 hp=md.with_suffix('.html');hp.write_text(page)
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')
-artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',hp,md]
+from book_assets import sync_figure_index
+active_assets=sync_figure_index(HERE)
+artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',hp,md]+active_assets
 (HERE/'manifest.json').write_text(json.dumps({'chapter':9,'generator':'manuscripts/ch09/build.py','figures':len(teaching_checks),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(outputs)} image files, {len(maths)} formulas, offline HTML; {len(layout)} extent warnings.')

@@ -76,14 +76,14 @@ def draw(here,data):
         for i,row in enumerate(data['thinking']['cost_parts']):
             start=0
             for v,c,l in zip(row,['blue','orange','green'],['输入','思考','可见输出']):a.barh(i,v,left=start,height=.5,color=COL[c],edgecolor=COL['line'],label=l if i==0 else None);start+=v
-        a.set(yticks=[0,1],yticklabels=['1000 思考','100 思考'],xlabel='单次调用费用',ylim=(-.5,2.0));a.legend(ncol=3,frameon=False,loc='upper left');save(f,'thinking')
+        a.set(yticks=[0,1],yticklabels=['1000 思考','100 思考'],xlabel='单次调用成本',ylim=(-.5,2.0));a.legend(ncol=3,frameon=False,loc='upper left');save(f,'thinking')
         f,a=canvas(4.1);box(a,.04,.40,.23,.23,'任务控制器','orange',11);box(a,.38,.40,.23,.23,'服务入口','gray');box(a,.74,.68,.22,.19,'外部 API','blue',11);box(a,.74,.15,.22,.19,'自建副本','green',11);arrow(a,(.27,.515),(.38,.515));arrow(a,(.61,.56),(.74,.775));arrow(a,(.61,.46),(.74,.245));text(a,.50,.86,'按调用用量计费',11,ha='center');text(a,.5,.13,'按设备与运行支出计费',11,ha='center');save(f,'6-service')
         for quality,name in [(False,'7-routing'),(True,'routing-deadline')]:
             d=data['11-7'];h=np.array(d['h']);f,a=plot(4.0)
             if quality:a.plot(h*100,.98*h*100,color='#267398');a.axhline(90,ls='--',color='#a56c28');a.axvline(d['joint_target_hit']*100,ls='--',color='#666');a.set(ylabel='按时成功的提交比例（%）',ylim=(0,105))
-            else:a.plot(h*100,d['cost_B'],label='服务 B',color='#267398');a.axhline(d['cost_A'],label='服务 A',color='#a56c28');a.axvline(d['cost_crossover']*100,ls='--',color='#666');a.set(ylabel='每个成功任务的费用');a.legend(frameon=False)
+            else:a.plot(h*100,d['cost_B'],label='服务 B',color='#267398');a.axhline(d['cost_A'],label='服务 A',color='#a56c28');a.axvline(d['cost_crossover']*100,ls='--',color='#666');a.set(ylabel='每个成功任务的成本');a.legend(frameon=False)
             a.set(xlabel='B 请求命中率（%）',xlim=(0,100));save(f,name)
-        f,a=plot(3.8);n=np.linspace(0,200000,100);d=data['purchase'];a.plot(n/1e4,d['fixed']+n*d['self_per_task'],label='自建',color='#267398');a.plot(n/1e4,n*d['api_per_task'],label='按量 API',color='#388768');a.set(xlabel='提交任务数（万项）',ylabel='总费用');a.legend(frameon=False);save(f,'purchase')
+        f,a=plot(3.8);n=np.linspace(0,200000,100);d=data['purchase'];a.plot(n/1e4,d['fixed']+n*d['self_per_task'],label='自建',color='#267398');a.plot(n/1e4,n*d['api_per_task'],label='按量 API',color='#388768');a.set(xlabel='提交任务数（万项）',ylabel='总成本');a.legend(frameon=False);save(f,'purchase')
         f,a=canvas(4.6)
         for x,l,c in [(.04,'控制器','orange'),(.64,'外部系统','blue')]:box(a,x,.69,.32,.17,l,c)
         arrow(a,(.36,.77),(.64,.77));text(a,.5,.95,'操作 ID：K',12,ha='center');box(a,.64,.39,.32,.17,'操作已提交','green',11);arrow(a,(.80,.69),(.80,.56));arrow(a,(.64,.46),(.36,.46),'control');text(a,.17,.46,'确认丢失',12,ha='center');arrow(a,(.36,.18),(.64,.18),'control');text(a,.5,.08,'恢复后先按 K 查询结果',12,ha='center');save(f,'commit-ack')
@@ -101,4 +101,6 @@ def draw(here,data):
         for i,model in enumerate([9,6]):
             for k in range(3):a.barh(i,model,left=k*(model+1),height=.5,color=COL['blue'],edgecolor=COL['line']);a.barh(i,1,left=k*(model+1)+model,height=.5,color=COL['orange'],edgecolor=COL['line'])
         a.axvline(24,ls='--',color='#a56c28');a.set(yticks=[0,1],yticklabels=['普通模型','快速模型'],xlim=(0,31),xlabel='完成时间（s）');save(f,'decision')
+    from core_principles_figures import draw as draw_principles
+    draw_principles(11, out)
     out.finish();return out.outputs,out.checks

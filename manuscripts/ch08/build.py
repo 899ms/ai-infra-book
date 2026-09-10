@@ -11,10 +11,11 @@ import numpy as np
 import markdown
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1]
 parser=argparse.ArgumentParser();parser.add_argument('--font');args=parser.parse_args()
-font=next((Path(p) for p in [args.font,'/System/Library/Fonts/Supplemental/Arial Unicode.ttf','/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'] if p and Path(p).exists()),None)
-if not font:raise SystemExit('A CJK font is required; use --font')
-font_manager.fontManager.addfont(str(font));family=font_manager.FontProperties(fname=str(font)).get_name()
-plt.rcParams.update({'font.family':family,'font.size':11,'axes.unicode_minus':False,'svg.fonttype':'none','svg.hashsalt':'ch08-v1','pdf.fonttype':42,'axes.spines.top':False,'axes.spines.right':False,'figure.facecolor':'white','savefig.facecolor':'white'})
+import sys
+sys.path.insert(0,str(HERE.parent))
+from figure_style.typography import configure_font
+font,family=configure_font(args.font)
+plt.rcParams.update({'font.family':[family,'DejaVu Sans'],'font.size':11,'axes.unicode_minus':False,'svg.fonttype':'path','svg.hashsalt':'ch08-v1','pdf.fonttype':42,'axes.spines.top':False,'axes.spines.right':False,'figure.facecolor':'white','savefig.facecolor':'white'})
 C={'ink':'#203c48','blue':'#286b98','teal':'#16857b','orange':'#bc722b','red':'#a94c52','pale':'#edf3f6','gray':'#e2e7ea','line':'#b7c8ce'}
 for row in json.loads((HERE/'sources.json').read_text())['sources']:
  if hashlib.sha256((ROOT/row['path']).read_bytes()).hexdigest()!=row['sha256']:raise SystemExit('Source changed; review before rebuilding: '+row['path'])
@@ -41,7 +42,7 @@ def arrow(a,p,q,col='teal',rad=0):a.add_patch(FancyArrowPatch(p,q,arrowstyle='-|
 f,a=plt.subplots(figsize=(11,6.8));f.subplots_adjust(left=.10,right=.96,bottom=.14,top=.93)
 bs=np.arange(1,129);weight=15136811008/2**30/bs
 for L,col in [(2048,'blue'),(8192,'teal')]:
- kv=L*147456/2**30;a.plot(bs,weight+kv,color=C[col],lw=2.5,label=f'{L//1024}K 历史：总读取');a.axhline(kv,color=C[col],ls='--',lw=1.2,label=f'{L//1024}K 历史：KV')
+ kv=L*147456/2**30;a.plot(bs,weight+kv,color=C[col],lw=2.5,label=f'{L//1024}K 上下文：总读取');a.axhline(kv,color=C[col],ls='--',lw=1.2,label=f'{L//1024}K 上下文：KV')
  cross=(15136811008+L*147456-1)//(L*147456);yy=15136811008/2**30/cross+kv;a.scatter([cross],[yy],color=C[col],s=45);a.annotate(f'b = {cross}',xy=(cross,yy),xytext=(cross*.65,yy*1.6),arrowprops={'arrowstyle':'->','color':C[col]},color=C[col])
 a.plot(bs,weight,color='#7b858a',lw=1.7,label='每 token 分摊的权重');a.set(xscale='log',yscale='log',xlim=(1,128),ylim=(.09,20),xlabel='批量 b',ylabel='每个输出 token 的读取量 / GiB',xticks=[1,2,4,8,16,32,64,128],xticklabels=[1,2,4,8,16,32,64,128],yticks=[.125,.25,.5,1,2,4,8,16],yticklabels=['0.125','0.25','0.5','1','2','4','8','16']);a.minorticks_off();a.grid(alpha=.16);a.legend(frameon=False,loc='upper right')
 data['batch']={'shared_weight_bytes':15136811008,'kv_bytes_per_position':147456,'batch':bs.tolist(),'history_lengths':[2048,8192]};save(f,'figure-8-2-batch')
@@ -115,7 +116,7 @@ a.text(0,-.43,'边：新增 token 数；叶：总输入 token 数',fontsize=10)
 a=f.add_axes([.56,.18,.40,.69]);common=[0]+[lcp([seq[i-1],seq[i]]) for i in range(1,len(seq))];lens=[len(s) for s in seq];a.bar(range(1,13),common,color=C['teal'],label='与上一轮共同前缀');a.bar(range(1,13),np.array(lens)-common,bottom=common,color=C['orange'],label='其余输入');a.set(xticks=[1,3,6,9,12],xlabel='轮次',ylabel='输入 token 数');a.set_title('12 轮 token 匹配〔输入分析〕',fontsize=12,loc='left');a.legend(fontsize=9,frameon=False)
 data['prefix']={'tree':nodes,'edges':edges,'input_lengths':lens,'adjacent_lcp':common,'kind':'derived_token_identity_not_measured_hits'};save(f,'figure-8-6-prefix')
 # 4. One relation: buffering changes the number of complete histories that fit.
-f,a=canvas(6.5);a.text(.02,.94,'同样卸载 2592 MiB，缓冲占用改变可接纳的历史数',fontsize=15,weight='bold')
+f,a=canvas(6.5);a.text(.02,.94,'同样卸载 2592 MiB，缓冲占用改变可接纳的上下文数',fontsize=15,weight='bold')
 scale=.74/2592
 for y,buff,count in [(.66,288,2),(.29,576,1)]:
  x=.20;a.text(.02,y+.065,f'{buff//288} 组缓冲',va='center',fontsize=12)
@@ -126,8 +127,8 @@ for y,buff,count in [(.66,288,2),(.29,576,1)]:
  remaining=2592-buff-count*1152
  if remaining:
   a.add_patch(Rectangle((pos,y),remaining*scale,.13,fc=C['gray']));a.text(pos+remaining*scale/2,y+.065,f'余 {remaining}',ha='center',va='center',fontsize=12)
- a.text(.20,y-.085,f'净空间 {2592-buff} MiB → {count} 条完整历史',fontsize=13,color=C['ink'])
-a.text(.5,.04,'橙：预取缓冲    绿：完整 KV 历史    灰：不足一条的余量（单位：MiB）',ha='center',fontsize=11)
+ a.text(.20,y-.085,f'净空间 {2592-buff} MiB → {count} 条完整上下文',fontsize=13,color=C['ink'])
+a.text(.5,.04,'橙：预取缓冲    绿：完整 KV 上下文    灰：不足一条的余量（单位：MiB）',ha='center',fontsize=11)
 data['offload']={'offload_gib':2.53125,'buffer_gib':[.28125,.5625],'net_gib':[2.25,1.96875],'bandwidth_gib_s':[24,384],'copy_ms':[2.53125/24*1000,2.53125/384*1000]};save(f,'figure-8-9-offload')
 # Task-aligned quality comparison, with all four natural runs per task visible.
 quality=read('experiments/ch08/08-08/results/summary.json');qcontrol=read('experiments/ch08/08-08/results/q-control-summary.json')
@@ -220,6 +221,8 @@ from teaching_reading import readable_diagrams
 page=readable_diagrams(page)
 hp.write_text(page)
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')
-artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',md,hp]
+from book_assets import sync_figure_index
+active_assets=sync_figure_index(HERE)
+artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',md,hp]+active_assets
 (HERE/'manifest.json').write_text(json.dumps({'chapter':8,'generator':'manuscripts/ch08/build.py','figures':len(outputs)//3,'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(outputs)} images; {len(maths)} formulas; {len(warnings)} extent warnings.')

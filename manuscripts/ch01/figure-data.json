@@ -64,6 +64,64 @@
     }
   ],
   "measurement_scope": "Qwen3-8B BF16 / RTX PRO 6000 Blackwell / vLLM 0.23 eager / 2048 input / 256 forced output / 3 rounds per batch; throughput includes prefill; TPOT client first-to-last output / 255.",
+  "capacity_example": {
+    "model": "DeepSeek-R1-Distill-Llama-70B",
+    "parameters": 70553706496,
+    "bf16_weight_bytes": 141107412992,
+    "int8_weight_and_metadata_bytes": 73725919232,
+    "kv_bytes_per_8192_token_request": 2684354560,
+    "workspace_bytes": 2147483648,
+    "h100_nominal_capacity_bytes": 80000000000,
+    "rtx4090_nominal_capacity_bytes": 24000000000
+  },
+  "reference_numbers": {
+    "devices": [
+      {
+        "id": "rtx4090",
+        "capacity_gb": 24,
+        "bandwidth_tb_s": 1.008,
+        "bf16_fp32_dense_tflop_s": 165.2,
+        "read_1gb_ms": 0.9920634920634921
+      },
+      {
+        "id": "a100-80gb-sxm",
+        "capacity_gb": 80,
+        "bandwidth_tb_s": 2.039,
+        "bf16_fp32_dense_tflop_s": 312,
+        "read_1gb_ms": 0.4904364884747425
+      },
+      {
+        "id": "h100-sxm",
+        "capacity_gb": 80,
+        "bandwidth_tb_s": 3.35,
+        "bf16_fp32_dense_tflop_s": 989.4,
+        "read_1gb_ms": 0.29850746268656714
+      }
+    ],
+    "model": "Qwen3-8B",
+    "calls": [
+      {
+        "stage": "prefill",
+        "tokens": 2048,
+        "history": 0,
+        "matrix_flops": 29688662589440,
+        "h100_matrix_only_ms": 30.00673396951688,
+        "weights_plus_kv_bytes": 16683460608
+      },
+      {
+        "stage": "decode",
+        "tokens": 1,
+        "history": 2048,
+        "matrix_flops": 16344743936,
+        "h100_matrix_only_ms": 0.016519854392561147,
+        "weights_plus_kv_bytes": 16683608064
+      }
+    ],
+    "weight_bytes": 16381470720,
+    "decode_weight_read_bytes": 15136811008,
+    "kv_bytes_per_token": 147456,
+    "source_scope": "BF16 model data; matrix operation counts and ideal interface traffic; GPU times are resource bounds"
+  },
   "teaching_diagrams": {
     "capacity_path": {
       "capacity_GB": 80,

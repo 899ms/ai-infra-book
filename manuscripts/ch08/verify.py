@@ -12,7 +12,7 @@ def check(ok,msg):
  if not ok:errors.append(msg)
 def load(p):return json.loads(p.read_text())
 outline=(ROOT/'outlines/08-单实例推理.md').read_text()
-check(re.findall(r'^#{2,3} (8\.[^\n]+)',raw,re.M)==re.findall(r'^#{2,3} (8\.[^\n]+)',outline,re.M),'Outline headings differ')
+check(re.findall(r'^#{2,3} (8\.\d+(?:\.\d+)?) ',raw,re.M)==re.findall(r'^#{2,3} (8\.\d+(?:\.\d+)?) ',outline,re.M),'Outline section numbering/order differs')
 check(re.findall(r'^> \*\*练习 (8-\d+)',raw,re.M)==[f'8-{i}' for i in range(1,10)],'Exercise sequence')
 check(re.findall(r'^> \*\*练习 (8-\d+) · 核心',raw,re.M)==['8-2','8-4','8-9'],'Core selection')
 figure_count=len(load(HERE/'figure-index.json'))

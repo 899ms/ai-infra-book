@@ -47,7 +47,7 @@ def draw(here,data):
 
         d=data['teaching_diagrams']['success_cost'];f,a=canvas(3.6)
         for y,title,cost,success,c in [(.58,'原策略',100,50,'blue'),(.17,'新策略',200,80,'orange')]:
-            box(a,.03,y,.28,.21,title,c);box(a,.41,y,.55,.21,f'{cost} 费用 ÷ {success} 次成功\n= {cost/success:g} 费用／成功',c)
+            box(a,.03,y,.28,.21,title,c);box(a,.41,y,.55,.21,f'{cost} 成本 ÷ {success} 次成功\n= {cost/success:g} 成本／成功',c)
             arrow(a,(.31,y+.105),(.41,y+.105))
         text(a,.5,.93,'两种策略各尝试 100 次',14,ha='center');save(f,'success-cost')
         rounds=data['3-3']['rounds'];bars('3-agent',['第 1 轮：截断','第 2 轮：写文件','第 3 轮：测试','第 4 轮：结束'],[r['measured_model_seconds'] for r in rounds],'每轮模型墙钟时间（s）')
@@ -114,13 +114,15 @@ def draw(here,data):
         f,a=plot(3.1);res=d['residuals'];a.bar(range(8),[z['residual'] for z in res],color=[COL['blue'] if z['split']=='fit' else COL['orange'] for z in res],edgecolor=COL['line']);a.axhline(0,lw=.8,color='#555555');a.set(xticks=range(8),xticklabels=['F1','F2','F3','F4','F5','F6','H1','H2'],xlabel='F：拟合点；H：留出点',ylabel='预测减观测（nats/token）');save(f,'scaling-residual')
         f,a=plot(3.8);calls=np.linspace(0,4e8,200)
         for r,col in zip(d['lifecycle']['rows'],['#a56c28','#388768','#267398','#777777']):a.plot(calls/1e8,r['upfront_cost']+calls*r['cost_per_call'],color=col,ls='--' if r['outside_fit_box'] else '-',label=f"{r['N']/1e9:g}B"+(' 外推' if r['outside_fit_box'] else ''))
-        a.axvline(d['crossing_calls']/1e8,color='#777777',lw=.8);a.set(xlim=(0,4),ylim=(0,1650),xlabel='累计调用（亿次）',ylabel='累计费用（题设单位）');a.legend(frameon=False);save(f,'lifecycle-cost')
+        a.axvline(d['crossing_calls']/1e8,color='#777777',lw=.8);a.set(xlim=(0,4),ylim=(0,1650),xlabel='累计调用（亿次）',ylabel='累计成本（题设单位）');a.legend(frameon=False);save(f,'lifecycle-cost')
         d=data['3-8'];bars('8-history',['Llama 1 6.7B','Llama 2 7B','Llama 3.1 8B','Qwen2.5 7B','Qwen3 8B'],d['ratios'],'报告训练 token 数／参数数',4.0)
         f,a=plot(3.7,left=.26);ctx=[r['parameter_context'] for r in d['moe_rows']];y=np.arange(3)
         for dy,key,col,label in [(-.16,'total_reported','blue','总参数'),(.16,'active_reported','orange','激活参数')]:a.barh(y+dy,[r[key]/1e9 for r in ctx],height=.29,color=COL[col],edgecolor=COL['line'],label=label)
-        a.set(yticks=y,yticklabels=['V3','V4-Flash','V4-Pro'],xlabel='参数数（十亿）',xlim=(0,1900));a.invert_yaxis();a.legend(frameon=False);save(f,'moe-history')
+        a.set(yticks=y,yticklabels=['DeepSeek-V3','DeepSeek\nV4-Flash','DeepSeek\nV4-Pro'],xlabel='参数数（十亿）',xlim=(0,1900));a.invert_yaxis();a.legend(frameon=False);save(f,'moe-history')
         hist={r['input']['id']:r for r in data['3-9']['history_rows']}
         for ids,name in [(['llama1-7b','llama1-65b','llama2-7b','llama2-70b'],'9-gpu-hours'),(['llama31-8b','llama31-70b','llama31-405b'],'h100-hours')]:
             bars(name,[k.replace('llama31','Llama 3.1').replace('llama1','Llama 1').replace('llama2','Llama 2').replace('-',' ') for k in ids],[hist[k]['input']['gpu_hours']/1e6 for k in ids],'公开训练用量（百万 GPU 小时）')
-        parts=data['3-9']['stage_reports'][0]['input']['parts'];bars('v3-stage-hours',['V3 预训练','上下文扩展','后训练'],[parts[k]/1e6 for k in ['pretraining','context_extension','posttraining']],'H800 用量（百万 GPU 小时）')
+        parts=data['3-9']['stage_reports'][0]['input']['parts'];bars('v3-stage-hours',['DeepSeek-V3\n预训练','上下文扩展','后训练'],[parts[k]/1e6 for k in ['pretraining','context_extension','posttraining']],'H800 用量（百万 GPU 小时）')
+    from v41_case_figures import draw as draw_v41
+    draw_v41(3, out)
     return out.finish()

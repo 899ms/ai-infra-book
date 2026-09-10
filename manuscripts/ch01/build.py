@@ -16,12 +16,11 @@ import markdown
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
 parser=argparse.ArgumentParser();parser.add_argument('--font');args=parser.parse_args()
-font_candidates=[args.font,'/System/Library/Fonts/Supplemental/Arial Unicode.ttf',
- '/System/Library/Fonts/STHeiti Medium.ttc','/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc']
-font_path=next((Path(p) for p in font_candidates if p and Path(p).exists()),None)
-if font_path is None:raise SystemExit('Supply a Chinese font using --font.')
-font_manager.fontManager.addfont(str(font_path));family=font_manager.FontProperties(fname=str(font_path)).get_name()
-plt.rcParams.update({'font.family':family,'font.size':12,'axes.unicode_minus':False,'svg.fonttype':'none',
+import sys
+sys.path.insert(0,str(HERE.parent))
+from figure_style.typography import configure_font
+font_path,family=configure_font(args.font)
+plt.rcParams.update({'font.family':[family,'DejaVu Sans'],'font.size':12,'axes.unicode_minus':False,'svg.fonttype':'path',
  'axes.spines.top':False,'axes.spines.right':False,'axes.edgecolor':'#BAC6CD',
  'xtick.color':'#4E6571','ytick.color':'#4E6571','text.color':'#193441','axes.labelcolor':'#193441',
  'figure.facecolor':'white','savefig.facecolor':'white','svg.hashsalt':'ai-infra-ch01-v1'})
@@ -49,6 +48,23 @@ data={'historical_latency_ns':{'L1 cache':.5,'L2 cache':7,'Main memory':100,'Dat
  'per_output_resource_lower_bound_ms':[max(compute_ms*b,memory_ms)/b for b in [1,4,16,64]],
  'excluded':['KV and workspace','conversion','non-matrix work','realized efficiency','queueing']},
  'measured_short_group':short,'measurement_scope':'Qwen3-8B BF16 / RTX PRO 6000 Blackwell / vLLM 0.23 eager / 2048 input / 256 forced output / 3 rounds per batch; throughput includes prefill; TPOT client first-to-last output / 255.'}
+weight_index=json.loads((ROOT/'calculations/sources/deepseek-r1-distill-llama-70b/model.safetensors.index.json').read_text())
+quantized=json.loads((ROOT/'calculations/results/dense-quant-deepseek-r1-distill-llama-70b-tp1-pp8-80gb-8192.json').read_text())
+weight_bytes={row['bits']:row['physical_weight_bytes'] for row in quantized['summary']}
+assert weight_bytes[16]==weight_index['metadata']['total_size']==141107412992
+assert weight_bytes[8]==73725919232
+assert weight_bytes[16]>80e9 and weight_bytes[16]/2+5e9<80e9
+assert weight_bytes[8]+(2.5+2)*2**30<80e9
+assert 3*24e9<weight_bytes[8]<4*24e9
+data['capacity_example']={'model':'DeepSeek-R1-Distill-Llama-70B',
+ 'parameters':weight_bytes[16]//2,'bf16_weight_bytes':weight_bytes[16],
+ 'int8_weight_and_metadata_bytes':weight_bytes[8],
+ 'kv_bytes_per_8192_token_request':int(2.5*2**30),'workspace_bytes':2*2**30,
+ 'h100_nominal_capacity_bytes':80000000000,'rtx4090_nominal_capacity_bytes':24000000000}
+from reference_numbers import reference_numbers
+data['reference_numbers']=reference_numbers()
+assert data['reference_numbers']['calls'][0]['matrix_flops']==29688662589440
+assert data['reference_numbers']['calls'][1]['matrix_flops']==16344743936
 (HERE/'figure-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
 outputs=[]
 import sys
@@ -293,6 +309,8 @@ sys.path.insert(0,str(HERE.parent))
 from teaching_reading import readable_diagrams
 page=readable_diagrams(page)
 ht=md.with_suffix('.html');ht.write_text(page);outputs.append(ht)
+from book_assets import sync_figure_index
+outputs.extend(sync_figure_index(HERE))
 manifest={'source_lock':'sources.json','font':str(font_path),'matplotlib':matplotlib.__version__,
  'chapter':{'file':str(md.relative_to(ROOT)),'sha256':hashlib.sha256(md.read_bytes()).hexdigest()},
  'outputs':[{'path':str(p.relative_to(ROOT)),'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in outputs]}

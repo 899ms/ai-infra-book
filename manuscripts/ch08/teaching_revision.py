@@ -17,7 +17,7 @@ def draw(here,data):
         for dur,l,c in [(.1,'排队','gray'),(.3,'prefill','blue'),(2.55,'decode','green')]:a.barh(0,dur,left=start,height=.35,color=COL[c],edgecolor=COL['line'],label=l);start+=dur
         a.scatter([.4,2.95],[0,0],color='#252525',zorder=5);a.axvline(3,ls='--',color='#a56c28');a.set(yticks=[],xlim=(0,3.15),xlabel='从到达起计时（s）');a.legend(ncol=3,frameon=False,loc='upper center');save(f,'1-lifecycle')
         f,a=plot(3.7);b=np.array(data['batch']['batch']);w=data['batch']['shared_weight_bytes']/2**30/b
-        for L,c in [(2048,'#267398'),(8192,'#388768')]:a.plot(b,w+L*144/2**20,color=c,label=f'{L} 位置历史');a.axhline(L*144/2**20,color=c,ls=':')
+        for L,c in [(2048,'#267398'),(8192,'#388768')]:a.plot(b,w+L*144/2**20,color=c,label=f'{L} 位置上下文');a.axhline(L*144/2**20,color=c,ls=':')
         a.plot(b,w,ls='--',color='#777777',label='共享权重项');a.set(xscale='log',yscale='log',xlabel='批内请求数',ylabel='每输出读取量（GiB）');a.legend(frameon=False);save(f,'2-batch')
         for i,key in enumerate(['fixed','continuous','chunked']):
             f,a=plot(3.8,left=.16)
@@ -29,7 +29,7 @@ def draw(here,data):
             f,a=canvas(3.5);h=d['history'];step=.065;start=.15
             for row in range(4):
                 for col in range(h+4):box(a,start+col*step,.65-row*.13,step-.008,.105,'','blue' if col<h else ('green' if col-h<=row else 'white'))
-            text(a,.04,.91,f'旧历史 {h} + 新位置 4',14);text(a,.5,.12,f'旧历史配对 {4*h} + 块内配对 10 = {4*h+10}',12,ha='center');save(f,'4-attention' if i==0 else 'attention-history')
+            text(a,.04,.91,f'旧上下文 {h} + 新位置 4',14);text(a,.5,.12,f'旧上下文配对 {4*h} + 块内配对 10 = {4*h+10}',12,ha='center');save(f,'4-attention' if i==0 else 'attention-history')
         f,a=canvas(4.5);text(a,.04,.94,'逻辑块按序排列，物理块分散存放',14)
         for i,target in enumerate([2,0,3]):
             x=.06+i*.31;box(a,x,.68,.24,.13,f'逻辑块 {i}','blue',11);text(a,x+.12,.54,f'块表：{i} → {target}',11,ha='center');arrow(a,(x+.12,.46),(.14+target*.235,.31))
@@ -86,7 +86,7 @@ def draw(here,data):
             f,a=plot(4.7,left=.25);a.imshow(m,cmap=ListedColormap([COL['orange'],COL['green']]),vmin=0,vmax=1,aspect='auto')
             for y,row in enumerate(m):
                 for x,val in enumerate(row):a.text(x,y,'○' if val else '×',ha='center',va='center',fontsize=14)
-            a.set(yticks=range(8),yticklabels=data['kv']['task_ids'],xticks=range(4),xticklabels=['1 / 1','1 / 2','4 / 1','4 / 2'],xlabel='并发数 / 重复序号');save(f,'10-kv-quality' if i==0 else f'kv-quality-{i}')
+            a.set(yticks=range(8),yticklabels=[f'任务 {j+1}' for j in range(len(data['kv']['task_ids']))],xticks=range(4),xticklabels=['1 / 1','1 / 2','4 / 1','4 / 2'],xlabel='并发数 / 重复序号');save(f,'10-kv-quality' if i==0 else f'kv-quality-{i}')
         f,a=canvas(4.6)
         for row,(title,tokens) in enumerate([('草稿',['a','b','c','d']),('验证',['a','b','x','丢弃']),('保留',['a','b','x'])]):
             y=.71-row*.28;text(a,.03,y+.065,title,12)
@@ -110,4 +110,8 @@ def draw(here,data):
         f,a=plot(3.6);s=np.array(data['task']['local_speedups'])
         for frac,col in zip(data['task']['decode_fractions'],['#267398','#388768','#a56c28']):a.plot(s,1/(1-frac+frac/s),label=f'decode 占 {frac:.0%}',color=col)
         a.set(xlabel='decode 加速比',ylabel='完整任务加速比',xlim=(1,8));a.legend(frameon=False);save(f,'15-task')
+    from core_principles_figures import draw as draw_principles
+    draw_principles(8, out)
+    from v41_case_figures import draw as draw_v41
+    draw_v41(8, out)
     out.finish();return out.outputs,out.checks

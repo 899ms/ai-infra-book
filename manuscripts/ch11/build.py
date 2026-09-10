@@ -12,10 +12,11 @@ import numpy as np
 import markdown
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1]
 parser=argparse.ArgumentParser();parser.add_argument('--font');args=parser.parse_args()
-font=next((Path(x) for x in [args.font,'/System/Library/Fonts/Supplemental/Arial Unicode.ttf','/System/Library/Fonts/STHeiti Medium.ttc','/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'] if x and Path(x).exists()),None)
-if not font:raise SystemExit('Use --font to provide a CJK font')
-font_manager.fontManager.addfont(str(font));family=font_manager.FontProperties(fname=str(font)).get_name()
-plt.rcParams.update({'font.family':family,'font.size':12,'axes.unicode_minus':False,'svg.fonttype':'none','svg.hashsalt':'chapter11-v1','axes.spines.top':False,'axes.spines.right':False,'figure.facecolor':'white','savefig.facecolor':'white','text.color':'#233c48','axes.labelcolor':'#233c48','axes.edgecolor':'#9bacb4'})
+import sys
+sys.path.insert(0,str(HERE.parent))
+from figure_style.typography import configure_font
+font,family=configure_font(args.font)
+plt.rcParams.update({'font.family':[family,'DejaVu Sans'],'font.size':12,'axes.unicode_minus':False,'svg.fonttype':'path','svg.hashsalt':'chapter11-v1','axes.spines.top':False,'axes.spines.right':False,'figure.facecolor':'white','savefig.facecolor':'white','text.color':'#233c48','axes.labelcolor':'#233c48','axes.edgecolor':'#9bacb4'})
 C={'ink':'#233c48','blue':'#286b94','teal':'#20867e','orange':'#bb682d','red':'#aa4949','pale':'#edf3f7','green':'#e4f2ed','sand':'#fbf0df','muted':'#506975','line':'#bccdd5','gray':'#e1e6ea'}
 for row in json.loads((HERE/'sources.json').read_text())['sources']:
  if hashlib.sha256((ROOT/row['path']).read_bytes()).hexdigest()!=row['sha256']:raise SystemExit('Locked source changed: '+row['path'])
@@ -103,8 +104,8 @@ box(a,.30,.51,.21,.22,'服务入口','鉴权、路由、限流')
 box(a,.69,.69,.27,.21,'外部模型 API','队列、缓存、生成','pale')
 box(a,.69,.26,.27,.21,'自建模型副本','加载、队列、执行','green')
 arrow(a,(.19,.62),(.30,.62));arrow(a,(.51,.67),(.69,.79));arrow(a,(.51,.55),(.69,.37))
-a.text(.56,.83,'调用账单',ha='center',fontsize=11);a.text(.57,.35,'设备预留费用',ha='center',fontsize=11)
-box(a,.15,.045,.48,.21,'记录每项任务及各次尝试的费用','普通输入 / 创建 / 读取 / 生成 / 其他费用','sand',12)
+a.text(.56,.83,'调用账单',ha='center',fontsize=11);a.text(.57,.35,'设备预留成本',ha='center',fontsize=11)
+box(a,.15,.045,.48,.21,'记录每项任务及各次尝试的成本','普通输入 / 创建 / 读取 / 生成 / 其他成本','sand',12)
 arrow(a,(.40,.51),(.40,.255));arrow(a,(.81,.26),(.63,.16))
 a.text(.07,.86,'请求与结果沿各自路径往返',fontsize=12,color=C['muted'])
 save(f,'figure-11-6-service');data['11-6']={'kind':'mechanism','usage_categories':['uncached_input','cache_creation','cache_read','billed_generation','storage','tools']}
@@ -115,9 +116,9 @@ f,a=plt.subplots(figsize=(10.5,5.3));f.subplots_adjust(left=.12,right=.96,bottom
 a.plot(h*100,cb,color=C['blue'],label='B：命中率变化',lw=2.3);a.axhline(ca,color=C['orange'],label='A：前缀全命中，10 s 超过期限',lw=2)
 a.axvline(cross*100,color=C['muted'],ls='--',lw=1);a.axvline(target*100,color=C['teal'],ls='--',lw=1)
 a.axvspan(target*100,100,color=C['green'],alpha=.9,zorder=0)
-a.annotate('费用相同：约 84.9%',(cross*100,ca),(37,.031),arrowprops={'arrowstyle':'->','color':C['muted']},fontsize=12)
+a.annotate('成本相同：约 84.9%',(cross*100,ca),(37,.031),arrowprops={'arrowstyle':'->','color':C['muted']},fontsize=12)
 a.annotate('B 达到按时通过率要求：约 91.8%',(target*100,.007),(12,.006),arrowprops={'arrowstyle':'->','color':C['teal']},fontsize=12)
-a.set(xlabel='B 请求命中率 / %',ylabel='费用单位 / 通过测试的任务',xlim=(0,100),ylim=(0,.046));a.legend(frameon=False,fontsize=11,loc='upper right');a.grid(alpha=.15)
+a.set(xlabel='B 请求命中率 / %',ylabel='成本单位 / 通过测试的任务',xlim=(0,100),ylim=(0,.046));a.legend(frameon=False,fontsize=11,loc='upper right');a.grid(alpha=.15)
 save(f,'figure-11-7-routing');data['11-7']={'kind':'teaching_from_locked_calculation','source':'calculations/results/routing-cost-book.json','focus':'cost comparison constrained by deadline','h':h.tolist(),'cost_A':ca,'cost_B':cb.tolist(),'cost_crossover':cross,'joint_target_hit':target}
 
 # Recovery improves completion fraction at an additional cost.
@@ -169,6 +170,8 @@ from teaching_reading import readable_diagrams
 page=readable_diagrams(page)
 html_path=HERE.parent/'11-资源调度与运行环境.html';html_path.write_text(page)
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')
-artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',HERE/'platform-design.json',HERE/'platform_design.py',HERE/'extra_figures.py',HERE/'figure-order.json',html_path,md]
+from book_assets import sync_figure_index
+active_assets=sync_figure_index(HERE)
+artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',HERE/'platform-design.json',HERE/'platform_design.py',HERE/'extra_figures.py',HERE/'figure-order.json',html_path,md]+active_assets
 (HERE/'manifest.json').write_text(json.dumps({'chapter':11,'generator':'manuscripts/ch11/build.py','figures':len(teaching_checks),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(outputs)} figure files, {len(maths)} equations and offline HTML; {len(warnings)} layout warnings.')

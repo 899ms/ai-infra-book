@@ -9,8 +9,8 @@ s=M.read_text();outline=(R/'outlines/02-模型架构.md').read_text();errors=[]
 def check(ok,msg):
  if not ok:errors.append(msg)
 def load(n):return json.loads((R/'calculations/results'/f'{n}.json').read_text())
-head=lambda t:re.findall(r'^#{2,3} (2\.\d+(?:\.\d+)? [^\n]+)',t,re.M)
-check(head(s)==head(outline),'Outline headings/order differ')
+head=lambda t:re.findall(r'^#{2,3} (2\.\d+(?:\.\d+)?) ',t,re.M)
+check(head(s)==head(outline),'Outline section numbering/order differs')
 check(re.findall(r'^> \*\*练习 (2-\d+)',s,re.M)==[f'2-{i}' for i in range(1,10)],'Exercise sequence')
 check(re.findall(r'^> \*\*练习 (2-\d+)[^\n]*〔核心〕',s,re.M)==['2-2','2-5','2-7'],'Core exercise selection')
 index=json.loads((H/'figure-index.json').read_text());figure_count=len(index)

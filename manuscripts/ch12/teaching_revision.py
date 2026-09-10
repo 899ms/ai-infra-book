@@ -60,7 +60,7 @@ def draw(here,data):
                 a.barh(row,ready,height=.5,color=COL[c],edgecolor=COL['line'])
                 if done>ready:a.barh(row,done-ready,left=ready,height=.5,color=COL['gray'],edgecolor=COL['line'])
                 a.plot(done,row,'o',color='#454545')
-            a.set(yticks=[1,0],yticklabels=['音频','图片'],xlim=(0,8),xlabel='应用交付时刻（s）');save(f,name)
+            a.set(yticks=[1,0],yticklabels=['音频','图片'],xlim=(0,8),xlabel='数据交给应用的时刻（s）');save(f,name)
         f,a=plot(4.0,left=.20)
         for row,parts in enumerate(data['12-11']['exchange_components_us']):
             start=0
@@ -93,4 +93,6 @@ def draw(here,data):
             f,a=canvas(4.2);text(a,.04,.94,'已执行十轮；恢复连接需 1 s',14)
             for i in range(10):box(a,.04+i%5*.187,.66-(i//5)*.22,.17,.15,str(i+1),'green' if retained and i<9 else 'orange',12)
             text(a,.5,.22,'保留前九轮，只重做第十轮' if retained else '进度丢失，重做十轮',12,ha='center');text(a,.5,.08,'额外 1 + 1.9 = 2.9 s' if retained else '额外 1 + 10 × 1.9 = 20 s',12,ha='center');save(f,name)
+    from core_principles_figures import draw as draw_principles
+    draw_principles(12, out)
     out.finish();return out.outputs,out.checks

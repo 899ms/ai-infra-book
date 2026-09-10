@@ -68,3 +68,42 @@ python3 -m venv /tmp/ch12-book-venv
 ## 段落衔接与直观图解
 
 本轮新增九幅图，将分块重叠、缓冲耗尽、Agent 的逐轮依赖、迁移回本、层内同步、窗口停等、共享出口、部署时间组成与恢复进度画出来。每幅图旁说明应看哪一段、哪个箭头或交点，前后段落据此继续推导。所有图按阅读顺序重新编号，[figure-catalog.json](figure-catalog.json)记录编号与文件，[修订记录](../../research/ch12-visual-revision-2026-09-10/README.md)说明衔接调整和数据核对。新增图由 `draw-concepts.py` 绘制，`build.py` 统一生成阅读版和配图。
+
+## 当前阅读版配图（2026-09-10）
+
+正文现引用 32 幅图，以下清单按当前阅读顺序列出；上文旧图号用于追溯构建记录。
+
+| 图号 | 内容 | SVG | PNG | PDF |
+| --- | --- | --- | --- | --- |
+| 12-1 | 原图经上行到服务器，服务器收齐后处理，再经下行返回完整成片。实线箭头表示数据与处理顺序；连接已建立，双向传播合计 0.1 s。 | [SVG](figure-12-image-path.svg) | [PNG](figure-12-image-path.png) | [PDF](figure-12-image-path.pdf) |
+| 12-2 | 压缩和计算加速对任务完成时间的影响随上行速率而变化。本例采用原图 30 MB、成片 5 MB、下行 100 Mbit/s、RTT 0.1 秒，原处理时间 0.3 秒；压缩方案将输入减半并增加 0.15 秒编解码。三种方案的成片质量相同，连接已建立且各阶段串行。 | [SVG](figure-12-1-raw.svg) | [PNG](figure-12-1-raw.png) | [PDF](figure-12-1-raw.pdf) |
+| 12-3 | 整图串行：30 MB 全部上传并传播到服务器后才处理，随后回传 5 MB。上行 20 Mbit/s、下行 100 Mbit/s、单向传播 0.05 s，任务于 12.8 s 完成。 | [SVG](figure-12-2-overlap.svg) | [PNG](figure-12-2-overlap.png) | [PDF](figure-12-2-overlap.pdf) |
+| 12-4 | 三块各上传 4 s，每块到达后独立处理 0.1 s，随后回传 1、2、2 MB。前两块的处理和回传与后续上传重叠，完整成片于 12.36 s 返回。 | [SVG](figure-12-overlap-chunks.svg) | [PNG](figure-12-overlap-chunks.png) | [PDF](figure-12-overlap-chunks.pdf) |
+| 12-5 | 第一块音频从采集开始计时：20 ms 就绪，32 ms 处理完，33 ms 发完，38 ms 到达；初始缓冲 40 ms 后于 78 ms 播放。圆点标出到达，最后一行是播放设备的时钟。 | [SVG](figure-12-audio-clocks.svg) | [PNG](figure-12-audio-clocks.png) | [PDF](figure-12-audio-clocks.pdf) |
+| 12-6 | 第三块晚到使后续各块的播放时间都推迟 5 ms。每块长 20 ms，模型处理 12 ms、发送 1 ms；通常传播 5 ms，第三块传播 50 ms，初始缓冲 40 ms。实线段表示实际播放，浅色轮廓表示原定播放区间，圆点表示到达；所有时间均从开始采集第一块起算。图为上述教学流水的计算结果，播放器等待缺块而不丢弃。 | [SVG](figure-12-3-paths.svg) | [PNG](figure-12-3-paths.png) | [PDF](figure-12-3-paths.pdf) |
+| 12-7 | 缓冲量等于初始数据量加累计接收量，再减累计播放量。PCM 播放需要 256 kbit/s，接收只有 130 kbit/s，两条直线的下降速率均为 126 kbit/s。初始缓冲分别包含 60 ms 和 120 ms 音频，约在 0.12 秒和 0.24 秒耗尽；图画到各自第一次耗尽为止。 | [SVG](figure-12-4-buffer.svg) | [PNG](figure-12-4-buffer.png) | [PDF](figure-12-4-buffer.pdf) |
+| 12-8 | 截图 Agent 的一轮执行。箭头表示先后依赖，方框宽度不表示耗时。底部返回箭头要经过操作执行与界面更新，才能取得下一轮截图。 | [SVG](figure-12-5-agent.svg) | [PNG](figure-12-5-agent.png) | [PDF](figure-12-5-agent.pdf) |
+| 12-9 | 远端编码：先发送压缩图片，在服务器执行视觉编码，再执行语言模型。 | [SVG](figure-12-encoder-remote.svg) | [PNG](figure-12-encoder-remote.png) | [PDF](figure-12-encoder-remote.pdf) |
+| 12-10 | 端侧编码：先执行视觉编码，再发送完整数值特征到语言模型。发送对象随计算的放置位置改变。 | [SVG](figure-12-encoder-local.svg) | [PNG](figure-12-encoder-local.png) | [PDF](figure-12-encoder-local.pdf) |
+| 12-11 | 同一图片的完整视觉特征比压缩图片需要更多传输时间。压缩图片为 0.8 MB；Qwen3-VL-4B 在预处理后 640×640 输入上产生 400 个视觉位置，最终投影及三组 DeepStack 合计 [400,10240] BF16，共 8,192,000 bytes。上行速率为 6.4 Mbit/s，柱长表示发送时间；编码、排队和转换时间另计。两种方案处理同一张图片，完成相同的视觉理解任务。 | [SVG](figure-12-6-placement.svg) | [PNG](figure-12-6-placement.png) | [PDF](figure-12-6-placement.pdf) |
+| 12-12 | 三种保存对象对应三个重算起点。EC 省去视觉编码；匹配模型权重、前缀与位置的 KV 进一步省去已处理前缀的语言计算。容量对应正文固定视觉配置。 | [SVG](figure-12-cache-restart.svg) | [PNG](figure-12-cache-restart.png) | [PDF](figure-12-cache-restart.pdf) |
+| 12-13 | 迁移 64 MiB 状态，链路 80 Mbit/s，迁移后每轮节省 0.4 秒。两条曲线分别取恢复时间 1 秒和 2 秒，净节省为 N×0.4 减去传输和恢复时间。圆点标出首次获益的整数轮数；零线以上表示迁移更快，首次获益分别在第 20、22 轮。 | [SVG](figure-12-7-migration.svg) | [PNG](figure-12-7-migration.png) | [PDF](figure-12-7-migration.pdf) |
+| 12-14 | 张量并行的一次注意力输出归约：两卡先分别计算，再交换并求和，取得完整输出后进入前馈。横向箭头表示执行顺序，中间纵向箭头表示两卡通信。 | [SVG](figure-12-8-sync.svg) | [PNG](figure-12-8-sync.png) | [PDF](figure-12-8-sync.pdf) |
+| 12-15 | 前馈网络也分别计算局部输出，再做两卡归约。完整前馈结果就绪后才能进入下一层，这一结构在 36 层中重复。 | [SVG](figure-12-sync-ffn.svg) | [PNG](figure-12-sync-ffn.png) | [PDF](figure-12-sync-ffn.pdf) |
+| 12-16 | 固定窗口 64 KB，链路 20 Mbit/s，一批数据发送需 25.6 ms。为单独显示停等，图设接收端收齐一批后统一确认，从这批数据全部发出到收到整批确认再需 100 ms；每批完整周期为 125.6 ms。正文 W/R 是吞吐上界，图中的整批确认还增加了发送时间，因此实际周期更长。 | [SVG](figure-12-9-window.svg) | [PNG](figure-12-9-window.png) | [PDF](figure-12-9-window.pdf) |
+| 12-17 | 整体有序交付：音频第 3 s 已收齐，却因图片缺口继续等到第 7 s。灰色段表示数据已齐后的等待，圆点表示数据交给应用的时刻。 | [SVG](figure-12-10-transport.svg) | [PNG](figure-12-10-transport.png) | [PDF](figure-12-10-transport.pdf) |
+| 12-18 | 逐流有序交付：音频在第 3 s 收齐后立即交付，图片仍于第 7 s 交付。两图具有相同的发送、到达与恢复时刻；改变的是跨流等待依赖。 | [SVG](figure-12-transport-per-stream.svg) | [PNG](figure-12-transport-per-stream.png) | [PDF](figure-12-transport-per-stream.pdf) |
+| 12-19 | 报文变短后，固定交换开销仍然存在，因此空口占用时间不会同比缩短。两种成功交换采用相同的 34 μs 接入等待、16 μs SIFS、44 μs MAC ACK，区别只在数据 PPDU：208 μs 或 40 μs。条件为 OFDM54／6、无聚合、无重传的教学参考模型。 | [SVG](figure-12-11-wireless.svg) | [PNG](figure-12-11-wireless.png) | [PDF](figure-12-11-wireless.pdf) |
+| 12-20 | 一次取消同时触发两条路径：本地清空待播音频，远端在控制消息到达后停止生成和发送。虚线表示控制流；本地停止播放与远端资源释放有各自的完成时刻。 | [SVG](figure-12-cancel-paths.svg) | [PNG](figure-12-cancel-paths.png) | [PDF](figure-12-cancel-paths.pdf) |
+| 12-21 | 两条独立路径按带宽比例分配输入，分别发送 20 MB 和 10 MB，均需 8 s。任务等两部分都齐备后完成。 | [SVG](figure-12-multipath-independent.svg) | [PNG](figure-12-multipath-independent.png) | [PDF](figure-12-multipath-independent.pdf) |
+| 12-22 | 30 MB 图片按 20／10 MB 分到 20／10 Mbit/s 两条独立接入，各需 8 秒。两路再经过同一 24 Mbit/s 出口，全部数据通过该出口至少需 10 秒。箭头表示数据路径，不表示传播距离；容量取恒定值。 | [SVG](figure-12-12-multipath.svg) | [PNG](figure-12-12-multipath.png) | [PDF](figure-12-12-multipath.pdf) |
+| 12-23 | 新建连接时，354640-byte 固定音频的直接路径与 Queqiao 请求中位数分别为 1185.3、301.6 ms。计时从发起请求到收齐结果，输入文件相同，两条路径交替运行。 | [SVG](figure-12-13-queqiao.svg) | [PNG](figure-12-13-queqiao.png) | [PDF](figure-12-13-queqiao.pdf) |
+| 12-24 | 保持连接并调优后，同一固定音频的直接路径与 Queqiao 中位数分别为 240.9、236.5 ms。与前图采用相同纵轴，两条路径均接近数据发送、必要往返和处理的总预算。 | [SVG](figure-12-queqiao-tuned.svg) | [PNG](figure-12-queqiao-tuned.png) | [PDF](figure-12-queqiao-tuned.pdf) |
+| 12-25 | 后续单因素实验的设计：保持相同文件、路径和其他设置，每次只改变一个因素，配对记录中间事件与总完成时间。此图列出实验步骤。 | [SVG](figure-12-experiment-design.svg) | [PNG](figure-12-experiment-design.png) | [PDF](figure-12-experiment-design.pdf) |
+| 12-26 | 端侧：终端工作 6 s，模型计算 58 s，共 64 s。三图共用 45 s 期限线和同一横轴，颜色分别汇总二十轮同类工作的耗时。 | [SVG](figure-12-14-budgets.svg) | [PNG](figure-12-14-budgets.png) | [PDF](figure-12-14-budgets.pdf) |
+| 12-27 | 附近工作站：准备 3 s，二十轮终端 6 s、模型 30 s、传播 0.4 s、上传 1.6 s，共 41 s，满足 45 s 期限。 | [SVG](figure-12-budgets-1.svg) | [PNG](figure-12-budgets-1.png) | [PDF](figure-12-budgets-1.pdf) |
+| 12-28 | 云端：准备 1 s，二十轮终端 6 s、模型 16 s、传播 4 s、上传 20 s，共 47 s。计算更快而传输更久，总时间超过期限。 | [SVG](figure-12-budgets-2.svg) | [PNG](figure-12-budgets-2.png) | [PDF](figure-12-budgets-2.pdf) |
+| 12-29 | 云路径上行改变完整任务的部署选择。剩余 20 轮每轮上传 0.8 MB，云端准备 1 秒，每轮其余工作合计 1.3 秒，因此总时间为 27+128/b 秒；附近工作站为 41 秒，期限为 45 秒。本例保持模型质量、处理时间、价格和其他网络参数不变，忽略排队与故障。约 7.1 Mbit/s 起云方案可满足期限，约 9.1 Mbit/s 以上才比附近工作站更快。 | [SVG](figure-12-15-deployment.svg) | [PNG](figure-12-15-deployment.png) | [PDF](figure-12-15-deployment.pdf) |
+| 12-30 | 保留前九轮提交记录（绿色），只重做未确认的第十轮（橙色）。每轮 1.9 s，恢复连接 1 s，增加 2.9 s，总时间为 43.9 s。此例采用可安全重放的操作；已提交的外部操作则先查询其结果。 | [SVG](figure-12-16-recovery.svg) | [PNG](figure-12-16-recovery.png) | [PDF](figure-12-16-recovery.pdf) |
+| 12-31 | 丢失十轮进度时，恢复连接后重做十轮，额外 1＋10×1.9＝20 s，总任务从 41 s 延至 61 s。 | [SVG](figure-12-recovery-all.svg) | [PNG](figure-12-recovery-all.png) | [PDF](figure-12-recovery-all.pdf) |
+| 12-32 | 固定任务轨迹中的加速上限。模型从 8 秒缩短至 0.8 秒，其他串行阶段保持 2 秒；第三行表示模型时间趋近于零的理想下界。 | [SVG](figure-12-task-counterfactual.svg) | [PNG](figure-12-task-counterfactual.png) | [PDF](figure-12-task-counterfactual.pdf) |

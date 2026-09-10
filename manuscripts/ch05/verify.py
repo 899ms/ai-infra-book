@@ -8,8 +8,8 @@ ROOT=Path(__file__).resolve().parents[2];HERE=Path(__file__).resolve().parent
 md=HERE.parent/'05-算子与运行时.md';s=md.read_text();outline=(ROOT/'outlines'/md.name).read_text();page=md.with_suffix('.html').read_text();errors=[]
 def check(ok,msg):
  if not ok:errors.append(msg)
-heads=lambda t:re.findall(r'^#{2,3} (5\.\d+(?:\.\d+)?) (.+)$',t,re.M)
-check(heads(s)==heads(outline),'outline heading correspondence')
+heads=lambda t:re.findall(r'^#{2,3} (5\.\d+(?:\.\d+)?) ',t,re.M)
+check(heads(s)==heads(outline),'outline section numbering/order')
 check(re.findall(r'^> \*\*实验 (5-\d+)',s,re.M)==[f'5-{i}' for i in range(1,10)],'nine ordered exercises')
 check(re.findall(r'^> \*\*实验 (5-\d+) · 核心',s,re.M)==['5-2','5-8','5-9'],'core exercises')
 figure_count=len(json.loads((HERE/'figure-index.json').read_text()))

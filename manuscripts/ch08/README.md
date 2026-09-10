@@ -59,3 +59,89 @@ python3 -m venv /tmp/ch08-book-venv
 ## 与第九章的范围划分
 
 本章现名“推理优化”，研究给定设备组合下的运行配置；第九章研究计算与状态的分布和服务规模。单卡算例的容量条件已明确，多卡实例需逐卡计算容量。正文文件路径保留，章名、目录和阅读版均已更新。[修改说明](../../research/ch08-ch09-scope-revision/README.md)。
+
+## 当前阅读版配图（2026-09-10）
+
+正文现引用 35 幅图，以下清单按当前阅读顺序列出；上文旧图号用于追溯构建记录。
+
+| 图号 | 内容 | SVG | PNG | PDF |
+| --- | --- | --- | --- | --- |
+| 8-1 | A 跨越两个迭代继续执行。B 在第一轮结束，下一轮由 C 接替其执行位置；请求状态仍按各自身份保存。 | [SVG](figure-8-request-iterations.svg) | [PNG](figure-8-request-iterations.png) | [PDF](figure-8-request-iterations.pdf) |
+| 8-2 | 一条输出 256 个 token 的请求。排队 0.1 秒、prefill 0.3 秒，后续 255 个输出间隔各为 10 ms。横条按实际时间比例绘制，点标出首、末 token；3 秒虚线是完成时限。 | [SVG](figure-8-1-lifecycle.svg) | [PNG](figure-8-1-lifecycle.png) | [PDF](figure-8-1-lifecycle.pdf) |
+| 8-3 | 权重由批内输出共同分摊，上下文 KV 的读取量决定了曲线最终接近的下限。Qwen3-8B BF16，每份矩阵权重批内读取一次，各请求的上下文彼此独立；实线为权重与 KV 两项之和，虚线为对应上下文的 KV 项，灰线为共享权重项。横轴按倍数取值。 | [SVG](figure-8-2-batch.svg) | [PNG](figure-8-2-batch.png) | [PDF](figure-8-2-batch.pdf) |
+| 8-4 | 每输出 token 分摊的 HBM 读取量。固定 8K 上下文，传统路径为 W/B+K，独立快速 ROM 路径为 K；曲线只表示读取量，不是实测执行时间。 | [SVG](figure-8-batch-counterfactual.svg) | [PNG](figure-8-batch-counterfactual.png) | [PDF](figure-8-batch-counterfactual.pdf) |
+| 8-5 | 固定批次等待整组结束，再接纳 r2、r3。蓝色为 prefill，绿色为 decode，三角为到达时刻。各色带宽度为整次调度迭代耗时。 | [SVG](figure-8-3-scheduling.svg) | [PNG](figure-8-3-scheduling.png) | [PDF](figure-8-3-scheduling.pdf) |
+| 8-6 | r1 结束后立即接纳 r2。总时间减少，但 r0 的下一次输出等待 r2 的长 prefill，最长间隔增至约 147 μs。 | [SVG](figure-8-scheduling-continuous.svg) | [PNG](figure-8-scheduling-continuous.png) | [PDF](figure-8-scheduling-continuous.pdf) |
+| 8-7 | 每次先安排已有请求 decode，再处理一段新输入。最大间隔降至约 29 μs。三张调度图使用相同的时间尺度。 | [SVG](figure-8-scheduling-chunked.svg) | [PNG](figure-8-scheduling-chunked.png) | [PDF](figure-8-scheduling-chunked.pdf) |
+| 8-8 | 首块四个新位置只有块内因果配对，形成 1 + 2 + 3 + 4 = 10 个绿色格。白格表示将来位置，不参与当前查询。 | [SVG](figure-8-4-attention.svg) | [PNG](figure-8-4-attention.png) | [PDF](figure-8-4-attention.pdf) |
+| 8-9 | 八个旧位置形成 4 × 8 = 32 个蓝色格，块内仍为 10 个绿色格。块长相同，总配对从 10 增至 42。 | [SVG](figure-8-attention-history.svg) | [PNG](figure-8-attention-history.png) | [PDF](figure-8-attention-history.pdf) |
+| 8-10 | 逻辑块 0、1、2 按顺序组成序列，块表分别指向物理块 2、0、3。物理块 1 为空闲，注意力按块表恢复逻辑顺序。 | [SVG](figure-8-page-map.svg) | [PNG](figure-8-page-map.png) | [PDF](figure-8-page-map.pdf) |
+| 8-11 | 四请求长度为 9、13、5、15，按每条最大 16 个位置预留，共分配 64 个位置。蓝色已用，灰色预留未用。 | [SVG](figure-8-5-pages.svg) | [PNG](figure-8-5-pages.png) | [PDF](figure-8-5-pages.pdf) |
+| 8-12 | 各请求分别分配 12、16、8、16 个位置，共 52 个。灰色尾槽从 22 减到 10。 | [SVG](figure-8-pages-paged.svg) | [PNG](figure-8-pages-paged.png) | [PDF](figure-8-pages-paged.pdf) |
+| 8-13 | A、B 的两个共同前缀块只保存一次，各自块表都指向它们。A、B 保留各自的私有尾块；四请求物理分配总量进一步降至 44 个位置。 | [SVG](figure-8-pages-shared.svg) | [PNG](figure-8-pages-shared.png) | [PDF](figure-8-pages-shared.pdf) |
+| 8-14 | A 结束后引用数从 2 降到 1，B 仍可使用；最后一个引用释放且设备已用完，块才能回到空闲池。 | [SVG](figure-8-reference-release.svg) | [PNG](figure-8-reference-release.png) | [PDF](figure-8-reference-release.pdf) |
+| 8-15 | 四位置尾块已有共同 a、b、c。分支分别追加 x、y，需要不同物理尾块；此前已填满的块继续共享。 | [SVG](figure-8-copy-on-write.svg) | [PNG](figure-8-copy-on-write.png) | [PDF](figure-8-copy-on-write.pdf) |
+| 8-16 | 取消接口返回表示已接收取消请求。已提交的设备操作完成后，再释放私有块和相关引用；观测中的 1.6 ms 与 31 ms 对应不同事件。 | [SVG](figure-8-cancel-lifetime.svg) | [PNG](figure-8-cancel-lifetime.png) | [PDF](figure-8-cancel-lifetime.pdf) |
+| 8-17 | 前四轮代码 Agent 输入的压缩前缀树。根部已有共同 206 个 token，边上是新增数量，叶子是输入轮次。分叉表示后续内容不同。 | [SVG](figure-8-6-prefix.svg) | [PNG](figure-8-6-prefix.png) | [PDF](figure-8-6-prefix.pdf) |
+| 8-18 | 蓝色为与上一轮逐 token 相同的前缀，橙色为其余输入。此图描述输入内容的可复用程度，实际缓存命中还取决于状态是否保留。 | [SVG](figure-8-prefix-lengths.svg) | [PNG](figure-8-prefix-lengths.png) | [PDF](figure-8-prefix-lengths.pdf) |
+| 8-19 | 文本匹配到 10752，最近状态快照在 8192。恢复后仍需重算 2560 个位置，才能得到匹配末端的递推状态。 | [SVG](figure-8-prefix-restore.svg) | [PNG](figure-8-prefix-restore.png) | [PDF](figure-8-prefix-restore.pdf) |
+| 8-20 | 同一历史的三种更新方式。蓝色表示可复用前缀，橙色表示需要重新处理的输入；总结方案还要额外执行总结并验证质量。长度以 K token 示意。 | [SVG](figure-8-context-edits.svg) | [PNG](figure-8-context-edits.png) | [PDF](figure-8-context-edits.pdf) |
+| 8-21 | 缓存容量均为 864 MiB。A 占 864 MiB，期望净节省 36 ms；三个 B 类前缀各占 288 MiB、各节省 24 ms，合计 72 ms。图中宽度表示容量，时间是按正文假设计算的期望净节省。 | [SVG](figure-8-7-cache-choice.svg) | [PNG](figure-8-7-cache-choice.png) | [PDF](figure-8-7-cache-choice.pdf) |
+| 8-22 | BF16、q8_0、q4_0 保存同一组 32 个数值所需的空间。横条按字节数成比例绘制；橙色为每组 2 bytes 的缩放系数。把每组总长度乘以组数，就得到整条上下文的 KV 容量。 | [SVG](figure-8-8-kv-format.svg) | [PNG](figure-8-8-kv-format.png) | [PDF](figure-8-8-kv-format.pdf) |
+| 8-23 | 卸载九份 FFN 共腾出 2592 MiB。橙色为留在设备上的预取缓冲，绿色为可重新分配的净空间；一组缓冲净省 2304 MiB，两组净省 2016 MiB。 | [SVG](figure-8-9-offload.svg) | [PNG](figure-8-9-offload.png) | [PDF](figure-8-9-offload.pdf) |
+| 8-24 | 每轮复制量保持为 2592 MiB。24 GiB/s 至少需要约 105 ms，384 GiB/s 至少需要约 6.6 ms。 | [SVG](figure-8-offload-copy.svg) | [PNG](figure-8-offload-copy.png) | [PDF](figure-8-offload-copy.pdf) |
+| 8-25 | BF16 KV 基线。每行是一道固定任务，四列为并发 1、4 下各两次自然生成。绿色圆圈正确，橙色叉号错误，共 28/32 正确。 | [SVG](figure-8-10-kv-quality.svg) | [PNG](figure-8-10-kv-quality.png) | [PDF](figure-8-10-kv-quality.pdf) |
+| 8-26 | 同一任务与运行顺序，原 FP8 实现共 26/32 正确。这里 FP8 为每元素 8 bit 浮点格式，比较包含实现选择对 Q 精度的影响。 | [SVG](figure-8-kv-quality-1.svg) | [PNG](figure-8-kv-quality-1.png) | [PDF](figure-8-kv-quality-1.pdf) |
+| 8-27 | 将查询 Q 保持为 BF16，KV 仍用 FP8，共 28/32 正确；失败位置与 BF16 基线不同。三图使用相同任务和列顺序，模型权重均为 BF16。 | [SVG](figure-8-kv-quality-2.svg) | [PNG](figure-8-kv-quality-2.png) | [PDF](figure-8-kv-quality-2.pdf) |
+| 8-28 | 贪心验证的教学示意。a、b、c、d、x 表示 token；目标模型在第三个位置选出 x，与草稿 c 不同。第四个位置及其后的验证结果被丢弃，下一轮从 a、b、x 继续生成。方框表示序列位置，不表示执行耗时。 | [SVG](figure-8-11-verification.svg) | [PNG](figure-8-11-verification.png) | [PDF](figure-8-11-verification.pdf) |
+| 8-29 | 接受 A 的概率为 1/4，拒绝后输出 B 的概率为 3/4。两条路径合起来给出目标分布。 | [SVG](figure-8-sample-A.svg) | [PNG](figure-8-sample-A.png) | [PDF](figure-8-sample-A.pdf) |
+| 8-30 | 接受 B 的概率为 3/4，拒绝后输出 A 的概率为 1/4。目标分布相同，草稿被接受的概率更高。 | [SVG](figure-8-sample-B.svg) | [PNG](figure-8-sample-B.png) | [PDF](figure-8-sample-B.pdf) |
+| 8-31 | 两符号目标分布，每轮生成四个草稿 token。每轮验证 1.4 ms，查询时间沿横轴变化；每个输出 token 的耗时用一轮成本除以平均输出数。普通 decode 为 1 ms/token。没有提前停止，额外 token 计入输出数。点标出查询为 0.1 ms 的算例，BBBB 与普通执行在查询约 1.65 ms 处相交。 | [SVG](figure-8-12-speculation.svg) | [PNG](figure-8-12-speculation.png) | [PDF](figure-8-12-speculation.pdf) |
+| 8-32 | 每种接纳与到达条件使用三个 16 请求窗口。柱为全部完成请求的吞吐中位数，圆点为各窗口结果。时间从计划到达起计算。 | [SVG](figure-8-13-service.svg) | [PNG](figure-8-13-service.png) | [PDF](figure-8-13-service.pdf) |
+| 8-33 | 分子仅计正确且在 3 秒内完成的请求。两图采用相同横轴顺序和纵轴范围，差额来自错误或迟到的回答。 | [SVG](figure-8-service-goodput.svg) | [PNG](figure-8-service-goodput.png) | [PDF](figure-8-service-goodput.pdf) |
+| 8-34 | 16 条长请求的教学配置比较，坐标来自正文题设与推导。横轴为 KV 和辅助缓冲区占用，已扣除共同的权重与基本工作区；纵轴为整批请求总耗时。A 的时间是按题设计算的所需时间，其内存不足，不能在本实例上执行。阴影区域同时满足 12 GiB 和 3 秒限制。 | [SVG](figure-8-14-design.svg) | [PNG](figure-8-14-design.png) | [PDF](figure-8-14-design.pdf) |
+| 8-35 | 其他阶段时间固定、没有新增准备工作的 Amdahl 教学曲线。三条曲线分别取 decode 占基线时间 20%、50%、80%。局部加速的收益随着该阶段原有占比增加。 | [SVG](figure-8-15-task.svg) | [PNG](figure-8-15-task.png) | [PDF](figure-8-15-task.pdf) |
+
+
+## V4／V4.1 会话修订后的当前图表
+
+当前正文共 36 幅图；下表是当前图号，前文旧图号保留作历史记录。
+
+| 图号 | 内容 | 文件 |
+| --- | --- | --- |
+| 8-1 | A 跨越两个迭代继续执行。B 在第一轮结束，下一轮由 C 接替其执行位置；请求状态仍按各自身份保存。 | [SVG](figure-8-request-iterations.svg) |
+| 8-2 | 一条输出 256 个 token 的请求。排队 0.1 秒、prefill 0.3 秒，后续 255 个输出间隔各为 10 ms。横条按实际时间比例绘制，点标出首、末 token；3 秒虚线是完成时限。 | [SVG](figure-8-1-lifecycle.svg) |
+| 8-3 | 权重由批内输出共同分摊，上下文 KV 的读取量决定了曲线最终接近的下限。Qwen3-8B BF16，每份矩阵权重批内读取一次，各请求的上下文彼此独立；实线为权重与 KV 两项之和，虚线为对应上下文的 KV 项，灰线为共享权重项。横轴按倍数取值。 | [SVG](figure-8-2-batch.svg) |
+| 8-4 | 每输出 token 分摊的 HBM 读取量。固定 8K 上下文，传统路径为 W/B+K，独立快速 ROM 路径为 K；曲线只表示读取量，不是实测执行时间。 | [SVG](figure-8-batch-counterfactual.svg) |
+| 8-5 | 固定批次等待整组结束，再接纳 r2、r3。蓝色为 prefill，绿色为 decode，三角为到达时刻。各色带宽度为整次调度迭代耗时。 | [SVG](figure-8-3-scheduling.svg) |
+| 8-6 | r1 结束后立即接纳 r2。总时间减少，但 r0 的下一次输出等待 r2 的长 prefill，最长间隔增至约 147 μs。 | [SVG](figure-8-scheduling-continuous.svg) |
+| 8-7 | 每次先安排已有请求 decode，再处理一段新输入。最大间隔降至约 29 μs。三张调度图使用相同的时间尺度。 | [SVG](figure-8-scheduling-chunked.svg) |
+| 8-8 | 首块四个新位置只有块内因果配对，形成 1 + 2 + 3 + 4 = 10 个绿色格。白格表示将来位置，不参与当前查询。 | [SVG](figure-8-4-attention.svg) |
+| 8-9 | 八个旧位置形成 4 × 8 = 32 个蓝色格，块内仍为 10 个绿色格。块长相同，总配对从 10 增至 42。 | [SVG](figure-8-attention-history.svg) |
+| 8-10 | 逻辑块 0、1、2 按顺序组成序列，块表分别指向物理块 2、0、3。物理块 1 为空闲，注意力按块表恢复逻辑顺序。 | [SVG](figure-8-page-map.svg) |
+| 8-11 | 四请求长度为 9、13、5、15，按每条最大 16 个位置预留，共分配 64 个位置。蓝色已用，灰色预留未用。 | [SVG](figure-8-5-pages.svg) |
+| 8-12 | 各请求分别分配 12、16、8、16 个位置，共 52 个。灰色尾槽从 22 减到 10。 | [SVG](figure-8-pages-paged.svg) |
+| 8-13 | A、B 的两个共同前缀块只保存一次，各自块表都指向它们。A、B 保留各自的私有尾块；四请求物理分配总量进一步降至 44 个位置。 | [SVG](figure-8-pages-shared.svg) |
+| 8-14 | A 结束后引用数从 2 降到 1，B 仍可使用；最后一个引用释放且设备已用完，块才能回到空闲池。 | [SVG](figure-8-reference-release.svg) |
+| 8-15 | 四位置尾块已有共同 a、b、c。分支分别追加 x、y，需要不同物理尾块；此前已填满的块继续共享。 | [SVG](figure-8-copy-on-write.svg) |
+| 8-16 | 取消接口返回表示已接收取消请求。已提交的设备操作完成后，再释放私有块和相关引用；观测中的 1.6 ms 与 31 ms 对应不同事件。 | [SVG](figure-8-cancel-lifetime.svg) |
+| 8-17 | 前四轮代码 Agent 输入的压缩前缀树。根部已有共同 206 个 token，边上是新增数量，叶子是输入轮次。分叉表示后续内容不同。 | [SVG](figure-8-6-prefix.svg) |
+| 8-18 | 蓝色为与上一轮逐 token 相同的前缀，橙色为其余输入。此图描述输入内容的可复用程度，实际缓存命中还取决于状态是否保留。 | [SVG](figure-8-prefix-lengths.svg) |
+| 8-19 | 文本匹配到 10752，最近状态快照在 8192。恢复后仍需重算 2560 个位置，才能得到匹配末端的递推状态。 | [SVG](figure-8-prefix-restore.svg) |
+| 8-20 | 同一历史的三种更新方式。蓝色表示可复用前缀，橙色表示需要重新处理的输入；总结方案还要额外执行总结并验证质量。长度以 K token 示意。 | [SVG](figure-8-context-edits.svg) |
+| 8-21 | 同一会话的三条缓存恢复路径。蓝色为已保留的全局状态，绿色为可用的局部状态，橙色为新增计算。局部未命中时有界重放近似恢复 SWA；全局未命中时重算缺失前缀。图示不代表耗时比例。 | [SVG](figure-8-v41-recovery.svg) |
+| 8-22 | 缓存容量均为 864 MiB。A 占 864 MiB，期望净节省 36 ms；三个 B 类前缀各占 288 MiB、各节省 24 ms，合计 72 ms。图中宽度表示容量，时间是按正文假设计算的期望净节省。 | [SVG](figure-8-7-cache-choice.svg) |
+| 8-23 | BF16、q8_0、q4_0 保存同一组 32 个数值所需的空间。横条按字节数成比例绘制；橙色为每组 2 bytes 的缩放系数。把每组总长度乘以组数，就得到整条上下文的 KV 容量。 | [SVG](figure-8-8-kv-format.svg) |
+| 8-24 | 卸载九份 FFN 共腾出 2592 MiB。橙色为留在设备上的预取缓冲，绿色为可重新分配的净空间；一组缓冲净省 2304 MiB，两组净省 2016 MiB。 | [SVG](figure-8-9-offload.svg) |
+| 8-25 | 每轮复制量保持为 2592 MiB。24 GiB/s 至少需要约 105 ms，384 GiB/s 至少需要约 6.6 ms。 | [SVG](figure-8-offload-copy.svg) |
+| 8-26 | BF16 KV 基线。每行是一道固定任务，四列为并发 1、4 下各两次自然生成。绿色圆圈正确，橙色叉号错误，共 28/32 正确。 | [SVG](figure-8-10-kv-quality.svg) |
+| 8-27 | 同一任务与运行顺序，原 FP8 实现共 26/32 正确。这里 FP8 为每元素 8 bit 浮点格式，比较包含实现选择对 Q 精度的影响。 | [SVG](figure-8-kv-quality-1.svg) |
+| 8-28 | 将查询 Q 保持为 BF16，KV 仍用 FP8，共 28/32 正确；失败位置与 BF16 基线不同。三图使用相同任务和列顺序，模型权重均为 BF16。 | [SVG](figure-8-kv-quality-2.svg) |
+| 8-29 | 贪心验证的教学示意。a、b、c、d、x 表示 token；目标模型在第三个位置选出 x，与草稿 c 不同。第四个位置及其后的验证结果被丢弃，下一轮从 a、b、x 继续生成。方框表示序列位置，不表示执行耗时。 | [SVG](figure-8-11-verification.svg) |
+| 8-30 | 接受 A 的概率为 1/4，拒绝后输出 B 的概率为 3/4。两条路径合起来给出目标分布。 | [SVG](figure-8-sample-A.svg) |
+| 8-31 | 接受 B 的概率为 3/4，拒绝后输出 A 的概率为 1/4。目标分布相同，草稿被接受的概率更高。 | [SVG](figure-8-sample-B.svg) |
+| 8-32 | 两符号目标分布，每轮生成四个草稿 token。每轮验证 1.4 ms，查询时间沿横轴变化；每个输出 token 的耗时用一轮成本除以平均输出数。普通 decode 为 1 ms/token。没有提前停止，额外 token 计入输出数。点标出查询为 0.1 ms 的算例，BBBB 与普通执行在查询约 1.65 ms 处相交。 | [SVG](figure-8-12-speculation.svg) |
+| 8-33 | 每种接纳与到达条件使用三个 16 请求窗口。柱为全部完成请求的吞吐中位数，圆点为各窗口结果。时间从计划到达起计算。 | [SVG](figure-8-13-service.svg) |
+| 8-34 | 分子仅计正确且在 3 秒内完成的请求。两图采用相同横轴顺序和纵轴范围，差额来自错误或迟到的回答。 | [SVG](figure-8-service-goodput.svg) |
+| 8-35 | 16 条长请求的教学配置比较，坐标来自正文题设与推导。横轴为 KV 和辅助缓冲区占用，已扣除共同的权重与基本工作区；纵轴为整批请求总耗时。A 的时间是按题设计算的所需时间，其内存不足，不能在本实例上执行。阴影区域同时满足 12 GiB 和 3 秒限制。 | [SVG](figure-8-14-design.svg) |
+| 8-36 | 其他阶段时间固定、没有新增准备工作的 Amdahl 教学曲线。三条曲线分别取 decode 占基线时间 20%、50%、80%。局部加速的收益随着该阶段原有占比增加。 | [SVG](figure-8-15-task.svg) |

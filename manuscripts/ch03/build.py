@@ -12,10 +12,11 @@ import numpy as np
 import markdown
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1]
 parser=argparse.ArgumentParser();parser.add_argument('--font');args=parser.parse_args()
-font=next((Path(x) for x in [args.font,'/System/Library/Fonts/Supplemental/Arial Unicode.ttf','/System/Library/Fonts/STHeiti Medium.ttc','/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'] if x and Path(x).exists()),None)
-if not font:raise SystemExit('Use --font to select a Chinese font')
-font_manager.fontManager.addfont(str(font));family=font_manager.FontProperties(fname=str(font)).get_name()
-plt.rcParams.update({'font.family':family,'font.size':11,'axes.unicode_minus':False,'svg.fonttype':'none','svg.hashsalt':'ch03-workloads-v1','axes.spines.top':False,'axes.spines.right':False,'figure.facecolor':'white','savefig.facecolor':'white','text.color':'#193441','axes.labelcolor':'#193441','axes.edgecolor':'#b8cbd2'})
+import sys
+sys.path.insert(0,str(HERE.parent))
+from figure_style.typography import configure_font
+font,family=configure_font(args.font)
+plt.rcParams.update({'font.family':[family,'DejaVu Sans'],'font.size':11,'axes.unicode_minus':False,'svg.fonttype':'path','svg.hashsalt':'ch03-workloads-v1','axes.spines.top':False,'axes.spines.right':False,'figure.facecolor':'white','savefig.facecolor':'white','text.color':'#193441','axes.labelcolor':'#193441','axes.edgecolor':'#b8cbd2'})
 C={'ink':'#193441','blue':'#246f91','teal':'#138b83','orange':'#c9782b','pale':'#f0f6f8','light':'#e7f3ef','sand':'#fcf2e7','muted':'#55707d','line':'#cbd8df','red':'#b65757'}
 for z in json.loads((HERE/'sources.json').read_text())['sources']:
  if hashlib.sha256((ROOT/z['path']).read_bytes()).hexdigest()!=z['sha256']:raise SystemExit('Source changed; review before relocking: '+z['path'])
@@ -74,7 +75,7 @@ a.text(.055,.515,'后续只需\n$G-1=3$ 次调用',fontsize=13,linespacing=1.8)
 for i,(slots,label) in enumerate([(8192,'Prefill 后'),(8193,'Decode 1 后'),(8194,'Decode 2 后'),(8195,'Decode 3 后')]):
  x=.07+i*.23;box(a,x,.22,.19,.12,label,f'{slots} 个位置',color='light')
 a.text(.055,.125,'基线：8192 位置 = 1.125 GiB；三次 decode 共追加 432 KiB。$y_4$ 返回后尚未再次入模。',fontsize=12)
-footer(a,'前缀命中减少重算，但新输入与后续生成仍可读取已有历史；V4 的状态使用第二章各自的结构账。')
+footer(a,'前缀命中减少重算，但新输入与后续生成仍可读取已有上下文；V4 的状态使用第二章各自的结构账。')
 save(f,'figure-3-1-stages');data['3-1']={'kind':'teaching_structure','S':6144,'P':2048,'G':4,'kv_bytes_per_position':147456,'slots_after_calls':[8192,8193,8194,8195]}
 # 3-2: workload composition, observed metrics and explicit fluid queue.
 arrival=read('experiments/ch03/03-02/results/summary.json')['reports']
@@ -112,8 +113,8 @@ for z in ch:
 ax.plot([],[],'o',color=C['blue'],label='块到达');ax.plot([],[],'|',markersize=13,color=C['orange'],label='原定播放时刻');ax.barh([],[],color=C['teal'],label='实际播放区间');ax.set_yticks(range(8),[f'块 {i+1}' for i in range(8)]);ax.invert_yaxis();ax.set_xlim(0,260);ax.set_xticks([0,50,100,150,200,250]);ax.set_xlabel('从采集起点计时 / ms');ax.legend(frameon=False,ncol=3,fontsize=10,loc='upper left',bbox_to_anchor=(0,1.20));ax.annotate('第三块晚到 5 ms',xy=(123,2),xytext=(167,1.3),arrowprops={'arrowstyle':'->','color':C['orange']},fontsize=10)
 box(a,.06,.115,.27,.095,'缓冲对照〔教学〕','40 ms：首播 78，停顿 5 ms\n60 ms：首播 98，无停顿',size=12)
 box(a,.365,.115,.27,.095,'打断投影〔教学〕','123 ms 发出 → 130 ms 静音\n未模拟后端取消',size=12)
-box(a,.67,.115,.27,.095,'历史接收〔真实记录〕','首块 399.919 / 370.459 ms\n首播、静音、取消未知',size=12)
-footer(a,'每块 20 ms、24 kHz、单声道、2 bytes/sample：960 bytes；模型与网络时长是教学输入，设备播放并非历史实测。')
+box(a,.67,.115,.27,.095,'上下文接收〔真实记录〕','首块 399.919 / 370.459 ms\n首播、静音、取消未知',size=12)
+footer(a,'每块 20 ms、24 kHz、单声道、2 bytes/sample：960 bytes；模型与网络时长是教学输入，设备播放并非上下文实测。')
 save(f,'figure-3-4-realtime');data['3-4']={'kind':'separate_mechanism_teaching_and_historical_reception','audio_chunks':ch,'base_summary':aud['summary'],'large_buffer':large['summary'],'interrupt':intr['summary'],'historical_reception':real,'visual':{'positions':400,'ec_bytes':8192000,'kv_bytes':58982400}}
 # 3-5: computational paths, matrices, parameter states.
 t=calc('training-qwen3-8b-t8192');f,a=canvas('图 3-5  推理与各训练阶段的计算和状态','Qwen3-8B · B=1、T=8192；训练计算所有词表头行，无重计算；各面板使用独立单位。',9)
@@ -143,7 +144,7 @@ footer(a,'本例不调用教师模型。一次 BF16 权重快照为 16.381 GB；
 save(f,'figure-3-6-rl');data['3-6']={'kind':'teaching_analytical_cycle','base_stages':rl['rl_stages'],'low_acceptance_stages':low['rl_stages'],'base':rl['summary'],'low_acceptance':low['summary'],'scenario':rl['scenario']}
 # 3-7: real public points, independent holdout, conditional lifetime proxy.
 fit=calc('datablations-real-c4-eight-point-fit');result=fit['primary']['result'];life=calc('real-c4-lifecycle-512-128')['variants'][0];law=result['law']
-f=plt.figure(figsize=(15,10));f.suptitle('图 3-7  训练预算与生命周期成本',x=.045,y=.97,ha='left',fontsize=24,weight='bold');f.text(.045,.91,'六个 C4 点拟合、两个事前留出；费用按同一拟合结果与每 FLOP 的固定单价估算。',fontsize=11,color=C['muted'])
+f=plt.figure(figsize=(15,10));f.suptitle('图 3-7  训练预算与生命周期成本',x=.045,y=.97,ha='left',fontsize=24,weight='bold');f.text(.045,.91,'六个 C4 点拟合、两个事前留出；成本按同一拟合结果与每 FLOP 的固定单价估算。',fontsize=11,color=C['muted'])
 a=f.add_axes([.09,.47,.34,.35]);a.plot([2,7.6],[2,7.6],color=C['line'],lw=1)
 resids=[]
 for split,col,marker,lab in [('fit','blue','o','拟合：6 点'),('holdout','orange','^','留出：2 点')]:
@@ -152,13 +153,13 @@ a.set(xlim=(2,7.6),ylim=(2,7.6),xlabel='观测损失 / nats·token⁻¹',ylabel=
 a=f.add_axes([.09,.18,.34,.15]);a.bar(range(8),[z['residual'] for z in resids],color=[C['blue'] if z['split']=='fit' else C['orange'] for z in resids]);a.axhline(0,lw=.8,color=C['line']);a.set_xticks(range(8),['F1','F2','F3','F4','F5','F6','H1','H2']);a.set_ylabel('预测 − 观测');a.set_ylim(-.026,.033);a.set_title('留出 RMSE = 0.019345 nats/token',loc='left',fontsize=11)
 a=f.add_axes([.58,.25,.36,.57]);calls=np.linspace(0,4e8,250)
 for z,col in zip(life['lifecycle']['rows'],['orange','teal','blue','muted']):a.plot(calls/1e8,z['upfront_cost']+calls*z['cost_per_call'],color=C[col],linestyle='--' if z['outside_fit_box'] else '-',lw=2,label=f"{z['N']/1e9:g}B"+('（外推）' if z['outside_fit_box'] else ''))
-cross=(life['lifecycle']['rows'][0]['upfront_cost']-life['lifecycle']['rows'][1]['upfront_cost'])/(life['lifecycle']['rows'][1]['cost_per_call']-life['lifecycle']['rows'][0]['cost_per_call']);a.axvline(cross/1e8,color=C['line'],lw=1);a.text(cross/1e8+.06,1150,'0.1B / 0.5B\n约 2.048 亿次交叉',fontsize=10);a.set(xlabel='累计调用 / 亿次',ylabel='抽象 cost-unit',xlim=(0,4),ylim=(0,1650));a.set_title('B  目标损失 2.9 的费用估算',loc='left',fontsize=13);a.legend(frameon=False,fontsize=10)
+cross=(life['lifecycle']['rows'][0]['upfront_cost']-life['lifecycle']['rows'][1]['upfront_cost'])/(life['lifecycle']['rows'][1]['cost_per_call']-life['lifecycle']['rows'][0]['cost_per_call']);a.axvline(cross/1e8,color=C['line'],lw=1);a.text(cross/1e8+.06,1150,'0.1B / 0.5B\n约 2.048 亿次交叉',fontsize=10);a.set(xlabel='累计调用 / 亿次',ylabel='抽象 cost-unit',xlim=(0,4),ylim=(0,1650));a.set_title('B  目标损失 2.9 的成本估算',loc='left',fontsize=13);a.legend(frameon=False,fontsize=10)
 f.text(.53,.155,'$P=512$、$G=128$；每调用 $2N(P+G-1)$。\n0.1B 所需训练 D≈298.6B，超出拟合上界约 3.28 倍。',fontsize=11,linespacing=1.7)
 f.text(.045,.055,'拟合系数依赖这组数据与预定网格；同损失不等于同任务质量。虚线表示模型参数量或训练数据量超出拟合范围。',fontsize=10.5,color=C['muted'])
 save(f,'figure-3-7-scaling');data['3-7']={'kind':'public_observations_and_conditional_proxy','records':fit['records'],'law':law,'residuals':resids,'fit_sse':result['fit_sse'],'holdout_rmse':result['holdout_rmse'],'lifecycle':life['lifecycle'],'crossing_calls':cross}
 # 3-8: historical scale/data and separate MoE parameter categories.
 hist=calc('training-history-published');hr={z['input']['id']:z for z in hist['training_history_rows']};ids=['llama1-7b','llama2-7b','llama31-8b','qwen25-7b-proxy','qwen3-8b-proxy'];names=['Llama 1 6.7B\n2023 · 1T','Llama 2 ~7B\n2023 · 2T','Llama 3.1 ~8B\n2024 · ~15T','Qwen2.5 ~7B\n2024 · ~18T','Qwen3 ~8B\n2025 · ~36T']
-f,a=canvas('图 3-8  Llama 与 Qwen 的模型—数据选择','历史投入按报告中的模型规模估算；Qwen token 为 family 披露，产品点不是受控 Scaling Law 实验。',9)
+f,a=canvas('图 3-8  Llama 与 Qwen 的模型—数据选择','上下文投入按报告中的模型规模估算；Qwen token 为 family 披露，产品点不是受控 Scaling Law 实验。',9)
 ax=f.add_axes([.16,.26,.30,.51]);ratios=[hr[k]['input']['training_tokens']/hr[k]['input']['parameter_proxy'] for k in ids];ax.barh(range(5),ratios,color=[C['blue']]*3+[C['teal']]*2);ax.set_yticks(range(5),names);ax.invert_yaxis();ax.set_xlim(0,5400);ax.set_xlabel('训练 token / 参数');ax.set_title('A  相近规模 dense 模型',loc='left',fontsize=13)
 for i,v in enumerate(ratios):ax.text(v+90,i,f'{v:,.0f}',va='center',fontsize=10)
 ax=f.add_axes([.63,.26,.31,.51]);mids=['deepseek-v3-pretraining','deepseek-v4-flash','deepseek-v4-pro'];ctx=[hr[k]['parameter_context'] for k in mids];y=np.arange(3);tot=[z['total_reported']/1e9 for z in ctx];act=[z['active_reported']/1e9 for z in ctx];ax.barh(y-.17,tot,height=.30,color=C['blue'],label='总参数：估算容量');ax.barh(y+.17,act,height=.30,color=C['orange'],label='激活参数：估算计算量');ax.set_yticks(y,['V3 · 2024\n14.8T','V4-Flash · 2026\n32T','V4-Pro · 2026\n33T']);ax.invert_yaxis();ax.set_xlim(0,1900);ax.set_xlabel('十亿参数 B');ax.set_title('B  MoE 总参数与激活参数',loc='left',fontsize=13);ax.legend(frameon=False,fontsize=10,loc='upper center',bbox_to_anchor=(.5,-.17))
@@ -222,6 +223,8 @@ sys.path.insert(0,str(HERE.parent))
 from teaching_reading import readable_diagrams
 page=readable_diagrams(page)
 html_path=HERE.parent/'03-推理与训练负载.html';html_path.write_text(page)
-artifacts=outputs+[HERE/'figure-data.json',html_path,md]
+from book_assets import sync_figure_index
+active_assets=sync_figure_index(HERE)
+artifacts=outputs+[HERE/'figure-data.json',html_path,md]+active_assets
 (HERE/'manifest.json').write_text(json.dumps({'chapter':3,'generator':'manuscripts/ch03/build.py','figures':len(re.findall(r'!\[',raw)),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(outputs)} figure files and reading HTML; {len(extent_issues)} text extent warnings.')

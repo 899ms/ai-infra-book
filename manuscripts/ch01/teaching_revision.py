@@ -61,13 +61,17 @@ def draw(here,data):
         for i,(v,label) in enumerate(zip(vals,['0.1 μs','0.5 ms','10 ms'])):a.text(v*1.35,i,label,va='center',fontsize=12)
         out.save(f,'figure-1-4-numbers')
 
-        f,a=plot(3.5,left=.23)
-        for y,v,c in [(3,140,'orange'),(2,0,'orange'),(1,70,'blue'),(0,70,'blue')]:
-            a.barh(y,v,height=.55,color=COL[c],edgecolor=COL['line']);a.text(v+3,y,f'{v} GB',va='center',fontsize=12)
+        capacity=data['capacity_example']
+        bf16=capacity['bf16_weight_bytes']/1e9
+        int8=capacity['int8_weight_and_metadata_bytes']/1e9
+        f,a=plot(3.5,left=.25)
+        for y,v,c in [(3,bf16,'orange'),(2,bf16/2,'blue'),(1,bf16/2,'blue'),(0,int8,'green')]:
+            a.barh(y,v,height=.55,color=COL[c],edgecolor=COL['line'])
+            a.text(6,y,f'{v:.2f} GB',va='center',fontsize=12)
         a.axvline(80,color='#80542e',ls='--',lw=1);a.text(82,3.65,'单卡容量 80 GB',fontsize=11)
-        a.axhline(1.5,color='#999999',lw=.7)
-        a.set(yticks=[3,2,1,0],yticklabels=['集中：卡 0','集中：卡 1','均分：卡 0','均分：卡 1'],
-              xlim=(0,172),ylim=(-.55,4.05),xlabel='纯权重容量（GB）',xticks=[0,40,80,120,160])
+        a.axhline(.5,color='#999999',lw=.7)
+        a.set(yticks=[3,2,1,0],yticklabels=['BF16 单卡','BF16 卡 0','BF16 卡 1','8 比特单卡'],
+              xlim=(0,190),ylim=(-.55,4.05),xlabel='权重及量化附加数据（GB）',xticks=[0,40,80,120,160])
         out.save(f,'figure-1-capacity-path')
 
         f,a=canvas(3.0)
@@ -116,7 +120,7 @@ def draw(here,data):
             out.save(f,name)
 
         for slug,title,items in [
-            ('tpu','增加专用的计算与供数资源',[('输入缓冲','blue'),('矩阵计算阵列','orange'),('输出缓冲','green')]),
+            ('tpu','增加专用计算与数据搬运资源',[('输入缓冲','blue'),('矩阵计算阵列','orange'),('输出缓冲','green')]),
             ('smartnic','把包处理放到数据经过的位置',[('网络数据','blue'),('可编程网卡\n完成包处理','orange'),('主机 CPU\n运行应用','green')]),
             ('ub','让多台设备直接交换所需数据',[('设备 0\n计算与存储','blue'),('统一互联\n传递数据','green'),('设备 1\n计算与存储','orange')])]:
             f,a=canvas(2.5);text(a,.04,.89,title,14)
@@ -124,4 +128,6 @@ def draw(here,data):
                 x=.03+.335*i;box(a,x,.30,.27,.34,label,c)
                 if i<2:arrow(a,(x+.27,.47),(x+.335,.47))
             out.save(f,'figure-1-design-'+slug)
+    from core_principles_figures import draw as draw_principles
+    draw_principles(1, out)
     return out.finish()

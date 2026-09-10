@@ -32,7 +32,7 @@ def draw(here,data):
         f,a=plot(3.6,left=.18)
         for stage in range(4):
             for batch in range(8):a.barh(stage,1,left=stage+batch,height=.7,color=COL[['blue','green','orange','purple'][batch%4]],edgecolor=COL['line']);a.text(stage+batch+.5,stage,str(batch),ha='center',va='center',fontsize=11)
-        a.set(yticks=range(4),yticklabels=[f'阶段 {i}' for i in range(4)],xlim=(0,11),xticks=[0,2,4,6,8,10,11],xlabel='时间（ms）；格内为微批编号');a.invert_yaxis();save(f,'4-pipeline')
+        a.set(yticks=range(4),yticklabels=[f'阶段 {i}' for i in range(4)],xlim=(0,11),xticks=[0,2,4,6,8,10,11],xlabel='时间（ms）；格内为微批次编号');a.invert_yaxis();save(f,'4-pipeline')
         for i in range(3):
             f,a=canvas(3.7);text(a,.04,.94,['集中到一张网卡','均分到四张独立网卡','四张网卡共用一个入口'][i],14);box(a,.04,.42,.24,.24,'32 MiB','blue')
             if i==0:box(a,.64,.42,.30,.24,'网卡\n25 GB/s','orange');arrow(a,(.28,.54),(.64,.54))
@@ -41,7 +41,7 @@ def draw(here,data):
                 for j in range(4):
                     y=.21+j*.16;box(a,.72,y,.25,.12,'8 MiB','orange',11);arrow(a,(.60 if i==2 else .28,.54),(.72,y+.06))
             text(a,.5,.09,f'接收阶段至少 {data["7-5"]["lower_ms"][i]:.2f} ms',13,ha='center');save(f,'5-expert' if i==0 else f'expert-path-{i}')
-        f,a=canvas(4.8);box(a,.03,.44,.21,.18,'源 GPU','blue');box(a,.39,.72,.27,.15,'直连 40','green');box(a,.36,.17,.31,.19,'本地互联 60\n中继网卡 80','orange',11);box(a,.78,.40,.20,.25,'下游\n带宽 BD','gray');arrow(a,(.24,.53),(.39,.79));arrow(a,(.24,.53),(.36,.26));arrow(a,(.66,.79),(.78,.52));arrow(a,(.67,.26),(.78,.52));text(a,.5,.05,'单位 GB/s；中继先受 60 限制',12,ha='center');save(f,'6-relay')
+        f,a=canvas(4.8);box(a,.03,.44,.21,.18,'源 GPU','blue');box(a,.39,.72,.27,.15,'直连 40','green');box(a,.36,.17,.31,.19,'本地互联 60\n中继网卡 80','orange',11);box(a,.78,.40,.20,.25,'下游\n可用带宽','gray');arrow(a,(.24,.53),(.39,.79));arrow(a,(.24,.53),(.36,.26));arrow(a,(.66,.79),(.78,.52));arrow(a,(.67,.26),(.78,.52));text(a,.5,.05,'单位 GB/s；中继先受 60 限制',12,ha='center');save(f,'6-relay')
         paths=[('主机 RPC',['CPU A','网卡 A','网卡 B','CPU B']),('CPU 提交 GPUDirect RDMA',['GPU A','网卡 A','网卡 B','GPU B']),('GPU 经 NVLink 访问',['GPU A','NVLink','GPU B']),('设备发起 URMA 异步访问',['设备 A','UB 互联','设备 B'])]
         for i,(title,nodes) in enumerate(paths):
             f,a=canvas(3.8);text(a,.04,.94,title,14);step=.94/len(nodes)
@@ -56,9 +56,9 @@ def draw(here,data):
             y=.61-i*.43;box(a,.04,y,.31,.19,'远端快照','blue');box(a,.65,y,.31,.19,'消费者' if i==0 else '本地副本','green');arrow(a,(.35,y+.095),(.65,y+.095));text(a,.5,y+.25,'每次使用都跨网络读取' if i==0 else '搬回一次，再读取本地副本',13,ha='center')
         save(f,'snapshot-paths')
         for i,(label,c) in enumerate(data['7-8']['cases'].items()):
-            f,a=plot(3.5);r=np.arange(1,6 if i==0 else 26);a.plot(r,c['remote_per_read_ms']*r,label='每次远读',color='#267398');a.plot(r,c['setup_ms']+c['local_per_read_ms']*r,label='先搬回本地',color='#388768');a.set(xlabel='复用次数',ylabel='累计时间（ms）');a.legend(frameon=False);save(f,'8-snapshot' if i==0 else 'snapshot-partial')
+            f,a=plot(3.5);r=np.arange(1,6 if i==0 else 26);a.plot(r,c['remote_per_read_ms']*r,label='每次远程读取',color='#267398');a.plot(r,c['setup_ms']+c['local_per_read_ms']*r,label='先搬回本地',color='#388768');a.set(xlabel='复用次数',ylabel='累计时间（ms）');a.legend(frameon=False);save(f,'8-snapshot' if i==0 else 'snapshot-partial')
         f,a=canvas(4.0);text(a,.04,.94,'槽位保存一项尚未完成的请求',14)
-        for x,label,c in [(.03,'分配槽位','blue'),(.37,'传输与等待','orange'),(.71,'处理完成\n释放槽位','green')]:box(a,x,.39,.26,.23,label,c,12)
+        for x,label,c in [(.03,'分配槽位','blue'),(.37,'传输与等待','orange'),(.71,'处理通知\n释放槽位','green')]:box(a,x,.39,.26,.23,label,c,12)
         arrow(a,(.29,.5),(.37,.5));arrow(a,(.63,.5),(.71,.5));text(a,.5,.18,'占用时间：从分配到释放，共 2 μs',12,ha='center');save(f,'slot-lifetime')
         f,a=plot(3.5,left=.24)
         for y,(key,p) in enumerate(data['7-9']['periods'].items()):
@@ -80,14 +80,14 @@ def draw(here,data):
                 lane=1 if t['id']=='independent_transfer' else 0;color={'write_data':'blue','recover_and_make_visible':'orange','publish_notification':'green','independent_transfer':'purple'}[t['id']];a.barh(lane,t['duration_ns']/1000,left=t['start_ns']/1000,height=.45,color=COL[color],edgecolor=COL['line'])
             a.set(yticks=[0,1],yticklabels=['写入与发布','独立传输'],xlim=(0,115),xlabel='时间（μs）');a.invert_yaxis();save(f,'12-ordering' if i==0 else 'ordering-independent')
         f,a=canvas(5.0)
-        for row,(time,label,c) in enumerate([(1,'提前读取：得到旧值','orange'),(2,'生产者写入新值','blue'),(3,'就绪标志可见','green'),(4,'消费者读到就绪标志','green'),(5,'交付先前读到的旧值','orange'),(6,'若在 4 μs 重读，此时得到新值','blue')]):
+        for row,(time,label,c) in enumerate([(1,'提前读取：得到旧值','orange'),(2,'生产者写入新值','blue'),(3,'就绪标志可见','green'),(4,'消费者读到就绪标志','green'),(5,'返回先前读到的旧值','orange'),(6,'若在 4 μs 重读，此时得到新值','blue')]):
             y=.78-row*.14;text(a,.03,y+.04,f'{time} μs',11);box(a,.19,y,.76,.10,label,c,11)
         save(f,'13-stale')
         for i,(name,ops) in enumerate(data['7-14']['operations'].items()):
             f,a=plot(5,left=.17)
             for op in ops:
                 y=op['operation'];start=op['submit_ns']/1000;end=op['transfer_complete_ns']/1000;done=op['completion_consumed_ns']/1000;a.barh(y,end-start,left=start,height=.65,color=COL['blue']);a.barh(y,done-end,left=end,height=.65,color=COL['orange'])
-            a.set(xlim=(0,82),yticks=[0,4,8,12,15],ylabel='请求编号',xlabel='时间（μs）；蓝为传输，橙为等待回收');a.invert_yaxis();save(f,'14-reclaim' if i==0 else 'reclaim-more')
+            a.set(xlim=(0,82),yticks=[0,4,8,12,15],ylabel='请求编号',xlabel='时间（μs）\n蓝：传输；橙：等待槽位释放');a.invert_yaxis();save(f,'14-reclaim' if i==0 else 'reclaim-more')
         for kind,n in [('arrival','15-congestion'),('queue','congestion-queue')]:
             f,a=plot(3.8)
             for (name,segs),label,c in zip(data['7-15']['periodic_segments'].items(),['重叠 20 ms','重叠 5 ms','不重叠'],['#267398','#a56c28','#388768']):
@@ -108,7 +108,7 @@ def draw(here,data):
             for t in c['transmissions']:
                 if t['lost']:continue
                 arrival=float(Fraction(t['arrival_exact_ns']))/1000;seq=t['sequence'];a.plot([arrival,delivery[seq]],[seq,seq],color='#a56c28');a.scatter(arrival,seq,color='#267398',s=22)
-            a.set(xlim=(0,25),yticks=range(8),ylabel='报文序号',xlabel='到达与可交付时刻（μs）');a.invert_yaxis();save(f,'17-packets' if i==0 else f'packets-{i}')
+            a.set(xlim=(0,25),yticks=range(8),ylabel='报文序号',xlabel='到达与交给应用的时刻（μs）');a.invert_yaxis();save(f,'17-packets' if i==0 else f'packets-{i}')
         f,a=canvas(3.6);box(a,.04,.40,.34,.25,'请求 0 持有 A\n等待 B','blue');box(a,.62,.40,.34,.25,'请求 1 持有 B\n等待 A','orange');arrow(a,(.38,.58),(.62,.58));arrow(a,(.62,.46),(.38,.46));text(a,.5,.16,'双方都需要对方先释放',13,ha='center');save(f,'18-deadlock')
         f,a=canvas(3.7)
         for x,label,col in [(.03,'请求资源','blue'),(.37,'执行资源','orange'),(.71,'独立响应\n资源','green')]:box(a,x,.42,.26,.24,label,col,12)

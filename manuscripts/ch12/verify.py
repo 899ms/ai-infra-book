@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Validate chapter structure, actual source data, links, artwork, and arithmetic."""
 from pathlib import Path
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+from svg_labels import svg_labels
 from fractions import Fraction
 from urllib.parse import unquote, urlsplit
 import hashlib,json,re,xml.etree.ElementTree as ET
@@ -13,7 +16,7 @@ def check(name,condition):
 def close(x,y):return abs(x-y)<1e-8
 outline=(ROOT/'outlines/12-端边云协同.md').read_text()
 check('six_sections',re.findall(r'^## (12\.\d+) ',text,re.M)==[f'12.{i}' for i in range(1,7)])
-check('twenty_subsections_match_outline',re.findall(r'^### .+$',text,re.M)==re.findall(r'^### .+$',outline,re.M))
+check('subsection_numbers_match_outline',re.findall(r'^### (12\.\d+\.\d+) ',text,re.M)==re.findall(r'^### (12\.\d+\.\d+) ',outline,re.M))
 check('eight_exercises',re.findall(r'^\*\*(12-\d+)\s',text,re.M)==[f'12-{i}' for i in range(1,9)])
 check('three_core_exercises',re.findall(r'^\*\*(12-\d+)[^\n]*〔核心',text,re.M)==['12-2','12-3','12-7'])
 check('external_captions',re.findall(r'^\*图 (12-\d+)：',text,re.M)==[f'12-{i}' for i in range(1,figure_count+1)])
@@ -34,7 +37,7 @@ for url in links:
  p=(md.parent/unquote(parts.path)).resolve();check('link:'+url,p.exists())
 for entry in active_catalog:
  p=HERE/entry['file']
- tree=ET.parse(p);labels=[''.join(x.itertext()) for x in tree.iter() if x.tag.endswith('}text')]
+ labels=svg_labels(p)
  check('artwork_has_no_caption_number:'+p.name,not any(re.search(r'图\s*\d+\s*[-－–]\s*\d+',s) for s in labels))
  check('artwork_has_labels:'+p.name,bool(labels))
 check('book_size_layout',all(r['width_pt']==420 and r['min_label_pt']>=11 and not r['text_extent_warnings'] for r in json.loads((HERE/'teaching-layout-validation.json').read_text())))

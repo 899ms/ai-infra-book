@@ -12,10 +12,11 @@ from derive import derive
 import markdown
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1]
 parser=argparse.ArgumentParser();parser.add_argument('--font');args=parser.parse_args()
-font=next((Path(x) for x in [args.font,'/System/Library/Fonts/Supplemental/Arial Unicode.ttf','/System/Library/Fonts/STHeiti Medium.ttc','/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'] if x and Path(x).exists()),None)
-if not font:raise SystemExit('Select a Chinese font with --font')
-font_manager.fontManager.addfont(str(font));family=font_manager.FontProperties(fname=str(font)).get_name()
-plt.rcParams.update({'font.family':family,'font.size':11,'axes.unicode_minus':False,'svg.fonttype':'none','svg.hashsalt':'ch04-v1','axes.spines.top':False,'axes.spines.right':False,'figure.facecolor':'white','savefig.facecolor':'white','text.color':'#203a47','axes.labelcolor':'#203a47','axes.edgecolor':'#aabbc3'})
+import sys
+sys.path.insert(0,str(HERE.parent))
+from figure_style.typography import configure_font
+font,family=configure_font(args.font)
+plt.rcParams.update({'font.family':[family,'DejaVu Sans'],'font.size':11,'axes.unicode_minus':False,'svg.fonttype':'path','svg.hashsalt':'ch04-v1','axes.spines.top':False,'axes.spines.right':False,'figure.facecolor':'white','savefig.facecolor':'white','text.color':'#203a47','axes.labelcolor':'#203a47','axes.edgecolor':'#aabbc3'})
 C={'blue':'#286c90','teal':'#15867b','orange':'#bd742a','ink':'#203a47','pale':'#edf3f6','light':'#e5f3ed','sand':'#fff1df','line':'#b7c9d0','gray':'#6a7c87','red':'#aa4f4f'}
 for z in json.loads((HERE/'sources.json').read_text())['sources']:
  if hashlib.sha256((ROOT/z['path']).read_bytes()).hexdigest()!=z['sha256']:raise SystemExit('Input changed; review before relocking: '+z['path'])
@@ -171,6 +172,8 @@ sys.path.insert(0,str(HERE.parent))
 from teaching_reading import readable_diagrams
 page=readable_diagrams(page)
 html_path=HERE.parent/'04-加速器架构.html';html_path.write_text(page)
-artifacts=outputs+[HERE/'figure-data.json',HERE/'teaching-data.json',html_path,md]
+from book_assets import sync_figure_index
+active_assets=sync_figure_index(HERE)
+artifacts=outputs+[HERE/'figure-data.json',HERE/'teaching-data.json',html_path,md]+active_assets
 (HERE/'manifest.json').write_text(json.dumps({'chapter':4,'generator':'manuscripts/ch04/build.py','figures':len(re.findall(r'!\[',raw)),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(outputs)} figure files and reading HTML; {len(extent_issues)} text extent warnings.')

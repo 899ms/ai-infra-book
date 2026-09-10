@@ -46,7 +46,7 @@ def draw(here, data):
     style={'font.size':12,'text.color':COL['ink'],'axes.labelcolor':COL['ink'],
            'xtick.color':COL['ink'],'ytick.color':COL['ink'],'axes.edgecolor':COL['line'],
            'pdf.fonttype':42,'axes.titlesize':14,'axes.labelsize':12,'xtick.labelsize':11,
-           'ytick.labelsize':11,'legend.fontsize':11,'svg.fonttype':'none'}
+           'ytick.labelsize':11,'legend.fontsize':11,'svg.fonttype':'path'}
     with plt.rc_context(style):
         # One operation, then its neighbour: identical positions make reuse visible.
         f,a=canvas(4.1)

@@ -7,12 +7,25 @@ def draw(here,data):
     out=Exporter(here)
     def save(f,name):out.save(f,'figure-5-'+name)
     with plt.rc_context(STYLE):
-        d=data['5-1'];f,a=plot(3.6,left=.23)
+        d=data['5-1'];f,a=plot(3.6,left=.20)
+        cells=[]
         for y,kernel in enumerate(d['kernel_us']):
             start=0
-            for dur,label,c in [(3,'提交','orange'),(8,'H2D','blue'),(kernel,'kernel','green'),(4,'D2H','purple')]:
-                a.barh(y,dur,left=start,height=.42,color=COL[c],edgecolor=COL['line']);a.annotate(label,(start+dur/2,y),xytext=(0,16 if label in ['提交','kernel'] else -24),textcoords='offset points',fontsize=11,ha='center');start+=dur
-        a.set(yticks=[0,1],yticklabels=['原内核','内核加快'],xlim=(0,40),ylim=(-.65,1.65),xlabel='从 CPU 提交起计时（μs）');a.invert_yaxis();save(f,'1-execution')
+            for dur,label,c in [(3,'提\n交','orange'),(8,'H2D','blue'),(kernel,'内核','green'),(4,'D2H','purple')]:
+                cell=a.barh(y,dur,left=start,height=.64,color=COL[c],edgecolor=COL['line'])[0]
+                label_artist=a.text(start+dur/2,y,label,fontsize=12,ha='center',va='center',linespacing=1.15)
+                cells.append((cell,label_artist))
+                start+=dur
+        a.set(yticks=[0,1],yticklabels=['原内核','内核加快'],xlim=(0,37),ylim=(-.6,1.6),xlabel='从 CPU 提交起计时（μs）')
+        a.invert_yaxis()
+        # Preserve proportional durations and require padding inside every cell.
+        f.canvas.draw();renderer=f.canvas.get_renderer();padding=2*f.dpi/72
+        for cell,label_artist in cells:
+            outer=cell.get_window_extent(renderer);inner=label_artist.get_window_extent(renderer)
+            if not (outer.x0+padding <= inner.x0 and inner.x1 <= outer.x1-padding
+                    and outer.y0+padding <= inner.y0 and inner.y1 <= outer.y1-padding):
+                raise ValueError(f'figure-5-1: label must fit inside its cell: {label_artist.get_text()}')
+        save(f,'1-execution')
         f,a=canvas(4.6);text(a,.04,.94,'缩进层级决定保存到何时',14)
         box(a,.04,.08,.92,.76,'','gray');text(a,.07,.79,'遍历输出块 io、jo',14)
         box(a,.12,.62,.76,.10,'创建 FP32 累加器：16 KiB','green')
@@ -73,4 +86,6 @@ def draw(here,data):
         d=data['5-17'];v=[r['latency_saving_ms'] for r in d['pairs']];f,a=plot(3.8)
         a.axhline(0,color='#555555',lw=.8);a.vlines(range(1,12),0,v,color='#267398');a.scatter(range(1,12),v,color='#267398');a.axhline(np.median(v),color='#a56c28',ls='--',label=f'中位数 {np.median(v):.1f} ms')
         a.set(xlim=(.5,11.5),ylim=(-3.2,5.4),xticks=range(1,12),xlabel='配对轮次',ylabel='原请求减新请求耗时（ms）');a.legend(frameon=False);save(f,'17-request')
+    from v41_case_figures import draw as draw_v41
+    draw_v41(5, out)
     out.finish();return out.outputs,out.checks

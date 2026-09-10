@@ -76,14 +76,14 @@ def draw(save, C, data, canvas, box, arrow, design, lifecycle):
         for v,c in zip(row,colors):a.barh(i,v,left=left,color=c,height=.5);left+=v
         a.text(left+.0005,i,f'{left:.3f}',va='center')
     for c,l in zip(colors,['输入 0.020','思考 0.010 → 0.001','可见输出 0.002']):a.plot([],[],color=c,lw=8,label=l)
-    a.set(yticks=[0,1],yticklabels=['思考 1,000 token','思考 100 token'],xlim=(0,.038),xlabel='每次调用费用');a.invert_yaxis();a.legend(frameon=False,loc='lower center',bbox_to_anchor=(.5,1.02),ncol=3,fontsize=10)
+    a.set(yticks=[0,1],yticklabels=['思考 1,000 token','思考 100 token'],xlim=(0,.038),xlabel='每次调用成本');a.invert_yaxis();a.legend(frameon=False,loc='lower center',bbox_to_anchor=(.5,1.02),ncol=3,fontsize=10)
     done(f,'thinking',{'cost_parts':rows})
     # Fixed intercept and marginal slope.
     f,a=chart(left=.12);n=np.linspace(0,200000,201);a.plot(n/1000,1000+.002*n,label='自建：1,000 + 0.002N',color=C['blue']);a.plot(n/1000,.012*n,label='API：0.012N',color=C['orange'])
-    a.scatter([100],[1200],color=C['teal']);a.axvline(100,color=C['muted'],ls='--',lw=1);a.annotate('100,000 项时费用相等',(100,1200),(65,2050),arrowprops={'arrowstyle':'->','color':C['muted']});a.set(xlabel='提交任务数 / 千项',ylabel='总费用',xlim=(0,200),ylim=(0,2600));a.legend(frameon=False,loc='upper left')
+    a.scatter([100],[1200],color=C['teal']);a.axvline(100,color=C['muted'],ls='--',lw=1);a.annotate('100,000 项时成本相等',(100,1200),(65,2050),arrowprops={'arrowstyle':'->','color':C['muted']});a.set(xlabel='提交任务数 / 千项',ylabel='总成本',xlim=(0,200),ylim=(0,2600));a.legend(frameon=False,loc='upper left')
     done(f,'purchase',{'fixed':1000,'self_per_task':.002,'api_per_task':.012,'crossover':100000})
     # Six terminal paths with time and deadline, linked to probability tree.
-    f,a=canvas(7);box(a,.01,.40,.18,.19,'首次尝试','10 s；费用 0.010',size=12)
+    f,a=canvas(7);box(a,.01,.40,.18,.19,'首次尝试','10 s；成本 0.010',size=12)
     box(a,.33,.64,.20,.17,'局部修复','再用 4 s；0.006',size=12)
     box(a,.33,.20,.20,.17,'直接升级','再用 8 s；0.030',size=12)
     box(a,.66,.89,.31,.09,'首次成功：80% · 10 s',color='green',size=12)

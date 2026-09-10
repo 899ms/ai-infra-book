@@ -45,8 +45,8 @@ def draw(here,data):
             for j in range(5):
                 a.add_patch(Rectangle((.29+j*.125,y),.12,.13,facecolor=COL['blue'] if j<2 else COL['green'] if j<3+i else COL['white'],edgecolor=COL['line'],lw=.8))
                 if j<3+i:text(a,.35+j*.125,y+.065,'✓',12,ha='center')
-        text(a,.415,.84,'已有历史',11,ha='center');text(a,.73,.84,'本次输入',11,ha='center')
-        text(a,.5,.065,'6 个旧历史位置对 ＋ 6 个新位置对',12,ha='center');save(f,'causal-pairs')
+        text(a,.415,.84,'已有上下文',11,ha='center');text(a,.73,.84,'本次输入',11,ha='center')
+        text(a,.5,.065,'6 个旧上下文位置对 ＋ 6 个新位置对',12,ha='center');save(f,'causal-pairs')
 
         f,a=canvas(4.8);text(a,.04,.95,'一层先交换信息，再变换特征',14)
         stages=[('输入：每位置 4096 个数','gray'),('归一化 → 注意力 → 输出投影','blue'),('与子层输入逐元素相加','green'),('归一化 → 前馈网络','orange'),('与子层输入逐元素相加','green')]
@@ -65,14 +65,14 @@ def draw(here,data):
         box(a,.30,.26,.40,.13,'对应元素相乘','green');arrow(a,(.24,.43),(.4,.40));arrow(a,(.76,.43),(.6,.40))
         box(a,.20,.04,.60,.13,'down 投影：返回 4096 维','purple');arrow(a,(.5,.26),(.5,.17));save(f,'ffn-gates')
 
-        f,a=canvas(4.2);text(a,.04,.94,'每一步追加一个位置，重读已有历史',14)
+        f,a=canvas(4.2);text(a,.04,.94,'每一步追加一个位置，重读已有上下文',14)
         for i,n in enumerate([4,5,6,7]):
             y=.71-i*.18;text(a,.03,y+.05,f'第 {i+1} 步',11)
             cells(a,.22,y,n+1,w=.70,h=.12,colors=['blue']*n+['orange'])
-        text(a,.5,.07,'蓝：本步读取的历史；橙：本步追加',11,ha='center');save(f,'history')
+        text(a,.5,.07,'蓝：本步读取的上下文；橙：本步追加',11,ha='center');save(f,'history')
         f,a=plot(3.4)
         B=np.arange(1,65);W=data['teaching_diagrams']['history']['shared_weight_bytes']/2**30
-        a.axhline(W,color='#267398',label='共享权重');a.plot(B,B*8192*147456/2**30,color='#a56c28',label='8K 历史 × 请求数')
+        a.axhline(W,color='#267398',label='共享权重');a.plot(B,B*8192*147456/2**30,color='#a56c28',label='8K 上下文 × 请求数')
         a.set(xlim=(0,64),ylim=(0,75),xlabel='批内请求数',ylabel='逻辑读取量（GiB）');a.legend(frameon=False)
         save(f,'history-batch')
 
@@ -86,20 +86,20 @@ def draw(here,data):
             for g in range(groups):
                 x=.10+g*.825/groups;box(a,x,top-.28,.825/groups-.02,.08,f'KV {g+1}','blue',11)
         save(f,'3-sharing')
-        bars('4-cache',['MHA：32 组','GQA：8 组','MQA：1 组'],data['figure_2_4']['qwen_variants_mib'],'8K 历史容量（MiB）')
+        bars('4-cache',['MHA：32 组','GQA：8 组','MQA：1 组'],data['figure_2_4']['qwen_variants_mib'],'8K 上下文状态容量（MiB）')
 
         f,a=canvas(4.8)
-        text(a,.04,.94,'路径一：先展开每个历史位置',14)
+        text(a,.04,.94,'路径一：先展开每个上下文位置',14)
         box(a,.04,.69,.25,.13,'潜变量 c','blue');box(a,.38,.69,.25,.13,'展开键 K','green');box(a,.72,.69,.24,.13,'点积分数','purple')
         arrow(a,(.29,.755),(.38,.755));arrow(a,(.63,.755),(.72,.755))
-        text(a,.32,.60,'历史先计算 K = c Uₖ',12)
+        text(a,.32,.60,'上下文先计算 K = c Uₖ',12)
         text(a,.04,.46,'路径二：先变换当前查询',14)
         box(a,.04,.22,.25,.13,'当前查询 q','orange');box(a,.38,.22,.25,.13,'变换后查询','orange');box(a,.72,.22,.24,.13,'点积分数','purple')
         arrow(a,(.29,.285),(.38,.285));arrow(a,(.63,.285),(.72,.285))
         box(a,.71,.035,.25,.10,'潜变量 c','blue');arrow(a,(.835,.135),(.835,.22))
         text(a,.04,.09,'查询先计算 q Uₖᵀ',12)
         save(f,'mla-paths')
-        bars('mla-capacity',['紧凑潜变量','展开各头 KV'],data['figure_2_4']['k3_mla_paths_mib'],'K3 的 24 层 MLA 状态（MiB）')
+        bars('mla-capacity',['紧凑潜变量','展开各头 KV'],data['figure_2_4']['k3_mla_paths_mib'],'Kimi K3 的 24 层 MLA 状态（MiB）')
 
         f,a=canvas(4.3);text(a,.04,.94,'先形成压缩条目，再由查询选择',14)
         cells(a,.05,.72,8,w=.90,h=.11)
@@ -108,7 +108,7 @@ def draw(here,data):
         text(a,.5,.35,'示例：每 4 个位置合成 1 条',11,ha='center')
         box(a,.04,.08,.25,.13,'当前查询','orange');box(a,.38,.08,.25,.13,'扫描索引','purple');box(a,.72,.08,.24,.13,'读取选中条目','green',11)
         arrow(a,(.29,.145),(.38,.145));arrow(a,(.63,.145),(.72,.145));save(f,'5-sparse')
-        c=data['figure_2_5']['components'];bars('sparse-capacity',['窗口','压缩历史','索引历史','压缩缓冲'],[c['window_history_bytes']/2**20,c['compressed_history_bytes']/2**20,c['index_history_bytes']/2**20,data['figure_2_5']['compressor_buffer_bytes']/2**20],'V4 的 8K 历史状态（MiB）')
+        c=data['figure_2_5']['components'];bars('sparse-capacity',['窗口状态','压缩表示','索引条目','压缩缓冲'],[c['window_history_bytes']/2**20,c['compressed_history_bytes']/2**20,c['index_history_bytes']/2**20,data['figure_2_5']['compressor_buffer_bytes']/2**20],'DeepSeek V4-Flash 的 8K 上下文状态（MiB）')
         f,a=canvas(3.4)
         for i in range(4):
             x=.04+i*.24;box(a,x,.56,.20,.17,f'到达 {i+1}\n块内 {i+1}/4','orange' if i==3 else 'blue',11)
@@ -116,7 +116,7 @@ def draw(here,data):
         box(a,.62,.12,.33,.17,'发布压缩条目','green');arrow(a,(.86,.56),(.79,.29))
         text(a,.05,.28,'前三步更新同一缓冲\n第四步完成一块',12);save(f,'compression-steps')
 
-        f,a=canvas(3.9);text(a,.04,.94,'历史增加，状态矩阵保持同样大小',14)
+        f,a=canvas(3.9);text(a,.04,.94,'上下文增加，状态矩阵保持同样大小',14)
         for x,title,c in [(.04,'旧状态','blue'),(.37,'新键值外积','orange'),(.70,'新状态','green')]:
             for i in range(3):
                 for j in range(3):a.add_patch(Rectangle((x+j*.08,.46+i*.08),.08,.08,facecolor=COL[c],edgecolor=COL['line'],lw=.7))
@@ -124,17 +124,17 @@ def draw(here,data):
         text(a,.32,.58,'+',16,ha='center');text(a,.655,.58,'=',16,ha='center')
         box(a,.22,.09,.56,.13,'当前查询 × 新状态 → 输出','purple');save(f,'recurrence')
 
-        f,a=canvas(4.1);text(a,.04,.94,'注意力层型由模型配置决定',14)
-        box(a,.05,.62,.40,.18,'30 层线性注意力\n固定递推状态','blue');box(a,.55,.62,.40,.18,'10 层完整注意力\n逐位置历史','green')
+        f,a=canvas(4.1);text(a,.04,.94,'模型配置决定采用哪种注意力',14)
+        box(a,.05,.62,.40,.18,'30 层线性注意力\n固定递推状态','blue');box(a,.55,.62,.40,.18,'10 层完整注意力\n逐位置上下文','green')
         box(a,.20,.34,.60,.13,'层内归一化与残差连接','gray')
         arrow(a,(.25,.62),(.4,.47));arrow(a,(.75,.62),(.6,.47))
         box(a,.06,.07,.41,.16,'路由专家：256 选 8','orange',11);box(a,.57,.07,.37,.16,'共享专家','purple')
         arrow(a,(.4,.34),(.27,.23));arrow(a,(.6,.34),(.76,.23));save(f,'6-hybrid')
-        d=data['figure_2_7'];names={'qwen':'Qwen3-8B','v4':'V4-Flash','k3':'K3 紧凑'}
+        d=data['figure_2_7'];names={'qwen':'Qwen3-8B','v4':'DeepSeek\nV4-Flash','k3':'Kimi K3\n紧凑'}
         for field,name,ylabel in [('resident_bytes','7-state-growth','状态容量（GiB）'),('accounted_access_bytes','state-access','每步计入的访问量（GiB）')]:
             f,a=plot(3.8)
             for key,col in zip(names,['#267398','#388768','#a56c28']):a.plot(np.array(d['lengths'])/1024,np.array(d[field][key])/2**30,'o-',label=names[key],color=col)
-            a.set(xscale='log',yscale='log',xlabel='历史长度（千个位置，对数轴）',ylabel=ylabel+'，对数轴');a.legend(frameon=False);save(f,name)
+            a.set(xscale='log',yscale='log',xlabel='上下文长度（千个位置，对数轴）',ylabel=ylabel+'，对数轴');a.legend(frameon=False);save(f,name)
 
         f,a=canvas(4.0);text(a,.04,.94,'分派次数相同，访问到的专家可以不同',14)
         for y,title,n,c in [(.58,'分散：覆盖 256 个专家',256,'blue'),(.17,'集中：覆盖 8 个专家',8,'orange')]:
@@ -153,16 +153,35 @@ def draw(here,data):
         save(f,'8-residual')
 
         arch=data['teaching_diagrams']['architecture']
-        for key,label,name in [('layers','主干层数','architecture'),('hidden','主干隐藏维度','architecture-width'),('experts','每个 MoE 层的路由专家数','architecture-experts')]:bars(name,['Qwen3-8B','Qwen3.6','V4-Flash','K3'],arch[key],label)
+        for key,label,name in [('layers','主干层数','architecture'),('hidden','主干隐藏维度','architecture-width'),('experts','每个 MoE 层的路由专家数','architecture-experts')]:bars(name,['Qwen3-8B','Qwen3.6','DeepSeek\nV4-Flash','Kimi K3'],arch[key],label)
         models=data['teaching_diagrams']['resource_comparison']['models']
-        for key,div,label,name in [('uniform_bf16_bytes',1e9,'完整 BF16 权重（GB）','resources'),('decode_matrix_flops',1e9,'8K 历史单步矩阵运算（GFLOPs）','resources-compute'),('state_8192_bytes',2**20,'8K 历史状态（MiB）','resources-state')]:bars(name,['Qwen3-8B','Qwen3.6','V4-Flash','K3 紧凑'],[m[key]/div for m in models],label)
+        for key,div,label,name in [('uniform_bf16_bytes',1e9,'完整 BF16 权重（GB）','resources'),('decode_matrix_flops',1e9,'8K 上下文单步矩阵运算（GFLOPs）','resources-compute'),('state_8192_bytes',2**20,'8K 上下文状态（MiB）','resources-state')]:bars(name,['Qwen3-8B','Qwen3.6','DeepSeek\nV4-Flash','Kimi K3\n紧凑'],[m[key]/div for m in models],label)
+
+        # Pair lengths within each model; logarithmic axis keeps all four readable.
+        import json
+        long_data=json.loads((here/'long-context-comparison.json').read_text())
+        f,a=plot(5.3,left=.30,bottom=.17)
+        f.subplots_adjust(top=.84)
+        labels=['Qwen3-8B*','Qwen3.6','DeepSeek\nV4-Flash','Kimi K3\n紧凑']
+        for j,(offset,color,label) in enumerate([(-.18,COL['blue'],'8K 上下文'),(.18,COL['orange'],'200K 上下文')]):
+            vals=[r['matrix_flops']/1e9 for r in long_data['models'][j*4:(j+1)*4]]
+            yy=np.arange(4)+offset
+            a.barh(yy,np.array(vals)-1,left=1,height=.30,color=color,edgecolor=COL['line'],label=label)
+            for y,value in zip(yy,vals):a.text(value*1.08,y,f'{value:,.2f}',va='center',fontsize=11)
+        a.set(yticks=range(4),yticklabels=labels,xscale='log',xlim=(1,4000),
+              xlabel='单步矩阵运算（GFLOPs，对数轴）',ylim=(3.65,-.65))
+        a.set_xticks([1,10,100,1000],['1','10','100','1000'])
+        a.minorticks_off()
+        a.legend(loc='upper left',bbox_to_anchor=(0,1.16),ncol=2,frameon=False)
+        a.grid(axis='x',alpha=.15)
+        save(f,'long-context-compute')
 
         rows=data['figure_2_9']['capacity_rows'];f,a=plot(3.8,left=.26,bottom=.25);left=np.zeros(3)
         for key,label,col in [('weight_bytes','权重','blue'),('workspace_bytes','预留','orange'),('kv_bytes_per_request','一条 KV','green')]:
             vals=np.array([r[key]/1e9 for r in rows]);a.barh(range(3),vals,left=left,height=.5,label=label,color=COL[col],edgecolor=COL['line']);left+=vals
         for i,r in enumerate(rows):a.plot([r['capacity_bytes']/1e9]*2,[i-.35,i+.35],color=COL['ink'],lw=1.2)
         a.set(yticks=range(3),yticklabels=['Qwen BF16','70B 8-bit','70B 4-bit'],xlim=(0,85),xlabel='容量（GB）');a.invert_yaxis();a.legend(loc='upper center',bbox_to_anchor=(.5,-.22),ncol=3,frameon=False);save(f,'9-capacity')
-        d=data['figure_2_9']['history_capacity'];bars('history-capacity',['8K 历史','32K 历史'],d['maximum_requests'],'容量允许的独立请求数')
+        d=data['figure_2_9']['history_capacity'];bars('history-capacity',['8K 上下文','32K 上下文'],d['maximum_requests'],'容量允许的独立请求数')
 
         f,a=canvas(4.8);text(a,.04,.94,'输入 128 个位置，返回 4 个 token',14)
         for i in range(4):
@@ -173,5 +192,9 @@ def draw(here,data):
             arrow(a,(.27,y+.07),(.36,y+.07));arrow(a,(.63,y+.07),(.72,y+.07))
             text(a,.49,y-.045,f'已保留 {128+i} 个位置',11,ha='center')
         save(f,'10-request')
-        bars('request-compute',['Qwen3-8B','V4-Flash','V4-Pro','K3 展开'],data['figure_2_10']['matrix_tflops'],'完整请求矩阵运算（TFLOPs）')
+        bars('request-compute',['Qwen3-8B','DeepSeek\nV4-Flash','DeepSeek\nV4-Pro','Kimi K3\n展开'],data['figure_2_10']['matrix_tflops'],'完整请求矩阵运算（TFLOPs）')
+    from core_principles_figures import draw as draw_principles
+    draw_principles(2, out)
+    from v41_case_figures import draw as draw_v41
+    draw_v41(2, out)
     return out.finish()

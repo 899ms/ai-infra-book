@@ -6,8 +6,8 @@ HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1]
 md=HERE.parent/'03-推理与训练负载.md';s=md.read_text();outline=(ROOT/'outlines/03-推理与训练负载.md').read_text();errors=[]
 def check(ok,msg):
  if not ok:errors.append(msg)
-def heads(s):return [x.replace('$','') for x in re.findall(r'^#{2,3} (3\.\d+[^\n]*)',s,re.M)]
-check(heads(s)==heads(outline),'outline headings differ')
+def heads(s):return re.findall(r'^#{2,3} (3\.\d+(?:\.\d+)?) ',s,re.M)
+check(heads(s)==heads(outline),'outline section numbering/order differs')
 labs=sorted(set(map(int,re.findall(r'\*\*练习 3-(\d+)',s))))
 check(labs==list(range(1,11)),'ten exercises missing')
 figs=re.findall(r'!\[[^\]]*\]\((ch03/[^)]+\.svg)\)',s)

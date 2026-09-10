@@ -38,7 +38,7 @@ def draw(here,data,teaching):
         save(f,'3-expert-rows')
         f,a=plot(3.2,left=.28)
         a.barh([0,1],[512,512],color=COL['green'],label='有效行');a.barh([0,1],[3584,0],left=[512,512],color=COL['gray'],edgecolor=COL['line'],label='补零行')
-        a.set(yticks=[0,1],yticklabels=['256 个专家','8 个专家'],xlim=(0,4500),ylim=(-.7,1.7),xlabel='实际执行的输入行数');a.invert_yaxis();a.legend(frameon=False);save(f,'expert-padding-total')
+        a.set(yticks=[0,1],yticklabels=['256 个专家','8 个专家'],xlim=(0,4500),ylim=(-.7,1.7),xlabel='执行的矩阵行数（含补零）');a.invert_yaxis();a.legend(frameon=False);save(f,'expert-padding-total')
         vals=np.array(data['4-4']['service_cycles'])
         f,a=plot(4.0,left=.27)
         for i,(label,c) in enumerate([('矩阵','orange'),('共享存储','blue'),('指数','green')]):a.barh(np.arange(4)+(i-1)*.22,vals[:,i],height=.20,color=COL[c],edgecolor=COL['line'],label=label)
@@ -59,7 +59,7 @@ def draw(here,data,teaching):
         f,a=canvas(3.3);text(a,.04,.92,'同时等待返回的访问占用请求槽',14)
         for i in range(4):box(a,.05+i*.235,.49,.20,.18,f'请求 {i+1}','blue',11)
         text(a,.5,.31,'每请求 128 bytes，发出后 500 ns 返回',12,ha='center')
-        text(a,.5,.12,'持续带宽还取决于有多少请求能同时在途',12,ha='center');save(f,'memory-inflight')
+        text(a,.5,.12,'持续带宽还取决于能同时处理多少请求',12,ha='center');save(f,'memory-inflight')
         d=data['4-7'];f,a=plot(3.7)
         for b,ys,c in zip([1,2],d['bandwidth_upper_bytes_per_second'],['#267398','#388768']):a.plot(d['requests'],np.array(ys)/1e12,label=f'接口 {b} TB/s',color=c)
         a.set(xlim=(0,10000),ylim=(0,2.4),xlabel='同时未完成请求数',ylabel='带宽上界（TB/s）');a.legend(frameon=False);save(f,'7-memory')
@@ -75,11 +75,11 @@ def draw(here,data,teaching):
             for t in r['chunks']:
                 y=t['chunk'];a.barh(y,t['slot_released']-t['issue_start'],left=t['issue_start'],height=.62,color=COL['gray']);a.barh(y,t['transfer_end']-t['issue_start'],left=t['issue_start'],height=.40,color=COL['blue']);a.barh(y,t['compute_end']-t['compute_start'],left=t['compute_start'],height=.40,color=COL['green']);a.plot(t['data_ready'],y,'|',color='#a56c28',markersize=12)
             a.set(yticks=range(4),yticklabels=[f'块 {i}' for i in range(4)],xlim=(0,1320),xticks=[0,320,640,960,1280],xlabel='教学时间（tick）');a.invert_yaxis();save(f,name)
-        f,a=canvas(4.0);text(a,.04,.93,'完整行先交接，下一组使用另一槽',14)
+        f,a=canvas(4.0);text(a,.04,.93,'传递完整行，两组交替使用缓冲区',14)
         box(a,.04,.61,.26,.17,'矩阵单元\n计算 QK','orange');box(a,.70,.61,.26,.17,'向量单元\n计算 Softmax','green')
         box(a,.38,.66,.23,.11,'槽 A','blue');box(a,.38,.42,.23,.11,'槽 B','purple')
         arrow(a,(.30,.695),(.38,.715));arrow(a,(.61,.715),(.70,.695));arrow(a,(.17,.61),(.38,.475))
-        box(a,.28,.09,.44,.16,'矩阵单元计算 PV\n用完后释放交接槽','orange');arrow(a,(.83,.61),(.72,.17));save(f,'matrix-vector-handoff')
+        box(a,.28,.09,.44,.16,'矩阵单元计算 PV\n用完后释放缓冲区','orange');arrow(a,(.83,.61),(.72,.17));save(f,'matrix-vector-handoff')
         for move,name in [(False,'10-locality'),(True,'locality-compute')]:
             f,a=canvas(3.0);text(a,.04,.93,'计算留在裸片 0' if not move else '把计算放到权重所在的裸片',14)
             box(a,.04,.44,.33,.25,'裸片 0\n本地计算','blue');box(a,.63,.44,.33,.25,'裸片 1\n权重'+('与计算' if move else ''),'orange')
@@ -96,11 +96,13 @@ def draw(here,data,teaching):
         a.set(xlim=(1,32),ylim=(0,45),xlabel='批内请求数',ylabel='每步读取（GB）');a.legend(frameon=False);save(f,'12-specialization')
         d=data['4-13'];f,a=plot(3.6)
         for key,label,c in [('compute_us','矩阵计算','#a56c28'),('memory_us','片外读取','#267398')]:a.plot(d['rows'],d[key],label=label,color=c)
-        a.axvline(179,ls=':',color='#777777');a.set(xlim=(1,256),ylim=(0,65),xlabel='输入行数 M',ylabel='资源时间（μs）');a.legend(frameon=False);save(f,'13-roofline')
+        a.axvline(179,ls=':',color='#777777');a.set(xlim=(1,256),ylim=(0,65),xlabel='本次 token 数 M',ylabel='资源时间（μs）');a.legend(frameon=False);save(f,'13-roofline')
         d=data['4-14']
         for key,name,label in [('wall_us','14-performance','每次调用总耗时（μs）'),('dram_read_mib','performance-traffic','DRAM 读取（MiB）')]:
             f,a=plot(3.5)
             vals=d[key];a.bar(range(4),vals,color=[COL['blue'],COL['green']]*2,edgecolor=COL['line']);a.set(xticks=range(4),xticklabels=['1 行\n复用','1 行\n轮换','256 行\n复用','256 行\n轮换'],ylabel=label,ylim=(0,max(vals)*1.3))
             for i,v in enumerate(vals):a.text(i,v+max(vals)*.025,'256 B' if v<.001 else f'{v:.1f}',ha='center',fontsize=11)
             save(f,name)
+    from core_principles_figures import draw as draw_principles
+    draw_principles(4, out)
     return out.finish()

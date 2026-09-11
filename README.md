@@ -57,10 +57,8 @@
 [配套计算工具](calculations/README.md)可以用来复算书中的数字，也可以换一组模型和输入，估算资源需求。工具附有模型配置和[结果索引](calculations/results/README.md)，静态计算只需 Python 3.10+ 标准库，无需 GPU 或模型权重。
 
 ```bash
-git lfs install
 git clone https://github.com/bojieli/ai-infra-book.git
 cd ai-infra-book
-git lfs pull
 
 # 查看模型支持情况
 python3 calculations/calc.py models
@@ -69,7 +67,12 @@ python3 calculations/calc.py models
 python3 calculations/calc.py forward --model qwen3-8b --tokens 8192 --format md
 ```
 
-仓库使用 [Git LFS](https://git-lfs.com/) 保存论文和部分较大的输入与测量记录。复现前请下载所需 LFS 文件；仅阅读 Markdown 不必克隆整个资料库。
+仓库使用 [Git LFS](https://git-lfs.com/) 保存论文和较大的输入与测量记录，合计约 20 GB。为避免克隆时全部下载，[.lfsconfig](.lfsconfig) 默认跳过所有 LFS 文件，工作区中只留下指针；正文、配图和静态计算都不需要它们。复现某个实验时，只下载对应目录：
+
+```bash
+git lfs install
+git lfs pull --include="experiments/ch05/05-01/**" --exclude=""
+```
 
 [配套实验](experiments/README.md)按章节存放在 `experiments/chXX/XX-YY/` 中，每个实验都附有运行方法、输入条件和结果说明。需要 GPU 的实验会注明硬件与依赖要求；没有相应设备，也可以先阅读已有记录。复现或引用结果时，请留意所用的书稿版本、模型、硬件和输入参数。
 
@@ -103,11 +106,11 @@ bash book/build_pdf.sh
 | [manuscripts/](manuscripts/README.md) | 前言、十二章正文、配图与绘图脚本 |
 | [experiments/](experiments/README.md) | 按章节组织的实验与运行记录 |
 | [calculations/](calculations/README.md) | 资源计算工具、固定输入与复算结果 |
-| [case-studies/](case-studies/) | 模型、硬件和系统案例分析 |
+| [case-studies/](case-studies/README.md) | 模型、硬件和系统案例分析，按章节索引 |
 | [references/](references/README.md) | 引用资料、来源清单与版本快照 |
-| [research/](research/) | 支撑正文的专题调研与证据分析 |
+| [research/](research/README.md) | 支撑正文的专题调研，以及各章修订记录 |
 | [book/](book/README.md) | PDF 模板、构建与校验工具 |
-| [website/](website/README.md)、[scripts/](scripts/) | 网站资源、构建与检查脚本 |
+| [website/](website/README.md)、[scripts/](scripts/README.md) | 网站资源、构建与检查脚本 |
 | [archive/](archive/README.md) | 历史大纲、审阅和写作协调记录 |
 
 ## 参与贡献

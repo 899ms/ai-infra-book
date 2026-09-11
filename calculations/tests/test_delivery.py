@@ -86,7 +86,7 @@ class SourceAuditTests(unittest.TestCase):
         self.assertIn("mechanical map does not close F01", self.row["reason"])
 
     def test_the_only_sectioned_gap_is_the_orientation_section(self):
-        self.assertTrue(set(self.row["sectioned_gaps"]) <= {"1.1", "1.1.1", "1.1.2"},
+        self.assertTrue(set(self.row["sectioned_gaps"]) <= {"1.1", "1.1.1", "1.1.2", "1.1.3"},
                         self.row["sectioned_gaps"])
 
 

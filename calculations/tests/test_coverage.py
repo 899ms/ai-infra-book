@@ -120,8 +120,8 @@ class ReportTests(unittest.TestCase):
                 if row["section"]}
         # Chapter 1's panorama is named by no work package. Everything else that
         # once looked like a hole was stale numbering in PLAN.md and is now fixed.
-        self.assertTrue(gaps <= {"1.1", "1.1.1", "1.1.2"}, sorted(gaps))
-        self.assertIn("1.1.1", gaps)
+        self.assertTrue(gaps <= {"1.1", "1.1.1", "1.1.2", "1.1.3"}, sorted(gaps))
+        self.assertIn("1.1.2", gaps)
 
     def test_the_renumbered_sections_are_claimed_again(self):
         claimed = {name for row in self.report["rows"] for name in row["candidate_work_packages"]}

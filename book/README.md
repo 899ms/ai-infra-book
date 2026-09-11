@@ -2,10 +2,9 @@
 
 沿用 AI Agent Book 的 ElegantBook 系列模板，生成真正由 XeLaTeX 排版的 PDF。正文读取 `manuscripts/01-*.md` 至 `12-*.md`，不维护另一套章节副本。
 
-- [全书 PDF](AI-Infra-Book.pdf)
-- [第二章 PDF](AI-Infra-Book-Chapter-02.pdf)
-- [封面 PDF](AI-Infra-Book-Cover.pdf)
-- [封面预览](AI-Infra-Book-Cover.png)
+最新版全书 PDF：<https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf>（由 GitHub Actions 从 `main` 自动构建并发布到 Releases）。
+
+编译生成的 PDF、封面和 `*-build.json` 构建记录不纳入版本控制（见 `book/.gitignore`）。
 
 ## 编译
 
@@ -21,7 +20,7 @@ bash book/build_pdf.sh --chapter 2
 
 依赖为 Python 3.9+、Pandoc 3.x 和含 XeLaTeX 的 TeX Live/MacTeX。普通正文保留 AI Agent Book 的 Songti SC（宋体），代码使用 Menlo；中文粗体与章节标题使用项目自带的思源黑体 Bold，图注和图表也统一使用思源黑体。字体文件与 OFL 许可证见 `manuscripts/figure_style/fonts/`，无需另行安装思源黑体。没有 Songti SC 时保留原模板的 Noto Sans CJK SC 回退。可选的 Poppler（`pdfseparate`、`pdftoppm`）用于从全书导出独立封面 PDF 和 PNG；若安装 Ghostscript（`gs`），封面 PDF 只保留本页使用的字体和资源。当前机器已安装这些依赖。封面和章节 PDF 中的日期是编译日期。
 
-`build_pdf.py` 先调用 Pandoc 生成 LaTeX，再执行三遍 XeLaTeX，稳定目录、交叉引用和跨页表格。各次日志、中间 Markdown、LaTeX 和辅助文件保存在 `book/build/`，不会覆盖正文。输出与构建记录保存在 `book/AI-Infra-Book*.pdf` 和 `*-build.json`。
+`build_pdf.py` 先调用 Pandoc 生成 LaTeX，再执行三遍 XeLaTeX，稳定目录、交叉引用和跨页表格。各次日志、中间 Markdown、LaTeX 和辅助文件保存在 `book/build/`，不会覆盖正文。输出与构建记录保存在 `book/AI-Infra-Book*.pdf` 和 `*-build.json`，这些文件只留在本地，不提交到仓库。
 
 图表使用正文对应的 PDF 矢量文件，缺少 PDF 时使用 PNG；编译前如修改过图表，应先运行相应章节的图表构建脚本。构建器会合并图片说明与紧随其后的图注，避免重复显示，保留原有手工图号。所有表格保持竖向页面，第二章末的矩阵查阅表连续排版。Markdown 脚注保留为 PDF 页脚注，各章脚注互不冲突。指向计算记录和参考材料的文件链接相对于本仓库目录保留，因此这些附件需随仓库一起访问。
 

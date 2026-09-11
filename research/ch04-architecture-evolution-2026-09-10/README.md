@@ -19,7 +19,7 @@
 | SM100 TMEM／分块缩放；SM120 差异 | Blackwell Tuning Guide、CUTLASS 功能和 SM100 示例 | 明确数据中心与 RTX 的实际路径 |
 | Rubin 指数吞吐与描述符更新 | `rubin-rechecked.md`，attention 与 MoE 小节 | 对应 Softmax 和专家准备成本 |
 | M3 动态局部内存分配 | `apple-m3-evolution.md`，Dynamic Caching | 区分整机共享内存与 GPU 局部资源 |
-| M4 Dynamic Caching、120 GB/s、Neural Engine | [官方公告](sources/apple-m4-2024.html)；既有 Mac mini 官方规格 | 补上 M3 与 M5 之间的演进 |
+| M4 Dynamic Caching、120 GB/s、Neural Engine | [官方公告](sources/apple-m4-2024.md)；既有 Mac mini 官方规格 | 补上 M3 与 M5 之间的演进 |
 | M5 GPU 每核 Neural Accelerator、153 GB/s、第二代动态缓存 | `apple-m5-evolution.md`，GPU 与统一内存小节 | GPU 内专用单元与独立 Neural Engine 并列 |
 | 早期 DaVinci 资源分工 | DaVinci 论文 §3.1–3.4 | Scalar／Vector／Cube／MTE |
 | Atlas A2 矩阵、向量分离 | Ascend C 指南第 4 章 | AIC／AIV 独立控制和全局地址交换 |

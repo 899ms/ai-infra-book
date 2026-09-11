@@ -41,7 +41,7 @@ PDF 在 macOS 15 使用 Pandoc 3.7.0.2 和 Homebrew TeX Live / XeLaTeX 构建，
 
 ## 下载和本地复现
 
-从仓库 [Releases](https://github.com/bojieli/ai-infra-book/releases) 下载唯一的全书附件 `AI-Infra-Book.pdf`。网站可直接通过 GitHub Pages 阅读；如需离线网站，从 Actions 的 `book-site-download` 产物取得 `ai-infra-book-site.tar.gz`，解压后运行 `python -m http.server`。
+最新版全书 PDF 的固定下载链接为 <https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf>，始终指向最近一次标记为 Latest 的 Release；历次版本见 [Releases](https://github.com/bojieli/ai-infra-book/releases)。网站可直接通过 GitHub Pages 阅读；如需离线网站，从 Actions 的 `book-site-download` 产物取得 `ai-infra-book-site.tar.gz`，解压后运行 `python -m http.server`。
 
 已有 PDF 编译依赖时，在仓库根目录运行：
 

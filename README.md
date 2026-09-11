@@ -1,21 +1,26 @@
 # 深入理解 AI Infra：量化分析与系统设计
 
 [![Build](https://github.com/bojieli/ai-infra-book/actions/workflows/book-site.yml/badge.svg)](https://github.com/bojieli/ai-infra-book/actions/workflows/book-site.yml)
-[![PDF](https://img.shields.io/badge/PDF-下载-blue)](https://github.com/bojieli/ai-infra-book/releases/latest)
+[![PDF](https://img.shields.io/badge/PDF-下载最新版-red)](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/bojieli/ai-infra-book?style=social)](https://github.com/bojieli/ai-infra-book)
 
 《深入理解 AI Infra》由李博杰撰写，是 GitHub 上获得 **45k+ Star** 的[《深入理解 AI Agent：设计原理与工程实践》](https://github.com/bojieli/ai-agent-book)的姊妹篇。
 
-写完《深入理解 AI Agent》后，在与读者交流和开发 Agent 产品的过程中，我越来越感到：要开发好基于模型的应用，还需要理解它赖以运行的基础设施。就像软件工程师需要学习操作系统、编译原理和计算机体系结构一样，模型应用开发者也需要理解模型背后的执行系统：参数和上下文状态存在哪里，计算怎样执行，多个加速器怎样协作，模型调用怎样与工具程序衔接。
+写完《深入理解 AI Agent》后，在与读者交流和开发 Agent 产品的过程中，我越来越感到：要开发好基于模型的应用，还需要理解它赖以运行的基础设施。大多数软件工程师不必亲自开发操作系统、编译器和芯片，却仍要学习操作系统、编译原理和计算机体系结构，因为申请内存、读取文件、调用函数，背后都有资源与时间代价。基于模型开发应用也是如此：选多大的模型、保留多长的上下文、同时执行多少请求、任务放在本地还是云端，都会改变系统要完成的工作。延迟相差几倍，产品体验就可能完全不同；成本相差一个数量级，能够支撑的商业模式也随之改变。我们做实时语音 Agent 时，把语音交互的延迟从 5 秒降到约 500—600 毫秒，运行成本约为调用 GPT-4o 实时语音 API 的百分之一。
 
-我认为，**编程抽象正在从操作系统上移到模型上下文**：一部分过去需要逐条写进程序的行为，现在可以用模型与上下文表达，底层系统设计可以利用的应用信息也随之改变。本书讨论的正是这次变化中的基础设施——把模型训练和推理当作一个完整的应用、贯穿各层来分析，用上层提供的计算依赖和数据使用时机，重新组织芯片、网络与运行时的工作。
+更深层的变化是**编程抽象的上移：从操作系统到模型上下文**。传统的操作系统、编译器和硬件要为事先未知的各种程序提供通用能力，系统优化总要在可编程性与性能之间取舍。如今 LLM 成了最重要的应用，从算子执行到分布式调度，都可以针对特定的模型和加速器架构优化；模型设计也开始反过来适应硬件，DeepSeek V4 按显存容量和存储带宽的约束重新设计长上下文的表示方式，就是一例。从某种意义上说，**模型成了 LLM 时代的操作系统，AI Infra 成了 LLM 时代的计算机体系结构**。《计算机体系结构：量化研究方法》是我在体系结构领域的入门书，而 AI Infra 领域还缺少一本从硬件约束和模型架构出发、量化推导系统设计的书，这是我写作本书的动机。
 
-贯穿全书的方法是**从约束推导设计**：根据模型的架构与负载，列出计算、存储、通信和依赖关系，对照硬件的容量、算力和带宽参数，推算性能、找出瓶颈，再决定模型怎样分工、状态放在哪里、执行如何组织，最后用测量检验判断。沿着数据搬移这条线索，本书反复追问五个问题：**搬什么、搬多少、搬几次、经过哪里、谁必须等它。** 更多写作背景见[前言](manuscripts/00-前言.md)。
+贯穿全书的方法是**从约束推导设计**：先明确任务与质量要求，列出计算、存储、通信和依赖关系，对照硬件的容量、带宽和算力做数量级估算，排除不可能的方案、找出瓶颈，再决定模型怎样分工、状态放在哪里、执行如何组织，最后用测量校正。这类估算人容易出错，AI 也一样：只算权重读取而忘了 KV 缓存，按峰值算力推算速度而不查带宽能否供给，把工作平分给多张卡却遗漏卡间通信，漏掉任何一项，结论都可能偏离几倍甚至几个数量级。从 FPGA 加速 Bing 搜索排序、昇腾 AKG 算子生成到 UB 万卡互联，我反复遇到的是同一条线索：**数据搬移**。本书因此反复追问五个问题：**搬什么、搬多少、搬几次、经过哪里、谁必须等它。** 更多写作背景见[前言](manuscripts/00-前言.md)。
 
-**[在线阅读](https://bojieli.github.io/ai-infra-book/) · [下载 PDF](https://github.com/bojieli/ai-infra-book/releases/latest) · [章节正文](manuscripts/README.md) · [配套实验](experiments/README.md)**
+> [!TIP]
+> ### 📥 [下载最新版全书 PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf)
+>
+> **推荐下载 PDF 阅读。** 书中有大量公式、表格、脚注和交叉引用，GitHub 直接显示 Markdown 时，LaTeX 公式和部分排版常常渲染不全或错位。PDF 由 XeLaTeX 排版，每次更新 `main` 后自动构建并发布到 [Releases](https://github.com/bojieli/ai-infra-book/releases)，上面的链接始终指向最新版。下方目录链接到各章 Markdown 源文件，便于查找原文和提交勘误；通读全书，仍建议下载 PDF。
 
-目前书稿仍是初稿，正在持续修订。可以直接从下方目录阅读 Markdown，也可以通过网站或 PDF 阅读全书。[Releases](https://github.com/bojieli/ai-infra-book/releases) 中保留了各次发布的 PDF，方便查阅和引用同一版本。
+**[下载 PDF（推荐）](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf) · [在线阅读](https://bojieli.github.io/ai-infra-book/) · [章节正文](manuscripts/README.md) · [配套实验](experiments/README.md)**
+
+目前书稿仍是初稿，正在持续修订。[Releases](https://github.com/bojieli/ai-infra-book/releases) 中保留了各次发布的 PDF，方便查阅和引用同一版本。
 
 ## 内容目录
 

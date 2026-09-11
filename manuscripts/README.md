@@ -6,7 +6,7 @@
 
 各章均以“本章小结”收尾，资料说明移出正文，来源保留为脚注。
 
-[全书 PDF](../book/AI-Infra-Book.pdf) · [本轮修改与验证](../archive/reviews/core-principles-revision-2026-09-10/README.md) · [思想实验复算](../calculations/results/core-principles.json)
+[下载全书 PDF（推荐）](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf) · [本轮修改与验证](../archive/reviews/core-principles-revision-2026-09-10/README.md) · [思想实验复算](../calculations/results/core-principles.json)
 
 | 章 | 正文 | 配图 |
 | --- | --- | ---: |

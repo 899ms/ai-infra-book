@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | environment-resources-book | 九组 36 进程、CPU CPU·秒、RSS 峰值与积分、有限窗恒等式；正文 11.1.2 | 不代表 PSS、物理内存、完整环境或生产稳态 |
 | environment-lifecycle-default | 共享与私有容量、五路径声明字节下界、单调用预热期待、独立局部实测；正文 11.2 | 云端首工具与完整创建时间为空，图不伪造实测 |
-| routing-cost-book / crossover | A/B 实际计费用量、全尝试分子、84.93% 费用交点、91.84% 联合期限门槛；图 11-7 | 独立质量与缓存概率，价格和时长均为教学输入 |
+| routing-cost-book / crossover | Haiku 4.5／Sonnet 5 实际计费用量、全尝试分子、79.52% 费用交点、91.84% 联合期限门槛；图 11-31 | 单价为 Claude 标准 API 价格；独立质量与缓存概率，时长为题设 |
 | retry-paths-book | 六条有限终点、概率和费用、CPU·秒与驻留积分；图 11-8 | 期限只作判定，非停止策略；条件概率未实测 |
 | C61–C65 计划与 C63–C66 审计 | 检查现有子账和完整任务缺口 | 不宣称整个计算工作包因写作而完成 |
 
@@ -18,7 +18,7 @@
 
 - 阅读 `research/2026-infra-survey/README.md` 中调度、验证、可抢占恢复和模型费用的相关记录，以及 RLBoost 阶段审计。原调查提供公开论文的固定版本与选读范围。
 - `platform-routing.md`：ASI 分配比例不同于 MFU；SpecBox 为单机 Docker 预印本；E2B 模板、快照、连接分别定义；计费字段归一化。
-- `preemptible-rollout-and-weight-readiness.md`：30 GB×6 接收、共享 200 Gbit/s 出口与 50 Gbit/s 接收的 7.2 秒下界；TP=2 仍接收完整权重；批量恢复可能截短输出；历史价格仅用于条件算例。
+- `preemptible-rollout-and-weight-readiness.md`：Qwen3-8B 16.38 GB×6 接收、共享 200 Gbit/s 出口与 50 Gbit/s 接收的 3.93 秒下界；TP=2 仍接收完整权重；批量恢复可能截短输出；历史价格仅用于条件算例。
 - `reward-deadlines-and-feedback.md`：条件剩余时间、最迟启动、训练等待抵消验证节省，以及不同 verl 入口不自动等价于 DistRS。
 - `routing-cost-and-completion.md`：同任务费用与按时质量联合门槛，避免以低 token 单价直接选择模型。
 

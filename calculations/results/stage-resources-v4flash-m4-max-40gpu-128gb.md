@@ -231,10 +231,10 @@ Conditional known-work service bounds; full runtime remains unknown.
 | sources[53].url | https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash/resolve/60d8d70770c6776ff598c94bb586a859a38244f1/model-00046-of-00046.safetensors?header=1 |
 | sources[53].revision | 60d8d70770c6776ff598c94bb586a859a38244f1 |
 | sources[53].sha256 | 10f90b036e608fabcf2c781dd5274a0fbc262f7aeaf959218ff1ccb829903981 |
-| sources[54].file | sources/hardware/apple-m4-pro-max-specs.html |
+| sources[54].file | sources/hardware/apple-m4-pro-max-specs.md |
 | sources[54].url | https://support.apple.com/en-us/121554 |
 | sources[54].revision | snapshot-2026-09-08 |
-| sources[54].sha256 | 3ecc587a1aa03802e248cb174e9f1f458f578b86db3c298daac4fd04ecc619d1 |
+| sources[54].sha256 | c9bb483fc827e3c528a62af1c3c0ec25b17ddc9ec6fde0e4ce5476200adcde5e |
 | device.id | m4-max-40gpu-128gb |
 | device.vendor | Apple |
 | device.memory.nominal_capacity | 128 |

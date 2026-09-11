@@ -977,19 +977,19 @@ def sync() -> dict:
            '[2048token](../calculations/results/grouped-experts-prefill.md)与[8行tile](../calculations/results/grouped-experts-small-tile.md)另列复用变化。运行 `python3 calculations/calc.py grouped-experts --format md`，JSON保留逐专家gate/up/down的M/K/N与分块载荷；权重按M块重读、输入按N块重读，边界只读有效元素，不能用FLOPs padding倍数放大bytes。此为指定output-stationary工作缓冲接口，非HBM实测；后端跳过无效指令、通信、融合、设备能力与真实重叠尚未计。',
            '> **实验 9-6')
     insert('09-分布式推理.md', 'C48-expert-reuse-threshold',
-           '[78行边界](../calculations/results/expert-locality-boundary78.md)与[79行边界](../calculations/results/expert-locality-boundary79.md)使用相同官方专家与教学能力，精确分段解CPU激活交接＋max(计算,权重读取)和GPU搬权重＋max(计算,权重读取)。CPU／GPU等时knee分别每专家10／100token；单个非驻留专家1–78token时CPU服务较小，79及以上搬权重GPU较小。'
-           '全部正整数区间均已求解，末段无上界；等号单独保留，不靠有限扫描猜测长期趋势。[CPU有效能力200TF/s敏感性](../calculations/results/expert-locality-fast-cpu.md)边界变为3225／3226，仍可能受激活交接限制，不是CPU产品性能声明。运行 `python3 calculations/calc.py expert-locality --format md` 查区间。这里只比较相同专家批及固定服务能力，非均匀专家负载、实际量化／NUMA／小矩阵效率仍需单独核对。',
+           '[AVX-512单token](../calculations/results/expert-locality-avx512.md)、[128token](../calculations/results/expert-locality-avx512-128.md)与[AMX单token](../calculations/results/expert-locality-amx.md)、[128token](../calculations/results/expert-locality-amx-128.md)采用KTransformers论文平台：单路Xeon Platinum 8452Y的AVX-512内核1.8TF/s、AMX内核21.3TF/s、同路DRAM 220GB/s，A100 40GB PCIe按峰值50%计156TF/s、777.5GB/s，PCIe交接25GB/s、启动5us。精确分段解CPU激活交接＋max(计算,权重读取)和GPU搬权重＋max(计算,权重读取)：AVX-512时CPU／GPU等时knee分别每专家90/11／62400/311 token，1–71 token CPU较小、72起搬权重较小；AMX时CPU knee为1065/11，交点推迟到688／689。'
+           '全部正整数区间均已求解，末段无上界；等号单独保留，不靠有限扫描猜测长期趋势。运行 `python3 calculations/calc.py expert-locality --format md` 查区间，跨路DRAM 125GB/s可用`--inputs`复算。这里只比较相同专家批及固定服务能力，非均匀专家负载、实际量化与小矩阵效率另核。',
            '> **实验 9-3')
     insert('09-分布式推理.md', 'C49-expert-locality',
            '[专家就地与搬权重子账](../calculations/results/expert-locality-book.md)按官方Qwen235的H4096、F1536、128专家／top8，gate/up/down每专家BF16共36MiB。每层固定ID0–31驻留占1.125GiB，94层合计105.75GiB，仅专家权重已不能放进单24GB卡；此驻留数是教学输入，需另做实际放置。'
-           '128-token均衡路由的非驻留部分为96个不同专家、768个token—专家任务，权重3.375GiB、矩阵28991029248 FLOPs，逐assignment BF16激活往返12MiB。教学CPU2TF/s、DRAM200GB/s、GPU100TF/s、HBM1TB/s、链路25GB/s、启动5us，CPU子账19.582710ms、搬权重GPU149.059025ms；两者是声明路径的资源估计，非KTransformers实测。'
+           '128-token均衡路由的非驻留部分为96个不同专家、768个token—专家任务，权重3.375GiB、矩阵28991029248 FLOPs，逐assignment BF16激活往返12MiB。默认取KTransformers论文平台（AVX-512 1.8TF/s、DRAM 220GB/s）与A100 40GB PCIe峰值50%（156TF/s、777.5GB/s）、链路25GB/s、启动5us，CPU子账17.935492ms、搬权重GPU150.096083ms；两者是声明路径的资源估计，非KTransformers端到端实测。'
            '[2048-token prefill](../calculations/results/expert-locality-prefill.md)、[单token无驻留](../calculations/results/expert-locality-single.md)、[热点全命中](../calculations/results/expert-locality-hot.md)、[8192token](../calculations/results/expert-locality-long.md)检查复用与瓶颈变化。运行 `python3 calculations/calc.py expert-locality --format md` 查逐专家M/K/N；`--inputs`可输入128项counts。直方图缺token身份，因此明确按assignment交接，不推断跨专家去重。只计单层非驻留专家，量化／NUMA／激活访存／合并／不均衡与实际重叠仍待补。',
            '> **实验 9-5')
     insert('09-分布式推理.md', 'C47-pd-pool',
-           '[整数池配比](../calculations/results/pd-pool-book.md)以官方Qwen8、8192输入／129输出统一请求口径：P处理8192新token，首输出来自prefill，D仅调用128次。两类教学副本各4个，P/D有效token每秒分别16384/64和4096/256，枚举25配比，4个前者给P、4个后者给D时上界8请求/s；共置逐副本加资源秒后为3.2请求/s。'
-           '[同构对照](../calculations/results/pd-pool-homogeneous.md)分池与共置均4请求/s；[网络限制](../calculations/results/pd-pool-network.md)按每请求1207959552bytes将上界限至1请求/s，到达率等于上界不标为严格低于。'
-           '[命中6144前缀](../calculations/results/pd-pool-prefix.md)只减少P新工作，D冷缓存仍收完整KV，最佳P配比降至2个、上界9请求/s；[1025输出](../calculations/results/pd-pool-long-output.md)最佳P仅1个、D为7个，上界19/16请求/s。'
-           '[仅首输出](../calculations/results/pd-pool-first-output.md)无需D或KV交接。运行 `python3 calculations/calc.py pd-pool --format md`，`--inputs`可输入实际阶段能力。上述为有效服务能力教学假设，不代表A100/H20测量；副本放置可行性、混跑干扰、排队和SLO须另核，枚举最优只对本候选成立。',
+           '[整数池配比](../calculations/results/pd-pool-book.md)以官方Qwen8、8192输入／1025输出统一请求口径：P处理8192新token，首输出来自prefill，D调用1024次。四张A100 80GB SXM与四张H20 SXM5 96GB，阶段能力由hardware.json峰值×50%经Roofline推出：A100 prefill 0.856s、decode批量32每请求1.764资源秒；H20分别1.805s、0.878s。枚举25配比，4张A100给P、4张H20给D时上界约4.55请求/s；共置逐卡加资源秒后约3.02请求/s。'
+           '[八张A100同构](../calculations/results/pd-pool-homogeneous.md)分池2.83、共置3.05请求/s，[八张H20](../calculations/results/pd-pool-all-h20.md)分池2.77、共置2.98请求/s；[网络限制](../calculations/results/pd-pool-network.md)按每请求1207959552bytes将上界限至1请求/s，到达率等于上界不标为严格低于。'
+           '[命中6144前缀](../calculations/results/pd-pool-prefix.md)只减少P新工作，D冷缓存仍收完整KV，最佳为2张A100做P、上界约5.69请求/s；[129输出](../calculations/results/pd-pool-short-output.md)最佳为4张A100加3张H20做P、上界约6.33请求/s；[4097输出](../calculations/results/pd-pool-4k-output.md)上界约1.26请求/s。'
+           '[仅首输出](../calculations/results/pd-pool-first-output.md)无需D或KV交接。运行 `python3 calculations/calc.py pd-pool --format md`，`--inputs`可换设备、批量与效率，或直接输入实测阶段能力。H20峰值取自MegaScale-Infer表3；副本放置、混跑干扰、排队和SLO须另核，枚举最优只对本候选成立。',
            '> **实验 9-2')
     insert('09-分布式推理.md', 'C48-pd-af-handoff',
            '[PD／AF交接账](../calculations/results/pd-af-handoff-book.md)复算32层教学模型：8K BF16 KV为1GiB，AF单步双向激活0.5MiB、64次消息。有效25GB/s、每hop启动5us，串行通信PD42.954673ms、AF0.340972ms；相同1GiB分成64次的对照只因启动多315us。启动增到1ms时AF64.020972ms大于PD43.949673ms，不能仅按载荷判断开销。'
@@ -1038,10 +1038,7 @@ def sync() -> dict:
            '[图6-9](../calculations/figures/supernode-cost/figure.svg)从同一完成记录重算1..1000ms的精确成本阶梯，空段表示容量/SLO不满足。运行 `python3 calculations/calc.py supernode-cohort-cost --inputs calculations/scenarios/supernode-cohort-example.json --format md`；`plot-supernode-cost`重绘。这里不是实际价格、硬件性能或输出质量评测；故障恢复时长是输入，真实加载/状态重建协议不由本例推断。',
            '> **图 6-9')
     insert('07-数据中心网络.md', 'C37-gradient',
-           '[真实梯度两级归约](../calculations/results/gradient-fp32-hierarchical-nic2.md)选Qwen3-8B第一层gate梯度[12288,4096]，每rank不同样本贡献，声明FP32线格式为192MiB，不乘36层。8rank两服务器各4卡，完整平坦RS+AG共14轮，总发送2688MiB；连续ring跨服务器672MiB，[交错ring](../calculations/results/gradient-fp32-flat-interleaved-nic2.md)为2688MiB。'
-           '分层先本地RS三轮，对应分片跨服务器AR两轮，再本地AG三轮；总发送仍2688MiB，跨服务器降为384MiB。逐消息保留元素区间、贡献身份和RS后所有权，逻辑归约加法352321536次，不能把AG也计为加法。'
-           'NIC各25GB/s、server出口/入口及每向割集40GB/s、额外双向共享割集80GB/s、本地链路200GB/s和每轮2us均为教学输入。两NIC不复制载荷而切分区间，仍受共享出口限制；发送与接收端分别计账。'
-           '逐轮max(资源bytes/速率)再串行相加是声明屏障下的必要下界，不是实测通信时间；预算通过仅表示未被此下界排除，训练计算与实际期限仍未知。运行 `python3 calculations/calc.py hierarchical-gradient --inputs calculations/scenarios/hierarchical-gradient-example.json --format md`；[BF16](../calculations/results/gradient-bf16-hierarchical-nic2.md)只改变声明线格式，不推断浮点重排等价。框架分桶、全模型训练、TP/PP/EP跨服务器与强弱扩展仍另核。',
+           '[真实梯度两级归约](../calculations/results/gradient-fp32-hierarchical-nic8.md)选Qwen3-8B第一层gate梯度[12288,4096]，每rank不同样本贡献，声明FP32线格式为192MiB，不乘36层。16rank两服务器各8卡，完整平坦RS+AG共30轮，总发送5760MiB；连续ring跨服务器720MiB且只经过每台服务器的一张NIC，[交错ring](../calculations/results/gradient-fp32-flat-interleaved-nic8.md)为5760MiB。分层先本地RS七轮，对应分片跨服务器AR两轮（每对参与者各走一张NIC），再本地AG七轮；总发送仍5760MiB，跨服务器降为384MiB。逐消息保留元素区间、贡献身份和RS后所有权，逻辑归约加法754974720次，不能把AG也计为加法。每卡一张NIC每向50GB/s、NVLink每向450GB/s和每轮2us为声明输入；对照配置（每台4卡、两张25GB/s NIC共用40GB/s出口、本地200GB/s）见`-two-nic`结果。发送与接收端分别计账。逐轮max(资源bytes/速率)再串行相加是声明屏障下的必要下界，不是实测通信时间；预算通过仅表示未被此下界排除，训练计算与实际期限仍未知。运行 `python3 calculations/calc.py hierarchical-gradient --inputs calculations/scenarios/hierarchical-gradient-example.json --format md`；[BF16](../calculations/results/gradient-bf16-hierarchical-nic8.md)只改变声明线格式，不推断浮点重排等价。框架分桶、全模型训练、TP/PP/EP跨服务器与强弱扩展仍另核。',
            '### 7.2.2 TP、PP 与拓扑映射')
     insert('12-端边云协同.md', 'C66-image-request',
            '[完整图片请求](../calculations/results/image-request-original.md)固定给定30,000,000输入bytes与5,000,000成片bytes，上/下行20/100Mbit/s：上传12s、下载0.4s、单次残余RTT0.1s、模型0.3s，共12.8s。连接已可用，其他零时间是教学假设；[模型降至0.03s](../calculations/results/image-request-faster-model.md)只省0.27s。'

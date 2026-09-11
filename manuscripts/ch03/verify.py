@@ -3,7 +3,7 @@
 from pathlib import Path
 import hashlib,json,re,urllib.parse,xml.etree.ElementTree as ET
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1]
-md=HERE.parent/'03-推理与训练负载.md';s=md.read_text();outline=(ROOT/'outlines/03-推理与训练负载.md').read_text();errors=[]
+md=HERE.parent/'03-推理与训练负载.md';s=md.read_text();outline=(ROOT/'archive/outlines/03-推理与训练负载.md').read_text();errors=[]
 def check(ok,msg):
  if not ok:errors.append(msg)
 def heads(s):return re.findall(r'^#{2,3} (3\.\d+(?:\.\d+)?) ',s,re.M)

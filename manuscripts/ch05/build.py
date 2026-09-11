@@ -40,11 +40,16 @@ def arrow(a,p,q,col='teal',rad=0):a.add_patch(FancyArrowPatch(p,q,arrowstyle='-|
 # All figure numbers and full titles are in the manuscript captions, never on the canvas.
 data['5-2']={'kind':'teaching','relationship':'local capacity versus rereads','capacity_KiB':[8,24,80],'interface_MiB':[6168,3096,1560],'minimum_logical_MiB':128}
 
-serial=[];pipelined=[]
+# One K tile of the 5.1.5 kernel on one H100 SM: HBM bandwidth and dense BF16 peak split evenly over 132 SMs.
+H100_HBM,H100_BF16,H100_SMS=3.35e12,989.4e12,132
+COPY_US=2*(128*64+64*128)*H100_SMS/H100_HBM*1e6;COMPUTE_US=2*128*128*64*H100_SMS/H100_BF16*1e6
+serial=[];pipelined=[];copy_end=[];compute_end=[]
 for i in range(4):
- serial.extend([{'kind':'copy','tile':i,'slot':i%2,'start':5*i,'duration':2},{'kind':'compute','tile':i,'slot':i%2,'start':5*i+2,'duration':3}])
- pipelined.extend([{'kind':'copy','tile':i,'slot':i%2,'start':[0,2,5,8][i],'duration':2},{'kind':'compute','tile':i,'slot':i%2,'start':2+3*i,'duration':3}])
-data['5-6']={'kind':'teaching_timeline','copy_us':2,'compute_us':3,'serial':serial,'double_buffer':pipelined,'completion_us':[20,14]}
+ serial.extend([{'kind':'copy','tile':i,'slot':i%2,'start':i*(COPY_US+COMPUTE_US),'duration':COPY_US},{'kind':'compute','tile':i,'slot':i%2,'start':i*(COPY_US+COMPUTE_US)+COPY_US,'duration':COMPUTE_US}])
+ cs=max(copy_end[-1] if copy_end else 0,compute_end[i-2] if i>=2 else 0);copy_end.append(cs+COPY_US)
+ ks=max(copy_end[i],compute_end[-1] if compute_end else 0);compute_end.append(ks+COMPUTE_US)
+ pipelined.extend([{'kind':'copy','tile':i,'slot':i%2,'start':cs,'duration':COPY_US},{'kind':'compute','tile':i,'slot':i%2,'start':ks,'duration':COMPUTE_US}])
+data['5-6']={'kind':'teaching_timeline','device':'h100-sxm, one of 132 SMs','copy_bytes':32768,'compute_flops':2097152,'copy_us':COPY_US,'compute_us':COMPUTE_US,'serial':serial,'double_buffer':pipelined,'completion_us':[4*(COPY_US+COMPUTE_US),compute_end[-1]]}
 
 data['5-5']={'kind':'fixed_scale_teaching','required_MiB':[60,60,60],'T_write_read_MiB':[48,0,0],'Z_write_read_MiB':[48,48,0]}
 
@@ -147,7 +152,8 @@ data['reduction']={'kind':'dependency_and_reread','row_elements':4096,'segments'
 
 data['softmax']={'kind':'online_recurrence','first':[0,1,1],'rescale':.5,'second':[float(np.log(2)),1.5,3.5],'output':7/3}
 
-data['attention_tradeoff']={'kind':'teaching_tradeoff','kv_rows':[1,64,128],'q_rows':[166,110,76],'traffic_MiB':[204,304,436],'updates':[409600,9600,6912]}
+att_rows=read('calculations/results/attention-tiles-rtxpro6000.json')['attention_tile_rows']
+data['attention_tradeoff']={'kind':'teaching_tradeoff','source':'calculations/results/attention-tiles-rtxpro6000.json','capacity_bytes':101376,'kv_rows':[r['kv_block'] for r in att_rows],'q_rows':[r['query_block'] for r in att_rows],'traffic_MiB':[r['interface_bytes']/2**20 for r in att_rows],'updates':[r['kv_block_pairs'] for r in att_rows]}
 
 f,a=canvas(6.6)
 for y,fused in [(.57,False),(.12,True)]:
@@ -167,24 +173,35 @@ for y,fused in [(.57,False),(.12,True)]:
 a.text(.025,.015,'重复读取的数据宽度翻倍，省下的一次写出不足以抵消它',fontsize=12,color=C['blue'])
 save(f,'figure-5-10-quantization');data['quantization']={'kind':'data_reuse','column_tiles':12,'source_MiB':32,'quantized_MiB':16,'input_traffic_MiB':[240,416],'shared_other_MiB':204}
 
+graph_small=read('calculations/results/graph-small-input-rtxpro6000.json');graph_large=read('calculations/results/graph-large-input-rtxpro6000.json')
+COPY_BW=graph_small['scenario']['copy_bandwidth_bytes_per_second']
+copy_small_us,copy_large_us=graph_small['summary']['extra_copy_ns']/1000,graph_large['summary']['extra_copy_ns']/1000
 f,a=plt.subplots(figsize=(11,5));f.subplots_adjust(left=.24,right=.95,top=.85,bottom=.18)
-for y,prep,copy in [(2,20,0),(1,5,2*2**20*2/2e12*1e6),(0,5,16*2**20*2/2e12*1e6)]:
+for y,prep,copy in [(2,20,0),(1,5,copy_small_us),(0,5,copy_large_us)]:
  for start,dur,col,label in [(0,prep,'orange',f'{prep:g}'),(prep,copy,'teal',f'{copy:.1f}'),(prep+copy,20,'blue','20')]:
   if dur:a.barh(y,dur,left=start,height=.48,color=C[col]);a.text(start+dur/2,y,label,ha='center',va='center',color='white',fontsize=10)
  a.text(prep+copy+20+.6,y,f'{prep+copy+20:.1f} μs',va='center',fontsize=11)
-a.set_yticks([2,1,0],['普通执行','图重放：2 MiB 输入','图重放：16 MiB 输入']);a.set(xlim=(0,48),ylim=(-.65,2.6),xlabel='完成时间 / μs');a.axvline(40,color=C['muted'],ls='--',lw=1)
+a.set_yticks([2,1,0],['普通执行','图重放：2 MiB 输入','图重放：16 MiB 输入']);a.set(xlim=(0,52),xticks=range(0,51,10),ylim=(-.65,2.6),xlabel='完成时间 / μs');a.axvline(40,color=C['muted'],ls='--',lw=1)
 a.legend(handles=[Rectangle((0,0),1,1,color=C[c],label=t) for c,t in [('orange','准备 / 提交等待'),('teal','复制输入'),('blue','设备计算')]],loc='lower left',bbox_to_anchor=(-.2,1),frameon=False,ncol=3,fontsize=11)
-save(f,'figure-5-13-graph-copy');data['graph_copy']={'kind':'teaching_timeline','payload_MiB':[2,16],'prepare_us':[20,5,5],'copy_us':[0,2.097152,16.777216],'compute_us':20,'completion_us':[40,27.097152,41.777216]}
+save(f,'figure-5-13-graph-copy');data['graph_copy']={'kind':'teaching_timeline','device':'rtx-pro6000-blackwell-ws','copy_bandwidth_bytes_per_second':COPY_BW,'payload_MiB':[2,16],'prepare_us':[20,5,5],'copy_us':[0,copy_small_us,copy_large_us],'compute_us':20,'completion_us':[40,25+copy_small_us,25+copy_large_us]}
 
+persist=read('calculations/results/persistent-tiles-rtxpro6000.json');ps_=persist['scenario'];tiles_=persist['persistent_tiles']
+PROJ_US=tiles_[0]['matrix_flops']/ps_['matrix_flops_per_second']*1e6;ACT_US=tiles_[0]['activation_elements']/ps_['activation_elements_per_second']*1e6
+TASK_US=(ps_['task_dispatch_ns']+ps_['event_publish_ns'])/1000;LAUNCH_US=ps_['host_launch_ns']/1000
+timelines={}
 f,axs=plt.subplots(2,1,figsize=(12,6.5));f.subplots_adjust(left=.12,right=.97,top=.91,bottom=.12,hspace=.75)
 for a,fine in zip(axs,[False,True]):
- prod=32.21225472+(.7 if fine else 0);act=39.3216+(.7 if fine else 0);first=5+prod if fine else 10+8*prod
- for i in range(8):
-  ps=5+i*prod;ac=first+i*act
-  for start,duration,y in [(ps,prod,.64),(ac,act,.13)]:
-   a.broken_barh([(start,duration)],(y,.28),facecolors=C['blue' if i%2==0 else 'teal']);a.text(start+duration/2,y+.14,str(i),ha='center',va='center',color='white',fontsize=10)
- a.axvline(first,ls='--',color=C['orange']);a.set_xticks(range(0,601,100));a.set(xlim=(0,610),ylim=(0,1.03),xlabel='时间 / μs');a.set_yticks([.27,.78],['激活','投影']);a.set_title(('逐块开始激活' if fine else '全部投影完成后开始激活')+f'：约 {first+8*act:.0f} μs',loc='left',fontsize=14)
-save(f,'figure-5-15-persistent');data['persistent']={'kind':'teaching_timeline','tiles':8,'projection_us':32.21225472,'activation_us':39.3216,'task_overhead_us':.7,'launch_us':5,'completion_us':[582.27083776,358.08505472]}
+ if fine:
+  bars=[(t['nanoseconds']['producer_start']/1000,t['nanoseconds']['producer_ready']/1000,t['nanoseconds']['consumer_start']/1000,t['nanoseconds']['consumer_done']/1000) for t in tiles_]
+ else:
+  first=2*LAUNCH_US+8*PROJ_US;bars=[(LAUNCH_US+i*PROJ_US,LAUNCH_US+(i+1)*PROJ_US,first+i*ACT_US,first+(i+1)*ACT_US) for i in range(8)]
+ timelines['fine' if fine else 'coarse']=[dict(zip(['projection_start','projection_end','activation_start','activation_end'],b)) for b in bars]
+ for i,(p0,p1,c0,c1) in enumerate(bars):
+  for start,end,y in [(p0,p1,.64),(c0,c1,.13)]:
+   a.broken_barh([(start,end-start)],(y,.28),facecolors=C['blue' if i%2==0 else 'teal'])
+   if end-start>4:a.text((start+end)/2,y+.14,str(i),ha='center',va='center',color='white',fontsize=10)
+ end=max(b[3] for b in bars);a.axvline(bars[0][2],ls='--',color=C['orange']);a.set_xticks(range(0,131,20));a.set(xlim=(0,135),ylim=(0,1.03),xlabel='时间 / μs');a.set_yticks([.27,.78],['激活','投影']);a.set_title(('逐块开始激活' if fine else '全部投影完成后开始激活')+f'：约 {end:.0f} μs',loc='left',fontsize=14)
+save(f,'figure-5-15-persistent');data['persistent']={'kind':'teaching_timeline','device':'rtx-pro6000-blackwell-ws','source':'calculations/results/persistent-tiles-rtxpro6000.json','tiles':8,'projection_us':PROJ_US,'activation_us':ACT_US,'task_overhead_us':TASK_US,'launch_us':LAUNCH_US,'completion_us':[persist['summary']['barrier_finish_ns']/1000,persist['summary']['persistent_finish_ns']/1000],'timelines':timelines}
 
 # Preserve existing numerical data identifiers; figure-index.json records current reading order.
 new_keys={'execution':1,'banks':3,'reduction':4,'softmax':7,'attention_tradeoff':8,'quantization':10,'graph_copy':13,'persistent':15}
@@ -199,7 +216,8 @@ full_outputs,full_checks=draw_full_revision(HERE,data)
 revision_outputs.extend(full_outputs)
 revision_checks.extend(full_checks)
 from structure_figures import draw as draw_structure
-revision_outputs.extend(draw_structure(HERE))
+revision_outputs.extend(draw_structure(HERE,data))
+revision_checks.extend(json.loads((HERE/'structure-layout-validation.json').read_text()))
 (HERE/'teaching-layout-check.json').write_text(json.dumps(revision_checks,ensure_ascii=False,indent=2)+'\n')
 outputs.extend(revision_outputs)
 outputs=list(dict.fromkeys(outputs))

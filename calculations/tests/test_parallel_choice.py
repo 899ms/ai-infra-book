@@ -15,11 +15,17 @@ class SelectionTests(unittest.TestCase):
         s=json.loads((ROOT/'calculations/scenarios/parallel-choice-example.json').read_text())
         r=choice.evaluate(dict(s['common'],**s['cases'][0]))
         for row in r['candidates']:
-            expected=sum(old.step(row['tp'],8192+i)['total_s'] for i in range(8))
+            expected=sum(old.step(row['tp'],s['common']['history']+i)['total_s'] for i in range(8))
             self.assertAlmostEqual(row['service_s'],expected,places=12)
+        cross=choice.evaluate(dict(s['common'],**s['cases'][2]))
+        tp16=next(c for c in cross['candidates'] if c['tp']==16)
+        expected=sum(old.step(16,s['common']['history']+i,'measured_two_servers')['total_s'] for i in range(8))
+        self.assertAlmostEqual(tp16['service_s'],expected,places=12)
     def test_capacity_slo_and_no_feasible_choice(self):
         s=json.loads((ROOT/'calculations/scenarios/parallel-choice-example.json').read_text())
-        self.assertEqual([choice.evaluate(dict(s['common'],**c))['winner_tp'] for c in s['cases']],[2,8,None,4])
+        self.assertEqual([choice.evaluate(dict(s['common'],**c))['winner_tp'] for c in s['cases']],[2,8,8,2])
+        first=choice.evaluate(dict(s['common'],**s['cases'][0]))
+        self.assertIn('每卡容量不足',first['candidates'][0]['rejections'])
     def test_global_work_and_gradient_conservation(self):
         c=json.loads((ROOT/'calculations/scenarios/supernode-scaling-example.json').read_text())
         for size in c['supernode_sizes']:
@@ -30,7 +36,7 @@ class SelectionTests(unittest.TestCase):
                 self.assertEqual(r['local_dp']*r['supernodes'],r['dp'])
                 expected=2*(r['supernodes']-1)/r['supernodes']*2*c['parameters']
                 self.assertAlmostEqual(r['per_supernode_remote_bytes'],expected)
-                self.assertAlmostEqual(r['compute_s'],1.96608)
+                self.assertAlmostEqual(r['compute_s'],6*c['parameters']*c['global_tokens']/1024/(989.4e12*0.41))
     def test_egress_cap_can_reverse_algorithm_choice(self):
         c=json.loads((ROOT/'calculations/scenarios/supernode-scaling-example.json').read_text())
         fast=scaling.evaluate(c,64,c['profiles'][0]);cap=scaling.evaluate(c,64,c['profiles'][1])

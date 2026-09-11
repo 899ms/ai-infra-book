@@ -8,7 +8,7 @@ SGLang 团队 2025 年的实践文章从重启引擎、磁盘加载，讲到保�
 
 沿固定 [Qwen3-8B 配置](../references/outline-checks/2026-09-07/scaling-history/qwen3-8b-config.json)，把未共享的 embedding／输出头、36 层 attention、门控 MLP、归一化参数相加，得到 **8,190,735,360 个逻辑参数**。BF16 原始权重为 16,381,470,720 byte，即 **15.2564 GiB**。这是矩阵与向量计数，不包含对齐、量化元数据、运行时派生状态和内存分配开销。
 
-教学假设：每卡本任务可用预算为 64 GiB，训练驻留状态 40 GiB，rollout KV 池 24 GiB，共有运行时与工作区 4 GiB。训练状态的 40 GiB 是给定输入，必须由所用训练后端的 trace 校准，不能只从 8B 参数数推出来。
+教学假设：共享的卡为 H100 SXM，标称 80 GB，约 74.5 GiB；训练驻留状态 40 GiB，rollout KV 池 24 GiB，共有运行时与工作区 4 GiB。训练状态的 40 GiB 是给定输入，必须由所用训练后端的 trace 校准，不能只从 8B 参数数推出来。
 
 训练独占时是 `40+4=44 GiB`，rollout 时是 `15.2564+24+4=43.2564 GiB`，都能放下。但若训练状态还在就恢复完整 rollout，交接峰值变成 **83.2564 GiB**。先恢复推理权重，完成同步，再释放或换出训练状态，最后恢复 KV，峰值则为 `max(40+15.2564+4,15.2564+24+4)`，即 **59.2564 GiB**。腾出的显存来自执行次序；主机容量、换出链路和实际缓冲仍需满足约束。
 
@@ -46,4 +46,4 @@ attention、embedding 与输出头另算：DP／EP 下可能复制，TP 下还�
 
 [weight-handoff计算](../calculations/results/weight-handoff-book.md)按锁定官方Qwen235配置复算全BF16权重470187269120bytes，专家454192791552bytes、非专家15994477568bytes。EP16每rank接收专家加完整非专家共44381527040bytes；一个EP组选择性单播总出口710104432640bytes，向16rank各发完整模型则7522996305920bytes。这是指定单播策略的生产端载荷，不是树广播链路量或实测加速。
 
-[Qwen8阶段容量](../calculations/results/weight-handoff-qwen8.md)使用本节40/24/4GiB教学分配复现83.2564/59.2564GiB峰值。运行`python3 calculations/calc.py weight-handoff --format md`，用`--inputs`切换模型、EP、副本与有效带宽；旧KV失效、源端重组、接收缓冲与引擎版本屏障仍需另外验证。
+[Qwen8阶段容量](../calculations/results/weight-handoff-qwen8.md)使用本节40/24/4GiB教学分配复现83.2564/59.2564GiB峰值，并与 H100 SXM 的 80 GB 容量比较。运行`python3 calculations/calc.py weight-handoff --format md`，用`--inputs`切换模型、EP、副本与有效带宽；旧KV失效、源端重组、接收缓冲与引擎版本屏障仍需另外验证。

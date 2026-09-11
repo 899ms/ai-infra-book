@@ -51,6 +51,43 @@ def draw_encoder_paths(out):
             arrow(a, (.435, .102), (.565, .102))
             out.save(f, 'figure-12-' + name)
 
+def draw_local_tiers(out,data):
+    """Three local device tiers reading the same 16.345 GB decode step."""
+    rows=[('RTX PRO 6000',9.12,'109.6 token/s','green'),
+          ('M3 Ultra',19.96,'50.1 token/s','green'),
+          ('手机，q4_0 权重',63.8,'15.7 token/s','blue'),
+          ('手机，BF16 权重',191,'5.2 token/s','blue')]
+    with plt.rc_context(STYLE):
+        f,a=plot(3.4,left=.28)
+        for y,(label,ms,rate,c) in enumerate(rows):
+            a.barh(y,ms,height=.55,color=COL[c],edgecolor=COL['line'])
+            text(a,ms+6,y,f'{ms:g} ms，{rate}',11)
+        a.set(yticks=range(4),yticklabels=[r[0] for r in rows],xlabel='每步读取时间下界（ms）',xlim=(0,330))
+        out.save(f,'figure-12-local-tiers')
+    data['12-local-tiers']={'kind':'teaching_bound','step_bytes':16344778752,'phone_channels_x16_declared':4,
+        'phone_bus_GBps':85.6,'q4_weight_bytes':4257230400,'rows_ms':[r[1] for r in rows],
+        'token_per_s':[109.6,50.1,15.7,5.2],'relationship':'带宽决定每步读取下界'}
+
+def draw_loss_repair(out,data):
+    """Completion time on the 14 percent loss path under three repair schemes."""
+    rows=[('Mathis 上界下仅发送',18.33,'gray'),
+          ('逐轮重传 p99（6 轮）',1.247,'orange'),
+          ('逐轮重传期望',0.764,'orange'),
+          ('FEC 308 符号，99.9% 免重传',0.249,'blue'),
+          ('串行预算：RTT＋模型＋发送',0.247,'green')]
+    with plt.rc_context(STYLE):
+        f,a=plot(3.6,left=.42)
+        for y,(label,t,c) in enumerate(rows):
+            a.barh(y,t,height=.55,color=COL[c],edgecolor=COL['line'])
+            text(a,t*1.12,y,f'{t:g} s',11)
+        a.set(xscale='log',xlim=(0.1,60),yticks=range(5),yticklabels=[r[0] for r in rows],
+              xlabel='完成时间（s，对数坐标）',xticks=[.1,1,10],xticklabels=['0.1','1','10'])
+        out.save(f,'figure-12-loss-repair')
+    data['12-loss-repair']={'kind':'teaching_bound','path':{'rtt_s':.2,'knee_Mbps':333,'loss':.14,'mss_bytes':1448,
+        'request_bytes':354640},'packets':245,'serial_budget_s':.2465,'mathis_Mbps':.1548,'mathis_send_s':18.33,
+        'retransmit_expected_s':.764,'retransmit_p99_s':1.247,'fec_repair':63,'fec_overhead':.257,'fec_s':.2487,
+        'relationship':'修复方式决定完成时间'}
+
 def draw(here,data):
     out=Exporter(here)
     def save(f,n):out.save(f,'figure-12-'+n)
@@ -135,11 +172,12 @@ def draw(here,data):
                 if v:a.barh(0,v,left=start,height=.5,color=COL[c],edgecolor=COL['line'],label=l)
                 start+=v
             a.axvline(45,ls='--',color='#a56c28');a.set(yticks=[0],yticklabels=[['端侧','附近','云端'][i]],xlabel='剩余二十轮完成时间（s）',xlim=(0,68),ylim=(-.6,1.6));a.legend(ncol=3,frameon=False,loc='upper left');save(f,'14-budgets' if i==0 else 'budgets-'+str(i))
-        f,a=plot(4.0);b=np.array(data['12-15']['scan_Mbps']);a.plot(b,27+128/b,color='#267398',label='云端');a.axhline(41,color='#388768',label='附近：41 s');a.axhline(45,ls='--',color='#a56c28',label='期限：45 s');a.set(xlabel='云上行（Mbit/s）',ylabel='二十轮完成时间（s）');a.legend(frameon=False);save(f,'15-deployment')
+        d=data['12-15'];f,a=plot(4.0);b=np.array(d['scan_Mbps']);a.plot(b,d['cloud_seconds'],color='#267398',label='云端 H100');a.axhline(d['near_s'],color='#388768',label=f"附近 RTX PRO 6000：{d['near_s']:.1f} s");a.axhline(d['deadline_s'],ls='--',color='#a56c28',label=f"期限：{d['deadline_s']:g} s");a.set(xlabel='云上行（Mbit/s）',ylabel='二十轮完成时间（s）',ylim=(0,80));a.legend(frameon=False);save(f,'15-deployment')
         for retained,name in [(True,'16-recovery'),(False,'recovery-all')]:
-            f,a=canvas(4.2);text(a,.04,.94,'已执行十轮；恢复连接需 1 s',14)
+            rc=data['12-16']['round_s'];f,a=canvas(4.2);text(a,.04,.94,f'云端已执行十轮，每轮 {rc:.2f} s；恢复连接需 1 s',14)
             for i in range(10):box(a,.04+i%5*.187,.66-(i//5)*.22,.17,.15,str(i+1),'green' if retained and i<9 else 'orange',12)
-            text(a,.5,.22,'保留前九轮，只重做第十轮' if retained else '进度丢失，重做十轮',12,ha='center');text(a,.5,.08,'额外 1 + 1.9 = 2.9 s' if retained else '额外 1 + 10 × 1.9 = 20 s',12,ha='center');save(f,name)
+            text(a,.5,.22,'保留前九轮，只重做第十轮' if retained else '进度丢失，重做十轮',12,ha='center');text(a,.5,.08,f'额外 1 + {rc:.2f} = {1+rc:.2f} s' if retained else f'额外 1 + 10 × {rc:.2f} ≈ {1+10*rc:.1f} s',12,ha='center');save(f,name)
     from core_principles_figures import draw as draw_principles
     draw_principles(12, out)
+    draw_local_tiers(out,data);draw_loss_repair(out,data)
     out.finish();return out.outputs,out.checks

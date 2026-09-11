@@ -49,20 +49,20 @@ a.plot(bs,weight,color='#7b858a',lw=1.7,label='每 token 分摊的权重');a.set
 data['batch']={'shared_weight_bytes':15136811008,'kv_bytes_per_position':147456,'batch':bs.tolist(),'history_lengths':[2048,8192]};save(f,'figure-8-2-batch')
 # 1. Time bars are read from saved events, never hand-estimated GPU times.
 f=plt.figure(figsize=(13,10));gs=f.add_gridspec(3,1,height_ratios=[1,1,1],hspace=.65,left=.08,right=.96,top=.95,bottom=.06)
-for j,(policy,label) in enumerate([('fixed','固定批次〔教学〕'),('continuous','连续批处理〔教学〕'),('chunked','Decode 优先分块〔教学〕')]):
- d=calc('iteration-batching-'+policy);a=f.add_subplot(gs[j]);data[policy]=d['batching_steps']
+for j,(policy,label) in enumerate([('fixed','固定批次'),('continuous','连续批处理'),('chunked','Decode 优先分块')]):
+ d=calc('iteration-batching-pro6000-'+policy);a=f.add_subplot(gs[j]);data[policy]=d['batching_steps']
  for step in d['batching_steps']:
   for plan in step['plans']:
-   y=3-int(plan['request'][1:]);start=step['start_ns']/1000;dur=step['duration_ns']/1000
+   y=3-int(plan['request'][1:]);start=step['start_ns']/1e6;dur=step['duration_ns']/1e6
    a.broken_barh([(start,dur)],(y-.34,.68),facecolors=C['blue' if plan['phase']=='prefill' else 'teal'],edgecolors='white',lw=.8)
    # The time bars carry the scheduling argument; detailed step counts stay in figure-data.json.
- a.set(yticks=range(4),yticklabels=['r3','r2','r1','r0'],xlim=(0,330),xticks=[0,50,100,150,200,250,300],ylim=(-.85,3.85),xlabel='时间 / μs');a.set_title(label+['  ·  总时间 317 μs，最大间隔 12 μs','  ·  总时间 277 μs，最大间隔 147 μs','  ·  总时间 317 μs，最大间隔 29 μs'][j],loc='left',fontsize=12,pad=9)
+ s=d['summary'];a.set(yticks=range(4),yticklabels=['r3','r2','r1','r0'],xlim=(0,900),xticks=[0,150,300,450,600,750,900],ylim=(-.85,3.85),xlabel='时间 / ms');a.set_title(label+f"  ·  总时间 {s['finish_ns']/1e6:.0f} ms，最大间隔 {s['max_itl_ns']/1e6:.0f} ms",loc='left',fontsize=12,pad=9)
  # Arrival markers and maximum output gap are derived from the saved request events.
  for reqrow in d['batching_requests']:
-  y=3-int(reqrow['id'][1:]);a.scatter([reqrow['arrival_ns']/1000],[y],marker='>',s=45,color=C['ink'],zorder=6,clip_on=False)
+  y=3-int(reqrow['id'][1:]);a.scatter([reqrow['arrival_ns']/1e6],[y],marker='>',s=45,color=C['ink'],zorder=6,clip_on=False)
  gaps=[(v-u,r['id'],u/1000,v/1000) for r in d['batching_requests'] for u,v in zip(r['delivery_ns'],r['delivery_ns'][1:])]
- gap,rid,x0,x1=max(gaps);y=3-int(rid[1:])+.48
- a.annotate('',xy=(x1,y),xytext=(x0,y),arrowprops={'arrowstyle':'|-|','color':C['orange'],'lw':1.6});a.text((x0+x1)/2,y+.13,f'{gap/1000:.1f} μs',ha='center',va='bottom',fontsize=9,color=C['orange'])
+ gap,rid,x0,x1=max(gaps);y=3-int(rid[1:])+.48;x0/=1000;x1/=1000
+ a.annotate('',xy=(x1,y),xytext=(x0,y),arrowprops={'arrowstyle':'|-|','color':C['orange'],'lw':1.6});a.text((x0+x1)/2,y+.13,f'{gap/1e6:.1f} ms',ha='center',va='bottom',fontsize=9,color=C['orange'])
 data['chunk_history']=calc('chunk-history-book')['chunk_history_rows'];save(f,'figure-8-3-scheduling')
 # 2. Physical pages, with explicit shared block references.
 f,a=canvas(8.5);lengths=[9,13,5,15];styles=[('整段预留',64),('每块 4 位置',52),('A、B 共享前 8 位置',44)]
@@ -130,7 +130,10 @@ for y,buff,count in [(.66,288,2),(.29,576,1)]:
   a.add_patch(Rectangle((pos,y),remaining*scale,.13,fc=C['gray']));a.text(pos+remaining*scale/2,y+.065,f'余 {remaining}',ha='center',va='center',fontsize=12)
  a.text(.20,y-.085,f'净空间 {2592-buff} MiB → {count} 条完整上下文',fontsize=13,color=C['ink'])
 a.text(.5,.04,'橙：预取缓冲    绿：完整 KV 上下文    灰：不足一条的余量（单位：MiB）',ha='center',fontsize=11)
-data['offload']={'offload_gib':2.53125,'buffer_gib':[.28125,.5625],'net_gib':[2.25,1.96875],'bandwidth_gib_s':[24,384],'copy_ms':[2.53125/24*1000,2.53125/384*1000]};save(f,'figure-8-9-offload')
+data['offload']={'offload_gib':2.53125,'offload_bytes':2717908992,'buffer_gib':[.28125,.5625],'net_gib':[2.25,1.96875],'links':['PCIe Gen5 x16','GH200 NVLink-C2C'],'bandwidth_gb_s':[64,450],'copy_ms':[2717908992/64e9*1000,2717908992/450e9*1000],'results':['calculations/results/weight-offload-pcie5.json','calculations/results/weight-offload-gh200-c2c.json']}
+from fractions import Fraction
+for path,ms in zip(data['offload']['results'],data['offload']['copy_ms']):assert abs(float(Fraction(read(path)['summary']['per_forward_copy_service_ns_exact']))/1e6-ms)<1e-9
+save(f,'figure-8-9-offload')
 # Task-aligned quality comparison, with all four natural runs per task visible.
 quality=read('experiments/ch08/08-08/results/summary.json');qcontrol=read('experiments/ch08/08-08/results/q-control-summary.json')
 record_sets=[[r for r in c['requests'] if r['mode']=='natural' and r['trial']!='warm'] for c in quality['configurations']]+[[r for r in qcontrol['records'] if r['mode']=='natural']]
@@ -150,16 +153,17 @@ axs[0].set_ylabel('任务 ID');f.text(.55,.035,'每格为一次自然生成：�
 data['kv']={'format_mib':[1152,612,324],'quality_bf16_weights':correct,'total_executions_each':32,'unique_tasks':8,'task_ids':task_ids,'columns':cols,'correct_by_task':quality_matrices};save(f,'figure-8-10-kv-quality')
 # 6. One relation: lookup cost can erase the benefit of additional outputs.
 f,a=plt.subplots(figsize=(10,6));f.subplots_adjust(left=.11,right=.96,bottom=.14,top=.90)
-queries=np.linspace(0,2,101);vals=[]
+T0=read('experiments/ch08/08-01/efficiency.json');T0=next(r['decode_round_ms'] for r in T0['rows'] if r['kind']=='short' and r['batch']==1);Q=.1
+queries=np.linspace(0,60,121);vals=[];crosses=[]
 for name,prob,col in [('AAAA',.25,'red'),('BBBB',.75,'teal')]:
- out=sum(prob**i for i in range(5));cost=1.5/out;vals.append({'draft':name,'acceptance':prob,'expected_output':out,'ms_per_output':cost})
- a.plot(queries,(queries+1.4)/out,color=C[col],lw=2.5,label=f'{name}：平均输出数 {out:.2f} token/轮')
- a.scatter([.1],[cost],color=C[col],s=40);a.annotate(f'{cost:.2f} ms/token',xy=(.1,cost),xytext=(.25,cost+(.33 if cost>1 else .13)),fontsize=11,color=C[col])
-cross=sum(.75**i for i in range(5))-1.4
-a.axhline(1,color=C['ink'],ls='--',lw=1.4,label='普通 decode：1 ms/token');a.scatter([cross],[1],color=C['teal'],s=45)
-a.annotate('查询约 1.65 ms：优势消失',xy=(cross,1),xytext=(.93,1.43),arrowprops={'arrowstyle':'->','color':C['teal']},fontsize=11)
-a.set(xlabel='每轮查询时间 / ms',ylabel='平均每个输出 token 的耗时 / ms',xlim=(0,2),ylim=(0,2.8),xticks=[0,.5,1,1.5,2]);a.grid(alpha=.2);a.legend(frameon=False,loc='upper left')
-data['speculation']={'target_p_A':.25,'query_ms':.1,'verification_ms':1.4,'ordinary_ms':1,'drafts':vals};save(f,'figure-8-12-speculation')
+ out=sum(prob**i for i in range(5));cost=(T0+Q)/out;vals.append({'draft':name,'acceptance':prob,'expected_output':out,'ms_per_output':cost});crosses.append(out*T0-T0)
+ a.plot(queries,(queries+T0)/out,color=C[col],lw=2.5,label=f'{name}：平均输出数 {out:.2f} token/轮')
+ a.scatter([Q],[cost],color=C[col],s=40);a.annotate(f'{cost:.1f} ms/token',xy=(Q,cost),xytext=(3,cost-5),fontsize=11,color=C[col])
+a.axhline(T0,color=C['ink'],ls='--',lw=1.4,label=f'普通 decode：{T0:.1f} ms/token')
+for x,col in zip(crosses,['red','teal']):
+ a.scatter([x],[T0],color=C[col],s=45);a.annotate(f'查询约 {x:.1f} ms',xy=(x,T0),xytext=(x+1.5,T0+6),arrowprops={'arrowstyle':'->','color':C[col]},fontsize=11)
+a.set(xlabel='每轮查询时间 / ms',ylabel='平均每个输出 token 的耗时 / ms',xlim=(0,60),ylim=(0,70),xticks=[0,10,20,30,40,50,60]);a.grid(alpha=.2);a.legend(frameon=False,loc='upper left')
+data['speculation']={'target_p_A':.25,'query_ms':Q,'verification_ms':T0,'ordinary_ms':T0,'device':'rtx-pro6000-blackwell-ws','source':'experiments/ch08/08-01/efficiency.json','drafts':vals,'query_break_even_ms':crosses};save(f,'figure-8-12-speculation')
 # 7. Amdahl bound only; never filled with missing MiMo stage data.
 f,a=plt.subplots(figsize=(10,5.8));f.subplots_adjust(left=.10,right=.95,bottom=.14,top=.89);ss=np.linspace(1,8,100)
 for frac,col in [(.2,'blue'),(.5,'teal'),(.8,'orange')]:
@@ -185,6 +189,8 @@ for key,offset,col,lab in [('completed_per_s',-.17,'blue','完成吞吐'),('slo_
   a.text(i+offset,max(v)+.08,f'{med[i]:.2f}',ha='center',fontsize=10,color=C[col])
 a.set(ylabel='窗口吞吐 / req/s',ylim=(0,3.1),yticks=[0,.5,1,1.5,2,2.5,3],xticks=xs,xticklabels=labels);a.legend(frameon=False,fontsize=11,loc='upper left');a.grid(axis='y',alpha=.15)
 data['service']={'source':'experiments/ch08/08-09/analysis.json','groups':ordered,'correct':d['correct'],'qualified':d['qualified'],'requests':d['formal_requests']};save(f,'figure-8-13-service')
+# Worked examples are recomputed first; the mechanism diagrams read their results.
+subprocess.run([sys.executable,str(HERE/'teaching-check.py')],check=True,capture_output=True,text=True)
 from illustrations import draw
 draw(save, canvas, box, arrow, C, data)
 (HERE/'figure-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n');(HERE/'figure-layout-check.json').write_text(json.dumps({'text_extent_warnings':warnings},ensure_ascii=False,indent=2)+'\n')

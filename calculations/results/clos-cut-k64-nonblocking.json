@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "calculation": "clos-cut",
+  "scenario": {
+    "mode": "clos",
+    "radix": 64,
+    "oversubscription": "1",
+    "tiers": [
+      2,
+      3
+    ],
+    "link_bytes_per_second": 50000000000,
+    "partition_endpoints": 1024,
+    "supernode_scenario": "scenarios/supernode-scaling-example.json",
+    "rails": 8,
+    "servers": 2,
+    "nic_bytes_per_second": 50000000000,
+    "startup_ns": 2000,
+    "pairing": "aligned",
+    "model": "qwen3-8b",
+    "gradient_dtype": "FP32",
+    "results_glob": "gradient-*.json",
+    "server_counts": [
+      2,
+      4,
+      8,
+      16,
+      32
+    ]
+  },
+  "declared_input_sources": {
+    "mode": "book",
+    "radix": "references/text/dgx-superpod-h100-ra.txt lines 170, 346 (NVIDIA Quantum QM9700; 2048 GPUs on 64 leaf + 32 spine switches = 64-port two-tier Clos)",
+    "oversubscription": "book",
+    "tiers": "references/text/fat-tree.txt lines 210-220",
+    "link_bytes_per_second": "references/text/nvidia-connectx7-datasheet.txt line 23 (up to 400Gb/s)",
+    "partition_endpoints": "book (supernode-scaling scenario, 1024 GPUs)",
+    "supernode_scenario": "book"
+  },
+  "mode": "clos",
+  "leaf": {
+    "radix": 64,
+    "oversubscription_exact": "1",
+    "downlinks": 32,
+    "uplinks": 32,
+    "link_bytes_per_second_exact": "50000000000"
+  },
+  "tiers": [
+    {
+      "tiers": 2,
+      "leaf_switches": 64,
+      "pods": null,
+      "switches": {
+        "leaf": 64,
+        "spine": 32
+      },
+      "total_switches": 96,
+      "endpoints": 2048,
+      "endpoints_per_pod": null,
+      "leaf_uplinks_total": 2048,
+      "bisection_bytes_per_second_exact": "51200000000000",
+      "nonblocking_bisection_bytes_per_second_exact": "51200000000000",
+      "bisection_fraction_of_nonblocking_exact": "1"
+    },
+    {
+      "tiers": 3,
+      "leaf_switches": 2048,
+      "pods": 64,
+      "switches": {
+        "edge": 2048,
+        "aggregation": 2048,
+        "core": 1024
+      },
+      "total_switches": 5120,
+      "endpoints": 65536,
+      "endpoints_per_pod": 1024,
+      "leaf_uplinks_total": 65536,
+      "bisection_bytes_per_second_exact": "1638400000000000",
+      "nonblocking_bisection_bytes_per_second_exact": "1638400000000000",
+      "bisection_fraction_of_nonblocking_exact": "1"
+    }
+  ],
+  "partition_cuts": [
+    {
+      "tiers": 2,
+      "partition_endpoints": 1024,
+      "leaves_used": 32,
+      "pods_used": null,
+      "leaf_uplinks_in_cut": 1024,
+      "pod_core_links_in_cut": null,
+      "cut_links": 1024,
+      "cut_bytes_per_second_exact": "51200000000000",
+      "cut_bytes_per_second_per_endpoint_exact": "50000000000"
+    },
+    {
+      "tiers": 3,
+      "partition_endpoints": 1024,
+      "leaves_used": 32,
+      "pods_used": 1,
+      "leaf_uplinks_in_cut": 1024,
+      "pod_core_links_in_cut": 1024,
+      "cut_links": 1024,
+      "cut_bytes_per_second_exact": "51200000000000",
+      "cut_bytes_per_second_per_endpoint_exact": "50000000000"
+    }
+  ],
+  "supernode_egress": {
+    "scenario_file": "scenarios/supernode-scaling-example.json",
+    "gpus": 1024,
+    "nic_bytes_per_second": 50000000000,
+    "results_file": "results/supernode-scaling-book.json",
+    "rows": [
+      {
+        "supernode_gpus": 8,
+        "supernodes": 128,
+        "nominal_nic_egress_bytes_per_second_exact": "400000000000",
+        "oversubscribed_egress_bytes_per_second_exact": "400000000000",
+        "egress_per_gpu_bytes_per_second_exact": "50000000000",
+        "per_supernode_remote_bytes": 127000000000.0,
+        "remote_seconds_at_nominal": 0.3175,
+        "remote_seconds_at_oversubscribed": 0.3175
+      },
+      {
+        "supernode_gpus": 64,
+        "supernodes": 16,
+        "nominal_nic_egress_bytes_per_second_exact": "3200000000000",
+        "oversubscribed_egress_bytes_per_second_exact": "3200000000000",
+        "egress_per_gpu_bytes_per_second_exact": "50000000000",
+        "per_supernode_remote_bytes": 120000000000.0,
+        "remote_seconds_at_nominal": 0.0375,
+        "remote_seconds_at_oversubscribed": 0.0375
+      },
+      {
+        "supernode_gpus": 128,
+        "supernodes": 8,
+        "nominal_nic_egress_bytes_per_second_exact": "6400000000000",
+        "oversubscribed_egress_bytes_per_second_exact": "6400000000000",
+        "egress_per_gpu_bytes_per_second_exact": "50000000000",
+        "per_supernode_remote_bytes": 112000000000.0,
+        "remote_seconds_at_nominal": 0.0175,
+        "remote_seconds_at_oversubscribed": 0.0175
+      },
+      {
+        "supernode_gpus": 256,
+        "supernodes": 4,
+        "nominal_nic_egress_bytes_per_second_exact": "12800000000000",
+        "oversubscribed_egress_bytes_per_second_exact": "12800000000000",
+        "egress_per_gpu_bytes_per_second_exact": "50000000000",
+        "per_supernode_remote_bytes": 96000000000.0,
+        "remote_seconds_at_nominal": 0.0075,
+        "remote_seconds_at_oversubscribed": 0.0075
+      }
+    ]
+  },
+  "summary": {
+    "radix": 64,
+    "oversubscription": "1",
+    "leaf_downlinks": 32,
+    "leaf_uplinks": 32,
+    "tier2_endpoints": 2048,
+    "tier2_total_switches": 96,
+    "tier2_bisection_bytes_per_second": 51200000000000.0,
+    "tier2_bisection_fraction_of_nonblocking": "1",
+    "tier3_endpoints": 65536,
+    "tier3_total_switches": 5120,
+    "tier3_bisection_bytes_per_second": 1638400000000000.0,
+    "tier3_bisection_fraction_of_nonblocking": "1",
+    "partition_endpoints": 1024,
+    "partition_cut_bytes_per_second": 51200000000000.0,
+    "partition_cut_bytes_per_second_per_endpoint": 50000000000.0,
+    "supernode8_egress_bytes_per_second": 400000000000.0,
+    "supernode64_egress_bytes_per_second": 3200000000000.0,
+    "supernode128_egress_bytes_per_second": 6400000000000.0,
+    "supernode256_egress_bytes_per_second": 12800000000000.0
+  },
+  "assumptions": [
+    "k 端口交换机的折叠 Clos：叶层每台 d 下行、u 上行，d/u 为声明的超额订阅比；上层保持对叶上行不阻塞。二层为叶—脊，三层沿用 fat-tree 论文的 pod 结构（每 pod k/2 台边缘交换机）。",
+    "半分带宽按顶层链路计：所有叶上行数的一半乘每链路速率；不模拟具体流的路由、ECMP 冲突或队列。",
+    "分区割集只对占用整数个叶（或 pod）的分区成立；不足一叶时按向上取整计入整叶上行。每端点份额 = 割集/端点数。",
+    "超节点出口取 supernode-scaling 场景的每卡 NIC 速率乘卡数，再除以超额订阅比；跨域字节读取已有结果文件，本模块不重算梯度同步。"
+  ]
+}

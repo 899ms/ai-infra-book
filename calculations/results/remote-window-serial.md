@@ -1,6 +1,6 @@
 # memory-concurrency — qwen3-8b
 
-输入：`{"bandwidth_bytes_per_second": 40000000000, "batch": 1, "latency_ns": 2000, "length": 8192, "transaction_bytes": 256, "transactions": 128}`
+输入：`{"bandwidth_bytes_per_second": 50000000000, "batch": 1, "latency_ns": 2000, "length": 8192, "transaction_bytes": 256, "transactions": 128}`
 
 数值是分析计算；字节以 bytes 保存，FMA=2，不是硬件测量。
 
@@ -10,16 +10,16 @@
 | allocated_window_bytes | 32,768 |
 | outstanding_window_bytes | 32,768 |
 | active_transactions | 128 |
-| throughput_bounds_exact_bytes_per_second | `{"interface": "40000000000", "transaction_window": "16384000000", "serial_service": "2560000000"}` |
+| throughput_bounds_exact_bytes_per_second | `{"interface": "50000000000", "transaction_window": "16384000000", "serial_service": "2560000000"}` |
 | effective_bandwidth_upper_exact_bytes_per_second | `"2560000000"` |
 | serial_service_can_reach_interface | `false` |
 | binding_limiters | `["serial_service"]` |
-| required_window_bytes | 80,000.0 |
-| required_transactions | 313 |
+| required_window_bytes | 100,000.0 |
+| required_transactions | 391 |
 | transaction_limited_bytes_per_second | 16,384,000,000.0 |
 | effective_bandwidth_upper_bytes_per_second | 2,560,000,000.0 |
-| bandwidth_utilization_upper | 0.064 |
-| ideal_interface_service_seconds | 0.0301989888 |
+| bandwidth_utilization_upper | 0.0512 |
+| ideal_interface_service_seconds | 0.02415919104 |
 | window_constrained_service_lower_seconds | 0.4718592 |
 | finite_transfer_lower_seconds | 0.4718592 |
 | assumed_fixed_size_transfer_count | 4,718,592 |

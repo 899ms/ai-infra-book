@@ -130,7 +130,7 @@ data['checkpoint_resharding']={'shape':[12288,4096],'old_parts':4,'new_parts':8,
 
 # 13: checkpoint overhead is a descending and an ascending cost.
 f,ax=plt.subplots(figsize=(11.2,5.9));f.subplots_adjust(left=.10,right=.96,bottom=.17,top=.90)
-c=14*N/8e9;lam=1024/(365*86400);tau=np.linspace(180,2400,350)
+c=14*N/7e9;lam=1/(7.9*3600);tau=np.linspace(180,2400,350)
 sv=c/tau*100;redo=lam*tau/2*100;recovery=lam*120*100;total=sv+redo+recovery
 ax.plot(tau/60,sv,label='保存：间隔越长，摊销越少',color=C['blue'],lw=2)
 ax.plot(tau/60,redo,label='重做：间隔越长，损失越多',color=C['orange'],lw=2)

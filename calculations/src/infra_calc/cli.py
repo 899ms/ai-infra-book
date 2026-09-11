@@ -62,6 +62,8 @@ from .topics import v4_prefix_continuation
 from .topics import flux_vae_decode, architecture_variants
 from .topics import workload_profiles
 from .topics import qwen35_forward
+from .topics import clos_cut, hash_collision, sm_occupancy, energy_ledger, critical_batch, straggler_max, moe_capacity, wan_loss_model
+from .topics import edge_tiers
 from . import coverage
 from . import delivery
 from . import hardware
@@ -311,6 +313,50 @@ def parser() -> argparse.ArgumentParser:
     training_pipeline.add_argument("--inputs", type=Path)
     training_pipeline.add_argument("--format", choices=("json", "md"), default="json")
     training_pipeline.add_argument("--output", type=Path)
+    clos_cut = sub.add_parser("clos-cut", help="Folded Clos reach/bisection/cut, rail-aligned two-server AllReduce, switch-side reduction")
+    clos_cut.add_argument("--inputs", type=Path)
+    clos_cut.add_argument("--format", choices=("json", "md"), default="json")
+    clos_cut.add_argument("--output", type=Path)
+    hash_collision = sub.add_parser("hash-collision", help="Exact ECMP maximum-load distribution and per-packet spraying reorder wait")
+    hash_collision.add_argument("--inputs", type=Path)
+    hash_collision.add_argument("--format", choices=("json", "md"), default="json")
+    hash_collision.add_argument("--output", type=Path)
+    incast_feedback = sub.add_parser("incast-feedback", help="N-1 senders into one port: allowed feedback delay and required buffer")
+    incast_feedback.add_argument("--inputs", type=Path)
+    incast_feedback.add_argument("--format", choices=("json", "md"), default="json")
+    incast_feedback.add_argument("--output", type=Path)
+    in_network_reduce = sub.add_parser("in-network-reduce", help="Switch-side reduction versus archived hierarchical-gradient results")
+    in_network_reduce.add_argument("--inputs", type=Path)
+    in_network_reduce.add_argument("--format", choices=("json", "md"), default="json")
+    in_network_reduce.add_argument("--output", type=Path)
+    sm_occupancy = sub.add_parser("sm-occupancy", help="CC 9.0 resident blocks/warps, binding limit, latency hiding and MMA count per tile")
+    sm_occupancy.add_argument("--inputs", type=Path)
+    sm_occupancy.add_argument("--format", choices=("json", "md"), default="json")
+    sm_occupancy.add_argument("--output", type=Path)
+    energy_ledger = sub.add_parser("energy-ledger", help="Energy per byte by level applied to one Qwen3-8B decode step; voltage, density, rack, phone rows")
+    energy_ledger.add_argument("--inputs", type=Path)
+    energy_ledger.add_argument("--format", choices=("json", "md"), default="json")
+    energy_ledger.add_argument("--output", type=Path)
+    critical_batch = sub.add_parser("critical-batch", help="Gradient noise scale S(B)/E(B) applied to the chapter-10 design")
+    critical_batch.add_argument("--inputs", type=Path)
+    critical_batch.add_argument("--format", choices=("json", "md"), default="json")
+    critical_batch.add_argument("--output", type=Path)
+    straggler_max = sub.add_parser("straggler-max", help="Synchronous step as max over N ranks, detection, responses and spike rollback")
+    straggler_max.add_argument("--inputs", type=Path)
+    straggler_max.add_argument("--format", choices=("json", "md"), default="json")
+    straggler_max.add_argument("--output", type=Path)
+    moe_capacity = sub.add_parser("moe-capacity", help="Capacity factor: padded rows and dropped tokens for the 96/32 example and Qwen3-235B")
+    moe_capacity.add_argument("--inputs", type=Path)
+    moe_capacity.add_argument("--format", choices=("json", "md"), default="json")
+    moe_capacity.add_argument("--output", type=Path)
+    edge_tiers_parser = sub.add_parser("edge-tiers", help="End, nearby and cloud tiers of the chapter-12 screenshot Agent on named devices")
+    edge_tiers_parser.add_argument("--inputs", type=Path)
+    edge_tiers_parser.add_argument("--format", choices=("json", "md"), default="json")
+    edge_tiers_parser.add_argument("--output", type=Path)
+    wan_loss_model = sub.add_parser("wan-loss-model", help="Mathis, BBR-style goodput, reliable-stream tail and FEC repair on the Queqiao path")
+    wan_loss_model.add_argument("--inputs", type=Path)
+    wan_loss_model.add_argument("--format", choices=("json", "md"), default="json")
+    wan_loss_model.add_argument("--output", type=Path)
     real_lifecycle = sub.add_parser("real-scaling-lifecycle", help="Real C4 fit to declared training and inference lifetime proxy")
     real_lifecycle.add_argument("--inputs", type=Path)
     real_lifecycle.add_argument("--format", choices=("json", "md"), default="json")
@@ -1253,6 +1299,20 @@ def main(argv: list[str] | None = None) -> None:
             result = training_pipeline_gemm_state.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
         elif args.command == "training-pipeline-schedule":
             result = training_pipeline_schedule.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+        elif args.command == "edge-tiers":
+            payload = json.loads(args.inputs.read_text()) if args.inputs else {}
+            result = edge_tiers.calculate(**payload.get("inputs", payload), input_sources=payload.get("input_sources") if "inputs" in payload else None)
+        elif args.command in ("clos-cut", "hash-collision", "sm-occupancy", "energy-ledger", "critical-batch", "straggler-max", "moe-capacity", "wan-loss-model"):
+            module = dict(zip(("clos-cut", "hash-collision", "sm-occupancy", "energy-ledger", "critical-batch", "straggler-max", "moe-capacity", "wan-loss-model"),
+                              (clos_cut, hash_collision, sm_occupancy, energy_ledger, critical_batch, straggler_max, moe_capacity, wan_loss_model)))[args.command]
+            payload = json.loads(args.inputs.read_text()) if args.inputs else {}
+            result = module.calculate(**payload.get("inputs", payload), input_sources=payload.get("input_sources") if "inputs" in payload else None)
+        elif args.command == "incast-feedback":
+            payload = json.loads(args.inputs.read_text()) if args.inputs else {}
+            result = feedback_queue.incast(**payload.get("inputs", payload), input_sources=payload.get("input_sources") if "inputs" in payload else None)
+        elif args.command == "in-network-reduce":
+            payload = json.loads(args.inputs.read_text()) if args.inputs else {}
+            result = clos_cut.calculate(**{**payload.get("inputs", payload), "mode": "in_network"}, input_sources=payload.get("input_sources") if "inputs" in payload else None)
         elif args.command == "real-scaling-lifecycle":
             result = real_scaling_lifecycle.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
         elif args.command == "plot-real-scaling":

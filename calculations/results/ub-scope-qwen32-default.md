@@ -330,7 +330,7 @@
 - 启动按每collective轮/PP服务启动定义，带宽是显式单向有效服务条件，不引用宣传峰值；翻转阈值仅在此固定消息图、共享出口和服务假设下成立。
 
 历史材料仅证明时间线：
-- [../references/files/documents/ub-reflection.html](https://01.me/2025/09/a-story-of-unified-bus/) SHA-256 `9ed0f62950241537477bc05ad6ef917b6b31e5c0737a8bff02058449c0051419`
+- [../references/files/documents/ub-reflection.md](https://01.me/2025/09/a-story-of-unified-bus/) SHA-256 `1f4d1e37fb2a17a79ac267cab37074656665330782569c5ee6ac1687423a70e6`
 
 模型固定来源：
 - [configs/models/qwen3-32b/config.json](https://huggingface.co/Qwen/Qwen3-32B/resolve/9216db5781bf21249d130ec9da846c4624c16137/config.json) SHA-256 `97e295b63283935788fac5e4f8860862a56d4089538cafc93f0431f2ebe483bb`

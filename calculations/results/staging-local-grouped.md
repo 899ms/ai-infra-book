@@ -9,8 +9,8 @@
 | message_bytes | 8,388,608 |
 | logical_send_bytes | 50,331,648 |
 | aggregate_resource_lower_seconds | 0.001572864 |
-| sum_round_resource_lower_seconds | 0.001572864 |
-| barrier_lower_with_startup_seconds | 0.001572864 |
+| sum_round_resource_lower_seconds | 0.0015728640000000002 |
+| barrier_lower_with_startup_seconds | 0.0015728640000000002 |
 | buffer_resident_bytes | `null` |
 | measured_all_reduce_seconds | `null` |
 

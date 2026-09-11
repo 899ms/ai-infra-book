@@ -49,7 +49,7 @@ def draw(here,data):
             text(a,.5,.08,'GPU 转换时同时占用 288 MiB' if gpu else '格式转换在 CPU 完成',12,ha='center');save(f,name)
         d=data['10-6'];f,a=plot(4.2)
         for k,l,c in [('total_gib','分片＋10 GiB 临时缓冲','#267398'),('persistent_gib','训练状态分片','#388768')]:a.plot(d['participants'],d[k],label=l,color=c)
-        a.axhline(24,ls='--',color='#a56c28',label='可用 24 GiB');a.set(xlabel='分片参与者数',ylabel='每卡显存需求（GiB）',ylim=(0,47));a.legend(frameon=False);save(f,'6-candidates')
+        a.axhline(22,ls='--',color='#a56c28',label='RTX 4090 可用 22 GiB');a.set(xlabel='分片参与者数',ylabel='每卡显存需求（GiB）',ylim=(0,47));a.legend(frameon=False);save(f,'6-candidates')
         for i,(label,d) in enumerate(data['10-7'].items()):
             f,a=plot(4.1,left=.18)
             for e in d['events']:
@@ -99,7 +99,7 @@ def draw(here,data):
         for x in [.28,.62]:arrow(a,(x,.60),(x+.10,.60))
         text(a,.70,.34,'保留 75% → 4.5 条/s',11,ha='center');arrow(a,(.84,.48),(.84,.16),'control');arrow(a,(.84,.16),(.16,.16),'control');arrow(a,(.16,.16),(.16,.48),'control');text(a,.5,.08,'新权重用于后续生成',12,ha='center');save(f,'14-rl-flow')
         for i,key in enumerate(['restore_bytes','staged_bytes']):
-            f,a=plot(4.1,bottom=.26);v=np.array(data['10-15'][key])/2**30;a.step(range(4),v,where='post',color='#267398');a.plot(range(4),v,'o',color='#267398');a.axhline(64,ls='--',color='#a56c28');a.set(xticks=range(4),xticklabels=['训练\n结束','加载权重\n分配 KV' if i==0 else '只加载\n权重','释放\n训练状态','开始\n生成'],ylabel='显存占用（GiB）',ylim=(0,100));a.text(1,v[1]+4,f'峰值 {v[1]:.1f} GiB',fontsize=12,ha='center');save(f,'15-rl' if i==0 else 'rl-staged')
+            f,a=plot(4.1,bottom=.26);v=np.array(data['10-15'][key])/2**30;a.step(range(4),v,where='post',color='#267398');a.plot(range(4),v,'o',color='#267398');a.axhline(80e9/2**30,ls='--',color='#a56c28',label='H100 SXM 74.5 GiB');a.legend(frameon=False,loc='upper right');a.set(xticks=range(4),xticklabels=['训练\n结束','加载权重\n分配 KV' if i==0 else '只加载\n权重','释放\n训练状态','开始\n生成'],ylabel='显存占用（GiB）',ylim=(0,100));a.text(1,v[1]+4,f'峰值 {v[1]:.1f} GiB',fontsize=12,ha='center');save(f,'15-rl' if i==0 else 'rl-staged')
         f,a=canvas(4.5)
         for row,(l,c) in enumerate([('μ：实际生成样本的策略','blue'),('πold：本轮优化开始时的策略','orange'),('πθ：本轮更新中的当前策略','green')]):
             y=.70-row*.28;box(a,.04,y,.92,.18,l,c)
@@ -121,10 +121,18 @@ def draw(here,data):
         for k,c in zip(d['curves'],['#388768','#267398','#a56c28']):a.plot(d['relative_bandwidth'],d['curves'][k],color=c,label=f'原通信占比 {float(k):.0%}')
         a.set(xlabel='新带宽／原带宽',ylabel='新耗时／原耗时');a.legend(frameon=False);save(f,'19-hardware')
         f,a=plot(4.2)
-        for (key,d),l,c in zip(data['10-20'].items(),['A100','H100','B200'],['#267398','#388768','#a56c28']):a.plot(np.array(d['parameters'])/1e12,np.array(d['continuous_required_devices'])/1e4,color=c,label=l)
-        a.axhline(1.6384,ls='--',color='#666');a.set(yscale='log',xlabel='稠密模型参数量（万亿）',ylabel='90 天所需加速器（万张）');a.legend(frameon=False);save(f,'20-scale')
-        # 21: smaller pipeline bubbles trade against transfers, activation peaks and parameters.
-        d=data['10-21'];names=list(d);x=np.arange(4)
+        for (key,d),l,c in zip(data['10-20'].items(),['A100','H100','B200'],['#267398','#388768','#a56c28']):a.plot(np.array(d['parameters'])/1e12,np.array(d['continuous_required_devices'])/1e4,color=c,label=l+'（40%）');a.plot(np.array(d['parameters'])/1e12,np.array(d['continuous_required_devices_mfu50'])/1e4,color=c,ls='--',lw=1)
+        a.plot([],[],color='#666',ls='--',lw=1,label='虚线：50%');a.axhline(1.6384,ls='--',color='#666');a.set(yscale='log',xlabel='稠密模型参数量（万亿）',ylabel='90 天所需加速器（万张）');a.legend(frameon=False);save(f,'20-scale')
+        # 21-23: where each bubble-compressing schedule fills the 1F1B gaps; same scale and colours as 17/18.
+        fill={'F':'blue','B':'orange','X':'orange','W':'purple','update':'green'}
+        for key,name in [('10-21','pipeline-interleaved'),('10-22','pipeline-zero-bubble'),('10-23','pipeline-dualpipe')]:
+            d=data[key];f,a=plot(4.1,left=.18)
+            for e in d['events']:
+                second=e['chunk']==1 or e['direction']==1
+                a.barh(e['stage'],e['duration']*1000,left=e['start']*1000,height=.58,color=COL[fill[e['kind']]],edgecolor=COL['line'],linewidth=.5,hatch='////' if second else None)
+            a.set(yticks=range(4),yticklabels=[f'阶段 {j}' for j in range(4)],xlim=(0,355),xlabel='时间（ms）');a.invert_yaxis();a.set_title(f"{d['label']}：{d['summary']['step_makespan_seconds']*1000:.0f} ms",loc='left');save(f,name)
+        # 24: smaller pipeline bubbles trade against transfers, activation peaks and parameters.
+        d=data['10-24'];names=list(d);x=np.arange(4)
         f,(a1,a2)=plt.subplots(1,2,figsize=(420/72,3.9));f.subplots_adjust(left=.125,right=.94,bottom=.24,top=.80,wspace=.42)
         a1.bar(x-.17,[d[k]['makespan_m8_ms'] for k in names],.32,color=COL['blue'],edgecolor=COL['line'],label='8 个微批次')
         a1.bar(x+.17,[d[k]['makespan_m16_ms'] for k in names],.32,color=COL['orange'],edgecolor=COL['line'],label='16 个微批次')
@@ -135,8 +143,8 @@ def draw(here,data):
         for xx,p in zip(x,peaks):a2.text(xx,p+30,f'{p:,.0f}',ha='center',fontsize=11)
         a2.set(xticks=x,ylabel='最大单阶段峰值（MiB）',ylim=(0,1900));a2.set_xticklabels(['1F1B','交错 v=2','零气泡','DualPipe'],rotation=22,ha='right')
         out.save(f,'figure-10-pipeline-schedules')
-        # 26: capacity factor trades dropped assignments against padded rows.
-        d=data['10-26'];f,a=plot(3.9)
+        # 29: capacity factor trades dropped assignments against padded rows.
+        d=data['10-29'];f,a=plot(3.9)
         a.bar(x-.17,[v*100 for v in d['model_dropped_fraction']],.32,color=COL['orange'],edgecolor=COL['line'],label='丢弃分派占总分派')
         a.bar(x+.17,[v*100 for v in d['model_padded_fraction']],.32,color=COL['blue'],edgecolor=COL['line'],label='补零行占执行量')
         for xx,dr,pa in zip(x,d['model_dropped_fraction'],d['model_padded_fraction']):

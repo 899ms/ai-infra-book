@@ -92,7 +92,7 @@ None/null为未知；条件卡数时间不是实测日期。Llama405跨模型卡
 - [../references/outline-checks/2026-09-07/scaling-history/qwen25-v2.txt](https://arxiv.org/pdf/2412.15115v2)，SHA256 `06a9d66b2079b2fb92d5bd8d61b5c2c4b01dc2f22c18e83e8598cb665acc288f`。
 - [../references/files/papers/qwen3.pdf](https://arxiv.org/abs/2505.09388v1)，SHA256 `84a5e2b1fa04bb774bf12ae606d1e6d9dd2147ed2ebe78a4cfeb91ba380ffdd5`。
 - [../references/text/qwen3.txt](https://arxiv.org/abs/2505.09388v1)，SHA256 `75f231a33d55a719089ba566e12ce78a2bca6f680a14e9ac8567d72775416a6a`。
-- [../references/outline-checks/2026-09-07/scaling-history/qwen35-blog.html](https://qwen.ai/blog?id=qwen3.5)，SHA256 `d7fa9cb22ae0821694f921728c3b556d7fb49dcb5faa9075546b60717858f408`。
+- [../references/outline-checks/2026-09-07/scaling-history/qwen35-blog.md](https://qwen.ai/blog?id=qwen3.5)，SHA256 `0d3471c03d933637d40fff8b6976aad57cb0165980fe91dfb0d8eaa967f23bd3`。
 - [../references/files/papers/deepseek-v3.pdf](https://arxiv.org/abs/2412.19437)，SHA256 `812a3fd645c80725354de9d831a6785503007a60681461407f64e97305fa9330`。
 - [../references/text/deepseek-v3.txt](https://arxiv.org/abs/2412.19437)，SHA256 `a0f38c9e92d97605ef07a8fb6fc144931eb719b5337895d97dfee4ef43f9e3a6`。
 - [../references/files/papers/deepseek-v4.pdf](https://arxiv.org/abs/2606.19348)，SHA256 `55b2d72f772ac00de2e470b3ee08443c648d971c7f57c52d6202895665e5978d`。

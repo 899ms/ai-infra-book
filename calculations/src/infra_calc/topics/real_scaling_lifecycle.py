@@ -3,6 +3,7 @@
 from . import real_scaling_fit
 from .scaling_law import lifecycle, _finite_api
 from ..units import positive_int, positive_number
+from .. import hardware
 
 
 @_finite_api
@@ -13,11 +14,31 @@ def calculate(
     input_tokens=512,
     returned_tokens=128,
     cost_per_proxy_flop=1e-18,
+    cost_device=None,
+    cost_mfu=None,
 ):
     positive_number(target_loss, "target_loss")
     positive_int(input_tokens, "input_tokens", allow_zero=True)
     positive_int(returned_tokens, "returned_tokens")
     positive_number(cost_per_proxy_flop, "cost_per_proxy_flop")
+    device_basis = None
+    if cost_device is not None or cost_mfu is not None:
+        # Price every proxy FLOP as time on one named device at a declared MFU.
+        if cost_device is None or cost_mfu is None:
+            raise ValueError("cost_device and cost_mfu must be given together")
+        positive_number(cost_mfu, "cost_mfu")
+        if cost_mfu > 1:
+            raise ValueError("cost_mfu must not exceed 1")
+        profile = hardware.select_device(cost_device)
+        peak = hardware.select_peak(profile, "BF16", "FP32", "tensor", "dense")
+        cost_per_proxy_flop = 1 / (float(peak["tera_ops_per_second"]) * 1e12 * cost_mfu)
+        device_basis = dict(
+            device=cost_device,
+            name=profile["name"],
+            bf16_dense_tera_flops_per_second=peak["tera_ops_per_second"],
+            mfu=cost_mfu,
+            unit="GPU-seconds",
+        )
     if not isinstance(candidate_sizes, (list, tuple)) or not candidate_sizes:
         raise ValueError("candidate_sizes must be a nonempty sequence")
     for size in candidate_sizes:
@@ -36,6 +57,8 @@ def calculate(
         returned_tokens=returned_tokens,
         cost_per_proxy_flop=cost_per_proxy_flop,
     )
+    if device_basis is not None:
+        scenario.update(cost_device=cost_device, cost_mfu=cost_mfu)
     fitted = real_scaling_fit.calculate()
     if scenario["returned_tokens"] < 1:
         raise ValueError("At least one returned token required")
@@ -122,9 +145,19 @@ def calculate(
                 crossing_checks=crossing_checks,
             )
         )
+    if device_basis is None:
+        cost_scope = f"All costs use the same declared {rate:g} abstract cost units per proxy FLOP, not currency, official hardware price, or measured efficiency."
+    else:
+        cost_scope = (
+            f"All costs are {device_basis['name']} GPU-seconds: {rate:.9g} GPU-s per proxy FLOP = "
+            f"1/({device_basis['bf16_dense_tera_flops_per_second']} TFLOP/s BF16 dense peak x MFU {cost_mfu:g}); "
+            "the same MFU is applied to training and serving, and MFU is a declared input rather than measured here."
+        )
+    extra = dict(cost_basis=device_basis) if device_basis is not None else {}
     return dict(
         calculation="real-scaling-lifetime-proxy",
         scenario=scenario,
+        **extra,
         fit_source=dict(calculation=fitted["calculation"], sources=fitted["sources"]),
         sources=fitted["sources"],
         work_convention=dict(
@@ -135,7 +168,7 @@ def calculate(
         variants=results,
         scope=[
             "The fitted real C4 loss is a proxy target, not demonstrated equal task quality or a trained candidate architecture.",
-            f"All costs use the same declared {rate:g} abstract cost units per proxy FLOP, not currency, official hardware price, or measured efficiency.",
+            cost_scope,
             "Training is 6ND. Input work is 2NP; additional decode is 2N(G-1), because the first output comes from the input phase. Attention, KV, sampling, actual heads and communication are not modeled.",
             "Every candidate reports its N/D fit-box extrapolation. Formula feasibility does not establish a realizable data budget or reliable prediction.",
             "Primary and four prespecified sensitivities are shown separately; held-out error does not select a cheaper law.",
@@ -146,10 +179,19 @@ def calculate(
 
 def markdown(result):
     scenario = result["scenario"]
+    basis = result.get("cost_basis")
+    if basis is None:
+        unit_text = f"使用 {scenario['cost_per_proxy_flop']:g} 抽象 cost-unit/FLOP"
+    else:
+        unit_text = (
+            f"按 {basis['name']} GPU 秒计价：每 FLOP {scenario['cost_per_proxy_flop']:.9g} GPU 秒，"
+            f"即 1/({basis['bf16_dense_tera_flops_per_second']} TFLOP/s BF16 dense 峰值 × MFU {basis['mfu']:g})，"
+            "费用列单位均为 GPU 秒"
+        )
     lines = [
         "# 真实 C4 拟合的条件生命周期代理",
         "",
-        f"目标 loss {scenario['target_loss']}；输入 {scenario['input_tokens']} token，返回 {scenario['returned_tokens']} token，额外 decode {scenario['returned_tokens']-1} 步。训练、prefill、decode 均使用 {scenario['cost_per_proxy_flop']:g} 抽象 cost-unit/FLOP，setup=0。",
+        f"目标 loss {scenario['target_loss']}；输入 {scenario['input_tokens']} token，返回 {scenario['returned_tokens']} token，额外 decode {scenario['returned_tokens']-1} 步。训练、prefill、decode 均{unit_text}，setup=0。",
         "",
         "费用直线为 T(C)=6ND·r+C·2N[P+(G−1)]·r。它是声明的运算量代理，不是完整硬件费用、吞吐实测或等任务质量证明。",
         "",

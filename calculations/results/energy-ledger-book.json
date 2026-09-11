@@ -1,0 +1,507 @@
+{
+  "schema_version": 1,
+  "calculation": "energy-ledger",
+  "scenario": {
+    "decode_result": "results/qwen3-8b-decode-b1-s8192.json",
+    "chapter1_context_tokens": 2048,
+    "sources_extract": "research/gap-plan-2026-09-11/sources-extract.json",
+    "voltage_before": "0.85",
+    "voltage_after": "0.55",
+    "power_after_over_before": "0.75",
+    "area_after_over_before": "0.60",
+    "rack_budget_kw": "120",
+    "rack_fixed_kw": "12",
+    "rack_per_card_kw": "1.2",
+    "rack_card_counts": [
+      64,
+      72,
+      96
+    ],
+    "declared_air_cooling_kw_per_rack": "40",
+    "declared_phone_channels_x16": 4
+  },
+  "declared_input_sources": {
+    "decode_result": "book (results/qwen3-8b-decode-b1-s8192.json)",
+    "chapter1_context_tokens": "book (chapter 1 table, 2048-token context)",
+    "sources_extract": "research/gap-plan-2026-09-11/sources-extract.json",
+    "voltage_before": "references/text/logicfolding-energy.txt line 219",
+    "voltage_after": "references/text/logicfolding-energy.txt line 219",
+    "power_after_over_before": "references/text/logicfolding-energy.txt line 224",
+    "area_after_over_before": "references/text/logicfolding-energy.txt line 226",
+    "rack_budget_kw": "book (chapter 6.5.2 eq. 6-11)",
+    "rack_fixed_kw": "book (chapter 6.5.2)",
+    "rack_per_card_kw": "book (chapter 6.5.2)",
+    "rack_card_counts": "book (chapter 6.5.2)",
+    "declared_air_cooling_kw_per_rack": "references/text/ashrae-liquid-cooling.txt (40-50 kW rack airflow statement; no explicit limit stated) and references/text/dgx-superpod-h100-ra.txt line 312 (>40 kW); declared",
+    "declared_phone_channels_x16": "book (declared; SoC bus width not stated in references/text/qualcomm-8elite-brief.txt)"
+  },
+  "summary": {
+    "weight_read_bytes": 15136819200,
+    "kv_read_bytes": 1207959552,
+    "kv_read_bytes_at_chapter1_context": 301989888,
+    "matrix_flops": 19968622592,
+    "extract_present": true,
+    "hbm_pj_per_byte": 31.76,
+    "joules_per_token_weights": 0.480745377792,
+    "joules_per_token_kv": 0.03836479537152,
+    "joules_per_token_compute": 0.014976466944,
+    "joules_per_token_total": 0.53408664010752,
+    "dynamic_power_ratio": 0.4186851211072664,
+    "power_density_ratio": 1.25,
+    "rack_max_cards": 90,
+    "phone_bus_gb_per_second": 85.6
+  },
+  "sources_extract": {
+    "path": "research/gap-plan-2026-09-11/sources-extract.json",
+    "present": true,
+    "generated": "2026-09-11",
+    "levels_present": [
+      "hbm",
+      "l2",
+      "nvlink",
+      "shared_l1"
+    ],
+    "levels_absent": [
+      "register",
+      "nic"
+    ],
+    "compute_present": true,
+    "phone_present": true
+  },
+  "decode_step": {
+    "result_file": "results/qwen3-8b-decode-b1-s8192.json",
+    "scenario": {
+      "batch": 1,
+      "history": 8192,
+      "tokens": 1,
+      "output_head": "last",
+      "weight_bytes": 2,
+      "activation_bytes": 2,
+      "kv_bytes": 2,
+      "score_bytes": 4
+    },
+    "weight_read_bytes": 15136819200,
+    "kv_read_bytes": 1207959552,
+    "kv_read_bytes_at_chapter1_context": 301989888,
+    "matrix_flops": 19968622592,
+    "weight_plus_kv_bytes": 16344778752
+  },
+  "energy_per_byte": {
+    "shared_l1": {
+      "pj_per_byte_exact": "5/4",
+      "pj_per_byte": 1.25,
+      "quoted_value": 5,
+      "quoted_unit": "pJ/word",
+      "conversion_factor_exact": "1/4",
+      "quote": "5pJ/word",
+      "source": "text/dally-hotchips2023.txt",
+      "file": "text/dally-hotchips2023.txt",
+      "line": 697,
+      "page": 52,
+      "date": "Hot Chips 35 keynote, 2023-08-29 (conference programme)",
+      "process_node": "能耗表注明取自 Horowitz ISSCC 2014；面积按 TSMC 45nm 综合；HFMA/HMMA 表注明 45nm",
+      "note": null
+    },
+    "l2": {
+      "pj_per_byte_exact": "25/2",
+      "pj_per_byte": 12.5,
+      "quoted_value": 50,
+      "quoted_unit": "pJ/word",
+      "conversion_factor_exact": "1/4",
+      "quote": "50pJ/word",
+      "source": "text/dally-hotchips2023.txt",
+      "file": "text/dally-hotchips2023.txt",
+      "line": 690,
+      "page": 52,
+      "date": "Hot Chips 35 keynote, 2023-08-29 (conference programme)",
+      "process_node": "能耗表注明取自 Horowitz ISSCC 2014；面积按 TSMC 45nm 综合；HFMA/HMMA 表注明 45nm",
+      "note": null
+    },
+    "hbm": {
+      "pj_per_byte_exact": "794/25",
+      "pj_per_byte": 31.76,
+      "quoted_value": 3.97,
+      "quoted_unit": "pJ/bit",
+      "conversion_factor_exact": "8",
+      "quote": "The energy to access a bit in HBM2 is approximately 3.97 pJ/bit,",
+      "source": "text/fgdram-micro17.txt",
+      "file": "text/fgdram-micro17.txt",
+      "line": 124,
+      "page": 2,
+      "date": "MICRO-50, October 2017",
+      "process_node": "DRAM energy model: 28nm node scaled from 55nm",
+      "note": null
+    },
+    "nvlink": {
+      "pj_per_byte_exact": "52/5",
+      "pj_per_byte": 10.4,
+      "quoted_value": 1.3,
+      "quoted_unit": "pJ/bit",
+      "conversion_factor_exact": "8",
+      "quote": "NVLink-C2C also only uses 1.3 picojoules per bit transferred, which is greater than 5x more energy-efficient than PCIe Gen 5.",
+      "source": "text/nvidia-grace-hopper-blog.txt",
+      "file": "text/nvidia-grace-hopper-blog.txt",
+      "line": 114,
+      "page": null,
+      "date": null,
+      "process_node": null,
+      "note": null
+    }
+  },
+  "energy_per_byte_references": {
+    "dram_lpddr_45nm": {
+      "pj_per_byte_exact": "160",
+      "pj_per_byte": 160.0,
+      "quoted_value": 640,
+      "quoted_unit": "pJ/word",
+      "conversion_factor_exact": "1/4",
+      "quote": "640pJ/word",
+      "source": "text/dally-hotchips2023.txt",
+      "file": "text/dally-hotchips2023.txt",
+      "line": 683,
+      "page": 52,
+      "date": "Hot Chips 35 keynote, 2023-08-29 (conference programme)",
+      "process_node": "能耗表注明取自 Horowitz ISSCC 2014；面积按 TSMC 45nm 综合；HFMA/HMMA 表注明 45nm",
+      "note": null
+    },
+    "dram_access_dally_aha": {
+      "pj_per_byte_exact": "40",
+      "pj_per_byte": 40.0,
+      "quoted_value": 5,
+      "quoted_unit": "pJ/bit",
+      "conversion_factor_exact": "8",
+      "quote": "Part of 5pJ/b access",
+      "source": "text/dally-aha2023.txt",
+      "file": "text/dally-aha2023.txt",
+      "line": 562,
+      "page": 31,
+      "date": "Stanford AHA Retreat keynote, 2023-08-31",
+      "process_node": null,
+      "note": null
+    },
+    "hbm2_including_ecc": {
+      "pj_per_byte_exact": "784/25",
+      "pj_per_byte": 31.36,
+      "quoted_value": 3.92,
+      "quoted_unit": "pJ/bit",
+      "conversion_factor_exact": "8",
+      "quote": "cess incurs 3.92 pJ/bit of energy (including ECC overhead) which is",
+      "source": "text/fgdram-micro17.txt",
+      "file": "text/fgdram-micro17.txt",
+      "line": 204,
+      "page": 3,
+      "date": "MICRO-50, October 2017",
+      "process_node": "DRAM energy model: 28nm node scaled from 55nm",
+      "note": null
+    },
+    "gddr5": {
+      "pj_per_byte_exact": "112",
+      "pj_per_byte": 112.0,
+      "quoted_value": 14.0,
+      "quoted_unit": "pJ/bit",
+      "conversion_factor_exact": "8",
+      "quote": "14.0pJ/bit",
+      "source": "text/fgdram-micro17.txt",
+      "file": "text/fgdram-micro17.txt",
+      "line": 87,
+      "page": 2,
+      "date": "MICRO-50, October 2017",
+      "process_node": "DRAM energy model: 28nm node scaled from 55nm",
+      "note": null
+    },
+    "on_die_wire_48mm_round_trip": {
+      "pj_per_byte_exact": "384",
+      "pj_per_byte": 384.0,
+      "quoted_value": 100,
+      "quoted_unit": "fJ/bit-mm",
+      "conversion_factor_exact": "96/25",
+      "quote": "4.8pJ/b @ 100fJ/b-mm",
+      "source": "text/dally-aha2023.txt",
+      "file": "text/dally-aha2023.txt",
+      "line": 558,
+      "page": 31,
+      "date": "Stanford AHA Retreat keynote, 2023-08-31",
+      "process_node": null,
+      "note": "48mm round trip on GPU die → 4.8 pJ/b"
+    }
+  },
+  "joules_per_token": {
+    "by_level_if_all_bytes_came_from_that_level": {
+      "shared_l1": {
+        "pj_per_byte_exact": "5/4",
+        "source": "text/dally-hotchips2023.txt",
+        "line": 697,
+        "weight_read_joules": 0.018921024,
+        "kv_read_joules": 0.00150994944,
+        "kv_read_joules_at_chapter1_context": 0.00037748736,
+        "weight_plus_kv_joules": 0.02043097344
+      },
+      "l2": {
+        "pj_per_byte_exact": "25/2",
+        "source": "text/dally-hotchips2023.txt",
+        "line": 690,
+        "weight_read_joules": 0.18921024,
+        "kv_read_joules": 0.0150994944,
+        "kv_read_joules_at_chapter1_context": 0.0037748736,
+        "weight_plus_kv_joules": 0.2043097344
+      },
+      "hbm": {
+        "pj_per_byte_exact": "794/25",
+        "source": "text/fgdram-micro17.txt",
+        "line": 124,
+        "weight_read_joules": 0.480745377792,
+        "kv_read_joules": 0.03836479537152,
+        "kv_read_joules_at_chapter1_context": 0.00959119884288,
+        "weight_plus_kv_joules": 0.51911017316352
+      },
+      "nvlink": {
+        "pj_per_byte_exact": "52/5",
+        "source": "text/nvidia-grace-hopper-blog.txt",
+        "line": 114,
+        "weight_read_joules": 0.15742291968,
+        "kv_read_joules": 0.0125627793408,
+        "kv_read_joules_at_chapter1_context": 0.0031406948352,
+        "weight_plus_kv_joules": 0.1699856990208
+      },
+      "dram_lpddr_45nm": {
+        "pj_per_byte_exact": "160",
+        "source": "text/dally-hotchips2023.txt",
+        "line": 683,
+        "weight_read_joules": 2.421891072,
+        "kv_read_joules": 0.19327352832,
+        "kv_read_joules_at_chapter1_context": 0.04831838208,
+        "weight_plus_kv_joules": 2.61516460032
+      },
+      "dram_access_dally_aha": {
+        "pj_per_byte_exact": "40",
+        "source": "text/dally-aha2023.txt",
+        "line": 562,
+        "weight_read_joules": 0.605472768,
+        "kv_read_joules": 0.04831838208,
+        "kv_read_joules_at_chapter1_context": 0.01207959552,
+        "weight_plus_kv_joules": 0.65379115008
+      },
+      "hbm2_including_ecc": {
+        "pj_per_byte_exact": "784/25",
+        "source": "text/fgdram-micro17.txt",
+        "line": 204,
+        "weight_read_joules": 0.474690650112,
+        "kv_read_joules": 0.03788161155072,
+        "kv_read_joules_at_chapter1_context": 0.00947040288768,
+        "weight_plus_kv_joules": 0.51257226166272
+      },
+      "gddr5": {
+        "pj_per_byte_exact": "112",
+        "source": "text/fgdram-micro17.txt",
+        "line": 87,
+        "weight_read_joules": 1.6953237504,
+        "kv_read_joules": 0.135291469824,
+        "kv_read_joules_at_chapter1_context": 0.033822867456,
+        "weight_plus_kv_joules": 1.830615220224
+      },
+      "on_die_wire_48mm_round_trip": {
+        "pj_per_byte_exact": "384",
+        "source": "text/dally-aha2023.txt",
+        "line": 558,
+        "weight_read_joules": 5.8125385728,
+        "kv_read_joules": 0.463856467968,
+        "kv_read_joules_at_chapter1_context": 0.115964116992,
+        "weight_plus_kv_joules": 6.276395040768
+      }
+    },
+    "compute": {
+      "pj_per_flop_exact": "3/4",
+      "pj_per_flop": 0.75,
+      "quoted_value": 1.5,
+      "quoted_unit": "pJ per HFMA (2 FLOPs)",
+      "quote": "HFMA 1.5pJ 2000%",
+      "source": "text/dally-hotchips2023.txt",
+      "line": 204,
+      "page": 12,
+      "process_node": "能耗表注明取自 Horowitz ISSCC 2014；面积按 TSMC 45nm 综合；HFMA/HMMA 表注明 45nm",
+      "joules": 0.014976466944
+    },
+    "per_token_split_weights_kv_compute": {
+      "weight_joules": 0.480745377792,
+      "kv_joules": 0.03836479537152,
+      "kv_joules_at_chapter1_context": 0.00959119884288,
+      "compute_joules": 0.014976466944,
+      "compute_included": true,
+      "total_joules_per_token": 0.53408664010752,
+      "weight_fraction": 0.9001261999274469,
+      "hbm_source": "text/fgdram-micro17.txt"
+    }
+  },
+  "voltage_scaling": {
+    "formula": "P_dynamic ~ alpha C V^2 f; only the V^2 term changes",
+    "before_v": "17/20",
+    "after_v": "11/20",
+    "dynamic_power_ratio_exact": "121/289",
+    "dynamic_power_ratio": 0.4186851211072664,
+    "reduction_fraction": 0.5813148788927336,
+    "paper_reported_power_reduction": "66% (logicfolding-energy.txt line 219; includes wiring changes, not voltage alone)"
+  },
+  "power_density": {
+    "power_ratio": "3/4",
+    "projected_area_ratio": "3/5",
+    "density_ratio_exact": "5/4",
+    "density_ratio": 1.25,
+    "paper_reported_density_increase": "24% (lines 224-226)"
+  },
+  "rack": {
+    "formula": "N <= floor((P_b - P_0)/P_c)",
+    "budget_kw": "120",
+    "fixed_kw": "12",
+    "per_card_kw": "6/5",
+    "max_cards": 90,
+    "rows": [
+      {
+        "cards": 64,
+        "power_kw_exact": "444/5",
+        "power_kw": 88.8,
+        "within_budget": true,
+        "within_declared_air_cooling": false
+      },
+      {
+        "cards": 72,
+        "power_kw_exact": "492/5",
+        "power_kw": 98.4,
+        "within_budget": true,
+        "within_declared_air_cooling": false
+      },
+      {
+        "cards": 96,
+        "power_kw_exact": "636/5",
+        "power_kw": 127.2,
+        "within_budget": false,
+        "within_declared_air_cooling": false
+      }
+    ],
+    "declared_air_cooling_kw_per_rack": "40",
+    "max_cards_under_air_cooling": 23,
+    "air_cooling_references": {
+      "explicit_limit": null,
+      "airflow_statement": {
+        "name": "airflow of a 40–50 kW rack vs floor tile",
+        "value": "up to 5000 cfm vs best-in-class tile 1900 cfm",
+        "unit": "cfm",
+        "quote": "a 40 to 50 kW rack could be up to 5000 cfm. Floor tile best-in-class is 1900 cfm.",
+        "file": "text/ashrae-liquid-cooling.txt",
+        "page": 28,
+        "line": 984,
+        "source_id": "ashrae-liquid-cooling",
+        "date": "ASHRAE TC 9.9 white paper, 2021",
+        "process_node": null,
+        "archive_file": "text/ashrae-liquid-cooling.txt"
+      },
+      "fan_power_statement": {
+        "name": "fan power share in a 50 kW rack",
+        "value": "at least 5 kW (10–20% of server power)",
+        "unit": "kW",
+        "quote": "In a 50 kW rack, the fan power translates to be",
+        "file": "text/ashrae-liquid-cooling.txt",
+        "page": 14,
+        "line": 402,
+        "source_id": "ashrae-liquid-cooling",
+        "date": "ASHRAE TC 9.9 white paper, 2021",
+        "process_node": null,
+        "archive_file": "text/ashrae-liquid-cooling.txt"
+      },
+      "superpod_rack_power": {
+        "name": "rack power in example SU layout",
+        "value": ">40",
+        "unit": "kW",
+        "quote": "In this example, power consumption per rack exceeds 40 kW.",
+        "file": "text/dgx-superpod-h100-ra.txt",
+        "page": 10,
+        "line": 312,
+        "source_id": "dgx-superpod-h100-ra",
+        "date": null,
+        "process_node": null,
+        "archive_file": "text/dgx-superpod-h100-ra.txt"
+      },
+      "dgx_h200_system_power": {
+        "name": "system power (standard)",
+        "value": 10.2,
+        "unit": "kW",
+        "quote": "System power usage 10.2kW max*",
+        "file": "text/nvidia-dgx-h200-datasheet.txt",
+        "page": 1,
+        "line": 21,
+        "source_id": "nvidia-dgx-h200-datasheet",
+        "date": null,
+        "process_node": null,
+        "archive_file": "text/nvidia-dgx-h200-datasheet.txt"
+      }
+    }
+  },
+  "phone": {
+    "lpddr5x_pin_rate": {
+      "name": "LPDDR5X top data rate",
+      "value": 10.7,
+      "unit": "Gb/s per pin",
+      "quote": "It offers a top speed grade of 10.7 Gbps",
+      "file": "text/micron-lpddr5x-page.txt",
+      "page": null,
+      "line": 273,
+      "source_id": "micron-lpddr5x-page",
+      "date": null,
+      "process_node": null,
+      "archive_file": "text/micron-lpddr5x-page.txt"
+    },
+    "soc_memory_clock": {
+      "name": "LPDDR5X speed",
+      "value": "up to 5300",
+      "unit": "MHz",
+      "quote": "Support for LP-DDR5x memory, up to 5300 MHz",
+      "file": "text/qualcomm-8elite-brief.txt",
+      "page": 3,
+      "line": 241,
+      "source_id": "qualcomm-8elite-brief",
+      "date": null,
+      "process_node": null,
+      "archive_file": "text/qualcomm-8elite-brief.txt"
+    },
+    "declared_phone_channels_x16": 4,
+    "x16_channel_bytes_per_second_exact": "21400000000",
+    "x16_channel_gb_per_second": 21.4,
+    "declared_bus_bits": 64,
+    "bus_bytes_per_second_exact": "85600000000",
+    "bus_gb_per_second": 85.6,
+    "weight_read_seconds_for_decode_step": 0.176832,
+    "note": "bus width of the phone SoC is not stated in the archived briefs; channel count is declared",
+    "melting_point_reference_rows": [
+      {
+        "name": "energy per token, Zephyr-3B 4-bit, six-prompt conversation",
+        "value": "S23/MLCChat 0.21; iPhone 14 Pro/MLCChat 0.20; iPhone 14 Pro/LLMFarm 0.16",
+        "unit": "mWh/token",
+        "quote": "was 11.54, 10.43, 2.42 mWh (normalized per token: 0.21, 0.20,",
+        "source": "text/melting-point.txt",
+        "line": 1514,
+        "page": 8
+      },
+      {
+        "name": "Table 6: Orin AGX @50W, Llama2-7B q4_k, llama.cpp CPU",
+        "value": "2.3284±0.0875 tokens/s; 0.0204±0.0035 mWh/token",
+        "unit": null,
+        "quote": "Llama2-7B q4_k 2.3284±0.0875 0.0204±0.0035",
+        "source": "text/melting-point.txt",
+        "line": 2197,
+        "page": 18
+      }
+    ],
+    "melting_point_joules_per_token": {
+      "S23/MLCChat": 0.756,
+      "iPhone 14 Pro/MLCChat": 0.72,
+      "iPhone 14 Pro/LLMFarm": 0.576
+    },
+    "mwh_to_joule": "1 mWh = 3.6 J"
+  },
+  "assumptions": [
+    "一步 decode 的权重、KV 读取字节与矩阵 FLOPs 直接读取已有结果文件，本模块不重算前向；第 1 章的 2048 token KV 行按同一文件的每 token 字节乘 2048。",
+    "各层次每字节能耗、每 FLOP 能耗、手机总线与 MELTing point 参考行只在 sources-extract.json 存在且给出该行时出现，附带其 node/date/source；缺失时对应字段为空，不用占位数。",
+    "按层次的 J/token 阶梯是\"若全部字节都来自该层次\"的对照，不是真实数据路径；权重/KV/计算三分账按 HBM 每字节能耗与每 FLOP 能耗相加，不含控制、时钟或静态功耗。",
+    "电压项只解释 V^2 的影响，不能单独复现论文的 66%；功率密度用投影面积，不与各层硅面积之和混用。",
+    "机柜线性功率模型与第 6.5.2 节一致；风冷上限为声明输入（来自归档冷却指南时在场景中注明来源），缺省时不做判断。"
+  ]
+}

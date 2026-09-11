@@ -74,12 +74,12 @@ f,ax=plt.subplots(figsize=(11,6));f.subplots_adjust(left=.12,right=.94,bottom=.1
 participants=np.arange(4,33);persist=16*N/participants/2**30;total=persist+10
 ax.plot(participants,total,color=C['blue'],lw=2.3,label='训练状态分片 + 10 GiB 附加量')
 ax.plot(participants,persist,color=C['teal'],lw=1.6,ls=':',label='训练状态分片')
-ax.fill_between(participants,total,24,where=total<=24,interpolate=True,color=C['teal'],alpha=.17,label='剩余显存')
-ax.axhline(24,color=C['red'],ls='--',label='24 GiB 可用显存')
+ax.fill_between(participants,total,22,where=total<=22,interpolate=True,color=C['teal'],alpha=.17,label='剩余显存')
+ax.axhline(22,color=C['red'],ls='--',label='RTX 4090 每卡 22 GiB 可用显存')
 for d in [8,16]:
  v=16*N/d/2**30+10;ax.plot(d,v,'o',color=C['blue']);ax.annotate(f'{d} 卡：{v:.1f} GiB',(d,v),xytext=(15,16),textcoords='offset points',fontsize=12,arrowprops={'arrowstyle':'-','color':C['muted']})
 ax.set(xlim=(4,32),ylim=(0,47),xticks=[4,8,12,16,24,32],xlabel='分片参与者数',ylabel='每卡容量 / GiB');ax.legend(frameon=False,fontsize=10,loc='upper right');ax.grid(alpha=.15)
-save(f,'figure-10-3-candidates');data['10-3']={'participants':participants.tolist(),'persistent_gib':persist.tolist(),'total_gib':total.tolist(),'extra_live_gib':10,'net_budget_gib':24}
+save(f,'figure-10-3-candidates');data['10-3']={'participants':participants.tolist(),'persistent_gib':persist.tolist(),'total_gib':total.tolist(),'extra_live_gib':10,'net_budget_gib':22,'device':'rtx4090'}
 
 # 4. Real generated event schedules, not invented pipeline rectangles.
 f=plt.figure(figsize=(13,11));policies=[('training-pipeline-gpipe-m8','填满排空'),('training-pipeline-1f1b-m8','1F1B')];pipedata={}
@@ -101,7 +101,7 @@ f.text(.71,.23,'蓝：前向；橙：反向\n绿：参数更新\n块内数字：
 save(f,'figure-10-4-pipeline');data['10-4']=pipedata
 # 5. One relation: upload bandwidth determines recoverable progress at failure.
 f,ax=plt.subplots(figsize=(12.5,5.7));f.subplots_adjust(left=.17,right=.80,bottom=.18,top=.88);checkpointdata={}
-for j,(name,label,col) in enumerate([('checkpoint-async-rounded','8 GB/s','blue'),('checkpoint-async-fast','16 GB/s','teal')]):
+for j,(name,label,col) in enumerate([('checkpoint-async-rounded','7 GB/s','blue'),('checkpoint-async-fast','20 GB/s','teal')]):
  d=calc(name);checkpointdata[label]=d['checkpoint_save_rows']
  for row in d['checkpoint_save_rows']:
   t=row['seconds'];y=3-(j*2+row['snapshot'])
@@ -111,9 +111,9 @@ for j,(name,label,col) in enumerate([('checkpoint-async-rounded','8 GB/s','blue'
   ax.plot(t['durable'],y,'o',markerfacecolor=C['red'] if t['durable']<=50 else 'white',markeredgecolor=C['red'])
   ax.text(t['durable']+.5,y,f"{t['durable']:g}",va='center',fontsize=10)
 ax.axvline(50,ls='--',color=C['red']);ax.text(50,3.75,'故障：50 s',ha='center',color=C['red'],fontsize=12)
-ax.set(xlim=(18,59),xticks=[20,30,40,50],ylim=(-.6,4.1),yticks=[3,2,1,0],yticklabels=['8 GB/s · 快照 1','8 GB/s · 快照 2','16 GB/s · 快照 1','16 GB/s · 快照 2'],xlabel='时间 / s');ax.grid(axis='x',alpha=.15)
+ax.set(xlim=(18,59),xticks=[20,30,40,50],ylim=(-.6,4.1),yticks=[3,2,1,0],yticklabels=['7 GB/s · 快照 1','7 GB/s · 快照 2','20 GB/s · 快照 1','20 GB/s · 快照 2'],xlabel='时间 / s');ax.grid(axis='x',alpha=.15)
 f.text(.83,.73,'恢复到 20 s',fontsize=12,color=C['blue']);f.text(.83,.51,'恢复到 40 s',fontsize=12,color=C['teal']);f.text(.83,.28,'橙：复制到缓冲区\n实心点：已提交\n空心点：尚未提交',fontsize=10,linespacing=1.8)
-save(f,'figure-10-5-recovery');data['10-5']={'timelines':checkpointdata,'failure_seconds':50,'recoverable_capture_seconds':{'8 GB/s':20,'16 GB/s':40}}
+save(f,'figure-10-5-recovery');data['10-5']={'timelines':checkpointdata,'failure_seconds':50,'recoverable_capture_seconds':{'7 GB/s':20,'20 GB/s':40}}
 
 # 6. One relation: allocation order changes the handoff peak.
 f,ax=plt.subplots(figsize=(12,6));f.subplots_adjust(left=.10,right=.94,bottom=.25,top=.90)
@@ -122,11 +122,11 @@ restore=[v['training'],v['restore_all_before_release'],v['rollout'],v['rollout']
 staged=[v['training'],v['sync_weights_before_release'],v['sync_weights_before_release']-40*2**30,v['rollout']]
 for ys,label,col in [(restore,'先恢复权重和 KV，再释放训练状态','red'),(staged,'先同步权重，再释放训练状态、分配 KV','blue')]:
  ax.step(x,np.array(ys)/2**30,where='post',lw=2.3,color=C[col],label=label);ax.plot(x,np.array(ys)/2**30,'o',color=C[col])
-ax.axhline(64,ls='--',color=C['muted']);ax.text(2.82,65.5,'64 GiB',ha='right',fontsize=11)
+CAP=80e9/2**30;ax.axhline(CAP,ls='--',color=C['muted']);ax.text(2.82,CAP+1.5,'H100 SXM：74.5 GiB',ha='right',fontsize=11)
 for yy,dy in [(restore[1]/2**30,3),(staged[1]/2**30,-6)]:ax.annotate(f'{yy:.1f} GiB',(1,yy),xytext=(12,dy),textcoords='offset points',fontsize=12)
-ax.annotate('',xy=(1.63,restore[1]/2**30),xytext=(1.63,staged[1]/2**30),arrowprops={'arrowstyle':'<->','color':C['orange'],'lw':1.5});ax.text(1.7,73,'24 GiB\n一份 KV 池',fontsize=11,color=C['orange'],va='center')
+ax.annotate('',xy=(1.63,restore[1]/2**30),xytext=(1.63,staged[1]/2**30),arrowprops={'arrowstyle':'<->','color':C['orange'],'lw':1.5});ax.text(1.7,66,'24 GiB\n一份 KV 池',fontsize=11,color=C['orange'],va='center')
 ax.set(xticks=x,xticklabels=['训练迭代结束','加载生成权重','释放训练状态','开始生成'],ylabel='显存占用 / GiB',ylim=(0,103),yticks=[0,20,40,60,80,100],xlim=(-.1,3.15));ax.legend(frameon=False,fontsize=11,loc='upper left');ax.grid(axis='y',alpha=.15)
-save(f,'figure-10-6-rl');data['10-6']={'phase_live_bytes':v,'net_budget_gib':64,'restore_bytes':restore,'staged_bytes':staged,'x_unit':'ordered steps, not elapsed time'}
+save(f,'figure-10-6-rl');data['10-6']={'phase_live_bytes':v,'net_budget_gib':80e9/2**30,'device':'h100-sxm','restore_bytes':restore,'staged_bytes':staged,'x_unit':'ordered steps, not elapsed time'}
 
 # 7. One relation: preserve discrete choices, recompute current values.
 f,a=canvas(6.2)
@@ -152,13 +152,14 @@ save(f,'figure-10-8-hardware');data['10-8']={'kind':'declared_sensitivity','form
 f,ax=plt.subplots(figsize=(11.5,6.3));f.subplots_adjust(left=.12,right=.89,bottom=.18,top=.91)
 rows=calc('dense-training-scale-book')['dense_scale_rows'];scaledata={}
 for dev,label,col in [('a100-80gb-sxm','A100 80GB SXM','blue'),('h100-sxm','H100 SXM','teal'),('b200-sxm','B200','orange')]:
- rr=sorted([r for r in rows if r['device']==dev and r['efficiency_exact']=='1/2'],key=lambda r:r['parameters'])
- per_t=rr[0]['training_days']*16384/90
+ rr=sorted([r for r in rows if r['device']==dev and r['efficiency_exact']=='2/5'],key=lambda r:r['parameters'])
+ half=sorted([r for r in rows if r['device']==dev and r['efficiency_exact']=='1/2'],key=lambda r:r['parameters'])
+ per_t=rr[0]['training_days']*16384/90;per_half=half[0]['training_days']*16384/90
  xx=np.linspace(.1,10,200);yy=xx*per_t
- ax.plot(xx,yy/1e4,color=C[col],lw=2,label=label)
+ ax.plot(xx,yy/1e4,color=C[col],lw=2,label=label);ax.plot(xx,xx*per_half/1e4,color=C[col],lw=1.2,ls='--')
  ax.annotate(f'{yy[-1]/1e4:.0f} 万卡',(10,yy[-1]/1e4),xytext=(7,0),textcoords='offset points',va='center',fontsize=10,color=C[col])
  crossing=16384/per_t;ax.plot(crossing,1.6384,'o',color=C[col])
- scaledata[dev]={'source_rows':rr,'deadline_days':90,'parameters':(xx*1e12).tolist(),'continuous_required_devices':yy.tolist(),'parameters_at_16384_devices':crossing*1e12}
+ scaledata[dev]={'source_rows':rr,'efficiency':'2/5','deadline_days':90,'parameters':(xx*1e12).tolist(),'continuous_required_devices':yy.tolist(),'parameters_at_16384_devices':crossing*1e12,'continuous_required_devices_mfu50':(xx*per_half).tolist(),'source_rows_mfu50':half}
 ax.axhline(1.6384,color=C['muted'],ls='--',lw=1);ax.text(6.5,1.76,'16,384 张卡',fontsize=11,color=C['muted'])
 ax.text(5.6,112,'各曲线上方满足对应计算需求',fontsize=11,color=C['blue'])
 ax.set(yscale='log',xlabel='Dense 参数量 / T',ylabel='90 天所需设备 / 万张（对数刻度）',xticks=[.1,1,5,10],xlim=(.1,10.6),ylim=(.1,150))
@@ -167,8 +168,13 @@ save(f,'figure-10-9-scale');data['10-9']=scaledata
 # Gap-filling: schedule variants beyond 1F1B, and MoE capacity-factor rows.
 sched={}
 for key,stem in [('1F1B','training-pipeline-1f1b'),('交错式 v=2','training-pipeline-interleaved'),('零气泡','training-pipeline-zero-bubble'),('DualPipe','training-pipeline-dualpipe')]:
- d8=calc(stem+'-m8');d16=calc(stem+'-m16');s8=d8['summary'];updates=sum(d8['scenario']['optimizer_seconds'])
- sched[key]={'makespan_m8_ms':s8['step_makespan_seconds']*1000,'makespan_m16_ms':d16['summary']['step_makespan_seconds']*1000,'idle_per_gpu_m8_ms':(4*s8['step_makespan_seconds']-s8['useful_forward_backward_device_seconds']-updates)*250,'stage_peaks_m8_mib':[b/2**20 for b in s8['reserved_activation_scope_peak_bytes']],'forward_messages_m8':d8['transfers']['forward_messages'],'boundary_crossings_per_microbatch':d8['transfers'].get('boundary_crossings_per_microbatch',3)}
+ d8=calc(stem+'-m8');d16=calc(stem+'-m16');s8=d8['summary']
+ sched[key]={'makespan_m8_ms':s8['step_makespan_seconds']*1000,'makespan_m16_ms':d16['summary']['step_makespan_seconds']*1000,'idle_per_gpu_m8_ms':d8['stages'][0]['idle_during_training_seconds']*1000,'stage_peaks_m8_mib':[b/2**20 for b in s8['reserved_activation_scope_peak_bytes']],'forward_messages_m8':d8['transfers']['forward_messages'],'boundary_crossings_per_microbatch':d8['transfers'].get('boundary_crossings_per_microbatch',3),'bubble_bounds_ms':{k:v*1000 for k,v in (d8.get('bubble_reference') or {}).items() if isinstance(v,(int,float))}}
+ # Per-stage timelines for the three bubble-compressing schedules, drawn from the recorded events only.
+ if key!='1F1B':
+  chunk={v['stage']:v['chunk'] for v in d8['partition']['virtual_stages']}
+  events=[{'kind':e['kind'],'stage':e['stage'],'microbatch':e['microbatch'],'start':e['start'],'duration':e['duration'],'direction':e['direction'],'chunk':chunk.get(e['virtual_stage'],0)} for e in d8['events'] if e['stage'] is not None and e['kind'] in ['F','B','X','W','update']]
+  data['pipeline_timeline_'+stem.removeprefix('training-pipeline-')]={'label':{'交错式 v=2':'交错式 1F1B（v=2）','零气泡':'零气泡（ZB-H1）','DualPipe':'DualPipe'}[key],'events':events,'summary':s8,'scenario':d8['scenario'],'declared_schedule_rule':d8.get('declared_schedule_rule')}
 data['pipeline_schedules']=sched
 mc=calc('moe-capacity-book')
 data['moe_capacity']={'capacity_factors':[1,1.25,1.5,2],'model_experts':mc['model_example']['experts'],'model_top_k':mc['model_example']['top_k'],'model_tokens':mc['model_example']['tokens'],'model_assignments':mc['model_example']['assignments'],'model_capacity':[r['capacity_per_expert'] for r in mc['model_example']['rows']],'model_dropped_fraction':[float(Fraction(r['dropped_fraction_exact'])) for r in mc['model_example']['rows']],'model_padded_fraction':[float(Fraction(r['padded_fraction_of_executed_exact'])) for r in mc['model_example']['rows']],'chapter_capacity':[r['capacity_per_expert'] for r in mc['chapter_example']['rows']],'chapter_dropped':[r['dropped_total'] for r in mc['chapter_example']['rows']],'chapter_padded':[r['padded_total'] for r in mc['chapter_example']['rows']]}
@@ -177,7 +183,7 @@ runpy.run_path(str(HERE/'mechanism-figures.py'),init_globals=globals())
 old_numbers={1:1,2:2,3:6,4:7,5:12,6:15,7:17,8:19,9:20}
 previous={f'10-{n}':data.pop(f'10-{n}') for n in old_numbers}
 for old,new in old_numbers.items():data[f'10-{new}']=previous[f'10-{old}']
-new_numbers={3:'sharding_lifetime',4:'recompute_lifetime',5:'cast_paths',8:'communication_window',9:'attention_area',10:'input_queue',11:'checkpoint_resharding',13:'checkpoint_tradeoff',14:'rl_supply_flow',16:'rl_async_cycle',18:'task_deadline_breakdown',21:'pipeline_schedules',26:'moe_capacity'}
+new_numbers={3:'sharding_lifetime',4:'recompute_lifetime',5:'cast_paths',8:'communication_window',9:'attention_area',10:'input_queue',11:'checkpoint_resharding',13:'checkpoint_tradeoff',14:'rl_supply_flow',16:'rl_async_cycle',18:'task_deadline_breakdown',21:'pipeline_timeline_interleaved',22:'pipeline_timeline_zero-bubble',23:'pipeline_timeline_dualpipe',24:'pipeline_schedules',29:'moe_capacity'}
 for number,key in new_numbers.items():data[f'10-{number}']=data[key]
 
 import sys

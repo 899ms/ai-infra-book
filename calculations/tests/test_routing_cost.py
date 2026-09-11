@@ -8,8 +8,8 @@ from infra_calc.topics.routing_cost import calculate
 
 class RoutingCostTests(unittest.TestCase):
     def test_exact_book_crossover_and_deadline(self):
-        r = calculate(b_hit_fraction='1291/1520')
-        self.assertEqual(r['summary']['cost_crossover_b_hit_fraction_exact'], '1291/1520')
+        r = calculate(b_hit_fraction='10879/13680')
+        self.assertEqual(r['summary']['cost_crossover_b_hit_fraction_exact'], '10879/13680')
         self.assertEqual(r['routing_cost_rows'][0]['cost_per_quality_success_exact'],
                          r['routing_cost_rows'][1]['cost_per_quality_success_exact'])
         self.assertEqual(r['summary']['minimum_b_hit_for_joint_target_exact'], '45/49')
@@ -20,7 +20,7 @@ class RoutingCostTests(unittest.TestCase):
         r = calculate(tasks=10000, b_hit_fraction='1/2')
         b = r['routing_cost_rows'][1]
         # 5000 hits and 5000 misses; 4900 quality passes in each branch.
-        bill = 5000*F(8200,10**6) + 5000*F(42400,10**6)
+        bill = 5000*F(8800,10**6) + 5000*F(43000,10**6)
         self.assertEqual(F(b['total_cost_exact']), bill)
         self.assertEqual(F(b['cost_per_quality_success_exact']), bill/9800)
         self.assertEqual(F(b['cost_per_joint_success_exact']), bill/4900)

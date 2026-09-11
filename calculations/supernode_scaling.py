@@ -29,7 +29,7 @@ def evaluate(c,size,profile):
     tp_time=4*c['layers']*(2*(tp-1)*c['local_alpha_s']+2*(tp-1)/tp*message/local_bw)
     compute=6*c['parameters']*c['global_tokens']/total/c['effective_Fps']
     step=compute+tp_time+grad_time+c['update_s']
-    rate=total/c['gpu_mtbf_hours']/3600+hosts/c['domain_mtbf_hours']/3600
+    rate=total/c['gpu_mtbf_hours']/3600+(hosts/c['domain_mtbf_hours']/3600 if c.get('domain_mtbf_hours') else 0)
     recovery=c['restart_fixed_s']+size*c['restore_bytes_per_gpu']/c['restore_Bps']
     overhead=c['checkpoint_s']/c['checkpoint_interval_s']+rate*(c['checkpoint_interval_s']/2+recovery)
     return dict(supernode_gpus=size,supernodes=hosts,tp=tp,dp=dp,local_dp=q,profile=profile['name'],gradient_shard_bytes=gradient,per_rank_remote_bytes=per_rank,per_supernode_remote_bytes=exported,egress_Bps=export_bw,compute_s=compute,tp_s=tp_time,local_gradient_s=local_rs_ag,remote_gradient_s=network,hierarchical_s=hierarchical,flat_s=flat,chosen='hierarchical' if hierarchical<flat else 'flat',step_s=step,tokens_per_s=c['global_tokens']/step,recovery_s=recovery,interruption_rate_per_hour=rate*3600,overhead_fraction=overhead,effective_tokens_per_s=c['global_tokens']/step/(1+overhead))

@@ -7,6 +7,9 @@ from fractions import Fraction
 from ..sources import model_config, provenance
 from ..units import positive_int
 from . import state
+from . import kv_comparison
+from ..paths import PROJECT
+import json
 
 
 def transfer_ledger(total_bytes, messages, hops, startup_ns):
@@ -33,10 +36,13 @@ def transfer_ledger(total_bytes, messages, hops, startup_ns):
 
 def calculate(model='teaching-gqa', length=8192, batch=1, decode_steps=1,
               element_bytes=2, network_bandwidth=25*10**9,
-              staging_bandwidth=25*10**9, startup_ns=5000, path='direct'):
+              staging_bandwidth=25*10**9, startup_ns=5000, path='direct',
+              kv_layout='gqa', kv_model='deepseek-v3'):
     inputs = locals().copy()
+    if kv_layout not in ('gqa', 'mla'):
+        raise ValueError('kv_layout must be gqa or mla')
     for name, value in inputs.items():
-        if name not in ('model', 'path'):
+        if name not in ('model', 'path', 'kv_layout', 'kv_model'):
             positive_int(value, name, allow_zero=name=='startup_ns')
     if element_bytes not in (1, 2, 4):
         raise ValueError('Element size must be 1, 2 or 4 bytes; no packed format')
@@ -54,6 +60,23 @@ def calculate(model='teaching-gqa', length=8192, batch=1, decode_steps=1,
         kv_heads, head_dim = config['num_key_value_heads'], config['head_dim']
         kv_bytes = state.calculate(model,length,batch,element_bytes)['summary']['resident_bytes']
         sources = provenance(model)
+    mla = None
+    if kv_layout == 'mla':
+        unit = kv_comparison.per_token_bytes(kv_model, 'mla')
+        kv_bytes = batch*length*unit
+        sources = list({s['file']: s for s in sources+provenance(kv_model)}.values())
+        extra = kv_comparison.mla_compact_extra_flops_per_token(kv_model)
+        reference = PROJECT/'results/v3-forward-decode.json'
+        check = None
+        if reference.is_file():
+            ops = json.loads(reference.read_text())['operators']
+            row = next((op for op in ops if op['name'] == 'kv_b_proj'), None)
+            if row is not None:
+                check = dict(result_file='results/v3-forward-decode.json', operator='kv_b_proj',
+                             expanded_path_matrix_flops_per_layer=row['matrix_flops'],
+                             equals_compact_extra_per_layer=row['matrix_flops'] == extra['extra_flops_per_token_per_layer'])
+        mla = dict(kv_bytes_per_token=unit, decode_steps=decode_steps, batch=batch,
+                   extra_flops_per_step=batch*extra['extra_flops_per_token'], per_token=extra, expanded_path_reference=check)
     hops = [('network', network_bandwidth)]
     if path == 'host-staged':
         hops = [('source_d2h', staging_bandwidth), *hops,
@@ -75,6 +98,7 @@ def calculate(model='teaching-gqa', length=8192, batch=1, decode_steps=1,
                     destination_host_staging_bytes=payload if path=='host-staged' else 0)
     return dict(schema_version=1,calculation='pd-af-handoff',scenario=inputs,sources=sources,
                 summary=dict(layers=layers,hidden_size=width,kv_heads=kv_heads,head_dim=head_dim,
+                             kv_layout=kv_layout,kv_bytes_per_token=kv_bytes//(batch*length),
                              pd_snapshot_bytes=kv_bytes,af_one_direction_bytes=activation,
                              af_total_bytes=af_bytes,af_directional_messages=count,
                              hops_per_message=len(hops),
@@ -86,6 +110,7 @@ def calculate(model='teaching-gqa', length=8192, batch=1, decode_steps=1,
                 handoff_cases=[dict(name='PD snapshot',**pd),dict(name='AF decode activations',**af),
                                dict(name='byte-matched repeated handoffs',**control)],
                 endpoint_buffers=dict(pd=buffers(kv_bytes),af_one_message=buffers(activation)),
+                mla_compact_path=mla,
                 assumptions=[
                     'teaching-gqa为正文32层示例；Qwen从官方config读取完整GQA。PD每请求一次完整未切分KV，AF仅指定decode_steps次模型调用；两项不代表同一完整请求的替代总成本。',
                     'AF每层将完整hidden激活送到FFN侧，聚合完整结果返回；一次方向交接载荷B*H*element_bytes。MoE路由元数据、top-k复制、跨专家节点dispatch及共享专家的分支未计，不能套用潜空间V4/K3边界。',
@@ -94,4 +119,5 @@ def calculate(model='teaching-gqa', length=8192, batch=1, decode_steps=1,
                     '缓冲为明确的整消息双端分配上界：源GPU载荷、目的GPU载荷和两侧host槽共存；PD源KV与目的KV已包含在这里，不再另加为temporary。AF结果返回复用槽，FFN工作区及原激活保留不在此子账。',
                     '两端采用相同元素格式，未包含压缩元数据、格式转换、页索引、对齐和重传；不把1-byte存储自动称为受支持FP8执行。',
                     '相同总字节对照仅均分PD载荷到AF次数，有余数的消息多1byte。它用于隔离启动开销，不是实际KV分层协议。交叉点为上述串行通信模型的等时启动值，严格更快需在相应一侧。',
+                    'kv_layout=mla：PD 快照按锁定 DeepSeek-V3 config 的紧凑 MLA 每 token 字节（层数×(d_c+d_r)×element_bytes）乘长度，AF 激活字节仍按所选 model 的层数与 hidden 不变；紧凑路径每步额外查询变换与值恢复 FLOPs 按第 2 章公式由 V3 config 计算，并与 v3-forward-decode 的 kv_b_proj 算子核对。',
                 ])

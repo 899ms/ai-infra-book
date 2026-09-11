@@ -11,7 +11,7 @@
     "private_overhead_bytes": 4194304,
     "local_budget_bytes": 68719476736,
     "snapshot_delta_bytes": 134217728,
-    "effective_transfer_bytes_per_second": 1073741824,
+    "effective_transfer_bytes_per_second": 3125000000,
     "preparation_seconds": "2",
     "lead_seconds": "3",
     "prediction_hit_probability": "1",
@@ -190,7 +190,7 @@
       "total_bytes_across_declared_pools": 217315278848,
       "memory_only_environment_upper_bound": 31,
       "initial_local_data_install_bytes": 214748364800,
-      "aggregate_serial_transfer_lower_exact_seconds": "200"
+      "aggregate_serial_transfer_lower_exact_seconds": "134217728/1953125"
     },
     {
       "placement": "install_touched",
@@ -200,7 +200,7 @@
       "total_bytes_across_declared_pools": 56254005248,
       "memory_only_environment_upper_bound": 127,
       "initial_local_data_install_bytes": 53687091200,
-      "aggregate_serial_transfer_lower_exact_seconds": "50"
+      "aggregate_serial_transfer_lower_exact_seconds": "33554432/1953125"
     },
     {
       "placement": "share_readonly_copy_dirty",
@@ -210,7 +210,7 @@
       "total_bytes_across_declared_pools": 15988686848,
       "memory_only_environment_upper_bound": 496,
       "initial_local_data_install_bytes": 13421772800,
-      "aggregate_serial_transfer_lower_exact_seconds": "25/2"
+      "aggregate_serial_transfer_lower_exact_seconds": "8388608/1953125"
     },
     {
       "placement": "localize_hot_readonly",
@@ -220,7 +220,7 @@
       "total_bytes_across_declared_pools": 42832232448,
       "memory_only_environment_upper_bound": 168,
       "initial_local_data_install_bytes": 40265318400,
-      "aggregate_serial_transfer_lower_exact_seconds": "75/2"
+      "aggregate_serial_transfer_lower_exact_seconds": "25165824/1953125"
     }
   ],
   "measured_prewarm_trials": [
@@ -743,7 +743,7 @@
     "branches": 100,
     "total_base_plus_private_deltas_bytes": 15569256448,
     "full_independent_snapshots_bytes": 214748364800,
-    "one_delta_upload_lower_exact_seconds": "1/8",
+    "one_delta_upload_lower_exact_seconds": "2097152/48828125",
     "incremental_format_supported_by_measured_platform": null
   },
   "prewarm_budget": {
@@ -761,7 +761,7 @@
       "path": "cold_template",
       "declared_source_fetch_bytes": 2147483648,
       "declared_local_install_bytes": 536870912,
-      "serial_byte_service_lower_exact_seconds": "5/2",
+      "serial_byte_service_lower_exact_seconds": "8388608/9765625",
       "create_api_seconds": null,
       "first_tool_complete_seconds": null,
       "reconnect_seconds": null,
@@ -771,7 +771,7 @@
       "path": "warm_template",
       "declared_source_fetch_bytes": 0,
       "declared_local_install_bytes": 536870912,
-      "serial_byte_service_lower_exact_seconds": "1/2",
+      "serial_byte_service_lower_exact_seconds": "8388608/48828125",
       "create_api_seconds": null,
       "first_tool_complete_seconds": null,
       "reconnect_seconds": null,
@@ -781,7 +781,7 @@
       "path": "pause_resume",
       "declared_source_fetch_bytes": 536870912,
       "declared_local_install_bytes": 536870912,
-      "serial_byte_service_lower_exact_seconds": "1",
+      "serial_byte_service_lower_exact_seconds": "16777216/48828125",
       "create_api_seconds": null,
       "first_tool_complete_seconds": null,
       "reconnect_seconds": null,
@@ -791,7 +791,7 @@
       "path": "snapshot_clone",
       "declared_source_fetch_bytes": 536870912,
       "declared_local_install_bytes": 536870912,
-      "serial_byte_service_lower_exact_seconds": "1",
+      "serial_byte_service_lower_exact_seconds": "16777216/48828125",
       "create_api_seconds": null,
       "first_tool_complete_seconds": null,
       "reconnect_seconds": null,
@@ -801,7 +801,7 @@
       "path": "clean_rebuild",
       "declared_source_fetch_bytes": 2147483648,
       "declared_local_install_bytes": 2147483648,
-      "serial_byte_service_lower_exact_seconds": "4",
+      "serial_byte_service_lower_exact_seconds": "67108864/48828125",
       "create_api_seconds": null,
       "first_tool_complete_seconds": null,
       "reconnect_seconds": null,

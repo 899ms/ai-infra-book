@@ -64,4 +64,4 @@
 
 固定来源：
 
-- [sources/hardware/nvidia-async-copies-13-2-1.html](https://docs.nvidia.com/cuda/archive/13.2.1/cuda-programming-guide/04-special-topics/async-copies.html)，SHA256 `e601b5f21450aba8f96d78906d81621745f58758f1b791cf8280ef4be8d2a0c2`。
+- [sources/hardware/nvidia-async-copies-13-2-1.md](https://docs.nvidia.com/cuda/archive/13.2.1/cuda-programming-guide/04-special-topics/async-copies.html)，SHA256 `f9f016e144af37b23200555b13857c452999667979f3e94e7f164b15d878fa80`。

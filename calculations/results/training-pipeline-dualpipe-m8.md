@@ -162,7 +162,7 @@ Conditional GPipe/1F1B event execution and declared activation reservations; not
 | partition.virtual_stages[7].layers[7] | 34 |
 | partition.virtual_stages[7].layers[8] | 35 |
 | partition.parameter_copies_per_gpu | 2 |
-| declared_schedule_rule | Bidirectional: half the microbatches enter at stage 0 and half at stage 3 on a second parameter copy; each direction follows the zero-bubble order on its own stage copy; one compute stream per GPU arbitrates by the module's earliest-ready rule. Figure 5's slot order is not reproduced. |
+| declared_schedule_rule | Bidirectional: half the microbatches enter at stage 0 and half at stage 3 on a second parameter copy; each direction follows a split-backward 1F1B order on its own stage copy (W of microbatch i after X of microbatch i+(p-1-g) in that direction, remaining W in the cooldown); one compute stream per GPU arbitrates by the module's earliest-ready rule. Figure 5's slot order is not reproduced. |
 | work.per_microbatch_stages[0].stage | 0 |
 | work.per_microbatch_stages[0].layers[0] | 0 |
 | work.per_microbatch_stages[0].layers[1] | 1 |
@@ -6669,6 +6669,10 @@ Conditional GPipe/1F1B event execution and declared activation reservations; not
 | stages[0].stage | 0 |
 | stages[0].forward_backward_service_seconds | 0.24 |
 | stages[0].idle_during_training_seconds | 0.06500000000000011 |
+| stages[0].idle_zero_transfer_counterfactual_seconds | 0.06000000000000011 |
+| stages[0].bubble_bound_policy_seconds | 0.020000000000000004 |
+| stages[0].bubble_bound_zb_h1_seconds | 0.03 |
+| stages[0].bubble_bound_zb_h2_seconds | 0.0 |
 | stages[0].update_seconds | 0.001 |
 | stages[0].peak_declared_reserved_bytes | 1287611904 |
 | stages[0].virtual_stages[0] | 0 |
@@ -6677,6 +6681,10 @@ Conditional GPipe/1F1B event execution and declared activation reservations; not
 | stages[1].stage | 1 |
 | stages[1].forward_backward_service_seconds | 0.24 |
 | stages[1].idle_during_training_seconds | 0.06500000000000011 |
+| stages[1].idle_zero_transfer_counterfactual_seconds | 0.06000000000000011 |
+| stages[1].bubble_bound_policy_seconds | 0.020000000000000004 |
+| stages[1].bubble_bound_zb_h1_seconds | 0.03 |
+| stages[1].bubble_bound_zb_h2_seconds | 0.0 |
 | stages[1].update_seconds | 0.001 |
 | stages[1].peak_declared_reserved_bytes | 1690602496 |
 | stages[1].virtual_stages[0] | 1 |
@@ -6685,6 +6693,10 @@ Conditional GPipe/1F1B event execution and declared activation reservations; not
 | stages[2].stage | 2 |
 | stages[2].forward_backward_service_seconds | 0.24 |
 | stages[2].idle_during_training_seconds | 0.06500000000000011 |
+| stages[2].idle_zero_transfer_counterfactual_seconds | 0.06000000000000011 |
+| stages[2].bubble_bound_policy_seconds | 0.020000000000000004 |
+| stages[2].bubble_bound_zb_h1_seconds | 0.03 |
+| stages[2].bubble_bound_zb_h2_seconds | 0.0 |
 | stages[2].update_seconds | 0.001 |
 | stages[2].peak_declared_reserved_bytes | 1690602496 |
 | stages[2].virtual_stages[0] | 2 |
@@ -6693,6 +6705,10 @@ Conditional GPipe/1F1B event execution and declared activation reservations; not
 | stages[3].stage | 3 |
 | stages[3].forward_backward_service_seconds | 0.24 |
 | stages[3].idle_during_training_seconds | 0.06500000000000011 |
+| stages[3].idle_zero_transfer_counterfactual_seconds | 0.06000000000000011 |
+| stages[3].bubble_bound_policy_seconds | 0.020000000000000004 |
+| stages[3].bubble_bound_zb_h1_seconds | 0.03 |
+| stages[3].bubble_bound_zb_h2_seconds | 0.0 |
 | stages[3].update_seconds | 0.001 |
 | stages[3].peak_declared_reserved_bytes | 1287611904 |
 | stages[3].virtual_stages[0] | 3 |
@@ -6704,13 +6720,18 @@ Conditional GPipe/1F1B event execution and declared activation reservations; not
 | transfers.backward_messages | 24 |
 | transfers.total_payload_bytes | 75497472 |
 | transfers.boundary_crossings_per_microbatch | 3 |
+| bubble_reference.t_f_seconds | 0.01 |
+| bubble_reference.t_b_input_gradient_seconds | 0.01 |
+| bubble_reference.t_w_weight_gradient_seconds | 0.01 |
+| bubble_reference.full_backward_seconds | 0.02 |
 | bubble_reference.one_f1b_bubble | 0.09 |
 | bubble_reference.one_f1b_bubble_fraction | 0.375 |
+| bubble_reference.interleaved_bubble | unknown (null) |
 | bubble_reference.interleaved_bubble_fraction | unknown (null) |
-| bubble_reference.zb_h1_bubble | 0.05999999999999999 |
-| bubble_reference.zb1p_or_zb_h2_bubble | 0.029999999999999995 |
+| bubble_reference.zb_h1_or_zb1p_bubble | 0.03 |
+| bubble_reference.zb_h2_bubble | 0.0 |
 | bubble_reference.dualpipe_bubble_with_fb_equal_f_plus_b | 0.020000000000000004 |
-| bubble_reference.source | megatron-scale.txt lines 231/293 ((p-1)(t_f+t_b), (1/v)(p-1)/m); zero-bubble.txt lines 282-284 (ZB-H1 (p-1)(TF+TB-TW), ZB-H2 (p-1)(TF+TB-2TW)); deepseek-v3.txt Table 2 line 688-691 (ZB1P (PP-1)(F+B-2W), DualPipe (PP/2-1)(F&B+B-3W)); uniform stage-0 F, B, W = declared fraction x B, F&B taken as F+B (no compute overlap modeled) |
+| bubble_reference.source | megatron-scale.txt lines 231/293 ((p-1)(t_f+t_b), (1/v)(p-1)/m); zero-bubble.txt lines 282-284 (1F1B (p-1)(TF+TB+TW), ZB-H1 (p-1)(TF+TB-TW), ZB-H2 (p-1)(TF+TB-2TW); TB = input-gradient pass, TW = weight-gradient pass); deepseek-v3.txt Table 2 line 688-691 (ZB1P (PP-1)(F+B-2W) with full backward B = TB+TW, i.e. the ZB-H1 bound; DualPipe (PP/2-1)(F&B+B-3W)); uniform stage-0 times, TW = declared fraction x full backward, F&B taken as F+B (no compute overlap modeled) |
 | summary.total_sequences | 8 |
 | summary.total_tokens | 1024 |
 | summary.gradient_ready_seconds | 0.3050000000000001 |
@@ -6719,6 +6740,22 @@ Conditional GPipe/1F1B event execution and declared activation reservations; not
 | summary.exposed_transfer_makespan_delta_seconds | 0.0050000000000000044 |
 | summary.useful_forward_backward_device_seconds | 0.96 |
 | summary.idle_device_seconds | 0.26000000000000045 |
+| summary.idle_per_stage_seconds[0] | 0.06500000000000011 |
+| summary.idle_per_stage_seconds[1] | 0.06500000000000011 |
+| summary.idle_per_stage_seconds[2] | 0.06500000000000011 |
+| summary.idle_per_stage_seconds[3] | 0.06500000000000011 |
+| summary.idle_per_stage_zero_transfer_counterfactual_seconds[0] | 0.06000000000000011 |
+| summary.idle_per_stage_zero_transfer_counterfactual_seconds[1] | 0.06000000000000011 |
+| summary.idle_per_stage_zero_transfer_counterfactual_seconds[2] | 0.06000000000000011 |
+| summary.idle_per_stage_zero_transfer_counterfactual_seconds[3] | 0.06000000000000011 |
+| summary.bubble_bound_policy_seconds | 0.020000000000000004 |
+| summary.bubble_bound_1f1b_seconds | 0.09 |
+| summary.bubble_bound_1f1b_fraction | 0.375 |
+| summary.bubble_bound_interleaved_seconds | unknown (null) |
+| summary.bubble_bound_interleaved_fraction | unknown (null) |
+| summary.bubble_bound_zb_h1_seconds | 0.03 |
+| summary.bubble_bound_zb_h2_seconds | 0.0 |
+| summary.bubble_bound_dualpipe_seconds | 0.020000000000000004 |
 | summary.reserved_activation_scope_peak_bytes[0] | 1287611904 |
 | summary.reserved_activation_scope_peak_bytes[1] | 1690602496 |
 | summary.reserved_activation_scope_peak_bytes[2] | 1690602496 |
@@ -6727,6 +6764,6 @@ Conditional GPipe/1F1B event execution and declared activation reservations; not
 | summary.measured_runtime_seconds | unknown (null) |
 | assumptions[0] | Fixed PP4 on four GPUs; interleaved_1f1b places v contiguous layer chunks per GPU (chunk c of GPU g is virtual stage c*4+g); zero_bubble keeps 9 layers per GPU and splits every backward into input part X and weight part W by the declared fraction; dualpipe adds a second stage copy per GPU for the reverse direction (parameters 2x) and splits backward the same way. |
 | assumptions[1] | Service times scale with the layers in each virtual stage relative to 9; transfer times reuse the per-boundary inputs of the base schedule, and the interleaved wrap-around link 3->0 uses wraparound_transfer_seconds. Links are physical directed edges shared by both DualPipe directions. |
-| assumptions[2] | Per-GPU orders follow the declared_schedule_rule recorded in the output; where the archived texts give only the idea (split backward, bidirectional feeding) the exact slot placement is this module's rule, not the paper's figure. The scheduler is the same nonpreemptive earliest-ready list scheduler as GPipe/1F1B. |
-| assumptions[3] | Saved activations are reserved from forward start to the end of the last backward part (W when split); send/receive buffers as in the base schedule. Idle time = gradient-ready time minus setup minus useful compute per GPU. |
-| assumptions[4] | bubble_reference evaluates DeepSeek-V3 Table 2 formulas with uniform stage-0 service times and F&B = F + B; it is a reference row, not this schedule's measured bubble. |
+| assumptions[2] | Per-GPU orders follow the declared_schedule_rule recorded in the output. zero_bubble reproduces the ZB-H1 slot order of zero-bubble.txt Figure 3 (top); for interleaved_1f1b and dualpipe the archived texts give the idea (chunked stages, bidirectional feeding) and the exact slot placement is this module's rule, not the paper's figure. The scheduler is the same nonpreemptive earliest-ready list scheduler as GPipe/1F1B. |
+| assumptions[3] | Saved activations are reserved from forward start to the end of the last backward part (W when split), so a stage holding g deferred W's reserves their full saved set rather than the paper's smaller M_W; send/receive buffers as in the base schedule. Idle time = gradient-ready time minus setup minus useful compute per GPU; the zero-transfer counterfactual idle isolates the schedule bubble from transfer exposure. |
+| assumptions[4] | bubble_bound_* fields evaluate the archived bubble formulas (megatron-scale, zero-bubble Table 2, DeepSeek-V3 Table 2) with uniform stage-0 service times, T_B/T_W split by the declared fraction and F&B = F + B; they are bounds without communication, not this schedule's measured idle. bubble_bound_policy_seconds is the bound for the selected policy. |

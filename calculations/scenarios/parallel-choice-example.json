@@ -1,16 +1,22 @@
 {
  "assumptions":[
-  "教学模型，固定 Qwen3-8B BF16；不代替真实引擎规划器。候选为 TP1/2/4/8 与剩余卡组成的独立实例；每实例一次处理一个会话，不做连续批处理或跨会话流水。",
-  "逐步时间复用第六章权重／KV 读取与 72 次 ring 归约模型；小批 decode 读取受限。跨机 TP 组保守地按组内每轮均受慢链路限制，不代表最优分层通信算法。",
-  "全部八卡从请求到达计费至所有请求完成，每卡每秒 1 成本单位；目标为满足最低按时比例后，最小化每个按时完成会话的成本。",
-  "每卡容量按均匀 TP 分片加复制的归一化权重、最大历史 KV 和固定工作区计。完整参数数值来自现有第六章算例。",
-  "候选最优只在上述模型和候选范围内成立。PP/CP/SP/EP、动态批处理、其他归约算法须先扩展工作与通信模型再比较。"
+  "Qwen3-32B BF16，一台 HGX H100（8 张 H100 SXM 80 GB）。候选为 TP1/2/4/8 与其余卡组成的独立实例；每个实例一次处理一个会话，排队会话的 KV 也常驻在实例内。",
+  "每步时间：各卡读取本卡权重分片与 KV 分片的时间（按 H100 峰值 HBM 带宽 3350 GB/s）与矩阵计算时间取较大者，再加 128 次 AllReduce。机内 AllReduce 为 NVLink 环形算法：每轮 0.822 μs，每方向 450 GB/s；两台服务器组成的 TP16 直接取 nccl-tests 在两台 HGX H100 上实测的 16 KiB AllReduce 时间。",
+  "八张卡（跨服务器情形为十六张）从会话到达计费至全部会话完成，费用按 H100 GPU·s 计；满足最低按时比例后，按每个按时完成会话的 GPU·s 排序。",
+  "每卡容量为 80 GB，另为激活与工作区预留 2 GiB；KV 头少于 TP 卡数时 KV 按头复制。"
  ],
- "common":{"gpus":8,"gpus_per_host":8,"tp_candidates":[1,2,4,8],"memory_bytes":24000000000,"workspace_bytes":2147483648,"history":8192,"steps":8,"requests":4,"deadline_s":0.09,"required_fraction":0.75,"hbm_Bps":1000000000000,"serial_s":0.0002,"local_alpha_s":0.000002,"local_Bps":50000000000,"cross_alpha_s":0.000004,"cross_Bps":25000000000,"cost_per_gpu_second":1},
+ "sources":[
+  "calculations/configs/models/qwen3-32b/config.json",
+  "calculations/configs/hardware.json#h100-sxm",
+  "references/files/specs/nvidia-h100.pdf 第 47 页：18 条 NVLink 4，每条每方向 25 GB/s",
+  "references/proceedings/ASPLOS/2026/paper-034.pdf 表 1：H100 NVLink 延迟 822 ns（nvbandwidth）",
+  "experiments/ch07/07-03/raw/hgx2.txt 第 81 行：16 rank、两台 HGX H100、16 KiB AllReduce 32.74 μs"
+ ],
+ "common":{"model":"qwen3-32b","device":"h100-sxm","gpus":8,"gpus_per_host":8,"tp_candidates":[1,2,4,8],"workspace_bytes":2147483648,"history":131064,"steps":8,"requests":4,"deadline_s":0.13,"required_fraction":0.75,"local_alpha_s":8.22e-07,"local_Bps":450000000000,"cross_allreduce_s":3.274e-05},
  "cases":[
-  {"name":"四会话，90 ms 期限"},
-  {"name":"单会话，40 ms 期限","requests":1,"deadline_s":0.04,"required_fraction":1},
-  {"name":"两台四卡，单会话 40 ms","gpus_per_host":4,"requests":1,"deadline_s":0.04,"required_fraction":1},
-  {"name":"每卡容量降为 10 GB","memory_bytes":10000000000}
+  {"name":"四会话，128K 上下文，130 ms 期限"},
+  {"name":"单会话，128K 上下文，50 ms 期限","requests":1,"deadline_s":0.05,"required_fraction":1},
+  {"name":"两台 HGX H100 共 16 卡，单会话，50 ms 期限","gpus":16,"tp_candidates":[1,2,4,8,16],"requests":1,"deadline_s":0.05,"required_fraction":1},
+  {"name":"四会话，32K 上下文，130 ms 期限","history":32760}
  ]
 }

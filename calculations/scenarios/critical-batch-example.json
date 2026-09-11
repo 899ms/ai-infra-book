@@ -1,0 +1,34 @@
+{
+  "inputs": {
+    "declared_noise_scale_tokens": 2000000,
+    "reference_sequences_per_step": 384,
+    "sequence_tokens": 8192,
+    "total_tokens": 100000000000,
+    "reference_cards": 48,
+    "microbatches_per_card": 8,
+    "step_seconds_at_reference": "56.7",
+    "compute_seconds_at_reference": "52.2",
+    "overhead_seconds_per_step": "4.5",
+    "card_counts": [
+      32,
+      48,
+      96,
+      192,
+      384,
+      768,
+      1536
+    ]
+  },
+  "input_sources": {
+    "declared_noise_scale_tokens": "references/text/scaling-laws.txt line 147 (roughly 1-2 million tokens; declared)",
+    "reference_sequences_per_step": "book (chapter 10.1: 384 sequences per step)",
+    "sequence_tokens": "book (chapter 10.1: 8192 tokens)",
+    "total_tokens": "book (chapter 10.1: 100B tokens)",
+    "reference_cards": "book (chapter 10: 48-card design)",
+    "microbatches_per_card": "book (chapter 10.3: 8 microbatches per card)",
+    "step_seconds_at_reference": "book (chapter 10.6: 56.7 s)",
+    "compute_seconds_at_reference": "book (chapter 10.6: 52.2 s)",
+    "overhead_seconds_per_step": "book (chapter 10.6: 4 s communication + 0.5 s input)",
+    "card_counts": "book (declared)"
+  }
+}

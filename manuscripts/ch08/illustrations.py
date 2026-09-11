@@ -1,25 +1,29 @@
 """Mechanism diagrams derived from chapter-eight teaching examples."""
+import json
+from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
 
 def draw(save, canvas, box, arrow, C, data):
+    worked=json.loads((Path(__file__).resolve().parent/'teaching-validation.json').read_text())
     # Keep the timeline proportional; annotate short intervals outside the bar.
     f,a=plt.subplots(figsize=(11,3.8))
     f.subplots_adjust(left=.08,right=.96,bottom=.22,top=.88)
-    for x,w,c in [(0,.1,'gray'),(.1,.3,'blue'),(.4,2.55,'teal')]:
+    queue,prefill,itl=.1,.096,.0265;first=queue+prefill;last=first+255*itl
+    for x,w,c in [(0,queue,'gray'),(queue,prefill,'blue'),(first,255*itl,'teal')]:
         a.add_patch(Rectangle((x,.35),w,.28,fc=C[c],ec='white'))
-    a.text(1.675,.49,'255 个输出间隔 × 10 ms = 2.55 s',ha='center',va='center',color='white',fontsize=13)
+    a.text((first+last)/2,.49,'255 个输出间隔 × 26.5 ms = 6.76 s',ha='center',va='center',color='white',fontsize=13)
     a.annotate('排队 0.1 s',xy=(.05,.63),xytext=(.05,1.00),arrowprops={'arrowstyle':'-','color':C['ink']},fontsize=11)
-    a.annotate('Prefill 0.3 s',xy=(.25,.63),xytext=(.62,.81),arrowprops={'arrowstyle':'-','color':C['blue']},fontsize=11,color=C['blue'])
-    a.scatter([.4,2.95],[.35,.35],color=C['ink'],zorder=5)
-    a.text(.4,.22,'首 token\n0.4 s',ha='center',va='top',fontsize=11)
-    a.text(2.95,.22,'末 token\n2.95 s',ha='center',va='top',fontsize=11)
-    a.axvline(3,color=C['red'],ls='--',lw=1.4)
-    a.text(3.02,.90,'3 s 时限',color=C['red'],fontsize=11)
-    a.set(xlim=(0,3.35),ylim=(-.18,1.15),yticks=[],xticks=[0,1,2,3],xlabel='自请求到达起 / s')
+    a.annotate('Prefill 0.096 s',xy=(.148,.63),xytext=(.6,.81),arrowprops={'arrowstyle':'-','color':C['blue']},fontsize=11,color=C['blue'])
+    a.scatter([first,last],[.35,.35],color=C['ink'],zorder=5)
+    a.text(first,.22,'首 token\n0.196 s',ha='center',va='top',fontsize=11)
+    a.text(last-.25,.22,'末 token\n6.95 s',ha='center',va='top',fontsize=11)
+    a.axvline(7,color=C['red'],ls='--',lw=1.4)
+    a.text(7.05,.90,'7 s 时限',color=C['red'],fontsize=11)
+    a.set(xlim=(0,7.8),ylim=(-.18,1.15),yticks=[],xticks=[0,1,2,3,4,5,6,7],xlabel='自请求到达起 / s')
     a.spines['left'].set_visible(False)
-    data['lifecycle']={'queue_s':.1,'prefill_s':.3,'output_intervals':255,'interval_s':.01,'completion_s':2.95,'deadline_s':3}
+    data['lifecycle']={'queue_s':queue,'prefill_s':prefill,'output_intervals':255,'interval_s':itl,'completion_s':last,'deadline_s':7,'source':'experiments/ch08/08-01/results/summary.json'}
     save(f,'figure-8-1-lifecycle')
 
     # Equal-sized cells show the rectangle + triangle decomposition exactly.
@@ -43,10 +47,11 @@ def draw(save, canvas, box, arrow, C, data):
     f,a=canvas(4.5)
     a.text(.04,.93,'同样的 864 MiB，可以怎样使用？',fontsize=15,weight='bold')
     box(a,.06,.58,.63,.19,'A：864 MiB',col='blue')
-    a.text(.76,.675,'共节省 36 ms',va='center',fontsize=14,color=C['blue'])
-    for i in range(3):box(a,.06+i*.21,.20,.203,.23,f'B{i+1}：288 MiB','节省 24 ms',size=12)
-    a.text(.76,.315,'共节省 72 ms',va='center',fontsize=14,color=C['teal'])
-    data['cache_choice']={'capacity_mib':864,'A':{'size_mib':864,'net_ms':36},'B':{'count':3,'each_mib':288,'each_net_ms':24}}
+    va=round(worked['cache']['A_gen5'][2]*1e3,1);vb=round(worked['cache']['B_gen5'][2]*1e3,1)
+    a.text(.76,.675,f'共节省 {va} ms',va='center',fontsize=14,color=C['blue'])
+    for i in range(3):box(a,.06+i*.21,.20,.203,.23,f'B{i+1}：288 MiB',f'节省 {vb} ms',size=12)
+    a.text(.76,.315,f'共节省 {3*vb:.1f} ms',va='center',fontsize=14,color=C['teal'])
+    data['cache_choice']={'capacity_mib':864,'A':{'size_mib':864,'net_ms':worked['cache']['A_gen5'][2]*1e3},'B':{'count':3,'each_mib':288,'each_net_ms':worked['cache']['B_gen5'][2]*1e3},'link':'PCIe Gen5 x16, 64 GB/s per direction'}
     save(f,'figure-8-7-cache-choice')
 
     f,a=plt.subplots(figsize=(11,4.8))
@@ -82,17 +87,18 @@ def draw(save, canvas, box, arrow, C, data):
 
     f,a=plt.subplots(figsize=(10,6.2))
     f.subplots_adjust(left=.11,right=.97,bottom=.16,top=.91)
-    a.add_patch(Rectangle((0,0),12,3,fc='#e5f2ec',ec='none'))
-    a.axvline(12,ls='--',color=C['orange'],lw=1.5);a.axhline(3,ls='--',color=C['red'],lw=1.5)
-    a.text(12.3,.55,'12 GiB 上限',color=C['orange'],fontsize=11)
-    a.text(.4,3.12,'3 s 时限',color=C['red'],fontsize=11)
-    rows=[('A',16*1188/1024,.6+255*.01,'内存不足'),('B',6048/1024,.4+255*.01,'共享'),('C',16*1188*34/64/1024,.6+255*.012,'超时'),('D',6048/1024+2,.2+.4+85*.015,'共享 + 推测')]
+    a.add_patch(Rectangle((0,0),12,7,fc='#e5f2ec',ec='none'))
+    a.axvline(12,ls='--',color=C['orange'],lw=1.5);a.axhline(7,ls='--',color=C['red'],lw=1.5)
+    a.text(12.3,1.2,'12 GiB 上限',color=C['orange'],fontsize=11)
+    a.text(.4,7.25,'7 s 时限',color=C['red'],fontsize=11)
+    labels={'A':'内存不足','B':'共享，超时','C':'超时','D':'共享 + 推测'}
+    rows=[(r['name'],r['memory_gib'],r['time_s'],labels[r['name']]) for r in worked['design_candidates'] if r['name'] in labels]
     for name,mem,t,label in rows:
-        ok=mem<=12 and t<=3;col=C['teal'] if ok else C['red']
+        ok=mem<=12 and t<=7;col=C['teal'] if ok else C['red']
         a.scatter(mem,t,s=85,facecolors=col if ok else 'white',edgecolors=col,lw=1.8,zorder=4)
-        offset={'A':(-75,20),'B':(-45,-35),'C':(8,15),'D':(10,-30)}[name]
+        offset={'A':(-95,-40),'B':(10,8),'C':(10,-38),'D':(10,-30)}[name]
         a.annotate(f'{name}：{label}\n{mem:.2f} GiB，{t:.2f} s',xy=(mem,t),xytext=offset,textcoords='offset points',fontsize=11,color=col)
-    a.text(3,.8,'内存足够且按期完成',fontsize=13,color=C['teal'])
-    a.set(xlim=(0,21),ylim=(0,4.3),xlabel='KV 与辅助缓冲区 / GiB',ylabel='整批请求总耗时 / s',xticks=[0,6,12,18],yticks=[0,1,2,3,4]);a.grid(alpha=.12)
-    data['design_plane']={'capacity_gib':12,'deadline_s':3,'configurations':[{'name':r[0],'memory_gib':r[1],'time_s':r[2]} for r in rows]}
+    a.text(1,2.0,'内存足够且按期完成',fontsize=13,color=C['teal'])
+    a.set(xlim=(0,21),ylim=(0,16.5),xlabel='KV 与辅助缓冲区 / GiB',ylabel='整批请求总耗时 / s',xticks=[0,6,12,18],yticks=[0,3,6,7,9,12,15]);a.grid(alpha=.12)
+    data['design_plane']={'capacity_gib':12,'deadline_s':7,'device':'rtx-pro6000-blackwell-ws','configurations':[{'name':r[0],'memory_gib':r[1],'time_s':r[2]} for r in rows]}
     save(f,'figure-8-14-design')

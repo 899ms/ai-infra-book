@@ -4,7 +4,7 @@
   "scenario": {
     "mean_compute_seconds": "52.2",
     "declared_sigma_seconds": "2.61",
-    "overhead_seconds": "4.5",
+    "overhead_seconds": "0.58",
     "ranks": [
       8,
       48,
@@ -13,9 +13,9 @@
     "straggler_k_sigma": "3",
     "model": "qwen3-8b",
     "checkpoint_devices": 48,
-    "device_mtbf_seconds": 31536000,
+    "device_mtbf_seconds": 29122560,
     "declared_spike_mtbf_seconds": 604800,
-    "save_bandwidth_bytes_per_second": 8000000000,
+    "save_bandwidth_bytes_per_second": 7000000000,
     "recovery_ns": 120000000000,
     "intervals_seconds": [
       300,
@@ -28,14 +28,14 @@
   "declared_input_sources": {
     "mean_compute_seconds": "book (chapter 10.6: 52.2 s)",
     "declared_sigma_seconds": "book (declared)",
-    "overhead_seconds": "book (chapter 10.6: 4 s + 0.5 s)",
+    "overhead_seconds": "book (chapter 10.3.3/10.6: 0.08 s exposed ZeRO-3 communication + 0.5 s input)",
     "ranks": "book (declared 8 / 48 / 1024)",
     "straggler_k_sigma": "book (declared)",
     "model": "configs/models/qwen3-8b/config.json",
     "checkpoint_devices": "book (chapter 10: 48 cards)",
-    "device_mtbf_seconds": "book (checkpoint-interval scenario)",
+    "device_mtbf_seconds": "references/text/meta-cluster-reliability.txt lines 736-747 (1024-GPU job MTTF 7.9 h x 1024)",
     "declared_spike_mtbf_seconds": "book (declared)",
-    "save_bandwidth_bytes_per_second": "book (checkpoint-interval scenario)",
+    "save_bandwidth_bytes_per_second": "references/text/dgx-superpod-h100-ra.txt Table 6 (Good, single SU aggregate write 7 GB/s)",
     "recovery_ns": "book (checkpoint-interval scenario)",
     "intervals_seconds": "book (checkpoint-interval scenario)"
   },
@@ -70,8 +70,8 @@
       "ranks": 8,
       "expected_standard_max": 1.4236003060452715,
       "expected_max_seconds": 55.91559679877816,
-      "expected_step_seconds": 60.41559679877816,
-      "expected_step_over_mean_step": 1.0655308077385919,
+      "expected_step_seconds": 56.49559679877816,
+      "expected_step_over_mean_step": 1.070397817331909,
       "expected_wait_for_mean_rank_seconds": 3.715596798778158,
       "wait_fraction_of_compute": 0.07118001530226356,
       "probability_some_rank_beyond_k_sigma": 0.010748299479155787,
@@ -83,12 +83,12 @@
       },
       "responses": {
         "wait": {
-          "step_seconds": 64.53
+          "step_seconds": 60.61
         },
         "redistribute": {
           "remaining_ranks": 7,
           "mean_seconds_exact": "2088/35",
-          "step_seconds": 67.68632841747686,
+          "step_seconds": 63.76632841747685,
           "note": "straggler removed, its work spread evenly; no migration cost modeled"
         },
         "evict": {
@@ -100,8 +100,8 @@
       "ranks": 48,
       "expected_standard_max": 2.2331208808457803,
       "expected_max_seconds": 58.02844549900749,
-      "expected_step_seconds": 62.52844549900749,
-      "expected_step_over_mean_step": 1.102794453245282,
+      "expected_step_seconds": 58.60844549900749,
+      "expected_step_over_mean_step": 1.1104290545473188,
       "expected_wait_for_mean_rank_seconds": 5.828445499007486,
       "wait_fraction_of_compute": 0.111656044042289,
       "probability_some_rank_beyond_k_sigma": 0.06278154256341573,
@@ -113,12 +113,12 @@
       },
       "responses": {
         "wait": {
-          "step_seconds": 64.53
+          "step_seconds": 60.61
         },
         "redistribute": {
           "remaining_ranks": 47,
           "mean_seconds_exact": "12528/235",
-          "step_seconds": 63.61752046412427,
+          "step_seconds": 59.69752046412427,
           "note": "straggler removed, its work spread evenly; no migration cost modeled"
         },
         "evict": {
@@ -130,8 +130,8 @@
       "ranks": 1024,
       "expected_standard_max": 3.2482396013754027,
       "expected_max_seconds": 60.6779053595898,
-      "expected_step_seconds": 65.1779053595898,
-      "expected_step_over_mean_step": 1.1495221403807725,
+      "expected_step_seconds": 61.2579053595898,
+      "expected_step_over_mean_step": 1.1606272330350473,
       "expected_wait_for_mean_rank_seconds": 8.477905359589798,
       "wait_fraction_of_compute": 0.16241198006877006,
       "probability_some_rank_beyond_k_sigma": 0.7492325852496335,
@@ -143,12 +143,12 @@
       },
       "responses": {
         "wait": {
-          "step_seconds": 65.17717444018726
+          "step_seconds": 61.257174440187256
         },
         "redistribute": {
           "remaining_ranks": 1023,
           "mean_seconds_exact": "89088/1705",
-          "step_seconds": 65.22820083314913,
+          "step_seconds": 61.30820083314913,
           "note": "straggler removed, its work spread evenly; no migration cost modeled"
         },
         "evict": {
@@ -159,116 +159,116 @@
   ],
   "evict_response": {
     "checkpoint_payload_bytes": 114670295040,
-    "blocking_save_cost_exact_seconds": "11198271/781250",
+    "blocking_save_cost_exact_seconds": "6399012/390625",
     "rows": [
       {
         "useful_interval_seconds": 300,
         "expected_lost_work_seconds": 150.0,
         "recovery_seconds": 120.0,
-        "save_cost_seconds": 14.33378688,
+        "save_cost_seconds": 16.38147072,
         "evict_cost_seconds": 270.0,
-        "hardware_first_order_loss": 0.04819024850410959
+        "hardware_first_order_loss": 0.05504991822278481
       },
       {
         "useful_interval_seconds": 600,
         "expected_lost_work_seconds": 300.0,
         "recovery_seconds": 120.0,
-        "save_cost_seconds": 14.33378688,
+        "save_cost_seconds": 16.38147072,
         "evict_cost_seconds": 420.0,
-        "hardware_first_order_loss": 0.024528914206392693
+        "hardware_first_order_loss": 0.02799469803544304
       },
       {
         "useful_interval_seconds": 900,
         "expected_lost_work_seconds": 450.0,
         "recovery_seconds": 120.0,
-        "save_cost_seconds": 14.33378688,
+        "save_cost_seconds": 16.38147072,
         "evict_cost_seconds": 570.0,
-        "hardware_first_order_loss": 0.016794009775342466
+        "hardware_first_order_loss": 0.0191411119814346
       },
       {
         "useful_interval_seconds": 1800,
         "expected_lost_work_seconds": 900.0,
         "recovery_seconds": 120.0,
-        "save_cost_seconds": 14.33378688,
+        "save_cost_seconds": 16.38147072,
         "evict_cost_seconds": 1020.0,
-        "hardware_first_order_loss": 0.009515726348858448
+        "hardware_first_order_loss": 0.010781987952742616
       },
       {
         "useful_interval_seconds": 3600,
         "expected_lost_work_seconds": 1800.0,
         "recovery_seconds": 120.0,
-        "save_cost_seconds": 14.33378688,
+        "save_cost_seconds": 16.38147072,
         "evict_cost_seconds": 1920.0,
-        "hardware_first_order_loss": 0.006903981895890411
+        "hardware_first_order_loss": 0.00771496549535865
       }
     ]
   },
   "checkpoint_loss": {
-    "hardware_rate_exact_per_second": "1/657000",
+    "hardware_rate_exact_per_second": "1/606720",
     "spike_rate_exact_per_second": "1/604800",
-    "combined_rate_exact_per_second": "701/220752000",
-    "first_order_optimal_interval_hardware_only": 4339.884325684268,
-    "first_order_optimal_interval_with_spike": 3004.6146730212427,
+    "combined_rate_exact_per_second": "631/191116800",
+    "first_order_optimal_interval_hardware_only": 4458.467430684764,
+    "first_order_optimal_interval_with_spike": 3150.11345520537,
     "rows": [
       {
         "useful_interval_seconds": 300,
-        "hardware_only_loss_exact": "274835011/5703125000",
-        "hardware_only_loss": 0.04819024850410959,
-        "with_spike_rollback_loss_exact": "15533338741/319375000000",
-        "with_spike_rollback_loss": 0.04863667707553816,
-        "poisson_retained_hardware_only": 0.9539969329561598,
-        "poisson_retained_with_spike": 0.9535598595660955
+        "hardware_only_loss_exact": "10872358849/197500000000",
+        "hardware_only_loss": 0.05504991822278481,
+        "with_spike_rollback_loss_exact": "76723699443/1382500000000",
+        "with_spike_rollback_loss": 0.055496346794213385,
+        "poisson_retained_hardware_only": 0.947787740415855,
+        "poisson_retained_with_spike": 0.947351908828993
       },
       {
         "useful_interval_seconds": 600,
-        "hardware_only_loss_exact": "839348783/34218750000",
-        "hardware_only_loss": 0.024528914206392693,
-        "with_spike_rollback_loss_exact": "5178670823/205312500000",
-        "with_spike_rollback_loss": 0.02522335865083714,
-        "poisson_retained_hardware_only": 0.9760329335642955,
-        "poisson_retained_with_spike": 0.9753437456943272
+        "hardware_only_loss_exact": "2764476431/98750000000",
+        "hardware_only_loss": 0.02799469803544304,
+        "with_spike_rollback_loss_exact": "25497475379/888750000000",
+        "with_spike_rollback_loss": 0.02868914247988748,
+        "poisson_retained_hardware_only": 0.97273639084754,
+        "poisson_retained_with_spike": 0.9720478808672057
       },
       {
         "useful_interval_seconds": 900,
-        "hardware_only_loss_exact": "95778337/5703125000",
-        "hardware_only_loss": 0.016794009775342466,
-        "with_spike_rollback_loss_exact": "50981266223/2874375000000",
-        "with_spike_rollback_loss": 0.017736470092802784,
-        "poisson_retained_hardware_only": 0.9834588450487983,
-        "poisson_retained_with_spike": 0.9825205568849085
+        "hardware_only_loss_exact": "11341108849/592500000000",
+        "hardware_only_loss": 0.0191411119814346,
+        "with_spike_rollback_loss_exact": "249889848329/12442500000000",
+        "with_spike_rollback_loss": 0.020083572298894917,
+        "poisson_retained_hardware_only": 0.9811881725098018,
+        "poisson_retained_with_spike": 0.9802503787434458
       },
       {
         "useful_interval_seconds": 1800,
-        "hardware_only_loss_exact": "325616261/34218750000",
-        "hardware_only_loss": 0.009515726348858448,
-        "with_spike_rollback_loss_exact": "16099711087/1437187500000",
-        "with_spike_rollback_loss": 0.011202234285366383,
-        "poisson_retained_hardware_only": 0.9905495420631771,
-        "poisson_retained_with_spike": 0.9888676639479063
+        "hardware_only_loss_exact": "3194163931/296250000000",
+        "hardware_only_loss": 0.010781987952742616,
+        "with_spike_rollback_loss_exact": "77569630051/6221250000000",
+        "with_spike_rollback_loss": 0.012468495889250553,
+        "poisson_retained_hardware_only": 0.9893029458106819,
+        "poisson_retained_with_spike": 0.9876214563720489
       },
       {
         "useful_interval_seconds": 3600,
-        "hardware_only_loss_exact": "157497087/22812500000",
-        "hardware_only_loss": 0.006903981895890411,
-        "with_spike_rollback_loss_exact": "14484816481/1437187500000",
-        "with_spike_rollback_loss": 0.010078585070493586,
-        "poisson_retained_hardware_only": 0.9931155778536939,
-        "poisson_retained_with_spike": 0.9899519680758576
+        "hardware_only_loss_exact": "17855926/2314453125",
+        "hardware_only_loss": 0.00771496549535865,
+        "with_spike_rollback_loss_exact": "529271321/48603515625",
+        "with_spike_rollback_loss": 0.010889568669961824,
+        "poisson_retained_hardware_only": 0.9923101151310236,
+        "poisson_retained_with_spike": 0.9891471700955783
       }
     ]
   },
   "summary": {
     "expected_step_seconds": {
-      "8": 60.41559679877816,
-      "48": 62.52844549900749,
-      "1024": 65.1779053595898
+      "8": 56.49559679877816,
+      "48": 58.60844549900749,
+      "1024": 61.2579053595898
     },
     "expected_standard_max": {
       "8": 1.4236003060452715,
       "48": 2.2331208808457803,
       "1024": 3.2482396013754027
     },
-    "mean_step_seconds": 56.7
+    "mean_step_seconds": 52.78
   },
   "assumptions": [
     "每 rank 计算时间为独立同分布正态（均值取第 10.6 节 48 卡方案的 52.2 s 单卡计算，标准差为声明输入）；同步步时间 = 最大值 + 4.5 s 通信与输入等待。正态尾部允许负值，但在所用 σ 下概率可忽略。",

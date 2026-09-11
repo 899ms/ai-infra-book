@@ -1,0 +1,31 @@
+{
+  "inputs": {
+    "flows": 8,
+    "uplinks": 32,
+    "spray_paths": 8,
+    "spray_tokens": 1024,
+    "spray_packet_bytes": 4096,
+    "spray_path_delays_ns": [
+      1000,
+      2000,
+      3000,
+      4000,
+      5000,
+      6000,
+      7000,
+      8000
+    ],
+    "spray_path_bytes_per_second": 50000000000,
+    "spray_model": "qwen3-8b"
+  },
+  "input_sources": {
+    "flows": "book (8 servers on one rail leaf, one cross-group flow each; rail-optimized topology of chapter 7.2.5: flows of one shifted pairing leave 8 different leaves and cannot collide, so the colliding set is the flows sharing ONE leaf)",
+    "uplinks": "results/clos-cut-k64-nonblocking.md (leaf_uplinks 32: k=64 nonblocking leaf, 32 downlinks + 32 uplinks)",
+    "spray_paths": "references/text/uec-spec-10.txt line 16045 (packet spraying over many entropies; 8 declared)",
+    "spray_tokens": "book (8 MiB message, chapter 7)",
+    "spray_packet_bytes": "book (declared)",
+    "spray_path_delays_ns": "book (declared)",
+    "spray_path_bytes_per_second": "references/text/nvidia-connectx7-datasheet.txt line 23 (up to 400Gb/s)",
+    "spray_model": "configs/models/qwen3-8b/config.json"
+  }
+}

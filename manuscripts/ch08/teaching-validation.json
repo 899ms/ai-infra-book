@@ -1,5 +1,10 @@
 {
-  "kind": "explicit teaching assumptions; no hardware measurements",
+  "kind": "worked examples on RTX PRO 6000 Blackwell Workstation Edition; efficiencies from experiments/ch08/08-01/efficiency.json",
+  "device": {
+    "bandwidth_bytes_per_second": 1792000000000.0,
+    "bf16_dense_flops": 503800000000000.0,
+    "power_watts": 600
+  },
   "capacity": {
     "short_mib": 324,
     "long_mib": 1188,
@@ -7,81 +12,183 @@
     "independent_16_mib": 19008,
     "q8_16_mib": 10098.0
   },
+  "lifecycle": {
+    "ttft_ms": 96.26964386552572,
+    "itl_ms": 26.527167726125494,
+    "completion_s": 6.953499999999999,
+    "deadline_s": 7
+  },
+  "rates_8k_prefix_b16": {
+    "r_P_new_tokens_per_s": 16059,
+    "r_D_calls_per_s": 585.0091407678244,
+    "resource_seconds_per_request": 0.563420359105486
+  },
   "design_candidates": [
     {
       "name": "A",
       "memory_gib": 18.5625,
-      "time_s": 3.15,
-      "cost_per_qualified_result": null,
+      "prefill_s": 7.340438184186343,
+      "rounds": 255,
+      "round_ms": 29.63,
+      "time_s": 14.896088184186343,
       "fits_12gib": false,
-      "within_3s": false
+      "within_7s": false,
+      "gpu_seconds_per_qualified_result": null,
+      "energy_upper_bound_j_per_result": null
     },
     {
       "name": "B",
       "memory_gib": 5.90625,
-      "time_s": 2.95,
-      "cost_per_qualified_result": 0.184375,
+      "prefill_s": 2.0405,
+      "rounds": 255,
+      "round_ms": 27.35,
+      "time_s": 9.014750000000001,
       "fits_12gib": true,
-      "within_3s": true
+      "within_7s": false,
+      "gpu_seconds_per_qualified_result": null,
+      "energy_upper_bound_j_per_result": null
     },
     {
       "name": "C",
       "memory_gib": 9.861328125,
-      "time_s": 3.66,
-      "cost_per_qualified_result": null,
+      "prefill_s": 7.340438184186343,
+      "rounds": 255,
+      "round_ms": 28.26125,
+      "time_s": 14.547056934186344,
       "fits_12gib": true,
-      "within_3s": false
+      "within_7s": false,
+      "gpu_seconds_per_qualified_result": null,
+      "energy_upper_bound_j_per_result": null
     },
     {
       "name": "D",
-      "memory_gib": 7.90625,
-      "time_s": 1.875,
-      "cost_per_qualified_result": 0.140625,
+      "memory_gib": 9.01953125,
+      "prefill_s": 2.2323930917239783,
+      "rounds": 85,
+      "round_ms": 27.35,
+      "time_s": 4.557143091723979,
       "fits_12gib": true,
-      "within_3s": true
+      "within_7s": true,
+      "gpu_seconds_per_qualified_result": 0.28482144323274866,
+      "energy_upper_bound_j_per_result": 170.8928659396492
     },
     {
       "name": "E",
-      "memory_gib": 6.90625,
-      "time_s": 1.775,
-      "cost_per_qualified_result": 0.12203125,
+      "memory_gib": 5.90625,
+      "prefill_s": 2.0405,
+      "rounds": 128,
+      "round_ms": 27.450000000000003,
+      "time_s": 5.5541,
       "fits_12gib": true,
-      "within_3s": true
+      "within_7s": true,
+      "gpu_seconds_per_qualified_result": 0.34713125,
+      "energy_upper_bound_j_per_result": 208.27875
     }
   ],
-  "exercise_4_A_probability_tie": 0.95,
-  "exercise_5_bandwidth_for_1s_gib_s": 645.46875,
+  "design_16_output_s": {
+    "B": 2.45075,
+    "D": 2.3691430917239784,
+    "E": 2.2601000000000004
+  },
+  "dflash": {
+    "extra_process_mib": 3188,
+    "ttft_ratio": 1.0940421914844294,
+    "verify_matrix_flops": 2556247932928,
+    "verify_s": 0.008778432470071745,
+    "step_median_ms": {
+      "ar": 16.88326452858746,
+      "dflash-7": 15.215343446470797
+    }
+  },
+  "summary_break_even": {
+    "saving_ms_per_step": 0.7788925699443286,
+    "rebuild_s": 0.14507136275636354,
+    "generate_s": 53.780480000000004,
+    "steps_generate": 69233.61891436543,
+    "steps_rebuild": 186.25336580978365
+  },
+  "cache": {
+    "A_gen5": [
+      0.30789778160792125,
+      0.014155776,
+      0.1327152268039606
+    ],
+    "B_gen5": [
+      0.09473792721850273,
+      0.004718592,
+      0.04029107560925137
+    ],
+    "A_gen4": [
+      0.30789778160792125,
+      0.028311552,
+      0.11148156280396061
+    ],
+    "B_gen4": [
+      0.09473792721850273,
+      0.009437184,
+      0.03321318760925136
+    ],
+    "exercise_4_A_probability_tie": 0.4596857114402191
+  },
+  "kv_conversion_saving_ms": 0.48680785621520534,
+  "offload_copy_ms": {
+    "pcie5": 42.467328,
+    "gh200_c2c": 6.03979776
+  },
+  "exercise_5_bandwidth_for_1s_gb_s": 693.06679296,
+  "speculation": {
+    "ordinary_ms": 26.26,
+    "ms_per_token": {
+      "AAAA": 19.789325513196484,
+      "BBBB": 8.640409731113957
+    },
+    "query_break_even_ms": {
+      "AAAA": 8.719140624999998,
+      "BBBB": 53.853515625
+    },
+    "index_break_even_tokens": 113.51001751338939,
+    "drafter_forward_ms": 3.5668370442932105
+  },
   "exercise_7": [
     {
       "block": 1,
       "expected_output": 1.75,
-      "linear_ms_per_token": 0.4,
-      "padded_ms_per_token": 0.7428571428571429
+      "linear_ms_per_token": 17.085714285714285,
+      "padded_ms_per_token": 23.25714285714286
     },
     {
       "block": 2,
       "expected_output": 2.3125,
-      "linear_ms_per_token": 0.3891891891891892,
-      "padded_ms_per_token": 0.5621621621621622
+      "linear_ms_per_token": 14.486486486486486,
+      "padded_ms_per_token": 17.6
     },
     {
       "block": 4,
       "expected_output": 3.05078125,
-      "linear_ms_per_token": 0.4261203585147247,
-      "padded_ms_per_token": 0.4261203585147247
+      "linear_ms_per_token": 13.340845070422537,
+      "padded_ms_per_token": 13.340845070422537
     },
     {
       "block": 5,
       "expected_output": 3.2880859375,
-      "linear_ms_per_token": 0.4561924561924562,
-      "padded_ms_per_token": 0.6386694386694387
+      "linear_ms_per_token": 13.472883872883871,
+      "padded_ms_per_token": 16.75746955746956
     },
     {
       "block": 8,
       "expected_output": 3.6996612548828125,
-      "linear_ms_per_token": 0.5676195346880529,
-      "padded_ms_per_token": 0.5676195346880529
+      "linear_ms_per_token": 14.893255410148436,
+      "padded_ms_per_token": 14.893255410148436
     }
   ],
+  "energy_per_qualified_j_08_09_median": {
+    "serial-16": 2587.0,
+    "continuous-4": 652.0,
+    "serial-1": 622.1,
+    "continuous-16": 1083.7,
+    "continuous-1": 615.0,
+    "serial-4": 1982.3,
+    "offline-None": 1116.3
+  },
   "passed": true
 }

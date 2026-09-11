@@ -1,0 +1,36 @@
+{
+  "inputs": {
+    "decode_result": "results/qwen3-8b-decode-b1-s8192.json",
+    "chapter1_context_tokens": 2048,
+    "sources_extract": "research/gap-plan-2026-09-11/sources-extract.json",
+    "voltage_before": "0.85",
+    "voltage_after": "0.55",
+    "power_after_over_before": "0.75",
+    "area_after_over_before": "0.60",
+    "rack_budget_kw": "120",
+    "rack_fixed_kw": "12",
+    "rack_per_card_kw": "1.2",
+    "rack_card_counts": [
+      64,
+      72,
+      96
+    ],
+    "declared_air_cooling_kw_per_rack": "40",
+    "declared_phone_channels_x16": 4
+  },
+  "input_sources": {
+    "decode_result": "book (results/qwen3-8b-decode-b1-s8192.json)",
+    "chapter1_context_tokens": "book (chapter 1 table, 2048-token context)",
+    "sources_extract": "research/gap-plan-2026-09-11/sources-extract.json",
+    "voltage_before": "references/text/logicfolding-energy.txt line 219",
+    "voltage_after": "references/text/logicfolding-energy.txt line 219",
+    "power_after_over_before": "references/text/logicfolding-energy.txt line 224",
+    "area_after_over_before": "references/text/logicfolding-energy.txt line 226",
+    "rack_budget_kw": "book (chapter 6.5.2 eq. 6-11)",
+    "rack_fixed_kw": "book (chapter 6.5.2)",
+    "rack_per_card_kw": "book (chapter 6.5.2)",
+    "rack_card_counts": "book (chapter 6.5.2)",
+    "declared_air_cooling_kw_per_rack": "references/text/ashrae-liquid-cooling.txt (40-50 kW rack airflow statement; no explicit limit stated) and references/text/dgx-superpod-h100-ra.txt line 312 (>40 kW); declared",
+    "declared_phone_channels_x16": "book (declared; SoC bus width not stated in references/text/qualcomm-8elite-brief.txt)"
+  }
+}

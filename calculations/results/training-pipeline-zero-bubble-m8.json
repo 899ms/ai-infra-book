@@ -149,7 +149,7 @@
     ],
     "parameter_copies_per_gpu": 1
   },
-  "declared_schedule_rule": "ZB-H1-style: 1F1B order for F and input-backward X; weight-backward W of microbatch i follows X of microbatch i+(p-1-g); remaining W run in the cooldown.",
+  "declared_schedule_rule": "ZB-H1 (zero-bubble.txt Figure 3 top, Table 2): stage g (0-indexed) runs the 1F1B order for F and the input-gradient backward X (the paper's B) with p-1-g warmup forwards; the weight-gradient backward W of microbatch i is placed immediately after X of microbatch i+g, so every stage holds the same p-1 microbatches of deferred work in flight (stage 0: X0 W0 F4 X1 W1 ...; stage 3: X3 W0 F4 X4 W1 ...); the last g W's run after the final X. Steady state is F, X, W per microbatch; the remaining bubble is the Table 2 bound (p-1)(T_F+T_B-T_W) plus transfer exposure.",
   "work": {
     "per_microbatch_stages": [
       {
@@ -3807,36 +3807,6 @@
         "microbatch": 0
       },
       {
-        "kind": "F",
-        "virtual_stage": 0,
-        "microbatch": 4
-      },
-      {
-        "kind": "X",
-        "virtual_stage": 0,
-        "microbatch": 1
-      },
-      {
-        "kind": "F",
-        "virtual_stage": 0,
-        "microbatch": 5
-      },
-      {
-        "kind": "X",
-        "virtual_stage": 0,
-        "microbatch": 2
-      },
-      {
-        "kind": "F",
-        "virtual_stage": 0,
-        "microbatch": 6
-      },
-      {
-        "kind": "X",
-        "virtual_stage": 0,
-        "microbatch": 3
-      },
-      {
         "kind": "W",
         "virtual_stage": 0,
         "microbatch": 0
@@ -3844,12 +3814,12 @@
       {
         "kind": "F",
         "virtual_stage": 0,
-        "microbatch": 7
+        "microbatch": 4
       },
       {
         "kind": "X",
         "virtual_stage": 0,
-        "microbatch": 4
+        "microbatch": 1
       },
       {
         "kind": "W",
@@ -3857,9 +3827,14 @@
         "microbatch": 1
       },
       {
-        "kind": "X",
+        "kind": "F",
         "virtual_stage": 0,
         "microbatch": 5
+      },
+      {
+        "kind": "X",
+        "virtual_stage": 0,
+        "microbatch": 2
       },
       {
         "kind": "W",
@@ -3867,9 +3842,14 @@
         "microbatch": 2
       },
       {
-        "kind": "X",
+        "kind": "F",
         "virtual_stage": 0,
         "microbatch": 6
+      },
+      {
+        "kind": "X",
+        "virtual_stage": 0,
+        "microbatch": 3
       },
       {
         "kind": "W",
@@ -3877,9 +3857,14 @@
         "microbatch": 3
       },
       {
-        "kind": "X",
+        "kind": "F",
         "virtual_stage": 0,
         "microbatch": 7
+      },
+      {
+        "kind": "X",
+        "virtual_stage": 0,
+        "microbatch": 4
       },
       {
         "kind": "W",
@@ -3887,14 +3872,29 @@
         "microbatch": 4
       },
       {
-        "kind": "W",
+        "kind": "X",
         "virtual_stage": 0,
         "microbatch": 5
       },
       {
         "kind": "W",
         "virtual_stage": 0,
+        "microbatch": 5
+      },
+      {
+        "kind": "X",
+        "virtual_stage": 0,
         "microbatch": 6
+      },
+      {
+        "kind": "W",
+        "virtual_stage": 0,
+        "microbatch": 6
+      },
+      {
+        "kind": "X",
+        "virtual_stage": 0,
+        "microbatch": 7
       },
       {
         "kind": "W",
@@ -3934,6 +3934,11 @@
         "microbatch": 1
       },
       {
+        "kind": "W",
+        "virtual_stage": 1,
+        "microbatch": 0
+      },
+      {
         "kind": "F",
         "virtual_stage": 1,
         "microbatch": 4
@@ -3942,21 +3947,6 @@
         "kind": "X",
         "virtual_stage": 1,
         "microbatch": 2
-      },
-      {
-        "kind": "W",
-        "virtual_stage": 1,
-        "microbatch": 0
-      },
-      {
-        "kind": "F",
-        "virtual_stage": 1,
-        "microbatch": 5
-      },
-      {
-        "kind": "X",
-        "virtual_stage": 1,
-        "microbatch": 3
       },
       {
         "kind": "W",
@@ -3966,6 +3956,21 @@
       {
         "kind": "F",
         "virtual_stage": 1,
+        "microbatch": 5
+      },
+      {
+        "kind": "X",
+        "virtual_stage": 1,
+        "microbatch": 3
+      },
+      {
+        "kind": "W",
+        "virtual_stage": 1,
+        "microbatch": 2
+      },
+      {
+        "kind": "F",
+        "virtual_stage": 1,
         "microbatch": 6
       },
       {
@@ -3976,7 +3981,7 @@
       {
         "kind": "W",
         "virtual_stage": 1,
-        "microbatch": 2
+        "microbatch": 3
       },
       {
         "kind": "F",
@@ -3991,7 +3996,7 @@
       {
         "kind": "W",
         "virtual_stage": 1,
-        "microbatch": 3
+        "microbatch": 4
       },
       {
         "kind": "X",
@@ -4001,17 +4006,12 @@
       {
         "kind": "W",
         "virtual_stage": 1,
-        "microbatch": 4
+        "microbatch": 5
       },
       {
         "kind": "X",
         "virtual_stage": 1,
         "microbatch": 7
-      },
-      {
-        "kind": "W",
-        "virtual_stage": 1,
-        "microbatch": 5
       },
       {
         "kind": "W",
@@ -4051,11 +4051,6 @@
         "microbatch": 1
       },
       {
-        "kind": "W",
-        "virtual_stage": 2,
-        "microbatch": 0
-      },
-      {
         "kind": "F",
         "virtual_stage": 2,
         "microbatch": 3
@@ -4064,6 +4059,21 @@
         "kind": "X",
         "virtual_stage": 2,
         "microbatch": 2
+      },
+      {
+        "kind": "W",
+        "virtual_stage": 2,
+        "microbatch": 0
+      },
+      {
+        "kind": "F",
+        "virtual_stage": 2,
+        "microbatch": 4
+      },
+      {
+        "kind": "X",
+        "virtual_stage": 2,
+        "microbatch": 3
       },
       {
         "kind": "W",
@@ -4073,12 +4083,12 @@
       {
         "kind": "F",
         "virtual_stage": 2,
-        "microbatch": 4
+        "microbatch": 5
       },
       {
         "kind": "X",
         "virtual_stage": 2,
-        "microbatch": 3
+        "microbatch": 4
       },
       {
         "kind": "W",
@@ -4088,12 +4098,12 @@
       {
         "kind": "F",
         "virtual_stage": 2,
-        "microbatch": 5
+        "microbatch": 6
       },
       {
         "kind": "X",
         "virtual_stage": 2,
-        "microbatch": 4
+        "microbatch": 5
       },
       {
         "kind": "W",
@@ -4103,12 +4113,12 @@
       {
         "kind": "F",
         "virtual_stage": 2,
-        "microbatch": 6
+        "microbatch": 7
       },
       {
         "kind": "X",
         "virtual_stage": 2,
-        "microbatch": 5
+        "microbatch": 6
       },
       {
         "kind": "W",
@@ -4116,24 +4126,14 @@
         "microbatch": 4
       },
       {
-        "kind": "F",
-        "virtual_stage": 2,
-        "microbatch": 7
-      },
-      {
         "kind": "X",
         "virtual_stage": 2,
-        "microbatch": 6
+        "microbatch": 7
       },
       {
         "kind": "W",
         "virtual_stage": 2,
         "microbatch": 5
-      },
-      {
-        "kind": "X",
-        "virtual_stage": 2,
-        "microbatch": 7
       },
       {
         "kind": "W",
@@ -4158,6 +4158,36 @@
         "microbatch": 0
       },
       {
+        "kind": "F",
+        "virtual_stage": 3,
+        "microbatch": 1
+      },
+      {
+        "kind": "X",
+        "virtual_stage": 3,
+        "microbatch": 1
+      },
+      {
+        "kind": "F",
+        "virtual_stage": 3,
+        "microbatch": 2
+      },
+      {
+        "kind": "X",
+        "virtual_stage": 3,
+        "microbatch": 2
+      },
+      {
+        "kind": "F",
+        "virtual_stage": 3,
+        "microbatch": 3
+      },
+      {
+        "kind": "X",
+        "virtual_stage": 3,
+        "microbatch": 3
+      },
+      {
         "kind": "W",
         "virtual_stage": 3,
         "microbatch": 0
@@ -4165,51 +4195,6 @@
       {
         "kind": "F",
         "virtual_stage": 3,
-        "microbatch": 1
-      },
-      {
-        "kind": "X",
-        "virtual_stage": 3,
-        "microbatch": 1
-      },
-      {
-        "kind": "W",
-        "virtual_stage": 3,
-        "microbatch": 1
-      },
-      {
-        "kind": "F",
-        "virtual_stage": 3,
-        "microbatch": 2
-      },
-      {
-        "kind": "X",
-        "virtual_stage": 3,
-        "microbatch": 2
-      },
-      {
-        "kind": "W",
-        "virtual_stage": 3,
-        "microbatch": 2
-      },
-      {
-        "kind": "F",
-        "virtual_stage": 3,
-        "microbatch": 3
-      },
-      {
-        "kind": "X",
-        "virtual_stage": 3,
-        "microbatch": 3
-      },
-      {
-        "kind": "W",
-        "virtual_stage": 3,
-        "microbatch": 3
-      },
-      {
-        "kind": "F",
-        "virtual_stage": 3,
         "microbatch": 4
       },
       {
@@ -4220,7 +4205,7 @@
       {
         "kind": "W",
         "virtual_stage": 3,
-        "microbatch": 4
+        "microbatch": 1
       },
       {
         "kind": "F",
@@ -4235,7 +4220,7 @@
       {
         "kind": "W",
         "virtual_stage": 3,
-        "microbatch": 5
+        "microbatch": 2
       },
       {
         "kind": "F",
@@ -4250,7 +4235,7 @@
       {
         "kind": "W",
         "virtual_stage": 3,
-        "microbatch": 6
+        "microbatch": 3
       },
       {
         "kind": "F",
@@ -4261,6 +4246,21 @@
         "kind": "X",
         "virtual_stage": 3,
         "microbatch": 7
+      },
+      {
+        "kind": "W",
+        "virtual_stage": 3,
+        "microbatch": 4
+      },
+      {
+        "kind": "W",
+        "virtual_stage": 3,
+        "microbatch": 5
+      },
+      {
+        "kind": "W",
+        "virtual_stage": 3,
+        "microbatch": 6
       },
       {
         "kind": "W",
@@ -4627,18 +4627,19 @@
       "end": 0.054000000000000006
     },
     {
-      "kind": "W",
+      "kind": "F",
       "stage": 3,
       "virtual_stage": 3,
       "direction": 0,
-      "microbatch": 0,
+      "microbatch": 1,
       "duration": 0.01,
       "resource": "compute:3",
       "dependencies": [
-        "X:3:0:0"
+        "X:3:0:0",
+        "A:2:1:0"
       ],
-      "priority": 4,
-      "id": "W:3:0:0",
+      "priority": 3,
+      "id": "F:3:1:0",
       "start": 0.053000000000000005,
       "end": 0.063
     },
@@ -4661,7 +4662,7 @@
       "end": 0.064
     },
     {
-      "kind": "F",
+      "kind": "X",
       "stage": 3,
       "virtual_stage": 3,
       "direction": 0,
@@ -4669,11 +4670,10 @@
       "duration": 0.01,
       "resource": "compute:3",
       "dependencies": [
-        "W:3:0:0",
-        "A:2:1:0"
+        "F:3:1:0"
       ],
-      "priority": 3,
-      "id": "F:3:1:0",
+      "priority": 2,
+      "id": "X:3:1:0",
       "start": 0.063,
       "end": 0.073
     },
@@ -4729,20 +4729,20 @@
       "end": 0.075
     },
     {
-      "kind": "X",
+      "kind": "G",
       "stage": 3,
       "virtual_stage": 3,
       "direction": 0,
       "microbatch": 1,
-      "duration": 0.01,
-      "resource": "compute:3",
+      "duration": 0.001,
+      "resource": "link:3->2",
       "dependencies": [
-        "F:3:1:0"
+        "X:3:1:0"
       ],
-      "priority": 2,
-      "id": "X:3:1:0",
+      "priority": 1,
+      "id": "G:2:1:0",
       "start": 0.073,
-      "end": 0.08299999999999999
+      "end": 0.074
     },
     {
       "kind": "A",
@@ -4759,6 +4759,24 @@
       "id": "A:2:2:0",
       "start": 0.074,
       "end": 0.075
+    },
+    {
+      "kind": "X",
+      "stage": 2,
+      "virtual_stage": 2,
+      "direction": 0,
+      "microbatch": 1,
+      "duration": 0.01,
+      "resource": "compute:2",
+      "dependencies": [
+        "F:2:2:0",
+        "F:2:1:0",
+        "G:2:1:0"
+      ],
+      "priority": 2,
+      "id": "X:2:1:0",
+      "start": 0.074,
+      "end": 0.08399999999999999
     },
     {
       "kind": "G",
@@ -4794,6 +4812,23 @@
       "end": 0.08499999999999999
     },
     {
+      "kind": "F",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 2,
+      "duration": 0.01,
+      "resource": "compute:3",
+      "dependencies": [
+        "X:3:1:0",
+        "A:2:2:0"
+      ],
+      "priority": 3,
+      "id": "F:3:2:0",
+      "start": 0.075,
+      "end": 0.08499999999999999
+    },
+    {
       "kind": "X",
       "stage": 0,
       "virtual_stage": 0,
@@ -4813,53 +4848,19 @@
     },
     {
       "kind": "G",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 1,
-      "duration": 0.001,
-      "resource": "link:3->2",
-      "dependencies": [
-        "X:3:1:0"
-      ],
-      "priority": 1,
-      "id": "G:2:1:0",
-      "start": 0.08299999999999999,
-      "end": 0.08399999999999999
-    },
-    {
-      "kind": "W",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 1,
-      "duration": 0.01,
-      "resource": "compute:3",
-      "dependencies": [
-        "X:3:1:0"
-      ],
-      "priority": 4,
-      "id": "W:3:1:0",
-      "start": 0.08299999999999999,
-      "end": 0.09299999999999999
-    },
-    {
-      "kind": "X",
       "stage": 2,
       "virtual_stage": 2,
       "direction": 0,
       "microbatch": 1,
-      "duration": 0.01,
-      "resource": "compute:2",
+      "duration": 0.001,
+      "resource": "link:2->1",
       "dependencies": [
-        "F:2:2:0",
-        "F:2:1:0",
-        "G:2:1:0"
+        "X:2:1:0"
       ],
-      "priority": 2,
-      "id": "X:2:1:0",
+      "priority": 1,
+      "id": "G:1:1:0",
       "start": 0.08399999999999999,
-      "end": 0.09399999999999999
+      "end": 0.08499999999999999
     },
     {
       "kind": "A",
@@ -4878,72 +4879,6 @@
       "end": 0.086
     },
     {
-      "kind": "F",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 4,
-      "duration": 0.01,
-      "resource": "compute:0",
-      "dependencies": [
-        "X:0:0:0"
-      ],
-      "priority": 3,
-      "id": "F:0:4:0",
-      "start": 0.086,
-      "end": 0.09599999999999999
-    },
-    {
-      "kind": "F",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 2,
-      "duration": 0.01,
-      "resource": "compute:3",
-      "dependencies": [
-        "W:3:1:0",
-        "A:2:2:0"
-      ],
-      "priority": 3,
-      "id": "F:3:2:0",
-      "start": 0.09299999999999999,
-      "end": 0.10299999999999998
-    },
-    {
-      "kind": "G",
-      "stage": 2,
-      "virtual_stage": 2,
-      "direction": 0,
-      "microbatch": 1,
-      "duration": 0.001,
-      "resource": "link:2->1",
-      "dependencies": [
-        "X:2:1:0"
-      ],
-      "priority": 1,
-      "id": "G:1:1:0",
-      "start": 0.09399999999999999,
-      "end": 0.09499999999999999
-    },
-    {
-      "kind": "W",
-      "stage": 2,
-      "virtual_stage": 2,
-      "direction": 0,
-      "microbatch": 0,
-      "duration": 0.01,
-      "resource": "compute:2",
-      "dependencies": [
-        "X:2:1:0",
-        "X:2:0:0"
-      ],
-      "priority": 4,
-      "id": "W:2:0:0",
-      "start": 0.09399999999999999,
-      "end": 0.10399999999999998
-    },
-    {
       "kind": "X",
       "stage": 1,
       "virtual_stage": 1,
@@ -4958,24 +4893,8 @@
       ],
       "priority": 2,
       "id": "X:1:1:0",
-      "start": 0.09499999999999999,
-      "end": 0.10499999999999998
-    },
-    {
-      "kind": "A",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 4,
-      "duration": 0.001,
-      "resource": "link:0->1",
-      "dependencies": [
-        "F:0:4:0"
-      ],
-      "priority": 1,
-      "id": "A:0:4:0",
-      "start": 0.09599999999999999,
-      "end": 0.09699999999999999
+      "start": 0.08499999999999999,
+      "end": 0.09499999999999999
     },
     {
       "kind": "X",
@@ -4990,8 +4909,8 @@
       ],
       "priority": 2,
       "id": "X:3:2:0",
-      "start": 0.10299999999999998,
-      "end": 0.11299999999999998
+      "start": 0.08499999999999999,
+      "end": 0.09499999999999999
     },
     {
       "kind": "F",
@@ -5002,13 +4921,29 @@
       "duration": 0.01,
       "resource": "compute:2",
       "dependencies": [
-        "W:2:0:0",
+        "X:2:1:0",
         "A:1:3:0"
       ],
       "priority": 3,
       "id": "F:2:3:0",
-      "start": 0.10399999999999998,
-      "end": 0.11399999999999998
+      "start": 0.086,
+      "end": 0.09599999999999999
+    },
+    {
+      "kind": "W",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 0,
+      "duration": 0.01,
+      "resource": "compute:0",
+      "dependencies": [
+        "X:0:0:0"
+      ],
+      "priority": 4,
+      "id": "W:0:0:0",
+      "start": 0.086,
+      "end": 0.09599999999999999
     },
     {
       "kind": "G",
@@ -5023,25 +4958,140 @@
       ],
       "priority": 1,
       "id": "G:0:1:0",
-      "start": 0.10499999999999998,
-      "end": 0.10599999999999998
+      "start": 0.09499999999999999,
+      "end": 0.09599999999999999
     },
     {
-      "kind": "F",
+      "kind": "G",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 2,
+      "duration": 0.001,
+      "resource": "link:3->2",
+      "dependencies": [
+        "X:3:2:0"
+      ],
+      "priority": 1,
+      "id": "G:2:2:0",
+      "start": 0.09499999999999999,
+      "end": 0.09599999999999999
+    },
+    {
+      "kind": "W",
       "stage": 1,
       "virtual_stage": 1,
       "direction": 0,
-      "microbatch": 4,
+      "microbatch": 0,
       "duration": 0.01,
       "resource": "compute:1",
       "dependencies": [
         "X:1:1:0",
-        "A:0:4:0"
+        "X:1:0:0"
+      ],
+      "priority": 4,
+      "id": "W:1:0:0",
+      "start": 0.09499999999999999,
+      "end": 0.10499999999999998
+    },
+    {
+      "kind": "A",
+      "stage": 2,
+      "virtual_stage": 2,
+      "direction": 0,
+      "microbatch": 3,
+      "duration": 0.001,
+      "resource": "link:2->3",
+      "dependencies": [
+        "F:2:3:0"
+      ],
+      "priority": 1,
+      "id": "A:2:3:0",
+      "start": 0.09599999999999999,
+      "end": 0.09699999999999999
+    },
+    {
+      "kind": "X",
+      "stage": 2,
+      "virtual_stage": 2,
+      "direction": 0,
+      "microbatch": 2,
+      "duration": 0.01,
+      "resource": "compute:2",
+      "dependencies": [
+        "F:2:3:0",
+        "F:2:2:0",
+        "G:2:2:0"
+      ],
+      "priority": 2,
+      "id": "X:2:2:0",
+      "start": 0.09599999999999999,
+      "end": 0.10599999999999998
+    },
+    {
+      "kind": "F",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 4,
+      "duration": 0.01,
+      "resource": "compute:0",
+      "dependencies": [
+        "W:0:0:0"
       ],
       "priority": 3,
-      "id": "F:1:4:0",
-      "start": 0.10499999999999998,
-      "end": 0.11499999999999998
+      "id": "F:0:4:0",
+      "start": 0.09599999999999999,
+      "end": 0.10599999999999998
+    },
+    {
+      "kind": "F",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 3,
+      "duration": 0.01,
+      "resource": "compute:3",
+      "dependencies": [
+        "X:3:2:0",
+        "A:2:3:0"
+      ],
+      "priority": 3,
+      "id": "F:3:3:0",
+      "start": 0.09699999999999999,
+      "end": 0.10699999999999998
+    },
+    {
+      "kind": "A",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 4,
+      "duration": 0.001,
+      "resource": "link:0->1",
+      "dependencies": [
+        "F:0:4:0"
+      ],
+      "priority": 1,
+      "id": "A:0:4:0",
+      "start": 0.10599999999999998,
+      "end": 0.10699999999999998
+    },
+    {
+      "kind": "G",
+      "stage": 2,
+      "virtual_stage": 2,
+      "direction": 0,
+      "microbatch": 2,
+      "duration": 0.001,
+      "resource": "link:2->1",
+      "dependencies": [
+        "X:2:2:0"
+      ],
+      "priority": 1,
+      "id": "G:1:2:0",
+      "start": 0.10599999999999998,
+      "end": 0.10699999999999998
     },
     {
       "kind": "X",
@@ -5062,70 +5112,70 @@
       "end": 0.11599999999999998
     },
     {
-      "kind": "G",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 2,
-      "duration": 0.001,
-      "resource": "link:3->2",
-      "dependencies": [
-        "X:3:2:0"
-      ],
-      "priority": 1,
-      "id": "G:2:2:0",
-      "start": 0.11299999999999998,
-      "end": 0.11399999999999998
-    },
-    {
       "kind": "W",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 2,
-      "duration": 0.01,
-      "resource": "compute:3",
-      "dependencies": [
-        "X:3:2:0"
-      ],
-      "priority": 4,
-      "id": "W:3:2:0",
-      "start": 0.11299999999999998,
-      "end": 0.12299999999999997
-    },
-    {
-      "kind": "A",
       "stage": 2,
       "virtual_stage": 2,
       "direction": 0,
-      "microbatch": 3,
-      "duration": 0.001,
-      "resource": "link:2->3",
-      "dependencies": [
-        "F:2:3:0"
-      ],
-      "priority": 1,
-      "id": "A:2:3:0",
-      "start": 0.11399999999999998,
-      "end": 0.11499999999999998
-    },
-    {
-      "kind": "X",
-      "stage": 2,
-      "virtual_stage": 2,
-      "direction": 0,
-      "microbatch": 2,
+      "microbatch": 0,
       "duration": 0.01,
       "resource": "compute:2",
       "dependencies": [
-        "F:2:3:0",
-        "F:2:2:0",
-        "G:2:2:0"
+        "X:2:2:0",
+        "X:2:0:0"
+      ],
+      "priority": 4,
+      "id": "W:2:0:0",
+      "start": 0.10599999999999998,
+      "end": 0.11599999999999998
+    },
+    {
+      "kind": "X",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 3,
+      "duration": 0.01,
+      "resource": "compute:3",
+      "dependencies": [
+        "F:3:3:0"
       ],
       "priority": 2,
-      "id": "X:2:2:0",
-      "start": 0.11399999999999998,
-      "end": 0.12399999999999997
+      "id": "X:3:3:0",
+      "start": 0.10699999999999998,
+      "end": 0.11699999999999998
+    },
+    {
+      "kind": "F",
+      "stage": 1,
+      "virtual_stage": 1,
+      "direction": 0,
+      "microbatch": 4,
+      "duration": 0.01,
+      "resource": "compute:1",
+      "dependencies": [
+        "W:1:0:0",
+        "A:0:4:0"
+      ],
+      "priority": 3,
+      "id": "F:1:4:0",
+      "start": 0.10699999999999998,
+      "end": 0.11699999999999998
+    },
+    {
+      "kind": "W",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 1,
+      "duration": 0.01,
+      "resource": "compute:0",
+      "dependencies": [
+        "X:0:1:0"
+      ],
+      "priority": 4,
+      "id": "W:0:1:0",
+      "start": 0.11599999999999998,
+      "end": 0.12599999999999997
     },
     {
       "kind": "A",
@@ -5140,74 +5190,24 @@
       ],
       "priority": 1,
       "id": "A:1:4:0",
-      "start": 0.11499999999999998,
-      "end": 0.11599999999999998
+      "start": 0.11699999999999998,
+      "end": 0.11799999999999998
     },
     {
-      "kind": "F",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 5,
-      "duration": 0.01,
-      "resource": "compute:0",
-      "dependencies": [
-        "X:0:1:0"
-      ],
-      "priority": 3,
-      "id": "F:0:5:0",
-      "start": 0.11599999999999998,
-      "end": 0.12599999999999997
-    },
-    {
-      "kind": "F",
+      "kind": "G",
       "stage": 3,
       "virtual_stage": 3,
       "direction": 0,
       "microbatch": 3,
-      "duration": 0.01,
-      "resource": "compute:3",
-      "dependencies": [
-        "W:3:2:0",
-        "A:2:3:0"
-      ],
-      "priority": 3,
-      "id": "F:3:3:0",
-      "start": 0.12299999999999997,
-      "end": 0.13299999999999998
-    },
-    {
-      "kind": "G",
-      "stage": 2,
-      "virtual_stage": 2,
-      "direction": 0,
-      "microbatch": 2,
       "duration": 0.001,
-      "resource": "link:2->1",
+      "resource": "link:3->2",
       "dependencies": [
-        "X:2:2:0"
+        "X:3:3:0"
       ],
       "priority": 1,
-      "id": "G:1:2:0",
-      "start": 0.12399999999999997,
-      "end": 0.12499999999999997
-    },
-    {
-      "kind": "W",
-      "stage": 2,
-      "virtual_stage": 2,
-      "direction": 0,
-      "microbatch": 1,
-      "duration": 0.01,
-      "resource": "compute:2",
-      "dependencies": [
-        "X:2:2:0",
-        "X:2:1:0"
-      ],
-      "priority": 4,
-      "id": "W:2:1:0",
-      "start": 0.12399999999999997,
-      "end": 0.13399999999999998
+      "id": "G:2:3:0",
+      "start": 0.11699999999999998,
+      "end": 0.11799999999999998
     },
     {
       "kind": "X",
@@ -5224,40 +5224,25 @@
       ],
       "priority": 2,
       "id": "X:1:2:0",
-      "start": 0.12499999999999997,
-      "end": 0.13499999999999998
-    },
-    {
-      "kind": "A",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 5,
-      "duration": 0.001,
-      "resource": "link:0->1",
-      "dependencies": [
-        "F:0:5:0"
-      ],
-      "priority": 1,
-      "id": "A:0:5:0",
-      "start": 0.12599999999999997,
+      "start": 0.11699999999999998,
       "end": 0.12699999999999997
     },
     {
-      "kind": "X",
+      "kind": "W",
       "stage": 3,
       "virtual_stage": 3,
       "direction": 0,
-      "microbatch": 3,
+      "microbatch": 0,
       "duration": 0.01,
       "resource": "compute:3",
       "dependencies": [
-        "F:3:3:0"
+        "X:3:3:0",
+        "X:3:0:0"
       ],
-      "priority": 2,
-      "id": "X:3:3:0",
-      "start": 0.13299999999999998,
-      "end": 0.143
+      "priority": 4,
+      "id": "W:3:0:0",
+      "start": 0.11699999999999998,
+      "end": 0.12699999999999997
     },
     {
       "kind": "F",
@@ -5268,13 +5253,29 @@
       "duration": 0.01,
       "resource": "compute:2",
       "dependencies": [
-        "W:2:1:0",
+        "W:2:0:0",
         "A:1:4:0"
       ],
       "priority": 3,
       "id": "F:2:4:0",
-      "start": 0.13399999999999998,
-      "end": 0.144
+      "start": 0.11799999999999998,
+      "end": 0.12799999999999997
+    },
+    {
+      "kind": "F",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 5,
+      "duration": 0.01,
+      "resource": "compute:0",
+      "dependencies": [
+        "W:0:1:0"
+      ],
+      "priority": 3,
+      "id": "F:0:5:0",
+      "start": 0.12599999999999997,
+      "end": 0.13599999999999998
     },
     {
       "kind": "G",
@@ -5289,25 +5290,92 @@
       ],
       "priority": 1,
       "id": "G:0:2:0",
-      "start": 0.13499999999999998,
-      "end": 0.13599999999999998
+      "start": 0.12699999999999997,
+      "end": 0.12799999999999997
     },
     {
       "kind": "W",
       "stage": 1,
       "virtual_stage": 1,
       "direction": 0,
-      "microbatch": 0,
+      "microbatch": 1,
       "duration": 0.01,
       "resource": "compute:1",
       "dependencies": [
         "X:1:2:0",
-        "X:1:0:0"
+        "X:1:1:0"
       ],
       "priority": 4,
-      "id": "W:1:0:0",
-      "start": 0.13499999999999998,
-      "end": 0.145
+      "id": "W:1:1:0",
+      "start": 0.12699999999999997,
+      "end": 0.13699999999999998
+    },
+    {
+      "kind": "A",
+      "stage": 2,
+      "virtual_stage": 2,
+      "direction": 0,
+      "microbatch": 4,
+      "duration": 0.001,
+      "resource": "link:2->3",
+      "dependencies": [
+        "F:2:4:0"
+      ],
+      "priority": 1,
+      "id": "A:2:4:0",
+      "start": 0.12799999999999997,
+      "end": 0.12899999999999998
+    },
+    {
+      "kind": "X",
+      "stage": 2,
+      "virtual_stage": 2,
+      "direction": 0,
+      "microbatch": 3,
+      "duration": 0.01,
+      "resource": "compute:2",
+      "dependencies": [
+        "F:2:4:0",
+        "F:2:3:0",
+        "G:2:3:0"
+      ],
+      "priority": 2,
+      "id": "X:2:3:0",
+      "start": 0.12799999999999997,
+      "end": 0.13799999999999998
+    },
+    {
+      "kind": "F",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 4,
+      "duration": 0.01,
+      "resource": "compute:3",
+      "dependencies": [
+        "W:3:0:0",
+        "A:2:4:0"
+      ],
+      "priority": 3,
+      "id": "F:3:4:0",
+      "start": 0.12899999999999998,
+      "end": 0.13899999999999998
+    },
+    {
+      "kind": "A",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 5,
+      "duration": 0.001,
+      "resource": "link:0->1",
+      "dependencies": [
+        "F:0:5:0"
+      ],
+      "priority": 1,
+      "id": "A:0:5:0",
+      "start": 0.13599999999999998,
+      "end": 0.13699999999999998
     },
     {
       "kind": "X",
@@ -5328,72 +5396,6 @@
       "end": 0.146
     },
     {
-      "kind": "G",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 3,
-      "duration": 0.001,
-      "resource": "link:3->2",
-      "dependencies": [
-        "X:3:3:0"
-      ],
-      "priority": 1,
-      "id": "G:2:3:0",
-      "start": 0.143,
-      "end": 0.144
-    },
-    {
-      "kind": "W",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 3,
-      "duration": 0.01,
-      "resource": "compute:3",
-      "dependencies": [
-        "X:3:3:0"
-      ],
-      "priority": 4,
-      "id": "W:3:3:0",
-      "start": 0.143,
-      "end": 0.153
-    },
-    {
-      "kind": "A",
-      "stage": 2,
-      "virtual_stage": 2,
-      "direction": 0,
-      "microbatch": 4,
-      "duration": 0.001,
-      "resource": "link:2->3",
-      "dependencies": [
-        "F:2:4:0"
-      ],
-      "priority": 1,
-      "id": "A:2:4:0",
-      "start": 0.144,
-      "end": 0.145
-    },
-    {
-      "kind": "X",
-      "stage": 2,
-      "virtual_stage": 2,
-      "direction": 0,
-      "microbatch": 3,
-      "duration": 0.01,
-      "resource": "compute:2",
-      "dependencies": [
-        "F:2:4:0",
-        "F:2:3:0",
-        "G:2:3:0"
-      ],
-      "priority": 2,
-      "id": "X:2:3:0",
-      "start": 0.144,
-      "end": 0.154
-    },
-    {
       "kind": "F",
       "stage": 1,
       "virtual_stage": 1,
@@ -5402,46 +5404,13 @@
       "duration": 0.01,
       "resource": "compute:1",
       "dependencies": [
-        "W:1:0:0",
+        "W:1:1:0",
         "A:0:5:0"
       ],
       "priority": 3,
       "id": "F:1:5:0",
-      "start": 0.145,
-      "end": 0.155
-    },
-    {
-      "kind": "F",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 6,
-      "duration": 0.01,
-      "resource": "compute:0",
-      "dependencies": [
-        "X:0:2:0"
-      ],
-      "priority": 3,
-      "id": "F:0:6:0",
-      "start": 0.146,
-      "end": 0.156
-    },
-    {
-      "kind": "F",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 4,
-      "duration": 0.01,
-      "resource": "compute:3",
-      "dependencies": [
-        "W:3:3:0",
-        "A:2:4:0"
-      ],
-      "priority": 3,
-      "id": "F:3:4:0",
-      "start": 0.153,
-      "end": 0.163
+      "start": 0.13699999999999998,
+      "end": 0.147
     },
     {
       "kind": "G",
@@ -5456,25 +5425,57 @@
       ],
       "priority": 1,
       "id": "G:1:3:0",
-      "start": 0.154,
-      "end": 0.155
+      "start": 0.13799999999999998,
+      "end": 0.13899999999999998
     },
     {
       "kind": "W",
       "stage": 2,
       "virtual_stage": 2,
       "direction": 0,
-      "microbatch": 2,
+      "microbatch": 1,
       "duration": 0.01,
       "resource": "compute:2",
       "dependencies": [
         "X:2:3:0",
-        "X:2:2:0"
+        "X:2:1:0"
       ],
       "priority": 4,
-      "id": "W:2:2:0",
-      "start": 0.154,
-      "end": 0.164
+      "id": "W:2:1:0",
+      "start": 0.13799999999999998,
+      "end": 0.148
+    },
+    {
+      "kind": "X",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 4,
+      "duration": 0.01,
+      "resource": "compute:3",
+      "dependencies": [
+        "F:3:4:0"
+      ],
+      "priority": 2,
+      "id": "X:3:4:0",
+      "start": 0.13899999999999998,
+      "end": 0.149
+    },
+    {
+      "kind": "W",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 2,
+      "duration": 0.01,
+      "resource": "compute:0",
+      "dependencies": [
+        "X:0:2:0"
+      ],
+      "priority": 4,
+      "id": "W:0:2:0",
+      "start": 0.146,
+      "end": 0.156
     },
     {
       "kind": "A",
@@ -5489,8 +5490,8 @@
       ],
       "priority": 1,
       "id": "A:1:5:0",
-      "start": 0.155,
-      "end": 0.156
+      "start": 0.147,
+      "end": 0.148
     },
     {
       "kind": "X",
@@ -5507,40 +5508,8 @@
       ],
       "priority": 2,
       "id": "X:1:3:0",
-      "start": 0.155,
-      "end": 0.165
-    },
-    {
-      "kind": "A",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 6,
-      "duration": 0.001,
-      "resource": "link:0->1",
-      "dependencies": [
-        "F:0:6:0"
-      ],
-      "priority": 1,
-      "id": "A:0:6:0",
-      "start": 0.156,
+      "start": 0.147,
       "end": 0.157
-    },
-    {
-      "kind": "X",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 4,
-      "duration": 0.01,
-      "resource": "compute:3",
-      "dependencies": [
-        "F:3:4:0"
-      ],
-      "priority": 2,
-      "id": "X:3:4:0",
-      "start": 0.163,
-      "end": 0.17300000000000001
     },
     {
       "kind": "F",
@@ -5551,13 +5520,62 @@
       "duration": 0.01,
       "resource": "compute:2",
       "dependencies": [
-        "W:2:2:0",
+        "W:2:1:0",
         "A:1:5:0"
       ],
       "priority": 3,
       "id": "F:2:5:0",
-      "start": 0.164,
-      "end": 0.17400000000000002
+      "start": 0.148,
+      "end": 0.158
+    },
+    {
+      "kind": "G",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 4,
+      "duration": 0.001,
+      "resource": "link:3->2",
+      "dependencies": [
+        "X:3:4:0"
+      ],
+      "priority": 1,
+      "id": "G:2:4:0",
+      "start": 0.149,
+      "end": 0.15
+    },
+    {
+      "kind": "W",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 1,
+      "duration": 0.01,
+      "resource": "compute:3",
+      "dependencies": [
+        "X:3:4:0",
+        "X:3:1:0"
+      ],
+      "priority": 4,
+      "id": "W:3:1:0",
+      "start": 0.149,
+      "end": 0.159
+    },
+    {
+      "kind": "F",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 6,
+      "duration": 0.01,
+      "resource": "compute:0",
+      "dependencies": [
+        "W:0:2:0"
+      ],
+      "priority": 3,
+      "id": "F:0:6:0",
+      "start": 0.156,
+      "end": 0.166
     },
     {
       "kind": "G",
@@ -5572,25 +5590,92 @@
       ],
       "priority": 1,
       "id": "G:0:3:0",
-      "start": 0.165,
-      "end": 0.166
+      "start": 0.157,
+      "end": 0.158
     },
     {
       "kind": "W",
       "stage": 1,
       "virtual_stage": 1,
       "direction": 0,
-      "microbatch": 1,
+      "microbatch": 2,
       "duration": 0.01,
       "resource": "compute:1",
       "dependencies": [
         "X:1:3:0",
-        "X:1:1:0"
+        "X:1:2:0"
       ],
       "priority": 4,
-      "id": "W:1:1:0",
-      "start": 0.165,
-      "end": 0.17500000000000002
+      "id": "W:1:2:0",
+      "start": 0.157,
+      "end": 0.167
+    },
+    {
+      "kind": "A",
+      "stage": 2,
+      "virtual_stage": 2,
+      "direction": 0,
+      "microbatch": 5,
+      "duration": 0.001,
+      "resource": "link:2->3",
+      "dependencies": [
+        "F:2:5:0"
+      ],
+      "priority": 1,
+      "id": "A:2:5:0",
+      "start": 0.158,
+      "end": 0.159
+    },
+    {
+      "kind": "X",
+      "stage": 2,
+      "virtual_stage": 2,
+      "direction": 0,
+      "microbatch": 4,
+      "duration": 0.01,
+      "resource": "compute:2",
+      "dependencies": [
+        "F:2:5:0",
+        "F:2:4:0",
+        "G:2:4:0"
+      ],
+      "priority": 2,
+      "id": "X:2:4:0",
+      "start": 0.158,
+      "end": 0.168
+    },
+    {
+      "kind": "F",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 5,
+      "duration": 0.01,
+      "resource": "compute:3",
+      "dependencies": [
+        "W:3:1:0",
+        "A:2:5:0"
+      ],
+      "priority": 3,
+      "id": "F:3:5:0",
+      "start": 0.159,
+      "end": 0.169
+    },
+    {
+      "kind": "A",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 6,
+      "duration": 0.001,
+      "resource": "link:0->1",
+      "dependencies": [
+        "F:0:6:0"
+      ],
+      "priority": 1,
+      "id": "A:0:6:0",
+      "start": 0.166,
+      "end": 0.167
     },
     {
       "kind": "X",
@@ -5611,72 +5696,6 @@
       "end": 0.17600000000000002
     },
     {
-      "kind": "G",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 4,
-      "duration": 0.001,
-      "resource": "link:3->2",
-      "dependencies": [
-        "X:3:4:0"
-      ],
-      "priority": 1,
-      "id": "G:2:4:0",
-      "start": 0.17300000000000001,
-      "end": 0.17400000000000002
-    },
-    {
-      "kind": "W",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 4,
-      "duration": 0.01,
-      "resource": "compute:3",
-      "dependencies": [
-        "X:3:4:0"
-      ],
-      "priority": 4,
-      "id": "W:3:4:0",
-      "start": 0.17300000000000001,
-      "end": 0.18300000000000002
-    },
-    {
-      "kind": "A",
-      "stage": 2,
-      "virtual_stage": 2,
-      "direction": 0,
-      "microbatch": 5,
-      "duration": 0.001,
-      "resource": "link:2->3",
-      "dependencies": [
-        "F:2:5:0"
-      ],
-      "priority": 1,
-      "id": "A:2:5:0",
-      "start": 0.17400000000000002,
-      "end": 0.17500000000000002
-    },
-    {
-      "kind": "X",
-      "stage": 2,
-      "virtual_stage": 2,
-      "direction": 0,
-      "microbatch": 4,
-      "duration": 0.01,
-      "resource": "compute:2",
-      "dependencies": [
-        "F:2:5:0",
-        "F:2:4:0",
-        "G:2:4:0"
-      ],
-      "priority": 2,
-      "id": "X:2:4:0",
-      "start": 0.17400000000000002,
-      "end": 0.18400000000000002
-    },
-    {
       "kind": "F",
       "stage": 1,
       "virtual_stage": 1,
@@ -5685,47 +5704,13 @@
       "duration": 0.01,
       "resource": "compute:1",
       "dependencies": [
-        "W:1:1:0",
+        "W:1:2:0",
         "A:0:6:0"
       ],
       "priority": 3,
       "id": "F:1:6:0",
-      "start": 0.17500000000000002,
-      "end": 0.18500000000000003
-    },
-    {
-      "kind": "W",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 0,
-      "duration": 0.01,
-      "resource": "compute:0",
-      "dependencies": [
-        "X:0:3:0",
-        "X:0:0:0"
-      ],
-      "priority": 4,
-      "id": "W:0:0:0",
-      "start": 0.17600000000000002,
-      "end": 0.18600000000000003
-    },
-    {
-      "kind": "F",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 5,
-      "duration": 0.01,
-      "resource": "compute:3",
-      "dependencies": [
-        "W:3:4:0",
-        "A:2:5:0"
-      ],
-      "priority": 3,
-      "id": "F:3:5:0",
-      "start": 0.18300000000000002,
-      "end": 0.19300000000000003
+      "start": 0.167,
+      "end": 0.17700000000000002
     },
     {
       "kind": "G",
@@ -5740,25 +5725,57 @@
       ],
       "priority": 1,
       "id": "G:1:4:0",
-      "start": 0.18400000000000002,
-      "end": 0.18500000000000003
+      "start": 0.168,
+      "end": 0.169
     },
     {
       "kind": "W",
       "stage": 2,
       "virtual_stage": 2,
       "direction": 0,
-      "microbatch": 3,
+      "microbatch": 2,
       "duration": 0.01,
       "resource": "compute:2",
       "dependencies": [
         "X:2:4:0",
-        "X:2:3:0"
+        "X:2:2:0"
       ],
       "priority": 4,
-      "id": "W:2:3:0",
-      "start": 0.18400000000000002,
-      "end": 0.19400000000000003
+      "id": "W:2:2:0",
+      "start": 0.168,
+      "end": 0.17800000000000002
+    },
+    {
+      "kind": "X",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 5,
+      "duration": 0.01,
+      "resource": "compute:3",
+      "dependencies": [
+        "F:3:5:0"
+      ],
+      "priority": 2,
+      "id": "X:3:5:0",
+      "start": 0.169,
+      "end": 0.17900000000000002
+    },
+    {
+      "kind": "W",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 3,
+      "duration": 0.01,
+      "resource": "compute:0",
+      "dependencies": [
+        "X:0:3:0"
+      ],
+      "priority": 4,
+      "id": "W:0:3:0",
+      "start": 0.17600000000000002,
+      "end": 0.18600000000000003
     },
     {
       "kind": "A",
@@ -5773,8 +5790,8 @@
       ],
       "priority": 1,
       "id": "A:1:6:0",
-      "start": 0.18500000000000003,
-      "end": 0.18600000000000003
+      "start": 0.17700000000000002,
+      "end": 0.17800000000000002
     },
     {
       "kind": "X",
@@ -5791,40 +5808,8 @@
       ],
       "priority": 2,
       "id": "X:1:4:0",
-      "start": 0.18500000000000003,
-      "end": 0.19500000000000003
-    },
-    {
-      "kind": "F",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 7,
-      "duration": 0.01,
-      "resource": "compute:0",
-      "dependencies": [
-        "W:0:0:0"
-      ],
-      "priority": 3,
-      "id": "F:0:7:0",
-      "start": 0.18600000000000003,
-      "end": 0.19600000000000004
-    },
-    {
-      "kind": "X",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 5,
-      "duration": 0.01,
-      "resource": "compute:3",
-      "dependencies": [
-        "F:3:5:0"
-      ],
-      "priority": 2,
-      "id": "X:3:5:0",
-      "start": 0.19300000000000003,
-      "end": 0.20300000000000004
+      "start": 0.17700000000000002,
+      "end": 0.18700000000000003
     },
     {
       "kind": "F",
@@ -5835,13 +5820,62 @@
       "duration": 0.01,
       "resource": "compute:2",
       "dependencies": [
-        "W:2:3:0",
+        "W:2:2:0",
         "A:1:6:0"
       ],
       "priority": 3,
       "id": "F:2:6:0",
-      "start": 0.19400000000000003,
-      "end": 0.20400000000000004
+      "start": 0.17800000000000002,
+      "end": 0.18800000000000003
+    },
+    {
+      "kind": "G",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 5,
+      "duration": 0.001,
+      "resource": "link:3->2",
+      "dependencies": [
+        "X:3:5:0"
+      ],
+      "priority": 1,
+      "id": "G:2:5:0",
+      "start": 0.17900000000000002,
+      "end": 0.18000000000000002
+    },
+    {
+      "kind": "W",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 2,
+      "duration": 0.01,
+      "resource": "compute:3",
+      "dependencies": [
+        "X:3:5:0",
+        "X:3:2:0"
+      ],
+      "priority": 4,
+      "id": "W:3:2:0",
+      "start": 0.17900000000000002,
+      "end": 0.18900000000000003
+    },
+    {
+      "kind": "F",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 7,
+      "duration": 0.01,
+      "resource": "compute:0",
+      "dependencies": [
+        "W:0:3:0"
+      ],
+      "priority": 3,
+      "id": "F:0:7:0",
+      "start": 0.18600000000000003,
+      "end": 0.19600000000000004
     },
     {
       "kind": "G",
@@ -5856,25 +5890,76 @@
       ],
       "priority": 1,
       "id": "G:0:4:0",
-      "start": 0.19500000000000003,
-      "end": 0.19600000000000004
+      "start": 0.18700000000000003,
+      "end": 0.18800000000000003
     },
     {
       "kind": "W",
       "stage": 1,
       "virtual_stage": 1,
       "direction": 0,
-      "microbatch": 2,
+      "microbatch": 3,
       "duration": 0.01,
       "resource": "compute:1",
       "dependencies": [
         "X:1:4:0",
-        "X:1:2:0"
+        "X:1:3:0"
       ],
       "priority": 4,
-      "id": "W:1:2:0",
-      "start": 0.19500000000000003,
-      "end": 0.20500000000000004
+      "id": "W:1:3:0",
+      "start": 0.18700000000000003,
+      "end": 0.19700000000000004
+    },
+    {
+      "kind": "A",
+      "stage": 2,
+      "virtual_stage": 2,
+      "direction": 0,
+      "microbatch": 6,
+      "duration": 0.001,
+      "resource": "link:2->3",
+      "dependencies": [
+        "F:2:6:0"
+      ],
+      "priority": 1,
+      "id": "A:2:6:0",
+      "start": 0.18800000000000003,
+      "end": 0.18900000000000003
+    },
+    {
+      "kind": "X",
+      "stage": 2,
+      "virtual_stage": 2,
+      "direction": 0,
+      "microbatch": 5,
+      "duration": 0.01,
+      "resource": "compute:2",
+      "dependencies": [
+        "F:2:6:0",
+        "F:2:5:0",
+        "G:2:5:0"
+      ],
+      "priority": 2,
+      "id": "X:2:5:0",
+      "start": 0.18800000000000003,
+      "end": 0.19800000000000004
+    },
+    {
+      "kind": "F",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 6,
+      "duration": 0.01,
+      "resource": "compute:3",
+      "dependencies": [
+        "W:3:2:0",
+        "A:2:6:0"
+      ],
+      "priority": 3,
+      "id": "F:3:6:0",
+      "start": 0.18900000000000003,
+      "end": 0.19900000000000004
     },
     {
       "kind": "A",
@@ -5911,72 +5996,6 @@
       "end": 0.20600000000000004
     },
     {
-      "kind": "G",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 5,
-      "duration": 0.001,
-      "resource": "link:3->2",
-      "dependencies": [
-        "X:3:5:0"
-      ],
-      "priority": 1,
-      "id": "G:2:5:0",
-      "start": 0.20300000000000004,
-      "end": 0.20400000000000004
-    },
-    {
-      "kind": "W",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 5,
-      "duration": 0.01,
-      "resource": "compute:3",
-      "dependencies": [
-        "X:3:5:0"
-      ],
-      "priority": 4,
-      "id": "W:3:5:0",
-      "start": 0.20300000000000004,
-      "end": 0.21300000000000005
-    },
-    {
-      "kind": "A",
-      "stage": 2,
-      "virtual_stage": 2,
-      "direction": 0,
-      "microbatch": 6,
-      "duration": 0.001,
-      "resource": "link:2->3",
-      "dependencies": [
-        "F:2:6:0"
-      ],
-      "priority": 1,
-      "id": "A:2:6:0",
-      "start": 0.20400000000000004,
-      "end": 0.20500000000000004
-    },
-    {
-      "kind": "X",
-      "stage": 2,
-      "virtual_stage": 2,
-      "direction": 0,
-      "microbatch": 5,
-      "duration": 0.01,
-      "resource": "compute:2",
-      "dependencies": [
-        "F:2:6:0",
-        "F:2:5:0",
-        "G:2:5:0"
-      ],
-      "priority": 2,
-      "id": "X:2:5:0",
-      "start": 0.20400000000000004,
-      "end": 0.21400000000000005
-    },
-    {
       "kind": "F",
       "stage": 1,
       "virtual_stage": 1,
@@ -5985,47 +6004,13 @@
       "duration": 0.01,
       "resource": "compute:1",
       "dependencies": [
-        "W:1:2:0",
+        "W:1:3:0",
         "A:0:7:0"
       ],
       "priority": 3,
       "id": "F:1:7:0",
-      "start": 0.20500000000000004,
-      "end": 0.21500000000000005
-    },
-    {
-      "kind": "W",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 1,
-      "duration": 0.01,
-      "resource": "compute:0",
-      "dependencies": [
-        "X:0:4:0",
-        "X:0:1:0"
-      ],
-      "priority": 4,
-      "id": "W:0:1:0",
-      "start": 0.20600000000000004,
-      "end": 0.21600000000000005
-    },
-    {
-      "kind": "F",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 6,
-      "duration": 0.01,
-      "resource": "compute:3",
-      "dependencies": [
-        "W:3:5:0",
-        "A:2:6:0"
-      ],
-      "priority": 3,
-      "id": "F:3:6:0",
-      "start": 0.21300000000000005,
-      "end": 0.22300000000000006
+      "start": 0.19700000000000004,
+      "end": 0.20700000000000005
     },
     {
       "kind": "G",
@@ -6040,25 +6025,57 @@
       ],
       "priority": 1,
       "id": "G:1:5:0",
-      "start": 0.21400000000000005,
-      "end": 0.21500000000000005
+      "start": 0.19800000000000004,
+      "end": 0.19900000000000004
     },
     {
       "kind": "W",
       "stage": 2,
       "virtual_stage": 2,
       "direction": 0,
-      "microbatch": 4,
+      "microbatch": 3,
       "duration": 0.01,
       "resource": "compute:2",
       "dependencies": [
         "X:2:5:0",
-        "X:2:4:0"
+        "X:2:3:0"
       ],
       "priority": 4,
-      "id": "W:2:4:0",
-      "start": 0.21400000000000005,
-      "end": 0.22400000000000006
+      "id": "W:2:3:0",
+      "start": 0.19800000000000004,
+      "end": 0.20800000000000005
+    },
+    {
+      "kind": "X",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 6,
+      "duration": 0.01,
+      "resource": "compute:3",
+      "dependencies": [
+        "F:3:6:0"
+      ],
+      "priority": 2,
+      "id": "X:3:6:0",
+      "start": 0.19900000000000004,
+      "end": 0.20900000000000005
+    },
+    {
+      "kind": "W",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 4,
+      "duration": 0.01,
+      "resource": "compute:0",
+      "dependencies": [
+        "X:0:4:0"
+      ],
+      "priority": 4,
+      "id": "W:0:4:0",
+      "start": 0.20600000000000004,
+      "end": 0.21600000000000005
     },
     {
       "kind": "A",
@@ -6073,8 +6090,8 @@
       ],
       "priority": 1,
       "id": "A:1:7:0",
-      "start": 0.21500000000000005,
-      "end": 0.21600000000000005
+      "start": 0.20700000000000005,
+      "end": 0.20800000000000005
     },
     {
       "kind": "X",
@@ -6091,24 +6108,8 @@
       ],
       "priority": 2,
       "id": "X:1:5:0",
-      "start": 0.21500000000000005,
-      "end": 0.22500000000000006
-    },
-    {
-      "kind": "X",
-      "stage": 3,
-      "virtual_stage": 3,
-      "direction": 0,
-      "microbatch": 6,
-      "duration": 0.01,
-      "resource": "compute:3",
-      "dependencies": [
-        "F:3:6:0"
-      ],
-      "priority": 2,
-      "id": "X:3:6:0",
-      "start": 0.22300000000000006,
-      "end": 0.23300000000000007
+      "start": 0.20700000000000005,
+      "end": 0.21700000000000005
     },
     {
       "kind": "F",
@@ -6119,64 +6120,13 @@
       "duration": 0.01,
       "resource": "compute:2",
       "dependencies": [
-        "W:2:4:0",
+        "W:2:3:0",
         "A:1:7:0"
       ],
       "priority": 3,
       "id": "F:2:7:0",
-      "start": 0.22400000000000006,
-      "end": 0.23400000000000007
-    },
-    {
-      "kind": "G",
-      "stage": 1,
-      "virtual_stage": 1,
-      "direction": 0,
-      "microbatch": 5,
-      "duration": 0.001,
-      "resource": "link:1->0",
-      "dependencies": [
-        "X:1:5:0"
-      ],
-      "priority": 1,
-      "id": "G:0:5:0",
-      "start": 0.22500000000000006,
-      "end": 0.22600000000000006
-    },
-    {
-      "kind": "W",
-      "stage": 1,
-      "virtual_stage": 1,
-      "direction": 0,
-      "microbatch": 3,
-      "duration": 0.01,
-      "resource": "compute:1",
-      "dependencies": [
-        "X:1:5:0",
-        "X:1:3:0"
-      ],
-      "priority": 4,
-      "id": "W:1:3:0",
-      "start": 0.22500000000000006,
-      "end": 0.23500000000000007
-    },
-    {
-      "kind": "X",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 5,
-      "duration": 0.01,
-      "resource": "compute:0",
-      "dependencies": [
-        "W:0:1:0",
-        "F:0:5:0",
-        "G:0:5:0"
-      ],
-      "priority": 2,
-      "id": "X:0:5:0",
-      "start": 0.22600000000000006,
-      "end": 0.23600000000000007
+      "start": 0.20800000000000005,
+      "end": 0.21800000000000005
     },
     {
       "kind": "G",
@@ -6191,24 +6141,58 @@
       ],
       "priority": 1,
       "id": "G:2:6:0",
-      "start": 0.23300000000000007,
-      "end": 0.23400000000000007
+      "start": 0.20900000000000005,
+      "end": 0.21000000000000005
     },
     {
       "kind": "W",
       "stage": 3,
       "virtual_stage": 3,
       "direction": 0,
-      "microbatch": 6,
+      "microbatch": 3,
       "duration": 0.01,
       "resource": "compute:3",
       "dependencies": [
-        "X:3:6:0"
+        "X:3:6:0",
+        "X:3:3:0"
       ],
       "priority": 4,
-      "id": "W:3:6:0",
-      "start": 0.23300000000000007,
-      "end": 0.24300000000000008
+      "id": "W:3:3:0",
+      "start": 0.20900000000000005,
+      "end": 0.21900000000000006
+    },
+    {
+      "kind": "G",
+      "stage": 1,
+      "virtual_stage": 1,
+      "direction": 0,
+      "microbatch": 5,
+      "duration": 0.001,
+      "resource": "link:1->0",
+      "dependencies": [
+        "X:1:5:0"
+      ],
+      "priority": 1,
+      "id": "G:0:5:0",
+      "start": 0.21700000000000005,
+      "end": 0.21800000000000005
+    },
+    {
+      "kind": "W",
+      "stage": 1,
+      "virtual_stage": 1,
+      "direction": 0,
+      "microbatch": 4,
+      "duration": 0.01,
+      "resource": "compute:1",
+      "dependencies": [
+        "X:1:5:0",
+        "X:1:4:0"
+      ],
+      "priority": 4,
+      "id": "W:1:4:0",
+      "start": 0.21700000000000005,
+      "end": 0.22700000000000006
     },
     {
       "kind": "A",
@@ -6223,8 +6207,26 @@
       ],
       "priority": 1,
       "id": "A:2:7:0",
-      "start": 0.23400000000000007,
-      "end": 0.23500000000000007
+      "start": 0.21800000000000005,
+      "end": 0.21900000000000006
+    },
+    {
+      "kind": "X",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 5,
+      "duration": 0.01,
+      "resource": "compute:0",
+      "dependencies": [
+        "W:0:4:0",
+        "F:0:5:0",
+        "G:0:5:0"
+      ],
+      "priority": 2,
+      "id": "X:0:5:0",
+      "start": 0.21800000000000005,
+      "end": 0.22800000000000006
     },
     {
       "kind": "X",
@@ -6241,25 +6243,8 @@
       ],
       "priority": 2,
       "id": "X:2:6:0",
-      "start": 0.23400000000000007,
-      "end": 0.24400000000000008
-    },
-    {
-      "kind": "W",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 2,
-      "duration": 0.01,
-      "resource": "compute:0",
-      "dependencies": [
-        "X:0:5:0",
-        "X:0:2:0"
-      ],
-      "priority": 4,
-      "id": "W:0:2:0",
-      "start": 0.23600000000000007,
-      "end": 0.24600000000000008
+      "start": 0.21800000000000005,
+      "end": 0.22800000000000006
     },
     {
       "kind": "F",
@@ -6270,13 +6255,13 @@
       "duration": 0.01,
       "resource": "compute:3",
       "dependencies": [
-        "W:3:6:0",
+        "W:3:3:0",
         "A:2:7:0"
       ],
       "priority": 3,
       "id": "F:3:7:0",
-      "start": 0.24300000000000008,
-      "end": 0.25300000000000006
+      "start": 0.21900000000000006,
+      "end": 0.22900000000000006
     },
     {
       "kind": "G",
@@ -6291,25 +6276,41 @@
       ],
       "priority": 1,
       "id": "G:1:6:0",
-      "start": 0.24400000000000008,
-      "end": 0.24500000000000008
+      "start": 0.22800000000000006,
+      "end": 0.22900000000000006
+    },
+    {
+      "kind": "W",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 5,
+      "duration": 0.01,
+      "resource": "compute:0",
+      "dependencies": [
+        "X:0:5:0"
+      ],
+      "priority": 4,
+      "id": "W:0:5:0",
+      "start": 0.22800000000000006,
+      "end": 0.23800000000000007
     },
     {
       "kind": "W",
       "stage": 2,
       "virtual_stage": 2,
       "direction": 0,
-      "microbatch": 5,
+      "microbatch": 4,
       "duration": 0.01,
       "resource": "compute:2",
       "dependencies": [
         "X:2:6:0",
-        "X:2:5:0"
+        "X:2:4:0"
       ],
       "priority": 4,
-      "id": "W:2:5:0",
-      "start": 0.24400000000000008,
-      "end": 0.25400000000000006
+      "id": "W:2:4:0",
+      "start": 0.22800000000000006,
+      "end": 0.23800000000000007
     },
     {
       "kind": "X",
@@ -6320,14 +6321,14 @@
       "duration": 0.01,
       "resource": "compute:1",
       "dependencies": [
-        "W:1:3:0",
+        "W:1:4:0",
         "F:1:6:0",
         "G:1:6:0"
       ],
       "priority": 2,
       "id": "X:1:6:0",
-      "start": 0.24500000000000008,
-      "end": 0.25500000000000006
+      "start": 0.22900000000000006,
+      "end": 0.23900000000000007
     },
     {
       "kind": "X",
@@ -6342,8 +6343,8 @@
       ],
       "priority": 2,
       "id": "X:3:7:0",
-      "start": 0.25300000000000006,
-      "end": 0.26300000000000007
+      "start": 0.22900000000000006,
+      "end": 0.23900000000000007
     },
     {
       "kind": "G",
@@ -6358,43 +6359,8 @@
       ],
       "priority": 1,
       "id": "G:0:6:0",
-      "start": 0.25500000000000006,
-      "end": 0.25600000000000006
-    },
-    {
-      "kind": "W",
-      "stage": 1,
-      "virtual_stage": 1,
-      "direction": 0,
-      "microbatch": 4,
-      "duration": 0.01,
-      "resource": "compute:1",
-      "dependencies": [
-        "X:1:6:0",
-        "X:1:4:0"
-      ],
-      "priority": 4,
-      "id": "W:1:4:0",
-      "start": 0.25500000000000006,
-      "end": 0.26500000000000007
-    },
-    {
-      "kind": "X",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 6,
-      "duration": 0.01,
-      "resource": "compute:0",
-      "dependencies": [
-        "W:0:2:0",
-        "F:0:6:0",
-        "G:0:6:0"
-      ],
-      "priority": 2,
-      "id": "X:0:6:0",
-      "start": 0.25600000000000006,
-      "end": 0.26600000000000007
+      "start": 0.23900000000000007,
+      "end": 0.24000000000000007
     },
     {
       "kind": "G",
@@ -6409,24 +6375,60 @@
       ],
       "priority": 1,
       "id": "G:2:7:0",
-      "start": 0.26300000000000007,
-      "end": 0.26400000000000007
+      "start": 0.23900000000000007,
+      "end": 0.24000000000000007
+    },
+    {
+      "kind": "W",
+      "stage": 1,
+      "virtual_stage": 1,
+      "direction": 0,
+      "microbatch": 5,
+      "duration": 0.01,
+      "resource": "compute:1",
+      "dependencies": [
+        "X:1:6:0",
+        "X:1:5:0"
+      ],
+      "priority": 4,
+      "id": "W:1:5:0",
+      "start": 0.23900000000000007,
+      "end": 0.24900000000000008
     },
     {
       "kind": "W",
       "stage": 3,
       "virtual_stage": 3,
       "direction": 0,
-      "microbatch": 7,
+      "microbatch": 4,
       "duration": 0.01,
       "resource": "compute:3",
       "dependencies": [
-        "X:3:7:0"
+        "X:3:7:0",
+        "X:3:4:0"
       ],
       "priority": 4,
-      "id": "W:3:7:0",
-      "start": 0.26300000000000007,
-      "end": 0.2730000000000001
+      "id": "W:3:4:0",
+      "start": 0.23900000000000007,
+      "end": 0.24900000000000008
+    },
+    {
+      "kind": "X",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 6,
+      "duration": 0.01,
+      "resource": "compute:0",
+      "dependencies": [
+        "W:0:5:0",
+        "F:0:6:0",
+        "G:0:6:0"
+      ],
+      "priority": 2,
+      "id": "X:0:6:0",
+      "start": 0.24000000000000007,
+      "end": 0.25000000000000006
     },
     {
       "kind": "X",
@@ -6437,31 +6439,31 @@
       "duration": 0.01,
       "resource": "compute:2",
       "dependencies": [
-        "W:2:5:0",
+        "W:2:4:0",
         "F:2:7:0",
         "G:2:7:0"
       ],
       "priority": 2,
       "id": "X:2:7:0",
-      "start": 0.26400000000000007,
-      "end": 0.2740000000000001
+      "start": 0.24000000000000007,
+      "end": 0.25000000000000006
     },
     {
       "kind": "W",
-      "stage": 0,
-      "virtual_stage": 0,
+      "stage": 3,
+      "virtual_stage": 3,
       "direction": 0,
-      "microbatch": 3,
+      "microbatch": 5,
       "duration": 0.01,
-      "resource": "compute:0",
+      "resource": "compute:3",
       "dependencies": [
-        "X:0:6:0",
-        "X:0:3:0"
+        "W:3:4:0",
+        "X:3:5:0"
       ],
       "priority": 4,
-      "id": "W:0:3:0",
-      "start": 0.26600000000000007,
-      "end": 0.2760000000000001
+      "id": "W:3:5:0",
+      "start": 0.24900000000000008,
+      "end": 0.25900000000000006
     },
     {
       "kind": "G",
@@ -6476,25 +6478,41 @@
       ],
       "priority": 1,
       "id": "G:1:7:0",
-      "start": 0.2740000000000001,
-      "end": 0.2750000000000001
+      "start": 0.25000000000000006,
+      "end": 0.25100000000000006
+    },
+    {
+      "kind": "W",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 6,
+      "duration": 0.01,
+      "resource": "compute:0",
+      "dependencies": [
+        "X:0:6:0"
+      ],
+      "priority": 4,
+      "id": "W:0:6:0",
+      "start": 0.25000000000000006,
+      "end": 0.26000000000000006
     },
     {
       "kind": "W",
       "stage": 2,
       "virtual_stage": 2,
       "direction": 0,
-      "microbatch": 6,
+      "microbatch": 5,
       "duration": 0.01,
       "resource": "compute:2",
       "dependencies": [
         "X:2:7:0",
-        "X:2:6:0"
+        "X:2:5:0"
       ],
       "priority": 4,
-      "id": "W:2:6:0",
-      "start": 0.2740000000000001,
-      "end": 0.2840000000000001
+      "id": "W:2:5:0",
+      "start": 0.25000000000000006,
+      "end": 0.26000000000000006
     },
     {
       "kind": "X",
@@ -6505,14 +6523,116 @@
       "duration": 0.01,
       "resource": "compute:1",
       "dependencies": [
-        "W:1:4:0",
+        "W:1:5:0",
         "F:1:7:0",
         "G:1:7:0"
       ],
       "priority": 2,
       "id": "X:1:7:0",
-      "start": 0.2750000000000001,
-      "end": 0.2850000000000001
+      "start": 0.25100000000000006,
+      "end": 0.26100000000000007
+    },
+    {
+      "kind": "W",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 6,
+      "duration": 0.01,
+      "resource": "compute:3",
+      "dependencies": [
+        "W:3:5:0",
+        "X:3:6:0"
+      ],
+      "priority": 4,
+      "id": "W:3:6:0",
+      "start": 0.25900000000000006,
+      "end": 0.2690000000000001
+    },
+    {
+      "kind": "W",
+      "stage": 2,
+      "virtual_stage": 2,
+      "direction": 0,
+      "microbatch": 6,
+      "duration": 0.01,
+      "resource": "compute:2",
+      "dependencies": [
+        "W:2:5:0",
+        "X:2:6:0"
+      ],
+      "priority": 4,
+      "id": "W:2:6:0",
+      "start": 0.26000000000000006,
+      "end": 0.2700000000000001
+    },
+    {
+      "kind": "G",
+      "stage": 1,
+      "virtual_stage": 1,
+      "direction": 0,
+      "microbatch": 7,
+      "duration": 0.001,
+      "resource": "link:1->0",
+      "dependencies": [
+        "X:1:7:0"
+      ],
+      "priority": 1,
+      "id": "G:0:7:0",
+      "start": 0.26100000000000007,
+      "end": 0.26200000000000007
+    },
+    {
+      "kind": "W",
+      "stage": 1,
+      "virtual_stage": 1,
+      "direction": 0,
+      "microbatch": 6,
+      "duration": 0.01,
+      "resource": "compute:1",
+      "dependencies": [
+        "X:1:7:0",
+        "X:1:6:0"
+      ],
+      "priority": 4,
+      "id": "W:1:6:0",
+      "start": 0.26100000000000007,
+      "end": 0.2710000000000001
+    },
+    {
+      "kind": "X",
+      "stage": 0,
+      "virtual_stage": 0,
+      "direction": 0,
+      "microbatch": 7,
+      "duration": 0.01,
+      "resource": "compute:0",
+      "dependencies": [
+        "W:0:6:0",
+        "F:0:7:0",
+        "G:0:7:0"
+      ],
+      "priority": 2,
+      "id": "X:0:7:0",
+      "start": 0.26200000000000007,
+      "end": 0.2720000000000001
+    },
+    {
+      "kind": "W",
+      "stage": 3,
+      "virtual_stage": 3,
+      "direction": 0,
+      "microbatch": 7,
+      "duration": 0.01,
+      "resource": "compute:3",
+      "dependencies": [
+        "W:3:6:0",
+        "X:3:7:0"
+      ],
+      "priority": 4,
+      "id": "W:3:7:0",
+      "start": 0.2690000000000001,
+      "end": 0.2790000000000001
     },
     {
       "kind": "W",
@@ -6528,93 +6648,8 @@
       ],
       "priority": 4,
       "id": "W:2:7:0",
-      "start": 0.2840000000000001,
-      "end": 0.2940000000000001
-    },
-    {
-      "kind": "G",
-      "stage": 1,
-      "virtual_stage": 1,
-      "direction": 0,
-      "microbatch": 7,
-      "duration": 0.001,
-      "resource": "link:1->0",
-      "dependencies": [
-        "X:1:7:0"
-      ],
-      "priority": 1,
-      "id": "G:0:7:0",
-      "start": 0.2850000000000001,
-      "end": 0.2860000000000001
-    },
-    {
-      "kind": "W",
-      "stage": 1,
-      "virtual_stage": 1,
-      "direction": 0,
-      "microbatch": 5,
-      "duration": 0.01,
-      "resource": "compute:1",
-      "dependencies": [
-        "X:1:7:0",
-        "X:1:5:0"
-      ],
-      "priority": 4,
-      "id": "W:1:5:0",
-      "start": 0.2850000000000001,
-      "end": 0.2950000000000001
-    },
-    {
-      "kind": "X",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 7,
-      "duration": 0.01,
-      "resource": "compute:0",
-      "dependencies": [
-        "W:0:3:0",
-        "F:0:7:0",
-        "G:0:7:0"
-      ],
-      "priority": 2,
-      "id": "X:0:7:0",
-      "start": 0.2860000000000001,
-      "end": 0.2960000000000001
-    },
-    {
-      "kind": "W",
-      "stage": 1,
-      "virtual_stage": 1,
-      "direction": 0,
-      "microbatch": 6,
-      "duration": 0.01,
-      "resource": "compute:1",
-      "dependencies": [
-        "W:1:5:0",
-        "X:1:6:0"
-      ],
-      "priority": 4,
-      "id": "W:1:6:0",
-      "start": 0.2950000000000001,
-      "end": 0.3050000000000001
-    },
-    {
-      "kind": "W",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 4,
-      "duration": 0.01,
-      "resource": "compute:0",
-      "dependencies": [
-        "X:0:7:0",
-        "X:0:4:0"
-      ],
-      "priority": 4,
-      "id": "W:0:4:0",
-      "start": 0.2960000000000001,
-      "end": 0.3060000000000001
+      "start": 0.2700000000000001,
+      "end": 0.2800000000000001
     },
     {
       "kind": "W",
@@ -6630,42 +6665,8 @@
       ],
       "priority": 4,
       "id": "W:1:7:0",
-      "start": 0.3050000000000001,
-      "end": 0.3150000000000001
-    },
-    {
-      "kind": "W",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 5,
-      "duration": 0.01,
-      "resource": "compute:0",
-      "dependencies": [
-        "W:0:4:0",
-        "X:0:5:0"
-      ],
-      "priority": 4,
-      "id": "W:0:5:0",
-      "start": 0.3060000000000001,
-      "end": 0.3160000000000001
-    },
-    {
-      "kind": "W",
-      "stage": 0,
-      "virtual_stage": 0,
-      "direction": 0,
-      "microbatch": 6,
-      "duration": 0.01,
-      "resource": "compute:0",
-      "dependencies": [
-        "W:0:5:0",
-        "X:0:6:0"
-      ],
-      "priority": 4,
-      "id": "W:0:6:0",
-      "start": 0.3160000000000001,
-      "end": 0.3260000000000001
+      "start": 0.2710000000000001,
+      "end": 0.2810000000000001
     },
     {
       "kind": "W",
@@ -6676,13 +6677,12 @@
       "duration": 0.01,
       "resource": "compute:0",
       "dependencies": [
-        "W:0:6:0",
         "X:0:7:0"
       ],
       "priority": 4,
       "id": "W:0:7:0",
-      "start": 0.3260000000000001,
-      "end": 0.33600000000000013
+      "start": 0.2720000000000001,
+      "end": 0.2820000000000001
     },
     {
       "kind": "update",
@@ -6694,74 +6694,74 @@
       "resource": "compute:0",
       "dependencies": [
         "X:0:0:0",
-        "X:0:1:0",
-        "X:0:2:0",
-        "X:0:3:0",
         "W:0:0:0",
-        "X:0:4:0",
+        "X:0:1:0",
         "W:0:1:0",
-        "X:0:5:0",
+        "X:0:2:0",
         "W:0:2:0",
-        "X:0:6:0",
+        "X:0:3:0",
         "W:0:3:0",
-        "X:0:7:0",
+        "X:0:4:0",
         "W:0:4:0",
+        "X:0:5:0",
         "W:0:5:0",
+        "X:0:6:0",
         "W:0:6:0",
+        "X:0:7:0",
         "W:0:7:0",
         "X:1:0:0",
         "X:1:1:0",
-        "X:1:2:0",
         "W:1:0:0",
-        "X:1:3:0",
+        "X:1:2:0",
         "W:1:1:0",
-        "X:1:4:0",
+        "X:1:3:0",
         "W:1:2:0",
-        "X:1:5:0",
+        "X:1:4:0",
         "W:1:3:0",
-        "X:1:6:0",
+        "X:1:5:0",
         "W:1:4:0",
-        "X:1:7:0",
+        "X:1:6:0",
         "W:1:5:0",
+        "X:1:7:0",
         "W:1:6:0",
         "W:1:7:0",
         "X:2:0:0",
         "X:2:1:0",
-        "W:2:0:0",
         "X:2:2:0",
-        "W:2:1:0",
+        "W:2:0:0",
         "X:2:3:0",
-        "W:2:2:0",
+        "W:2:1:0",
         "X:2:4:0",
-        "W:2:3:0",
+        "W:2:2:0",
         "X:2:5:0",
-        "W:2:4:0",
+        "W:2:3:0",
         "X:2:6:0",
-        "W:2:5:0",
+        "W:2:4:0",
         "X:2:7:0",
+        "W:2:5:0",
         "W:2:6:0",
         "W:2:7:0",
         "X:3:0:0",
-        "W:3:0:0",
         "X:3:1:0",
-        "W:3:1:0",
         "X:3:2:0",
-        "W:3:2:0",
         "X:3:3:0",
-        "W:3:3:0",
+        "W:3:0:0",
         "X:3:4:0",
-        "W:3:4:0",
+        "W:3:1:0",
         "X:3:5:0",
-        "W:3:5:0",
+        "W:3:2:0",
         "X:3:6:0",
-        "W:3:6:0",
+        "W:3:3:0",
         "X:3:7:0",
+        "W:3:4:0",
+        "W:3:5:0",
+        "W:3:6:0",
         "W:3:7:0"
       ],
       "priority": 5,
       "id": "U:0",
-      "start": 0.33600000000000013,
-      "end": 0.33700000000000013
+      "start": 0.2820000000000001,
+      "end": 0.2830000000000001
     },
     {
       "kind": "update",
@@ -6773,74 +6773,74 @@
       "resource": "compute:1",
       "dependencies": [
         "X:0:0:0",
-        "X:0:1:0",
-        "X:0:2:0",
-        "X:0:3:0",
         "W:0:0:0",
-        "X:0:4:0",
+        "X:0:1:0",
         "W:0:1:0",
-        "X:0:5:0",
+        "X:0:2:0",
         "W:0:2:0",
-        "X:0:6:0",
+        "X:0:3:0",
         "W:0:3:0",
-        "X:0:7:0",
+        "X:0:4:0",
         "W:0:4:0",
+        "X:0:5:0",
         "W:0:5:0",
+        "X:0:6:0",
         "W:0:6:0",
+        "X:0:7:0",
         "W:0:7:0",
         "X:1:0:0",
         "X:1:1:0",
-        "X:1:2:0",
         "W:1:0:0",
-        "X:1:3:0",
+        "X:1:2:0",
         "W:1:1:0",
-        "X:1:4:0",
+        "X:1:3:0",
         "W:1:2:0",
-        "X:1:5:0",
+        "X:1:4:0",
         "W:1:3:0",
-        "X:1:6:0",
+        "X:1:5:0",
         "W:1:4:0",
-        "X:1:7:0",
+        "X:1:6:0",
         "W:1:5:0",
+        "X:1:7:0",
         "W:1:6:0",
         "W:1:7:0",
         "X:2:0:0",
         "X:2:1:0",
-        "W:2:0:0",
         "X:2:2:0",
-        "W:2:1:0",
+        "W:2:0:0",
         "X:2:3:0",
-        "W:2:2:0",
+        "W:2:1:0",
         "X:2:4:0",
-        "W:2:3:0",
+        "W:2:2:0",
         "X:2:5:0",
-        "W:2:4:0",
+        "W:2:3:0",
         "X:2:6:0",
-        "W:2:5:0",
+        "W:2:4:0",
         "X:2:7:0",
+        "W:2:5:0",
         "W:2:6:0",
         "W:2:7:0",
         "X:3:0:0",
-        "W:3:0:0",
         "X:3:1:0",
-        "W:3:1:0",
         "X:3:2:0",
-        "W:3:2:0",
         "X:3:3:0",
-        "W:3:3:0",
+        "W:3:0:0",
         "X:3:4:0",
-        "W:3:4:0",
+        "W:3:1:0",
         "X:3:5:0",
-        "W:3:5:0",
+        "W:3:2:0",
         "X:3:6:0",
-        "W:3:6:0",
+        "W:3:3:0",
         "X:3:7:0",
+        "W:3:4:0",
+        "W:3:5:0",
+        "W:3:6:0",
         "W:3:7:0"
       ],
       "priority": 5,
       "id": "U:1",
-      "start": 0.33600000000000013,
-      "end": 0.33700000000000013
+      "start": 0.2820000000000001,
+      "end": 0.2830000000000001
     },
     {
       "kind": "update",
@@ -6852,74 +6852,74 @@
       "resource": "compute:2",
       "dependencies": [
         "X:0:0:0",
-        "X:0:1:0",
-        "X:0:2:0",
-        "X:0:3:0",
         "W:0:0:0",
-        "X:0:4:0",
+        "X:0:1:0",
         "W:0:1:0",
-        "X:0:5:0",
+        "X:0:2:0",
         "W:0:2:0",
-        "X:0:6:0",
+        "X:0:3:0",
         "W:0:3:0",
-        "X:0:7:0",
+        "X:0:4:0",
         "W:0:4:0",
+        "X:0:5:0",
         "W:0:5:0",
+        "X:0:6:0",
         "W:0:6:0",
+        "X:0:7:0",
         "W:0:7:0",
         "X:1:0:0",
         "X:1:1:0",
-        "X:1:2:0",
         "W:1:0:0",
-        "X:1:3:0",
+        "X:1:2:0",
         "W:1:1:0",
-        "X:1:4:0",
+        "X:1:3:0",
         "W:1:2:0",
-        "X:1:5:0",
+        "X:1:4:0",
         "W:1:3:0",
-        "X:1:6:0",
+        "X:1:5:0",
         "W:1:4:0",
-        "X:1:7:0",
+        "X:1:6:0",
         "W:1:5:0",
+        "X:1:7:0",
         "W:1:6:0",
         "W:1:7:0",
         "X:2:0:0",
         "X:2:1:0",
-        "W:2:0:0",
         "X:2:2:0",
-        "W:2:1:0",
+        "W:2:0:0",
         "X:2:3:0",
-        "W:2:2:0",
+        "W:2:1:0",
         "X:2:4:0",
-        "W:2:3:0",
+        "W:2:2:0",
         "X:2:5:0",
-        "W:2:4:0",
+        "W:2:3:0",
         "X:2:6:0",
-        "W:2:5:0",
+        "W:2:4:0",
         "X:2:7:0",
+        "W:2:5:0",
         "W:2:6:0",
         "W:2:7:0",
         "X:3:0:0",
-        "W:3:0:0",
         "X:3:1:0",
-        "W:3:1:0",
         "X:3:2:0",
-        "W:3:2:0",
         "X:3:3:0",
-        "W:3:3:0",
+        "W:3:0:0",
         "X:3:4:0",
-        "W:3:4:0",
+        "W:3:1:0",
         "X:3:5:0",
-        "W:3:5:0",
+        "W:3:2:0",
         "X:3:6:0",
-        "W:3:6:0",
+        "W:3:3:0",
         "X:3:7:0",
+        "W:3:4:0",
+        "W:3:5:0",
+        "W:3:6:0",
         "W:3:7:0"
       ],
       "priority": 5,
       "id": "U:2",
-      "start": 0.33600000000000013,
-      "end": 0.33700000000000013
+      "start": 0.2820000000000001,
+      "end": 0.2830000000000001
     },
     {
       "kind": "update",
@@ -6931,74 +6931,74 @@
       "resource": "compute:3",
       "dependencies": [
         "X:0:0:0",
-        "X:0:1:0",
-        "X:0:2:0",
-        "X:0:3:0",
         "W:0:0:0",
-        "X:0:4:0",
+        "X:0:1:0",
         "W:0:1:0",
-        "X:0:5:0",
+        "X:0:2:0",
         "W:0:2:0",
-        "X:0:6:0",
+        "X:0:3:0",
         "W:0:3:0",
-        "X:0:7:0",
+        "X:0:4:0",
         "W:0:4:0",
+        "X:0:5:0",
         "W:0:5:0",
+        "X:0:6:0",
         "W:0:6:0",
+        "X:0:7:0",
         "W:0:7:0",
         "X:1:0:0",
         "X:1:1:0",
-        "X:1:2:0",
         "W:1:0:0",
-        "X:1:3:0",
+        "X:1:2:0",
         "W:1:1:0",
-        "X:1:4:0",
+        "X:1:3:0",
         "W:1:2:0",
-        "X:1:5:0",
+        "X:1:4:0",
         "W:1:3:0",
-        "X:1:6:0",
+        "X:1:5:0",
         "W:1:4:0",
-        "X:1:7:0",
+        "X:1:6:0",
         "W:1:5:0",
+        "X:1:7:0",
         "W:1:6:0",
         "W:1:7:0",
         "X:2:0:0",
         "X:2:1:0",
-        "W:2:0:0",
         "X:2:2:0",
-        "W:2:1:0",
+        "W:2:0:0",
         "X:2:3:0",
-        "W:2:2:0",
+        "W:2:1:0",
         "X:2:4:0",
-        "W:2:3:0",
+        "W:2:2:0",
         "X:2:5:0",
-        "W:2:4:0",
+        "W:2:3:0",
         "X:2:6:0",
-        "W:2:5:0",
+        "W:2:4:0",
         "X:2:7:0",
+        "W:2:5:0",
         "W:2:6:0",
         "W:2:7:0",
         "X:3:0:0",
-        "W:3:0:0",
         "X:3:1:0",
-        "W:3:1:0",
         "X:3:2:0",
-        "W:3:2:0",
         "X:3:3:0",
-        "W:3:3:0",
+        "W:3:0:0",
         "X:3:4:0",
-        "W:3:4:0",
+        "W:3:1:0",
         "X:3:5:0",
-        "W:3:5:0",
+        "W:3:2:0",
         "X:3:6:0",
-        "W:3:6:0",
+        "W:3:3:0",
         "X:3:7:0",
+        "W:3:4:0",
+        "W:3:5:0",
+        "W:3:6:0",
         "W:3:7:0"
       ],
       "priority": 5,
       "id": "U:3",
-      "start": 0.33600000000000013,
-      "end": 0.33700000000000013
+      "start": 0.2820000000000001,
+      "end": 0.2830000000000001
     }
   ],
   "activation_intervals": [
@@ -7006,7 +7006,7 @@
       "id": "saved:0:0:0",
       "stage": 0,
       "start": 0.0,
-      "end": 0.18600000000000003,
+      "end": 0.09599999999999999,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
@@ -7014,7 +7014,7 @@
       "id": "saved:0:1:0",
       "stage": 0,
       "start": 0.01,
-      "end": 0.21600000000000005,
+      "end": 0.12599999999999997,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
@@ -7022,7 +7022,7 @@
       "id": "saved:0:2:0",
       "stage": 0,
       "start": 0.02,
-      "end": 0.24600000000000008,
+      "end": 0.156,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
@@ -7030,31 +7030,31 @@
       "id": "saved:0:3:0",
       "stage": 0,
       "start": 0.03,
-      "end": 0.2760000000000001,
+      "end": 0.18600000000000003,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:0:4:0",
       "stage": 0,
-      "start": 0.086,
-      "end": 0.3060000000000001,
+      "start": 0.09599999999999999,
+      "end": 0.21600000000000005,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:0:5:0",
       "stage": 0,
-      "start": 0.11599999999999998,
-      "end": 0.3160000000000001,
+      "start": 0.12599999999999997,
+      "end": 0.23800000000000007,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:0:6:0",
       "stage": 0,
-      "start": 0.146,
-      "end": 0.3260000000000001,
+      "start": 0.156,
+      "end": 0.26000000000000006,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
@@ -7062,7 +7062,7 @@
       "id": "saved:0:7:0",
       "stage": 0,
       "start": 0.18600000000000003,
-      "end": 0.33600000000000013,
+      "end": 0.2820000000000001,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
@@ -7070,7 +7070,7 @@
       "id": "saved:1:0:0",
       "stage": 1,
       "start": 0.011,
-      "end": 0.145,
+      "end": 0.10499999999999998,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
@@ -7078,7 +7078,7 @@
       "id": "saved:1:1:0",
       "stage": 1,
       "start": 0.021,
-      "end": 0.17500000000000002,
+      "end": 0.13699999999999998,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
@@ -7086,7 +7086,7 @@
       "id": "saved:1:2:0",
       "stage": 1,
       "start": 0.031,
-      "end": 0.20500000000000004,
+      "end": 0.167,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
@@ -7094,39 +7094,39 @@
       "id": "saved:1:3:0",
       "stage": 1,
       "start": 0.075,
-      "end": 0.23500000000000007,
+      "end": 0.19700000000000004,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:1:4:0",
       "stage": 1,
-      "start": 0.10499999999999998,
-      "end": 0.26500000000000007,
+      "start": 0.10699999999999998,
+      "end": 0.22700000000000006,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:1:5:0",
       "stage": 1,
-      "start": 0.145,
-      "end": 0.2950000000000001,
+      "start": 0.13699999999999998,
+      "end": 0.24900000000000008,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:1:6:0",
       "stage": 1,
-      "start": 0.17500000000000002,
-      "end": 0.3050000000000001,
+      "start": 0.167,
+      "end": 0.2710000000000001,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:1:7:0",
       "stage": 1,
-      "start": 0.20500000000000004,
-      "end": 0.3150000000000001,
+      "start": 0.19700000000000004,
+      "end": 0.2810000000000001,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
@@ -7134,7 +7134,7 @@
       "id": "saved:2:0:0",
       "stage": 2,
       "start": 0.022,
-      "end": 0.10399999999999998,
+      "end": 0.11599999999999998,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
@@ -7142,7 +7142,7 @@
       "id": "saved:2:1:0",
       "stage": 2,
       "start": 0.032,
-      "end": 0.13399999999999998,
+      "end": 0.148,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
@@ -7150,47 +7150,47 @@
       "id": "saved:2:2:0",
       "stage": 2,
       "start": 0.064,
-      "end": 0.164,
+      "end": 0.17800000000000002,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:2:3:0",
       "stage": 2,
-      "start": 0.10399999999999998,
-      "end": 0.19400000000000003,
+      "start": 0.086,
+      "end": 0.20800000000000005,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:2:4:0",
       "stage": 2,
-      "start": 0.13399999999999998,
-      "end": 0.22400000000000006,
+      "start": 0.11799999999999998,
+      "end": 0.23800000000000007,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:2:5:0",
       "stage": 2,
-      "start": 0.164,
-      "end": 0.25400000000000006,
+      "start": 0.148,
+      "end": 0.26000000000000006,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:2:6:0",
       "stage": 2,
-      "start": 0.19400000000000003,
-      "end": 0.2840000000000001,
+      "start": 0.17800000000000002,
+      "end": 0.2700000000000001,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:2:7:0",
       "stage": 2,
-      "start": 0.22400000000000006,
-      "end": 0.2940000000000001,
+      "start": 0.20800000000000005,
+      "end": 0.2800000000000001,
       "bytes": 240915456,
       "kind": "declared_saved_reservation"
     },
@@ -7198,63 +7198,63 @@
       "id": "saved:3:0:0",
       "stage": 3,
       "start": 0.033,
-      "end": 0.063,
+      "end": 0.12699999999999997,
       "bytes": 320804352,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:3:1:0",
       "stage": 3,
-      "start": 0.063,
-      "end": 0.09299999999999999,
+      "start": 0.053000000000000005,
+      "end": 0.159,
       "bytes": 320804352,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:3:2:0",
       "stage": 3,
-      "start": 0.09299999999999999,
-      "end": 0.12299999999999997,
+      "start": 0.075,
+      "end": 0.18900000000000003,
       "bytes": 320804352,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:3:3:0",
       "stage": 3,
-      "start": 0.12299999999999997,
-      "end": 0.153,
+      "start": 0.09699999999999999,
+      "end": 0.21900000000000006,
       "bytes": 320804352,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:3:4:0",
       "stage": 3,
-      "start": 0.153,
-      "end": 0.18300000000000002,
+      "start": 0.12899999999999998,
+      "end": 0.24900000000000008,
       "bytes": 320804352,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:3:5:0",
       "stage": 3,
-      "start": 0.18300000000000002,
-      "end": 0.21300000000000005,
+      "start": 0.159,
+      "end": 0.25900000000000006,
       "bytes": 320804352,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:3:6:0",
       "stage": 3,
-      "start": 0.21300000000000005,
-      "end": 0.24300000000000008,
+      "start": 0.18900000000000003,
+      "end": 0.2690000000000001,
       "bytes": 320804352,
       "kind": "declared_saved_reservation"
     },
     {
       "id": "saved:3:7:0",
       "stage": 3,
-      "start": 0.24300000000000008,
-      "end": 0.2730000000000001,
+      "start": 0.21900000000000006,
+      "end": 0.2790000000000001,
       "bytes": 320804352,
       "kind": "declared_saved_reservation"
     },
@@ -7398,7 +7398,7 @@
       "id": "A:2:1:0:receive",
       "stage": 3,
       "start": 0.042,
-      "end": 0.063,
+      "end": 0.053000000000000005,
       "bytes": 1048576,
       "kind": "receive_buffer"
     },
@@ -7435,6 +7435,22 @@
       "kind": "receive_buffer"
     },
     {
+      "id": "G:2:1:0:send",
+      "stage": 3,
+      "start": 0.073,
+      "end": 0.074,
+      "bytes": 2097152,
+      "kind": "send_buffer"
+    },
+    {
+      "id": "G:2:1:0:receive",
+      "stage": 2,
+      "start": 0.073,
+      "end": 0.074,
+      "bytes": 2097152,
+      "kind": "receive_buffer"
+    },
+    {
       "id": "A:2:2:0:send",
       "stage": 2,
       "start": 0.074,
@@ -7446,7 +7462,7 @@
       "id": "A:2:2:0:receive",
       "stage": 3,
       "start": 0.074,
-      "end": 0.09299999999999999,
+      "end": 0.075,
       "bytes": 1048576,
       "kind": "receive_buffer"
     },
@@ -7467,18 +7483,18 @@
       "kind": "receive_buffer"
     },
     {
-      "id": "G:2:1:0:send",
-      "stage": 3,
-      "start": 0.08299999999999999,
-      "end": 0.08399999999999999,
+      "id": "G:1:1:0:send",
+      "stage": 2,
+      "start": 0.08399999999999999,
+      "end": 0.08499999999999999,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
-      "id": "G:2:1:0:receive",
-      "stage": 2,
-      "start": 0.08299999999999999,
-      "end": 0.08399999999999999,
+      "id": "G:1:1:0:receive",
+      "stage": 1,
+      "start": 0.08399999999999999,
+      "end": 0.08499999999999999,
       "bytes": 2097152,
       "kind": "receive_buffer"
     },
@@ -7494,54 +7510,22 @@
       "id": "A:1:3:0:receive",
       "stage": 2,
       "start": 0.08499999999999999,
-      "end": 0.10399999999999998,
-      "bytes": 1048576,
-      "kind": "receive_buffer"
-    },
-    {
-      "id": "G:1:1:0:send",
-      "stage": 2,
-      "start": 0.09399999999999999,
-      "end": 0.09499999999999999,
-      "bytes": 2097152,
-      "kind": "send_buffer"
-    },
-    {
-      "id": "G:1:1:0:receive",
-      "stage": 1,
-      "start": 0.09399999999999999,
-      "end": 0.09499999999999999,
-      "bytes": 2097152,
-      "kind": "receive_buffer"
-    },
-    {
-      "id": "A:0:4:0:send",
-      "stage": 0,
-      "start": 0.09599999999999999,
-      "end": 0.09699999999999999,
-      "bytes": 1048576,
-      "kind": "send_buffer"
-    },
-    {
-      "id": "A:0:4:0:receive",
-      "stage": 1,
-      "start": 0.09599999999999999,
-      "end": 0.10499999999999998,
+      "end": 0.086,
       "bytes": 1048576,
       "kind": "receive_buffer"
     },
     {
       "id": "G:0:1:0:send",
       "stage": 1,
-      "start": 0.10499999999999998,
-      "end": 0.10599999999999998,
+      "start": 0.09499999999999999,
+      "end": 0.09599999999999999,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:0:1:0:receive",
       "stage": 0,
-      "start": 0.10499999999999998,
+      "start": 0.09499999999999999,
       "end": 0.10599999999999998,
       "bytes": 2097152,
       "kind": "receive_buffer"
@@ -7549,273 +7533,321 @@
     {
       "id": "G:2:2:0:send",
       "stage": 3,
-      "start": 0.11299999999999998,
-      "end": 0.11399999999999998,
+      "start": 0.09499999999999999,
+      "end": 0.09599999999999999,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:2:2:0:receive",
       "stage": 2,
-      "start": 0.11299999999999998,
-      "end": 0.11399999999999998,
+      "start": 0.09499999999999999,
+      "end": 0.09599999999999999,
       "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "A:2:3:0:send",
       "stage": 2,
-      "start": 0.11399999999999998,
-      "end": 0.11499999999999998,
+      "start": 0.09599999999999999,
+      "end": 0.09699999999999999,
       "bytes": 1048576,
       "kind": "send_buffer"
     },
     {
       "id": "A:2:3:0:receive",
       "stage": 3,
-      "start": 0.11399999999999998,
-      "end": 0.12299999999999997,
+      "start": 0.09599999999999999,
+      "end": 0.09699999999999999,
       "bytes": 1048576,
       "kind": "receive_buffer"
     },
     {
-      "id": "A:1:4:0:send",
-      "stage": 1,
-      "start": 0.11499999999999998,
-      "end": 0.11599999999999998,
+      "id": "A:0:4:0:send",
+      "stage": 0,
+      "start": 0.10599999999999998,
+      "end": 0.10699999999999998,
       "bytes": 1048576,
       "kind": "send_buffer"
     },
     {
-      "id": "A:1:4:0:receive",
-      "stage": 2,
-      "start": 0.11499999999999998,
-      "end": 0.13399999999999998,
+      "id": "A:0:4:0:receive",
+      "stage": 1,
+      "start": 0.10599999999999998,
+      "end": 0.10699999999999998,
       "bytes": 1048576,
       "kind": "receive_buffer"
     },
     {
       "id": "G:1:2:0:send",
       "stage": 2,
-      "start": 0.12399999999999997,
-      "end": 0.12499999999999997,
+      "start": 0.10599999999999998,
+      "end": 0.10699999999999998,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:1:2:0:receive",
       "stage": 1,
-      "start": 0.12399999999999997,
-      "end": 0.12499999999999997,
+      "start": 0.10599999999999998,
+      "end": 0.11699999999999998,
       "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
-      "id": "A:0:5:0:send",
-      "stage": 0,
-      "start": 0.12599999999999997,
-      "end": 0.12699999999999997,
+      "id": "A:1:4:0:send",
+      "stage": 1,
+      "start": 0.11699999999999998,
+      "end": 0.11799999999999998,
       "bytes": 1048576,
       "kind": "send_buffer"
     },
     {
-      "id": "A:0:5:0:receive",
-      "stage": 1,
-      "start": 0.12599999999999997,
-      "end": 0.145,
+      "id": "A:1:4:0:receive",
+      "stage": 2,
+      "start": 0.11699999999999998,
+      "end": 0.11799999999999998,
       "bytes": 1048576,
-      "kind": "receive_buffer"
-    },
-    {
-      "id": "G:0:2:0:send",
-      "stage": 1,
-      "start": 0.13499999999999998,
-      "end": 0.13599999999999998,
-      "bytes": 2097152,
-      "kind": "send_buffer"
-    },
-    {
-      "id": "G:0:2:0:receive",
-      "stage": 0,
-      "start": 0.13499999999999998,
-      "end": 0.13599999999999998,
-      "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "G:2:3:0:send",
       "stage": 3,
-      "start": 0.143,
-      "end": 0.144,
+      "start": 0.11699999999999998,
+      "end": 0.11799999999999998,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:2:3:0:receive",
       "stage": 2,
-      "start": 0.143,
-      "end": 0.144,
+      "start": 0.11699999999999998,
+      "end": 0.12799999999999997,
+      "bytes": 2097152,
+      "kind": "receive_buffer"
+    },
+    {
+      "id": "G:0:2:0:send",
+      "stage": 1,
+      "start": 0.12699999999999997,
+      "end": 0.12799999999999997,
+      "bytes": 2097152,
+      "kind": "send_buffer"
+    },
+    {
+      "id": "G:0:2:0:receive",
+      "stage": 0,
+      "start": 0.12699999999999997,
+      "end": 0.13599999999999998,
       "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "A:2:4:0:send",
       "stage": 2,
-      "start": 0.144,
-      "end": 0.145,
+      "start": 0.12799999999999997,
+      "end": 0.12899999999999998,
       "bytes": 1048576,
       "kind": "send_buffer"
     },
     {
       "id": "A:2:4:0:receive",
       "stage": 3,
-      "start": 0.144,
-      "end": 0.153,
+      "start": 0.12799999999999997,
+      "end": 0.12899999999999998,
+      "bytes": 1048576,
+      "kind": "receive_buffer"
+    },
+    {
+      "id": "A:0:5:0:send",
+      "stage": 0,
+      "start": 0.13599999999999998,
+      "end": 0.13699999999999998,
+      "bytes": 1048576,
+      "kind": "send_buffer"
+    },
+    {
+      "id": "A:0:5:0:receive",
+      "stage": 1,
+      "start": 0.13599999999999998,
+      "end": 0.13699999999999998,
       "bytes": 1048576,
       "kind": "receive_buffer"
     },
     {
       "id": "G:1:3:0:send",
       "stage": 2,
-      "start": 0.154,
-      "end": 0.155,
+      "start": 0.13799999999999998,
+      "end": 0.13899999999999998,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:1:3:0:receive",
       "stage": 1,
-      "start": 0.154,
-      "end": 0.155,
+      "start": 0.13799999999999998,
+      "end": 0.147,
       "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "A:1:5:0:send",
       "stage": 1,
-      "start": 0.155,
-      "end": 0.156,
+      "start": 0.147,
+      "end": 0.148,
       "bytes": 1048576,
       "kind": "send_buffer"
     },
     {
       "id": "A:1:5:0:receive",
       "stage": 2,
-      "start": 0.155,
-      "end": 0.164,
+      "start": 0.147,
+      "end": 0.148,
       "bytes": 1048576,
-      "kind": "receive_buffer"
-    },
-    {
-      "id": "A:0:6:0:send",
-      "stage": 0,
-      "start": 0.156,
-      "end": 0.157,
-      "bytes": 1048576,
-      "kind": "send_buffer"
-    },
-    {
-      "id": "A:0:6:0:receive",
-      "stage": 1,
-      "start": 0.156,
-      "end": 0.17500000000000002,
-      "bytes": 1048576,
-      "kind": "receive_buffer"
-    },
-    {
-      "id": "G:0:3:0:send",
-      "stage": 1,
-      "start": 0.165,
-      "end": 0.166,
-      "bytes": 2097152,
-      "kind": "send_buffer"
-    },
-    {
-      "id": "G:0:3:0:receive",
-      "stage": 0,
-      "start": 0.165,
-      "end": 0.166,
-      "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "G:2:4:0:send",
       "stage": 3,
-      "start": 0.17300000000000001,
-      "end": 0.17400000000000002,
+      "start": 0.149,
+      "end": 0.15,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:2:4:0:receive",
       "stage": 2,
-      "start": 0.17300000000000001,
-      "end": 0.17400000000000002,
+      "start": 0.149,
+      "end": 0.158,
+      "bytes": 2097152,
+      "kind": "receive_buffer"
+    },
+    {
+      "id": "G:0:3:0:send",
+      "stage": 1,
+      "start": 0.157,
+      "end": 0.158,
+      "bytes": 2097152,
+      "kind": "send_buffer"
+    },
+    {
+      "id": "G:0:3:0:receive",
+      "stage": 0,
+      "start": 0.157,
+      "end": 0.166,
       "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "A:2:5:0:send",
       "stage": 2,
-      "start": 0.17400000000000002,
-      "end": 0.17500000000000002,
+      "start": 0.158,
+      "end": 0.159,
       "bytes": 1048576,
       "kind": "send_buffer"
     },
     {
       "id": "A:2:5:0:receive",
       "stage": 3,
-      "start": 0.17400000000000002,
-      "end": 0.18300000000000002,
+      "start": 0.158,
+      "end": 0.159,
+      "bytes": 1048576,
+      "kind": "receive_buffer"
+    },
+    {
+      "id": "A:0:6:0:send",
+      "stage": 0,
+      "start": 0.166,
+      "end": 0.167,
+      "bytes": 1048576,
+      "kind": "send_buffer"
+    },
+    {
+      "id": "A:0:6:0:receive",
+      "stage": 1,
+      "start": 0.166,
+      "end": 0.167,
       "bytes": 1048576,
       "kind": "receive_buffer"
     },
     {
       "id": "G:1:4:0:send",
       "stage": 2,
-      "start": 0.18400000000000002,
-      "end": 0.18500000000000003,
+      "start": 0.168,
+      "end": 0.169,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:1:4:0:receive",
       "stage": 1,
-      "start": 0.18400000000000002,
-      "end": 0.18500000000000003,
+      "start": 0.168,
+      "end": 0.17700000000000002,
       "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "A:1:6:0:send",
       "stage": 1,
-      "start": 0.18500000000000003,
-      "end": 0.18600000000000003,
+      "start": 0.17700000000000002,
+      "end": 0.17800000000000002,
       "bytes": 1048576,
       "kind": "send_buffer"
     },
     {
       "id": "A:1:6:0:receive",
       "stage": 2,
-      "start": 0.18500000000000003,
-      "end": 0.19400000000000003,
+      "start": 0.17700000000000002,
+      "end": 0.17800000000000002,
       "bytes": 1048576,
+      "kind": "receive_buffer"
+    },
+    {
+      "id": "G:2:5:0:send",
+      "stage": 3,
+      "start": 0.17900000000000002,
+      "end": 0.18000000000000002,
+      "bytes": 2097152,
+      "kind": "send_buffer"
+    },
+    {
+      "id": "G:2:5:0:receive",
+      "stage": 2,
+      "start": 0.17900000000000002,
+      "end": 0.18800000000000003,
+      "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "G:0:4:0:send",
       "stage": 1,
-      "start": 0.19500000000000003,
-      "end": 0.19600000000000004,
+      "start": 0.18700000000000003,
+      "end": 0.18800000000000003,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:0:4:0:receive",
       "stage": 0,
-      "start": 0.19500000000000003,
+      "start": 0.18700000000000003,
       "end": 0.19600000000000004,
       "bytes": 2097152,
+      "kind": "receive_buffer"
+    },
+    {
+      "id": "A:2:6:0:send",
+      "stage": 2,
+      "start": 0.18800000000000003,
+      "end": 0.18900000000000003,
+      "bytes": 1048576,
+      "kind": "send_buffer"
+    },
+    {
+      "id": "A:2:6:0:receive",
+      "stage": 3,
+      "start": 0.18800000000000003,
+      "end": 0.18900000000000003,
+      "bytes": 1048576,
       "kind": "receive_buffer"
     },
     {
@@ -7830,199 +7862,167 @@
       "id": "A:0:7:0:receive",
       "stage": 1,
       "start": 0.19600000000000004,
-      "end": 0.20500000000000004,
-      "bytes": 1048576,
-      "kind": "receive_buffer"
-    },
-    {
-      "id": "G:2:5:0:send",
-      "stage": 3,
-      "start": 0.20300000000000004,
-      "end": 0.20400000000000004,
-      "bytes": 2097152,
-      "kind": "send_buffer"
-    },
-    {
-      "id": "G:2:5:0:receive",
-      "stage": 2,
-      "start": 0.20300000000000004,
-      "end": 0.20400000000000004,
-      "bytes": 2097152,
-      "kind": "receive_buffer"
-    },
-    {
-      "id": "A:2:6:0:send",
-      "stage": 2,
-      "start": 0.20400000000000004,
-      "end": 0.20500000000000004,
-      "bytes": 1048576,
-      "kind": "send_buffer"
-    },
-    {
-      "id": "A:2:6:0:receive",
-      "stage": 3,
-      "start": 0.20400000000000004,
-      "end": 0.21300000000000005,
+      "end": 0.19700000000000004,
       "bytes": 1048576,
       "kind": "receive_buffer"
     },
     {
       "id": "G:1:5:0:send",
       "stage": 2,
-      "start": 0.21400000000000005,
-      "end": 0.21500000000000005,
+      "start": 0.19800000000000004,
+      "end": 0.19900000000000004,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:1:5:0:receive",
       "stage": 1,
-      "start": 0.21400000000000005,
-      "end": 0.21500000000000005,
+      "start": 0.19800000000000004,
+      "end": 0.20700000000000005,
       "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "A:1:7:0:send",
       "stage": 1,
-      "start": 0.21500000000000005,
-      "end": 0.21600000000000005,
+      "start": 0.20700000000000005,
+      "end": 0.20800000000000005,
       "bytes": 1048576,
       "kind": "send_buffer"
     },
     {
       "id": "A:1:7:0:receive",
       "stage": 2,
-      "start": 0.21500000000000005,
-      "end": 0.22400000000000006,
+      "start": 0.20700000000000005,
+      "end": 0.20800000000000005,
       "bytes": 1048576,
-      "kind": "receive_buffer"
-    },
-    {
-      "id": "G:0:5:0:send",
-      "stage": 1,
-      "start": 0.22500000000000006,
-      "end": 0.22600000000000006,
-      "bytes": 2097152,
-      "kind": "send_buffer"
-    },
-    {
-      "id": "G:0:5:0:receive",
-      "stage": 0,
-      "start": 0.22500000000000006,
-      "end": 0.22600000000000006,
-      "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "G:2:6:0:send",
       "stage": 3,
-      "start": 0.23300000000000007,
-      "end": 0.23400000000000007,
+      "start": 0.20900000000000005,
+      "end": 0.21000000000000005,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:2:6:0:receive",
       "stage": 2,
-      "start": 0.23300000000000007,
-      "end": 0.23400000000000007,
+      "start": 0.20900000000000005,
+      "end": 0.21800000000000005,
+      "bytes": 2097152,
+      "kind": "receive_buffer"
+    },
+    {
+      "id": "G:0:5:0:send",
+      "stage": 1,
+      "start": 0.21700000000000005,
+      "end": 0.21800000000000005,
+      "bytes": 2097152,
+      "kind": "send_buffer"
+    },
+    {
+      "id": "G:0:5:0:receive",
+      "stage": 0,
+      "start": 0.21700000000000005,
+      "end": 0.21800000000000005,
       "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "A:2:7:0:send",
       "stage": 2,
-      "start": 0.23400000000000007,
-      "end": 0.23500000000000007,
+      "start": 0.21800000000000005,
+      "end": 0.21900000000000006,
       "bytes": 1048576,
       "kind": "send_buffer"
     },
     {
       "id": "A:2:7:0:receive",
       "stage": 3,
-      "start": 0.23400000000000007,
-      "end": 0.24300000000000008,
+      "start": 0.21800000000000005,
+      "end": 0.21900000000000006,
       "bytes": 1048576,
       "kind": "receive_buffer"
     },
     {
       "id": "G:1:6:0:send",
       "stage": 2,
-      "start": 0.24400000000000008,
-      "end": 0.24500000000000008,
+      "start": 0.22800000000000006,
+      "end": 0.22900000000000006,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:1:6:0:receive",
       "stage": 1,
-      "start": 0.24400000000000008,
-      "end": 0.24500000000000008,
+      "start": 0.22800000000000006,
+      "end": 0.22900000000000006,
       "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "G:0:6:0:send",
       "stage": 1,
-      "start": 0.25500000000000006,
-      "end": 0.25600000000000006,
+      "start": 0.23900000000000007,
+      "end": 0.24000000000000007,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:0:6:0:receive",
       "stage": 0,
-      "start": 0.25500000000000006,
-      "end": 0.25600000000000006,
+      "start": 0.23900000000000007,
+      "end": 0.24000000000000007,
       "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "G:2:7:0:send",
       "stage": 3,
-      "start": 0.26300000000000007,
-      "end": 0.26400000000000007,
+      "start": 0.23900000000000007,
+      "end": 0.24000000000000007,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:2:7:0:receive",
       "stage": 2,
-      "start": 0.26300000000000007,
-      "end": 0.26400000000000007,
+      "start": 0.23900000000000007,
+      "end": 0.24000000000000007,
       "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "G:1:7:0:send",
       "stage": 2,
-      "start": 0.2740000000000001,
-      "end": 0.2750000000000001,
+      "start": 0.25000000000000006,
+      "end": 0.25100000000000006,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:1:7:0:receive",
       "stage": 1,
-      "start": 0.2740000000000001,
-      "end": 0.2750000000000001,
+      "start": 0.25000000000000006,
+      "end": 0.25100000000000006,
       "bytes": 2097152,
       "kind": "receive_buffer"
     },
     {
       "id": "G:0:7:0:send",
       "stage": 1,
-      "start": 0.2850000000000001,
-      "end": 0.2860000000000001,
+      "start": 0.26100000000000007,
+      "end": 0.26200000000000007,
       "bytes": 2097152,
       "kind": "send_buffer"
     },
     {
       "id": "G:0:7:0:receive",
       "stage": 0,
-      "start": 0.2850000000000001,
-      "end": 0.2860000000000001,
+      "start": 0.26100000000000007,
+      "end": 0.26200000000000007,
       "bytes": 2097152,
       "kind": "receive_buffer"
     }
@@ -8030,7 +8030,7 @@
   "activation_timelines": [
     {
       "stage": 0,
-      "peak_declared_reserved_bytes": 1688505344,
+      "peak_declared_reserved_bytes": 965758976,
       "events": [
         {
           "time": 0.0,
@@ -8117,205 +8117,205 @@
           "live_bytes": 963661824
         },
         {
-          "time": 0.086,
-          "object": "saved:0:4:0",
-          "delta_bytes": 240915456,
-          "live_bytes": 1204577280
+          "time": 0.09499999999999999,
+          "object": "G:0:1:0:receive",
+          "delta_bytes": 2097152,
+          "live_bytes": 965758976
         },
         {
           "time": 0.09599999999999999,
-          "object": "A:0:4:0:send",
-          "delta_bytes": 1048576,
-          "live_bytes": 1205625856
+          "object": "saved:0:0:0",
+          "delta_bytes": -240915456,
+          "live_bytes": 724843520
         },
         {
-          "time": 0.09699999999999999,
-          "object": "A:0:4:0:send",
-          "delta_bytes": -1048576,
-          "live_bytes": 1204577280
-        },
-        {
-          "time": 0.10499999999999998,
-          "object": "G:0:1:0:receive",
-          "delta_bytes": 2097152,
-          "live_bytes": 1206674432
+          "time": 0.09599999999999999,
+          "object": "saved:0:4:0",
+          "delta_bytes": 240915456,
+          "live_bytes": 965758976
         },
         {
           "time": 0.10599999999999998,
           "object": "G:0:1:0:receive",
           "delta_bytes": -2097152,
-          "live_bytes": 1204577280
+          "live_bytes": 963661824
         },
         {
-          "time": 0.11599999999999998,
-          "object": "saved:0:5:0",
-          "delta_bytes": 240915456,
-          "live_bytes": 1445492736
+          "time": 0.10599999999999998,
+          "object": "A:0:4:0:send",
+          "delta_bytes": 1048576,
+          "live_bytes": 964710400
+        },
+        {
+          "time": 0.10699999999999998,
+          "object": "A:0:4:0:send",
+          "delta_bytes": -1048576,
+          "live_bytes": 963661824
         },
         {
           "time": 0.12599999999999997,
-          "object": "A:0:5:0:send",
-          "delta_bytes": 1048576,
-          "live_bytes": 1446541312
+          "object": "saved:0:1:0",
+          "delta_bytes": -240915456,
+          "live_bytes": 722746368
+        },
+        {
+          "time": 0.12599999999999997,
+          "object": "saved:0:5:0",
+          "delta_bytes": 240915456,
+          "live_bytes": 963661824
         },
         {
           "time": 0.12699999999999997,
-          "object": "A:0:5:0:send",
-          "delta_bytes": -1048576,
-          "live_bytes": 1445492736
-        },
-        {
-          "time": 0.13499999999999998,
           "object": "G:0:2:0:receive",
           "delta_bytes": 2097152,
-          "live_bytes": 1447589888
+          "live_bytes": 965758976
         },
         {
           "time": 0.13599999999999998,
           "object": "G:0:2:0:receive",
           "delta_bytes": -2097152,
-          "live_bytes": 1445492736
+          "live_bytes": 963661824
         },
         {
-          "time": 0.146,
-          "object": "saved:0:6:0",
-          "delta_bytes": 240915456,
-          "live_bytes": 1686408192
+          "time": 0.13599999999999998,
+          "object": "A:0:5:0:send",
+          "delta_bytes": 1048576,
+          "live_bytes": 964710400
+        },
+        {
+          "time": 0.13699999999999998,
+          "object": "A:0:5:0:send",
+          "delta_bytes": -1048576,
+          "live_bytes": 963661824
         },
         {
           "time": 0.156,
-          "object": "A:0:6:0:send",
-          "delta_bytes": 1048576,
-          "live_bytes": 1687456768
+          "object": "saved:0:2:0",
+          "delta_bytes": -240915456,
+          "live_bytes": 722746368
+        },
+        {
+          "time": 0.156,
+          "object": "saved:0:6:0",
+          "delta_bytes": 240915456,
+          "live_bytes": 963661824
         },
         {
           "time": 0.157,
-          "object": "A:0:6:0:send",
-          "delta_bytes": -1048576,
-          "live_bytes": 1686408192
-        },
-        {
-          "time": 0.165,
           "object": "G:0:3:0:receive",
           "delta_bytes": 2097152,
-          "live_bytes": 1688505344
+          "live_bytes": 965758976
         },
         {
           "time": 0.166,
           "object": "G:0:3:0:receive",
           "delta_bytes": -2097152,
-          "live_bytes": 1686408192
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.166,
+          "object": "A:0:6:0:send",
+          "delta_bytes": 1048576,
+          "live_bytes": 964710400
+        },
+        {
+          "time": 0.167,
+          "object": "A:0:6:0:send",
+          "delta_bytes": -1048576,
+          "live_bytes": 963661824
         },
         {
           "time": 0.18600000000000003,
-          "object": "saved:0:0:0",
+          "object": "saved:0:3:0",
           "delta_bytes": -240915456,
-          "live_bytes": 1445492736
+          "live_bytes": 722746368
         },
         {
           "time": 0.18600000000000003,
           "object": "saved:0:7:0",
           "delta_bytes": 240915456,
-          "live_bytes": 1686408192
+          "live_bytes": 963661824
         },
         {
-          "time": 0.19500000000000003,
+          "time": 0.18700000000000003,
           "object": "G:0:4:0:receive",
           "delta_bytes": 2097152,
-          "live_bytes": 1688505344
+          "live_bytes": 965758976
         },
         {
           "time": 0.19600000000000004,
           "object": "G:0:4:0:receive",
           "delta_bytes": -2097152,
-          "live_bytes": 1686408192
+          "live_bytes": 963661824
         },
         {
           "time": 0.19600000000000004,
           "object": "A:0:7:0:send",
           "delta_bytes": 1048576,
-          "live_bytes": 1687456768
+          "live_bytes": 964710400
         },
         {
           "time": 0.19700000000000004,
           "object": "A:0:7:0:send",
           "delta_bytes": -1048576,
-          "live_bytes": 1686408192
+          "live_bytes": 963661824
         },
         {
           "time": 0.21600000000000005,
-          "object": "saved:0:1:0",
-          "delta_bytes": -240915456,
-          "live_bytes": 1445492736
-        },
-        {
-          "time": 0.22500000000000006,
-          "object": "G:0:5:0:receive",
-          "delta_bytes": 2097152,
-          "live_bytes": 1447589888
-        },
-        {
-          "time": 0.22600000000000006,
-          "object": "G:0:5:0:receive",
-          "delta_bytes": -2097152,
-          "live_bytes": 1445492736
-        },
-        {
-          "time": 0.24600000000000008,
-          "object": "saved:0:2:0",
-          "delta_bytes": -240915456,
-          "live_bytes": 1204577280
-        },
-        {
-          "time": 0.25500000000000006,
-          "object": "G:0:6:0:receive",
-          "delta_bytes": 2097152,
-          "live_bytes": 1206674432
-        },
-        {
-          "time": 0.25600000000000006,
-          "object": "G:0:6:0:receive",
-          "delta_bytes": -2097152,
-          "live_bytes": 1204577280
-        },
-        {
-          "time": 0.2760000000000001,
-          "object": "saved:0:3:0",
-          "delta_bytes": -240915456,
-          "live_bytes": 963661824
-        },
-        {
-          "time": 0.2850000000000001,
-          "object": "G:0:7:0:receive",
-          "delta_bytes": 2097152,
-          "live_bytes": 965758976
-        },
-        {
-          "time": 0.2860000000000001,
-          "object": "G:0:7:0:receive",
-          "delta_bytes": -2097152,
-          "live_bytes": 963661824
-        },
-        {
-          "time": 0.3060000000000001,
           "object": "saved:0:4:0",
           "delta_bytes": -240915456,
           "live_bytes": 722746368
         },
         {
-          "time": 0.3160000000000001,
+          "time": 0.21700000000000005,
+          "object": "G:0:5:0:receive",
+          "delta_bytes": 2097152,
+          "live_bytes": 724843520
+        },
+        {
+          "time": 0.21800000000000005,
+          "object": "G:0:5:0:receive",
+          "delta_bytes": -2097152,
+          "live_bytes": 722746368
+        },
+        {
+          "time": 0.23800000000000007,
           "object": "saved:0:5:0",
           "delta_bytes": -240915456,
           "live_bytes": 481830912
         },
         {
-          "time": 0.3260000000000001,
+          "time": 0.23900000000000007,
+          "object": "G:0:6:0:receive",
+          "delta_bytes": 2097152,
+          "live_bytes": 483928064
+        },
+        {
+          "time": 0.24000000000000007,
+          "object": "G:0:6:0:receive",
+          "delta_bytes": -2097152,
+          "live_bytes": 481830912
+        },
+        {
+          "time": 0.26000000000000006,
           "object": "saved:0:6:0",
           "delta_bytes": -240915456,
           "live_bytes": 240915456
         },
         {
-          "time": 0.33600000000000013,
+          "time": 0.26100000000000007,
+          "object": "G:0:7:0:receive",
+          "delta_bytes": 2097152,
+          "live_bytes": 243012608
+        },
+        {
+          "time": 0.26200000000000007,
+          "object": "G:0:7:0:receive",
+          "delta_bytes": -2097152,
+          "live_bytes": 240915456
+        },
+        {
+          "time": 0.2820000000000001,
           "object": "saved:0:7:0",
           "delta_bytes": -240915456,
           "live_bytes": 0
@@ -8324,7 +8324,7 @@
     },
     {
       "stage": 1,
-      "peak_declared_reserved_bytes": 1207723008,
+      "peak_declared_reserved_bytes": 965758976,
       "events": [
         {
           "time": 0.01,
@@ -8459,6 +8459,18 @@
           "live_bytes": 963661824
         },
         {
+          "time": 0.08399999999999999,
+          "object": "G:1:1:0:receive",
+          "delta_bytes": 2097152,
+          "live_bytes": 965758976
+        },
+        {
+          "time": 0.08499999999999999,
+          "object": "G:1:1:0:receive",
+          "delta_bytes": -2097152,
+          "live_bytes": 963661824
+        },
+        {
           "time": 0.08499999999999999,
           "object": "A:1:3:0:send",
           "delta_bytes": 1048576,
@@ -8471,337 +8483,325 @@
           "live_bytes": 963661824
         },
         {
-          "time": 0.09399999999999999,
-          "object": "G:1:1:0:receive",
+          "time": 0.09499999999999999,
+          "object": "G:0:1:0:send",
           "delta_bytes": 2097152,
           "live_bytes": 965758976
-        },
-        {
-          "time": 0.09499999999999999,
-          "object": "G:1:1:0:receive",
-          "delta_bytes": -2097152,
-          "live_bytes": 963661824
         },
         {
           "time": 0.09599999999999999,
-          "object": "A:0:4:0:receive",
-          "delta_bytes": 1048576,
-          "live_bytes": 964710400
-        },
-        {
-          "time": 0.10499999999999998,
-          "object": "A:0:4:0:receive",
-          "delta_bytes": -1048576,
+          "object": "G:0:1:0:send",
+          "delta_bytes": -2097152,
           "live_bytes": 963661824
         },
         {
           "time": 0.10499999999999998,
-          "object": "G:0:1:0:send",
-          "delta_bytes": 2097152,
-          "live_bytes": 965758976
-        },
-        {
-          "time": 0.10499999999999998,
-          "object": "saved:1:4:0",
-          "delta_bytes": 240915456,
-          "live_bytes": 1206674432
+          "object": "saved:1:0:0",
+          "delta_bytes": -240915456,
+          "live_bytes": 722746368
         },
         {
           "time": 0.10599999999999998,
-          "object": "G:0:1:0:send",
-          "delta_bytes": -2097152,
-          "live_bytes": 1204577280
+          "object": "A:0:4:0:receive",
+          "delta_bytes": 1048576,
+          "live_bytes": 723794944
         },
         {
-          "time": 0.11499999999999998,
+          "time": 0.10599999999999998,
+          "object": "G:1:2:0:receive",
+          "delta_bytes": 2097152,
+          "live_bytes": 725892096
+        },
+        {
+          "time": 0.10699999999999998,
+          "object": "A:0:4:0:receive",
+          "delta_bytes": -1048576,
+          "live_bytes": 724843520
+        },
+        {
+          "time": 0.10699999999999998,
+          "object": "saved:1:4:0",
+          "delta_bytes": 240915456,
+          "live_bytes": 965758976
+        },
+        {
+          "time": 0.11699999999999998,
+          "object": "G:1:2:0:receive",
+          "delta_bytes": -2097152,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.11699999999999998,
           "object": "A:1:4:0:send",
           "delta_bytes": 1048576,
-          "live_bytes": 1205625856
+          "live_bytes": 964710400
         },
         {
-          "time": 0.11599999999999998,
+          "time": 0.11799999999999998,
           "object": "A:1:4:0:send",
           "delta_bytes": -1048576,
-          "live_bytes": 1204577280
+          "live_bytes": 963661824
         },
         {
-          "time": 0.12399999999999997,
-          "object": "G:1:2:0:receive",
-          "delta_bytes": 2097152,
-          "live_bytes": 1206674432
-        },
-        {
-          "time": 0.12499999999999997,
-          "object": "G:1:2:0:receive",
-          "delta_bytes": -2097152,
-          "live_bytes": 1204577280
-        },
-        {
-          "time": 0.12599999999999997,
-          "object": "A:0:5:0:receive",
-          "delta_bytes": 1048576,
-          "live_bytes": 1205625856
-        },
-        {
-          "time": 0.13499999999999998,
+          "time": 0.12699999999999997,
           "object": "G:0:2:0:send",
           "delta_bytes": 2097152,
-          "live_bytes": 1207723008
+          "live_bytes": 965758976
+        },
+        {
+          "time": 0.12799999999999997,
+          "object": "G:0:2:0:send",
+          "delta_bytes": -2097152,
+          "live_bytes": 963661824
         },
         {
           "time": 0.13599999999999998,
-          "object": "G:0:2:0:send",
-          "delta_bytes": -2097152,
-          "live_bytes": 1205625856
-        },
-        {
-          "time": 0.145,
-          "object": "saved:1:0:0",
-          "delta_bytes": -240915456,
+          "object": "A:0:5:0:receive",
+          "delta_bytes": 1048576,
           "live_bytes": 964710400
         },
         {
-          "time": 0.145,
+          "time": 0.13699999999999998,
+          "object": "saved:1:1:0",
+          "delta_bytes": -240915456,
+          "live_bytes": 723794944
+        },
+        {
+          "time": 0.13699999999999998,
           "object": "A:0:5:0:receive",
+          "delta_bytes": -1048576,
+          "live_bytes": 722746368
+        },
+        {
+          "time": 0.13699999999999998,
+          "object": "saved:1:5:0",
+          "delta_bytes": 240915456,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.13799999999999998,
+          "object": "G:1:3:0:receive",
+          "delta_bytes": 2097152,
+          "live_bytes": 965758976
+        },
+        {
+          "time": 0.147,
+          "object": "G:1:3:0:receive",
+          "delta_bytes": -2097152,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.147,
+          "object": "A:1:5:0:send",
+          "delta_bytes": 1048576,
+          "live_bytes": 964710400
+        },
+        {
+          "time": 0.148,
+          "object": "A:1:5:0:send",
           "delta_bytes": -1048576,
           "live_bytes": 963661824
         },
         {
-          "time": 0.145,
-          "object": "saved:1:5:0",
-          "delta_bytes": 240915456,
-          "live_bytes": 1204577280
-        },
-        {
-          "time": 0.154,
-          "object": "G:1:3:0:receive",
-          "delta_bytes": 2097152,
-          "live_bytes": 1206674432
-        },
-        {
-          "time": 0.155,
-          "object": "G:1:3:0:receive",
-          "delta_bytes": -2097152,
-          "live_bytes": 1204577280
-        },
-        {
-          "time": 0.155,
-          "object": "A:1:5:0:send",
-          "delta_bytes": 1048576,
-          "live_bytes": 1205625856
-        },
-        {
-          "time": 0.156,
-          "object": "A:1:5:0:send",
-          "delta_bytes": -1048576,
-          "live_bytes": 1204577280
-        },
-        {
-          "time": 0.156,
-          "object": "A:0:6:0:receive",
-          "delta_bytes": 1048576,
-          "live_bytes": 1205625856
-        },
-        {
-          "time": 0.165,
+          "time": 0.157,
           "object": "G:0:3:0:send",
           "delta_bytes": 2097152,
-          "live_bytes": 1207723008
+          "live_bytes": 965758976
+        },
+        {
+          "time": 0.158,
+          "object": "G:0:3:0:send",
+          "delta_bytes": -2097152,
+          "live_bytes": 963661824
         },
         {
           "time": 0.166,
-          "object": "G:0:3:0:send",
-          "delta_bytes": -2097152,
-          "live_bytes": 1205625856
-        },
-        {
-          "time": 0.17500000000000002,
-          "object": "saved:1:1:0",
-          "delta_bytes": -240915456,
+          "object": "A:0:6:0:receive",
+          "delta_bytes": 1048576,
           "live_bytes": 964710400
         },
         {
-          "time": 0.17500000000000002,
-          "object": "A:0:6:0:receive",
-          "delta_bytes": -1048576,
-          "live_bytes": 963661824
-        },
-        {
-          "time": 0.17500000000000002,
-          "object": "saved:1:6:0",
-          "delta_bytes": 240915456,
-          "live_bytes": 1204577280
-        },
-        {
-          "time": 0.18400000000000002,
-          "object": "G:1:4:0:receive",
-          "delta_bytes": 2097152,
-          "live_bytes": 1206674432
-        },
-        {
-          "time": 0.18500000000000003,
-          "object": "G:1:4:0:receive",
-          "delta_bytes": -2097152,
-          "live_bytes": 1204577280
-        },
-        {
-          "time": 0.18500000000000003,
-          "object": "A:1:6:0:send",
-          "delta_bytes": 1048576,
-          "live_bytes": 1205625856
-        },
-        {
-          "time": 0.18600000000000003,
-          "object": "A:1:6:0:send",
-          "delta_bytes": -1048576,
-          "live_bytes": 1204577280
-        },
-        {
-          "time": 0.19500000000000003,
-          "object": "G:0:4:0:send",
-          "delta_bytes": 2097152,
-          "live_bytes": 1206674432
-        },
-        {
-          "time": 0.19600000000000004,
-          "object": "G:0:4:0:send",
-          "delta_bytes": -2097152,
-          "live_bytes": 1204577280
-        },
-        {
-          "time": 0.19600000000000004,
-          "object": "A:0:7:0:receive",
-          "delta_bytes": 1048576,
-          "live_bytes": 1205625856
-        },
-        {
-          "time": 0.20500000000000004,
+          "time": 0.167,
           "object": "saved:1:2:0",
           "delta_bytes": -240915456,
+          "live_bytes": 723794944
+        },
+        {
+          "time": 0.167,
+          "object": "A:0:6:0:receive",
+          "delta_bytes": -1048576,
+          "live_bytes": 722746368
+        },
+        {
+          "time": 0.167,
+          "object": "saved:1:6:0",
+          "delta_bytes": 240915456,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.168,
+          "object": "G:1:4:0:receive",
+          "delta_bytes": 2097152,
+          "live_bytes": 965758976
+        },
+        {
+          "time": 0.17700000000000002,
+          "object": "G:1:4:0:receive",
+          "delta_bytes": -2097152,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.17700000000000002,
+          "object": "A:1:6:0:send",
+          "delta_bytes": 1048576,
           "live_bytes": 964710400
         },
         {
-          "time": 0.20500000000000004,
-          "object": "A:0:7:0:receive",
+          "time": 0.17800000000000002,
+          "object": "A:1:6:0:send",
           "delta_bytes": -1048576,
           "live_bytes": 963661824
         },
         {
-          "time": 0.20500000000000004,
-          "object": "saved:1:7:0",
-          "delta_bytes": 240915456,
-          "live_bytes": 1204577280
-        },
-        {
-          "time": 0.21400000000000005,
-          "object": "G:1:5:0:receive",
+          "time": 0.18700000000000003,
+          "object": "G:0:4:0:send",
           "delta_bytes": 2097152,
-          "live_bytes": 1206674432
+          "live_bytes": 965758976
         },
         {
-          "time": 0.21500000000000005,
-          "object": "G:1:5:0:receive",
+          "time": 0.18800000000000003,
+          "object": "G:0:4:0:send",
           "delta_bytes": -2097152,
-          "live_bytes": 1204577280
+          "live_bytes": 963661824
         },
         {
-          "time": 0.21500000000000005,
-          "object": "A:1:7:0:send",
+          "time": 0.19600000000000004,
+          "object": "A:0:7:0:receive",
           "delta_bytes": 1048576,
-          "live_bytes": 1205625856
+          "live_bytes": 964710400
         },
         {
-          "time": 0.21600000000000005,
-          "object": "A:1:7:0:send",
-          "delta_bytes": -1048576,
-          "live_bytes": 1204577280
-        },
-        {
-          "time": 0.22500000000000006,
-          "object": "G:0:5:0:send",
-          "delta_bytes": 2097152,
-          "live_bytes": 1206674432
-        },
-        {
-          "time": 0.22600000000000006,
-          "object": "G:0:5:0:send",
-          "delta_bytes": -2097152,
-          "live_bytes": 1204577280
-        },
-        {
-          "time": 0.23500000000000007,
+          "time": 0.19700000000000004,
           "object": "saved:1:3:0",
           "delta_bytes": -240915456,
+          "live_bytes": 723794944
+        },
+        {
+          "time": 0.19700000000000004,
+          "object": "A:0:7:0:receive",
+          "delta_bytes": -1048576,
+          "live_bytes": 722746368
+        },
+        {
+          "time": 0.19700000000000004,
+          "object": "saved:1:7:0",
+          "delta_bytes": 240915456,
           "live_bytes": 963661824
         },
         {
-          "time": 0.24400000000000008,
-          "object": "G:1:6:0:receive",
+          "time": 0.19800000000000004,
+          "object": "G:1:5:0:receive",
           "delta_bytes": 2097152,
           "live_bytes": 965758976
         },
         {
-          "time": 0.24500000000000008,
-          "object": "G:1:6:0:receive",
+          "time": 0.20700000000000005,
+          "object": "G:1:5:0:receive",
           "delta_bytes": -2097152,
           "live_bytes": 963661824
         },
         {
-          "time": 0.25500000000000006,
-          "object": "G:0:6:0:send",
+          "time": 0.20700000000000005,
+          "object": "A:1:7:0:send",
+          "delta_bytes": 1048576,
+          "live_bytes": 964710400
+        },
+        {
+          "time": 0.20800000000000005,
+          "object": "A:1:7:0:send",
+          "delta_bytes": -1048576,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.21700000000000005,
+          "object": "G:0:5:0:send",
           "delta_bytes": 2097152,
           "live_bytes": 965758976
         },
         {
-          "time": 0.25600000000000006,
-          "object": "G:0:6:0:send",
+          "time": 0.21800000000000005,
+          "object": "G:0:5:0:send",
           "delta_bytes": -2097152,
           "live_bytes": 963661824
         },
         {
-          "time": 0.26500000000000007,
+          "time": 0.22700000000000006,
           "object": "saved:1:4:0",
           "delta_bytes": -240915456,
           "live_bytes": 722746368
         },
         {
-          "time": 0.2740000000000001,
-          "object": "G:1:7:0:receive",
+          "time": 0.22800000000000006,
+          "object": "G:1:6:0:receive",
           "delta_bytes": 2097152,
           "live_bytes": 724843520
         },
         {
-          "time": 0.2750000000000001,
-          "object": "G:1:7:0:receive",
+          "time": 0.22900000000000006,
+          "object": "G:1:6:0:receive",
           "delta_bytes": -2097152,
           "live_bytes": 722746368
         },
         {
-          "time": 0.2850000000000001,
-          "object": "G:0:7:0:send",
+          "time": 0.23900000000000007,
+          "object": "G:0:6:0:send",
           "delta_bytes": 2097152,
           "live_bytes": 724843520
         },
         {
-          "time": 0.2860000000000001,
-          "object": "G:0:7:0:send",
+          "time": 0.24000000000000007,
+          "object": "G:0:6:0:send",
           "delta_bytes": -2097152,
           "live_bytes": 722746368
         },
         {
-          "time": 0.2950000000000001,
+          "time": 0.24900000000000008,
           "object": "saved:1:5:0",
           "delta_bytes": -240915456,
           "live_bytes": 481830912
         },
         {
-          "time": 0.3050000000000001,
+          "time": 0.25000000000000006,
+          "object": "G:1:7:0:receive",
+          "delta_bytes": 2097152,
+          "live_bytes": 483928064
+        },
+        {
+          "time": 0.25100000000000006,
+          "object": "G:1:7:0:receive",
+          "delta_bytes": -2097152,
+          "live_bytes": 481830912
+        },
+        {
+          "time": 0.26100000000000007,
+          "object": "G:0:7:0:send",
+          "delta_bytes": 2097152,
+          "live_bytes": 483928064
+        },
+        {
+          "time": 0.26200000000000007,
+          "object": "G:0:7:0:send",
+          "delta_bytes": -2097152,
+          "live_bytes": 481830912
+        },
+        {
+          "time": 0.2710000000000001,
           "object": "saved:1:6:0",
           "delta_bytes": -240915456,
           "live_bytes": 240915456
         },
         {
-          "time": 0.3150000000000001,
+          "time": 0.2810000000000001,
           "object": "saved:1:7:0",
           "delta_bytes": -240915456,
           "live_bytes": 0
@@ -8810,7 +8810,7 @@
     },
     {
       "stage": 2,
-      "peak_declared_reserved_bytes": 725892096,
+      "peak_declared_reserved_bytes": 965758976,
       "events": [
         {
           "time": 0.020999999999999998,
@@ -8915,6 +8915,18 @@
           "live_bytes": 722746368
         },
         {
+          "time": 0.073,
+          "object": "G:2:1:0:receive",
+          "delta_bytes": 2097152,
+          "live_bytes": 724843520
+        },
+        {
+          "time": 0.074,
+          "object": "G:2:1:0:receive",
+          "delta_bytes": -2097152,
+          "live_bytes": 722746368
+        },
+        {
           "time": 0.074,
           "object": "A:2:2:0:send",
           "delta_bytes": 1048576,
@@ -8927,14 +8939,14 @@
           "live_bytes": 722746368
         },
         {
-          "time": 0.08299999999999999,
-          "object": "G:2:1:0:receive",
+          "time": 0.08399999999999999,
+          "object": "G:1:1:0:send",
           "delta_bytes": 2097152,
           "live_bytes": 724843520
         },
         {
-          "time": 0.08399999999999999,
-          "object": "G:2:1:0:receive",
+          "time": 0.08499999999999999,
+          "object": "G:1:1:0:send",
           "delta_bytes": -2097152,
           "live_bytes": 722746368
         },
@@ -8945,349 +8957,337 @@
           "live_bytes": 723794944
         },
         {
-          "time": 0.09399999999999999,
-          "object": "G:1:1:0:send",
-          "delta_bytes": 2097152,
-          "live_bytes": 725892096
+          "time": 0.086,
+          "object": "A:1:3:0:receive",
+          "delta_bytes": -1048576,
+          "live_bytes": 722746368
+        },
+        {
+          "time": 0.086,
+          "object": "saved:2:3:0",
+          "delta_bytes": 240915456,
+          "live_bytes": 963661824
         },
         {
           "time": 0.09499999999999999,
-          "object": "G:1:1:0:send",
-          "delta_bytes": -2097152,
-          "live_bytes": 723794944
-        },
-        {
-          "time": 0.10399999999999998,
-          "object": "saved:2:0:0",
-          "delta_bytes": -240915456,
-          "live_bytes": 482879488
-        },
-        {
-          "time": 0.10399999999999998,
-          "object": "A:1:3:0:receive",
-          "delta_bytes": -1048576,
-          "live_bytes": 481830912
-        },
-        {
-          "time": 0.10399999999999998,
-          "object": "saved:2:3:0",
-          "delta_bytes": 240915456,
-          "live_bytes": 722746368
-        },
-        {
-          "time": 0.11299999999999998,
           "object": "G:2:2:0:receive",
           "delta_bytes": 2097152,
-          "live_bytes": 724843520
+          "live_bytes": 965758976
         },
         {
-          "time": 0.11399999999999998,
+          "time": 0.09599999999999999,
           "object": "G:2:2:0:receive",
           "delta_bytes": -2097152,
-          "live_bytes": 722746368
+          "live_bytes": 963661824
         },
         {
-          "time": 0.11399999999999998,
+          "time": 0.09599999999999999,
           "object": "A:2:3:0:send",
           "delta_bytes": 1048576,
-          "live_bytes": 723794944
+          "live_bytes": 964710400
         },
         {
-          "time": 0.11499999999999998,
+          "time": 0.09699999999999999,
           "object": "A:2:3:0:send",
           "delta_bytes": -1048576,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.10599999999999998,
+          "object": "G:1:2:0:send",
+          "delta_bytes": 2097152,
+          "live_bytes": 965758976
+        },
+        {
+          "time": 0.10699999999999998,
+          "object": "G:1:2:0:send",
+          "delta_bytes": -2097152,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.11599999999999998,
+          "object": "saved:2:0:0",
+          "delta_bytes": -240915456,
           "live_bytes": 722746368
         },
         {
-          "time": 0.11499999999999998,
+          "time": 0.11699999999999998,
           "object": "A:1:4:0:receive",
           "delta_bytes": 1048576,
           "live_bytes": 723794944
         },
         {
-          "time": 0.12399999999999997,
-          "object": "G:1:2:0:send",
+          "time": 0.11699999999999998,
+          "object": "G:2:3:0:receive",
           "delta_bytes": 2097152,
           "live_bytes": 725892096
         },
         {
-          "time": 0.12499999999999997,
-          "object": "G:1:2:0:send",
-          "delta_bytes": -2097152,
-          "live_bytes": 723794944
-        },
-        {
-          "time": 0.13399999999999998,
-          "object": "saved:2:1:0",
-          "delta_bytes": -240915456,
-          "live_bytes": 482879488
-        },
-        {
-          "time": 0.13399999999999998,
+          "time": 0.11799999999999998,
           "object": "A:1:4:0:receive",
           "delta_bytes": -1048576,
-          "live_bytes": 481830912
-        },
-        {
-          "time": 0.13399999999999998,
-          "object": "saved:2:4:0",
-          "delta_bytes": 240915456,
-          "live_bytes": 722746368
-        },
-        {
-          "time": 0.143,
-          "object": "G:2:3:0:receive",
-          "delta_bytes": 2097152,
           "live_bytes": 724843520
         },
         {
-          "time": 0.144,
-          "object": "G:2:3:0:receive",
-          "delta_bytes": -2097152,
-          "live_bytes": 722746368
+          "time": 0.11799999999999998,
+          "object": "saved:2:4:0",
+          "delta_bytes": 240915456,
+          "live_bytes": 965758976
         },
         {
-          "time": 0.144,
+          "time": 0.12799999999999997,
+          "object": "G:2:3:0:receive",
+          "delta_bytes": -2097152,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.12799999999999997,
           "object": "A:2:4:0:send",
           "delta_bytes": 1048576,
+          "live_bytes": 964710400
+        },
+        {
+          "time": 0.12899999999999998,
+          "object": "A:2:4:0:send",
+          "delta_bytes": -1048576,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.13799999999999998,
+          "object": "G:1:3:0:send",
+          "delta_bytes": 2097152,
+          "live_bytes": 965758976
+        },
+        {
+          "time": 0.13899999999999998,
+          "object": "G:1:3:0:send",
+          "delta_bytes": -2097152,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.147,
+          "object": "A:1:5:0:receive",
+          "delta_bytes": 1048576,
+          "live_bytes": 964710400
+        },
+        {
+          "time": 0.148,
+          "object": "saved:2:1:0",
+          "delta_bytes": -240915456,
           "live_bytes": 723794944
         },
         {
-          "time": 0.145,
-          "object": "A:2:4:0:send",
+          "time": 0.148,
+          "object": "A:1:5:0:receive",
           "delta_bytes": -1048576,
           "live_bytes": 722746368
         },
         {
-          "time": 0.154,
-          "object": "G:1:3:0:send",
+          "time": 0.148,
+          "object": "saved:2:5:0",
+          "delta_bytes": 240915456,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.149,
+          "object": "G:2:4:0:receive",
           "delta_bytes": 2097152,
-          "live_bytes": 724843520
+          "live_bytes": 965758976
         },
         {
-          "time": 0.155,
-          "object": "G:1:3:0:send",
+          "time": 0.158,
+          "object": "G:2:4:0:receive",
           "delta_bytes": -2097152,
-          "live_bytes": 722746368
+          "live_bytes": 963661824
         },
         {
-          "time": 0.155,
-          "object": "A:1:5:0:receive",
+          "time": 0.158,
+          "object": "A:2:5:0:send",
           "delta_bytes": 1048576,
-          "live_bytes": 723794944
+          "live_bytes": 964710400
         },
         {
-          "time": 0.164,
+          "time": 0.159,
+          "object": "A:2:5:0:send",
+          "delta_bytes": -1048576,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.168,
+          "object": "G:1:4:0:send",
+          "delta_bytes": 2097152,
+          "live_bytes": 965758976
+        },
+        {
+          "time": 0.169,
+          "object": "G:1:4:0:send",
+          "delta_bytes": -2097152,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.17700000000000002,
+          "object": "A:1:6:0:receive",
+          "delta_bytes": 1048576,
+          "live_bytes": 964710400
+        },
+        {
+          "time": 0.17800000000000002,
           "object": "saved:2:2:0",
           "delta_bytes": -240915456,
-          "live_bytes": 482879488
-        },
-        {
-          "time": 0.164,
-          "object": "A:1:5:0:receive",
-          "delta_bytes": -1048576,
-          "live_bytes": 481830912
-        },
-        {
-          "time": 0.164,
-          "object": "saved:2:5:0",
-          "delta_bytes": 240915456,
-          "live_bytes": 722746368
-        },
-        {
-          "time": 0.17300000000000001,
-          "object": "G:2:4:0:receive",
-          "delta_bytes": 2097152,
-          "live_bytes": 724843520
-        },
-        {
-          "time": 0.17400000000000002,
-          "object": "G:2:4:0:receive",
-          "delta_bytes": -2097152,
-          "live_bytes": 722746368
-        },
-        {
-          "time": 0.17400000000000002,
-          "object": "A:2:5:0:send",
-          "delta_bytes": 1048576,
           "live_bytes": 723794944
         },
         {
-          "time": 0.17500000000000002,
-          "object": "A:2:5:0:send",
+          "time": 0.17800000000000002,
+          "object": "A:1:6:0:receive",
           "delta_bytes": -1048576,
           "live_bytes": 722746368
         },
         {
-          "time": 0.18400000000000002,
-          "object": "G:1:4:0:send",
-          "delta_bytes": 2097152,
-          "live_bytes": 724843520
-        },
-        {
-          "time": 0.18500000000000003,
-          "object": "G:1:4:0:send",
-          "delta_bytes": -2097152,
-          "live_bytes": 722746368
-        },
-        {
-          "time": 0.18500000000000003,
-          "object": "A:1:6:0:receive",
-          "delta_bytes": 1048576,
-          "live_bytes": 723794944
-        },
-        {
-          "time": 0.19400000000000003,
-          "object": "saved:2:3:0",
-          "delta_bytes": -240915456,
-          "live_bytes": 482879488
-        },
-        {
-          "time": 0.19400000000000003,
-          "object": "A:1:6:0:receive",
-          "delta_bytes": -1048576,
-          "live_bytes": 481830912
-        },
-        {
-          "time": 0.19400000000000003,
+          "time": 0.17800000000000002,
           "object": "saved:2:6:0",
           "delta_bytes": 240915456,
-          "live_bytes": 722746368
+          "live_bytes": 963661824
         },
         {
-          "time": 0.20300000000000004,
+          "time": 0.17900000000000002,
           "object": "G:2:5:0:receive",
           "delta_bytes": 2097152,
-          "live_bytes": 724843520
+          "live_bytes": 965758976
         },
         {
-          "time": 0.20400000000000004,
+          "time": 0.18800000000000003,
           "object": "G:2:5:0:receive",
           "delta_bytes": -2097152,
-          "live_bytes": 722746368
+          "live_bytes": 963661824
         },
         {
-          "time": 0.20400000000000004,
+          "time": 0.18800000000000003,
           "object": "A:2:6:0:send",
           "delta_bytes": 1048576,
-          "live_bytes": 723794944
+          "live_bytes": 964710400
         },
         {
-          "time": 0.20500000000000004,
+          "time": 0.18900000000000003,
           "object": "A:2:6:0:send",
           "delta_bytes": -1048576,
-          "live_bytes": 722746368
+          "live_bytes": 963661824
         },
         {
-          "time": 0.21400000000000005,
+          "time": 0.19800000000000004,
           "object": "G:1:5:0:send",
           "delta_bytes": 2097152,
-          "live_bytes": 724843520
+          "live_bytes": 965758976
         },
         {
-          "time": 0.21500000000000005,
+          "time": 0.19900000000000004,
           "object": "G:1:5:0:send",
           "delta_bytes": -2097152,
-          "live_bytes": 722746368
+          "live_bytes": 963661824
         },
         {
-          "time": 0.21500000000000005,
+          "time": 0.20700000000000005,
           "object": "A:1:7:0:receive",
           "delta_bytes": 1048576,
-          "live_bytes": 723794944
+          "live_bytes": 964710400
         },
         {
-          "time": 0.22400000000000006,
-          "object": "saved:2:4:0",
+          "time": 0.20800000000000005,
+          "object": "saved:2:3:0",
           "delta_bytes": -240915456,
-          "live_bytes": 482879488
+          "live_bytes": 723794944
         },
         {
-          "time": 0.22400000000000006,
+          "time": 0.20800000000000005,
           "object": "A:1:7:0:receive",
           "delta_bytes": -1048576,
-          "live_bytes": 481830912
+          "live_bytes": 722746368
         },
         {
-          "time": 0.22400000000000006,
+          "time": 0.20800000000000005,
           "object": "saved:2:7:0",
           "delta_bytes": 240915456,
-          "live_bytes": 722746368
+          "live_bytes": 963661824
         },
         {
-          "time": 0.23300000000000007,
+          "time": 0.20900000000000005,
           "object": "G:2:6:0:receive",
           "delta_bytes": 2097152,
-          "live_bytes": 724843520
+          "live_bytes": 965758976
         },
         {
-          "time": 0.23400000000000007,
+          "time": 0.21800000000000005,
           "object": "G:2:6:0:receive",
           "delta_bytes": -2097152,
-          "live_bytes": 722746368
+          "live_bytes": 963661824
         },
         {
-          "time": 0.23400000000000007,
+          "time": 0.21800000000000005,
           "object": "A:2:7:0:send",
           "delta_bytes": 1048576,
-          "live_bytes": 723794944
+          "live_bytes": 964710400
         },
         {
-          "time": 0.23500000000000007,
+          "time": 0.21900000000000006,
           "object": "A:2:7:0:send",
           "delta_bytes": -1048576,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.22800000000000006,
+          "object": "G:1:6:0:send",
+          "delta_bytes": 2097152,
+          "live_bytes": 965758976
+        },
+        {
+          "time": 0.22900000000000006,
+          "object": "G:1:6:0:send",
+          "delta_bytes": -2097152,
+          "live_bytes": 963661824
+        },
+        {
+          "time": 0.23800000000000007,
+          "object": "saved:2:4:0",
+          "delta_bytes": -240915456,
           "live_bytes": 722746368
         },
         {
-          "time": 0.24400000000000008,
-          "object": "G:1:6:0:send",
+          "time": 0.23900000000000007,
+          "object": "G:2:7:0:receive",
           "delta_bytes": 2097152,
           "live_bytes": 724843520
         },
         {
-          "time": 0.24500000000000008,
-          "object": "G:1:6:0:send",
+          "time": 0.24000000000000007,
+          "object": "G:2:7:0:receive",
           "delta_bytes": -2097152,
           "live_bytes": 722746368
         },
         {
-          "time": 0.25400000000000006,
+          "time": 0.25000000000000006,
+          "object": "G:1:7:0:send",
+          "delta_bytes": 2097152,
+          "live_bytes": 724843520
+        },
+        {
+          "time": 0.25100000000000006,
+          "object": "G:1:7:0:send",
+          "delta_bytes": -2097152,
+          "live_bytes": 722746368
+        },
+        {
+          "time": 0.26000000000000006,
           "object": "saved:2:5:0",
           "delta_bytes": -240915456,
           "live_bytes": 481830912
         },
         {
-          "time": 0.26300000000000007,
-          "object": "G:2:7:0:receive",
-          "delta_bytes": 2097152,
-          "live_bytes": 483928064
-        },
-        {
-          "time": 0.26400000000000007,
-          "object": "G:2:7:0:receive",
-          "delta_bytes": -2097152,
-          "live_bytes": 481830912
-        },
-        {
-          "time": 0.2740000000000001,
-          "object": "G:1:7:0:send",
-          "delta_bytes": 2097152,
-          "live_bytes": 483928064
-        },
-        {
-          "time": 0.2750000000000001,
-          "object": "G:1:7:0:send",
-          "delta_bytes": -2097152,
-          "live_bytes": 481830912
-        },
-        {
-          "time": 0.2840000000000001,
+          "time": 0.2700000000000001,
           "object": "saved:2:6:0",
           "delta_bytes": -240915456,
           "live_bytes": 240915456
         },
         {
-          "time": 0.2940000000000001,
+          "time": 0.2800000000000001,
           "object": "saved:2:7:0",
           "delta_bytes": -240915456,
           "live_bytes": 0
@@ -9296,7 +9296,7 @@
     },
     {
       "stage": 3,
-      "peak_declared_reserved_bytes": 323950080,
+      "peak_declared_reserved_bytes": 1285314560,
       "events": [
         {
           "time": 0.032,
@@ -9324,264 +9324,264 @@
         },
         {
           "time": 0.053000000000000005,
+          "object": "A:2:1:0:receive",
+          "delta_bytes": -1048576,
+          "live_bytes": 320804352
+        },
+        {
+          "time": 0.053000000000000005,
           "object": "G:2:0:0:send",
           "delta_bytes": 2097152,
-          "live_bytes": 323950080
+          "live_bytes": 322901504
+        },
+        {
+          "time": 0.053000000000000005,
+          "object": "saved:3:1:0",
+          "delta_bytes": 320804352,
+          "live_bytes": 643705856
         },
         {
           "time": 0.054000000000000006,
           "object": "G:2:0:0:send",
           "delta_bytes": -2097152,
-          "live_bytes": 321852928
+          "live_bytes": 641608704
         },
         {
-          "time": 0.063,
-          "object": "saved:3:0:0",
-          "delta_bytes": -320804352,
-          "live_bytes": 1048576
+          "time": 0.073,
+          "object": "G:2:1:0:send",
+          "delta_bytes": 2097152,
+          "live_bytes": 643705856
         },
         {
-          "time": 0.063,
-          "object": "A:2:1:0:receive",
-          "delta_bytes": -1048576,
-          "live_bytes": 0
-        },
-        {
-          "time": 0.063,
-          "object": "saved:3:1:0",
-          "delta_bytes": 320804352,
-          "live_bytes": 320804352
+          "time": 0.074,
+          "object": "G:2:1:0:send",
+          "delta_bytes": -2097152,
+          "live_bytes": 641608704
         },
         {
           "time": 0.074,
           "object": "A:2:2:0:receive",
           "delta_bytes": 1048576,
-          "live_bytes": 321852928
+          "live_bytes": 642657280
         },
         {
-          "time": 0.08299999999999999,
-          "object": "G:2:1:0:send",
-          "delta_bytes": 2097152,
-          "live_bytes": 323950080
-        },
-        {
-          "time": 0.08399999999999999,
-          "object": "G:2:1:0:send",
-          "delta_bytes": -2097152,
-          "live_bytes": 321852928
-        },
-        {
-          "time": 0.09299999999999999,
-          "object": "saved:3:1:0",
-          "delta_bytes": -320804352,
-          "live_bytes": 1048576
-        },
-        {
-          "time": 0.09299999999999999,
+          "time": 0.075,
           "object": "A:2:2:0:receive",
           "delta_bytes": -1048576,
-          "live_bytes": 0
+          "live_bytes": 641608704
         },
         {
-          "time": 0.09299999999999999,
+          "time": 0.075,
           "object": "saved:3:2:0",
           "delta_bytes": 320804352,
-          "live_bytes": 320804352
+          "live_bytes": 962413056
         },
         {
-          "time": 0.11299999999999998,
+          "time": 0.09499999999999999,
           "object": "G:2:2:0:send",
           "delta_bytes": 2097152,
-          "live_bytes": 322901504
+          "live_bytes": 964510208
         },
         {
-          "time": 0.11399999999999998,
+          "time": 0.09599999999999999,
           "object": "G:2:2:0:send",
           "delta_bytes": -2097152,
-          "live_bytes": 320804352
+          "live_bytes": 962413056
         },
         {
-          "time": 0.11399999999999998,
+          "time": 0.09599999999999999,
           "object": "A:2:3:0:receive",
           "delta_bytes": 1048576,
-          "live_bytes": 321852928
+          "live_bytes": 963461632
         },
         {
-          "time": 0.12299999999999997,
+          "time": 0.09699999999999999,
+          "object": "A:2:3:0:receive",
+          "delta_bytes": -1048576,
+          "live_bytes": 962413056
+        },
+        {
+          "time": 0.09699999999999999,
+          "object": "saved:3:3:0",
+          "delta_bytes": 320804352,
+          "live_bytes": 1283217408
+        },
+        {
+          "time": 0.11699999999999998,
+          "object": "G:2:3:0:send",
+          "delta_bytes": 2097152,
+          "live_bytes": 1285314560
+        },
+        {
+          "time": 0.11799999999999998,
+          "object": "G:2:3:0:send",
+          "delta_bytes": -2097152,
+          "live_bytes": 1283217408
+        },
+        {
+          "time": 0.12699999999999997,
+          "object": "saved:3:0:0",
+          "delta_bytes": -320804352,
+          "live_bytes": 962413056
+        },
+        {
+          "time": 0.12799999999999997,
+          "object": "A:2:4:0:receive",
+          "delta_bytes": 1048576,
+          "live_bytes": 963461632
+        },
+        {
+          "time": 0.12899999999999998,
+          "object": "A:2:4:0:receive",
+          "delta_bytes": -1048576,
+          "live_bytes": 962413056
+        },
+        {
+          "time": 0.12899999999999998,
+          "object": "saved:3:4:0",
+          "delta_bytes": 320804352,
+          "live_bytes": 1283217408
+        },
+        {
+          "time": 0.149,
+          "object": "G:2:4:0:send",
+          "delta_bytes": 2097152,
+          "live_bytes": 1285314560
+        },
+        {
+          "time": 0.15,
+          "object": "G:2:4:0:send",
+          "delta_bytes": -2097152,
+          "live_bytes": 1283217408
+        },
+        {
+          "time": 0.158,
+          "object": "A:2:5:0:receive",
+          "delta_bytes": 1048576,
+          "live_bytes": 1284265984
+        },
+        {
+          "time": 0.159,
+          "object": "saved:3:1:0",
+          "delta_bytes": -320804352,
+          "live_bytes": 963461632
+        },
+        {
+          "time": 0.159,
+          "object": "A:2:5:0:receive",
+          "delta_bytes": -1048576,
+          "live_bytes": 962413056
+        },
+        {
+          "time": 0.159,
+          "object": "saved:3:5:0",
+          "delta_bytes": 320804352,
+          "live_bytes": 1283217408
+        },
+        {
+          "time": 0.17900000000000002,
+          "object": "G:2:5:0:send",
+          "delta_bytes": 2097152,
+          "live_bytes": 1285314560
+        },
+        {
+          "time": 0.18000000000000002,
+          "object": "G:2:5:0:send",
+          "delta_bytes": -2097152,
+          "live_bytes": 1283217408
+        },
+        {
+          "time": 0.18800000000000003,
+          "object": "A:2:6:0:receive",
+          "delta_bytes": 1048576,
+          "live_bytes": 1284265984
+        },
+        {
+          "time": 0.18900000000000003,
           "object": "saved:3:2:0",
           "delta_bytes": -320804352,
-          "live_bytes": 1048576
+          "live_bytes": 963461632
         },
         {
-          "time": 0.12299999999999997,
-          "object": "A:2:3:0:receive",
-          "delta_bytes": -1048576,
-          "live_bytes": 0
-        },
-        {
-          "time": 0.12299999999999997,
-          "object": "saved:3:3:0",
-          "delta_bytes": 320804352,
-          "live_bytes": 320804352
-        },
-        {
-          "time": 0.143,
-          "object": "G:2:3:0:send",
-          "delta_bytes": 2097152,
-          "live_bytes": 322901504
-        },
-        {
-          "time": 0.144,
-          "object": "G:2:3:0:send",
-          "delta_bytes": -2097152,
-          "live_bytes": 320804352
-        },
-        {
-          "time": 0.144,
-          "object": "A:2:4:0:receive",
-          "delta_bytes": 1048576,
-          "live_bytes": 321852928
-        },
-        {
-          "time": 0.153,
-          "object": "saved:3:3:0",
-          "delta_bytes": -320804352,
-          "live_bytes": 1048576
-        },
-        {
-          "time": 0.153,
-          "object": "A:2:4:0:receive",
-          "delta_bytes": -1048576,
-          "live_bytes": 0
-        },
-        {
-          "time": 0.153,
-          "object": "saved:3:4:0",
-          "delta_bytes": 320804352,
-          "live_bytes": 320804352
-        },
-        {
-          "time": 0.17300000000000001,
-          "object": "G:2:4:0:send",
-          "delta_bytes": 2097152,
-          "live_bytes": 322901504
-        },
-        {
-          "time": 0.17400000000000002,
-          "object": "G:2:4:0:send",
-          "delta_bytes": -2097152,
-          "live_bytes": 320804352
-        },
-        {
-          "time": 0.17400000000000002,
-          "object": "A:2:5:0:receive",
-          "delta_bytes": 1048576,
-          "live_bytes": 321852928
-        },
-        {
-          "time": 0.18300000000000002,
-          "object": "saved:3:4:0",
-          "delta_bytes": -320804352,
-          "live_bytes": 1048576
-        },
-        {
-          "time": 0.18300000000000002,
-          "object": "A:2:5:0:receive",
-          "delta_bytes": -1048576,
-          "live_bytes": 0
-        },
-        {
-          "time": 0.18300000000000002,
-          "object": "saved:3:5:0",
-          "delta_bytes": 320804352,
-          "live_bytes": 320804352
-        },
-        {
-          "time": 0.20300000000000004,
-          "object": "G:2:5:0:send",
-          "delta_bytes": 2097152,
-          "live_bytes": 322901504
-        },
-        {
-          "time": 0.20400000000000004,
-          "object": "G:2:5:0:send",
-          "delta_bytes": -2097152,
-          "live_bytes": 320804352
-        },
-        {
-          "time": 0.20400000000000004,
-          "object": "A:2:6:0:receive",
-          "delta_bytes": 1048576,
-          "live_bytes": 321852928
-        },
-        {
-          "time": 0.21300000000000005,
-          "object": "saved:3:5:0",
-          "delta_bytes": -320804352,
-          "live_bytes": 1048576
-        },
-        {
-          "time": 0.21300000000000005,
+          "time": 0.18900000000000003,
           "object": "A:2:6:0:receive",
           "delta_bytes": -1048576,
-          "live_bytes": 0
+          "live_bytes": 962413056
         },
         {
-          "time": 0.21300000000000005,
+          "time": 0.18900000000000003,
           "object": "saved:3:6:0",
           "delta_bytes": 320804352,
-          "live_bytes": 320804352
+          "live_bytes": 1283217408
         },
         {
-          "time": 0.23300000000000007,
+          "time": 0.20900000000000005,
           "object": "G:2:6:0:send",
           "delta_bytes": 2097152,
-          "live_bytes": 322901504
+          "live_bytes": 1285314560
         },
         {
-          "time": 0.23400000000000007,
+          "time": 0.21000000000000005,
           "object": "G:2:6:0:send",
           "delta_bytes": -2097152,
-          "live_bytes": 320804352
+          "live_bytes": 1283217408
         },
         {
-          "time": 0.23400000000000007,
+          "time": 0.21800000000000005,
           "object": "A:2:7:0:receive",
           "delta_bytes": 1048576,
-          "live_bytes": 321852928
+          "live_bytes": 1284265984
         },
         {
-          "time": 0.24300000000000008,
-          "object": "saved:3:6:0",
+          "time": 0.21900000000000006,
+          "object": "saved:3:3:0",
           "delta_bytes": -320804352,
-          "live_bytes": 1048576
+          "live_bytes": 963461632
         },
         {
-          "time": 0.24300000000000008,
+          "time": 0.21900000000000006,
           "object": "A:2:7:0:receive",
           "delta_bytes": -1048576,
-          "live_bytes": 0
+          "live_bytes": 962413056
         },
         {
-          "time": 0.24300000000000008,
+          "time": 0.21900000000000006,
           "object": "saved:3:7:0",
           "delta_bytes": 320804352,
-          "live_bytes": 320804352
+          "live_bytes": 1283217408
         },
         {
-          "time": 0.26300000000000007,
+          "time": 0.23900000000000007,
           "object": "G:2:7:0:send",
           "delta_bytes": 2097152,
-          "live_bytes": 322901504
+          "live_bytes": 1285314560
         },
         {
-          "time": 0.26400000000000007,
+          "time": 0.24000000000000007,
           "object": "G:2:7:0:send",
           "delta_bytes": -2097152,
+          "live_bytes": 1283217408
+        },
+        {
+          "time": 0.24900000000000008,
+          "object": "saved:3:4:0",
+          "delta_bytes": -320804352,
+          "live_bytes": 962413056
+        },
+        {
+          "time": 0.25900000000000006,
+          "object": "saved:3:5:0",
+          "delta_bytes": -320804352,
+          "live_bytes": 641608704
+        },
+        {
+          "time": 0.2690000000000001,
+          "object": "saved:3:6:0",
+          "delta_bytes": -320804352,
           "live_bytes": 320804352
         },
         {
-          "time": 0.2730000000000001,
+          "time": 0.2790000000000001,
           "object": "saved:3:7:0",
           "delta_bytes": -320804352,
           "live_bytes": 0
@@ -9593,9 +9593,13 @@
     {
       "stage": 0,
       "forward_backward_service_seconds": 0.24,
-      "idle_during_training_seconds": 0.09600000000000014,
+      "idle_during_training_seconds": 0.04200000000000009,
+      "idle_zero_transfer_counterfactual_seconds": 0.030000000000000082,
+      "bubble_bound_policy_seconds": 0.03,
+      "bubble_bound_zb_h1_seconds": 0.03,
+      "bubble_bound_zb_h2_seconds": 0.0,
       "update_seconds": 0.001,
-      "peak_declared_reserved_bytes": 1688505344,
+      "peak_declared_reserved_bytes": 965758976,
       "virtual_stages": [
         0
       ],
@@ -9604,9 +9608,13 @@
     {
       "stage": 1,
       "forward_backward_service_seconds": 0.24,
-      "idle_during_training_seconds": 0.09600000000000014,
+      "idle_during_training_seconds": 0.04200000000000009,
+      "idle_zero_transfer_counterfactual_seconds": 0.030000000000000082,
+      "bubble_bound_policy_seconds": 0.03,
+      "bubble_bound_zb_h1_seconds": 0.03,
+      "bubble_bound_zb_h2_seconds": 0.0,
       "update_seconds": 0.001,
-      "peak_declared_reserved_bytes": 1207723008,
+      "peak_declared_reserved_bytes": 965758976,
       "virtual_stages": [
         1
       ],
@@ -9615,9 +9623,13 @@
     {
       "stage": 2,
       "forward_backward_service_seconds": 0.24,
-      "idle_during_training_seconds": 0.09600000000000014,
+      "idle_during_training_seconds": 0.04200000000000009,
+      "idle_zero_transfer_counterfactual_seconds": 0.030000000000000082,
+      "bubble_bound_policy_seconds": 0.03,
+      "bubble_bound_zb_h1_seconds": 0.03,
+      "bubble_bound_zb_h2_seconds": 0.0,
       "update_seconds": 0.001,
-      "peak_declared_reserved_bytes": 725892096,
+      "peak_declared_reserved_bytes": 965758976,
       "virtual_stages": [
         2
       ],
@@ -9626,9 +9638,13 @@
     {
       "stage": 3,
       "forward_backward_service_seconds": 0.24,
-      "idle_during_training_seconds": 0.09600000000000014,
+      "idle_during_training_seconds": 0.04200000000000009,
+      "idle_zero_transfer_counterfactual_seconds": 0.030000000000000082,
+      "bubble_bound_policy_seconds": 0.03,
+      "bubble_bound_zb_h1_seconds": 0.03,
+      "bubble_bound_zb_h2_seconds": 0.0,
       "update_seconds": 0.001,
-      "peak_declared_reserved_bytes": 323950080,
+      "peak_declared_reserved_bytes": 1285314560,
       "virtual_stages": [
         3
       ],
@@ -9644,28 +9660,53 @@
     "boundary_crossings_per_microbatch": 3
   },
   "bubble_reference": {
+    "t_f_seconds": 0.01,
+    "t_b_input_gradient_seconds": 0.01,
+    "t_w_weight_gradient_seconds": 0.01,
+    "full_backward_seconds": 0.02,
     "one_f1b_bubble": 0.09,
     "one_f1b_bubble_fraction": 0.375,
+    "interleaved_bubble": null,
     "interleaved_bubble_fraction": null,
-    "zb_h1_bubble": 0.05999999999999999,
-    "zb1p_or_zb_h2_bubble": 0.029999999999999995,
+    "zb_h1_or_zb1p_bubble": 0.03,
+    "zb_h2_bubble": 0.0,
     "dualpipe_bubble_with_fb_equal_f_plus_b": 0.020000000000000004,
-    "source": "megatron-scale.txt lines 231/293 ((p-1)(t_f+t_b), (1/v)(p-1)/m); zero-bubble.txt lines 282-284 (ZB-H1 (p-1)(TF+TB-TW), ZB-H2 (p-1)(TF+TB-2TW)); deepseek-v3.txt Table 2 line 688-691 (ZB1P (PP-1)(F+B-2W), DualPipe (PP/2-1)(F&B+B-3W)); uniform stage-0 F, B, W = declared fraction x B, F&B taken as F+B (no compute overlap modeled)"
+    "source": "megatron-scale.txt lines 231/293 ((p-1)(t_f+t_b), (1/v)(p-1)/m); zero-bubble.txt lines 282-284 (1F1B (p-1)(TF+TB+TW), ZB-H1 (p-1)(TF+TB-TW), ZB-H2 (p-1)(TF+TB-2TW); TB = input-gradient pass, TW = weight-gradient pass); deepseek-v3.txt Table 2 line 688-691 (ZB1P (PP-1)(F+B-2W) with full backward B = TB+TW, i.e. the ZB-H1 bound; DualPipe (PP/2-1)(F&B+B-3W)); uniform stage-0 times, TW = declared fraction x full backward, F&B taken as F+B (no compute overlap modeled)"
   },
   "summary": {
     "total_sequences": 8,
     "total_tokens": 1024,
-    "gradient_ready_seconds": 0.33600000000000013,
-    "step_makespan_seconds": 0.33700000000000013,
-    "zero_transfer_counterfactual_seconds": 0.3310000000000001,
-    "exposed_transfer_makespan_delta_seconds": 0.006000000000000005,
+    "gradient_ready_seconds": 0.2820000000000001,
+    "step_makespan_seconds": 0.2830000000000001,
+    "zero_transfer_counterfactual_seconds": 0.2710000000000001,
+    "exposed_transfer_makespan_delta_seconds": 0.01200000000000001,
     "useful_forward_backward_device_seconds": 0.96,
-    "idle_device_seconds": 0.38400000000000056,
+    "idle_device_seconds": 0.16800000000000037,
+    "idle_per_stage_seconds": [
+      0.04200000000000009,
+      0.04200000000000009,
+      0.04200000000000009,
+      0.04200000000000009
+    ],
+    "idle_per_stage_zero_transfer_counterfactual_seconds": [
+      0.030000000000000082,
+      0.030000000000000082,
+      0.030000000000000082,
+      0.030000000000000082
+    ],
+    "bubble_bound_policy_seconds": 0.03,
+    "bubble_bound_1f1b_seconds": 0.09,
+    "bubble_bound_1f1b_fraction": 0.375,
+    "bubble_bound_interleaved_seconds": null,
+    "bubble_bound_interleaved_fraction": null,
+    "bubble_bound_zb_h1_seconds": 0.03,
+    "bubble_bound_zb_h2_seconds": 0.0,
+    "bubble_bound_dualpipe_seconds": null,
     "reserved_activation_scope_peak_bytes": [
-      1688505344,
-      1207723008,
-      725892096,
-      323950080
+      965758976,
+      965758976,
+      965758976,
+      1285314560
     ],
     "complete_training_activation_peak_bytes": null,
     "measured_runtime_seconds": null
@@ -9673,8 +9714,8 @@
   "assumptions": [
     "Fixed PP4 on four GPUs; interleaved_1f1b places v contiguous layer chunks per GPU (chunk c of GPU g is virtual stage c*4+g); zero_bubble keeps 9 layers per GPU and splits every backward into input part X and weight part W by the declared fraction; dualpipe adds a second stage copy per GPU for the reverse direction (parameters 2x) and splits backward the same way.",
     "Service times scale with the layers in each virtual stage relative to 9; transfer times reuse the per-boundary inputs of the base schedule, and the interleaved wrap-around link 3->0 uses wraparound_transfer_seconds. Links are physical directed edges shared by both DualPipe directions.",
-    "Per-GPU orders follow the declared_schedule_rule recorded in the output; where the archived texts give only the idea (split backward, bidirectional feeding) the exact slot placement is this module's rule, not the paper's figure. The scheduler is the same nonpreemptive earliest-ready list scheduler as GPipe/1F1B.",
-    "Saved activations are reserved from forward start to the end of the last backward part (W when split); send/receive buffers as in the base schedule. Idle time = gradient-ready time minus setup minus useful compute per GPU.",
-    "bubble_reference evaluates DeepSeek-V3 Table 2 formulas with uniform stage-0 service times and F&B = F + B; it is a reference row, not this schedule's measured bubble."
+    "Per-GPU orders follow the declared_schedule_rule recorded in the output. zero_bubble reproduces the ZB-H1 slot order of zero-bubble.txt Figure 3 (top); for interleaved_1f1b and dualpipe the archived texts give the idea (chunked stages, bidirectional feeding) and the exact slot placement is this module's rule, not the paper's figure. The scheduler is the same nonpreemptive earliest-ready list scheduler as GPipe/1F1B.",
+    "Saved activations are reserved from forward start to the end of the last backward part (W when split), so a stage holding g deferred W's reserves their full saved set rather than the paper's smaller M_W; send/receive buffers as in the base schedule. Idle time = gradient-ready time minus setup minus useful compute per GPU; the zero-transfer counterfactual idle isolates the schedule bubble from transfer exposure.",
+    "bubble_bound_* fields evaluate the archived bubble formulas (megatron-scale, zero-bubble Table 2, DeepSeek-V3 Table 2) with uniform stage-0 service times, T_B/T_W split by the declared fraction and F&B = F + B; they are bounds without communication, not this schedule's measured idle. bubble_bound_policy_seconds is the bound for the selected policy."
   ]
 }

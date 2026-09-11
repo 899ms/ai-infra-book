@@ -1,0 +1,23 @@
+{
+  "inputs": {
+    "mode": "clos",
+    "radix": 64,
+    "oversubscription": "1",
+    "tiers": [
+      2,
+      3
+    ],
+    "link_bytes_per_second": 50000000000,
+    "partition_endpoints": 1024,
+    "supernode_scenario": "scenarios/supernode-scaling-example.json"
+  },
+  "input_sources": {
+    "mode": "book",
+    "radix": "book (declared 64-port switch)",
+    "oversubscription": "book",
+    "tiers": "references/text/fat-tree.txt lines 210-220",
+    "link_bytes_per_second": "references/text/nvidia-connectx7-datasheet.txt line 23 (up to 400Gb/s)",
+    "partition_endpoints": "book (supernode-scaling scenario, 1024 GPUs)",
+    "supernode_scenario": "book"
+  }
+}

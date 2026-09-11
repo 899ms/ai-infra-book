@@ -184,7 +184,7 @@ def draw(here,data):
         for key,label,col in [('weight_bytes','权重','blue'),('workspace_bytes','工作区预留','orange'),('kv_bytes_per_request','单请求 KV','green')]:
             vals=np.array([r[key]/1e9 for r in rows]);a.barh(range(3),vals,left=left,height=.5,label=label,color=COL[col],edgecolor=COL['line']);left+=vals
         for i,r in enumerate(rows):a.plot([r['capacity_bytes']/1e9]*2,[i-.35,i+.35],color=COL['ink'],lw=1.2)
-        a.set(yticks=range(3),yticklabels=['Qwen BF16','70B 8-bit','70B 4-bit'],xlim=(0,85),xlabel='容量（GB）');a.invert_yaxis();a.legend(loc='upper center',bbox_to_anchor=(.5,-.22),ncol=3,frameon=False);save(f,'9-capacity')
+        a.set(yticks=range(3),yticklabels=['Qwen BF16\nRTX 4090','70B 8-bit\nH100 SXM','70B 4-bit\nH100 SXM'],xlim=(0,85),xlabel='容量（GB）');a.invert_yaxis();a.legend(loc='upper center',bbox_to_anchor=(.5,-.22),ncol=3,frameon=False);save(f,'9-capacity')
         d=data['figure_2_9']['history_capacity'];bars('history-capacity',['8K 上下文','32K 上下文'],d['maximum_requests'],'容量允许的独立请求数')
 
         f,a=canvas(4.8);text(a,.04,.94,'输入 128 个 token，返回 4 个 token',14)

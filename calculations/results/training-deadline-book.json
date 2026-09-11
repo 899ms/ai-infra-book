@@ -151,6 +151,18 @@
       "url": "https://raw.githubusercontent.com/NVIDIA/cutlass/147295a3d4b75f3aeff247c25b8927cea9a7006a/python/CuTeDSL/cutlass/cute/nvgpu/tcgen05/mma.py",
       "revision": "147295a3d4b75f3aeff247c25b8927cea9a7006a",
       "sha256": "abb9b3a8d2b5329677999b00a45c6c6e6ab763fc748cfbeeaa333de0df881baa"
+    },
+    {
+      "file": "../references/files/specs/nvidia-h20-spec-sheet.pdf",
+      "url": "https://flopper.io/gpu/nvidia-h20-96gb/spec-sheet.pdf",
+      "revision": "sheet-2026-09-02",
+      "sha256": "10066ce28de21151385fc05110af461ccce6a2ea73a0b3322efe5a47e67ce1e5"
+    },
+    {
+      "file": "../references/outline-checks/2026-09-07/execution-feedback/megascale-infer.pdf",
+      "url": "https://arxiv.org/pdf/2504.02263v1",
+      "revision": "2504.02263v1",
+      "sha256": "3596ecc1eda339b0e33e3f3de5d4910b42f1aeb2e880c68b405a59678a66f403"
     }
   ],
   "training_deadline_devices": [
@@ -226,9 +238,34 @@
     },
     {
       "device": "h20-sxm5-96gb",
-      "status": "unavailable",
-      "reason": "No verified peak for h20-sxm5-96gb: BF16/FP32/tensor/dense. Do not substitute another precision or product.",
-      "capacity_bound_devices": 2
+      "status": "available",
+      "capacity_bound_devices": 2,
+      "nominal_capacity_bytes": 96000000000,
+      "selected_peak": {
+        "input_precision": "BF16",
+        "accumulator_precision": "FP32",
+        "execution_unit": "tensor",
+        "sparsity": "dense",
+        "tera_ops_per_second": 148,
+        "operation_kind": "floating_point",
+        "source_id": "megascale-infer",
+        "locator": "Table 3, H20 row, Comp. (TFLOPS) 148; A800 312 and H800 989 rows in the same column equal the BF16 dense datasheet peaks",
+        "reported": "148",
+        "derivation": null,
+        "clock_basis": "author-reported peak; NVIDIA publishes no H20 datasheet; sustained performance not measured",
+        "supporting_evidence": [
+          {
+            "source_id": "nvidia-h20-spec-sheet",
+            "locator": "Performance Metrics table, BF16 Peak (dense) 148.0",
+            "claim": "Third-party compilation labels 148 TFLOPS as BF16 dense, matching the paper value."
+          },
+          {
+            "source_id": "nvidia-ptx-isa-9-3",
+            "locator": "9.7.14 wgmma.mma_async: .bf16 inputs accumulate in .f32 (Hopper sm_90)",
+            "claim": "Neither source states the accumulator; Hopper wgmma defines BF16 Tensor accumulation as FP32, matching the H100 record convention."
+          }
+        ]
+      }
     },
     {
       "device": "h20-sxm5-141gb",
@@ -421,6 +458,45 @@
       "persistent_average_bytes_at_combined_count_exact": "65525882880/7"
     },
     {
+      "device": "h20-sxm5-96gb",
+      "matrix_work_efficiency_exact": "3/10",
+      "bf16_fp32_dense_peak_flops_exact": "148000000000000",
+      "nominal_capacity_bytes": 96000000000,
+      "compute_count_bound": 46,
+      "persistent_capacity_count_bound": 2,
+      "combined_necessary_count": 46,
+      "conditional_training_seconds_exact": "107131399773507584/41552734375",
+      "excluded_calendar_seconds": 0,
+      "conditional_calendar_seconds_exact": "107131399773507584/41552734375",
+      "persistent_average_bytes_at_combined_count_exact": "65525882880/23"
+    },
+    {
+      "device": "h20-sxm5-96gb",
+      "matrix_work_efficiency_exact": "2/5",
+      "bf16_fp32_dense_peak_flops_exact": "148000000000000",
+      "nominal_capacity_bytes": 96000000000,
+      "compute_count_bound": 35,
+      "persistent_capacity_count_bound": 2,
+      "combined_necessary_count": 35,
+      "conditional_training_seconds_exact": "160697099660261376/63232421875",
+      "excluded_calendar_seconds": 0,
+      "conditional_calendar_seconds_exact": "160697099660261376/63232421875",
+      "persistent_average_bytes_at_combined_count_exact": "26210353152/7"
+    },
+    {
+      "device": "h20-sxm5-96gb",
+      "matrix_work_efficiency_exact": "1/2",
+      "bf16_fp32_dense_peak_flops_exact": "148000000000000",
+      "nominal_capacity_bytes": 96000000000,
+      "compute_count_bound": 28,
+      "persistent_capacity_count_bound": 2,
+      "combined_necessary_count": 28,
+      "conditional_training_seconds_exact": "160697099660261376/63232421875",
+      "excluded_calendar_seconds": 0,
+      "conditional_calendar_seconds_exact": "160697099660261376/63232421875",
+      "persistent_average_bytes_at_combined_count_exact": "32762941440/7"
+    },
+    {
       "device": "h100-sxm",
       "matrix_work_efficiency_exact": "3/10",
       "bf16_fp32_dense_peak_flops_exact": "989400000000000",
@@ -510,10 +586,9 @@
     "required_tokens_per_available_second_exact": "3125000/81",
     "persistent_state_bytes": 131051765760,
     "available_training_seconds": 2592000,
-    "usable_hardware_profiles": 5,
+    "usable_hardware_profiles": 6,
     "missing_hardware_profiles": [
       "a800-40gb-active",
-      "h20-sxm5-96gb",
       "h20-sxm5-141gb"
     ]
   },

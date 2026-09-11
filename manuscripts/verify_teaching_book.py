@@ -22,8 +22,10 @@ for n in range(1,13):
         p=ROOT/row['path'];check(p.exists() and hashlib.sha256(p.read_bytes()).hexdigest()==row['sha256'],f'{n}: artifact {row["path"]}')
     for row in json.loads((d/'sources.json').read_text())['sources']:
         p=ROOT/row['path'];check(p.exists() and hashlib.sha256(p.read_bytes()).hexdigest()==row['sha256'],f'{n}: source {row["path"]}')
-    layout_path=d/('teaching-layout-check.json' if n==5 else 'teaching-layout-validation.json');layout=json.loads(layout_path.read_text())
+    layout=json.loads((d/('teaching-layout-check.json' if n==5 else 'teaching-layout-validation.json')).read_text())
     if isinstance(layout,dict):layout=layout.get('figures',layout.get('checks',[]))
+    for aux in ('evolution-layout-validation.json','parallel-layout-validation.json','ub-ep-layout-validation.json','legacy-layout-validation.json'):
+        if (d/aux).exists():layout=layout+json.loads((d/aux).read_text())
     check(len(layout)==len(refs),f'{n}: layout inventory')
     check(all(r['width_pt']==420 and r['min_label_pt']>=11 and not r['text_extent_warnings'] for r in layout),f'{n}: figure typography')
     maths=json.loads((d/'math-validation.json').read_text());check(not maths.get('errors',[]),f'{n}: math rendering')

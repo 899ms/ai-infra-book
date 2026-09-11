@@ -11,15 +11,15 @@ def draw(save, C, data, canvas, box, arrow, design, lifecycle):
     def done(f,key,values):
         save(f,'figure-11-'+key);data[key]=values
     # Same workload, different limiting resource.
-    f,a=chart();labels=['CPU 核数','并发模型调用数','内存 / GiB'];before=[30/40,270/300,600/640];after=[30/40,360/300,780/640]
+    f,a=chart();labels=['CPU 核数','并发模型调用数','内存 / GiB'];mem=384e9/2**30;before=[30/48,270/320,600/mem];after=[30/48,360/320,780/mem]
     y=np.arange(3)
     a.barh(y+.18,np.array(before)*100,.30,color=C['blue'],label='每次模型调用 9 s')
     a.barh(y-.18,np.array(after)*100,.30,color=C['orange'],label='每次模型调用 12 s')
     for i,(v,w) in enumerate(zip(before,after)):
-        a.text(v*100+1,i+.18,['30 / 40','270 / 300','600 / 640'][i],va='center',fontsize=11)
-        a.text(w*100+1,i-.18,['30 / 40','360 / 300','780 / 640'][i],va='center',fontsize=11)
-    a.axvline(100,color=C['red'],ls='--');a.set(yticks=y,yticklabels=labels,xlim=(0,150),xlabel='需求 / 容量（%）');a.invert_yaxis();a.legend(loc='lower center',bbox_to_anchor=(.5,1.02),ncol=2,frameon=False)
-    done(f,'capacity',{'demand_9':[30,270,600],'demand_12':[30,360,780],'capacity':[40,300,640]})
+        a.text(v*100+1,i+.18,['30 / 48','270 / 320','600 / 358'][i],va='center',fontsize=11)
+        a.text(w*100+1,i-.18,['30 / 48','360 / 320','780 / 358'][i],va='center',fontsize=11)
+    a.axvline(100,color=C['red'],ls='--');a.set(yticks=y,yticklabels=labels,xlim=(0,250),xlabel='需求 / 容量（%）');a.invert_yaxis();a.legend(loc='lower center',bbox_to_anchor=(.5,1.02),ncol=2,frameon=False)
+    done(f,'capacity',{'demand_9':[30,270,600],'demand_12':[30,360,780],'capacity':[48,320,mem],'capacity_labels':['48','320','358']})
     # Page footprint: common horizontal scale reveals replicated bytes.
     f,a=chart();parts=[[2048,0,4],[512,0,4],[0,128,4],[256,128,4]];colors=[C['blue'],C['orange'],C['teal']]
     for i,row in enumerate(parts):
@@ -31,9 +31,9 @@ def draw(save, C, data, canvas, box, arrow, design, lifecycle):
     a.legend(frameon=False,loc='lower right');done(f,'pages',{'local_mib':[sum(x) for x in parts],'shared_template_mib':2048})
     # Pause one gap; memory area is the central relationship.
     f,a=chart();a.broken_barh([(10,9)],(1.1,.5),facecolors=C['blue']);a.text(14.5,1.35,'2 GiB × 9 s = 18 GiB·s',ha='center',va='center',color='white')
-    a.broken_barh([(10,1),(18,1)],(.1,.5),facecolors=C['teal']);a.text(10.5,.8,'保存',ha='center');a.text(18.5,.8,'恢复',ha='center');a.text(14.5,.35,'中间 7 s 释放内存',ha='center')
+    a.broken_barh([(10,8),(18,1)],(.1,.5),facecolors=C['teal']);a.text(14,.8,'保存 2 GiB × 4 s/GiB',ha='center');a.text(18.5,.8,'恢复',ha='center');a.text(14,.35,'没有释放内存的时间',ha='center',color='white')
     a.set(yticks=[1.35,.35],yticklabels=['持续保留','暂停后恢复'],xlim=(10,19),ylim=(-.25,2),xticks=range(10,20),xlabel='任务开始后的时间 / s')
-    a.text(14.5,1.8,'第二轮工具在第 19 秒开始，两种方案相同',ha='center');done(f,'pause',{'gap':[10,19],'resident_gib_seconds':18,'paused_gib_seconds':4})
+    a.text(14.5,1.8,'第二轮工具在第 19 秒开始，两种方案相同',ha='center');done(f,'pause',{'gap':[10,19],'resident_gib_seconds':18,'pause_seconds_per_gib':4,'resume_seconds':1,'paused_gib_seconds':2*(2*4+1),'source':'references/outline-checks/2026-09-07/platform-routing/e2b-persistence.md'})
     # Entire task memory occupied only in prep/tool phases.
     f,a=chart();a.broken_barh([(0,30)],(1.25,.5),facecolors=C['blue']);a.text(15,1.5,'60 GiB·s',ha='center',va='center',color='white')
     for start in [7,17,27]:
@@ -62,13 +62,13 @@ def draw(save, C, data, canvas, box, arrow, design, lifecycle):
     a.set(yticks=[0,1],yticklabels=['原配置','生成速度加倍'],xlim=(0,100),xlabel='每轮时间 / s');a.invert_yaxis();a.legend(ncol=4,frameon=False,loc='lower center',bbox_to_anchor=(.5,1.03))
     done(f,'rl-stages',{'stage_seconds':rows})
     # Shared network link is a physical constriction.
-    f,a=canvas(5.7);box(a,.02,.38,.22,.24,'训练实例','完整权重 30 GB');box(a,.32,.38,.23,.24,'共享发送出口','200 Gbit/s','sand');arrow(a,(.24,.5),(.32,.5))
+    f,a=canvas(5.7);box(a,.02,.38,.22,.24,'训练实例','Qwen3-8B 16.38 GB');box(a,.32,.38,.23,.24,'共享发送出口','200 Gbit/s','sand');arrow(a,(.24,.5),(.32,.5))
     for i,y in enumerate([.80,.47,.14]):
-        box(a,.74,y-.08,.23,.19,f'接收实例 {i*2+1}、{i*2+2}','各接收 30 GB',size=12);arrow(a,(.55,.5),(.73,y+.015))
+        box(a,.74,y-.08,.23,.19,f'接收实例 {i*2+1}、{i*2+2}','各接收 16.38 GB',size=12);arrow(a,(.55,.5),(.73,y+.015))
     a.text(.62,.93,'6 个实例，各 50 Gbit/s',ha='center',fontsize=13)
-    a.text(.40,.22,'出口累计发送 6 × 30 = 180 GB',ha='center',fontsize=13)
-    a.text(.40,.12,'全部传完至少 7.2 s',ha='center',fontsize=15,weight='bold')
-    done(f,'weights',{'weight_gb':30,'receivers':6,'sender_gbps':200,'receiver_gbps':50,'lower_seconds':7.2})
+    a.text(.40,.22,'出口累计发送 6 × 16.38 ≈ 98.3 GB',ha='center',fontsize=13)
+    a.text(.40,.12,'全部传完至少 3.93 s',ha='center',fontsize=15,weight='bold')
+    done(f,'weights',{'weight_bytes':16381470720,'receivers':6,'sender_gbps':200,'receiver_gbps':50,'lower_seconds':6*16381470720*8/200e9})
     # Cost composition preserves the fixed portion.
     f,a=chart();rows=[[.020,.010,.002],[.020,.001,.002]];colors=[C['blue'],C['orange'],C['teal']]
     for i,row in enumerate(rows):
@@ -76,12 +76,13 @@ def draw(save, C, data, canvas, box, arrow, design, lifecycle):
         for v,c in zip(row,colors):a.barh(i,v,left=left,color=c,height=.5);left+=v
         a.text(left+.0005,i,f'{left:.3f}',va='center')
     for c,l in zip(colors,['输入 0.020','思考 0.010 → 0.001','可见输出 0.002']):a.plot([],[],color=c,lw=8,label=l)
-    a.set(yticks=[0,1],yticklabels=['思考 1,000 token','思考 100 token'],xlim=(0,.038),xlabel='每次调用成本');a.invert_yaxis();a.legend(frameon=False,loc='lower center',bbox_to_anchor=(.5,1.02),ncol=3,fontsize=10)
+    a.set(yticks=[0,1],yticklabels=['思考 1,000 token','思考 100 token'],xlim=(0,.038),xlabel='每次调用成本 / 美元');a.invert_yaxis();a.legend(frameon=False,loc='lower center',bbox_to_anchor=(.5,1.02),ncol=3,fontsize=10)
     done(f,'thinking',{'cost_parts':rows})
     # Fixed intercept and marginal slope.
-    f,a=chart(left=.12);n=np.linspace(0,200000,201);a.plot(n/1000,1000+.002*n,label='自建：1,000 + 0.002N',color=C['blue']);a.plot(n/1000,.012*n,label='API：0.012N',color=C['orange'])
-    a.scatter([100],[1200],color=C['teal']);a.axvline(100,color=C['muted'],ls='--',lw=1);a.annotate('100,000 项时成本相等',(100,1200),(65,2050),arrowprops={'arrowstyle':'->','color':C['muted']});a.set(xlabel='提交任务数 / 千项',ylabel='总成本',xlim=(0,200),ylim=(0,2600));a.legend(frameon=False,loc='upper left')
-    done(f,'purchase',{'fixed':1000,'self_per_task':.002,'api_per_task':.012,'crossover':100000})
+    fixed=4*720*6.79;per=3*1.125*8.64/3600;cap=32*720*3600/27;cross=fixed/per
+    f,a=chart(left=.12);n=np.linspace(0,cap,201);a.plot(n/1e4,np.full_like(n,fixed),label='预留 4 张 B200：19,555.2 美元/月',color=C['blue']);m=np.linspace(0,3.2e6,201);a.plot(m/1e4,per*m,label='按量：0.0081N 美元',color=C['orange'])
+    a.scatter([cross/1e4],[fixed],color=C['teal']);a.axvline(cross/1e4,color=C['muted'],ls='--',lw=1);a.annotate('约 241 万项时成本相等',(cross/1e4,fixed),(60,23000),arrowprops={'arrowstyle':'->','color':C['muted']});a.set(xlabel='每月提交任务数 / 万项',ylabel='每月总成本 / 美元',xlim=(0,320),ylim=(0,27000),xticks=range(0,301,50));a.legend(frameon=False,loc='upper left')
+    done(f,'purchase',{'fixed':fixed,'self_per_task':0,'api_per_task':per,'capacity':cap,'crossover':cross,'reserved_usd_per_gpu_hour':6.79,'on_demand_usd_per_gpu_hour':8.64,'source':'experiments/ch13/13-06/single-agent-serving/comparison-sources/gpu-prices.md'})
     # Six terminal paths with time and deadline, linked to probability tree.
     f,a=canvas(7);box(a,.01,.40,.18,.19,'首次尝试','10 s；成本 0.010',size=12)
     box(a,.33,.64,.20,.17,'局部修复','再用 4 s；0.006',size=12)

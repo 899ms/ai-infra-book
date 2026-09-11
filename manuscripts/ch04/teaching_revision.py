@@ -55,13 +55,13 @@ def draw(here,data,teaching):
             left=0
             for n,c,label in [(d['weight_bytes'],'blue','权重'),(d['workspace_bytes'],'orange','工作区'),(row['requests']*row['context_multiplier']*d['kv_bytes_per_request'],'green','KV')]:
                 a.barh(y,n/1e9,left=left,height=.5,color=COL[c],edgecolor=COL['line'],label=label if y==0 else None);left+=n/1e9
-        a.axvline(24,ls='--',color='#555555');a.set(yticks=range(3),yticklabels=['8K token × 4 请求','8K token × 5 请求','16K token × 2 请求'],xlim=(0,27),xlabel='显存占用（GB）');a.invert_yaxis();a.legend(ncol=3,loc='upper center',bbox_to_anchor=(.5,-.22),frameon=False);save(f,'6-capacity')
+        a.axvline(24,ls='--',color='#555555');a.set(yticks=range(3),yticklabels=['8K token × 4 请求','8K token × 5 请求','16K token × 2 请求'],xlim=(0,27),xlabel='RTX 4090 显存占用（GB）');a.invert_yaxis();a.legend(ncol=3,loc='upper center',bbox_to_anchor=(.5,-.22),frameon=False);save(f,'6-capacity')
         f,a=canvas(3.3);text(a,.04,.92,'同时等待返回的访问占用请求槽',14)
         for i in range(4):box(a,.05+i*.235,.49,.20,.18,f'请求 {i+1}','blue',11)
         text(a,.5,.31,'每请求 128 bytes，发出后 500 ns 返回',12,ha='center')
         text(a,.5,.12,'持续带宽还取决于能同时处理多少请求',12,ha='center');save(f,'memory-inflight')
         d=data['4-7'];f,a=plot(3.7)
-        for b,ys,c in zip([1,2],d['bandwidth_upper_bytes_per_second'],['#267398','#388768']):a.plot(d['requests'],np.array(ys)/1e12,label=f'接口 {b} TB/s',color=c)
+        for b,ys,c in zip(['RTX 4090：1008 GB/s','RTX 5090：1792 GB/s'],d['bandwidth_upper_bytes_per_second'],['#267398','#388768']):a.plot(d['requests'],np.array(ys)/1e12,label=b,color=c)
         a.set(xlim=(0,10000),ylim=(0,2.4),xlabel='同时未完成请求数',ylabel='带宽上界（TB/s）');a.legend(frameon=False);save(f,'7-memory')
         f,a=plot(3.4,left=.21)
         for i in range(4):a.barh(i,8192,color=COL['gray'],edgecolor=COL['line'],height=.5);a.barh(i,256,color=COL['blue'],height=.5)
@@ -80,15 +80,28 @@ def draw(here,data,teaching):
         box(a,.38,.66,.23,.11,'槽 A','blue');box(a,.38,.42,.23,.11,'槽 B','purple')
         arrow(a,(.30,.695),(.38,.715));arrow(a,(.61,.715),(.70,.695));arrow(a,(.17,.61),(.38,.475))
         box(a,.28,.09,.44,.16,'矩阵单元计算 PV\n用完后释放缓冲区','orange');arrow(a,(.83,.61),(.72,.17));save(f,'matrix-vector-handoff')
+        cases=teaching['die_locality']['cases']
         for move,name in [(False,'10-locality'),(True,'locality-compute')]:
-            f,a=canvas(3.0);text(a,.04,.93,'计算留在裸片 0' if not move else '把计算放到权重所在的裸片',14)
-            box(a,.04,.44,.33,.25,'裸片 0\n本地计算','blue');box(a,.63,.44,.33,.25,'裸片 1\n权重'+('与计算' if move else ''),'orange')
-            arrow(a,(.63,.57),(.37,.57));text(a,.5,.30,'输入与结果共 64 MiB' if move else '远程权重 32 GiB',12,ha='center')
-            text(a,.5,.13,'传输约 61 μs' if move else '传输约 31 ms',14,ha='center');save(f,name)
+            f,a=canvas(4.8);text(a,.03,.96,'计算都放在 die 0' if not move else '计算放到权重所在的 die',14)
+            for row,c in enumerate(cases):
+                y=.56-row*.46;text(a,.03,y+.31,'HGX B200' if row==0 else '昇腾 910C',13)
+                box(a,.03,y,.27,.25,'die 0\n32 GiB 权重\n计算','blue',11)
+                box(a,.70,y,.27,.25,'die 1\n32 GiB 权重'+('\n计算' if move else ''),'orange',11)
+                if move:
+                    arrow(a,(.30,y+.17),(.70,y+.17));arrow(a,(.70,y+.08),(.30,y+.08))
+                    text(a,.50,y+.215,f"输入与结果 64 MiB：{c['activation_us']:.1f} μs" if c['activation_us']<100 else f"输入与结果 64 MiB：{c['activation_us']/1000:.2f} ms",11,ha='center')
+                    text(a,.50,y-.045,f"两侧各读本地权重：{c['split_ms']:.1f} ms",12,ha='center')
+                else:
+                    arrow(a,(.70,y+.125),(.30,y+.125))
+                    limit='受 die 1 的 HBM 限制' if c['link_to_hbm_ratio']>=1 else '受 die 间链路限制'
+                    text(a,.50,y+.20,f"跨 die 读 32 GiB：{c['remote_ms']:.1f} ms",11,ha='center')
+                    text(a,.50,y+.05,limit,11,ha='center')
+                    text(a,.50,y-.045,f"阶段读取时间：{c['overlapped_ms']:.1f} ms",12,ha='center')
+            save(f,name)
         d=data['4-11']
         for i,name in enumerate(['11-interconnect','large-message']):
-            f,a=plot(3.2);vals=np.array(d['total_us'][i]);a.bar([0,1],[2,2],color=COL['orange'],edgecolor=COL['line'],label='启动');a.bar([0,1],vals-2,bottom=2,color=COL['blue'],edgecolor=COL['line'],label='传输')
-            a.set(xticks=[0,1],xticklabels=['100 GB/s','200 GB/s'],ylabel='传输时间（μs）',ylim=(0,max(vals)*1.45));a.legend(ncol=2,frameon=False)
+            f,a=plot(3.2);vals=np.array(d['total_us'][i]);alpha=d['alpha_seconds']*1e6;a.bar([0,1],[alpha,alpha],color=COL['orange'],edgecolor=COL['line'],label='启动');a.bar([0,1],vals-alpha,bottom=alpha,color=COL['blue'],edgecolor=COL['line'],label='传输')
+            a.set(xticks=[0,1],xticklabels=['A100 NVLink\n300 GB/s','H100 NVLink\n450 GB/s'],ylabel='传输时间（μs）',ylim=(0,max(vals)*1.45));a.legend(ncol=2,frameon=False)
             for j,v in enumerate(vals):a.text(j,v+max(vals)*.035,f'{v:.3f}',ha='center',fontsize=12)
             save(f,name)
         d=data['4-12'];f,a=plot(3.5)
@@ -105,4 +118,6 @@ def draw(here,data,teaching):
             save(f,name)
     from core_principles_figures import draw as draw_principles
     draw_principles(4, out)
+    from energy_physics import draw as draw_energy
+    data['4-energy']=draw_energy(out)
     return out.finish()

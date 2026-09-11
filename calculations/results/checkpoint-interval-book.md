@@ -1,6 +1,6 @@
 # checkpoint-interval — qwen3-8b
 
-输入：`{"common_job_mtbf_seconds": null, "device_mtbf_seconds": 31536000, "devices": 1024, "failure_free": false, "intervals_seconds": [60, 120, 300, 600, 900, 1800, 3600], "model": "qwen3-8b", "recovery_ns": 120000000000, "save_bandwidth_bytes_per_second": 8000000000}`
+输入：`{"common_job_mtbf_seconds": null, "device_mtbf_seconds": 29122560, "devices": 1024, "failure_free": false, "intervals_seconds": [60, 120, 300, 600, 900, 1800, 3600], "model": "qwen3-8b", "recovery_ns": 120000000000, "save_bandwidth_bytes_per_second": 7000000000}`
 
 数值是分析计算；字节以 bytes 保存，FMA=2，不是硬件测量。
 
@@ -8,11 +8,11 @@
 | --- | ---: |
 | parameters | 8,190,735,360 |
 | checkpoint_payload_bytes | 114,670,295,040 |
-| blocking_save_cost_exact_seconds | `"11198271/781250"` |
-| job_failure_rate_exact_per_second | `"8/246375"` |
-| job_mtbf_exact_seconds | `"246375/8"` |
-| first_order_optimal_useful_interval_seconds | 939.6125188821188 |
-| poisson_optimal_useful_interval_seconds | 930.0810557494722 |
+| blocking_save_cost_exact_seconds | `"6399012/390625"` |
+| job_failure_rate_exact_per_second | `"1/28440"` |
+| job_mtbf_exact_seconds | `"28440"` |
+| first_order_optimal_useful_interval_seconds | 965.2865142296354 |
+| poisson_optimal_useful_interval_seconds | 954.3965630587674 |
 | best_enumerated_first_order_intervals | `[900]` |
 | best_enumerated_poisson_intervals | `[900]` |
 
@@ -20,13 +20,13 @@ tau为新增有用计算秒；近似损失与重试模型的保留比例不能�
 
 | tau s | c/tau | lambda*tau/2 | lambda*r | 一阶损失 | 小于1 | Poisson周期期望 s | Poisson保留比例 |
 | ---: | --- | --- | --- | ---: | --- | ---: | ---: |
-| 60 | 3732757/15625000 | 16/16425 | 64/16425 | 0.243767072 | True | 74.713559446 | 0.803067080 |
-| 120 | 3732757/31250000 | 32/16425 | 64/16425 | 0.125292973 | True | 135.151765303 | 0.887890733 |
-| 300 | 3732757/78125000 | 16/3285 | 64/16425 | 0.056546413 | True | 317.174483655 | 0.945851623 |
-| 600 | 3732757/156250000 | 32/3285 | 64/16425 | 0.037527392 | True | 622.919861828 | 0.963205762 |
-| 900 | 3732757/234375000 | 16/1095 | 64/16425 | 0.034434801 | True | 931.658135184 | 0.966019580 |
-| 1800 | 3732757/468750000 | 32/1095 | 64/16425 | 0.041083458 | True | 1876.124733058 | 0.959424482 |
-| 3600 | 3732757/937500000 | 64/1095 | 64/16425 | 0.066325595 | True | 3849.912831682 | 0.935086106 |
+| 60 | 533251/1953125 | 1/948 | 1/237 | 0.278298774 | True | 76.806849537 | 0.781180329 |
+| 120 | 533251/3906250 | 1/474 | 1/237 | 0.142841370 | True | 137.285827819 | 0.874088767 |
+| 300 | 533251/9765625 | 5/948 | 1/237 | 0.064098573 | True | 319.490207048 | 0.938995917 |
+| 600 | 533251/19531250 | 5/474 | 1/237 | 0.042070384 | True | 625.738573982 | 0.958866889 |
+| 900 | 533251/29296875 | 5/316 | 1/237 | 0.038243828 | True | 935.234507323 | 0.962325484 |
+| 1800 | 533251/58593750 | 5/158 | 1/237 | 0.044965796 | True | 1883.553919115 | 0.955640283 |
+| 3600 | 533251/117187500 | 5/79 | 1/237 | 0.072060957 | True | 3872.643046112 | 0.929597682 |
 
 计量条件：
 

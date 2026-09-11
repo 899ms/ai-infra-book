@@ -7813,10 +7813,10 @@
         },
         {
           "field": "memory_bandwidth",
-          "value": null,
-          "recording_status": "value_not_recorded",
-          "source_id": "nvidia-h20-vgpu-release7",
-          "locator": "Tables 186–187: physical product heading NVIDIA H20 SXM5 96GB; not vGPU framebuffer column",
+          "value": 4096000000000.0,
+          "recording_status": "value_and_source_pointer",
+          "source_id": "megascale-infer",
+          "locator": "Table 3 Performance specifications and cost-effectiveness, H20 row, Bw. (GB/s) 4096",
           "official_disclosure_status": "not_determined_by_structural_audit"
         },
         {
@@ -7832,10 +7832,36 @@
       "interconnects": [],
       "availability": null,
       "configuration_evidence": [],
-      "peaks": [],
+      "peaks": [
+        {
+          "index": 0,
+          "input_precision": "BF16",
+          "accumulator_precision": "FP32",
+          "execution_unit": "tensor",
+          "sparsity": "dense",
+          "flops_denominator_eligible": true,
+          "exclusion_reasons": [],
+          "source_id": "megascale-infer",
+          "locator": "Table 3, H20 row, Comp. (TFLOPS) 148; A800 312 and H800 989 rows in the same column equal the BF16 dense datasheet peaks",
+          "clock_basis": "author-reported peak; NVIDIA publishes no H20 datasheet; sustained performance not measured",
+          "clock_evidence": null,
+          "supporting_evidence": [
+            {
+              "source_id": "nvidia-h20-spec-sheet",
+              "locator": "Performance Metrics table, BF16 Peak (dense) 148.0",
+              "claim": "Third-party compilation labels 148 TFLOPS as BF16 dense, matching the paper value."
+            },
+            {
+              "source_id": "nvidia-ptx-isa-9-3",
+              "locator": "9.7.14 wgmma.mma_async: .bf16 inputs accumulate in .f32 (Hopper sm_90)",
+              "claim": "Neither source states the accumulator; Hopper wgmma defines BF16 Tensor accumulation as FP32, matching the H100 record convention."
+            }
+          ]
+        }
+      ],
       "notes_requiring_source_review": [
-        "官方AI Enterprise release-7 Hopper vGPU页面确认型号与名义容量；未提供本项目需要的精度/累加/稀疏峰值、显存带宽或功率，保持缺失。",
-        "未使用第三方148TFLOPS、4TB/s等数值，也不以H100/H200、另一H20容量版本或核数推导。"
+        "NVIDIA 未公开 H20 数据表。BF16 稠密峰值 148 TFLOPS 与显存带宽 4096 GB/s 取自 MegaScale-Infer（arXiv:2504.02263v1）表 3；同列 A800 与 H800 的数值与 NVIDIA 数据表一致。型号与名义容量以官方 AI Enterprise release-7 vGPU 页面为准。",
+        "第三方规格汇编（Flopper.io，2026-09-02）给出 BF16 148 TFLOPS、4.0 TB/s，与论文相差 2.4% 的带宽差异保留论文值；该汇编的 FP8、TF32、功率等字段没有论文或官方佐证，未录入。"
       ],
       "source_claim_review": "not_performed_by_structural_audit"
     },
@@ -16603,10 +16629,10 @@
   ],
   "summary": {
     "devices": 151,
-    "peak_records": 471,
-    "eligible_floating_point_peaks": 198,
+    "peak_records": 472,
+    "eligible_floating_point_peaks": 199,
     "values_without_field_source": 0,
-    "unrecorded_values": 156
+    "unrecorded_values": 155
   },
   "pending_families": [
     "当前约定范围的H01–H07官方资料与字段审查已验收；以下保留已审查的数值未知/版本边界，不表示整族尚未调研",

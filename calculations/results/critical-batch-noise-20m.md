@@ -1,6 +1,6 @@
 # critical-batch — 
 
-输入：`{"card_counts": [32, 48, 96, 192, 384, 768, 1536], "compute_seconds_at_reference": "52.2", "declared_noise_scale_tokens": 20000000, "microbatches_per_card": 8, "overhead_seconds_per_step": "4.5", "reference_cards": 48, "reference_sequences_per_step": 384, "sequence_tokens": 8192, "step_seconds_at_reference": "56.7", "total_tokens": 100000000000}`
+输入：`{"card_counts": [32, 48, 96, 192, 384, 768, 1536], "compute_seconds_at_reference": "10284614378256728064/196933746337890625", "declared_noise_scale_tokens": 20000000, "microbatches_per_card": 8, "overhead_seconds_per_step": "6751999/11718750", "reference_cards": 48, "reference_sequences_per_step": 384, "sequence_tokens": 8192, "step_seconds_at_reference": "62388490856210290259/1181602478027343750", "total_tokens": 100000000000}`
 
 数值是分析计算；字节以 bytes 保存，FMA=2，不是硬件测量。
 

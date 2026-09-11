@@ -1,6 +1,6 @@
 # expert-locality — 
 
-输入：`{"counts": null, "cpu_flops_per_second": 2000000000000, "dram_bytes_per_second": 200000000000, "gpu_flops_per_second": 100000000000000, "hbm_bytes_per_second": 1000000000000, "link_bytes_per_second": 25000000000, "model": "qwen3-235b-a22b", "resident_experts": 32, "routing": "balanced", "startup_ns": 5000, "tokens": 8192}`
+输入：`{"counts": null, "cpu_flops_per_second": 1800000000000, "dram_bytes_per_second": 220000000000, "gpu_flops_per_second": 156000000000000, "hbm_bytes_per_second": 777500000000, "link_bytes_per_second": 25000000000, "model": "qwen3-235b-a22b", "resident_experts": 32, "routing": "balanced", "startup_ns": 5000, "tokens": 8192}`
 
 数值是分析计算；字节以 bytes 保存，FMA=2，不是硬件测量。
 
@@ -17,12 +17,12 @@
 | remote_matrix_flops | 1,855,425,871,872 |
 | per_assignment_activation_roundtrip_bytes | 805,306,368 |
 | remote_tasks_per_active_expert_exact | `"512"` |
-| cpu_matrix_ns_exact | `"115964116992/125"` |
-| cpu_weight_read_ns_exact | `"452984832/25"` |
+| cpu_matrix_ns_exact | `"25769803776/25"` |
+| cpu_weight_read_ns_exact | `"905969664/55"` |
 | cpu_dominant_resource | `"compute"` |
-| cpu_service_ns_exact | `"120110648832/125"` |
-| weight_copy_service_ns_exact | `"512466890496/3125"` |
-| gpu_resident_service_ns_exact | `"57982058496/3125"` |
+| cpu_service_ns_exact | `"26599110144/25"` |
+| weight_copy_service_ns_exact | `"255659465472/1625"` |
+| gpu_resident_service_ns_exact | `"19327352832/1625"` |
 | cpu_lower_than_weight_copy_in_declared_model | `false` |
 | extra_gpu_weights_for_all_experts_per_layer | 3,623,878,656 |
 
@@ -30,16 +30,16 @@
 
 | 每专家最少token | 最多token（null为无穷） | 声明模型较小服务时间 |
 | ---: | --- | --- |
-| 1 | 78 | cpu |
-| 79 | None | copy-to-gpu |
+| 1 | 71 | cpu |
+| 72 | None | copy-to-gpu |
 
-计算／权重读取等时位置：`{"cpu_equal_compute_weight_tokens_exact": "10", "gpu_equal_compute_weight_tokens_exact": "100"}`。
+计算／权重读取等时位置：`{"cpu_equal_compute_weight_tokens_exact": "90/11", "gpu_equal_compute_weight_tokens_exact": "62400/311"}`。
 
 | 非驻留专家路径 | 链路bytes | 启动数 | 权重读取bytes | 矩阵FLOPs | 声明模型ns |
 | --- | ---: | ---: | ---: | ---: | --- |
-| CPU local experts | 805306368 | 192 | 3623878656 | 1855425871872 | 120110648832/125 |
-| copy weights to GPU | 3623878656 | 96 | 3623878656 | 1855425871872 | 512466890496/3125 |
-| GPU resident reference | 0 | 0 | 3623878656 | 1855425871872 | 57982058496/3125 |
+| CPU local experts | 805306368 | 192 | 3623878656 | 1855425871872 | 26599110144/25 |
+| copy weights to GPU | 3623878656 | 96 | 3623878656 | 1855425871872 | 255659465472/1625 |
+| GPU resident reference | 0 | 0 | 3623878656 | 1855425871872 | 19327352832/1625 |
 
 | 专家 | token数 | GPU驻留 | gate/up M,K,N | down M,K,N | 矩阵FLOPs | 本批权重bytes |
 | ---: | ---: | --- | --- | --- | ---: | ---: |
@@ -180,7 +180,7 @@
 - 只比较非驻留专家子账。GPU常驻专家可并行的工作、attention、router、归约和完整请求不在本结果；全GPU参考需要额外权重容量，未作可行性保证。
 - CPU每个非空专家发送一批输入并返回一批结果，激活均BF16，每个token—expert任务各算一份；直方图没有token身份，不推断跨专家去重。每方向每非空专家一次启动。
 - 时长为明确教学路径：CPU先交接激活再计max(矩阵服务,理想权重读取)，搬权重路径先复制再计GPU同类服务；按资源聚合下界，不含各专家不均衡、padding、小矩阵效率、激活访存、格式转换、NUMA和内部依赖。
-- 计算与带宽均为有效服务假设，不引用CPU AMX或GPU宣传值。BF16权重不代表特定KTransformers量化格式，不能据此声称CPU/GPU实际胜负。
+- 默认参数取KTransformers SOSP 2025论文平台：单路Xeon Platinum 8452Y的AVX-512内核1.8 TFLOP/s与AMX内核21.3 TFLOP/s（论文图3实测峰值）、同路DRAM 220 GB/s（Intel MLC实测）；GPU取A100 40GB PCIe官方峰值312 TFLOP/s与1555 GB/s的50%；PCIe 4.0 x16理论32 GB/s，采用25 GB/s有效值。BF16权重不代表特定KTransformers量化格式。
 
 固定来源：
 

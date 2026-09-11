@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "calculation": "sm-occupancy",
+  "scenario": {
+    "threads_per_block": 256,
+    "declared_registers_per_thread": 128,
+    "tile_m": 128,
+    "tile_n": 128,
+    "tile_k": 64,
+    "accumulator_in_shared": true,
+    "extra_shared_bytes": 0,
+    "declared_warp_size": 32,
+    "hbm_bytes_per_second": 3350000000000,
+    "sms": 132,
+    "declared_latency_ns": 600,
+    "declared_outstanding_loads_per_warp": 4,
+    "declared_load_bytes_per_thread": 16,
+    "declared_mma_shape": [
+      16,
+      8,
+      16
+    ]
+  },
+  "declared_input_sources": {
+    "threads_per_block": "book (declared 8 warps)",
+    "declared_registers_per_thread": "book (declared)",
+    "tile_m": "book (chapter 4.3.2 tile)",
+    "tile_n": "book (chapter 4.3.2 tile)",
+    "tile_k": "book (chapter 4.3.2 tile)",
+    "accumulator_in_shared": "book (chapter 4.3.2: operands and accumulator in the 96 KiB buffer)",
+    "extra_shared_bytes": "book",
+    "declared_warp_size": "book (declared; not in archived texts)",
+    "hbm_bytes_per_second": "references/text/nvidia-h100-spec.txt line 383 (3.35TB/s)",
+    "sms": "references/text/nvidia-h100.txt line 644 (132 SMs)",
+    "declared_latency_ns": "book (declared; no archived measurement)",
+    "declared_outstanding_loads_per_warp": "book (declared)",
+    "declared_load_bytes_per_thread": "book (declared 128-bit load)",
+    "declared_mma_shape": "book (declared; shape not in archived texts)"
+  },
+  "summary": {
+    "resident_blocks": 2,
+    "resident_warps": 16,
+    "occupancy": 0.25,
+    "binding_limits": [
+      "registers",
+      "shared_memory"
+    ],
+    "shared_bytes_per_block": 98304,
+    "registers_per_thread": 128,
+    "needed_bytes_in_flight_per_sm": 15227.272727272728,
+    "available_bytes_in_flight_per_sm": 32768,
+    "covers_latency": true,
+    "mma_instructions_per_tile": 512,
+    "tile_flops": 2097152
+  },
+  "sm_limits_cc90": {
+    "max_threads_per_sm": 2048,
+    "max_warps_per_sm": 64,
+    "registers_per_sm": 65536,
+    "max_registers_per_thread": 255,
+    "max_blocks_per_sm": 32,
+    "shared_memory_per_sm_bytes": 233472,
+    "max_shared_memory_per_block_bytes": 232448,
+    "reserved_shared_per_block_bytes": 1024
+  },
+  "block": {
+    "threads": 256,
+    "warps": 8,
+    "registers_per_thread": 128,
+    "declared_registers_per_thread": 128,
+    "accumulator_registers_per_thread": 0,
+    "registers_per_block": 32768,
+    "operand_shared_bytes": 32768,
+    "accumulator_bytes": 65536,
+    "accumulator_in_shared": true,
+    "shared_bytes_per_block": 98304,
+    "shared_bytes_with_reservation": 99328,
+    "gemm_tiles_reserved_working_bytes": 98304
+  },
+  "residency": {
+    "blocks_by_limit": {
+      "threads": 8,
+      "registers": 2,
+      "shared_memory": 2,
+      "blocks": 32
+    },
+    "resident_blocks": 2,
+    "binding_limits": [
+      "registers",
+      "shared_memory"
+    ],
+    "resident_warps": 16,
+    "occupancy_exact": "1/4",
+    "occupancy": 0.25,
+    "resident_threads": 512
+  },
+  "latency_hiding": {
+    "hbm_bytes_per_second_exact": "3350000000000",
+    "declared_latency_ns": 600,
+    "needed_bytes_in_flight_gpu_exact": "2010000",
+    "needed_bytes_in_flight_gpu": 2010000.0,
+    "needed_bytes_in_flight_per_sm": 15227.272727272728,
+    "available_bytes_in_flight_per_sm": 32768,
+    "available_bytes_in_flight_gpu": 4325376,
+    "request_bytes_per_warp": 512,
+    "covers_latency": true,
+    "coverage_ratio": 2.1519283582089552,
+    "minimum_resident_warps_to_cover": 8
+  },
+  "mma": {
+    "declared_shape": [
+      16,
+      8,
+      16
+    ],
+    "instructions_per_tile": 512,
+    "instructions_per_warp_per_tile": 64,
+    "instructions_per_warp_per_tile_exact": "64",
+    "flops_per_instruction": 4096,
+    "tile_flops": 2097152,
+    "tile_next_level_bytes": 65536,
+    "tile_arithmetic_intensity": 32.0
+  },
+  "assumptions": [
+    "SM 限制取自归档的 Hopper 调优指南（每 SM 64 warp、64K 寄存器、32 个线程块、228 KB 共享内存，每块 227 KB 上限并预留 1 KB）；warp 宽度 32 为声明常量。寄存器按线程数×每线程寄存器直接相乘，不模拟分配粒度。",
+    "内核参数（每块线程数、每线程寄存器数、tile 形状）是声明的教学输入；96 KiB 工作集与第 4.3.2 节相同，由 gemm_tiles.account 复算。累加器放共享内存与放寄存器两种口径分别给出。",
+    "延迟隐藏用 Little 定律：需要在途字节 = HBM 带宽 × 声明延迟；可用在途字节 = 常驻 warp × 每 warp 未完成加载数 × 每次加载字节。延迟、未完成数与加载宽度均为声明值，未归档实测；TMA 批量拷贝不按此计。",
+    "MMA 指令数 = tile 各维除以声明指令形状之积，与 tile FLOPs 自洽；指令形状未在归档文本中出现，为声明输入，不代表 wgmma 的实际发射方式或吞吐。"
+  ]
+}

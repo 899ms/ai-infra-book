@@ -1,0 +1,444 @@
+{
+  "schema_version": 1,
+  "calculation": "iteration-batching",
+  "scenario": {
+    "model": "qwen3-8b",
+    "policy": "fixed",
+    "requests": [
+      {
+        "id": "r0",
+        "arrival_ns": 0,
+        "prompt_tokens": 2048,
+        "output_tokens": 8
+      },
+      {
+        "id": "r1",
+        "arrival_ns": 0,
+        "prompt_tokens": 2048,
+        "output_tokens": 2
+      },
+      {
+        "id": "r2",
+        "arrival_ns": 20000000,
+        "prompt_tokens": 8192,
+        "output_tokens": 2
+      },
+      {
+        "id": "r3",
+        "arrival_ns": 30000000,
+        "prompt_tokens": 2048,
+        "output_tokens": 4
+      }
+    ],
+    "max_sequences": 2,
+    "token_budget": 4096,
+    "chunk_tokens": 2048,
+    "step_base_ns": 26220000,
+    "per_new_token_ns": 30400,
+    "per_causal_pair_ns": 3,
+    "kv_capacity_bytes": null
+  },
+  "sources": [
+    {
+      "file": "configs/models/qwen3-8b/config.json",
+      "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+    },
+    {
+      "file": "sources/qwen3-8b/model.safetensors.index.json",
+      "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+    },
+    {
+      "file": "sources/qwen3/modeling_qwen3.py",
+      "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+      "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+      "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+    },
+    {
+      "file": "sources/qwen3/modeling_qwen3_moe.py",
+      "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+      "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+      "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+    }
+  ],
+  "batching_steps": [
+    {
+      "start_ns": 0,
+      "end_ns": 163327456,
+      "duration_ns": 163327456,
+      "new_tokens": 4096,
+      "causal_pairs": 4196352,
+      "live_kv_bytes_during_step": 603979776,
+      "plans": [
+        {
+          "request": "r0",
+          "phase": "prefill",
+          "history_tokens": 0,
+          "new_tokens": 2048,
+          "causal_pairs": 2098176,
+          "emits_token": true,
+          "matrix_flops": 29688662589440
+        },
+        {
+          "request": "r1",
+          "phase": "prefill",
+          "history_tokens": 0,
+          "new_tokens": 2048,
+          "causal_pairs": 2098176,
+          "emits_token": true,
+          "matrix_flops": 29688662589440
+        }
+      ]
+    },
+    {
+      "start_ns": 163327456,
+      "end_ns": 189620550,
+      "duration_ns": 26293094,
+      "new_tokens": 2,
+      "causal_pairs": 4098,
+      "live_kv_bytes_during_step": 604274688,
+      "plans": [
+        {
+          "request": "r0",
+          "phase": "decode",
+          "history_tokens": 2048,
+          "new_tokens": 1,
+          "causal_pairs": 2049,
+          "emits_token": true,
+          "matrix_flops": 16344743936
+        },
+        {
+          "request": "r1",
+          "phase": "decode",
+          "history_tokens": 2048,
+          "new_tokens": 1,
+          "causal_pairs": 2049,
+          "emits_token": true,
+          "matrix_flops": 16344743936
+        }
+      ]
+    },
+    {
+      "start_ns": 189620550,
+      "end_ns": 215877100,
+      "duration_ns": 26256550,
+      "new_tokens": 1,
+      "causal_pairs": 2050,
+      "live_kv_bytes_during_step": 302284800,
+      "plans": [
+        {
+          "request": "r0",
+          "phase": "decode",
+          "history_tokens": 2049,
+          "new_tokens": 1,
+          "causal_pairs": 2050,
+          "emits_token": true,
+          "matrix_flops": 16345333760
+        }
+      ]
+    },
+    {
+      "start_ns": 215877100,
+      "end_ns": 242133653,
+      "duration_ns": 26256553,
+      "new_tokens": 1,
+      "causal_pairs": 2051,
+      "live_kv_bytes_during_step": 302432256,
+      "plans": [
+        {
+          "request": "r0",
+          "phase": "decode",
+          "history_tokens": 2050,
+          "new_tokens": 1,
+          "causal_pairs": 2051,
+          "emits_token": true,
+          "matrix_flops": 16345923584
+        }
+      ]
+    },
+    {
+      "start_ns": 242133653,
+      "end_ns": 268390209,
+      "duration_ns": 26256556,
+      "new_tokens": 1,
+      "causal_pairs": 2052,
+      "live_kv_bytes_during_step": 302579712,
+      "plans": [
+        {
+          "request": "r0",
+          "phase": "decode",
+          "history_tokens": 2051,
+          "new_tokens": 1,
+          "causal_pairs": 2052,
+          "emits_token": true,
+          "matrix_flops": 16346513408
+        }
+      ]
+    },
+    {
+      "start_ns": 268390209,
+      "end_ns": 294646768,
+      "duration_ns": 26256559,
+      "new_tokens": 1,
+      "causal_pairs": 2053,
+      "live_kv_bytes_during_step": 302727168,
+      "plans": [
+        {
+          "request": "r0",
+          "phase": "decode",
+          "history_tokens": 2052,
+          "new_tokens": 1,
+          "causal_pairs": 2053,
+          "emits_token": true,
+          "matrix_flops": 16347103232
+        }
+      ]
+    },
+    {
+      "start_ns": 294646768,
+      "end_ns": 320903330,
+      "duration_ns": 26256562,
+      "new_tokens": 1,
+      "causal_pairs": 2054,
+      "live_kv_bytes_during_step": 302874624,
+      "plans": [
+        {
+          "request": "r0",
+          "phase": "decode",
+          "history_tokens": 2053,
+          "new_tokens": 1,
+          "causal_pairs": 2054,
+          "emits_token": true,
+          "matrix_flops": 16347693056
+        }
+      ]
+    },
+    {
+      "start_ns": 320903330,
+      "end_ns": 347159895,
+      "duration_ns": 26256565,
+      "new_tokens": 1,
+      "causal_pairs": 2055,
+      "live_kv_bytes_during_step": 303022080,
+      "plans": [
+        {
+          "request": "r0",
+          "phase": "decode",
+          "history_tokens": 2054,
+          "new_tokens": 1,
+          "causal_pairs": 2055,
+          "emits_token": true,
+          "matrix_flops": 16348282880
+        }
+      ]
+    },
+    {
+      "start_ns": 347159895,
+      "end_ns": 791646007,
+      "duration_ns": 444486112,
+      "new_tokens": 10240,
+      "causal_pairs": 35656704,
+      "live_kv_bytes_during_step": 1509949440,
+      "plans": [
+        {
+          "request": "r2",
+          "phase": "prefill",
+          "history_tokens": 0,
+          "new_tokens": 8192,
+          "causal_pairs": 33558528,
+          "emits_token": true,
+          "matrix_flops": 133594323353600
+        },
+        {
+          "request": "r3",
+          "phase": "prefill",
+          "history_tokens": 0,
+          "new_tokens": 2048,
+          "causal_pairs": 2098176,
+          "emits_token": true,
+          "matrix_flops": 29688662589440
+        }
+      ]
+    },
+    {
+      "start_ns": 791646007,
+      "end_ns": 817957533,
+      "duration_ns": 26311526,
+      "new_tokens": 2,
+      "causal_pairs": 10242,
+      "live_kv_bytes_during_step": 1510244352,
+      "plans": [
+        {
+          "request": "r2",
+          "phase": "decode",
+          "history_tokens": 8192,
+          "new_tokens": 1,
+          "causal_pairs": 8193,
+          "emits_token": true,
+          "matrix_flops": 19968622592
+        },
+        {
+          "request": "r3",
+          "phase": "decode",
+          "history_tokens": 2048,
+          "new_tokens": 1,
+          "causal_pairs": 2049,
+          "emits_token": true,
+          "matrix_flops": 16344743936
+        }
+      ]
+    },
+    {
+      "start_ns": 817957533,
+      "end_ns": 844214083,
+      "duration_ns": 26256550,
+      "new_tokens": 1,
+      "causal_pairs": 2050,
+      "live_kv_bytes_during_step": 302284800,
+      "plans": [
+        {
+          "request": "r3",
+          "phase": "decode",
+          "history_tokens": 2049,
+          "new_tokens": 1,
+          "causal_pairs": 2050,
+          "emits_token": true,
+          "matrix_flops": 16345333760
+        }
+      ]
+    },
+    {
+      "start_ns": 844214083,
+      "end_ns": 870470636,
+      "duration_ns": 26256553,
+      "new_tokens": 1,
+      "causal_pairs": 2051,
+      "live_kv_bytes_during_step": 302432256,
+      "plans": [
+        {
+          "request": "r3",
+          "phase": "decode",
+          "history_tokens": 2050,
+          "new_tokens": 1,
+          "causal_pairs": 2051,
+          "emits_token": true,
+          "matrix_flops": 16345923584
+        }
+      ]
+    }
+  ],
+  "batching_requests": [
+    {
+      "id": "r0",
+      "arrival_ns": 0,
+      "prompt_tokens": 2048,
+      "output_tokens": 8,
+      "computed": 2055,
+      "delivered": 8,
+      "reserved_bytes": 303022080,
+      "admitted_ns": 0,
+      "delivery_ns": [
+        163327456,
+        189620550,
+        215877100,
+        242133653,
+        268390209,
+        294646768,
+        320903330,
+        347159895
+      ],
+      "matrix_flops": 29803088183296,
+      "waiting_ns": 0,
+      "ttft_ns": 163327456,
+      "finish_ns": 347159895,
+      "latency_ns": 347159895,
+      "max_itl_ns": 26293094
+    },
+    {
+      "id": "r1",
+      "arrival_ns": 0,
+      "prompt_tokens": 2048,
+      "output_tokens": 2,
+      "computed": 2049,
+      "delivered": 2,
+      "reserved_bytes": 302137344,
+      "admitted_ns": 0,
+      "delivery_ns": [
+        163327456,
+        189620550
+      ],
+      "matrix_flops": 29705007333376,
+      "waiting_ns": 0,
+      "ttft_ns": 163327456,
+      "finish_ns": 189620550,
+      "latency_ns": 189620550,
+      "max_itl_ns": 26293094
+    },
+    {
+      "id": "r2",
+      "arrival_ns": 20000000,
+      "prompt_tokens": 8192,
+      "output_tokens": 2,
+      "computed": 8193,
+      "delivered": 2,
+      "reserved_bytes": 1208107008,
+      "admitted_ns": 347159895,
+      "delivery_ns": [
+        791646007,
+        817957533
+      ],
+      "matrix_flops": 133614291976192,
+      "waiting_ns": 327159895,
+      "ttft_ns": 771646007,
+      "finish_ns": 817957533,
+      "latency_ns": 797957533,
+      "max_itl_ns": 26311526
+    },
+    {
+      "id": "r3",
+      "arrival_ns": 30000000,
+      "prompt_tokens": 2048,
+      "output_tokens": 4,
+      "computed": 2051,
+      "delivered": 4,
+      "reserved_bytes": 302432256,
+      "admitted_ns": 347159895,
+      "delivery_ns": [
+        791646007,
+        817957533,
+        844214083,
+        870470636
+      ],
+      "matrix_flops": 29737698590720,
+      "waiting_ns": 317159895,
+      "ttft_ns": 761646007,
+      "finish_ns": 870470636,
+      "latency_ns": 840470636,
+      "max_itl_ns": 26311526
+    }
+  ],
+  "summary": {
+    "requests": 4,
+    "iterations": 12,
+    "finish_ns": 870470636,
+    "total_output_tokens": 16,
+    "total_scheduled_tokens": 14348,
+    "total_matrix_flops": 222860086083584,
+    "peak_live_kv_bytes": 1510244352,
+    "peak_reserved_kv_bytes": 1510539264,
+    "live_kv_byte_ns": 888980730130464768,
+    "max_waiting_ns": 327159895,
+    "max_ttft_ns": 771646007,
+    "max_itl_ns": 26311526
+  },
+  "assumptions": [
+    "同一教学请求流：固定批次只在整组退出后补位，连续批处理每个迭代边界补位，两者prefill一次处理完整prompt；chunked在相同连续补位上按decode优先、FIFO prefill分配token预算与单请求块上限。",
+    "只在迭代边界接纳已到达请求；固定批次不额外等待凑满。每个请求先完成prefill产生首输出，后续输出各消耗一个pending token。最新输出尚未写入KV，最终计算长度为prompt+output-1。",
+    "每步时长为base+new_tokens*per_new_token_ns+有效因果配对*per_causal_pair_ns，全部显式教学成本，跨请求相加后一次base；它不是实测拟合或硬件峰值预测。官方矩阵另计，非末prefill块不做输出头。",
+    "KV准入按声明最大输出长度预留，严格FIFO不绕过队首；逻辑KV按每步开始分配该步全部新增行、步末完成请求释放。只计KV池，不含权重、页碎片或工作区；无抢占、共享前缀或动态EOS。",
+    "时间戳是调度模型交付时刻，不模拟HTTP或流式聚合；相同输出数量不证明生成内容或质量一致。maxITL仅对至少两输出请求定义。"
+  ]
+}

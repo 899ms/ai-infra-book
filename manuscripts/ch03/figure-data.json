@@ -270,18 +270,22 @@
       }
     ],
     "fluid_queue": {
-      "service_steps_per_second": 6144,
+      "device": "rtx-pro6000-blackwell-ws",
+      "cards": 2,
+      "batch_per_card": 64,
+      "mean_context_tokens": 2742,
+      "service_steps_per_second": 5591.327571370426,
       "seconds": [
         0.0,
         60.0,
         120.0,
-        132.9609375
+        140.1727307652857
       ],
       "backlog_steps": [
-        0,
-        0,
-        79632,
-        0
+        0.0,
+        0.0,
+        112792.34571777443,
+        0.0
       ]
     }
   },
@@ -1496,9 +1500,9 @@
       }
     ],
     "law": {
-      "E": 1.2112421705646654,
-      "A": 1.2512538552831556,
-      "B": 0.5234301353650054,
+      "E": 1.2112421705646648,
+      "A": 1.2512538552831571,
+      "B": 0.5234301353650053,
       "alpha": 0.1,
       "beta": 0.45,
       "N0": 1000000000.0,
@@ -1513,78 +1517,78 @@
       {
         "id": "14m100m100m",
         "split": "fit",
-        "residual": 0.006975113490804041
+        "residual": 0.0069751134908049295
       },
       {
         "id": "196m1b51b5",
         "split": "fit",
-        "residual": -0.02059659722379026
+        "residual": -0.02059659722378937
       },
       {
         "id": "1b11b51b5",
         "split": "fit",
-        "residual": 0.00021375587554173237
+        "residual": 0.00021375587554217645
       },
       {
         "id": "1b112b12b",
         "split": "fit",
-        "residual": 0.007600562857554838
+        "residual": 0.007600562857555726
       },
       {
         "id": "1b191b91b",
         "split": "fit",
-        "residual": 0.008011198842696743
+        "residual": 0.008011198842697631
       },
       {
         "id": "2b855b55b",
         "split": "holdout",
-        "residual": 0.00860555677933128
+        "residual": 0.008605556779332169
       },
       {
         "id": "8b7178b178b",
         "split": "holdout",
-        "residual": 0.025968572228815212
+        "residual": 0.025968572228815656
       }
     ],
-    "fit_sse": 0.0005997233448120746,
-    "holdout_rmse": 0.019344538649002298,
+    "fit_sse": 0.0005997233448120783,
+    "holdout_rmse": 0.019344538649002794,
     "lifecycle": {
       "calls": 0,
       "rows": [
         {
           "N": 100000000.0,
-          "D": 298578849033.80475,
+          "D": 298578849033.8124,
           "feasible": true,
-          "predicted_loss": 2.8999999999999995,
-          "training_proxy_flops": 1.7914730942028284e+20,
+          "predicted_loss": 2.9000000000000004,
+          "training_proxy_flops": 1.7914730942028743e+20,
           "prefill_proxy_flops_per_call": 102400000000.0,
           "decode_proxy_flops_per_call": 25400000000.0,
-          "training_cost": 179.14730942028285,
+          "training_cost": 452666.5388626628,
           "setup_cost": 0,
-          "upfront_cost": 179.14730942028285,
-          "cost_per_call": 1.2780000000000002e-07,
+          "upfront_cost": 452666.5388626628,
+          "cost_per_call": 0.0003229229836264403,
           "lifetime_inference_cost": 0.0,
-          "total_cost": 179.14730942028285,
+          "total_cost": 452666.5388626628,
           "outside_fit_box": true,
           "extrapolation_factors": {
             "N": 1,
-            "D": 3.2810862531187337
+            "D": 3.281086253118817
           }
         },
         {
           "N": 500000000.0,
-          "D": 24819592197.315804,
+          "D": 24819592197.315968,
           "feasible": true,
-          "predicted_loss": 2.8999999999999995,
-          "training_proxy_flops": 7.445877659194742e+19,
+          "predicted_loss": 2.9,
+          "training_proxy_flops": 7.44587765919479e+19,
           "prefill_proxy_flops_per_call": 512000000000.0,
           "decode_proxy_flops_per_call": 127000000000.0,
-          "training_cost": 74.45877659194743,
+          "training_cost": 188141.2386091265,
           "setup_cost": 0,
-          "upfront_cost": 74.45877659194743,
-          "cost_per_call": 6.39e-07,
+          "upfront_cost": 188141.2386091265,
+          "cost_per_call": 0.0016146149181322012,
           "lifetime_inference_cost": 0.0,
-          "total_cost": 74.45877659194743,
+          "total_cost": 188141.2386091265,
           "outside_fit_box": false,
           "extrapolation_factors": {
             "N": 1,
@@ -1593,18 +1597,18 @@
         },
         {
           "N": 1000000000.0,
-          "D": 14895647223.134563,
+          "D": 14895647223.134624,
           "feasible": true,
           "predicted_loss": 2.9,
-          "training_proxy_flops": 8.937388333880738e+19,
+          "training_proxy_flops": 8.937388333880775e+19,
           "prefill_proxy_flops_per_call": 1024000000000.0,
           "decode_proxy_flops_per_call": 254000000000.0,
-          "training_cost": 89.37388333880739,
+          "training_cost": 225828.49034467293,
           "setup_cost": 0,
-          "upfront_cost": 89.37388333880739,
-          "cost_per_call": 1.278e-06,
+          "upfront_cost": 225828.49034467293,
+          "cost_per_call": 0.0032292298362644025,
           "lifetime_inference_cost": 0.0,
-          "total_cost": 89.37388333880739,
+          "total_cost": 225828.49034467293,
           "outside_fit_box": false,
           "extrapolation_factors": {
             "N": 1,
@@ -1613,18 +1617,18 @@
         },
         {
           "N": 2810000000.0,
-          "D": 8595274071.065386,
+          "D": 8595274071.065405,
           "feasible": true,
-          "predicted_loss": 2.9,
-          "training_proxy_flops": 1.449163208381624e+20,
+          "predicted_loss": 2.9000000000000004,
+          "training_proxy_flops": 1.4491632083816273e+20,
           "prefill_proxy_flops_per_call": 2877440000000.0,
           "decode_proxy_flops_per_call": 713740000000.0,
-          "training_cost": 144.91632083816242,
+          "training_cost": 366172.2277091235,
           "setup_cost": 0,
-          "upfront_cost": 144.91632083816242,
-          "cost_per_call": 3.59118e-06,
+          "upfront_cost": 366172.2277091235,
+          "cost_per_call": 0.00907413583990297,
           "lifetime_inference_cost": 0.0,
-          "total_cost": 144.91632083816242,
+          "total_cost": 366172.2277091235,
           "outside_fit_box": true,
           "extrapolation_factors": {
             "N": 2.5631670163276477,
@@ -1636,19 +1640,19 @@
         {
           "left_N": 100000000.0,
           "right_N": 500000000.0,
-          "calls": 204789774.70331654,
+          "calls": 204789774.70332462,
           "status": "nonnegative_crossing"
         },
         {
           "left_N": 100000000.0,
           "right_N": 1000000000.0,
-          "calls": 78050274.80566463,
+          "calls": 78050274.80566831,
           "status": "nonnegative_crossing"
         },
         {
           "left_N": 100000000.0,
           "right_N": 2810000000.0,
-          "calls": 9883694.131778907,
+          "calls": 9883694.131780142,
           "status": "nonnegative_crossing"
         },
         {
@@ -1673,7 +1677,7 @@
       "optimal_N": 500000000.0,
       "status": "finite_candidate_optimum"
     },
-    "crossing_calls": 204789774.70331654
+    "crossing_calls": 204789774.70332462
   },
   "3-8": {
     "kind": "reported_history_and_analytical_ratios",

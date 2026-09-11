@@ -1,6 +1,6 @@
 # checkpoint-async — qwen3-8b
 
-输入：`{"buffer_slots": 2, "durability_delay_ns": 0, "failure_ns": 50000000000, "first_capture_ns": 20000000000, "interval_ns": 20000000000, "model": "qwen3-8b", "payload_bytes": 112000000000, "snapshots": 2, "staging_ns": 500000000, "upload_bytes_per_second": 8000000000}`
+输入：`{"buffer_slots": 2, "durability_delay_ns": 0, "failure_ns": 50000000000, "first_capture_ns": 20000000000, "interval_ns": 20000000000, "model": "qwen3-8b", "payload_bytes": 112000000000, "snapshots": 2, "staging_ns": 500000000, "upload_bytes_per_second": 7000000000}`
 
 数值是分析计算；字节以 bytes 保存，FMA=2，不是硬件测量。
 
@@ -10,15 +10,15 @@
 | official_14_byte_payload | 114,670,295,040 |
 | payload_bytes | 112,000,000,000 |
 | payload_origin | `"explicit teaching payload override"` |
-| upload_service_exact_seconds | `"14"` |
+| upload_service_exact_seconds | `"16"` |
 | requested_payload_bytes_per_second_exact | `"5600000000"` |
-| requested_upload_utilization_exact | `"7/10"` |
+| requested_upload_utilization_exact | `"4/5"` |
 | requested_cadence_has_upload_slack | `true` |
 | requested_cadence_has_staging_slack | `true` |
 | snapshot_buffer_reserved_bytes | 224,000,000,000 |
 | snapshot_buffer_live_peak_bytes | 112,000,000,000 |
 | total_training_barrier_union_exact_seconds | `"1"` |
-| final_durable_exact_seconds | `"109/2"` |
+| final_durable_exact_seconds | `"113/2"` |
 | completed_durable_at_failure | 1 |
 | latest_recoverable_snapshot | 0 |
 | recovery_capture_exact_seconds | `"20"` |
@@ -29,8 +29,8 @@
 
 | 快照 | 槽 | 请求 s | 实际capture s | staging完成 s | upload开始 s | upload完成 s | durable s |
 | ---: | ---: | --- | --- | --- | --- | --- | --- |
-| 0 | 0 | 20 | 20 | 41/2 | 41/2 | 69/2 | 69/2 |
-| 1 | 1 | 40 | 40 | 81/2 | 81/2 | 109/2 | 109/2 |
+| 0 | 0 | 20 | 20 | 41/2 | 41/2 | 73/2 | 73/2 |
+| 1 | 1 | 40 | 40 | 81/2 | 81/2 | 113/2 | 113/2 |
 
 | 训练屏障并集起点 s | 终点 s |
 | --- | --- |

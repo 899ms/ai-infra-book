@@ -29,4 +29,4 @@
 
 固定来源：
 
-- [sources/formats/onnx-float8.html](https://onnx.ai/onnx/technical/float8.html)，SHA256 `8200a9f0872e8cb61915983e9b6eb3d2a587c6abdd470b24e586fb55eddb818e`。
+- [sources/formats/onnx-float8.md](https://onnx.ai/onnx/technical/float8.html)，SHA256 `d5c60432fca39feb350042cd07d90e87936fc77859910f837bcaf77d5204366f`。

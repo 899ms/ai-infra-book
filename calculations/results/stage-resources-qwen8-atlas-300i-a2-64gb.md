@@ -31,10 +31,10 @@ Conditional known-work service bounds; full runtime remains unknown.
 | sources[3].url | https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py |
 | sources[3].revision | 0720e206c6ba28887e4d60ef60a6a089f6c1cc76 |
 | sources[3].sha256 | 3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8 |
-| sources[4].file | sources/hardware/ascend-atlas-300i-a2.html |
+| sources[4].file | sources/hardware/ascend-atlas-300i-a2.md |
 | sources[4].url | https://e.huawei.com/cn/products/computing/ascend/atlas-300i-a2 |
 | sources[4].revision | snapshot-2026-09-08 |
-| sources[4].sha256 | bcdcad38a10dc330523dfc465840903154a7096303a9b7ed1e825155d848d7de |
+| sources[4].sha256 | 31e5f158991403035756f43856377603197b416fd295f4a538fd6207a126f803 |
 | device.id | atlas-300i-a2-64gb |
 | device.vendor | Huawei |
 | device.memory.nominal_capacity | 64 |
@@ -10733,7 +10733,7 @@ Conditional known-work service bounds; full runtime remains unknown.
 | resource_bounds.missing_resources[8] | vector_fp32 |
 | resource_bounds.global_resource_seconds.interface_bytes | 0.01027137953 |
 | resource_bounds.known_global_max_seconds | 0.01027137953 |
-| resource_bounds.known_serial_stage_max_sum_seconds | 0.010271379529999998 |
+| resource_bounds.known_serial_stage_max_sum_seconds | 0.01027137953 |
 | resource_bounds.accounted_global_max_seconds | unknown (null) |
 | resource_bounds.accounted_serial_stage_lower_bound_seconds | unknown (null) |
 | compute_only_bounds.stages[0].id | input |

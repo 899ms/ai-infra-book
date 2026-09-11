@@ -16,8 +16,8 @@
 | required_tokens_per_available_second_exact | `"3125000/81"` |
 | persistent_state_bytes | 131,051,765,760 |
 | available_training_seconds | 2,592,000 |
-| usable_hardware_profiles | 5 |
-| missing_hardware_profiles | `["a800-40gb-active", "h20-sxm5-96gb", "h20-sxm5-141gb"]` |
+| usable_hardware_profiles | 6 |
+| missing_hardware_profiles | `["a800-40gb-active", "h20-sxm5-141gb"]` |
 
 效率分母严格BF16输入／FP32累加／tensor／dense，每张设备；并非已校准MFU。
 
@@ -32,6 +32,9 @@
 | a100-80gb-sxm | 3/10 | 22 | 2 | 22 | 53565699886753792/20947265625 |
 | a100-80gb-sxm | 2/5 | 17 | 2 | 17 | 26782849943376896/10791015625 |
 | a100-80gb-sxm | 1/2 | 14 | 2 | 14 | 53565699886753792/22216796875 |
+| h20-sxm5-96gb | 3/10 | 46 | 2 | 46 | 107131399773507584/41552734375 |
+| h20-sxm5-96gb | 2/5 | 35 | 2 | 35 | 160697099660261376/63232421875 |
+| h20-sxm5-96gb | 1/2 | 28 | 2 | 28 | 160697099660261376/63232421875 |
 | h100-sxm | 3/10 | 7 | 2 | 7 | 857051198188060672/338173828125 |
 | h100-sxm | 2/5 | 6 | 2 | 6 | 107131399773507584/48310546875 |
 | h100-sxm | 1/2 | 5 | 2 | 5 | 857051198188060672/402587890625 |
@@ -45,7 +48,7 @@
 | rtx5090 | available | 5 | 已核对精度与单设备范围 |
 | a100-80gb-sxm | available | 2 | 已核对精度与单设备范围 |
 | a800-40gb-active | unavailable | 4 | No verified peak for a800-40gb-active: BF16/FP32/tensor/dense. Do not substitute another precision or product. |
-| h20-sxm5-96gb | unavailable | 2 | No verified peak for h20-sxm5-96gb: BF16/FP32/tensor/dense. Do not substitute another precision or product. |
+| h20-sxm5-96gb | available | 2 | 已核对精度与单设备范围 |
 | h20-sxm5-141gb | unavailable | 1 | No verified peak for h20-sxm5-141gb: BF16/FP32/tensor/dense. Do not substitute another precision or product. |
 | h100-sxm | available | 2 | 已核对精度与单设备范围 |
 | b200-sxm | available | 1 | 已核对精度与单设备范围 |
@@ -82,3 +85,5 @@
 - [research/hardware-nvidia-h01-round2/b200-pcf.pdf](https://images.nvidia.com/aem-dam/Solutions/documents/HGX-B200-PCF-Summary.pdf)，SHA256 `e689cb9a859cb52267fd2896837830d81ce606dad036e2b5f4324f2b60842084`。
 - [research/h05-next-review/cuda-programming-guide-12.8.1.md](https://docs.nvidia.com/cuda/archive/12.8.1/cuda-c-programming-guide/index.html)，SHA256 `f7f46a910869e1f1102ee7193b536dc6c9a356c224b51734f240168266ea5e25`。
 - [research/blackwell-bf16-independent/mma.py](https://raw.githubusercontent.com/NVIDIA/cutlass/147295a3d4b75f3aeff247c25b8927cea9a7006a/python/CuTeDSL/cutlass/cute/nvgpu/tcgen05/mma.py)，SHA256 `abb9b3a8d2b5329677999b00a45c6c6e6ab763fc748cfbeeaa333de0df881baa`。
+- [../references/files/specs/nvidia-h20-spec-sheet.pdf](https://flopper.io/gpu/nvidia-h20-96gb/spec-sheet.pdf)，SHA256 `10066ce28de21151385fc05110af461ccce6a2ea73a0b3322efe5a47e67ce1e5`。
+- [../references/outline-checks/2026-09-07/execution-feedback/megascale-infer.pdf](https://arxiv.org/pdf/2504.02263v1)，SHA256 `3596ecc1eda339b0e33e3f3de5d4910b42f1aeb2e880c68b405a59678a66f403`。

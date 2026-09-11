@@ -133,14 +133,14 @@
 
 固定来源：
 
-- [sources/hardware/nvidia-a100-page.html](https://www.nvidia.com/en-us/data-center/a100/)，SHA256 `4f9e4119f72f14db039bf46b25e123a7786b73d8bbff9f2e7243dfaaacb5e8c1`。
-- [sources/hardware/nvidia-h100-page.html](https://www.nvidia.com/en-us/data-center/h100/)，SHA256 `8fe697dfa96dceeeed6e7a16517294e15d9100cc0e9f1e6e5edbce78699b4681`。
-- [sources/hardware/nvidia-hgx-page.html](https://www.nvidia.com/en-us/data-center/hgx/)，SHA256 `37ed56ca6dbda836f4dd0aaabe4e7f4e898550438b2888db688caeb5a0ed65d7`。
-- [sources/hardware/nvidia-hgx-components.html](https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory/latest/components.html)，SHA256 `8db5c1cb160cfb3935d36324a112155d827a9b2e32768e59540ebd56f40840ec`。
+- [sources/hardware/nvidia-a100-page.md](https://www.nvidia.com/en-us/data-center/a100/)，SHA256 `826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed`。
+- [sources/hardware/nvidia-h100-page.md](https://www.nvidia.com/en-us/data-center/h100/)，SHA256 `9ec9b79f149ced935b19b3a44d07ce385859e49fcb33dfdfeb35adc7b7d00fe0`。
+- [sources/hardware/nvidia-hgx-page.md](https://www.nvidia.com/en-us/data-center/hgx/)，SHA256 `f3105b6fe6e65856d5bb225085f8dded0ab39952c2d9669bcc2df45c52a39c31`。
+- [sources/hardware/nvidia-hgx-components.md](https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory/latest/components.html)，SHA256 `7a6c94aba6bb4479ead548e337f9fc1cae922cc3aa13ae33e4cb1b77d6862d4f`。
 - [../references/files/specs/nvidia-a100.pdf](https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf)，SHA256 `3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815`。
 - [../references/files/specs/nvidia-h100.pdf](https://dam-cdn.nvd.orangelogic.com/AssetLink/705n6ur546g0uk43w0117r17n8042d73.pdf)，SHA256 `3641614979809a027a8aabdc2e77639efb8fcd0f8dc7873a22ba2125489f5a27`。
-- [sources/hardware/nvidia-ptx-isa-9-3.html](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html)，SHA256 `940cc68f858cefdf82425b47ee3bac3afde447c8a85b95f43d7d6fb1f46b4413`。
+- [sources/hardware/nvidia-ptx-isa-9-3.md](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html)，SHA256 `0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7`。
 - [../references/files/specs/nvidia-blackwell-brief.pdf](https://dam-cdn.nvd.orangelogic.com/AssetLink/gl2l4l4812s5fw0p614s6i8bv6mi3vx5.pdf)，SHA256 `df58a797c6bc4236b1877b634fe31ff8da4c82fff289605adfb5aaca424aec69`。
 - [research/hardware-nvidia-h01-round2/b200-pcf.pdf](https://images.nvidia.com/aem-dam/Solutions/documents/HGX-B200-PCF-Summary.pdf)，SHA256 `e689cb9a859cb52267fd2896837830d81ce606dad036e2b5f4324f2b60842084`。
-- [research/h05-next-review/cuda-programming-guide-12.8.1.html](https://docs.nvidia.com/cuda/archive/12.8.1/cuda-c-programming-guide/index.html)，SHA256 `cdc49d93372b4e03e94d56f24345373f82ad76b8663c745073463263009637ce`。
+- [research/h05-next-review/cuda-programming-guide-12.8.1.md](https://docs.nvidia.com/cuda/archive/12.8.1/cuda-c-programming-guide/index.html)，SHA256 `f7f46a910869e1f1102ee7193b536dc6c9a356c224b51734f240168266ea5e25`。
 - [research/blackwell-bf16-independent/mma.py](https://raw.githubusercontent.com/NVIDIA/cutlass/147295a3d4b75f3aeff247c25b8927cea9a7006a/python/CuTeDSL/cutlass/cute/nvgpu/tcgen05/mma.py)，SHA256 `abb9b3a8d2b5329677999b00a45c6c6e6ab763fc748cfbeeaa333de0df881baa`。

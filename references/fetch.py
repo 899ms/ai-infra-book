@@ -15,7 +15,10 @@ from urllib.parse import quote
 from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parent
-CHAPTERS = [c["title"] for c in json.loads((ROOT.parent / "outlines/chapters.json").read_text())]
+# 章名以当前 manuscripts 目录为准；旧的 outlines/chapters.json 仅作后备。
+_CHAPTER_FILES = sorted(ROOT.parent.glob("manuscripts/[0-9][0-9]-*.md"))
+CHAPTERS = ([re.sub(r"^\d\d-", "", p.stem) for p in _CHAPTER_FILES if not p.name.startswith("00-")]
+            or [c["title"] for c in json.loads((ROOT.parent / "outlines/chapters.json").read_text())])
 
 
 class ReadableText(HTMLParser):

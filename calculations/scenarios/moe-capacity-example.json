@@ -1,0 +1,26 @@
+{
+  "inputs": {
+    "model": "qwen3-235b-a22b",
+    "tokens": 8192,
+    "capacity_factors": [
+      "1",
+      "1.25",
+      "1.5",
+      "2"
+    ],
+    "chapter_histogram": [
+      96,
+      32
+    ],
+    "declared_hot_fraction": "1/2",
+    "declared_hot_multiplier": "3/2"
+  },
+  "input_sources": {
+    "model": "configs/models/qwen3-235b-a22b/config.json",
+    "tokens": "book (8K request)",
+    "capacity_factors": "references/text/switch-transformer.txt line 320 (capacity factors 1.0 and 1.5 in Figure 3; 1.25 and 2.0 declared)",
+    "chapter_histogram": "book (chapter 10.3.4: 96 and 32 dispatches)",
+    "declared_hot_fraction": "book (declared)",
+    "declared_hot_multiplier": "book (declared, same 3:1 skew as 96/32)"
+  }
+}

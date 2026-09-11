@@ -31,10 +31,10 @@ Conditional known-work service bounds; full runtime remains unknown.
 | sources[3].url | https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py |
 | sources[3].revision | 0720e206c6ba28887e4d60ef60a6a089f6c1cc76 |
 | sources[3].sha256 | 3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8 |
-| sources[4].file | sources/hardware/apple-m4-pro-max-specs.html |
+| sources[4].file | sources/hardware/apple-m4-pro-max-specs.md |
 | sources[4].url | https://support.apple.com/en-us/121554 |
 | sources[4].revision | snapshot-2026-09-08 |
-| sources[4].sha256 | 3ecc587a1aa03802e248cb174e9f1f458f578b86db3c298daac4fd04ecc619d1 |
+| sources[4].sha256 | c9bb483fc827e3c528a62af1c3c0ec25b17ddc9ec6fde0e4ce5476200adcde5e |
 | device.id | m4-max-40gpu-128gb |
 | device.vendor | Apple |
 | device.memory.nominal_capacity | 128 |
@@ -10734,7 +10734,7 @@ Conditional known-work service bounds; full runtime remains unknown.
 | resource_bounds.missing_resources[8] | vector_fp32 |
 | resource_bounds.global_resource_seconds.interface_bytes | 0.030099280673992673 |
 | resource_bounds.known_global_max_seconds | 0.030099280673992673 |
-| resource_bounds.known_serial_stage_max_sum_seconds | 0.03009928067399266 |
+| resource_bounds.known_serial_stage_max_sum_seconds | 0.030099280673992673 |
 | resource_bounds.accounted_global_max_seconds | unknown (null) |
 | resource_bounds.accounted_serial_stage_lower_bound_seconds | unknown (null) |
 | compute_only_bounds.stages[0].id | input |

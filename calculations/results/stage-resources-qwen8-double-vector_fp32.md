@@ -37,22 +37,22 @@ Conditional known-work service bounds; full runtime remains unknown.
 | sources[3].url | https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py |
 | sources[3].revision | 0720e206c6ba28887e4d60ef60a6a089f6c1cc76 |
 | sources[3].sha256 | 3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8 |
-| sources[4].file | sources/hardware/nvidia-h100-page.html |
+| sources[4].file | sources/hardware/nvidia-h100-page.md |
 | sources[4].url | https://www.nvidia.com/en-us/data-center/h100/ |
 | sources[4].revision | snapshot-2026-09-08 |
-| sources[4].sha256 | 8fe697dfa96dceeeed6e7a16517294e15d9100cc0e9f1e6e5edbce78699b4681 |
+| sources[4].sha256 | 9ec9b79f149ced935b19b3a44d07ce385859e49fcb33dfdfeb35adc7b7d00fe0 |
 | sources[5].file | ../references/files/specs/nvidia-h100.pdf |
 | sources[5].url | https://dam-cdn.nvd.orangelogic.com/AssetLink/705n6ur546g0uk43w0117r17n8042d73.pdf |
 | sources[5].revision | book-official-archive-2026-09-06 |
 | sources[5].sha256 | 3641614979809a027a8aabdc2e77639efb8fcd0f8dc7873a22ba2125489f5a27 |
-| sources[6].file | sources/hardware/nvidia-ptx-isa-9-3.html |
+| sources[6].file | sources/hardware/nvidia-ptx-isa-9-3.md |
 | sources[6].url | https://docs.nvidia.com/cuda/parallel-thread-execution/index.html |
 | sources[6].revision | snapshot-2026-09-08 |
-| sources[6].sha256 | 940cc68f858cefdf82425b47ee3bac3afde447c8a85b95f43d7d6fb1f46b4413 |
-| sources[7].file | research/h05-next-review/cuda-programming-guide-12.8.1.html |
+| sources[6].sha256 | 0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7 |
+| sources[7].file | research/h05-next-review/cuda-programming-guide-12.8.1.md |
 | sources[7].url | https://docs.nvidia.com/cuda/archive/12.8.1/cuda-c-programming-guide/index.html |
 | sources[7].revision | CUDA12.8.1 archive |
-| sources[7].sha256 | cdc49d93372b4e03e94d56f24345373f82ad76b8663c745073463263009637ce |
+| sources[7].sha256 | f7f46a910869e1f1102ee7193b536dc6c9a356c224b51734f240168266ea5e25 |
 | device.id | h100-sxm |
 | device.vendor | NVIDIA |
 | device.memory.nominal_capacity | 80 |
@@ -10598,9 +10598,9 @@ Conditional known-work service bounds; full runtime remains unknown.
 | resource_bounds.global_resource_seconds.special:compare_max | 0.0009363456 |
 | resource_bounds.global_resource_seconds.special:mask_decisions | 0.0018874368 |
 | resource_bounds.known_global_max_seconds | 0.0068419584 |
-| resource_bounds.known_serial_stage_max_sum_seconds | 0.007215858626865678 |
+| resource_bounds.known_serial_stage_max_sum_seconds | 0.007215858626865672 |
 | resource_bounds.accounted_global_max_seconds | 0.0068419584 |
-| resource_bounds.accounted_serial_stage_lower_bound_seconds | 0.007215858626865678 |
+| resource_bounds.accounted_serial_stage_lower_bound_seconds | 0.007215858626865672 |
 | compute_only_bounds.stages[0].id | input |
 | compute_only_bounds.stages[0].resource_seconds.vector_fp32 | 6.122571001494768e-11 |
 | compute_only_bounds.stages[0].resource_seconds.special:sin | 1.6384e-06 |
@@ -11032,9 +11032,9 @@ Conditional known-work service bounds; full runtime remains unknown.
 | compute_only_bounds.global_resource_seconds.special:compare_max | 0.0009363456 |
 | compute_only_bounds.global_resource_seconds.special:mask_decisions | 0.0018874368 |
 | compute_only_bounds.known_global_max_seconds | 0.0068419584 |
-| compute_only_bounds.known_serial_stage_max_sum_seconds | 0.00684485479445321 |
+| compute_only_bounds.known_serial_stage_max_sum_seconds | 0.006844854794453204 |
 | compute_only_bounds.accounted_global_max_seconds | 0.0068419584 |
-| compute_only_bounds.accounted_serial_stage_lower_bound_seconds | 0.00684485479445321 |
+| compute_only_bounds.accounted_serial_stage_lower_bound_seconds | 0.006844854794453204 |
 | capacity.comparison_bytes | 16400345088 |
 | capacity.applicable_necessary_condition | True |
 | capacity.definition | Declared uniform BF16 weights plus BF16 KV after this call; excludes workspace/activations |
@@ -11044,11 +11044,11 @@ Conditional known-work service bounds; full runtime remains unknown.
 | capacity.full_runtime_feasibility | unknown (null) |
 | coverage_gaps[0] | Sampling/tokenizer/launch/allocator and unexpanded dtype conversions/workspace remain outside the reference. |
 | coverage_gaps[1] | BF16 score/probability materialization is explicitly selected; scalar reductions FP32. No source backend or exact casting cost inferred. |
-| summary.accounted_serial_stage_lower_bound_seconds | 0.007215858626865678 |
+| summary.accounted_serial_stage_lower_bound_seconds | 0.007215858626865672 |
 | summary.accounted_global_max_seconds | 0.0068419584 |
 | summary.full_request_latency_bound_seconds | unknown (null) |
 | summary.measured_latency_seconds | unknown (null) |
-| summary.necessary_capacity_not_failed_accounted_bound_seconds | 0.007215858626865678 |
+| summary.necessary_capacity_not_failed_accounted_bound_seconds | 0.007215858626865672 |
 | assumptions[0] | Stages are complete serial decoder layers, with ideal overlap inside each layer. Sum of stage resource maxima is distinct from a pooled global maximum; neither is a measured runtime. |
 | assumptions[1] | FP32 F.linear is mapped to an explicitly chosen IEEE FP32 vector execution policy, not inferred actual backend dispatch. TF32 is not admitted. Ordinary scalar and FP32 matrix work share one vector budget. The FP32 scalar provider is a declared logical execution policy, not proof of every source elementwise machine dtype. |
 | assumptions[2] | V4 FP4 stored experts execute FP8xFP8 after conversion in the pinned kernel; no native FP4 or structured-sparse peak substitution. BF16/FP8 accumulation requires exact FP32 admission. |

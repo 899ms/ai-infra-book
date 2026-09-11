@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "calculation": "wan-loss-model",
+  "scenario": {
+    "rtt_seconds": "0.2",
+    "knee_bits_per_second": 333000000,
+    "loss_probability": "0.036",
+    "mss_bytes": 1448,
+    "request_bytes": 354640,
+    "declared_model_seconds": "0.038",
+    "fec_symbol_bytes": 1448,
+    "fec_target": "0.999",
+    "fec_extra_losses": [
+      0,
+      1
+    ],
+    "reference": null
+  },
+  "declared_input_sources": {
+    "rtt_seconds": "references/author-context/queqiao-168ff4b/PATH-CHARACTER-DC-20260826.md line 17 (199-207 ms)",
+    "knee_bits_per_second": "references/author-context/queqiao-168ff4b/PATH-CHARACTER-DC-20260826.md line 20 (~333 Mbit/s)",
+    "loss_probability": "references/author-context/queqiao-168ff4b/PATH-CHARACTER-DC-20260826.md line 242 (downstream loss at 3.6% during the run)",
+    "mss_bytes": "references/author-context/queqiao-168ff4b/PATH-CHARACTER-DC-20260826.md line 66 (1448)",
+    "request_bytes": "references/author-context/queqiao-168ff4b/PATH-CHARACTER-DC-20260826.md line 831 (354,640 bytes)",
+    "declared_model_seconds": "references/author-context/queqiao-168ff4b/PATH-CHARACTER-DC-20260826.md line 554 (Transcribing a 355KB file takes the model 38ms)",
+    "fec_symbol_bytes": "book (declared = MSS)",
+    "fec_target": "book (declared 99.9%)",
+    "fec_extra_losses": "book (declared)"
+  },
+  "summary": {
+    "mathis_mbit_per_second": 0.30526520346158753,
+    "bbr_ideal_goodput_mbit_per_second": 321.012,
+    "bdp_bytes": 8325000.0,
+    "packets": 245,
+    "expected_losses": 8.82,
+    "serial_budget_seconds": 0.2465198798798799,
+    "expected_completion_seconds": 0.5032928548099412,
+    "p99_completion_seconds": 0.8465198798798799,
+    "expected_rounds": 2.2838648746503067,
+    "p99_rounds": 4,
+    "fec_repair_symbols": 20,
+    "fec_overhead_ratio": 0.08163265306122448
+  },
+  "path": {
+    "rtt_seconds_exact": "1/5",
+    "knee_bits_per_second": 333000000,
+    "loss_probability_exact": "9/250",
+    "bdp_bytes_exact": "8325000",
+    "bdp_bytes": 8325000.0,
+    "bdp_packets": 5749.309392265193
+  },
+  "mathis": {
+    "formula": "MSS/(RTT*sqrt(p))",
+    "bits_per_second": 305265.20346158755,
+    "mbit_per_second": 0.30526520346158753,
+    "seconds_for_request": 9.293951514382162,
+    "fraction_of_knee": 0.0009167123227074701,
+    "with_constant_c": {
+      "periodic_loss_every_ack_1.22": {
+        "c": 1.22,
+        "mbit_per_second": 0.37242354822313684,
+        "seconds_for_request": 7.617993044575543
+      },
+      "periodic_loss_delayed_ack_0.87": {
+        "c": 0.87,
+        "mbit_per_second": 0.2655807270115812,
+        "seconds_for_request": 10.682702890094438
+      },
+      "random_loss_every_ack_1.31": {
+        "c": 1.31,
+        "mbit_per_second": 0.3998974165346797,
+        "seconds_for_request": 7.094619476627604
+      },
+      "random_loss_delayed_ack_0.93": {
+        "c": 0.93,
+        "mbit_per_second": 0.28389663921927644,
+        "seconds_for_request": 9.99349625202383
+      }
+    }
+  },
+  "bbr_ideal": {
+    "cwnd_bytes_exact": "16650000",
+    "goodput_bits_per_second_exact": "321012000",
+    "goodput_mbit_per_second": 321.012,
+    "seconds_for_request": 0.008838049667925186,
+    "goodput_over_mathis": 1051.5839878238658
+  },
+  "reliable_stream": {
+    "packets": 245,
+    "expected_losses": 8.82,
+    "serialization_seconds": 0.00851987987987988,
+    "serial_budget_seconds_exact": "1026139/4162500",
+    "serial_budget_seconds": 0.2465198798798799,
+    "rounds_cdf": [
+      0.0,
+      0.00012556636039669117,
+      0.7278022291824326,
+      0.9886340988307285,
+      0.9995885783915043,
+      0.999985185896162,
+      0.9999994666884693
+    ],
+    "expected_rounds": 2.2838648746503067,
+    "p50_rounds": 2,
+    "p99_rounds": 4,
+    "expected_completion_seconds": 0.5032928548099412,
+    "p99_completion_seconds": 0.8465198798798799,
+    "expected_over_budget": 2.041591351801637,
+    "p99_over_budget": 3.433880790029421,
+    "no_loss_completion_seconds": 0.2465198798798799
+  },
+  "fec": {
+    "symbol_bytes": 1448,
+    "target_block_recovery": "999/1000",
+    "rows": [
+      {
+        "tolerated_extra_losses": 0,
+        "data_symbols": 245,
+        "repair_symbols": 20,
+        "total_symbols": 265,
+        "overhead_ratio_exact": "4/49",
+        "overhead_ratio": 0.08163265306122448,
+        "block_recovery_probability": 0.9992969815390133,
+        "expected_losses_in_block": 9.54,
+        "repair_over_expected_losses": 2.0964360587002098
+      },
+      {
+        "tolerated_extra_losses": 1,
+        "data_symbols": 245,
+        "repair_symbols": 21,
+        "total_symbols": 266,
+        "overhead_ratio_exact": "3/35",
+        "overhead_ratio": 0.08571428571428572,
+        "block_recovery_probability": 0.9992622514227241,
+        "expected_losses_in_block": 9.576,
+        "repair_over_expected_losses": 2.192982456140351
+      }
+    ]
+  },
+  "reference_rows": {
+    "mathis_measured_mbit_per_second": "0.13-0.47 (document line 66)",
+    "direct_tcp_sustained_mbit_per_second": "3.6-105.8 upload; 68-84 downstream (lines 87-90)",
+    "transport_sustained_mbit_per_second": "0.4-310.4 upload; 224-268 downstream (lines 87-90)",
+    "coded_symbols": {
+      "carried": 2270,
+      "recovered": 1708,
+      "lost": 5,
+      "recovered_fraction_exact": "854/1135",
+      "residual_loss_exact": "1/454",
+      "source_lines": "236-238"
+    },
+    "frame_sessions_16x200": {
+      "udp_direct": {
+        "lost": 163,
+        "delivered": 3037,
+        "p50_ms": 193.6,
+        "p99_ms": 213.7
+      },
+      "udp_transport": {
+        "lost": 34,
+        "delivered": 3166,
+        "p50_ms": 208.2,
+        "p99_ms": 217.6
+      },
+      "tcp_transport": {
+        "lost": 0,
+        "delivered": 3200,
+        "p50_ms": 208.4,
+        "p99_ms": 728.4
+      },
+      "path_loss_during_run": "3.6%",
+      "source_lines": "244-247"
+    },
+    "fixed_file_request_ms": {
+      "new_connection": {
+        "direct_p50": 1185.3,
+        "transport_p50": 301.6
+      },
+      "warm_tuned": {
+        "direct_p50": 240.9,
+        "transport_p50": 236.5,
+        "direct_p99": 251.7,
+        "transport_p99": 246.4
+      },
+      "source_lines": "831-838"
+    }
+  },
+  "assumptions": [
+    "路径参数（RTT、拐点、擦除率、MSS、请求大小、模型时间）取自鹊桥路径文档并在 docstring 逐行引用；文档中的测量值只作对照行，不参与推导。",
+    "Mathis 公式给出独立随机丢包下 TCP 的稳态速率；BBR 理想行假定以拐点速率 pacing、cwnd=2×BDP、丢包只损失有效载荷 (1-p)。",
+    "可靠流模型：n=ceil(大小/MSS) 个报文独立丢失，每轮 RTT 一次理想选择性重传（重传也可能再丢），完成 = 串行预算 + 额外轮数×RTT。不含拥塞窗口收缩、慢启动或 RTO，因此是有利于 TCP 的下界。",
+    "串行预算 = RTT + 模型时间 + 请求按拐点速率串行化；文档用约 200 ms 往返和 30 ms 模型给出约 230 ms 的下限，本模块另加串行化项。",
+    "FEC：k 个数据符号加 r 个修复符号，块内丢失不超过 r 即可恢复，用二项分布尾精确求最小 r；额外容忍行给出比最小 r 再多承受的丢失数。不模拟符号大小对时延的影响或分块策略。"
+  ]
+}

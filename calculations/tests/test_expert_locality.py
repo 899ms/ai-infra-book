@@ -21,8 +21,9 @@ class ExpertLocalityTests(unittest.TestCase):
     def test_service_resources(self):
         s=calculate()['summary']
         tasks=768;weights=96*36*1024**2;flops=tasks*6*4096*1536
-        cpu=F(2*tasks*4096*2,25)+2*96*5000+max(F(flops,2000),F(weights,200))
-        copy=F(weights,25)+96*5000+max(F(flops,100000),F(weights,1000))
+        # Defaults: Xeon 8452Y AVX-512 1.8 TFLOP/s, 220 GB/s; A100 40GB PCIe at 50%: 156 TFLOP/s, 777.5 GB/s.
+        cpu=F(2*tasks*4096*2,25)+2*96*5000+max(F(flops,1800),F(weights,220))
+        copy=F(weights,25)+96*5000+max(F(flops,156000),F(weights*10,7775))
         self.assertEqual(F(s['cpu_service_ns_exact']),cpu)
         self.assertEqual(F(s['weight_copy_service_ns_exact']),copy)
         self.assertEqual(s['resident_expert_weight_bytes_all_layers'],32*36*1024**2*94)
@@ -59,11 +60,13 @@ class ReuseRegionTests(unittest.TestCase):
 
     def test_default_exact_threshold(self):
         r=calculate()
-        self.assertEqual(r['reuse_knees']['cpu_equal_compute_weight_tokens_exact'],'10')
-        self.assertEqual(r['reuse_knees']['gpu_equal_compute_weight_tokens_exact'],'100')
+        self.assertEqual(r['reuse_knees']['cpu_equal_compute_weight_tokens_exact'],'90/11')
+        self.assertEqual(r['reuse_knees']['gpu_equal_compute_weight_tokens_exact'],'62400/311')
         self.assertEqual(r['locality_reuse_regions'],[
-            dict(min_tokens_per_expert=1,max_tokens_per_expert=78,winner='cpu'),
-            dict(min_tokens_per_expert=79,max_tokens_per_expert=None,winner='copy-to-gpu')])
-        for m in (78,79):
+            dict(min_tokens_per_expert=1,max_tokens_per_expert=71,winner='cpu'),
+            dict(min_tokens_per_expert=72,max_tokens_per_expert=None,winner='copy-to-gpu')])
+        for m in (71,72):
             s=calculate(tokens=m,resident_experts=0,routing='concentrated')['summary']
-            self.assertEqual(s['cpu_lower_than_weight_copy_in_declared_model'],m==78)
+            self.assertEqual(s['cpu_lower_than_weight_copy_in_declared_model'],m==71)
+        amx=calculate(cpu_flops_per_second=21_300_000_000_000)
+        self.assertEqual(amx['locality_reuse_regions'][0]['max_tokens_per_expert'],688)

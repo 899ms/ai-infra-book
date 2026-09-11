@@ -1,30 +1,30 @@
 # memory-concurrency — qwen3-8b
 
-输入：`{"bandwidth_bytes_per_second": 40000000000, "batch": 1, "latency_ns": 2000, "length": 8192, "transaction_bytes": 256, "transactions": 313}`
+输入：`{"bandwidth_bytes_per_second": 50000000000, "batch": 1, "latency_ns": 2000, "length": 8192, "transaction_bytes": 256, "transactions": 391}`
 
 数值是分析计算；字节以 bytes 保存，FMA=2，不是硬件测量。
 
 | 结果 | 值 |
 | --- | ---: |
 | logical_kv_payload_bytes | 1,207,959,552 |
-| allocated_window_bytes | 80,128 |
-| outstanding_window_bytes | 80,128 |
-| active_transactions | 313 |
-| throughput_bounds_exact_bytes_per_second | `{"interface": "40000000000", "transaction_window": "40064000000", "serial_service": "128000000000/3"}` |
-| effective_bandwidth_upper_exact_bytes_per_second | `"40000000000"` |
-| serial_service_can_reach_interface | `true` |
-| binding_limiters | `["interface"]` |
-| required_window_bytes | 80,000.0 |
-| required_transactions | 313 |
-| transaction_limited_bytes_per_second | 40,064,000,000.0 |
-| effective_bandwidth_upper_bytes_per_second | 40,000,000,000.0 |
-| bandwidth_utilization_upper | 1.0 |
-| ideal_interface_service_seconds | 0.0301989888 |
-| window_constrained_service_lower_seconds | 0.0301989888 |
-| finite_transfer_lower_seconds | 0.0301989888 |
+| allocated_window_bytes | 100,096 |
+| outstanding_window_bytes | 100,096 |
+| active_transactions | 391 |
+| throughput_bounds_exact_bytes_per_second | `{"interface": "50000000000", "transaction_window": "50048000000", "serial_service": "128000000000/3"}` |
+| effective_bandwidth_upper_exact_bytes_per_second | `"128000000000/3"` |
+| serial_service_can_reach_interface | `false` |
+| binding_limiters | `["serial_service"]` |
+| required_window_bytes | 100,000.0 |
+| required_transactions | 391 |
+| transaction_limited_bytes_per_second | 50,048,000,000.0 |
+| effective_bandwidth_upper_bytes_per_second | 42,666,666,666.666664 |
+| bandwidth_utilization_upper | 0.8533333333333333 |
+| ideal_interface_service_seconds | 0.02415919104 |
+| window_constrained_service_lower_seconds | 0.028311552 |
+| finite_transfer_lower_seconds | 0.028311552 |
 | assumed_fixed_size_transfer_count | 4,718,592 |
 | assumed_fixed_size_payload_bytes | 1,207,959,552 |
-| limiter | `"interface"` |
+| limiter | `"serial_service"` |
 | measured_bandwidth_bytes_per_second | `null` |
 | predicted_decode_seconds | `null` |
 

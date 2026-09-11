@@ -1,6 +1,6 @@
 # gradient-cast — qwen3-8b
 
-输入：`{"copy_startup_ns": 0, "cpu_cast_bytes_per_second": 100000000000, "cpu_cast_startup_ns": 0, "extra_gpu_budget_bytes": 268435456, "gpu_cast_bytes_per_second": 1500000000000, "gpu_cast_startup_ns": 0, "host_budget_bytes": 536870912, "link_bytes_per_second": 32000000000, "model": "qwen3-8b"}`
+输入：`{"copy_startup_ns": 0, "cpu_cast_bytes_per_second": 307200000000, "cpu_cast_startup_ns": 0, "extra_gpu_budget_bytes": 268435456, "gpu_cast_bytes_per_second": 1008000000000, "gpu_cast_startup_ns": 0, "host_budget_bytes": 536870912, "link_bytes_per_second": 32000000000, "model": "qwen3-8b"}`
 
 数值是分析计算；字节以 bytes 保存，FMA=2，不是硬件测量。
 
@@ -11,9 +11,9 @@
 | bf16_bytes | 100,663,296 |
 | fp32_bytes | 201,326,592 |
 | cast_logical_read_write_bytes | 301,989,888 |
-| cpu_cast_exact_seconds | `"147456/48828125"` |
-| gpu_cast_exact_seconds | `"49152/244140625"` |
-| equal_time_link_bytes_per_second_exact | `"250000000000/7"` |
+| cpu_cast_exact_seconds | `"384/390625"` |
+| gpu_cast_exact_seconds | `"4096/13671875"` |
+| equal_time_link_bytes_per_second_exact | `"10752000000000/73"` |
 | fastest_without_capacity | `["cpu"]` |
 | fastest_fitting_buffers | `["cpu"]` |
 
@@ -21,24 +21,24 @@
 
 | 转换端 | 就绪 s | D2H bytes | GPU额外峰值 bytes | GPU含源峰值 bytes | 主机峰值 bytes | 缓冲可容纳 |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| cpu | 0.006165627 | 100663296 | 0 | 100663296 | 301989888 | True |
-| gpu | 0.006492783 | 201326592 | 201326592 | 301989888 | 201326592 | True |
+| cpu | 0.004128768 | 100663296 | 0 | 100663296 | 301989888 | True |
+| gpu | 0.006591049 | 201326592 | 201326592 | 301989888 | 201326592 | True |
 
 | 路径 | 操作 | 起点 s（精确） | 终点 s（精确） | 逻辑访问／载荷 bytes |
 | --- | --- | --- | --- | ---: |
 | cpu | d2h_bf16 | 0 | 6144/1953125 | 100663296 |
-| cpu | cast_on_cpu | 6144/1953125 | 301056/48828125 | 301989888 |
-| gpu | cast_on_gpu | 0 | 49152/244140625 | 301989888 |
-| gpu | d2h_fp32 | 49152/244140625 | 1585152/244140625 | 201326592 |
+| cpu | cast_on_cpu | 6144/1953125 | 8064/1953125 | 301989888 |
+| gpu | cast_on_gpu | 0 | 4096/13671875 | 301989888 |
+| gpu | d2h_fp32 | 4096/13671875 | 90112/13671875 | 201326592 |
 
 | 路径 | 所在端 | 缓冲 | 起点 s（含） | 终点 s（交接／释放） | bytes |
 | --- | --- | --- | --- | --- | ---: |
 | cpu | gpu | common_bf16_gradient | 0 | 6144/1953125 | 100663296 |
-| cpu | host | bf16_staging | 0 | 301056/48828125 | 100663296 |
-| cpu | host | fp32_output | 6144/1953125 | 301056/48828125 | 201326592 |
-| gpu | gpu | common_bf16_gradient | 0 | 49152/244140625 | 100663296 |
-| gpu | gpu | fp32_staging | 0 | 1585152/244140625 | 201326592 |
-| gpu | host | fp32_output | 49152/244140625 | 1585152/244140625 | 201326592 |
+| cpu | host | bf16_staging | 0 | 8064/1953125 | 100663296 |
+| cpu | host | fp32_output | 6144/1953125 | 8064/1953125 | 201326592 |
+| gpu | gpu | common_bf16_gradient | 0 | 4096/13671875 | 100663296 |
+| gpu | gpu | fp32_staging | 0 | 90112/13671875 | 201326592 |
+| gpu | host | fp32_output | 4096/13671875 | 90112/13671875 | 201326592 |
 
 计量条件：
 

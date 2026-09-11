@@ -100,6 +100,34 @@ def calculate(length=8192, batch=1):
         ])
 
 
+def per_token_bytes(model, layout):
+    """Per-token KV bytes (one request) in an explicit layout, same formulas as calculate()."""
+    root=model_config(model); c=root.get('text_config',root)
+    if layout=='gqa':
+        if c['model_type'] not in ('qwen3','qwen3_moe','llama'):
+            raise ValueError('gqa layout requires a Qwen3/Llama GQA config')
+        d=c.get('head_dim',c['hidden_size']//c['num_attention_heads'])
+        return 2*c['num_hidden_layers']*c['num_key_value_heads']*d*2
+    if layout=='mla':
+        if model!='deepseek-v3':
+            raise ValueError('compact MLA layout is implemented for the locked deepseek-v3 config')
+        return c['num_hidden_layers']*(c['kv_lora_rank']+c['qk_rope_head_dim'])*2
+    raise ValueError('layout must be gqa or mla')
+
+
+def mla_compact_extra_flops_per_token(model='deepseek-v3'):
+    """Chapter 2 compact-path work per query token: query absorb (d_h x d_c) and value restore (d_c x d_v) per head, all layers."""
+    c=model_config(model)
+    if model!='deepseek-v3':
+        raise ValueError('compact MLA extra work is implemented for the locked deepseek-v3 config')
+    heads=c['num_attention_heads']; layers=c['num_hidden_layers']
+    absorb=2*heads*c['qk_nope_head_dim']*c['kv_lora_rank']
+    restore=2*heads*c['kv_lora_rank']*c['v_head_dim']
+    return dict(layers=layers,heads=heads,d_c=c['kv_lora_rank'],d_r=c['qk_rope_head_dim'],
+                query_absorb_flops_per_layer=absorb,value_restore_flops_per_layer=restore,
+                extra_flops_per_token_per_layer=absorb+restore,extra_flops_per_token=(absorb+restore)*layers)
+
+
 def markdown(r):
     lines=['# 跨模型 KV 存储与单次 decode 读取', '',f"B={r['scenario']['batch']}，可见长度 N={r['scenario']['length']}；所有数值为 bytes，单 token 增长列为每请求。",'',
         '| 模型 / 缓存格式 | 全局增长 B/token | 全局历史 | 固定/窗口状态 | decode 主历史读 | decode index 读 | 下个 token 容量增长 |',

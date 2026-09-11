@@ -84,18 +84,24 @@ def draw(here, data):
         a.set(xlim=(0,98),ylim=(0,7),xticks=[8,24,48,80],xlabel='局部存储需求（KiB）',ylabel='接口读写量（GiB）')
         save(f,'figure-5-2-tiles')
 
-        f,a=canvas(3.0);title(a,'同样的 96 KiB，能放下几份工作集？')
-        for y,size,count,c in [(.54,24,4,'blue'),(.19,80,1,'orange')]:
+        # RTX PRO 6000 (compute capability 12.x): 100 KB shared memory per SM, 99 KB per block, i.e. 1 KiB reserved per block.
+        budget,reserve=100,1
+        f,a=canvas(3.0);title(a,'一个 SM 的 100 KB 共享内存能放几份？')
+        for y,size,c in [(.54,24,'blue'),(.19,80,'orange')]:
+            count=budget//(size+reserve)
             for i in range(count):
-                x=.04+.92*i*size/96;w=.92*size/96
+                x=.04+.92*i*(size+reserve)/budget;w=.92*size/budget
                 a.add_patch(Rectangle((x,y),w,.16,fc=COL[c],ec=COL['line'],lw=.9))
+                a.add_patch(Rectangle((x+w,y),.92*reserve/budget,.16,fc=COL['gray'],ec=COL['line'],lw=.6))
                 text(a,x+w/2,y+.08,f'{size} KiB',12,ha='center')
-            if size==80:
-                a.add_patch(Rectangle((.04+.92*80/96,y),.92*16/96,.16,fc='white',ec=COL['line'],lw=.9))
-                text(a,.885,y+.08,'空余',11,ha='center')
+            used=count*(size+reserve)
+            if used<budget:
+                a.add_patch(Rectangle((.04+.92*used/budget,y),.92*(budget-used)/budget,.16,fc='white',ec=COL['line'],lw=.9))
+                text(a,.04+.92*(used+budget)/2/budget,y+.08,'空余',11,ha='center')
             text(a,.04,y-.075,'四份 64 × 64 输出块的工作集' if size==24 else '一份 128 × 128 输出块的工作集',12)
+        text(a,.96,.075,'灰色：每块 1 KiB 预留',11,ha='right')
         save(f,'figure-5-tile-residency')
-        data['tile_residency']={'budget_KiB':96,'working_set_KiB':[24,80],'resident_sets':[4,1],'constraint':'illustrative aggregate local-storage budget, not hardware occupancy prediction'}
+        data['tile_residency']={'device':'rtx-pro6000-blackwell-ws (compute capability 12.x)','budget_KiB':budget,'reserve_KiB_per_block':reserve,'working_set_KiB':[24,80],'resident_sets':[budget//(24+reserve),budget//(80+reserve)],'constraint':'shared memory per SM; inputs and accumulator both in shared memory'}
 
         f,a=canvas(4.5)
         for y,stride in [(.58,32),(.09,33)]:
@@ -128,7 +134,7 @@ def draw(here, data):
         save(f,'figure-5-4-reduction')
 
         f,a=canvas(4.2)
-        title(a,'分开执行：中间结果经过下一层存储')
+        title(a,'分开执行：中间结果经过下一级存储')
         box(a,.04,.70,.25,.12,'SiLU(G)','green');box(a,.70,.70,.25,.12,'T × U','green')
         box(a,.36,.46,.28,.13,'完整 T\n24 MiB','orange')
         arrow(a,(.29,.755),(.39,.60));arrow(a,(.61,.60),(.70,.755))
@@ -152,23 +158,27 @@ def draw(here, data):
         f.legend(handles=[Patch(fc=COL[c],ec=COL['line'],label=l) for c,l in [('blue','必要读写'),('orange','中间 T'),('purple','中间 Z')]],loc='upper center',ncol=3,frameon=False,handlelength=1,columnspacing=1)
         save(f,'figure-5-5-boundaries')
 
+        d=data['5-6'];ev={(e['kind'],e['tile']):e for e in d['double_buffer']}
+        end=lambda e:e['start']+e['duration']
+        spans=[(0,end(ev['copy',0])),(ev['compute',0]['start'],end(ev['compute',0])),(ev['compute',1]['start'],end(ev['compute',1]))]
         f,a=canvas(4.1)
         text(a,.41,.94,'槽 A',14,ha='center');text(a,.80,.94,'槽 B',14,ha='center')
-        for y,time,left,right in [(.70,'0–2 μs','写入块 0','空闲'),(.43,'2–4 μs','读取块 0','写入块 1'),(.16,'5–7 μs','写入块 2','读取块 1')]:
-            text(a,.025,y+.07,time,12);box(a,.23,y,.34,.14,left,'blue');box(a,.63,y,.34,.14,right,'green' if right!='空闲' else 'gray')
-        arrow(a,(.40,.42),(.40,.365));text(a,.40,.34,'块 0 用完',11,ha='center')
-        text(a,.5,.05,'同一槽：读取结束，才能再次写入',12,ha='center')
+        for y,(t0,t1),left,right in zip([.70,.43,.16],spans,['写入块 0','读取块 0','写入块 2'],['空闲','写入块 1','读取块 1']):
+            text(a,.0,y+.07,f'{t0:.2f}–{t1:.2f} μs'.replace('0.00','0'),12);box(a,.23,y,.34,.14,left,'blue');box(a,.63,y,.34,.14,right,'green' if right!='空闲' else 'gray')
+        arrow(a,(.40,.42),(.40,.365));text(a,.40,.34,f'{end(ev["compute",0]):.2f} μs 块 0 用完',11,ha='center')
+        text(a,.5,.05,f'槽 A 早已空出，块 2 等搬运器在 {ev["copy",2]["start"]:.2f} μs 空闲才写入',11,ha='center')
         save(f,'figure-5-buffer-slots')
-        data['buffer_slots']={'intervals_us':[[0,2],[2,4],[5,7]],'slot_A':['write 0','read 0','write 2'],'slot_B':['idle','write 1','read 1'],'reuse_A_us':5}
+        data['buffer_slots']={'intervals_us':[list(s) for s in spans],'slot_A':['write 0','read 0','write 2'],'slot_B':['idle','write 1','read 1'],'slot_A_free_us':end(ev['compute',0]),'reuse_A_us':ev['copy',2]['start']}
 
         f,axs=plt.subplots(2,1,figsize=(420/72,4.6));f.subplots_adjust(left=.15,right=.95,top=.82,bottom=.13,hspace=.85)
         d=data['5-6']
-        for a,mode,title_,end in zip(axs,['serial','double_buffer'],['串行：20 μs','双缓冲：14 μs'],[20,14]):
+        for a,mode,end in zip(axs,['serial','double_buffer'],d['completion_us']):
+            title_=('串行' if mode=='serial' else '双缓冲')+f'：{end:.2f} μs'
             for e in d[mode]:
                 y=.65 if e['kind']=='copy' else .13
                 a.broken_barh([(e['start'],e['duration'])],(y,.28),facecolors=COL['blue' if e['slot']==0 else 'green'],edgecolors=COL['line'],lw=.8)
                 a.text(e['start']+e['duration']/2,y+.14,str(e['tile']),ha='center',va='center',fontsize=11)
-            a.set(xlim=(0,21),ylim=(0,1),xticks=[0,5,10,15,20],yticks=[.27,.79],yticklabels=['计算','搬运'])
+            a.set(xlim=(0,6.6),ylim=(0,1),xticks=[0,1,2,3,4,5,6],yticks=[.27,.79],yticklabels=['计算','搬运'])
             a.set_title(title_,loc='left',pad=9);a.axvline(end,ls='--',lw=.8,color=COL['line'])
         axs[1].set_xlabel('时间（μs）')
         f.legend(handles=[Patch(fc=COL[c],ec=COL['line'],label=l) for c,l in [('blue','槽 A：块 0、2'),('green','槽 B：块 1、3')]],loc='upper center',ncol=2,frameon=False)
@@ -199,7 +209,7 @@ def draw(here, data):
         d=data['5-8'];a.scatter(d['traffic_MiB'],d['updates'],s=55,c=['#a56b30','#318262','#267398'])
         for x,y,label,off in zip(d['traffic_MiB'],d['updates'],['b = 1','b = 64','b = 128'],[(9,0),(10,10),(-64,14)]):
             a.annotate(label,(x,y),xytext=off,textcoords='offset points',fontsize=12)
-        a.set_yscale('log');a.set(xlim=(180,475),ylim=(3500,1e6),xticks=[200,300,400],xlabel='接口读写量（MiB）',ylabel='块对更新次数（对数刻度）')
+        a.set_yscale('log');a.set(xlim=(230,665),ylim=(3500,1e6),xticks=[300,400,500,600],xlabel='接口读写量（MiB）',ylabel='块对更新次数（对数刻度）')
         a.set_yticks([1e4,1e5,1e6],['1 万','10 万','100 万']);a.grid(alpha=.15)
         save(f,'figure-5-8-attention-tradeoff')
     (here/'teaching-layout-check.json').write_text(json.dumps(checks,ensure_ascii=False,indent=2)+'\n')

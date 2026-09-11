@@ -1,4 +1,4 @@
-<!-- 从 index.html 迁移的资料快照；原始 HTML SHA-256: c09d51fa3bb787a708b6862fbb93a1210ddf4ca90d905627a3e7913cfc7c9826。 -->
+<!-- 从 index.html 迁移的资料快照；原始 HTML SHA-256: e6ebd6fb9b8bc8769a320b147dc13318cfddd00c6cc2abd54acc31bd071fa7ef。 -->
 
 AI Infra 参考资料
 
@@ -240,3 +240,42 @@ AI Infra 参考资料
 | 5,8,9 | documents | [TensorRT LLM Architecture Overview](https://nvidia.github.io/TensorRT-LLM/developer-guide/overview.html) | [原件](files/documents/tensorrt-llm-architecture.md) · [离线文本](text/tensorrt-llm-architecture.txt) | downloaded |
 | 1,4,5,7 | papers | [基于可编程网卡的高性能数据中心系统](https://01.me/files/pubs/bojieli-phd-thesis.pdf) | [原件](files/papers/bojieli-phd-thesis.pdf) · [离线文本](text/bojieli-phd-thesis.txt) | user_provided |
 | 1,4 | papers | [Huawei’s τ Chip Was Supposed to Melt?](files/papers/202609.00031v1.pdf) | [原件](files/papers/202609.00031v1.pdf) · [离线文本](text/logicfolding-energy.txt) | user_provided |
+| 6,7 | papers | [KV-Direct: High-Performance In-Memory Key-Value Store with Programmable NIC](https://doi.org/10.1145/3132747.3132756) | [原件](files/papers/kv-direct-sosp17.pdf) · [离线文本](text/kv-direct.txt) | user_provided |
+| 1,4,6 | documents | [Hardware for Deep Learning (Hot Chips 2023 Keynote)](https://hc2023.hotchips.org/) | [原件](files/documents/dally-hotchips2023.pdf) · [离线文本](text/dally-hotchips2023.txt) | downloaded |
+| 1,4 | documents | [Energy Efficiency and AI Hardware (Stanford AHA Retreat 2023 Keynote)](https://aha.stanford.edu/) | [原件](files/documents/dally-aha2023.pdf) · [离线文本](text/dally-aha2023.txt) | downloaded |
+| 1,4,6 | papers | [Fine-Grained DRAM: Energy-Efficient DRAM for Extreme Bandwidth Systems](https://research.nvidia.com/publication/2017-10_fine-grained-dram-energy-efficient-dram-extreme-bandwidth-systems) | [原件](files/papers/fgdram-micro17.pdf) · [离线文本](text/fgdram-micro17.txt) | downloaded |
+| 4,6 | documents | [NVIDIA Grace Hopper Superchip Architecture In-Depth](https://developer.nvidia.com/blog/nvidia-grace-hopper-superchip-architecture-in-depth/) | [原件](files/documents/nvidia-grace-hopper-blog.md) · [离线文本](text/nvidia-grace-hopper-blog.txt) | downloaded |
+| 4 | specs | [NVIDIA H100 Tensor Core GPU Datasheet](https://resources.nvidia.com/en-us-gpu-resources/h100-datasheet-24306) | [原件](files/specs/nvidia-h100-datasheet.pdf) · [离线文本](text/nvidia-h100-datasheet.txt) | downloaded |
+| 4,6 | specs | [NVIDIA H200 Tensor Core GPU Datasheet](https://resources.nvidia.com/en-us-hopper-architecture/hpc-datasheet-sc23) | [原件](files/specs/nvidia-h200-datasheet.pdf) · [离线文本](text/nvidia-h200-datasheet.txt) | downloaded |
+| 4,6,7 | specs | [NVIDIA HGX H100 and HGX H200 Datasheet](https://resources.nvidia.com/en-us-hopper-architecture/hpc-hgx-h100-hgx-h20) | [原件](files/specs/nvidia-hgx-h100-datasheet.pdf) · [离线文本](text/nvidia-hgx-h100-datasheet.txt) | downloaded |
+| 6,7 | specs | [NVIDIA DGX H200 Datasheet](https://resources.nvidia.com/en-us-dgx-systems/dgx-h200-datasheet) | [原件](files/specs/nvidia-dgx-h200-datasheet.pdf) · [离线文本](text/nvidia-dgx-h200-datasheet.txt) | downloaded |
+| 7 | specs | [NVIDIA ConnectX-7 Datasheet](https://www.nvidia.com/en-us/networking/ethernet-adapters/) | [原件](files/specs/nvidia-connectx7-datasheet.pdf) · [离线文本](text/nvidia-connectx7-datasheet.txt) | downloaded |
+| 4,6 | specs | [Micron HBM3E Product Brief](https://www.micron.com/products/memory/hbm/hbm3e) | 未获取 | failed |
+| 4,6 | specs | [Micron HBM3E product page](https://www.micron.com/products/memory/hbm/hbm3e) | [原件](files/specs/micron-hbm3e-page.md) · [离线文本](text/micron-hbm3e-page.txt) | downloaded |
+| 4,6 | specs | [SK hynix HBM product page](https://product.skhynix.com/products/dram/hbm.go) | [原件](files/specs/skhynix-hbm-page.md) · [离线文本](text/skhynix-hbm-page.txt) | downloaded |
+| 4,6 | specs | [TSMC CoWoS Technology](https://3dfabric.tsmc.com/english/dedicatedFoundry/technology/cowos.htm) | 未获取 | failed |
+| 6,11 | documents | [Emergence and Expansion of Liquid Cooling in Mainstream Data Centers (ASHRAE TC 9.9 White Paper)](https://www.ashrae.org/technical-resources/bookstore/datacom-series) | [原件](files/documents/ashrae-liquid-cooling.pdf) · [离线文本](text/ashrae-liquid-cooling.txt) | downloaded |
+| 4,12 | specs | [Snapdragon 8 Elite Mobile Platform Product Brief](https://www.qualcomm.com/products/mobile/snapdragon/smartphones/snapdragon-8-series-mobile-platforms/snapdragon-8-elite-mobile-platform) | [原件](files/specs/qualcomm-8elite-brief.pdf) · [离线文本](text/qualcomm-8elite-brief.txt) | downloaded |
+| 4,12 | specs | [Snapdragon 8 Elite Gen 5 Mobile Platform Product Brief](https://www.qualcomm.com/products/mobile/snapdragon/smartphones/snapdragon-8-series-mobile-platforms) | [原件](files/specs/qualcomm-8elite-gen5-brief.pdf) · [离线文本](text/qualcomm-8elite-gen5-brief.txt) | downloaded |
+| 12 | specs | [iPhone 16 Pro - Tech Specs](https://support.apple.com/en-us/121031) | [原件](files/specs/apple-iphone16-pro-specs.md) · [离线文本](text/apple-iphone16-pro-specs.txt) | downloaded |
+| 4,12 | specs | [Micron LPDDR5X product page](https://www.micron.com/products/memory/lpddr-components/lpddr5x) | [原件](files/specs/micron-lpddr5x-page.md) · [离线文本](text/micron-lpddr5x-page.txt) | downloaded |
+| 4,12 | specs | [Samsung LPDDR5X product page](https://semiconductor.samsung.com/dram/lpddr/lpddr5x/) | [原件](files/specs/samsung-lpddr5x-page.md) · [离线文本](text/samsung-lpddr5x-page.txt) | downloaded |
+| 12 | papers | [MELTing point: Mobile Evaluation of Language Transformers](https://arxiv.org/abs/2403.12844) | [原件](files/papers/melting-point.pdf) · [离线文本](text/melting-point.txt) | downloaded |
+| 7 | documents | [NVIDIA DGX SuperPOD: Next Generation Scalable Infrastructure for AI Leadership (Reference Architecture Featuring NVIDIA DGX H100)](https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-h100/latest/index.html) | [原件](files/documents/dgx-superpod-h100-ra.pdf) · [离线文本](text/dgx-superpod-h100-ra.txt) | downloaded |
+| 7 | documents | [NVIDIA SHARP Rev 3.0.0: Introduction](https://docs.nvidia.com/networking/display/sharpv300) | [原件](files/documents/sharp-docs-intro.md) · [离线文本](text/sharp-docs-intro.txt) | downloaded |
+| 7 | papers | [Scalable Hierarchical Aggregation Protocol (SHArP): A Hardware Architecture for Efficient Data Reduction](https://network.nvidia.com/pdf/solutions/hpc/paperieee_copyright.pdf) | [原件](files/papers/sharp-paper.pdf) · [离线文本](text/sharp-paper.txt) | downloaded |
+| 7 | standards | [Ultra Ethernet Specification v1.0.1](https://ultraethernet.org/uec-1-0-spec/) | [原件](files/standards/uec-spec-10.pdf) · [离线文本](text/uec-spec-10.txt) | downloaded |
+| 7 | standards | [Overview of and Motivation for the Forthcoming Ultra Ethernet Consortium Specification](https://ultraethernet.org/) | [原件](files/standards/uec-overview.pdf) · [离线文本](text/uec-overview.txt) | downloaded |
+| 7 | standards | [IEEE 802.1Qbb Priority-based Flow Control](https://1.ieee802.org/dcb/802-1qbb/) | [原件](files/standards/ieee-802-1qbb-entry.md) · [离线文本](text/ieee-802-1qbb-entry.txt) | landing_only |
+| 10 | papers | [PipeDream: Fast and Efficient Pipeline Parallel DNN Training](https://arxiv.org/abs/1806.03377) | [原件](files/papers/pipedream.pdf) · [离线文本](text/pipedream.txt) | downloaded |
+| 10 | papers | [Zero Bubble Pipeline Parallelism](https://arxiv.org/abs/2401.10241) | [原件](files/papers/zero-bubble.pdf) · [离线文本](text/zero-bubble.txt) | downloaded |
+| 10 | papers | [An Empirical Model of Large-Batch Training](https://arxiv.org/abs/1812.06162) | [原件](files/papers/large-batch-empirical.pdf) · [离线文本](text/large-batch-empirical.txt) | downloaded |
+| 9,10 | papers | [GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding](https://arxiv.org/abs/2006.16668) | [原件](files/papers/gshard.pdf) · [离线文本](text/gshard.txt) | downloaded |
+| 10 | papers | [MegaScale: Scaling Large Language Model Training to More Than 10,000 GPUs](https://arxiv.org/abs/2402.15627) | [原件](files/papers/megascale.pdf) · [离线文本](text/megascale.txt) | downloaded |
+| 10,11 | papers | [Revisiting Reliability in Large-Scale Machine Learning Research Clusters](https://arxiv.org/abs/2410.21680) | [原件](files/papers/meta-cluster-reliability.pdf) · [离线文本](text/meta-cluster-reliability.txt) | downloaded |
+| 10 | papers | [Mixed Precision Training](https://arxiv.org/abs/1710.03740) | [原件](files/papers/mixed-precision.pdf) · [离线文本](text/mixed-precision.txt) | downloaded |
+| 4,10 | papers | [FP8 Formats for Deep Learning](https://arxiv.org/abs/2209.05433) | [原件](files/papers/fp8-formats.pdf) · [离线文本](text/fp8-formats.txt) | downloaded |
+| 12 | standards | [BBR Congestion Control (draft-cardwell-iccrg-bbr-congestion-control-02)](https://datatracker.ietf.org/doc/draft-cardwell-iccrg-bbr-congestion-control/) | [原件](files/standards/bbr-ietf-draft.txt) · [离线文本](text/bbr-ietf-draft.txt) | downloaded |
+| 12 | papers | [The Macroscopic Behavior of the TCP Congestion Avoidance Algorithm](http://ccr.sigcomm.org/archive/1997/jul97/) | [原件](files/papers/mathis-tcp-model.pdf) · [离线文本](text/mathis-tcp-model.txt) | downloaded |
+| 4,5 | documents | [CUDA Programming Guide 13.2.1: Compute Capabilities](https://docs.nvidia.com/cuda/archive/13.2.1/cuda-programming-guide/05-appendices/compute-capabilities.html) | [原件](files/documents/cuda-compute-capabilities.md) · [离线文本](text/cuda-compute-capabilities.txt) | downloaded |
+| 5 | documents | [CUDA Programming Guide 13.2.1: Writing CUDA Kernels](https://docs.nvidia.com/cuda/archive/13.2.1/cuda-programming-guide/02-basics/writing-cuda-kernels.html) | [原件](files/documents/cuda-writing-kernels.md) · [离线文本](text/cuda-writing-kernels.txt) | downloaded |

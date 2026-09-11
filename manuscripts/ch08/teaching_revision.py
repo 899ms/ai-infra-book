@@ -13,9 +13,9 @@ def draw(here,data):
             y=.60-row*.36;text(a,.04,y+.17,f'迭代 {row}',12)
             for i,label in enumerate(labels):box(a,.25+i*.37,y,.30,.20,label,'blue' if label=='请求 A' else 'green',12)
         text(a,.5,.08,'B 已结束 → 空出的执行位置交给 C',12,ha='center');save(f,'request-iterations')
-        f,a=plot(3.0,left=.12);start=0
-        for dur,l,c in [(.1,'排队','gray'),(.3,'prefill','blue'),(2.55,'decode','green')]:a.barh(0,dur,left=start,height=.35,color=COL[c],edgecolor=COL['line'],label=l);start+=dur
-        a.scatter([.4,2.95],[0,0],color='#252525',zorder=5);a.axvline(3,ls='--',color='#a56c28');a.set(yticks=[],xlim=(0,3.15),xlabel='从到达起计时（s）');f.subplots_adjust(top=.78);a.legend(ncol=3,frameon=False,loc='upper center',bbox_to_anchor=(.5,1.28),columnspacing=1.5,handlelength=1.4);save(f,'1-lifecycle')
+        f,a=plot(3.0,left=.12);start=0;life=data['lifecycle']
+        for dur,l,c in [(life['queue_s'],'排队','gray'),(life['prefill_s'],'prefill','blue'),(life['output_intervals']*life['interval_s'],'decode','green')]:a.barh(0,dur,left=start,height=.35,color=COL[c],edgecolor=COL['line'],label=l);start+=dur
+        a.scatter([life['queue_s']+life['prefill_s'],life['completion_s']],[0,0],color='#252525',zorder=5);a.axvline(life['deadline_s'],ls='--',color='#a56c28');a.set(yticks=[],xlim=(0,7.4),xlabel='从到达起计时（s）');f.subplots_adjust(top=.78);a.legend(ncol=3,frameon=False,loc='upper center',bbox_to_anchor=(.5,1.28),columnspacing=1.5,handlelength=1.4);save(f,'1-lifecycle')
         f,a=plot(3.7);b=np.array(data['batch']['batch']);w=data['batch']['shared_weight_bytes']/2**30/b
         for L,c in [(2048,'#267398'),(8192,'#388768')]:a.plot(b,w+L*144/2**20,color=c,label=f'上下文 {L} token：总读取量');a.axhline(L*144/2**20,color=c,ls=':')
         a.plot(b,w,ls='--',color='#777777',label='每个输出 token 分摊的权重读取量');a.set(xscale='log',yscale='log',xlabel='批内请求数',ylabel='每生成一个 token 的读取量（GiB）');a.legend(frameon=False,fontsize=11);save(f,'2-batch')
@@ -23,8 +23,8 @@ def draw(here,data):
             f,a=plot(3.8,left=.16)
             for step in data[key]:
                 for plan in step['plans']:
-                    lane=int(plan['request'][1:]);a.barh(lane,step['duration_ns']/1000,left=step['start_ns']/1000,height=.55,color=COL['blue' if plan['phase']=='prefill' else 'green'],edgecolor=COL['line'],linewidth=.45)
-            a.scatter([0,0,20,30],range(4),marker='^',color='#252525',s=18,zorder=5);a.set(yticks=range(4),yticklabels=[f'请求 r{j}' for j in range(4)],xlim=(0,330),xlabel='时间（μs）');a.invert_yaxis();save(f,'3-scheduling' if i==0 else f'scheduling-{key}')
+                    lane=int(plan['request'][1:]);a.barh(lane,step['duration_ns']/1e6,left=step['start_ns']/1e6,height=.55,color=COL['blue' if plan['phase']=='prefill' else 'green'],edgecolor=COL['line'],linewidth=.45)
+            a.scatter([0,0,20,30],range(4),marker='^',color='#252525',s=18,zorder=5);a.set(yticks=range(4),yticklabels=[f'请求 r{j}' for j in range(4)],xlim=(0,900),xlabel='时间（ms）');a.invert_yaxis();save(f,'3-scheduling' if i==0 else f'scheduling-{key}')
         for i,d in enumerate(data['attention_geometry']):
             f,a=canvas(3.5);h=d['history'];step=.065;start=.15
             for row in range(4):
@@ -70,10 +70,11 @@ def draw(here,data):
         f,a=canvas(4.1)
         for row in range(2):
             y=.63-row*.40
-            if row==0:box(a,.04,y,.92,.19,'A：864 MiB，净节省 36 ms','blue')
+            cc=data['cache_choice'];va=round(cc['A']['net_ms'],1);vb=round(cc['B']['each_net_ms'],1)
+            if row==0:box(a,.04,y,.92,.19,f'A：864 MiB，净节省 {va} ms','blue')
             else:
-                for i in range(3):box(a,.04+i*.31,y,.30,.19,'B：288 MiB\n24 ms','green',11)
-            text(a,.5,y-.09,f'合计节省 {36 if row==0 else 72} ms',12,ha='center')
+                for i in range(3):box(a,.04+i*.31,y,.30,.19,f'B：288 MiB\n{vb} ms','green',11)
+            text(a,.5,y-.09,f'合计节省 {va if row==0 else round(3*vb,1)} ms',12,ha='center')
         save(f,'7-cache-choice')
         f,a=plot(3.5,left=.20)
         for i,(payload,scale) in enumerate(zip(data['kv_layout']['payload_bytes'],data['kv_layout']['scale_bytes'])):a.barh(i,payload,height=.5,color=COL['blue'],edgecolor=COL['line']);a.barh(i,scale,left=payload,height=.5,color=COL['orange'],edgecolor=COL['line'])
@@ -81,7 +82,7 @@ def draw(here,data):
         f,a=plot(3.6,left=.23)
         for i,buff in enumerate([288,576]):a.barh(i,buff,height=.48,color=COL['orange'],edgecolor=COL['line']);a.barh(i,2592-buff,left=buff,height=.48,color=COL['green'],edgecolor=COL['line'])
         a.set(yticks=[0,1],yticklabels=['一组预取缓冲','两组预取缓冲'],xlim=(0,2800),xlabel='卸载腾出的空间（MiB）');a.invert_yaxis();save(f,'9-offload')
-        f,a=plot(3.5);v=data['offload']['copy_ms'];a.bar([0,1],v,color=[COL['blue'],COL['green']],edgecolor=COL['line']);a.set(xticks=[0,1],xticklabels=['24 GiB/s','384 GiB/s'],ylabel='每轮复制下界（ms）',ylim=(0,120));save(f,'offload-copy')
+        f,a=plot(3.5);v=data['offload']['copy_ms'];a.bar([0,1],v,color=[COL['blue'],COL['green']],edgecolor=COL['line']);a.set(xticks=[0,1],xticklabels=['PCIe Gen5 x16\n64 GB/s','NVLink-C2C\n450 GB/s'],ylabel='每轮复制下界（ms）',ylim=(0,50));save(f,'offload-copy')
         for i,m in enumerate(data['kv']['correct_by_task']):
             f,a=plot(4.7,left=.25);a.imshow(m,cmap=ListedColormap([COL['orange'],COL['green']]),vmin=0,vmax=1,aspect='auto')
             for y,row in enumerate(m):
@@ -96,17 +97,17 @@ def draw(here,data):
             p=.25 if draft=='A' else .75;f,a=canvas(4.0);box(a,.32,.71,.36,.17,f'草稿恒为 {draft}','gray')
             for x,label,prob,c in [(.03,'接受 '+draft,p,'green'),(.54,'拒绝，输出 '+('B' if draft=='A' else 'A'),1-p,'orange')]:box(a,x,.18,.43,.19,label,c,12);arrow(a,(.5,.71),(x+.215,.37));text(a,x+.215,.48,f'概率 {prob:g}',12,ha='center')
             text(a,.5,.06,'最终：P(A) = 1/4，P(B) = 3/4',12,ha='center');save(f,n)
-        f,a=plot(3.6);q=np.linspace(0,2,100)
-        for d,c in zip(data['speculation']['drafts'],['#267398','#388768']):a.plot(q,(1.4+q)/d['expected_output'],color=c,label=d['draft'])
-        a.axhline(1,color='#777777',ls='--',label='普通 decode');a.set(xlabel='每轮草稿查询（ms）',ylabel='每输出 token 耗时（ms）');a.legend(frameon=False);save(f,'12-speculation')
+        f,a=plot(3.6);q=np.linspace(0,60,121);sp=data['speculation']
+        for d,c,x in zip(sp['drafts'],['#267398','#388768'],sp['query_break_even_ms']):a.plot(q,(sp['verification_ms']+q)/d['expected_output'],color=c,label=d['draft']);a.scatter([x],[sp['ordinary_ms']],color=c,zorder=5)
+        a.axhline(sp['ordinary_ms'],color='#777777',ls='--',label='普通 decode');a.set(xlabel='每轮草稿查询（ms）',ylabel='每输出 token 耗时（ms）',xlim=(0,60),ylim=(0,70));a.legend(frameon=False);save(f,'12-speculation')
         for field,name in [('completed_per_s','13-service'),('slo_goodput_per_s','service-goodput')]:
             f,a=plot(4.0,bottom=.28);groups=data['service']['groups'];labels=[]
             for i,g in enumerate(groups):
                 vals=[x[field] for x in g];a.bar(i,np.median(vals),color=COL['blue' if field=='completed_per_s' else 'green'],edgecolor=COL['line']);a.scatter([i]*len(vals),vals,color='#252525',s=16);labels.append(('逐个' if g[0]['service']=='serial' else '连续' if g[0]['service']=='continuous' else '突发')+('\n'+str(g[0]['rate']) if g[0]['rate'] is not None else '\n一次到达'))
             a.set(xticks=range(len(groups)),xticklabels=labels,ylim=(0,3.1),ylabel='完成吞吐（req/s）' if field=='completed_per_s' else '正确且按期完成（req/s）',xlabel='接纳策略；下行为到达率（req/s）');save(f,name)
-        f,a=plot(3.8);a.fill_between([0,12],0,3,color=COL['green'],alpha=.65)
+        f,a=plot(3.8);dp=data['design_plane'];a.fill_between([0,dp['capacity_gib']],0,dp['deadline_s'],color=COL['green'],alpha=.65)
         for c in data['design_plane']['configurations']:a.scatter(c['memory_gib'],c['time_s'],color='#267398');a.annotate(c['name'],(c['memory_gib'],c['time_s']),xytext=(5,5),textcoords='offset points',fontsize=12)
-        a.axvline(12,ls='--',color='#777777');a.axhline(3,ls='--',color='#777777');a.set(xlim=(0,21),ylim=(0,4.1),xlabel='KV 与辅助缓冲（GiB）',ylabel='整组完成时间（s）');save(f,'14-design')
+        a.axvline(dp['capacity_gib'],ls='--',color='#777777');a.axhline(dp['deadline_s'],ls='--',color='#777777');a.set(xlim=(0,21),ylim=(0,16.5),xlabel='KV 与辅助缓冲（GiB）',ylabel='整组完成时间（s）');save(f,'14-design')
         f,a=plot(3.6);s=np.array(data['task']['local_speedups'])
         for frac,col in zip(data['task']['decode_fractions'],['#267398','#388768','#a56c28']):a.plot(s,1/(1-frac+frac/s),label=f'decode 占 {frac:.0%}',color=col)
         a.set(xlabel='decode 加速比',ylabel='完整任务加速比',xlim=(1,8));a.legend(frameon=False);save(f,'15-task')

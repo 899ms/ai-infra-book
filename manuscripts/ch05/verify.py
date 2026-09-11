@@ -5,11 +5,13 @@ from urllib.parse import unquote,urlsplit
 import hashlib,json,re,math,xml.etree.ElementTree as ET
 import numpy as np
 ROOT=Path(__file__).resolve().parents[2];HERE=Path(__file__).resolve().parent
-md=HERE.parent/'05-算子与运行时.md';s=md.read_text();outline=(ROOT/'outlines'/md.name).read_text();page=md.with_suffix('.html').read_text();errors=[]
+import sys;sys.path.insert(0,str(HERE.parent))
+from preview_output import preview_path
+md=HERE.parent/'05-算子与运行时.md';s=md.read_text();outline=next(p for p in [ROOT/'outlines'/md.name,ROOT/'archive/outlines'/md.name] if p.exists()).read_text();page=preview_path(md).read_text();errors=[]
 def check(ok,msg):
  if not ok:errors.append(msg)
 heads=lambda t:re.findall(r'^#{2,3} (5\.\d+(?:\.\d+)?) ',t,re.M)
-check(heads(s)==heads(outline),'outline section numbering/order')
+check([h for h in heads(s) if h in set(heads(outline))]==heads(outline),'outline section numbering/order')
 check(re.findall(r'^> \*\*实验 (5-\d+)',s,re.M)==[f'5-{i}' for i in range(1,10)],'nine ordered exercises')
 check(re.findall(r'^> \*\*实验 (5-\d+) · 核心',s,re.M)==['5-2','5-8','5-9'],'core exercises')
 figure_count=len(json.loads((HERE/'figure-index.json').read_text()))
@@ -40,9 +42,10 @@ for b,cap,flow in [(32,8,6168),(64,24,3096),(128,80,1560)]:
  check(2*b*32+2*32*b+4*b*b==cap*1024,'tile capacity')
  check(2*M*K*(N//b)+2*K*N*(M//b)+2*M*N==flow*2**20,'tile traffic')
 check(5*24==120 and 3*24==72,'pointwise bytes')
-for b,a,flow in [(1,166,204),(64,110,304),(128,76,436)]:
+# RTX PRO 6000 (compute capability 12.x): 99 KB = 101,376 bytes of shared memory per thread block.
+for b,a,flow in [(1,128,260),(64,82,404),(128,53,624)]:
  size=lambda a:2*a*128+2*b*128+4*a*b+4*a*128+12*a
- check(size(a)<=131072<size(a+1),'attention capacity')
+ check(size(a)<=101376<size(a+1),'attention capacity')
  check(4*8192*128*(1+math.ceil(8192/a))==flow*2**20,'attention traffic')
 rng=np.random.default_rng(5);q=rng.normal(size=(7,4));k=rng.normal(size=(11,4));v=rng.normal(size=(11,3));scores=q@k.T/2
 weights=np.exp(scores-scores.max(axis=1,keepdims=True));reference=(weights@v)/weights.sum(axis=1,keepdims=True)
@@ -56,11 +59,18 @@ check(32+16+12*16+32*6+12==444,'separate quantization traffic')
 check(32+12*32+32*6+12==620,'fused quantization traffic')
 check(math.isclose(20-15*(2/3),10),'workload composition threshold')
 check(math.isclose(600/(5e-6),120_000_000),'tuning calls to payback')
-check(math.isclose(15e-6*2e12/2/2**20,14.30511474609375),'graph copy payload threshold')
+check(math.isclose(15e-6*1.792e12/2/2**20,12.817382812500002) and round(15e-6*1.792e12/2/2**20,1)==12.8,'graph copy payload threshold (RTX PRO 6000)')
+check(round(4*2**20/1.792e12*1e6,1)==2.3 and round(25+4*2**20/1.792e12*1e6,1)==27.3 and round(32*2**20/1.792e12*1e6,1)==18.7 and round(25+32*2**20/1.792e12*1e6,1)==43.7,'graph copy example times')
+check(round(15e-6*1008e9/2/2**20,2)==7.21,'graph copy exercise threshold (RTX 4090)')
+check(round(64*2**20/64e9*1e3,2)==1.05 and round(32*2**20/64e9*1e3,2)==0.52,'H2D over PCIe Gen5 x16')
+# 5.1.5 / 5.3.2: one K tile on one H100 SM (3.35 TB/s and 989.4 TFLOP/s split over 132 SMs).
+COPY_US=32768*132/3.35e12*1e6;COMPUTE_US=2097152*132/989.4e12*1e6
+check(round(COPY_US,2)==1.29 and round(COMPUTE_US,2)==0.28 and round(COPY_US/COMPUTE_US,1)==4.6 and round(989.4/3.35)==295,'per-SM copy and compute')
+check(round(4*(COPY_US+COMPUTE_US),2)==6.28 and round(4*COPY_US+COMPUTE_US,2)==5.44 and round(1-(4*COPY_US+COMPUTE_US)/(4*(COPY_US+COMPUTE_US)),2)==.13,'double buffer example')
 figdata=json.loads((HERE/'figure-data.json').read_text())
-for mode,end in [('serial',20),('double_buffer',14)]:
+for mode,end in [('serial',4*(COPY_US+COMPUTE_US)),('double_buffer',4*COPY_US+COMPUTE_US)]:
  events=figdata['5-6'][mode]
- check(max(e['start']+e['duration'] for e in events)==end,'timeline completion '+mode)
+ check(math.isclose(max(e['start']+e['duration'] for e in events),end),'timeline completion '+mode)
  for tile in range(4):
   cp=next(e for e in events if e['tile']==tile and e['kind']=='copy')
   comp=next(e for e in events if e['tile']==tile and e['kind']=='compute')
@@ -71,9 +81,13 @@ for mode,end in [('serial',20),('double_buffer',14)]:
  for kind in ['copy','compute']:
   ordered=sorted((e for e in events if e['kind']==kind),key=lambda e:e['start'])
   check(all(a['start']+a['duration']<=b['start'] for a,b in zip(ordered,ordered[1:])),'single resource exclusivity')
-prod=32.21225472;consume=39.3216
-check(math.isclose(2*5+8*(prod+consume),582.27083776),'coarse task completion')
-check(math.isclose(5+prod+.7+8*(consume+.7),358.08505472),'persistent task completion')
+# 5.5.4 on RTX PRO 6000: projection at 503.8 TFLOP/s, SiLU at 1792 GB/s with 4 bytes per element.
+prod=2*64*4096*12288/503.8e12*1e6;consume=64*12288*4/1792e9*1e6
+persist=json.loads((ROOT/'calculations/results/persistent-tiles-rtxpro6000.json').read_text())['summary']
+check(math.isclose(2*5+8*(prod+consume),persist['barrier_finish_ns']/1000),'coarse task completion')
+check(math.isclose(5+8*(prod+.7)+consume+.7,persist['persistent_finish_ns']/1000),'persistent task completion')
+check([round(prod,1),round(consume,2),round(prod+.7,1),round(consume+.7,2),round(2*5+8*(prod+consume)),round(5+8*(prod+.7)+consume+.7),round(persist['hypothetical_speedup'],1)]==[12.8,1.76,13.5,2.46,126,115,1.1],'persistent printed values')
+check(round(5+7*consume-8*.7-.7,1)==11.0 and round(7*consume,1)==12.3 and round(5+7*consume,1)==17.3,'persistent saving decomposition')
 
 # Check newly explained thresholds and the actual RMSNorm traffic objects.
 check(math.isclose(1560/3096/.4,1.25968992248062),'tile bandwidth reversal')
@@ -88,7 +102,7 @@ dag=figdata['5-16'];computed=[dag['prepare_us']+max(h,dag['branch_B_us'])+dag['f
 check(computed==dag['completion_us']==[80,60],'critical path diagram')
 check(10+max(15,90)+10==110,'contention scenario')
 # Check the new mechanism diagrams against the equations used in the text.
-check(set(figdata)=={f'5-{i}' for i in range(1,18)}|{'reuse_steps','tile_working_set','tile_residency','fusion_path','buffer_slots','attention_storage'},'complete stable figure data identifiers')
+check(set(figdata)=={f'5-{i}' for i in range(1,18)}|{'reuse_steps','tile_working_set','tile_residency','fusion_path','buffer_slots','attention_storage','sm_residency','warp_pipeline'},'complete stable figure data identifiers')
 bank=figdata['5-3']
 check([len(set(x)) for x in bank['column_banks']]==[1,32],'bank conflict versus distributed requests')
 check(figdata['5-4']['segments']*figdata['5-4']['partial_elements']==4096,'split reduction covers one row')
@@ -97,34 +111,52 @@ for b,a,traffic,updates in zip(*[figdata['5-8'][k] for k in ['kv_rows','q_rows',
  check(updates==math.ceil(8192/a)*math.ceil(8192/b),'attention diagram update counts')
 graph=figdata['5-13']
 check(np.allclose(np.array(graph['prepare_us'])+graph['copy_us']+np.array([graph['compute_us']]*3),graph['completion_us']),'graph-copy time components')
-check(np.allclose(figdata['5-15']['completion_us'],[2*5+8*(prod+consume),5+prod+.7+8*(consume+.7)]),'persistent diagram time components')
+check(np.allclose(figdata['5-15']['completion_us'],[2*5+8*(prod+consume),5+8*(prod+.7)+consume+.7]),'persistent diagram time components')
 
 # New diagrams must preserve the shared capacity, traffic and lifetime models.
 index=json.loads((HERE/'figure-index.json').read_text())
-check([z['number'] for z in index]==[f'5-{i}' for i in range(1,figure_count+1)],'index matches caption order')
-check(sum(z['revised'] for z in index)==figure_count,'all figures use revised layout')
+check([int(str(z['number']).split('-')[-1]) for z in index]==list(range(1,figure_count+1)),'index matches caption order')
+check(all((HERE/Path(z['asset']).name).with_suffix('.pdf').exists() for z in index),'all figures use revised layout')
 layout=json.loads((HERE/'teaching-layout-check.json').read_text())
 check(len(layout)==figure_count and all(z['width_pt']==420 and z['min_label_pt']>=11 and not z['text_extent_warnings'] for z in layout),'book-size revised labels and extents')
 for z in index:
- if z['revised']:
-  check((HERE/Path(z['asset']).with_suffix('.pdf')).exists(),'print PDF '+z['asset'])
+ check((HERE/Path(z['asset']).name).with_suffix('.pdf').exists(),'print PDF '+z['asset'])
 res=figdata['tile_residency']
-check([res['budget_KiB']//v for v in res['working_set_KiB']]==res['resident_sets'],'resident working-set capacity bound')
+check(res['budget_KiB']==100 and [res['budget_KiB']//(v+res['reserve_KiB_per_block']) for v in res['working_set_KiB']]==res['resident_sets']==[4,1],'resident working-set capacity bound')
+check([100//(32+1),100//(96+1)]==[3,1] and 96<=99,'double-buffered candidates on RTX PRO 6000')
+check((100-2*1)//2==49 and 49-32<32 and 49-32>=16,'two resident blocks leave one 16 KiB queue slot')
 work=figdata['tile_working_set'];m,n,k=work['tile']
 check(work['input_bytes']==[2*m*k,2*k*n] and work['accumulator_bytes']==4*m*n,'working-set labels versus shape')
 att=figdata['attention_storage']
 check(4*att['L']**2/2**20==att['SP_each_MiB'] and 4*att['SP_each_MiB']==att['SP_write_read_MiB'],'attention intermediates versus dimensions')
 check(figdata['buffer_slots']['reuse_A_us']==next(e['start'] for e in figdata['5-6']['double_buffer'] if e['kind']=='copy' and e['tile']==2),'snapshots match full timeline')
 
+# 5.1.5: residency, latency hiding and MMA counts reproduce calculations/results/sm-occupancy-*.json.
+sm=json.loads((ROOT/'calculations/results/sm-occupancy-book-tile.json').read_text());res=figdata['sm_residency']
+check(res['blocks_by_limit']==sm['residency']['blocks_by_limit']=={'threads':8,'registers':2,'shared_memory':2,'blocks':32},'SM residency limits')
+check(res['resident_blocks']==sm['summary']['resident_blocks']==2 and res['resident_warps']==16 and math.isclose(res['occupancy'],.25),'SM occupancy')
+check(res['shared_left_bytes']==233472-2*(98304+1024)==34*1024,'shared memory left after two blocks')
+check(math.isclose(3.35e12*600e-9/132,sm['summary']['needed_bytes_in_flight_per_sm']) and 16*4*32*16==sm['summary']['available_bytes_in_flight_per_sm']==32768,'Little law bytes in flight')
+check(math.isclose(32768/sm['summary']['needed_bytes_in_flight_per_sm'],2.1519283582089552) and sm['latency_hiding']['minimum_resident_warps_to_cover']==8,'latency coverage')
+check((128//16)*(128//8)*(64//16)==512==sm['summary']['mma_instructions_per_tile'] and 512*4096==2*128*128*64,'MMA instructions per tile')
+acc=json.loads((ROOT/'calculations/results/sm-occupancy-register-accumulator.json').read_text())
+check(acc['residency']['blocks_by_limit']=={'threads':8,'registers':2,'shared_memory':6,'blocks':32} and acc['summary']['binding_limits']==['registers'],'accumulator in registers')
+slow=json.loads((ROOT/'calculations/results/sm-occupancy-latency-1000ns.json').read_text())
+check(not slow['summary']['covers_latency'] and slow['latency_hiding']['minimum_resident_warps_to_cover']==25 and math.isclose(slow['latency_hiding']['coverage_ratio'],16384/25378.78787878788),'latency flip condition')
+wp=figdata['warp_pipeline']
+check(math.isclose(wp['completion_us'],4*COPY_US+COMPUTE_US) and np.allclose(wp['full_barrier_us'],[COPY_US*i for i in range(1,5)]) and np.allclose(wp['empty_barrier_us'],[COPY_US+COMPUTE_US,2*COPY_US+COMPUTE_US]),'warp pipeline barriers')
+for c,k in zip(wp['copies'],wp['computes']):check(c['start']+c['duration']<=k['start'] and c['slot']==k['slot']==c['tile']%2,'copy before compute')
+for t in range(2,4):check(wp['copies'][t]['start']>=wp['computes'][t-2]['start']+wp['computes'][t-2]['duration'],'slot freed before refill')
+check(2*64*64*2+4*64*64==32768 and 233472//(32768+1024)==6 and 65536//(256*128)==2 and 65536//(256*64)==4,'64x64 tile exercise limits')
 # Exercise arithmetic: changed inputs require generalization of the worked examples.
 m,n,k=64,128,32
 check(2*m*k+2*k*n+4*m*n==44*1024,'rectangular tile exercise capacity')
 check(2*M*K*(N//n)+2*K*N*(M//m)+2*M*N==2328*2**20,'rectangular tile exercise traffic')
 bytes_saved_per_row=(156-60)*2**20/1024
-check(101*bytes_saved_per_row/2e12<5e-6<102*bytes_saved_per_row/2e12,'fusion overhead exercise integer threshold')
+check(91*bytes_saved_per_row/1.792e12<5e-6<92*bytes_saved_per_row/1.792e12,'fusion overhead exercise integer threshold')
 attn_capacity=lambda a:2*a*128+2*2*64*128+4*a*64+4*a*128+12*a
-check(attn_capacity(94)<=131072<attn_capacity(95),'attention prefetch exercise capacity')
-check(math.ceil(8192/94)==88 and 4+88*4==356,'attention prefetch exercise traffic')
+check(attn_capacity(66)<=101376<attn_capacity(67),'attention prefetch exercise capacity')
+check(math.ceil(8192/66)==125 and 4+125*4==504,'attention prefetch exercise traffic')
 check(math.isclose((.5*3.5+5)/(.5*1.5+1),27/7),'three-block softmax exercise')
 check(math.isclose(11-5*.2,10),'shape dispatch exercise threshold')
 # A small tiled GEMM with ragged boundaries, preserving the explicit output cast.

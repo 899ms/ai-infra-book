@@ -1,0 +1,92 @@
+{
+  "model": "qwen3-8b",
+  "source": {
+    "tp": 4,
+    "ep": 1,
+    "devices": [
+      "g0",
+      "g1",
+      "g2",
+      "g3"
+    ]
+  },
+  "target": {
+    "tp": 8,
+    "ep": 1,
+    "devices": [
+      "g0",
+      "g1",
+      "g2",
+      "g3",
+      "g4",
+      "g5",
+      "g6",
+      "g7"
+    ]
+  },
+  "batch": 2,
+  "history": 8192,
+  "state_identity_verified": true,
+  "bandwidth": {
+    "fabric_bytes_per_second": 25000000000,
+    "sender_bytes_per_second": 25000000000,
+    "receiver_bytes_per_second": 25000000000
+  },
+  "auxiliary_state_bytes": 4096,
+  "same_weight_version": true,
+  "runtime_seconds": {
+    "drain": 1,
+    "group_setup": 1,
+    "weight_repack": 1,
+    "state_validation": 1,
+    "compile_graph": 1,
+    "atomic_cutover": 1,
+    "replay_prefill": 1,
+    "queue_clearance": 1,
+    "local_materialization": 1
+  },
+  "capacity_bytes_by_device": {
+    "g5": 80000000000,
+    "g7": 80000000000,
+    "g3": 80000000000,
+    "g0": 80000000000,
+    "g1": 80000000000,
+    "g2": 80000000000,
+    "g6": 80000000000,
+    "g4": 80000000000
+  },
+  "extra_live_bytes_by_device": {
+    "g5": 2147483648,
+    "g7": 2147483648,
+    "g3": 2147483648,
+    "g0": 2147483648,
+    "g1": 2147483648,
+    "g2": 2147483648,
+    "g6": 2147483648,
+    "g4": 2147483648
+  },
+  "amortization": {
+    "extra_seconds": 10,
+    "seconds_saved_per_step": "0.0002",
+    "extra_cost": null,
+    "cost_saved_per_step": null,
+    "remaining_steps": 50000
+  },
+  "deployment_cost": {
+    "currency": "hypothetical_credit",
+    "terms": {
+      "startup": null,
+      "steady_service": null,
+      "routing_and_cache": null,
+      "migration": null,
+      "warm_overlap": null,
+      "recovery_and_replay": null,
+      "failed_attempts": null,
+      "backlog_clearance": null,
+      "network_storage": null,
+      "host_control_plane": null
+    },
+    "slo_valid_completed_requests": null
+  },
+  "annotation": "Migration traffic shares one 200 Gb/s RDMA NIC (25 GB/s per direction), the chapter link between servers. Nine runtime terms of 1 s each are declared teaching inputs."
+}

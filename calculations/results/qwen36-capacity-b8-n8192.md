@@ -455,10 +455,10 @@ reserve_bytes为明确的额外预算假设，默认2GiB，并非测得workspace
       "sha256": "693d82ca256b39e9f9267d12a6a557bd09c3bca299304d3f5ba7fc6342c86f1a"
     },
     {
-      "file": "sources/hardware/nvidia-h100-page.html",
+      "file": "sources/hardware/nvidia-h100-page.md",
       "url": "https://www.nvidia.com/en-us/data-center/h100/",
       "revision": "snapshot-2026-09-08",
-      "sha256": "8fe697dfa96dceeeed6e7a16517294e15d9100cc0e9f1e6e5edbce78699b4681"
+      "sha256": "9ec9b79f149ced935b19b3a44d07ce385859e49fcb33dfdfeb35adc7b7d00fe0"
     },
     {
       "file": "sources/hardware/nvidia-rtx-blackwell-whitepaper.pdf",
@@ -479,28 +479,28 @@ reserve_bytes为明确的额外预算假设，默认2GiB，并非测得workspace
       "sha256": "ad6727c2875d1272aaa15cfeb3fd51b8e6666fc5625742fd1bd3bb076ed119d6"
     },
     {
-      "file": "../references/files/specs/apple-m2-pro-max.html",
+      "file": "../references/files/specs/apple-m2-pro-max.md",
       "url": "https://www.apple.com/newsroom/2023/01/apple-unveils-m2-pro-and-m2-max-next-generation-chips-for-next-level-workflows/",
       "revision": "book-official-archive-2026-09-06",
-      "sha256": "cd25f2f6f04f6be4eec9d75868c5379c396862a4426ce5f9961b9e8241150ea7"
+      "sha256": "22c21a5e875155c9975c3c10031aac7f1e826ae5a90435bb4feabae6b0a4dfa5"
     },
     {
-      "file": "sources/hardware/nvidia-ptx-isa-9-3.html",
+      "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
       "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
       "revision": "snapshot-2026-09-08",
-      "sha256": "940cc68f858cefdf82425b47ee3bac3afde447c8a85b95f43d7d6fb1f46b4413"
+      "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
     },
     {
-      "file": "research/hardware-nvidia-closure/rtx4090.html",
+      "file": "research/hardware-nvidia-closure/rtx4090.md",
       "url": "https://www.nvidia.com/en-us/geforce/graphics-cards/40-series/rtx-4090/",
       "revision": "official-closure-snapshot-2026-09-09",
-      "sha256": "2b315d1402135bfe273c3fbde57aa31ca482522ee8928b92af96cab8088906f8"
+      "sha256": "ccdcbcbb0a7d798519cc91eb797200d36a246b093ae3410cb4f26db723536bc7"
     },
     {
-      "file": "research/hardware-nvidia-closure/rtx5090.html",
+      "file": "research/hardware-nvidia-closure/rtx5090.md",
       "url": "https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090/",
       "revision": "official-closure-snapshot-2026-09-09",
-      "sha256": "33715ee8c890c82dda0615a28b9bf2d6879965b7a85ec6ae7e3e4c4497835df7"
+      "sha256": "af07e36fd9eb4b5e112d53a69f045fcf35ff3a03a86c4fdee38f5d8823e5c761"
     },
     {
       "file": "research/hardware-nvidia-closure/rtx-pro-ws-datasheet.pdf",
@@ -509,10 +509,10 @@ reserve_bytes为明确的额外预算假设，默认2GiB，并非测得workspace
       "sha256": "a19daec7b413bcbc2abc3893de5b97d4cfefef59cf1cb0f6121c3414037a9ddf"
     },
     {
-      "file": "research/h05-next-review/cuda-programming-guide-12.8.1.html",
+      "file": "research/h05-next-review/cuda-programming-guide-12.8.1.md",
       "url": "https://docs.nvidia.com/cuda/archive/12.8.1/cuda-c-programming-guide/index.html",
       "revision": "CUDA12.8.1 archive",
-      "sha256": "cdc49d93372b4e03e94d56f24345373f82ad76b8663c745073463263009637ce"
+      "sha256": "f7f46a910869e1f1102ee7193b536dc6c9a356c224b51734f240168266ea5e25"
     }
   ],
   "summary": {

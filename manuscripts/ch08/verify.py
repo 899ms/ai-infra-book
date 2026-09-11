@@ -5,13 +5,15 @@ from fractions import Fraction
 from urllib.parse import unquote,urlsplit
 import hashlib,html,json,re,sys,xml.etree.ElementTree as ET
 from PIL import Image
-HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1];md=HERE.parent/'08-单实例推理.md';raw=md.read_text();page=md.with_suffix('.html').read_text();errors=[];checks=0
+HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1];sys.path.insert(0,str(HERE.parent))
+from preview_output import preview_path
+md=HERE.parent/'08-单实例推理.md';raw=md.read_text();page=preview_path(md).read_text();errors=[];checks=0
 def check(ok,msg):
  global checks
  checks+=1
  if not ok:errors.append(msg)
 def load(p):return json.loads(p.read_text())
-outline=(ROOT/'outlines/08-单实例推理.md').read_text()
+outline=next(p for p in [ROOT/'outlines'/md.name,ROOT/'archive/outlines'/md.name] if p.exists()).read_text()
 check(re.findall(r'^#{2,3} (8\.\d+(?:\.\d+)?) ',raw,re.M)==re.findall(r'^#{2,3} (8\.\d+(?:\.\d+)?) ',outline,re.M),'Outline section numbering/order differs')
 check(re.findall(r'^> \*\*练习 (8-\d+)',raw,re.M)==[f'8-{i}' for i in range(1,10)],'Exercise sequence')
 check(re.findall(r'^> \*\*练习 (8-\d+) · 核心',raw,re.M)==['8-2','8-4','8-9'],'Core selection')
@@ -43,9 +45,9 @@ check(69178275840+16506720256+6006016==85691002112,'GGUF byte conservation')
 check(96000000000-8*2**30-85691002112>=1577058304,'Q2_K 8K necessary capacity');check(96000000000-8*2**30-85691002112<6308233216,'Q2_K 32K capacity fails')
 d=load(HERE/'figure-data.json');check(sum((L+3)//4*4 for L in d['pages']['lengths'])==52,'Page allocation');check(52-8==d['pages']['shared'],'Page sharing')
 for row in d['speculation']['drafts']:
- a=Fraction(1 if row['draft']=='AAAA' else 3,4);n=sum(a**j for j in range(5));check(float(n)==row['expected_output'],'Expected output');check(abs(float(Fraction(3,2)/n)-row['ms_per_output'])<1e-12,'Cost per output')
+ a=Fraction(1 if row['draft']=='AAAA' else 3,4);n=sum(a**j for j in range(5));check(float(n)==row['expected_output'],'Expected output');check(abs((d['speculation']['verification_ms']+d['speculation']['query_ms'])/float(n)-row['ms_per_output'])<1e-9,'Cost per output')
 service=load(ROOT/'experiments/ch08/08-09/analysis.json');check(sum(r['qualified'] for r in service['groups'])==155,'Qualified results');check(sum(r['correct'] for r in service['groups'])==294,'Correct results');check(sum(r['requests'] for r in service['groups'])==336,'Request total')
-for policy in ['fixed','continuous','chunked']:check(d[policy]==load(ROOT/f'calculations/results/iteration-batching-{policy}.json')['batching_steps'],'Exact time bars '+policy)
+for policy in ['fixed','continuous','chunked']:check(d[policy]==load(ROOT/f'calculations/results/iteration-batching-pro6000-{policy}.json')['batching_steps'],'Exact time bars '+policy)
 check(d['chunk_history']==load(ROOT/'calculations/results/chunk-history-book.json')['chunk_history_rows'],'Exact chunk samples')
 # Recompute authored design choices and compare task-aligned figure cells to source rows.
 import subprocess
@@ -65,7 +67,7 @@ for row in d['attention_geometry']:
  c=row['new'];h=row['history']
  check(row['history_pairs']==c*h and row['within_pairs']==c*(c+1)//2 and row['total_pairs']==c*h+c*(c+1)//2,'Attention cell geometry')
 check(d['kv_layout']['total_bytes']==[64,34,18] and [x+y for x,y in zip(d['kv_layout']['payload_bytes'],d['kv_layout']['scale_bytes'])]==[64,34,18],'KV byte layout')
-cache=d['cache_choice'];check(cache['B']['count']*cache['B']['each_mib']==cache['A']['size_mib']==cache['capacity_mib'] and cache['B']['count']*cache['B']['each_net_ms']==2*cache['A']['net_ms'],'Equal-capacity cache comparison')
+cache=d['cache_choice'];worked=load(HERE/'teaching-validation.json');check(cache['B']['count']*cache['B']['each_mib']==cache['A']['size_mib']==cache['capacity_mib'] and abs(cache['A']['net_ms']-worked['cache']['A_gen5'][2]*1e3)<1e-9 and abs(cache['B']['each_net_ms']-worked['cache']['B_gen5'][2]*1e3)<1e-9,'Equal-capacity cache comparison')
 example=d['verification_example'];check(example['output']==example['draft'][:example['first_mismatch']-1]+[example['replacement']],'Draft correction diagram')
 reference={r['name']:r for r in load(HERE/'teaching-validation.json')['design_candidates']}
 for r in d['design_plane']['configurations']:

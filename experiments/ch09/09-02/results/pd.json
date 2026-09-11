@@ -2,59 +2,65 @@
   "schema_version": 1,
   "experiment": "9-2",
   "title": "A100＋H20 的 PD 分离",
-  "worker_rates": {
+  "worker_devices": {
     "a100": {
-      "name": "A100-80GB-prefill",
-      "prefill_tokens_per_second": 16384,
-      "decode_tokens_per_second": 64
+      "name": "A100",
+      "device": "a100-80gb-sxm",
+      "decode_batch": 32,
+      "compute_efficiency": 0.5,
+      "bandwidth_efficiency": 0.5
     },
     "h20": {
-      "name": "H20-96GB-decode",
-      "prefill_tokens_per_second": 4096,
-      "decode_tokens_per_second": 256
+      "name": "H20",
+      "device": "h20-sxm5-96gb",
+      "decode_batch": 32,
+      "compute_efficiency": 0.5,
+      "bandwidth_efficiency": 0.5
     },
-    "note": "每 worker 服务速率是声明假设，不是实测。"
+    "note": "阶段能力由硬件表峰值乘 50% 效率推出，逐卡明细见各 pool-*.json 的 derived_stage_rates。"
   },
   "link_bytes_per_second": 25000000000,
   "rows": [
     {
       "layout": "共置（8 张 A100 都做两件事）",
-      "scan": "输入 2K／输出 128／无命中",
+      "scan": "输入 8K／输出 1024／无命中",
       "summary": {
-        "new_prefill_tokens_per_request": 2048,
-        "decode_calls_per_request": 128,
-        "full_prompt_state_bytes": 301989888,
-        "pd_transfer_bytes_per_request": 301989888,
-        "network_capacity_requests_per_second_exact": "48828125/589824",
+        "new_prefill_tokens_per_request": 8192,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 1207959552,
+        "pd_transfer_bytes_per_request": 1207959552,
+        "network_capacity_requests_per_second_exact": "48828125/2359296",
         "assignments": 9,
         "best_prefill_workers": {
-          "A100-80GB-prefill": 1
+          "A100": 3
         },
         "best_decode_workers": {
-          "A100-80GB-prefill": 7
+          "A100": 5
         },
-        "best_pd_bound_requests_per_second_exact": "7/2",
-        "colocated_bound_requests_per_second_exact": "64/17",
-        "pd_to_colocated_bound_ratio_exact": "119/128",
+        "best_pd_bound_requests_per_second_exact": "19912109375/7026552064",
+        "colocated_bound_requests_per_second_exact": "776572265625/254401730888",
+        "pd_to_colocated_bound_ratio_exact": "31800216361/34254441312",
         "best_bottlenecks": [
           "decode"
         ],
         "arrival_strictly_below_best_pd_bound": false,
         "arrival_strictly_below_colocated_bound": false
       },
-      "pd_bound": 3.5,
-      "colocated_bound": 3.764705882352941,
-      "ratio": 0.9296875,
-      "network_capacity": 82.7842288547092,
-      "transfer_bytes": 301989888,
+      "pd_bound": 2.8338378757652936,
+      "colocated_bound": 3.0525431682966215,
+      "ratio": 0.9283530877457272,
+      "network_capacity": 20.6960572136773,
+      "transfer_bytes": 1207959552,
       "bottlenecks": [
         "decode"
       ],
       "best_prefill_workers": {
-        "A100-80GB-prefill": 1
+        "A100": 3
       },
       "best_decode_workers": {
-        "A100-80GB-prefill": 7
+        "A100": 5
       }
     },
     {
@@ -63,240 +69,250 @@
       "summary": {
         "new_prefill_tokens_per_request": 8192,
         "decode_calls_per_request": 128,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
         "full_prompt_state_bytes": 1207959552,
         "pd_transfer_bytes_per_request": 1207959552,
         "network_capacity_requests_per_second_exact": "48828125/2359296",
         "assignments": 9,
         "best_prefill_workers": {
-          "A100-80GB-prefill": 2
+          "A100": 6
         },
         "best_decode_workers": {
-          "A100-80GB-prefill": 6
+          "A100": 2
         },
-        "best_pd_bound_requests_per_second_exact": "3",
-        "colocated_bound_requests_per_second_exact": "16/5",
-        "pd_to_colocated_bound_ratio_exact": "15/16",
+        "best_pd_bound_requests_per_second_exact": "1142578125/163079008",
+        "colocated_bound_requests_per_second_exact": "776572265625/103733440388",
+        "pd_to_colocated_bound_ratio_exact": "77800080291/83129524328",
+        "best_bottlenecks": [
+          "prefill"
+        ],
+        "arrival_strictly_below_best_pd_bound": true,
+        "arrival_strictly_below_colocated_bound": true
+      },
+      "pd_bound": 7.00628572010936,
+      "colocated_bound": 7.486228767891466,
+      "ratio": 0.9358898769109771,
+      "network_capacity": 20.6960572136773,
+      "transfer_bytes": 1207959552,
+      "bottlenecks": [
+        "prefill"
+      ],
+      "best_prefill_workers": {
+        "A100": 6
+      },
+      "best_decode_workers": {
+        "A100": 2
+      }
+    },
+    {
+      "layout": "共置（8 张 A100 都做两件事）",
+      "scan": "输入 8K／输出 4096／无命中",
+      "summary": {
+        "new_prefill_tokens_per_request": 8192,
+        "decode_calls_per_request": 4096,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 1207959552,
+        "pd_transfer_bytes_per_request": 1207959552,
+        "network_capacity_requests_per_second_exact": "48828125/2359296",
+        "assignments": 9,
+        "best_prefill_workers": {
+          "A100": 1
+        },
+        "best_decode_workers": {
+          "A100": 7
+        },
+        "best_pd_bound_requests_per_second_exact": "27876953125/31730086912",
+        "colocated_bound_requests_per_second_exact": "776572265625/856550392808",
+        "pd_to_colocated_bound_ratio_exact": "749481593707/773420868480",
         "best_bottlenecks": [
           "decode"
         ],
         "arrival_strictly_below_best_pd_bound": false,
         "arrival_strictly_below_colocated_bound": false
       },
-      "pd_bound": 3.0,
-      "colocated_bound": 3.2,
-      "ratio": 0.9375,
+      "pd_bound": 0.878565293637983,
+      "colocated_bound": 0.9066276451980713,
+      "ratio": 0.969047544812118,
       "network_capacity": 20.6960572136773,
       "transfer_bytes": 1207959552,
       "bottlenecks": [
         "decode"
       ],
       "best_prefill_workers": {
-        "A100-80GB-prefill": 2
+        "A100": 1
       },
       "best_decode_workers": {
-        "A100-80GB-prefill": 6
+        "A100": 7
       }
     },
     {
       "layout": "共置（8 张 A100 都做两件事）",
-      "scan": "输入 8K／输出 1024／无命中",
+      "scan": "输入 8K／输出 1024／命中 6K 前缀",
       "summary": {
-        "new_prefill_tokens_per_request": 8192,
+        "new_prefill_tokens_per_request": 2048,
         "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
         "full_prompt_state_bytes": 1207959552,
         "pd_transfer_bytes_per_request": 1207959552,
         "network_capacity_requests_per_second_exact": "48828125/2359296",
         "assignments": 9,
         "best_prefill_workers": {
-          "A100-80GB-prefill": 1
+          "A100": 1
         },
         "best_decode_workers": {
-          "A100-80GB-prefill": 7
+          "A100": 7
         },
-        "best_pd_bound_requests_per_second_exact": "7/16",
-        "colocated_bound_requests_per_second_exact": "16/33",
-        "pd_to_colocated_bound_ratio_exact": "231/256",
+        "best_pd_bound_requests_per_second_exact": "3982421875/1003793152",
+        "colocated_bound_requests_per_second_exact": "19414306640625/4859106467336",
+        "pd_to_colocated_bound_ratio_exact": "607388308417/611686452000",
         "best_bottlenecks": [
           "decode"
         ],
-        "arrival_strictly_below_best_pd_bound": false,
-        "arrival_strictly_below_colocated_bound": false
+        "arrival_strictly_below_best_pd_bound": true,
+        "arrival_strictly_below_colocated_bound": true
       },
-      "pd_bound": 0.4375,
-      "colocated_bound": 0.48484848484848486,
-      "ratio": 0.90234375,
+      "pd_bound": 3.967373026071411,
+      "colocated_bound": 3.995447881443288,
+      "ratio": 0.9929732895522754,
       "network_capacity": 20.6960572136773,
       "transfer_bytes": 1207959552,
       "bottlenecks": [
         "decode"
       ],
       "best_prefill_workers": {
-        "A100-80GB-prefill": 1
+        "A100": 1
       },
       "best_decode_workers": {
-        "A100-80GB-prefill": 7
+        "A100": 7
       }
     },
     {
       "layout": "共置（8 张 A100 都做两件事）",
-      "scan": "输入 8K／输出 128／命中 6K 前缀",
+      "scan": "输入 2K／输出 1024／无命中",
       "summary": {
         "new_prefill_tokens_per_request": 2048,
-        "decode_calls_per_request": 128,
-        "full_prompt_state_bytes": 1207959552,
-        "pd_transfer_bytes_per_request": 1207959552,
-        "network_capacity_requests_per_second_exact": "48828125/2359296",
-        "assignments": 9,
-        "best_prefill_workers": {
-          "A100-80GB-prefill": 1
-        },
-        "best_decode_workers": {
-          "A100-80GB-prefill": 7
-        },
-        "best_pd_bound_requests_per_second_exact": "7/2",
-        "colocated_bound_requests_per_second_exact": "64/17",
-        "pd_to_colocated_bound_ratio_exact": "119/128",
-        "best_bottlenecks": [
-          "decode"
-        ],
-        "arrival_strictly_below_best_pd_bound": false,
-        "arrival_strictly_below_colocated_bound": false
-      },
-      "pd_bound": 3.5,
-      "colocated_bound": 3.764705882352941,
-      "ratio": 0.9296875,
-      "network_capacity": 20.6960572136773,
-      "transfer_bytes": 1207959552,
-      "bottlenecks": [
-        "decode"
-      ],
-      "best_prefill_workers": {
-        "A100-80GB-prefill": 1
-      },
-      "best_decode_workers": {
-        "A100-80GB-prefill": 7
-      }
-    },
-    {
-      "layout": "共置（8 张 A100 都做两件事）",
-      "scan": "输入 32K／输出 128／无命中",
-      "summary": {
-        "new_prefill_tokens_per_request": 32768,
-        "decode_calls_per_request": 128,
-        "full_prompt_state_bytes": 4831838208,
-        "pd_transfer_bytes_per_request": 4831838208,
-        "network_capacity_requests_per_second_exact": "48828125/9437184",
-        "assignments": 9,
-        "best_prefill_workers": {
-          "A100-80GB-prefill": 4
-        },
-        "best_decode_workers": {
-          "A100-80GB-prefill": 4
-        },
-        "best_pd_bound_requests_per_second_exact": "2",
-        "colocated_bound_requests_per_second_exact": "2",
-        "pd_to_colocated_bound_ratio_exact": "1",
-        "best_bottlenecks": [
-          "prefill",
-          "decode"
-        ],
-        "arrival_strictly_below_best_pd_bound": false,
-        "arrival_strictly_below_colocated_bound": false
-      },
-      "pd_bound": 2.0,
-      "colocated_bound": 2.0,
-      "ratio": 1.0,
-      "network_capacity": 5.174014303419325,
-      "transfer_bytes": 4831838208,
-      "bottlenecks": [
-        "prefill",
-        "decode"
-      ],
-      "best_prefill_workers": {
-        "A100-80GB-prefill": 4
-      },
-      "best_decode_workers": {
-        "A100-80GB-prefill": 4
-      }
-    },
-    {
-      "layout": "共置（8 张 A100 都做两件事）",
-      "scan": "输入 8K／输出 128／到达率 8",
-      "summary": {
-        "new_prefill_tokens_per_request": 8192,
-        "decode_calls_per_request": 128,
-        "full_prompt_state_bytes": 1207959552,
-        "pd_transfer_bytes_per_request": 1207959552,
-        "network_capacity_requests_per_second_exact": "48828125/2359296",
-        "assignments": 9,
-        "best_prefill_workers": {
-          "A100-80GB-prefill": 2
-        },
-        "best_decode_workers": {
-          "A100-80GB-prefill": 6
-        },
-        "best_pd_bound_requests_per_second_exact": "3",
-        "colocated_bound_requests_per_second_exact": "16/5",
-        "pd_to_colocated_bound_ratio_exact": "15/16",
-        "best_bottlenecks": [
-          "decode"
-        ],
-        "arrival_strictly_below_best_pd_bound": false,
-        "arrival_strictly_below_colocated_bound": false
-      },
-      "pd_bound": 3.0,
-      "colocated_bound": 3.2,
-      "ratio": 0.9375,
-      "network_capacity": 20.6960572136773,
-      "transfer_bytes": 1207959552,
-      "bottlenecks": [
-        "decode"
-      ],
-      "best_prefill_workers": {
-        "A100-80GB-prefill": 2
-      },
-      "best_decode_workers": {
-        "A100-80GB-prefill": 6
-      }
-    },
-    {
-      "layout": "同构 PD（A100 4＋4）",
-      "scan": "输入 2K／输出 128／无命中",
-      "summary": {
-        "new_prefill_tokens_per_request": 2048,
-        "decode_calls_per_request": 128,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
         "full_prompt_state_bytes": 301989888,
         "pd_transfer_bytes_per_request": 301989888,
         "network_capacity_requests_per_second_exact": "48828125/589824",
         "assignments": 9,
         "best_prefill_workers": {
-          "A100-80GB-prefill": 1
+          "A100": 2
         },
         "best_decode_workers": {
-          "A100-80GB-prefill": 7
+          "A100": 6
         },
-        "best_pd_bound_requests_per_second_exact": "7/2",
-        "colocated_bound_requests_per_second_exact": "64/17",
-        "pd_to_colocated_bound_ratio_exact": "119/128",
+        "best_pd_bound_requests_per_second_exact": "11947265625/1701336704",
+        "colocated_bound_requests_per_second_exact": "3882861328125/507070180456",
+        "pd_to_colocated_bound_ratio_exact": "63383772557/69116803600",
         "best_bottlenecks": [
           "decode"
         ],
-        "arrival_strictly_below_best_pd_bound": false,
-        "arrival_strictly_below_colocated_bound": false
+        "arrival_strictly_below_best_pd_bound": true,
+        "arrival_strictly_below_colocated_bound": true
       },
-      "pd_bound": 3.5,
-      "colocated_bound": 3.764705882352941,
-      "ratio": 0.9296875,
+      "pd_bound": 7.022281713496731,
+      "colocated_bound": 7.6574436395238346,
+      "ratio": 0.9170530067307684,
       "network_capacity": 82.7842288547092,
       "transfer_bytes": 301989888,
       "bottlenecks": [
         "decode"
       ],
       "best_prefill_workers": {
-        "A100-80GB-prefill": 1
+        "A100": 2
       },
       "best_decode_workers": {
-        "A100-80GB-prefill": 7
+        "A100": 6
+      }
+    },
+    {
+      "layout": "共置（8 张 A100 都做两件事）",
+      "scan": "输入 32K／输出 1024／无命中",
+      "summary": {
+        "new_prefill_tokens_per_request": 32768,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 4831838208,
+        "pd_transfer_bytes_per_request": 4831838208,
+        "network_capacity_requests_per_second_exact": "48828125/9437184",
+        "assignments": 9,
+        "best_prefill_workers": {
+          "A100": 4
+        },
+        "best_decode_workers": {
+          "A100": 4
+        },
+        "best_pd_bound_requests_per_second_exact": "3982421875/5380516672",
+        "colocated_bound_requests_per_second_exact": "3882861328125/5024489604712",
+        "pd_to_colocated_bound_ratio_exact": "628061200589/655750469400",
+        "best_bottlenecks": [
+          "decode"
+        ],
+        "arrival_strictly_below_best_pd_bound": false,
+        "arrival_strictly_below_colocated_bound": false
+      },
+      "pd_bound": 0.7401560329186171,
+      "colocated_bound": 0.7727872149409218,
+      "ratio": 0.9577746870142004,
+      "network_capacity": 5.174014303419325,
+      "transfer_bytes": 4831838208,
+      "bottlenecks": [
+        "decode"
+      ],
+      "best_prefill_workers": {
+        "A100": 4
+      },
+      "best_decode_workers": {
+        "A100": 4
+      }
+    },
+    {
+      "layout": "同构 PD（A100 4＋4）",
+      "scan": "输入 8K／输出 1024／无命中",
+      "summary": {
+        "new_prefill_tokens_per_request": 8192,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 1207959552,
+        "pd_transfer_bytes_per_request": 1207959552,
+        "network_capacity_requests_per_second_exact": "48828125/2359296",
+        "assignments": 9,
+        "best_prefill_workers": {
+          "A100": 3
+        },
+        "best_decode_workers": {
+          "A100": 5
+        },
+        "best_pd_bound_requests_per_second_exact": "19912109375/7026552064",
+        "colocated_bound_requests_per_second_exact": "776572265625/254401730888",
+        "pd_to_colocated_bound_ratio_exact": "31800216361/34254441312",
+        "best_bottlenecks": [
+          "decode"
+        ],
+        "arrival_strictly_below_best_pd_bound": false,
+        "arrival_strictly_below_colocated_bound": false
+      },
+      "pd_bound": 2.8338378757652936,
+      "colocated_bound": 3.0525431682966215,
+      "ratio": 0.9283530877457272,
+      "network_capacity": 20.6960572136773,
+      "transfer_bytes": 1207959552,
+      "bottlenecks": [
+        "decode"
+      ],
+      "best_prefill_workers": {
+        "A100": 3
+      },
+      "best_decode_workers": {
+        "A100": 5
       }
     },
     {
@@ -305,244 +321,254 @@
       "summary": {
         "new_prefill_tokens_per_request": 8192,
         "decode_calls_per_request": 128,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
         "full_prompt_state_bytes": 1207959552,
         "pd_transfer_bytes_per_request": 1207959552,
         "network_capacity_requests_per_second_exact": "48828125/2359296",
         "assignments": 9,
         "best_prefill_workers": {
-          "A100-80GB-prefill": 2
+          "A100": 6
         },
         "best_decode_workers": {
-          "A100-80GB-prefill": 6
+          "A100": 2
         },
-        "best_pd_bound_requests_per_second_exact": "3",
-        "colocated_bound_requests_per_second_exact": "16/5",
-        "pd_to_colocated_bound_ratio_exact": "15/16",
+        "best_pd_bound_requests_per_second_exact": "1142578125/163079008",
+        "colocated_bound_requests_per_second_exact": "776572265625/103733440388",
+        "pd_to_colocated_bound_ratio_exact": "77800080291/83129524328",
+        "best_bottlenecks": [
+          "prefill"
+        ],
+        "arrival_strictly_below_best_pd_bound": true,
+        "arrival_strictly_below_colocated_bound": true
+      },
+      "pd_bound": 7.00628572010936,
+      "colocated_bound": 7.486228767891466,
+      "ratio": 0.9358898769109771,
+      "network_capacity": 20.6960572136773,
+      "transfer_bytes": 1207959552,
+      "bottlenecks": [
+        "prefill"
+      ],
+      "best_prefill_workers": {
+        "A100": 6
+      },
+      "best_decode_workers": {
+        "A100": 2
+      }
+    },
+    {
+      "layout": "同构 PD（A100 4＋4）",
+      "scan": "输入 8K／输出 4096／无命中",
+      "summary": {
+        "new_prefill_tokens_per_request": 8192,
+        "decode_calls_per_request": 4096,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 1207959552,
+        "pd_transfer_bytes_per_request": 1207959552,
+        "network_capacity_requests_per_second_exact": "48828125/2359296",
+        "assignments": 9,
+        "best_prefill_workers": {
+          "A100": 1
+        },
+        "best_decode_workers": {
+          "A100": 7
+        },
+        "best_pd_bound_requests_per_second_exact": "27876953125/31730086912",
+        "colocated_bound_requests_per_second_exact": "776572265625/856550392808",
+        "pd_to_colocated_bound_ratio_exact": "749481593707/773420868480",
         "best_bottlenecks": [
           "decode"
         ],
         "arrival_strictly_below_best_pd_bound": false,
         "arrival_strictly_below_colocated_bound": false
       },
-      "pd_bound": 3.0,
-      "colocated_bound": 3.2,
-      "ratio": 0.9375,
+      "pd_bound": 0.878565293637983,
+      "colocated_bound": 0.9066276451980713,
+      "ratio": 0.969047544812118,
       "network_capacity": 20.6960572136773,
       "transfer_bytes": 1207959552,
       "bottlenecks": [
         "decode"
       ],
       "best_prefill_workers": {
-        "A100-80GB-prefill": 2
+        "A100": 1
       },
       "best_decode_workers": {
-        "A100-80GB-prefill": 6
+        "A100": 7
       }
     },
     {
       "layout": "同构 PD（A100 4＋4）",
-      "scan": "输入 8K／输出 1024／无命中",
+      "scan": "输入 8K／输出 1024／命中 6K 前缀",
       "summary": {
-        "new_prefill_tokens_per_request": 8192,
+        "new_prefill_tokens_per_request": 2048,
         "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
         "full_prompt_state_bytes": 1207959552,
         "pd_transfer_bytes_per_request": 1207959552,
         "network_capacity_requests_per_second_exact": "48828125/2359296",
         "assignments": 9,
         "best_prefill_workers": {
-          "A100-80GB-prefill": 1
+          "A100": 1
         },
         "best_decode_workers": {
-          "A100-80GB-prefill": 7
+          "A100": 7
         },
-        "best_pd_bound_requests_per_second_exact": "7/16",
-        "colocated_bound_requests_per_second_exact": "16/33",
-        "pd_to_colocated_bound_ratio_exact": "231/256",
-        "best_bottlenecks": [
-          "decode"
-        ],
-        "arrival_strictly_below_best_pd_bound": false,
-        "arrival_strictly_below_colocated_bound": false
-      },
-      "pd_bound": 0.4375,
-      "colocated_bound": 0.48484848484848486,
-      "ratio": 0.90234375,
-      "network_capacity": 20.6960572136773,
-      "transfer_bytes": 1207959552,
-      "bottlenecks": [
-        "decode"
-      ],
-      "best_prefill_workers": {
-        "A100-80GB-prefill": 1
-      },
-      "best_decode_workers": {
-        "A100-80GB-prefill": 7
-      }
-    },
-    {
-      "layout": "同构 PD（A100 4＋4）",
-      "scan": "输入 8K／输出 128／命中 6K 前缀",
-      "summary": {
-        "new_prefill_tokens_per_request": 2048,
-        "decode_calls_per_request": 128,
-        "full_prompt_state_bytes": 1207959552,
-        "pd_transfer_bytes_per_request": 1207959552,
-        "network_capacity_requests_per_second_exact": "48828125/2359296",
-        "assignments": 9,
-        "best_prefill_workers": {
-          "A100-80GB-prefill": 1
-        },
-        "best_decode_workers": {
-          "A100-80GB-prefill": 7
-        },
-        "best_pd_bound_requests_per_second_exact": "7/2",
-        "colocated_bound_requests_per_second_exact": "64/17",
-        "pd_to_colocated_bound_ratio_exact": "119/128",
-        "best_bottlenecks": [
-          "decode"
-        ],
-        "arrival_strictly_below_best_pd_bound": false,
-        "arrival_strictly_below_colocated_bound": false
-      },
-      "pd_bound": 3.5,
-      "colocated_bound": 3.764705882352941,
-      "ratio": 0.9296875,
-      "network_capacity": 20.6960572136773,
-      "transfer_bytes": 1207959552,
-      "bottlenecks": [
-        "decode"
-      ],
-      "best_prefill_workers": {
-        "A100-80GB-prefill": 1
-      },
-      "best_decode_workers": {
-        "A100-80GB-prefill": 7
-      }
-    },
-    {
-      "layout": "同构 PD（A100 4＋4）",
-      "scan": "输入 32K／输出 128／无命中",
-      "summary": {
-        "new_prefill_tokens_per_request": 32768,
-        "decode_calls_per_request": 128,
-        "full_prompt_state_bytes": 4831838208,
-        "pd_transfer_bytes_per_request": 4831838208,
-        "network_capacity_requests_per_second_exact": "48828125/9437184",
-        "assignments": 9,
-        "best_prefill_workers": {
-          "A100-80GB-prefill": 4
-        },
-        "best_decode_workers": {
-          "A100-80GB-prefill": 4
-        },
-        "best_pd_bound_requests_per_second_exact": "2",
-        "colocated_bound_requests_per_second_exact": "2",
-        "pd_to_colocated_bound_ratio_exact": "1",
-        "best_bottlenecks": [
-          "prefill",
-          "decode"
-        ],
-        "arrival_strictly_below_best_pd_bound": false,
-        "arrival_strictly_below_colocated_bound": false
-      },
-      "pd_bound": 2.0,
-      "colocated_bound": 2.0,
-      "ratio": 1.0,
-      "network_capacity": 5.174014303419325,
-      "transfer_bytes": 4831838208,
-      "bottlenecks": [
-        "prefill",
-        "decode"
-      ],
-      "best_prefill_workers": {
-        "A100-80GB-prefill": 4
-      },
-      "best_decode_workers": {
-        "A100-80GB-prefill": 4
-      }
-    },
-    {
-      "layout": "同构 PD（A100 4＋4）",
-      "scan": "输入 8K／输出 128／到达率 8",
-      "summary": {
-        "new_prefill_tokens_per_request": 8192,
-        "decode_calls_per_request": 128,
-        "full_prompt_state_bytes": 1207959552,
-        "pd_transfer_bytes_per_request": 1207959552,
-        "network_capacity_requests_per_second_exact": "48828125/2359296",
-        "assignments": 9,
-        "best_prefill_workers": {
-          "A100-80GB-prefill": 2
-        },
-        "best_decode_workers": {
-          "A100-80GB-prefill": 6
-        },
-        "best_pd_bound_requests_per_second_exact": "3",
-        "colocated_bound_requests_per_second_exact": "16/5",
-        "pd_to_colocated_bound_ratio_exact": "15/16",
-        "best_bottlenecks": [
-          "decode"
-        ],
-        "arrival_strictly_below_best_pd_bound": false,
-        "arrival_strictly_below_colocated_bound": false
-      },
-      "pd_bound": 3.0,
-      "colocated_bound": 3.2,
-      "ratio": 0.9375,
-      "network_capacity": 20.6960572136773,
-      "transfer_bytes": 1207959552,
-      "bottlenecks": [
-        "decode"
-      ],
-      "best_prefill_workers": {
-        "A100-80GB-prefill": 2
-      },
-      "best_decode_workers": {
-        "A100-80GB-prefill": 6
-      }
-    },
-    {
-      "layout": "异构 PD（A100 4 做 prefill，H20 4 做 decode）",
-      "scan": "输入 2K／输出 128／无命中",
-      "summary": {
-        "new_prefill_tokens_per_request": 2048,
-        "decode_calls_per_request": 128,
-        "full_prompt_state_bytes": 301989888,
-        "pd_transfer_bytes_per_request": 301989888,
-        "network_capacity_requests_per_second_exact": "48828125/589824",
-        "assignments": 25,
-        "best_prefill_workers": {
-          "A100-80GB-prefill": 2,
-          "H20-96GB-decode": 0
-        },
-        "best_decode_workers": {
-          "A100-80GB-prefill": 2,
-          "H20-96GB-decode": 4
-        },
-        "best_pd_bound_requests_per_second_exact": "9",
-        "colocated_bound_requests_per_second_exact": "100/17",
-        "pd_to_colocated_bound_ratio_exact": "153/100",
+        "best_pd_bound_requests_per_second_exact": "3982421875/1003793152",
+        "colocated_bound_requests_per_second_exact": "19414306640625/4859106467336",
+        "pd_to_colocated_bound_ratio_exact": "607388308417/611686452000",
         "best_bottlenecks": [
           "decode"
         ],
         "arrival_strictly_below_best_pd_bound": true,
         "arrival_strictly_below_colocated_bound": true
       },
-      "pd_bound": 9.0,
-      "colocated_bound": 5.882352941176471,
-      "ratio": 1.53,
+      "pd_bound": 3.967373026071411,
+      "colocated_bound": 3.995447881443288,
+      "ratio": 0.9929732895522754,
+      "network_capacity": 20.6960572136773,
+      "transfer_bytes": 1207959552,
+      "bottlenecks": [
+        "decode"
+      ],
+      "best_prefill_workers": {
+        "A100": 1
+      },
+      "best_decode_workers": {
+        "A100": 7
+      }
+    },
+    {
+      "layout": "同构 PD（A100 4＋4）",
+      "scan": "输入 2K／输出 1024／无命中",
+      "summary": {
+        "new_prefill_tokens_per_request": 2048,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 301989888,
+        "pd_transfer_bytes_per_request": 301989888,
+        "network_capacity_requests_per_second_exact": "48828125/589824",
+        "assignments": 9,
+        "best_prefill_workers": {
+          "A100": 2
+        },
+        "best_decode_workers": {
+          "A100": 6
+        },
+        "best_pd_bound_requests_per_second_exact": "11947265625/1701336704",
+        "colocated_bound_requests_per_second_exact": "3882861328125/507070180456",
+        "pd_to_colocated_bound_ratio_exact": "63383772557/69116803600",
+        "best_bottlenecks": [
+          "decode"
+        ],
+        "arrival_strictly_below_best_pd_bound": true,
+        "arrival_strictly_below_colocated_bound": true
+      },
+      "pd_bound": 7.022281713496731,
+      "colocated_bound": 7.6574436395238346,
+      "ratio": 0.9170530067307684,
       "network_capacity": 82.7842288547092,
       "transfer_bytes": 301989888,
       "bottlenecks": [
         "decode"
       ],
       "best_prefill_workers": {
-        "A100-80GB-prefill": 2,
-        "H20-96GB-decode": 0
+        "A100": 2
       },
       "best_decode_workers": {
-        "A100-80GB-prefill": 2,
-        "H20-96GB-decode": 4
+        "A100": 6
+      }
+    },
+    {
+      "layout": "同构 PD（A100 4＋4）",
+      "scan": "输入 32K／输出 1024／无命中",
+      "summary": {
+        "new_prefill_tokens_per_request": 32768,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 4831838208,
+        "pd_transfer_bytes_per_request": 4831838208,
+        "network_capacity_requests_per_second_exact": "48828125/9437184",
+        "assignments": 9,
+        "best_prefill_workers": {
+          "A100": 4
+        },
+        "best_decode_workers": {
+          "A100": 4
+        },
+        "best_pd_bound_requests_per_second_exact": "3982421875/5380516672",
+        "colocated_bound_requests_per_second_exact": "3882861328125/5024489604712",
+        "pd_to_colocated_bound_ratio_exact": "628061200589/655750469400",
+        "best_bottlenecks": [
+          "decode"
+        ],
+        "arrival_strictly_below_best_pd_bound": false,
+        "arrival_strictly_below_colocated_bound": false
+      },
+      "pd_bound": 0.7401560329186171,
+      "colocated_bound": 0.7727872149409218,
+      "ratio": 0.9577746870142004,
+      "network_capacity": 5.174014303419325,
+      "transfer_bytes": 4831838208,
+      "bottlenecks": [
+        "decode"
+      ],
+      "best_prefill_workers": {
+        "A100": 4
+      },
+      "best_decode_workers": {
+        "A100": 4
+      }
+    },
+    {
+      "layout": "异构 PD（A100 4 做 prefill，H20 4 做 decode）",
+      "scan": "输入 8K／输出 1024／无命中",
+      "summary": {
+        "new_prefill_tokens_per_request": 8192,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 1207959552,
+        "pd_transfer_bytes_per_request": 1207959552,
+        "network_capacity_requests_per_second_exact": "48828125/2359296",
+        "assignments": 25,
+        "best_prefill_workers": {
+          "A100": 4,
+          "H20": 0
+        },
+        "best_decode_workers": {
+          "A100": 0,
+          "H20": 4
+        },
+        "best_pd_bound_requests_per_second_exact": "125000000/27447469",
+        "colocated_bound_requests_per_second_exact": "23814473165145361328125/7894003424232391199952",
+        "pd_to_colocated_bound_ratio_exact": "505216219150873036796928/334667271143249503000325",
+        "best_bottlenecks": [
+          "decode"
+        ],
+        "arrival_strictly_below_best_pd_bound": true,
+        "arrival_strictly_below_colocated_bound": false
+      },
+      "pd_bound": 4.554153973176907,
+      "colocated_bound": 3.016780191916508,
+      "ratio": 1.5096074899257852,
+      "network_capacity": 20.6960572136773,
+      "transfer_bytes": 1207959552,
+      "bottlenecks": [
+        "decode"
+      ],
+      "best_prefill_workers": {
+        "A100": 4,
+        "H20": 0
+      },
+      "best_decode_workers": {
+        "A100": 0,
+        "H20": 4
       }
     },
     {
@@ -551,264 +577,270 @@
       "summary": {
         "new_prefill_tokens_per_request": 8192,
         "decode_calls_per_request": 128,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
         "full_prompt_state_bytes": 1207959552,
         "pd_transfer_bytes_per_request": 1207959552,
         "network_capacity_requests_per_second_exact": "48828125/2359296",
         "assignments": 25,
         "best_prefill_workers": {
-          "A100-80GB-prefill": 4,
-          "H20-96GB-decode": 0
+          "A100": 4,
+          "H20": 3
         },
         "best_decode_workers": {
-          "A100-80GB-prefill": 0,
-          "H20-96GB-decode": 4
+          "A100": 0,
+          "H20": 1
         },
-        "best_pd_bound_requests_per_second_exact": "8",
-        "colocated_bound_requests_per_second_exact": "16/5",
-        "pd_to_colocated_bound_ratio_exact": "5/2",
+        "best_pd_bound_requests_per_second_exact": "4130859375/652316032",
+        "colocated_bound_requests_per_second_exact": "107017375648195361328125/18336603070164270072616",
+        "pd_to_colocated_bound_ratio_exact": "969547887334935780089571/893557117924918093598320",
         "best_bottlenecks": [
-          "prefill",
-          "decode"
+          "prefill"
         ],
         "arrival_strictly_below_best_pd_bound": true,
-        "arrival_strictly_below_colocated_bound": false
+        "arrival_strictly_below_colocated_bound": true
       },
-      "pd_bound": 8.0,
-      "colocated_bound": 3.2,
-      "ratio": 2.5,
+      "pd_bound": 6.332604400868075,
+      "colocated_bound": 5.836270504340291,
+      "ratio": 1.085042990409487,
       "network_capacity": 20.6960572136773,
       "transfer_bytes": 1207959552,
       "bottlenecks": [
-        "prefill",
-        "decode"
+        "prefill"
       ],
       "best_prefill_workers": {
-        "A100-80GB-prefill": 4,
-        "H20-96GB-decode": 0
+        "A100": 4,
+        "H20": 3
       },
       "best_decode_workers": {
-        "A100-80GB-prefill": 0,
-        "H20-96GB-decode": 4
+        "A100": 0,
+        "H20": 1
       }
     },
     {
       "layout": "异构 PD（A100 4 做 prefill，H20 4 做 decode）",
-      "scan": "输入 8K／输出 1024／无命中",
+      "scan": "输入 8K／输出 4096／无命中",
       "summary": {
         "new_prefill_tokens_per_request": 8192,
-        "decode_calls_per_request": 1024,
+        "decode_calls_per_request": 4096,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
         "full_prompt_state_bytes": 1207959552,
         "pd_transfer_bytes_per_request": 1207959552,
         "network_capacity_requests_per_second_exact": "48828125/2359296",
         "assignments": 25,
         "best_prefill_workers": {
-          "A100-80GB-prefill": 1,
-          "H20-96GB-decode": 0
+          "A100": 2,
+          "H20": 0
         },
         "best_decode_workers": {
-          "A100-80GB-prefill": 3,
-          "H20-96GB-decode": 4
+          "A100": 2,
+          "H20": 4
         },
-        "best_pd_bound_requests_per_second_exact": "19/16",
-        "colocated_bound_requests_per_second_exact": "10/11",
-        "pd_to_colocated_bound_ratio_exact": "209/160",
+        "best_pd_bound_requests_per_second_exact": "19982421875/15865043456",
+        "colocated_bound_requests_per_second_exact": "16381836027532861328125/14290259391494986733328",
+        "pd_to_colocated_bound_ratio_exact": "9137727739649075579292423/8316753294908008238039200",
         "best_bottlenecks": [
           "decode"
         ],
         "arrival_strictly_below_best_pd_bound": false,
         "arrival_strictly_below_colocated_bound": false
       },
-      "pd_bound": 1.1875,
-      "colocated_bound": 0.9090909090909091,
-      "ratio": 1.30625,
+      "pd_bound": 1.2595251901086253,
+      "colocated_bound": 1.1463637977966097,
+      "ratio": 1.0987133338731732,
       "network_capacity": 20.6960572136773,
       "transfer_bytes": 1207959552,
       "bottlenecks": [
         "decode"
       ],
       "best_prefill_workers": {
-        "A100-80GB-prefill": 1,
-        "H20-96GB-decode": 0
+        "A100": 2,
+        "H20": 0
       },
       "best_decode_workers": {
-        "A100-80GB-prefill": 3,
-        "H20-96GB-decode": 4
+        "A100": 2,
+        "H20": 4
       }
     },
     {
       "layout": "异构 PD（A100 4 做 prefill，H20 4 做 decode）",
-      "scan": "输入 8K／输出 128／命中 6K 前缀",
+      "scan": "输入 8K／输出 1024／命中 6K 前缀",
       "summary": {
         "new_prefill_tokens_per_request": 2048,
-        "decode_calls_per_request": 128,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
         "full_prompt_state_bytes": 1207959552,
         "pd_transfer_bytes_per_request": 1207959552,
         "network_capacity_requests_per_second_exact": "48828125/2359296",
         "assignments": 25,
         "best_prefill_workers": {
-          "A100-80GB-prefill": 2,
-          "H20-96GB-decode": 0
+          "A100": 2,
+          "H20": 0
         },
         "best_decode_workers": {
-          "A100-80GB-prefill": 2,
-          "H20-96GB-decode": 4
+          "A100": 2,
+          "H20": 4
         },
-        "best_pd_bound_requests_per_second_exact": "9",
-        "colocated_bound_requests_per_second_exact": "100/17",
-        "pd_to_colocated_bound_ratio_exact": "153/100",
+        "best_pd_bound_requests_per_second_exact": "19982421875/3513276032",
+        "colocated_bound_requests_per_second_exact": "256487948263131103515625/52380045623862003966864",
+        "pd_to_colocated_bound_ratio_exact": "33493765423608260161561599/28835614756150865128165000",
         "best_bottlenecks": [
           "decode"
         ],
         "arrival_strictly_below_best_pd_bound": true,
         "arrival_strictly_below_colocated_bound": true
       },
-      "pd_bound": 9.0,
-      "colocated_bound": 5.882352941176471,
-      "ratio": 1.53,
+      "pd_bound": 5.687689123483025,
+      "colocated_bound": 4.896672868614049,
+      "ratio": 1.1615415765139454,
       "network_capacity": 20.6960572136773,
       "transfer_bytes": 1207959552,
       "bottlenecks": [
         "decode"
       ],
       "best_prefill_workers": {
-        "A100-80GB-prefill": 2,
-        "H20-96GB-decode": 0
+        "A100": 2,
+        "H20": 0
       },
       "best_decode_workers": {
-        "A100-80GB-prefill": 2,
-        "H20-96GB-decode": 4
+        "A100": 2,
+        "H20": 4
       }
     },
     {
       "layout": "异构 PD（A100 4 做 prefill，H20 4 做 decode）",
-      "scan": "输入 32K／输出 128／无命中",
+      "scan": "输入 2K／输出 1024／无命中",
+      "summary": {
+        "new_prefill_tokens_per_request": 2048,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 301989888,
+        "pd_transfer_bytes_per_request": 301989888,
+        "network_capacity_requests_per_second_exact": "48828125/589824",
+        "assignments": 25,
+        "best_prefill_workers": {
+          "A100": 3,
+          "H20": 0
+        },
+        "best_decode_workers": {
+          "A100": 1,
+          "H20": 4
+        },
+        "best_pd_bound_requests_per_second_exact": "35982421875/3402673408",
+        "colocated_bound_requests_per_second_exact": "210029107352634033203125/24229790642756263902288",
+        "pd_to_colocated_bound_ratio_exact": "27899089563218665616990739/22869134671833123313154000",
+        "best_bottlenecks": [
+          "decode"
+        ],
+        "arrival_strictly_below_best_pd_bound": true,
+        "arrival_strictly_below_colocated_bound": true
+      },
+      "pd_bound": 10.574750368460869,
+      "colocated_bound": 8.66821799863237,
+      "ratio": 1.2199451340666907,
+      "network_capacity": 82.7842288547092,
+      "transfer_bytes": 301989888,
+      "bottlenecks": [
+        "decode"
+      ],
+      "best_prefill_workers": {
+        "A100": 3,
+        "H20": 0
+      },
+      "best_decode_workers": {
+        "A100": 1,
+        "H20": 4
+      }
+    },
+    {
+      "layout": "异构 PD（A100 4 做 prefill，H20 4 做 decode）",
+      "scan": "输入 32K／输出 1024／无命中",
       "summary": {
         "new_prefill_tokens_per_request": 32768,
-        "decode_calls_per_request": 128,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
         "full_prompt_state_bytes": 4831838208,
         "pd_transfer_bytes_per_request": 4831838208,
         "network_capacity_requests_per_second_exact": "48828125/9437184",
         "assignments": 25,
         "best_prefill_workers": {
-          "A100-80GB-prefill": 4,
-          "H20-96GB-decode": 2
+          "A100": 4,
+          "H20": 1
         },
         "best_decode_workers": {
-          "A100-80GB-prefill": 0,
-          "H20-96GB-decode": 2
+          "A100": 0,
+          "H20": 3
         },
-        "best_pd_bound_requests_per_second_exact": "9/4",
-        "colocated_bound_requests_per_second_exact": "25/17",
-        "pd_to_colocated_bound_ratio_exact": "153/100",
+        "best_pd_bound_requests_per_second_exact": "17041015625/18844435328",
+        "colocated_bound_requests_per_second_exact": "2634590286536634033203125/3811339103376774657052752",
+        "pd_to_colocated_bound_ratio_exact": "83134834192405897206963153/63548628826133234101120120",
         "best_bottlenecks": [
           "prefill"
         ],
-        "arrival_strictly_below_best_pd_bound": true,
+        "arrival_strictly_below_best_pd_bound": false,
         "arrival_strictly_below_colocated_bound": false
       },
-      "pd_bound": 2.25,
-      "colocated_bound": 1.4705882352941178,
-      "ratio": 1.53,
+      "pd_bound": 0.9042996156897103,
+      "colocated_bound": 0.6912505592069823,
+      "ratio": 1.308208150640981,
       "network_capacity": 5.174014303419325,
       "transfer_bytes": 4831838208,
       "bottlenecks": [
         "prefill"
       ],
       "best_prefill_workers": {
-        "A100-80GB-prefill": 4,
-        "H20-96GB-decode": 2
+        "A100": 4,
+        "H20": 1
       },
       "best_decode_workers": {
-        "A100-80GB-prefill": 0,
-        "H20-96GB-decode": 2
-      }
-    },
-    {
-      "layout": "异构 PD（A100 4 做 prefill，H20 4 做 decode）",
-      "scan": "输入 8K／输出 128／到达率 8",
-      "summary": {
-        "new_prefill_tokens_per_request": 8192,
-        "decode_calls_per_request": 128,
-        "full_prompt_state_bytes": 1207959552,
-        "pd_transfer_bytes_per_request": 1207959552,
-        "network_capacity_requests_per_second_exact": "48828125/2359296",
-        "assignments": 25,
-        "best_prefill_workers": {
-          "A100-80GB-prefill": 4,
-          "H20-96GB-decode": 0
-        },
-        "best_decode_workers": {
-          "A100-80GB-prefill": 0,
-          "H20-96GB-decode": 4
-        },
-        "best_pd_bound_requests_per_second_exact": "8",
-        "colocated_bound_requests_per_second_exact": "16/5",
-        "pd_to_colocated_bound_ratio_exact": "5/2",
-        "best_bottlenecks": [
-          "prefill",
-          "decode"
-        ],
-        "arrival_strictly_below_best_pd_bound": false,
-        "arrival_strictly_below_colocated_bound": false
-      },
-      "pd_bound": 8.0,
-      "colocated_bound": 3.2,
-      "ratio": 2.5,
-      "network_capacity": 20.6960572136773,
-      "transfer_bytes": 1207959552,
-      "bottlenecks": [
-        "prefill",
-        "decode"
-      ],
-      "best_prefill_workers": {
-        "A100-80GB-prefill": 4,
-        "H20-96GB-decode": 0
-      },
-      "best_decode_workers": {
-        "A100-80GB-prefill": 0,
-        "H20-96GB-decode": 4
+        "A100": 0,
+        "H20": 3
       }
     },
     {
       "layout": "全 H20（8 张）",
-      "scan": "输入 2K／输出 128／无命中",
+      "scan": "输入 8K／输出 1024／无命中",
       "summary": {
-        "new_prefill_tokens_per_request": 2048,
-        "decode_calls_per_request": 128,
-        "full_prompt_state_bytes": 301989888,
-        "pd_transfer_bytes_per_request": 301989888,
-        "network_capacity_requests_per_second_exact": "48828125/589824",
+        "new_prefill_tokens_per_request": 8192,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 1207959552,
+        "pd_transfer_bytes_per_request": 1207959552,
+        "network_capacity_requests_per_second_exact": "48828125/2359296",
         "assignments": 9,
         "best_prefill_workers": {
-          "H20-96GB-decode": 4
+          "H20": 5
         },
         "best_decode_workers": {
-          "H20-96GB-decode": 4
+          "H20": 3
         },
-        "best_pd_bound_requests_per_second_exact": "8",
-        "colocated_bound_requests_per_second_exact": "8",
-        "pd_to_colocated_bound_ratio_exact": "1",
+        "best_pd_bound_requests_per_second_exact": "1806640625/652316032",
+        "colocated_bound_requests_per_second_exact": "46250000000/15514838277",
+        "pd_to_colocated_bound_ratio_exact": "77574191385/83496452096",
         "best_bottlenecks": [
-          "prefill",
-          "decode"
+          "prefill"
         ],
-        "arrival_strictly_below_best_pd_bound": true,
-        "arrival_strictly_below_colocated_bound": true
+        "arrival_strictly_below_best_pd_bound": false,
+        "arrival_strictly_below_colocated_bound": false
       },
-      "pd_bound": 8.0,
-      "colocated_bound": 8.0,
-      "ratio": 1.0,
-      "network_capacity": 82.7842288547092,
-      "transfer_bytes": 301989888,
+      "pd_bound": 2.7695787568808368,
+      "colocated_bound": 2.9810172155363936,
+      "ratio": 0.9290717082901812,
+      "network_capacity": 20.6960572136773,
+      "transfer_bytes": 1207959552,
       "bottlenecks": [
-        "prefill",
-        "decode"
+        "prefill"
       ],
       "best_prefill_workers": {
-        "H20-96GB-decode": 4
+        "H20": 5
       },
       "best_decode_workers": {
-        "H20-96GB-decode": 4
+        "H20": 3
       }
     },
     {
@@ -817,203 +849,211 @@
       "summary": {
         "new_prefill_tokens_per_request": 8192,
         "decode_calls_per_request": 128,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
         "full_prompt_state_bytes": 1207959552,
         "pd_transfer_bytes_per_request": 1207959552,
         "network_capacity_requests_per_second_exact": "48828125/2359296",
         "assignments": 9,
         "best_prefill_workers": {
-          "H20-96GB-decode": 6
+          "H20": 7
         },
         "best_decode_workers": {
-          "H20-96GB-decode": 2
+          "H20": 1
         },
-        "best_pd_bound_requests_per_second_exact": "3",
-        "colocated_bound_requests_per_second_exact": "16/5",
-        "pd_to_colocated_bound_ratio_exact": "15/16",
+        "best_pd_bound_requests_per_second_exact": "2529296875/652316032",
+        "colocated_bound_requests_per_second_exact": "370000000000/88383278341",
+        "pd_to_colocated_bound_ratio_exact": "618682948387/667971616768",
         "best_bottlenecks": [
           "prefill"
         ],
-        "arrival_strictly_below_best_pd_bound": false,
-        "arrival_strictly_below_colocated_bound": false
+        "arrival_strictly_below_best_pd_bound": true,
+        "arrival_strictly_below_colocated_bound": true
       },
-      "pd_bound": 3.0,
-      "colocated_bound": 3.2,
-      "ratio": 0.9375,
+      "pd_bound": 3.877410259633171,
+      "colocated_bound": 4.186312240789118,
+      "ratio": 0.9262114330254261,
       "network_capacity": 20.6960572136773,
       "transfer_bytes": 1207959552,
       "bottlenecks": [
         "prefill"
       ],
       "best_prefill_workers": {
-        "H20-96GB-decode": 6
+        "H20": 7
       },
       "best_decode_workers": {
-        "H20-96GB-decode": 2
+        "H20": 1
       }
     },
     {
       "layout": "全 H20（8 张）",
-      "scan": "输入 8K／输出 1024／无命中",
+      "scan": "输入 8K／输出 4096／无命中",
       "summary": {
         "new_prefill_tokens_per_request": 8192,
-        "decode_calls_per_request": 1024,
+        "decode_calls_per_request": 4096,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
         "full_prompt_state_bytes": 1207959552,
         "pd_transfer_bytes_per_request": 1207959552,
         "network_capacity_requests_per_second_exact": "48828125/2359296",
         "assignments": 9,
         "best_prefill_workers": {
-          "H20-96GB-decode": 3
+          "H20": 3
         },
         "best_decode_workers": {
-          "H20-96GB-decode": 5
+          "H20": 5
         },
-        "best_pd_bound_requests_per_second_exact": "5/4",
-        "colocated_bound_requests_per_second_exact": "4/3",
-        "pd_to_colocated_bound_ratio_exact": "15/16",
+        "best_pd_bound_requests_per_second_exact": "39062500/30986413",
+        "colocated_bound_requests_per_second_exact": "11562500000/8341750533",
+        "pd_to_colocated_bound_ratio_exact": "8341750533/9171978248",
         "best_bottlenecks": [
           "decode"
         ],
         "arrival_strictly_below_best_pd_bound": false,
         "arrival_strictly_below_colocated_bound": false
       },
-      "pd_bound": 1.25,
-      "colocated_bound": 1.3333333333333333,
-      "ratio": 0.9375,
+      "pd_bound": 1.260633168479359,
+      "colocated_bound": 1.386099950395148,
+      "ratio": 0.9094821539528797,
       "network_capacity": 20.6960572136773,
       "transfer_bytes": 1207959552,
       "bottlenecks": [
         "decode"
       ],
       "best_prefill_workers": {
-        "H20-96GB-decode": 3
+        "H20": 3
       },
       "best_decode_workers": {
-        "H20-96GB-decode": 5
+        "H20": 5
       }
     },
     {
       "layout": "全 H20（8 张）",
-      "scan": "输入 8K／输出 128／命中 6K 前缀",
+      "scan": "输入 8K／输出 1024／命中 6K 前缀",
       "summary": {
         "new_prefill_tokens_per_request": 2048,
-        "decode_calls_per_request": 128,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
         "full_prompt_state_bytes": 1207959552,
         "pd_transfer_bytes_per_request": 1207959552,
         "network_capacity_requests_per_second_exact": "48828125/2359296",
         "assignments": 9,
         "best_prefill_workers": {
-          "H20-96GB-decode": 4
+          "H20": 3
         },
         "best_decode_workers": {
-          "H20-96GB-decode": 4
+          "H20": 5
         },
-        "best_pd_bound_requests_per_second_exact": "8",
-        "colocated_bound_requests_per_second_exact": "8",
-        "pd_to_colocated_bound_ratio_exact": "1",
+        "best_pd_bound_requests_per_second_exact": "156250000/27447469",
+        "colocated_bound_requests_per_second_exact": "31250000000/5389884537",
+        "pd_to_colocated_bound_ratio_exact": "5389884537/5489493800",
         "best_bottlenecks": [
-          "prefill",
           "decode"
         ],
         "arrival_strictly_below_best_pd_bound": true,
         "arrival_strictly_below_colocated_bound": true
       },
-      "pd_bound": 8.0,
-      "colocated_bound": 8.0,
-      "ratio": 1.0,
+      "pd_bound": 5.692692466471135,
+      "colocated_bound": 5.797897855784809,
+      "ratio": 0.981854563165733,
       "network_capacity": 20.6960572136773,
       "transfer_bytes": 1207959552,
       "bottlenecks": [
-        "prefill",
         "decode"
       ],
       "best_prefill_workers": {
-        "H20-96GB-decode": 4
+        "H20": 3
       },
       "best_decode_workers": {
-        "H20-96GB-decode": 4
+        "H20": 5
       }
     },
     {
       "layout": "全 H20（8 张）",
-      "scan": "输入 32K／输出 128／无命中",
+      "scan": "输入 2K／输出 1024／无命中",
+      "summary": {
+        "new_prefill_tokens_per_request": 2048,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 301989888,
+        "pd_transfer_bytes_per_request": 301989888,
+        "network_capacity_requests_per_second_exact": "48828125/589824",
+        "assignments": 9,
+        "best_prefill_workers": {
+          "H20": 4
+        },
+        "best_decode_workers": {
+          "H20": 4
+        },
+        "best_pd_bound_requests_per_second_exact": "125000000/13291693",
+        "colocated_bound_requests_per_second_exact": "231250000000/23891949849",
+        "pd_to_colocated_bound_ratio_exact": "23891949849/24589632050",
+        "best_bottlenecks": [
+          "decode"
+        ],
+        "arrival_strictly_below_best_pd_bound": true,
+        "arrival_strictly_below_colocated_bound": true
+      },
+      "pd_bound": 9.40437008287808,
+      "colocated_bound": 9.678992357740906,
+      "ratio": 0.9716269767851203,
+      "network_capacity": 82.7842288547092,
+      "transfer_bytes": 301989888,
+      "bottlenecks": [
+        "decode"
+      ],
+      "best_prefill_workers": {
+        "H20": 4
+      },
+      "best_decode_workers": {
+        "H20": 4
+      }
+    },
+    {
+      "layout": "全 H20（8 张）",
+      "scan": "输入 32K／输出 1024／无命中",
       "summary": {
         "new_prefill_tokens_per_request": 32768,
-        "decode_calls_per_request": 128,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
         "full_prompt_state_bytes": 4831838208,
         "pd_transfer_bytes_per_request": 4831838208,
         "network_capacity_requests_per_second_exact": "48828125/9437184",
         "assignments": 9,
         "best_prefill_workers": {
-          "H20-96GB-decode": 7
+          "H20": 6
         },
         "best_decode_workers": {
-          "H20-96GB-decode": 1
+          "H20": 2
         },
-        "best_pd_bound_requests_per_second_exact": "7/8",
-        "colocated_bound_requests_per_second_exact": "16/17",
-        "pd_to_colocated_bound_ratio_exact": "119/128",
+        "best_pd_bound_requests_per_second_exact": "5419921875/9422217664",
+        "colocated_bound_requests_per_second_exact": "231250000000/379276245273",
+        "pd_to_colocated_bound_ratio_exact": "1137828735819/1206043860992",
         "best_bottlenecks": [
           "prefill"
         ],
         "arrival_strictly_below_best_pd_bound": false,
         "arrival_strictly_below_colocated_bound": false
       },
-      "pd_bound": 0.875,
-      "colocated_bound": 0.9411764705882353,
-      "ratio": 0.9296875,
+      "pd_bound": 0.5752278357682398,
+      "colocated_bound": 0.6097139034730428,
+      "ratio": 0.9434389350343433,
       "network_capacity": 5.174014303419325,
       "transfer_bytes": 4831838208,
       "bottlenecks": [
         "prefill"
       ],
       "best_prefill_workers": {
-        "H20-96GB-decode": 7
+        "H20": 6
       },
       "best_decode_workers": {
-        "H20-96GB-decode": 1
-      }
-    },
-    {
-      "layout": "全 H20（8 张）",
-      "scan": "输入 8K／输出 128／到达率 8",
-      "summary": {
-        "new_prefill_tokens_per_request": 8192,
-        "decode_calls_per_request": 128,
-        "full_prompt_state_bytes": 1207959552,
-        "pd_transfer_bytes_per_request": 1207959552,
-        "network_capacity_requests_per_second_exact": "48828125/2359296",
-        "assignments": 9,
-        "best_prefill_workers": {
-          "H20-96GB-decode": 6
-        },
-        "best_decode_workers": {
-          "H20-96GB-decode": 2
-        },
-        "best_pd_bound_requests_per_second_exact": "3",
-        "colocated_bound_requests_per_second_exact": "16/5",
-        "pd_to_colocated_bound_ratio_exact": "15/16",
-        "best_bottlenecks": [
-          "prefill"
-        ],
-        "arrival_strictly_below_best_pd_bound": false,
-        "arrival_strictly_below_colocated_bound": false
-      },
-      "pd_bound": 3.0,
-      "colocated_bound": 3.2,
-      "ratio": 0.9375,
-      "network_capacity": 20.6960572136773,
-      "transfer_bytes": 1207959552,
-      "bottlenecks": [
-        "prefill"
-      ],
-      "best_prefill_workers": {
-        "H20-96GB-decode": 6
-      },
-      "best_decode_workers": {
-        "H20-96GB-decode": 2
+        "H20": 2
       }
     }
   ],
   "source_note": "由 calculations/calc.py pd-pool 现场生成。",
-  "python_version": "3.11.4 (main, Jul  5 2023, 08:40:20) [Clang 14.0.6 ]"
+  "python_version": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]"
 }

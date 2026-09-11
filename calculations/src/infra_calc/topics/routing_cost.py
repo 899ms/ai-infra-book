@@ -1,4 +1,4 @@
-"""Exact fictional billing and joint quality/deadline exercise from chapter 11."""
+"""Exact list-price billing and joint quality/deadline exercise from chapter 11 (Claude Haiku 4.5 vs Sonnet 5)."""
 from fractions import Fraction
 
 from ..units import positive_int
@@ -15,9 +15,11 @@ def calculate(tasks=1000, prefix_tokens=19000, fresh_tokens=1000,
     if not 0 <= hit <= 1:
         raise ValueError('Hit fraction must be in [0,1]')
     candidates = {
-        'A': dict(input_price=Fraction(1), cache_price=Fraction(1,10), output_price=Fraction(4),
+        # USD per million tokens, Claude API pricing snapshot 2026-09-07:
+        # Haiku 4.5 base input 1, cache hit 0.10, output 5; Sonnet 5 base input 2, cache hit 0.20, output 10.
+        'A': dict(model='Claude Haiku 4.5', input_price=Fraction(1), cache_price=Fraction(1,10), output_price=Fraction(5),
                   reasoning=1800, visible=200, quality=Fraction(4,5)),
-        'B': dict(input_price=Fraction(2), cache_price=Fraction(1,5), output_price=Fraction(8),
+        'B': dict(model='Claude Sonnet 5', input_price=Fraction(2), cache_price=Fraction(1,5), output_price=Fraction(10),
                   reasoning=100, visible=200, quality=Fraction(49,50)),
     }
     rows = []
@@ -31,7 +33,7 @@ def calculate(tasks=1000, prefix_tokens=19000, fresh_tokens=1000,
         hit_seconds, miss_seconds = (10,10) if name == 'A' else (4,12)
         timely = h * (hit_seconds <= deadline_seconds) + (1-h) * (miss_seconds <= deadline_seconds)
         joint = p['quality'] * timely
-        rows.append(dict(candidate=name, hit_fraction_exact=str(h),
+        rows.append(dict(candidate=name, model=p['model'], hit_fraction_exact=str(h),
                          input_tokens=prefix_tokens+fresh_tokens,
                          reasoning_tokens=p['reasoning'], visible_output_tokens=p['visible'],
                          billed_output_tokens=p['reasoning']+p['visible'],
@@ -68,7 +70,7 @@ def calculate(tasks=1000, prefix_tokens=19000, fresh_tokens=1000,
             b_meets_joint_target=Fraction(rows[1]['joint_success_fraction_exact']) >= target,
         ),
         assumptions=[
-            '正文假想A/B价格：每百万token输入/缓存/输出为A=1/0.1/4、B=2/0.2/8；非供应商价格或实测。A reasoning1800+visible200，B100+200，输出计费包含reasoning一次，不再重复加收。',
+            'A=Claude Haiku 4.5、B=Claude Sonnet 5 的标准 API 价格（references/outline-checks/2026-09-07/platform-routing/claude-api-pricing.txt，美元/百万token）：输入/缓存命中/输出为A=1/0.1/5、B=2/0.2/10。A reasoning1800+visible200，B100+200 为题设用量，输出计费包含reasoning一次，不再重复加收。',
             'A缓存固定全命中，B在指定相同长度前缀上按完整命中/未命中两分支。新输入总按输入价；缓存创建、存储、工具、环境费用在此教学题设为0，实际费用需另计。',
             '质量成功率A=0.8、B=0.98为给定输入，与缓存分支独立；分母用预期成功数，分子保留全部提交尝试费用。不是有限样本实测比率，也不假设自动重试到成功。',
             '给定完整请求时长A=10秒，B命中4秒/未命中12秒；满足时限使用<=。联合质量/截止时间成功率分开计算，零成功费用比为null，不以平均延迟代替尾部或完成率。',

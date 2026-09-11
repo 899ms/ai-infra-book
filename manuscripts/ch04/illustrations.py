@@ -50,7 +50,7 @@ def draw_additions(plt,C,canvas,box,arrow,save,data):
             a.barh(y,K*mult/1e9,left=left,height=.56,color=C['teal'],edgecolor='white',label='每条请求的 KV' if y==0 and j==0 else None);left+=K*mult/1e9
         if left>24:a.add_patch(Rectangle((24,y-.28),left-24,.56,fc='none',ec=C['red'],hatch='////',lw=1.3))
         a.text(left+.16,y,'超出容量' if left>24 else '可容纳',va='center',color=C['red'] if left>24 else C['ink'],fontsize=11)
-    a.axvline(24,ls='--',color=C['red']);a.text(24,-.63,'24 GB 上限',ha='center',color=C['red'],fontsize=11)
+    a.axvline(24,ls='--',color=C['red']);a.text(24,-.63,'RTX 4090 的 24 GB',ha='center',color=C['red'],fontsize=11)
     a.set_yticks(range(3),['8192 位置 × 4 请求','8192 位置 × 5 请求','16384 位置 × 2 请求']);a.invert_yaxis();a.set_xlim(0,27);a.set_xlabel('内存占用 / GB');a.legend(frameon=False,ncol=3,loc='upper left',bbox_to_anchor=(0,1.22))
     save(f,'figure-4-6-capacity');data['4-6']={'weight_bytes':W,'workspace_bytes':workspace,'kv_bytes_per_request':K,'capacity_bytes':cap,'cases':[{'requests':b,'context_multiplier':m,'total_bytes':W+workspace+b*m*K} for b,m in [(4,1),(5,1),(2,2)]]}
 
@@ -66,15 +66,11 @@ def draw_additions(plt,C,canvas,box,arrow,save,data):
     a.text(300,3.47,'全部蓝色：32 KiB',color=C['blue'],fontsize=12)
     save(f,'figure-4-8-layout');data['4-8']={'row_stride_bytes':8192,'read_bytes_per_row':256,'rows':128,'payload_bytes':32768,'address_span_bytes':1040640}
 
-    # Keep large weights beside arithmetic; annotate the actual crossed payload.
-    f,a=canvas(7)
-    for y,label in [(.55,'计算集中在 die 0'),(.10,'计算分到权重所在的 die')]:
-        a.text(.03,y+.31,label,fontsize=13)
-        box(a,.05,y,.31,.24,'die 0\n本地权重 + 计算','pale',12)
-        box(a,.64,y,.31,.24,'die 1\n本地权重'+(' + 计算' if y==.10 else ''),'light',12)
-    arrow(a,(.63,.68),(.37,.68));a.text(.50,.79,'远程权重 32 GiB',ha='center',fontsize=12);a.text(.50,.58,'约 31 ms',ha='center',fontsize=13,color=C['orange'])
-    arrow(a,(.37,.27),(.63,.27));arrow(a,(.63,.16),(.37,.16));a.text(.50,.38,'输入与结果共 64 MiB',ha='center',fontsize=12);a.text(.50,.06,'共约 61 μs',ha='center',fontsize=13,color=C['teal'])
-    save(f,'figure-4-10-locality');data['4-10']={'link_bytes_per_second':2**40,'remote_weight_bytes':32*2**30,'activation_bytes':64*2**20}
+    # Keep large weights beside arithmetic; the die link / per-die HBM ratio decides the remote cost.
+    from derive import die_locality
+    dl=die_locality()
+    save_data={'weights_per_die_bytes':dl['weights_per_die_bytes'],'activation_bytes':dl['activation_bytes'],'cases':dl['cases']}
+    data['4-10']=save_data
 
     # Plot service time, not another unexplained performance summary.
     m=np.arange(1,257);F=2*m*4096**2;V=2*(4096**2+2*m*4096);compute=F/165.2e12*1e6;memory=V/1.008e12*1e6

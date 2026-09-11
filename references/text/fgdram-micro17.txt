@@ -1,0 +1,1045 @@
+          Fine-Grained DRAM: Energy-Efficient DRAM for Extreme
+                          Bandwidth Systems
+
+           Mike O’Connor∗†‡      Niladrish Chatterjee∗†      Donghyuk Lee†        John Wilson†
+                    Aditya Agrawal†       Stephen W. Keckler†‡     William J. Dally†⋄
+
+                      † NVIDIA                        ‡ The University of Texas at Austin                                ⋄Stanford University
+
+                         {moconnor, nchatterjee, donghyukl, jowilson, adityaa, skeckler, bdally} @nvidia.com
+
+
+ABSTRACT                                                                                      KEYWORDS
+Future GPUs and other high-performance throughput processors will                             DRAM, Energy-Efficiency, High Bandwidth, GPU
+require multiple TB/s of bandwidth to DRAM. Satisfying this band-                             ACM Reference format:
+width demand within an acceptable energy budget is a challenge                                M. O’Connor, N. Chatterjee, D. Lee, J. Wilson, A. Agrawal, S.W. Keckler, and
+in these extreme bandwidth memory systems. We propose a new                                   W.J. Dally. 2017. Fine-Grained DRAM: Energy-Efficient DRAM for Extreme
+high-bandwidth DRAM architecture, Fine-Grained DRAM (FGDRAM),                                 Bandwidth Systems. In Proceedings of MICRO-50, Cambridge, MA, USA,
+which improves bandwidth by 4× and improves the energy efficiency                             October 14–18, 2017, 14 pages.
+of DRAM by 2× relative to the highest-bandwidth, most energy-                                 https://doi.org/10.1145/3123939.3124545
+efficient contemporary DRAM, High Bandwidth Memory (HBM2).
+These benefits are in large measure achieved by partitioning the DRAM                         1    INTRODUCTION
+die into many independent units, called grains, each of which has a
+                                                                                              High bandwidth DRAM has been a key enabler of the continu-
+local, adjacent I/O. This approach unlocks the bandwidth of all the
+                                                                                              ous performance scaling of Graphics Processing Units (GPUs) and
+banks in the DRAM to be used simultaneously, eliminating shared
+                                                                                              other throughput-oriented parallel processors. Successive gener-
+buses interconnecting various banks. Furthermore, the on-DRAM data
+                                                                                              ations of GPU-specific DRAMs, optimized primarily to maximize
+movement energy is significantly reduced due to the much shorter
+                                                                                              bandwidth rather than minimize cost per bit, have increased ag-
+wiring distance between the cell array and the local I/O. This FGDRAM
+                                                                                              gregate system bandwidth; first through high-frequency off-chip
+architecture readily lends itself to leveraging existing techniques to
+                                                                                              signaling with Graphics Double-Data Rate memories (GDDR3/5/5X
+reducing the effective DRAM row size in an area efficient manner,
+                                                                                              [18, 21, 24]) and, most recently, through on-package integration of
+reducing wasteful row activate energy in applications with low local-
+                                                                                              the processor die and wide, high-bandwidth interfaces to stacks of
+ity. In addition, when FGDRAM is paired with a memory controller
+                                                                                              DRAM (e.g., High Bandwidth Memory (HBM/HBM2) [20, 23] and
+optimized to exploit the additional concurrency provided by the in-
+                                                                                              Multi-Channel DRAM (MCDRAM) [15]). Future GPUs will demand
+dependent grains, it improves GPU system performance by 19% over
+                                                                                              multiple TB/s of DRAM bandwidth requiring further improvements
+an iso-bandwidth and iso-capacity future HBM baseline. Thus, this
+                                                                                              in the bandwidth of GPU-specific DRAM devices.
+energy-efficient, high-bandwidth FGDRAM architecture addresses the
+                                                                                                 In this paper, we show that traditional techniques for extend-
+needs of future extreme-bandwidth memory systems.
+                                                                                              ing the bandwidth of DRAMs will either add to the system en-
+                                                                                              ergy, and/or add to the cost/area of DRAM devices. To meet the
+CCS CONCEPTS                                                                                  bandwidth objectives of the future, DRAM devices must be more
+• Hardware → Dynamic memory; Power and energy; • Com-                                         energy-efficient than they are today without significantly sacrific-
+puting methodologies → Graphics processors; • Computer sys-                                   ing area-efficiency. To architect a DRAM device that meets these
+tems organization → Parallel architectures;                                                   objectives, we carry out a detailed design space exploration of high-
+                                                                                              bandwidth DRAM microarchitectures. Using constraints imposed
+∗ Both authors contributed equally to the paper                                               by practical DRAM layouts and insights from GPU memory ac-
+                                                                                              cess behaviors to inform the design process, we arrive at a DRAM
+                                                                                              and memory controller architecture, Fine-grained DRAM (FGDRAM),
+Permission to make digital or hard copies of all or part of this work for personal or
+classroom use is granted without fee provided that copies are not made or distributed         suited to future high-bandwidth GPUs.
+for profit or commercial advantage and that copies bear this notice and the full citation        The most formidable challenge to scaling the bandwidth of GPU
+on the first page. Copyrights for components of this work owned by others than ACM            DRAMs is the energy of DRAM accesses. Every system is designed
+must be honored. Abstracting with credit is permitted. To copy otherwise, or republish,
+to post on servers or to redistribute to lists, requires prior specific permission and/or a   to operate within a fixed maximum power envelope. The energy
+fee. Request permissions from permissions@acm.org.                                            spent on DRAM access eats into the total power budget available
+MICRO-50, October 14–18, 2017, Cambridge, MA, USA
+                                                                                              for the rest of the system. Traditionally, high-end GPU cards have
+© 2017 Association for Computing Machinery.
+ACM ISBN 978-1-4503-4952-9/17/10. . . $15.00                                                  been limited to approximately 300W, of which no more than about
+https://doi.org/10.1145/3123939.3124545                                                       20% is budgeted to the DRAM when operating at peak bandwidth.
+MICRO-50, October 14–18, 2017, Cambridge, MA, USA                                                                                                                      M. O’Connor et al.
+
+
+                                                                                                                      a traditional HBM2 die where 16 DRAM banks share a single wide
+                             30
+per access energy [pJ/bit]
+
+
+
+                                                                                                                      I/O interface, each FGDRAM grain fetches data from only a single
+                             25                                                                                       DRAM bank. Second, each grain has a fraction of the bandwidth of
+                             20                                                                                       a traditional HBM2 channel. These two architectural changes enable
+                                                             GDDR5                                                    the main benefits of FGDRAM. First, eliminating the sharing of a
+                             15                                                                                       DRAM channel by multiple banks eliminates the inter-bank global
+                                      14.0pJ/bit
+                             10                                                                                       data bus on a DRAM die. This architecture reduces the distance
+                                                                                    HBM2                              moved by data from a row-buffer to the I/O hub, thereby reduc-
+                              5
+                                       3.9pJ/bit                                                                      ing the on-DRAM data movement energy. Second, because each
+                                                              536GB/s             1.9TB/s
+                              0 192                                                                                   FGDRAM bank needs to provide less bandwidth than a traditional
+                                       256GB/s         512GB/s          1 TB/s            21920
+                                                                                             TB/s        4 TB/s
+                                                                                                                      bank, FGDRAM is able to use techniques explained in Section 3.2 to
+                                                            memory system bandwidth
+                                                                                                                      achieve lower activation energy without significant area overheads.
+(a) Maximum DRAM access energy for given peak bandwidth within
+                                                                                                                      While these benefits combine synergistically to reduce the DRAM
+60W DRAM power budget
+                                                                                                                      access energy, the allocation of private data channels to the individ-
+                                               Activation         On-die Data Movement                  I/O           ual banks on a die also exposes the entire bandwidth of the DRAM
+HBM2                                                                                                                  die to the GPU and paves the way for area-efficient bandwidth
+                                                                                                                      scaling. The throughput-optimized memory controllers on a GPU
+                                  0                    1                  2      (pJ/b)             3             4   can easily exploit this architecture to provide high bandwidth to
+                                                    (b) HBM2 energy consumption                                       memory intensive applications.
+                                                                                                                         In summary, this paper makes the following contributions:
+                                        Figure 1: GPU Memory Power and Energy
+                                                                                                                            • Based on a detailed analysis of GPU workloads (both com-
+                                                                                                                              pute and graphics) and practical DRAM architectures, we
+Figure 1a shows the DRAM energy per access that can be tolerated                                                              demonstrate that both data movement and row activation
+at a given peak DRAM bandwidth while remaining within a 60W                                                                   energies must be reduced to meet the energy target of future
+DRAM power budget. We see that the energy improvements of on-                                                                 memories.
+die stacked High Bandwidth Memory (HBM2) over off-chip GDDR5                                                                • We propose a new DRAM architecture, FGDRAM, which pro-
+memories have allowed modern GPUs to approach a terabyte-per-                                                                 vides both 4× more bandwidth and 51% lower energy per
+second of memory bandwidth at comparable power to previous                                                                    access than HBM2, the highest bandwidth and most efficient
+GPUs that provided less than half the bandwidth using GDDR5. This                                                             contemporary DRAM.
+figure also demonstrates, however, that even with HBM2, systems                                                             • We develop an evolutionary approach to HBM2 which also
+with more than 2 TB/s of bandwidth won’t be possible within this                                                              provides 4× more bandwidth, but show FGDRAM is 49% lower
+traditional power budget. A future exascale GPU with 4 TB/s of                                                                energy than this iso-bandwidth baseline.
+DRAM bandwidth would dissipate upwards of 120 W of DRAM                                                                     • The additional concurrency in our proposed FGDRAM archi-
+power.                                                                                                                        tecture can be easily exploited by a GPU to improve the
+   The energy to access a bit in HBM2 is approximately 3.97 pJ/bit,                                                           performance of a wide range of GPU compute workloads by
+and, as shown in Figure 1b, it consists largely of data movement                                                              19% on average over the iso-bandwidth baseline.
+energy (the energy to move data from the row buffer to the I/O                                                              • We also consider the iso-bandwidth baseline enhanced with
+pins) and activation energy (the energy to precharge a bank and                                                               two prior proposed techniques to improve DRAM perfor-
+activate a row of cells into the row-buffer); the I/O energy accounts                                                         mance and energy. We show that FGDRAM requires 34% less
+for the small remainder. The activation energy is a function of                                                               energy, is 1.5% less area, and is within 1.3% of the perfor-
+the row size and the row locality of the memory access stream,                                                                mance of this enhanced baseline.
+and it is a significant factor because most GPU workloads access
+only a small fraction of the 1KB row activated in HBM2. The data
+                                                                                                                      2     BANDWIDTH SCALING CHALLENGES
+movement energy is determined primarily by the distance that
+the data moves on both the DRAM die and the base layer die to                                                         This section examines the main challenges faced by conventional
+reach the I/O pins, the capacitance of these wires, and the rate                                                      bandwidth scaling techniques when applied to high bandwidth
+of switching on this datapath. Since most current DRAM devices,                                                       DRAMs. We use the key insights gained from this analysis to guide
+including HBM2, send data from banks spread across the die to a                                                       the design of our proposed FGDRAM architecture.
+common I/O interface, data may travel from the farthest corners
+of the device to the I/O PHYs on the base-layer, leading energy for                                                   2.1     DRAM Energy
+data movement to dominate the overall energy. FGDRAM reduces                                                          As shown in Figure 1a, reducing DRAM energy is required to en-
+both of these components of DRAM energy.                                                                              able increased bandwidth without exceeding a reasonable energy
+   In FGDRAM, a DRAM die is a collection of small units called grains,                                                budget for the DRAM in a system. The energy consumed by the
+with each grain having a local, dedicated, and narrow data interface.                                                 DRAM is a function of the microarchitecture of the DRAM and
+Much like a traditional DRAM channel, each grain serves a DRAM                                                        the memory request pattern generated by the processor. Previ-
+request in its entirety. However, there are two fundamental differ-                                                   ous work [7] demonstrated that GPU workloads, both from the
+ences between an FGDRAM grain and an HBM2 channel. First, unlike                                                      graphics and compute domains, incur high activation energy due
+Fine-Grained DRAM                                                                          MICRO-50, October 14–18, 2017, Cambridge, MA, USA
+                                   HBM die
+  row decoder                              ❶ row activation
+                                           ❷ data transfer within a chip                         Bank                                              Activated LWLs                  MWLs
+  sense amplifier   ❷
+                                   HBM die ❸ data transfer within a stack
+  bank                                     ❹ data transfer on an interposer                                                                                               LWD
+            ❶
+                                  buffer die                                  Inter-Bank         I/O Buffer
+                                                                                                                                             Mat                        Row-Buffer
+
+
+
+
+                                                                                                                               Row Decoder
+                                                                              R/W Bus        DDR TSVs
+                                                                                                               a
+                                                                                                                                                                          LDL
+                                                                              Sense Amps                                                      Sense Amps
+                                                           package                         LDL                                                                            MDL
+                    ❸
+                                           interposer                                                                      c
+                                                        substrate
+                                                                                           LDL                                                                      8     CSL
+                                                                              LWD
+                                  ❹                                                                          MDLs
+                                                                                             LWL
+                                                                                                                                                     0       1                        15
+                                                                                                            MWL
+                                                                                                                                                                        Subarray
+                                                                     1
+                                                                                                 Bitlines
+                                                                                                                    HFFs                                    Column Decoder
+                                                                                CSL        LDL
+Figure 2: HBM2 access energy components. Reproduced                                                                                                                          Global
+                                                                                           LDL                                  b                                          Sense Amps
+from [6].
+                                                                              Figure 3: High Bandwidth Memory microarchitecture. Re-
+                                                                              produced from [6].
+to low row-access locality arising from irregular accesses and/or
+row-buffer interference between the thousands of concurrently ex-
+ecuting threads. However, as shown in Figure 1b, the movement of              which is transferred with a burst length of four over the 64-bit DDR
+data from the sense-amplifiers to the DRAM I/Os is another more               I/O interface. Throughout this paper, we consider an HBM2 stack to
+significant contributor to overall energy. Figure 2 shows that in a           be operating in pseudochannel mode [41] with sixteen 64-bit wide
+stacked DRAM, the data first travels on the DRAM die from the                 channels per stack rather than legacy mode with eight 128-bit wide
+bank’s sense-amplifier to the central stripe, then down to the base           channels.
+layer using through-silicon vias (TSVs), and a short distance over               To support the 16 GB/s bandwidth per channel, an HBM2 bank
+the base-layer to reach the I/O bumps that connect the HBM2 stack             operating at 500MHz outputs 128 bits in each internal clock; two
+to the GPU (approximately 9.9 mm). Using a detailed energy model              banks operate in parallel to provide the required bandwidth (as
+based on physical floorplan and DRAM process characteristics (Sec-            described below in Section 2.3). Creating a future HBM stack with
+tion 4) and the actual data toggle rate of different applications,            4× the bandwidth at the same internal frequency with the tradi-
+we found that switching the capacitance on this datapath requires             tional prefetch scaling method would require two changes. First,
+2.24 pJ/bit of energy on average. In contrast, transferring the data          the internal prefetch from each bank must be increased to 512 bits
+over the I/O wires on the silicon interposer requires an additional           and the DRAM atom size (the size of each DRAM request) must be
+0.3 pJ/bit, considering actual application data toggle rates. In total,       correspondingly increased to 128 Bytes.
+with the average of 1.21 pJ/bit of activation energy, each HBM2 ac-              Increasing the prefetch width essentially requires a wider datap-
+cess incurs 3.92 pJ/bit of energy (including ECC overhead) which is           ath from the DRAM bank to the I/O circuitry of the DRAM device.
+a major impediment to increasing the aggregate bandwidth for a                As shown in Figure 3, a DRAM bank is composed of several subar-
+GPU.                                                                          rays, with each subarray containing a subset of the rows in the bank
+   Clearly, to reach a target 2 pJ/bit of overall energy consumption,         and a set of sense-amplifiers that constitute the row-buffer of the
+future high-bandwidth DRAMs must reduce internal data move-                   subarray. As a typical example, the 16K rows in an HBM2 bank are
+ment energy. Opportunities to reduce activation energy should also            organized as 32 subarrays, each containing 512 rows of DRAM cells.
+be considered, as it is still a significant component of overall energy       Each subarray is not monolithic, but consists of several 512×512
+consumption.                                                                  arrays of DRAM cells which are typically referred to as mats. When
+                                                                              a row is activated in a subarray, each mat activates a section of the
+2.2      Increasing Per-bank Bandwidth                                        row into its local set of sense-amplifiers. This subarray performs
+Traditionally, bandwidth scaling of DRAM devices has been achieved            this operations by first driving a Master Wordline (MWL) in a high
+by improvements in the I/O signaling frequency. However, while                level metal across the subarray, which in turn drives a Local Word-
+signal speed either on a PCB, an organic package substrate, or a              line (LWL) in every constituent mat. Subsequently, when a DRAM
+silicon interposer can be increased with relative ease, scaling the           atom is read, every mat of the subarray outputs a few bits of the
+frequency of the DRAM core and storage arrays at a commensurate               DRAM atom. In HBM2, a 1 KB wide row is split across 16 mats, each
+pace is extremely difficult. Consequently, with internal DRAM fre-            512 bits wide; on a read command, each mat provides 16 bits over
+quencies remaining fairly similar over several product generations,           two internal cycles to return the 32 Byte DRAM atom. The read
+DRAM vendors have turned to increasing the prefetch width to scale            command drives a set of Column Select Lines (CSLs) in each mat
+the internal DRAM bandwidth and match it with the bandwidth                   which work as mux select signals, driving data from the target
+at the I/O. However, because current high-end GPU DRAMs are at                sense-amplifiers to the Master Datalines (MDLs) via the Local Data
+the very limit of this scaling technique, continuing down this path           Lines (LDLs) [13, 25, 44]. Quadrupling the prefetch width of the
+will require either high energy or high area overhead.                        bank requires either increasing the number of mats in a subarray to
+    In an HBM2 channel, the 64-bit I/O interface is operated at a 1GHz        64 or quadrupling the bandwidth per mat so that each mat outputs
+frequency, providing 16 GB/s of bandwidth on the DDR interface.               64 bits over two cycles instead of 16 bits. The first option increases
+The DRAM atom size (the size of a single DRAM request) is 32 Bytes,           the row-size and consequently the activation energy. Given the
+MICRO-50, October 14–18, 2017, Cambridge, MA, USA                                                                                                    M. O’Connor et al.
+
+
+need to reduce energy in high bandwidth memories, this increase               CLK
+is a step in the wrong direction.                                          (500MHz)
+
+   On the other hand, increasing the mat bandwidth requires large             Bank A
+                                                                                           16B access   16B access   16B access   16B access
+                                                                          (Bank Group 0)
+area overheads. The 3 metal layers in a typical DRAM process
+require a metal layer for the vertical bitlines in the mat, one for the                                 tCCDL
+
+MWLs and LDLs in the horizontal direction, and a third for the CSLs           Bank B
+                                                                                                        16B access   16B access   16B access   16B access
+and MDLs in the vertical direction. The MWL and LDL metal layer has       (Bank Group 1)    tCCDs
+4× the pitch of the LWL which is built using silicided polysilicon [16,
+                                                                           Data Bus to
+25, 36, 44]. Likewise, the CSLs and MDLs have 4× the pitch of a             Processor
+bitline. A DRAM mat’s area is dictated by the number of wiring                                                                     32B burst   32B burst    32B burst   32B burst
+
+tracks required in these coarse-pitch metal layers. Quadrupling the
+mat bandwidth requires increasing the number of both the LDLs and         Figure 4: Overlapping multi-cycle accesses among bank
+MDLs from 16 to 64 (each signal being differential). This approach        groups. Each command requires two clock cycles to access
+leads to a 77% increase in mat area due to increases in the wiring        the data for a 32B burst. Commands to the different bank
+tracks in both the vertical and horizontal directions. While some of      groups can be separated by tCCDS =2 ns, while commands to
+that area can be saved by trading off CSL count for increased MDL         the same bank group must be separated by tCCDL =4 ns.
+count, additional area is required to increase the width of the global
+inter-bank I/O bus that connects the banks to the I/O circuitry.              Using this bank grouping approach, a DRAM can support higher
+Increasing the prefetch width thus significantly increases the cost       bandwidth from a channel than a single bank can provide. In par-
+of the DRAM device.                                                       ticular, if each bank accumulates the required data for a request
+   Furthermore, increasing the DRAM atom size is undesirable              over multiple internal cycles, the DRAM can support channel band-
+for multiple reasons. First, previous work has shown that GPU             widths many times that of a single bank’s bandwidth. Figure 4
+compute applications benefit from 32-byte sector sizes, and mem-          illustrates how a single 256-bit access is split over two 128-bit ac-
+ory hierarchies designed to support such request sizes boost both         cesses to a single bank. Since a request to a different bank-group
+performance and energy by avoiding data overfetch [35]. Second,           can overlap with the second phase access of the first bank, the total
+graphics pipelines compress render surface tiles into 32-byte units       bandwidth available on the interface is twice that of a single bank.
+to save DRAM bandwidth and amplify L2 capacity [31]. Increasing           In fact, HBM2 employs this technique [23], allowing the bandwidth
+the atom size from 32 Bytes to 128 Bytes defeats the benefit of this      to double relative to first-generation HBM without requiring addi-
+important optimization and leads to a 17% degradation in perfor-          tional per-mat bandwidth. This approach can be further extended
+mance for the graphics workloads we simulated. DRAM bandwidth             with more bank groups and more internal access cycles to enable a
+scaling techniques must avoid increasing the DRAM mat bandwidth           larger ratio between the bank and channel bandwidth.
+or the DRAM atom size.                                                        While this approach enables higher channel bandwidths, it re-
+                                                                          quires very fast switching on the internal DRAM global data bus
+                                                                          that interconnects all the banks, particularly for high channel band-
+                                                                          widths. Furthermore, the high ratios required for a 4× bandwidth
+2.3    Overlapping Accesses in Different Banks
+                                                                          HBM2 derivative would require rotating read and write commands
+Due to increasing I/O frequencies and stagnating DRAM internal            among at least 8 bank groups in each channel. Unfortunately, back-
+frequencies in modern high-bandwidth DRAM devices, the time               to-back accesses to the same bank would be very slow in this case, as
+to transfer a single DRAM atom on the I/O bus (tBURST) is smaller         each bank would require multiple cycles for a single access. In this
+than the minimum time between successive read requests to one             example, tCCDL is 16ns, instead of 4 ns as it is today. We found that
+DRAM bank. Thus, successive read accesses to the same DRAM                performance degrades by an average of 10.6% compared to an iso-
+bank cannot saturate the DRAM data interface.                             bandwidth system with conventional inter- and intra-bankgroup
+   To address this issue, recent DRAM standards, such as DDR4 [19],       timings.
+GDDR5, and HBM/HBM2 support bank grouping. The banks in a
+given DRAM channel are partitioned into several bank groups, typi-        2.4      Additional Parallel Channels
+cally with 4 banks per group. Accesses to different bank groups can
+                                                                          The complexities of increasing the bandwidth of a single channel
+be issued closely together, regardless of the cycle time of a single
+                                                                          can be avoided by simply increasing the number of channels in the
+bank. This short delay between successive column commands (i.e.
+                                                                          device. Each channel remains the same baseline bandwidth, though
+reads and writes) to different bank groups is the tCCDS timing pa-
+                                                                          possibly using a narrower, higher-speed I/O channel. All of the
+rameter. This tCCDS parameter is equal to the tBURST time, ensuring
+                                                                          channel timing parameters remain the same.
+“gapless” transmission on the data bus across successive accesses.
+                                                                             Unfortunately, a straightforward replication of channels is area
+The cycle time of a given bank (and possibly some structures shared
+                                                                          intensive. Even if the total storage capacity remains the same, the
+with other banks in the same group) determines the rate at which
+                                                                          number of independent DRAM banks increases in proportion to the
+successive column commands to the same group can be issued. This
+                                                                          number of additional channels – each bank simply has proportion-
+longer delay is the tCCDL timing parameter. To make efficient use of
+                                                                          ally fewer rows. However, increasing the channel count requires
+the full DRAM bandwidth, requests must alternate among different
+                                                                          the replication of the row and column address decoders and the
+bank groups.
+                                                                          global sense-amplifiers, leading to 36% higher area.
+Fine-Grained DRAM                                                                     MICRO-50, October 14–18, 2017, Cambridge, MA, USA
+
+                                         ❶ row activation                      (1) Additional bandwidth must be exposed via additional parallel
+                                         ❷ data transfer within a chip
+                                         ❸ data transfer within a stack            channels.
+                                         ❹ data transfer on an interposer      (2) Data movement energy must reduced by limiting the dis-
+                                                                                   tance between banks and I/Os.
+            ❷                                                                  (3) Activation energy must be reduced by limiting the effective
+       ❶
+                                                                                   row-size of each activate.
+                                                                               Our goal is to architect a DRAM stack with 4× the bandwidth
+                                                                            of a current HBM2 stack while simultaneously reducing the energy
+             ❸
+                                                                            per access by a factor of two. This 1 TB/s, 2 pJ/bit DRAM will
+                             ❹                                              enable future multi-TB/s GPU memory systems. Our proposed Fine-
+                                                                            Grained DRAM (FGDRAM) stack architecture (Figure 5) partitions the
+                                                                   2
+                                                                            DRAM into a number of small, independent grains. Each grain is
+                                                                            essentially a narrow slice of a DRAM bank along with an adjacent
+           Figure 5: FGDRAM Die Stack Architecture                          associated and dedicated I/O interface. This architectural approach
+                                                                            achieves the energy and bandwidth objectives by simultaneously
+   Alternatively, the number of banks per channel can be propor-            addressing data movement energy and providing direct parallel
+tionally reduced to avoid most of this additional area penalty. For         access to every DRAM bank. Furthermore we apply an area-efficient
+instance, a current 16-channel HBM2 stack with 16 banks per chan-           technique to reduce the effective row-size, addressing activation
+nel evolves into a 4× bandwidth 64-channel stack with 4 banks per           energy. The finely partitioned FGDRAM architecture requires changes
+channel. Each channel has the same bandwidth as a current HBM2              to the interface organization, the bank (grain) architecture, and the
+channel, using one quarter the number of 8 Gb/s I/O signals. The to-        memory controller architecture. In contrast to Figure 2, the data
+tal number of banks remains constant. This evolutionary approach            movement energy (1) row activation energy and (2) data transfer
+to scaling bandwidth has the fewest downsides, and we use this              within the chip are significantly reduced.
+quad-bandwidth HBM stack (QB-HBM) as a baseline for comparison
+to our FGDRAM proposal.                                                     3.1    Interface Architecture
+   By reducing the number of banks available in each channel, it
+                                                                            Parallel narrow channels. The proposed 1 TB/s FGDRAM stack
+becomes more difficult for the memory controller to always find
+                                                                            architecture provides equivalent bandwidth to the proposed quad-
+work for all four banks so that it can hide activate/precharge la-
+                                                                            bandwidth HBM (QB-HBM) baseline design. The QB-HBM design has
+tencies under data transfers from the other banks. Also, while this
+                                                                            64 channels, each providing 16 GB/s of bandwidth. The FGDRAM ar-
+QB-HBM architecture addresses the target bandwidth demand for
+                                                                            chitecture provides 512 grains in each stack, each providing 2 GB/s
+future systems, there is no significant reduction in the energy per
+                                                                            of bandwidth. The access granularity of each read or write request
+access. As a result, we also consider an enhanced alternative to the
+                                                                            is still a 32 byte atom in both architectures. In FGDRAM, one request
+QB-HBM baseline which incorporates prior published approaches
+                                                                            must be serialized over the narrower bus resulting in a tBURST of
+to increase bank-level parallelism and reduce DRAM activation
+                                                                            16 ns. While this increases the minimum latency of each read re-
+energy.
+                                                                            quest by several nanoseconds, this modest increase has a negligible
+   A potential solution to the reduction in exploitable bank-level
+                                                                            impact on performance in highly threaded, bandwidth-oriented
+parallelism can be found in a technique called Subarray Level Par-
+                                                                            systems.
+allelism (SALP) [26]. This approach enables subarrays within a
+                                                                                Using many narrow relatively low-bandwidth channels allows
+DRAM bank to be independently activated, effectively creating
+                                                                            the FGDRAM architecture to provide direct connections to each bank
+additional opportunities to perform activates/precharges while ac-
+                                                                            in the stack. Figure 6 shows one QB-HBM channel with its 4 physical
+cesses to other subarrays take place. In effect, it creates a number
+                                                                            banks, and the equivalent 16 grains in the FGDRAM proposal. One
+of smaller semi-independent banks within a single bank structure.
+                                                                            key aspect of the FGDRAM architecture is unlocking bandwidth by
+When SALP is enabled, bank-level parallelism is recovered, and the
+                                                                            allowing all banks to be accessed in parallel and eliminating the
+performance of the baseline 16-bank configuration is restored.
+                                                                            bottleneck of a shared bus interconnecting several banks. This ap-
+   As shown in Figure 1b, the energy due to DRAM row activations
+                                                                            proach reduces energy via the direct connection to nearby I/O, as
+is a significant portion of DRAM energy. The subchannels archi-
+                                                                            well as provides the necessary bandwidth without an area penalty.
+tecture [6] partitions each bank and the associated DRAM channel
+                                                                            Partitioning the interface into a large number of low bandwidth
+into narrow partitions, reducing the effective DRAM row size and
+                                                                            channels provides a number of other opportunities to optimize
+DRAM activation energy. We apply both SALP and subchannels to
+                                                                            energy and simplify the memory controller, as discussed in Sec-
+create an enhanced baseline quad-bandwidth HBM design. We will
+                                                                            tion 3.3.
+compare these baseline alternatives to our proposed architecture
+                                                                                Address/command interface. One command channel provides
+in energy, area, and performance.
+                                                                            the commands to eight grains; there are 64 command channels for a
+3   FINE-GRAINED DRAM                                                       512-grain FGDRAM stack. As shown in Figure 6, the shared command
+Based on the challenges faced in scaling bandwidth and reducing             logic sits between two physical banks to control the eight grains.
+DRAM energy, three key objectives shape our DRAM architecture               Each command specifies the grain it targets. The command protocol
+proposal:                                                                   is similar to a DDR/HBM2 interface with explicit activates, reads,
+MICRO-50, October 14–18, 2017, Cambridge, MA, USA                                                                                                   M. O’Connor et al.
+
+                                                                                                                        Row Decoder                     Pseudobanks
+
+      Shaded arrows show data movement                    Bank
+
+
+
+
+                                                  Bank/Pseudobank                                                                                           Pseudobank
+                                                      Mux and                                                                                                   Mux
+                                                  Global Sense Amps                                                                                             and
+                                                                                                                                                              Global
+                                                                                                                                                            Sense Amps
+
+                                                                                                                 Shared
+                                                                                                                  Clock
+                                                            TSV                                                  Strobes                                           Grain
+                                                                                                                               Shared
+                                                           array                                                 & Cmd.                                            Data
+                                                                                                                              Cmd/ctrl.
+                                                                                                                  TSVs                                             TSVs
+
+
+                                                                                                                                                               TSVs to
+              1 Channel QB-HBM                                                                                                                               other layers
+
+                                                                         8 Grains FGDRAM                                     1 Grain FGDRAM +
+                                                                                                                                              8
+                                                                                                                               shared control
+
+Figure 6: QB-HBM Channel and FGDRAM Grain architecture. Arrows illustrate data movement within the two architectures.
+
+                                                                                            Pseudobank-0      Pseudobank-1                        Pseudobank-3       Pseudobank-4
+and writes sent to the DRAM. Sharing a single command interface
+among eight grains does not degrade performance. The long tBURST                              0       3
+                                                                                                                              LWL
+                                                                                                                                          MWL       8         11       12       15
+                                                                            Row Decoder
+
+
+
+
+required from a grain allows commands for each of the other grains                                                              Pseudobank-
+to be sent before a given grain needs another command. The overall                                                             Select Lines (4)         8                   8
+
+ratio of command to data bandwidth remains the same as HBM2 and
+the QB-HBM baseline.
+   I/O signaling. As in the QB-HBM baseline, we are assuming a                                                                  GRAIN-0
+
+straightforward evolution of the existing HBM2 PHY technology to                  Column
+                                                                                                                                GRAIN-1
+                                                                                  Decoder
+an 8 Gb/s Pseudo-Open Drain Logic (PODL) PHY operating at 1.2V                                      Pseudobank MUX                                          Pseudobank MUX
+similar to those in GDDR5 [18]. This provides 4× the bandwidth
+                                                                                                          Grain-0 I/O                                         Grain-1 I/O
+of the existing 2 Gb/s HBM2 PHY with a similar signal count. As a
+result, each grain transfers data over just two data signals.
+                                                                            Figure 7: FGDRAM Grain. A bank is split into 2 grains, each
+                                                                            with 2 pseudobanks.
+3.2     Grain Architecture
+One key objective guiding the architecture of a grain is reduced
+activation energy. Each grain in the FGDRAM architecture is the
+equivalent of a bank in HBM2 except that it has a private, serial I/O       (Figure 3(b)), on an activate, a MWL is driven across the entire sub-
+connection to the GPU. This section demonstrates how the existing           array. The MWL, in turn, drives a local wordline (LWL) in each of
+HBM2 bank architecture can be modified to create pseudobanks in a           the mats in the subarray by turning on each mat’s local wordline
+grain, reducing the effective row-activation granularity.                   driver (LWD). In the FGDRAM architecture, the assertion of the MWL
+    Reducing row size. To reduce row size and the corresponding             leads to assertion of the LWLs in only a subset of the mats. As a
+activation energy overhead, we leverage the bank architecture of the        result, the effective row size of an activation is reduced. Since only
+“subchannels” architecture described in [6]. This scheme partitions         a subset of mats contain the active row, the bandwidth for a sub-
+a bank into a number of semi-independent “subchannel” slices, each          channel is correspondingly limited to a fraction of the original bank
+with a fraction of the original bank bandwidth. Importantly, each of        bandwidth.
+these subchannels also can semi-independently activate a row that              FGDRAM pseudobanks. Like the QB-HBM baseline, the FGDRAM
+is a fraction of the baseline row size of the entire bank. We only use      architecture delivers the required bandwidth by allowing many
+the bank architecture proposed in the subchannels paper, as the             banks to be simultaneously active. There are 256 banks in a 64-
+other aspects of the subchannels are pertinent just in the context          channel QB-HBM stack, and each bank is capable of delivering 128 bits
+of a conventional HBM2 architecture. The interface partitioning and         every 2 ns (8 GB/sec). Like current HBM2, the QB-HBM architecture
+command bandwidth issues are not applicable to FGDRAM.                      keeps two banks active in each channel (via the bank-grouping tech-
+    The subchannels architecture exploits the existing hierarchical         nique described in Section 2.3). In contrast, the FGDRAM architecture
+composition of a DRAM row assert signal. In the HBM2 baseline               allows all banks to be active simultaneously, transferring different
+Fine-Grained DRAM                                                                 MICRO-50, October 14–18, 2017, Cambridge, MA, USA
+
+
+DRAM atoms, since each bank has access to its own dedicated I/O         be routed to the base layer. Adjacent to the TSV area on the base
+channel.                                                                layer are the PHYs which connect to the host processor within the
+   To match the 2 GB/s bandwidth of a grain, it is sufficient to        package.
+involve only 4 mats in each grain, with each mat providing 8 bits per      Each grain is essentially a pair of DRAM pseudobanks along
+internal 500 MHz bank cycle. This is well matched to partitioning       with an associated private serial I/O interface, and the grains can
+each bank using the subchannels bank architecture into 4 slices.        independently process different DRAM operations in parallel. By
+Data is brought out of one of these slices in each grain over the       subdividing the DRAM die and constraining data movement (and
+32-bit wide connection to the GSAs of the grain and pushed to           to a certain extent command signals) to these small subdivisions,
+the serialization I/O buffer over 8 internal cycles. The datapath       on-die data movement energy is significantly reduced.
+is pipelined such that the external burst to the GPU can begin
+as soon as the first 32-bit section of the DRAM atom is received
+                                                                        3.3   Memory Controller Architecture
+at the I/O buffer. For a single DRAM atom (32 Byte) read in the
+FGDRAM architecture, multiple column-select lines (CSLs) must be        The FGDRAM architecture requires the memory controller to man-
+asserted sequentially, to select consecutive columns that store the     age and schedule requests for a large number of independent grains.
+entire DRAM atom with a slice. Instead of sending multiple column       Rather than a single HBM2 command interface supporting two 16 GB/s
+commands from the memory controller, the column address sent            channels, FGDRAM distributes this bandwidth among 16 grains. Be-
+with the read command is incremented using a small 3-bit ripple         cause a group of 8 grains shares a command channel, there are twice
+carry adder inside the DRAM in successive cycles of a burst.            as many command interfaces onto which the memory controller
+   We call each such division of a grain a pseudobank as shown in       must schedule requests. The request rate on each command chan-
+Figure 7. A pseudobank is somewhat different from a subchannel          nel is one half that of the baseline HBM2 command interface. Thus,
+because all of the subchannels in a bank are potentially active         the memory controller must perform essentially the same amount
+at once, and interleaving of requests among traditional banks is        of work per unit of bandwidth. Splitting the command interfaces
+required for good performance.                                          allows a more energy efficient implementation in the DRAM. The
+   Instead, the FGDRAM architecture divides a bank into 4 pseu-         commands a delivered near where they are needed and commands
+dobanks, but there are only 2 grains per bank. It is here that we       can be handled at the core 500 MHz clock rate. This architecture
+take advantage of the fact that the total bank bandwidth in a base-     saves a small amount of data movement energy and clock power in
+line QB-HBM stack is twice what we need to deliver in our 1 TB/s        the DRAM.
+FGDRAM stack. Each grain therefore consists of two pseudobanks.            Command interface. The shared command interface is used
+“Bank-level parallelism” (BLP) within a grain is achieved by allow-     to send commands to the eight associated grains. Just as in HBM2,
+ing activates and precharges in one pseudobank, while a read or         separate row and column commands can be sent simultaneously.
+write operation is accessing the other. Thus, the FGDRAM architec-      Each command specifies the 3-bit grain identifier with each com-
+ture leverages the same technique to both reduce the effective row      mand. Each command requires at least 2 ns to be transmitted across
+size and provide (pseudo)bank-level parallelism within a single         the interface. This latency allows each command to be processed at
+bank.                                                                   the low-speed 500 MHz internal DRAM core clock, thereby saving
+   Reducing data movement energy. As shown in Section 2.1,              clock power in the DRAM command processing logic. The com-
+a large fraction of the HBM2 access energy in many applications is      mands mirror those found in conventional HBM2. The commonplace
+expended in moving data from the global sense amplifiers associated     commands like refresh, activate, precharge, read, and write (with
+with a DRAM bank to the I/O pads. This energy is proportional           optional auto-precharge) all specify which of the eight associated
+to the distance the data must travel. Therefore, the FGDRAM grain       grains are targeted by the command. Some commands apply to
+architecture reduces this distance by providing each DRAM bank          all eight grains associated with a command channel; these com-
+with adjacent local I/O. Figure 6 illustrates the reduction in data     mands are primarily associated with configuration or transitioning
+movement distance with FGDRAM. Data moves directly to an adjacent       between low-power sleep/self-refresh modes.
+set of global sense amplifiers, and the small, narrow multiplexer          Just as in a conventional DRAM, a number of timing parameters
+that selects which of two adjacent pseudobanks is providing data        govern when certain commands can be sent relative to earlier com-
+to be sent through the TSVs to the I/O PHYs. This is in contrast        mands. In FGDRAM, some of these timing parameters differ from the
+to the traditional QB-HBM approach, where the data from all four        HBM2 baseline. For instance, because FGDRAM has a smaller DRAM
+banks must be multiplexed onto a central shared bus before being        row size and lower peak command issue rate, the tFAW (Four Ac-
+sent to the appropriate TSVs down to the base-layer PHYs. Also,         tivate Window) parameter due to power delivery constraints is
+rather than a central TSV area in the middle of the die as the QB-HBM   effectively eliminated. Each command interface issuing an activate
+requires, the TSV array is partitioned into two strips in the FGDRAM    of a 256B row every 2 ns roughly matches the aggregate activation
+architecture. The QB-HBM design can’t easily partition the TSV array    rate in number of bytes that an HBM2 die can sustain under the
+in a similar manner because all the data from 4 banks must be muxed     constraints of its tFAW parameter. The long 16 ns tBURST associated
+to a central shared bus, and splitting the group of 4 banks with a      with each grain also simplifies the scheduling in the memory con-
+TSV array would force half of the per-bank data buses to traverse       troller. With two pseudobanks per grain, and just two requests per
+the TSV array to the mux, and then have the shared data bus deliver     activate, FGDRAM can hide all activation/precharge latencies and
+the selected data back to the TSVs. In FGDRAM, the data buses from      keep its interfaces 100% busy. While the memory controller must
+a bank are directly routed to the immediately adjacent TSV area to      manage tracking requests to a number of grains and pseudobanks,
+MICRO-50, October 14–18, 2017, Cambridge, MA, USA                                                                            M. O’Connor et al.
+
+
+these are relatively simple directly indexed structures. Deep as-          a possibility, moving to in-DRAM ECC generation/checking like
+sociative queues required to find multiple row-buffer hits are are         that employed in LPDDR4 [5] would provide protection within the
+much less important in the FGDRAM architecture, saving memory              DRAM array without the necessity to transfer the data across the
+controller complexity.                                                     interface. The long burst lengths in FGDRAM are well suited to this
+    One complexity FGDRAM introduces to the memory controller is           approach by providing a minimum access granularity to prevent
+the need to ensure that two different rows in different pseudobanks        the need for read-modify-writes to update the ECC data. A short
+within in the same subarray are never simultaneously activated.            4-bit CRC code is then applied to each data transfer to detect errors
+The logic to track this is straightforward, but is new relative to         on the I/O interface for retry. This 4-bit CRC can detect all 3-bit or
+the baseline HBM2 controller. Careful memory address layout and            fewer errors, and requires the I/O to operate only slightly faster
+address swizzling makes this situation relatively unlikely to occur,       at 8.125 Gb/s to transmit this incremental CRC data. The energy
+but it must be prevented by delaying the activate or precharging           overheads of this approach are expected to be minor, with the I/O
+the other pseudobank.                                                      energy savings compensating for the ECC generation and checking
+    Command bandwidth. While the FGDRAM architecture has more              being performed in a less power-efficient DRAM process than the
+independent command interfaces, the total aggregate bandwidth,             host processor.
+both in command rate and raw I/O bandwidth of these interfaces,
+is the same as HBM2 relative to the total data bandwidth. In other
+                                                                           3.5    I/O Alternatives
+words, a 1 TB/s FGDRAM stack has 4× more command I/O bandwidth
+and the memory controller must support 4× the command issue                HBM2 relies on simple unterminated signaling across a silicon in-
+rate of an HBM2 stack. A new read or write command can only be             terposer with small-geometry, high-density wiring. While these
+sent to a grain once every 16 ns due to the length of the data burst       I/Os require very little energy, they have very short reach; the
+on the per-grain data lines. Because eight grains share a command          small-geometry wiring exhibits a physical bandwidth that is in-
+channel, a total of 8 read or write commands can be sent on this           versely proportional to the square of the length, similar to on-chip
+command channel every 16 ns. The worst-case scenario for com-              wiring. The HBM2 PHYs are located in a stripe near the middle of
+mand bandwidth is the case of one read or write command per                the base layer die and must be placed within a few millimeters
+activate. The row-command interface requires more than 2 ns to             of the processor. In practice, the I/O currently employed by HBM2
+send an activate command due to the long row address. The 8:1              can travel roughly 5 to 7 mm on an interposer while maintaining
+ratio of grains to command creates a bottleneck in this situation, but     unterminated signaling at 2 Gb/s. This distance depends strongly
+it is similar to the difficulty of keeping the bus utilized in HBM2 with   on the thickness, width and spacing of the wires. For example, a
+only one access per activate. The FGDRAM architecture is balanced to       copper wire that is 1.5 µm thick, 1.0 µm wide, and spaced 2.5 µm
+sustain 100% utilization with two 32B accesses per activated 256B          from neighboring wires is limited to about 5 mm for 2 Gb/s untermi-
+row, as long as each grain has requests distributed among both             nated signaling. Thicker and wider wires that use increased spacing
+pseudobanks.                                                               can reach longer distances, but the achievable bandwidth density
+                                                                           along the edge of the processor will decrease proportionally.
+                                                                               Since a key premise of the FGDRAM architecture is the placement
+3.4    ECC                                                                 of the DRAM PHYs close to the banks spread across the DRAM die,
+The current HBM2 architecture supports ECC bits stored within              any practical I/O signaling technology must efficiently move data
+the DRAM array and sent across the interface. Each 32B DRAM                at least a centimeter from the far side of a DRAM die. Furthermore,
+burst is accompanied by 32-bits of additional ECC data sent on 16          this signaling technology should be more efficient over this distance
+additional data pins per channel. The QB-HBM architecture assumes          than the on-die data transport energy; otherwise, any savings of
+a similar arrangement, sending the 32 additional bits per burst            on-die data transport energy simply becomes increased I/O energy.
+on 4 additional data signals per channel. This enables single-error        Pseudo-Open Drain Signaling. In the baseline evaluation, we
+correct, double-error detect (SECDED) on each of the two 64-bit            assume a conservative design similar to high-speed GDDR5 1.2V
+word of a burst. ECC generation and checking is handled by the             terminated pseudo-open drain logic (PODL) signaling technology.
+host processor.                                                            These existing DRAMs support 8 Gb/s data rates over the required
+   With FGDRAM, storing the ECC data in the array is straightfor-          distances, so it is a straightforward baseline. Since this paper focuses
+ward. As pointed out in [6], in structures like the narrow pseu-           primarily on the DRAM architecture, we use this conservative I/O
+dobanks, additional ECC data is stored in slightly wider mats with         as the baseline in our evaluations.
+576 columns. Sending additional data in FGDRAM on extra pins is            Ground-Referenced Signaling. A promising alternative signal-
+difficult since adding a single pin per grain would be a 50% over-         ing technique is Ground-Referenced Signaling (GRS) [34]. This type
+head. As a result, two options are possible. First, the ECC data           of single-ended signaling has several advantages over PODL. For
+can be sent over additional cycles on the existing data bus. This          example, the current consumed by the line driver is essentially
+would require the data I/Os to operate at 9 Gb/s rather than 8 Gb/s        constant, except for a small ripple at the data rate. Since this ripple
+to compensate for having fewer data pins than an ECC-enabled               is at very high-frequencies it is easily filtered by on-chip bypass ca-
+HBM2-style interface. The energy overhead these approaches are             pacitance. The fact that this current is not data-dependent helps to
+roughly equivalent (though there is somewhat lower I/O energy if           mitigate simultaneous switching output (SSO) noise, which is often
+the data+ECC burst is sent on fewer pins at a slightly faster rate).       a limiting factor for single-ended memory interfaces [37]. This elim-
+Alternatively, if operating the data I/Os significantly faster is not      inates the need to use DBI coding [39] and the associated signals on
+Fine-Grained DRAM                                                                   MICRO-50, October 14–18, 2017, Cambridge, MA, USA
+
+
+the data buses. In addition, GRS only uses the ground network to                             Table 1: GPU Configuration
+complete the signal return path by signaling “about” ground, which
+forces the signaling current to flow in the tight loop created by                 #SMs, Warps/SM, Threads/Warp                 60, 64, 32
+                                                                                  L2 cache (size, assoc., block, sector) 4MB, 16-way, 128B, 32B
+the lane wire and the nearest ground conductor. This also helps to                DRAM                                    QB-HBM or FGDRAM
+reduce common-impedance return-path noise since the return path
+is well-defined and ground is almost always the lowest impedance
+network. Also, the ground network is easily the best reference for       that assumes identical aspects of a contemporary DRAM process.
+a single-ended interface because it is low impedance and common          If different assumptions are made, they generally have a similar
+to all. Another important advantage of the GRS transceiver system        consequence in both our proposed FGDRAM design and the QB-HBM
+is that the entire path for strobe and data are matched to have iden-    baseline.
+tical delay and delay-sensitivities. This ensures the relative timing       TSV scaling. We assume that we are able to drive signals through
+between strobe and data is preserved in the presence of process,         the TSVs at 4× the data rate of contemporary HBM2 DRAMs. As a
+temperature, and voltage variation. It also means that the relative      result, we need the same number of signal TSVs as current HBM2
+timing between strobe and data tracks together in the presence of        designs for both the QB-HBM and FGDRAM architectures. This as-
+power supply noise; this has been demonstrated at signaling rates        sumption may be aggressive, but if additional TSVs are required,
+up to 20 Gb/s with PHYs built in a logic process.                        the impact would affect QB-HBM and FGDRAM equally. Future process
+Higher Bandwidth Signaling. These signaling technologies may             technologies may reduce the TSV pitch, enabling more TSVs in a
+enable faster data rates than the 8 Gb/s assumed in this paper. Sup-     smaller area. Again, any area benefit of this approach would apply
+porting higher data rates would allow fewer PHYs and signals             equally to FGDRAM and QB-HBM.
+between the processor and the DRAM. Ideally, the wire bandwidth             Stack height. We assume a 4-high DRAM stack in our analysis.
+would be sufficient to allow adequate memory bandwidth to be             It may be practical and economical to construct stacks with 8 or
+routed directly over an organic package substrate, enabling more         more devices going forward. Adding additional bandwidth to a stack
+traditional (less expensive) multi-chip module (MCM) assembly            via additional dies requires more TSVs and additional PHYs on the
+and obviating the requirement for assembly on a silicon interposer.      base layer. If additional dies in a stack are added only to provide
+Because the wires on an organic package have virtually distance-         additional capacity, then an approach similar to placing multiple
+independent physical bandwidth (up to several centimeters) this is       DIMMs on a shared DRAM bus can be used. Additional dies in a
+a viable approach. In other words, when using high-speed signaling       stack act like another rank, with multiple dies sharing the TSVs
+over a terminated link on an organic package, energy consumption         much like a conventional DRAM bus. There may be some impact on
+does not depend on wire length. This is due to the fact that the wire    peak data rates in this scheme, as there will be additional capacitive
+is relatively short (e.g., less than 40 mm) and frequency-dependent      loading on the TSV channels. This may push tall stacks towards
+attenuation is primarily due only to the parasitic capacitances of       having more TSVs running at lower data rates to compensate.
+the micro-bump pads, ESD protection devices, and I/O devices at             Non-stacked DRAMs. All of the advantages of the FGDRAM ar-
+each end of the link. The additional high-frequency attenuation          chitecture would apply to a non-staked DRAM as well. A single
+from the losses in the longest package traces is less than 1 dB (i.e.,   DRAM die built using the FGDRAM design could have the DRAM
+10%) for signaling rates up to 20 Gb/s, even when using low-cost         PHYs in the strips where the TSV arrays are located in the proposed
+packaging technology.                                                    stacked design. This approach can allow further efficient bandwidth
+    This can enable systems that require many DRAM devices (or           scaling of traditional GDDR-class memories. Coupled with high-
+stacks) co-populated with a processor in a package. Currently, it        speed, distance-efficient I/O technologies like GRS, it could enable
+is impossible to use unterminated 2 Gb/s signaling over a silicon        systems with large package substrates to simply use many non-
+interposer and reach a second DRAM device on the far side of a           stacked DRAMs to provide the bandwidth required, eliminating the
+closer DRAM device. The problem is that the bandwidth of the             overheads of stacked DRAMs.
+wires that connect the distant DRAM devices is significantly lower
+because they must be approximately 3× longer than the wires that         4 METHODOLOGY
+connect the adjacent DRAM devices. Signaling over an organic
+substrate enables larger packages with more stacks of DRAM than          4.1 Simulation Details
+current HBM2 systems.                                                    GPU Model: We simulate a modern GPU-system based on the
+    The benefits of these alternative signaling technologies could       NVIDIA Tesla P100 chip [30] (configured as shown in Table 1) on
+apply to the alternative QB-HBM baseline as well. Thus, we consider      a detailed GPU and memory simulator. We model the details of
+only the conservative PODL signaling in out subsequent evaluation        the compute and graphics pipelines, as well as the interconnect
+of the proposed FGDRAM architecture.                                     and caches. The caches are sectored (32B DRAM atom) for higher
+                                                                         efficiency [35].
+                                                                            Memory Controller and DRAM: The baseline memory con-
+3.6    Design Assumptions                                                troller model is optimized for harvesting maximum bandwidth and
+While we describe a 1 TB/s FGDRAM design with certain assumptions        thus deploys deep request buffers and aggressive request reorder-
+regarding the underlying process technology, the architectural ap-       ing to find row hits, batched write draining based on watermarks
+proach is generally applicable under a range of different technology     to reduce write-to-read and read-to-write turnarounds, and an ad-
+scaling assumptions. In general, we compare to a QB-HBM baseline         dress mapping policy designed to eliminate camping on banks and
+MICRO-50, October 14–18, 2017, Cambridge, MA, USA                                                                         M. O’Connor et al.
+
+                   Table 2: DRAM Configurations                                                   Table 3: DRAM Energy.
+
+      Category                      HBM2 QB-HBM           FGDRAM               Component                      HBM2 QB-HBM FGDRAM
+      channels/die (4-die stack)    4 (16)     16 (64)     128 (512)           Row activation (pJ)             909   909    227
+      banks/channel                   16           4    2 pseudobanks          Pre-GSA data movement (pJ/b)    1.51  1.51   0.98
+      grains/bank                    N/A         N/A           4               Post-GSA data movement (pJ/b)∗  1.17  1.02   0.40
+      row-size/activate              1KB         1KB         256B              I/O (pJ/b)∗                     0.80  0.77   0.77
+      data I/Os/die (4-die stack) 256 (1024) 256 (1024)   256 (1024)          ∗ at 50% activity
+      datarate/pin                  2 Gb/s      8 Gb/s      8 Gb/s
+      bandwidth/channel or grain   16 GB/s     16 GB/s      2 GB/s
+      bandwidth/die                64 GB/s    256 GB/s     256 GB/s
+      bandwidth/4-die stack        256 GB/s     1 TB/s      1 TB/s      rate (Table 3 shows the value at 50% toggle rate), and their sum
+                                  tRC=45, tRCD=16, tRP=16, tRAS=29      is the on-die data movement energy. Note that while FGDRAM has
+                        common tCL=16, tRRD=2, tWR=16, tFAW=12
+      timing parameters                                                 much lower overall data movement energy compared to HBM2 by
+                                  tWTRl=8, tWTRs=3, tWL=2 clks
+      in ns unless
+      specified
+                        tBURST         2           2          16        design, even QB-HBM has more efficient data movement than HBM2
+                        tCCDL          4           4          16
+                        tCCDS          2           2           2
+                                                                        due to the reduced distance between the arrays and the I/O blocks.
+                        activates                                       The final component is the I/O energy. In HBM2 it is influenced by
+                                       8           8          32
+                        in tFAW                                         the data switching activity, but in QB-HBM and FGDRAM the energy
+                                                                        of the high-speed I/Os is determined by the termination energy
+channels due to pathological access strides (similar to the baseline    and thus depends primarily on the number of 1 values in the data
+in [7]). The structural differences between QB-HBM and FGDRAM are       (Table 3 shows the values at 50% 1s).
+reflected in the hierarchical composition of their building blocks
+and in the timing parameters in Table-2. The memory controller’s        5     RESULTS
+internal state machine, and timing manager models these changes,        This section, compares the energy-efficiency and performance of
+and also models the fact that the FGDRAM command interface is           two iso-bandwidth DRAM systems: a QB-HBM stack and an FGDRAM
+arbitrated between eight grains.                                        stack. We also analyze the incremental area that would be required
+   Workloads: We evaluate memory intensive regions of 26 CUDA           by these designs over current HBM2 devices.
+applications from the Rodinia [8] and Lonestar [4] suites, exascale
+workloads [1, 10, 14, 27, 29, 43] (CoMD, HPGMG, lulesh, MCB, Mini-      5.1    Energy Improvement
+AMR, Nekbone), a hidden convolution layer from GoogLeNet [40], as       Figure 8 shows the total DRAM energy consumed per bit by GPU
+well as two well-known memory-bound applications with disparate         compute applications using QB-HBM and FGDRAM . The compute
+access patterns, STREAM and GUPS [11], to show the effect of our        workloads are grouped into two categories, with the first set (dmr
+proposals on the spectrum of applications executed by a GPU. We         to pathfinder) containing applications that use a small fraction (less
+also present results for 80 graphics workloads representing modern      than 60%) of the aggregate DRAM bandwidth, and the second con-
+game engines and rendering pipelines (both shader- and render-          sisting of memory intensive applications (GUPS to STREAM) which
+backend-generated traffic is simulated). These applications are from    are more likely to be DRAM power (=energy-per-bit×bandwidth)
+the domains of professional graphics and games.                         limited. We find that the FGDRAM architecture significantly reduces
+                                                                        energy across all the workloads by simultaneously reducing both
+4.2    Energy and Area Model                                            the activation and data movement energies.
+For estimating the energy and area of HBM2, QB-HBM and FGDRAM de-          Naturally, the reduction in activation energy is most beneficial
+vices, we use the methodology of previous work on subchannels [6]       for applications with low row locality (sssp, MCB, dmr, GUPS, nw,
+which was based on the model from Rambus [44]. In essence, we use       bfs, sp, kmeans, MiniAMR). Similar to classic GUPS, applications
+detailed floorplans of DRAM dies and devices to estimate the areas      dmr, sssp, sp, bfs and MCB have low intrinsic row-buffer locality
+of different blocks and the lengths of various datapath components      as they perform many sparse data-dependent loads - i.e., pointer
+traversed by bits from a DRAM cell to the GPU’s pins, estimate the      chasing. On the other hand, kmeans, nw, and MiniAMR suffer from
+capacitive loading on these components using DRAM technology            inter-thread interference at the row-buffers, and therefore have low
+parameters for a 28nm node (scaled from 55nm [44]), and use ap-         effective row locality as a natural consequence of highly threaded
+propriate switching activities to obtain the energy consumed to         processors [6]. The FGDRAM architecture reduces the fundamental ac-
+precharge a bank and activate a row, and in performing reads and        tivation granularity to 256 Bytes from 1 KB in QB-HBM. This reduces
+writes. Table 3 enumerates the energy consumed for different oper-      row-overfetch, and activation energy across the entire benchmark
+ations for the different DRAM types. The row-activation energy,         suite by 65% on average.
+which is the sum of precharge and activate energies, differs based         On the other hand, data movement energy is also either the
+on the DRAM row activation granularity. The datapath energy has         largest or, at the least, a very significant fraction of overall energy
+three components - i) traversing the LDLs and MDLs from the row-        in QB-HBM for many of the workloads. While data movement en-
+buffer to the GSAs (pre-GSA), ii) traversing the path from the GSAs     ergy varies between applications depending on their data toggle
+to the DRAM I/Os (post-GSA), and iii) traversing the I/O channel        rates (e.g., HPGMG has higher data movement energy compared to
+between the DRAM and GPU. The first component is not data de-           srad_v2 in QB-HBM), it is primarily determined by the distance the
+pendent as the LDLs and MDLs are precharged to a middle voltage         data must travel between the sense-amplifiers and the I/O pads. By
+before every bit transfer, the second depends on the data toggling      reducing this distance, FGDRAM reduces the average data movement
+Fine-Grained DRAM                                                                                             MICRO-50, October 14–18, 2017, Cambridge, MA, USA
+
+                                               Activation         Data Movement           I/O                       Memory Intensive Applications
+                                          6
+                     DRAM Energy (pJ/b)
+
+
+                                                                                 QB-HBM
+                                          4                                      FGDRAM
+
+                                          2
+
+                                          0
+
+
+
+
+Figure 8: DRAM Access Energy Per Bit (lower is better). Applications are divided into two groups based on their bandwidth
+utilization in the baseline QB-HBM system. Within each group, the applications are sorted in descending order of energy-per-bit
+in the QB-HBM baseline.
+
+                                  4
+DRAM Energy (pJ/b)
+
+
+
+
+                                                                           QB-HBM         FGDRAM   Depending on access characteristics, applications either see im-
+                                  3                                                                proved or unchanged performance with FGDRAM. Memory intensive
+                                                                                                   benchmarks that suffer from frequent row conflicts in QB-HBM and
+                                  2
+                                                                                                   access a few bytes per activated row (GUPS, nw, bfs, sp, kmeans and
+                                  1                                                                MiniAMR) are helped by FGDRAM’s i) increased concurrency that
+                                                                                                   allows more requests to be overlapped in time across different pseu-
+                                  0
+                                                            80 Graphics Applications               dobanks in a grain, and across the grains on a die, and ii) higher row
+                                                                                                   activate rates made possible by smaller activation granularity, i.e.,
+Figure 9: DRAM energy consumed by graphics applications                                            more activates in the same tFAW period. These two factors increase
+(gaming, rendering, and professional graphics) (lower is bet-                                      the performance of such irregular memory-intensive applications
+ter). Applications are sorted in descending order of energy                                        significantly — GUPS (3.4×), nw (2.1×), bfs (2.1×), sp (1.6×), kmeans
+consumption in the QB-HBM baseline system.                                                         (1.6×) and MiniAMR (1.5×).
+                                                                                                      On the other hand, memory-intensive applications with regular
+                                                                                                   access patterns (STREAM, streamcluster, LULESH) that utilized a
+energy by 48%. This key benefit of the FGDRAM architecture is effec-                               large fraction of the QB-HBM bandwidth, have very little change in
+tive across the board for all applications, but is most significant for                            performance when using the iso-bandwidth FGDRAM system as they
+those memory intensive applications where data movement energy                                     continue to enjoy high utilization of the same available bandwidth.
+dwarfs the activation energy due to high row locality (streamcluster,                              The small benefits observed in these applications with FGDRAM are
+mst, HPGMG, STREAM, LULESH). Previous work that focused solely                                     due to a secondary benefit of the highly partitioned FGDRAM ar-
+on activation energy reduction ([6, 9, 12, 32, 42, 45]) is ineffective                             chitecture that allows each grain to independently process reads
+at addressing this important energy bottleneck.                                                    and writes. This means that the write-to-read turnaround penalty
+   The I/O energies are the same for both QB-HBM and FGDRAM ar-                                    on a grain is overlapped by data transfer from other grains, lead-
+chitectures (as explained in Section 4). Using GRS technology for                                  ing to more effective utilization of the same aggregate bandwidth
+the I/O in FGDRAM and QB-HBM would slightly increase the I/O en-                                   compared to QB-HBM.
+ergy component from 0.43 pJ/bit to 0.54 pJ/bit, but would enable                                      In general, applications that are not memory intensive remain
+the benefits offered by GRS as outlined in Section 3.5.                                            unaffected by the change in memory technology. One exception is
+   Overall, on average, FGDRAM consumes only 1.95 pJ/bit, a 49%                                    MCB, which is heavily bank-limited in the QB-HBM baseline. FGDRAM
+improvement over QB-HBM which consumes 3.83 pJ/bit. Notably,                                       alleviates this bottleneck by using area-efficient pseudobanks, which
+FGDRAM is able to reduce the DRAM energy consumption of appli-                                     improves bank-level-parallelism, and hence performance, compared
+cations at both ends of the row locality spectrum by addressing                                    to the iso-bandwidth QB-HBM. Across the simulated CUDA work-
+all sources of energy consumption in a holistic manner. Conse-                                     loads, FGDRAM improves performance by 19% over an iso-bandwidth
+quently, both GUPS and STREAM are able to meet the energy target                                   future QB-HBM system.
+of 2 pJ/bit needed for future high-bandwidth systems.                                                 This outcome also shows that the increase in burst latency with
+   Figure 9 shows the per-access energy for graphics applications.                                 FGDRAM (16ns) over that of QB-HBM (2ns), and the consequent in-
+Graphics applications tend to have higher row-buffer locality than                                 crease in the empty-pipe memory access latency, has no impact
+compute applications, and thus lower energy in the QB-HBM baseline.                                on the performance of GPU applications. In theory, for a 1TB/s
+Overall, FGDRAM reduces the baseline QB-HBM DRAM energy by 35%,                                    memory system, we need an extra 109 128-byte full cache line re-
+primarily by reducing the data movement energy.                                                    quests to cover the additional bandwidth-delay product resulting
+                                                                                                   from the 14ns increase in the unloaded memory latency. This would
+5.2                                       Performance                                              mean an additional 2.8% more warps for a NVIDIA P100 machine
+Figure 10 demonstrates the performance of a GPU with FGDRAM nor-                                   that has 3840 warps already. In practice, however, by increasing
+malized to a baseline GPU with an iso-bandwidth QB-HBM system.
+MICRO-50, October 14–18, 2017, Cambridge, MA, USA                                                                        M. O’Connor et al.
+
+                           3.5
+  Normalized Performance
+
+                                   QB-HBM   FGDRAM                                      Memory Intensive Applications
+                             3
+                           2.5
+                             2
+                           1.5
+                             1
+                           0.5
+                             0
+
+
+
+
+Figure 10: Performance normalized to QB-HBM baseline (higher is better). Applications are divided into two groups based on
+their bandwidth utilization in the baseline QB-HBM system.
+
+                                                                                                                                  Activation
+parallelism through finer-grained channels that alleviates bank con-     FGDRAM
+                                                                                                                                  Data Movement
+tention, FGDRAM reduces the queuing delay encountered by memory         QB-HBM +                                                  I/O
+intensive applications in the QB-HBM architecture. This lowers the      SALP + SC
+average DRAM access latency by 40% across the simulated work-            QB-HBM
+loads. In fact, a GPU already spends several hundred nanoseconds
+to fetch a request from DRAM [3]. The minor increase in burst                       0           1            2                3               4
+                                                                                                    DRAM Energy (pJ/b)
+latency to achieve better bandwidth utilization is easily justifiable
+in a throughput architecture like a GPU where most of the memory
+                                                                        Figure 11: Average DRAM access energy per bit of baseline
+latency is from queuing delay rather than the unloaded DRAM
+                                                                        QB-HBM, enhanced QB-HBM+SALP+SC, and FGDRAM architectures.
+latency.
+   Graphics applications running on GPUs leverage tiled accesses
+to improve cache utilization and compression to reduce DRAM
+                                                                            FGDRAM overhead: The FGDRAM stack has the same band-
+bandwidth demand. As a result, most graphics applications are
+                                                                        width as QB-HBM and, thus, has an equal number of TSVs and GSAs.
+unable to fully utilize the bandwidth of the baseline QB-HBM system.
+                                                                        Like QB-HBM, FGDRAM has 3.20% more area than HBM2 due to the GSAs
+In fact, even applications like raytracing, which one could presume
+                                                                        alone. However, since the data wires from the pseudobanks only
+to have sparse, random access patterns owing to incoherent rays, are
+                                                                        have to be routed to local data TSVs, the routing is considerably
+heavily optimized to maximally utilize the on-die SRAM memory
+                                                                        simpler and thus the routing channel area overhead for data wires
+structures and produce sequential DRAM access streams that have
+                                                                        is almost negligible. A consequence of the reduced routing area
+high row-buffer locality [2]. Consequently, none of the graphics
+                                                                        is that the area for the additional control logic is not overlapped
+applications are activation rate limited and perform similarly on
+                                                                        with these wires and increases the die size by 3.41% relative to
+the two iso-bandwidth systems, with less than 1% different between
+                                                                        HBM2. The next set of overheads for FGDRAM comes from the pseu-
+QB-HBM and FGDRAM.
+                                                                        dobank organization. The overheads (3.47% over HBM2) are similar
+                                                                        to those required for subchannels [6], and are due to extra LWD
+5.3                        DRAM Area                                    stripes, address decoupling latches, and control routing from the
+To analyze the area overhead of the QB-HBM and FGDRAM stacks            grain periphery to the pseudobanks. Overall, the FGDRAM stack is
+relative to an HBM2 stack, we use the detailed area model outlined      10.36% larger than an HBM2 stack, and only 1.65% larger than the
+in Section 4.                                                           iso-bandwidth QB-HBM baseline.
+   QB-HBM overhead: The QB-HBM (and FGDRAM) I/Os are oper-                  The area overheads are derived with the assumption that the
+ated at 4× the datarate of the HBM2 I/Os, and as a result there is      I/O and TSV frequency can be scaled to provide higher per pin
+no additional TSV area overhead. Also, the total number of banks        bandwidth in QB-HBM and FGDRAM compared to HBM2. If TSV fre-
+on a die remains unchanged between QB-HBM and HBM2 (64), but            quency cannot be increased, then both the baseline QB-HBM and
+the banks are rearranged so that each QB-HBM channel has 4 banks.       FGDRAM would require 4× the number of TSVs to deliver the data
+To provide 4× the bandwidth of HBM2, 4× more banks have to be           from the banks to the I/O circuitry on the base die. Without any
+accessed in parallel in QB-HBM, which requires a proportional in-       improvements in TSV pitch, this would make a QB-HBM die 23.69%
+crease in GSA count and the wiring that connects the GSAs to the        larger than an HBM2 die, and our proposed FGDRAM die would be
+I/O buffers. These two factors increase the HBM2 area by 3.20% and      1.45% larger than QB-HBM.
+5.11% respectively. The additional control logic needed to manage
+the increased number of channels can be placed under the global         5.4    Comparison to Prior Work
+wires, and only a small (0.26%) area is needed for additional de-       Two significant drawbacks of the QB-HBM baseline system are the
+coding logic. Overall, the QB-HBM die is 8.57% larger than an HBM2      limited number of banks per channel (required to limit area over-
+die.                                                                    head) which restricts bank-level parallelism, and the relatively
+Fine-Grained DRAM                                                                     MICRO-50, October 14–18, 2017, Cambridge, MA, USA
+
+
+large 1 KB row-size. Two previous proposals, subarray-level par-        This technique educes the data movement within a vault since
+allelism (SALP) [26], and subchannels (SC) [6] can address these        the data traveling from the far banks must only move through a
+shortcomings. We modify a bank in QB-HBM to allow access to all         few short TSVs. Overall, however, there is little savings since the
+row buffers belonging to the 32 constituent subarrays. Note that        data from a vault must travel through several buffers in the vault
+adjacent subarrays share a sense-amplifier stripe which limits par-     controller on the base layer and is then routed through a network on
+allelism somewhat. We also vertically segment the row and bank          the base-layer to the appropriate I/O interface, finally traversing the
+datapath into subchannels, so that the minimum activation gran-         serial channel on the PCB to the processor. These overheads make
+ularity is 256 Bytes. This configuration, QB-HBM+SALP+SC, thus in-      the HMC solution (10pJ/b [33]) less energy-efficient than FGDRAM.
+corporates the best of prior proposals with the most feasible future    More importantly, scaling the bandwidth of HMC beyond its current
+scaling of the HBM architecture. The QB-HBM+SALP+SC approach            capability will require addressing the same set of challenges as faced
+has the area overheads of both QB-HBM (4× data wires and GSAs),         by HBM today. The FGDRAM architecture provides a roadmap for
+as well as the overhead for maintaining access to each subchannel       bandwidth scaling that can thus benefit the HMC as well.
+and subarray in a bank. Consequently, QB-HBM+SALP+SC is 3.2%
+larger than the QB-HBM baseline and 1.54% larger than our FGDRAM        7     CONCLUSION
+proposal.
+                                                                        Future GPUs and throughput CPUs that demand multiple TB/s of
+   Through our simulations, we found that the overlapping of ac-
+                                                                        bandwidth require higher bandwidth and more energy efficient
+tivation and precharges to different subarrays from SALP and the
+                                                                        DRAMs. Our proposed FGDRAM architecture addresses bandwidth
+increased activation rate possible from the smaller rows due to sub-
+                                                                        scalability in a performant and area efficient manner by unlocking
+channels improves the performance of the baseline QB-HBM system
+                                                                        the internal bandwidth of each bank in the stack. At the same time,
+to nearly identical levels as FGDRAM for all benchmarks. A few bench-
+                                                                        we address the most significant sources of DRAM energy consump-
+marks, like streamcluster, have slightly improved performance over
+                                                                        tion: data movement energy and activation energy. Partitioning
+FGDRAM due to the slightly higher available bank-level parallelism
+                                                                        the DRAM into independent grains, each with adjacent local I/O,
+from SALP. Overall, QB-HBM+SALP+SC has 1.3% better performance
+                                                                        significantly reduces data movement energy within the DRAM die.
+than FGDRAM. However, the energy efficiency of QB-HBM+SALP+SC
+                                                                        Furthermore, we leverage an area-efficient technique to reduce
+is worse than that of FGDRAM. As shown in Figure 11, it fails to
+                                                                        the DRAM row size, saving activation energy. Synergistically, this
+meet the the desired energy target of 2 pJ/b necessary to enable
+                                                                        technique also allows us to provide a mechanism to overlap acti-
+a 4 TB/s memory system. The subchannel technique reduces the
+                                                                        vations and accesses within a grain inside a single DRAM bank.
+minimum activation granularity of QB-HBM+SALP+SC to 256 bytes,
+                                                                        Overall, we reduce DRAM energy to 1.97 pJ/bit, a 49% improve-
+and SALP additionally reduces the row conflict rate by keeping
+                                                                        ment over an improved 4× bandwidth HBM2 variant. We show that
+multiple rows open in a bank simultaneously. These mechanisms
+                                                                        the increase in concurrency within FGDRAM devices can improve
+lead to 74% lower activation energy than QB-HBM (compared to 65%
+                                                                        performance relative to an iso-bandwidth QB-HBM system, partic-
+reduction with FGDRAM). Without any reduction in data movement
+                                                                        ularly for activate-rate limited workloads. Overall, the proposed
+energy, however, QB-HBM+SALP+SC is only able to improve energy
+                                                                        FGDRAM architecture provides a solution for the energy-efficient,
+by 23% over QB-HBM. This result falls well short of the 49% savings
+                                                                        high-bandwidth DRAM required for exascale systems and a range
+provided by FGDRAM. The benefits of SALP are orthogonal to FGDRAM,
+                                                                        of other applications.
+and could be applied to our proposed architecture as well if the
+incremental benefits warranted the additional area and complexity.
+To our knowledge, no prior work has focused on reducing the data        REFERENCES
+                                                                         [1] M. F. Adams, J. Brown, J. Shalf, B. V. Straalen, E. Strohmaier, and S. Williams.
+movement energy in DRAM devices.                                             2014. HPGMG 1.0: A Benchmark for Ranking High Performance Computing Systems.
+                                                                             Technical Report. Lawrence Berkley National Laboratory. LBNL-6630E.
+                                                                         [2] T. Aila and T. Karras. 2010. Architecture Considerations for Tracing Incoherent
+6   RELATED WORK                                                             Rays. In Proceedings of High Performance Graphics.
+                                                                         [3] M. Andersch, J. Lucas, M. Alvarez-Mesa, and B. Juurlink. 2015. On Latency in GPU
+Previous work on DRAM energy reduction [9, 12, 28, 38, 42, 45],              Throughput Microarchitectures. In Proceedings of the International Symposium
+focused solely on reducing activation energy. Since, on average,             on Performance Analysis of Systems and Software (ISPASS). 169–170.
+more than 50% of the average DRAM access energy is attributable          [4] M. Burtscher, R. Nasre, and K. Pingali. 2012. A Quantitative Study of Irregular
+                                                                             Programs on GPUs. In Proceedings of the International Symposium on Workload
+to on-die data movement, these techniques achieve a small fraction           Characterization (IISWC). 141–151.
+of the energy-efficiency of FGDRAM. The FGDRAM architecture readily      [5] S. Cha, S. O, H. Shin, S. Hwang, K. Park, S. J. Jang, J. S. Choi, G. Y. Jin, Y. H. Son,
+                                                                             H. Cho, J. H. Ahn, and N. S. Kim. 2017. Defect Analysis and Cost-Effective Re-
+lends itself to reducing the row-size by allocating lower-bandwidth          silience Architecture for Future DRAM Devices. In Proceedings of the International
+I/Os to individual banks, which allows using the recently proposed           Symposium on High-Performance Computer Architecture (HPCA).
+area-efficient subchannels technique [6] to complement FGDRAM’s          [6] N. Chatterjee, M. O’Connor, D. Lee, D. R. Johnson, S. W. Keckler, M. Rhu, and
+                                                                             W. J. Dally. 2017. Architecting an Energy-Efficient DRAM System For GPUs.
+low data movement energy.                                                    In Proceedings of the International Symposium on High-Performance Computer
+   Some DRAMs do have somewhat reduced data movement energy.                 Architecture (HPCA).
+The LPDDR4 die architecture [22], where the I/O pads for the two         [7] N. Chatterjee, M. O’Connor, G. H. Loh, N. Jayasena, and R. Balasubramonian.
+                                                                             2014. Managing DRAM Latency Divergence in Irregular GPGPU Applications.
+channels on the die are placed at opposite edges sees some reduction         In Proceedings of the International Conference on High Performance Computing,
+in data movement energy as a side-effect of the split interface. The         Networking, Storage and Analysis (SC).
+                                                                         [8] S. Che, M. Boyer, J. Meng, D. Tarjan, J.W. Sheaffer, S-.H. Lee, and K. Skadron. 2009.
+Hybrid Memory Cube (HMC) [17] splits the DRAM die into several               Rodinia: A Benchmark Suite for Heterogeneous Computing. In Proceedings of the
+vaults with the banks stack above each other within the die stack.           International Symposium on Workload Characterization (IISWC). 44–54.
+MICRO-50, October 14–18, 2017, Cambridge, MA, USA                                                                                                               M. O’Connor et al.
+
+
+ [9] E. Cooper-Balis and B. Jacob. 2010. Fine-Grained Activation for Power Reduction                  Networking, Storage and Analysis (SC).
+     in DRAM. IEEE Micro 30, 3 (May/June 2010), 34–47.                                           [39] M. R. Stan and W. P. Burleson. 1995. Bus-Invert Coding for Low-Power I/O.
+[10] Coral 2014. CORAL Benchmarks. https://asc.llnl.gov/CORAL-benchmarks/.                            IEEE Transactions on Very Large Scale Integraion (VLSI) Systems 3, 1 (March 1995),
+     (2014).                                                                                          49–58.
+[11] J. Dongarra and P. Luszczek. 2005. Introduction to the HPCChallenege Benchmark              [40] C. Szegedy, W. Liu, Y. Jia, P. Sermanet, S. Reed, D. Anguelov, D. Erha, V. Vanhoucke,
+     Suite. ICL Technical Report ICL-UT-05-01. (2005).                                                and A. Rabinovich. 2015. Going Deeper With Convolutions. In Proceedings of the
+[12] H. Ha, A. Pedram, S. Richardson, S. Kvatinsky, and M. Horowitz. 2016. Improving                  Conference on Computer Vision and Pattern Recognition (CVPR).
+     Energy Efficiency of DRAM by Exploiting Half Page Row Access. In Proceedings                [41] K. Tran and J. Ahn. 2014. HBM: Memory Solution for High Performance Proces-
+     of the International Symposium on Microarchitecture (MICRO).                                     sors. In Proceedings of MemCon.
+[13] Q. Harvard and R. J. Baker. 2011. A Scalable I/O Architecture for Wide I/O DRAM.            [42] A. N. Udipi, N. Muralimanohar, N. Chatterjee, R. Balasubramonian, A. Davis,
+     In Proceedings of the International Midwest Symposium on Circuits and Systems                    and N. Jouppi. 2010. Rethinking DRAM Design and Organization for Energy-
+     (MWSCAS).                                                                                        Constrained Multi-Cores. In Proceedings of the International Symposium on Com-
+[14] M. A Heroux, D. W. Doerfler, Paul S. Crozier, J. M. Wilenbring, H. C. Edwards,                   puter Architecture (ISCA). 175–186.
+     A. Williams, M. Rajan, E. R. Keiter, H. K. Thornquist, and R. W. Numrich. 2009.             [43] O. Villa, D. R. Johnson, M. O’Connor, E. Bolotin, D. Nellans, J. Luitjens, N.
+     Improving Performance via Mini-applications. Sandia Report SAND2008-5574.                        Sakharnykh, P. Wang, P. Micikevicius, A. Scudiero, S. W. Keckler, and W. J.
+     (2009).                                                                                          Dally. 2014. Scaling the Power Wall: A Path to Exascale. In Proceedings of the
+[15] Intel. 2016. An Intro to MCDRAM (High Bandwidth Memory) on Knights                               International Conference on High Performance Computing, Networking, Storage
+     Landing.       (2016).        https://software.intel.com/en-us/blogs/2016/01/20/                 and Analysis (SC).
+     an-intro-to-mcdram-high-bandwidth-memory-on-knights-landing.                                [44] T. Vogelsang. 2010. Understanding the Energy Consumption of Dynamic Random
+[16] D. James. 2010. Recent Advances in DRAM Manufacturing. In Proceedings of the                     Access Memories. In Proceedings of the International Symposium on Microarchi-
+     SEMI Advanced Semiconductor Manufacturing Conference. 264–269.                                   tecture (MICRO). 363–374.
+[17] J. Jeddeloh and B. Keeth. 2012. Hybrid Memory Cube – New DRAM Architecture                  [45] T. Zhang, K. Chen, C. Xu, G. Sun, T. Wang, and Y. Xie. 2014. Half-DRAM: a
+     Increases Density and Performance. In Symposium on VLSI Technology.                              High-bandwdith and Low-power DRAM System from the Rethinking of Fine-
+[18] JEDEC. 2009. JEDEC Standard JESD212: GDDR5 SGRAM. JEDEC Solid State                              grained Activation. In Proceedings of the International Symposium on Computer
+     Technology Association, Virginia, USA.                                                           Architecture (ISCA). 349–360.
+[19] JEDEC. 2012. JESD79-4: JEDEC Standard DDR4 SDRAM. JEDEC Solid State
+     Technology Association, Virginia, USA.
+[20] JEDEC. 2013. JEDEC Standard JESD235: High Bandwidth Memory (HBM) DRAM.
+     JEDEC Solid State Technology Association, Virginia, USA.
+[21] JEDEC. 2014. GDDR3 Specific SGRAM Functions in JEDEC Standard JESD21-C:
+     JEDEC Configurations for Solid State Memories. JEDEC Solid State Technology
+     Association, Virginia, USA.
+[22] JEDEC. 2014. JESD209-4: Low Power Double Data Rate 4 (LPDDR4). JEDEC Solid
+     State Technology Association, Virginia, USA.
+[23] JEDEC. 2015. JEDEC Standard JESD235A: High Bandwidth Memory (HBM) DRAM.
+     JEDEC Solid State Technology Association, Virginia, USA.
+[24] JEDEC. 2016. JEDEC Standard JESD232A: Graphics Double Data Rate (GDDR5X)
+     SGRAM Standard. JEDEC Solid State Technology Association, Virginia, USA.
+[25] B. Keeth, R. J. Baker, B. Johnson, and F. Lin. 2008. DRAM Circuit Design - Funda-
+     mental and High-Speed Topics. IEEE Press.
+[26] Y. Kim, V. Seshadri, D. Lee, J. Liu, and O. Mutlu. 2012. A Case for Exploiting
+     Subarray-Level Parallelism (SALP) in DRAM. In Proceedings of the International
+     Symposium on Computer Architecture (ISCA). 368–379.
+[27] S. Layton, N. Sakharnykh, and K. Clark. 2015. GPU Implementation of HPGMG-
+     FV. In HPGMG BoF, Supercomputing.
+[28] Y. Lee, H. Kim, S. Hong, S. Hong, and S. Kim. 2017. Partial Row Activation for
+     Low-Power DRAM System. In Proceedings of the International Symposium on
+     High-Performance Computer Architecture (HPCA).
+[29] J. Mohd-Yusof and N. Sakharnykh. 2014. Optimizing CoMD: A Molecular Dy-
+     namics Proxy Application Study. In GPU Technology Conference (GTC).
+[30] NVIDIA. 2016. NVIDIA Tesla P100 Whitepaper. (2016). https://images.nvidia.
+     com/content/pdf/tesla/whitepaper/pascal-architecture-whitepaper.pdf.
+[31] NVIDIA 2017. NVIDIA GeForce GTX 1080: Gaming Perfected. (2017).
+     http://international.download.nvidia.com/geforce-com/international/pdfs/
+     GeForce_GTX_1080_Whitepaper_FINAL.pdf.
+[32] S. O, Y. H. Son, N. S. Kim, and J. H. Ahn. 2014. Row-Buffer Decoupling: A Case
+     for Low-Latency DRAM Microarchitecture. In Proceedings of the International
+     Symposium on Computer Architecture (ISCA). 337–348.
+[33] T. Pawlowski. 2011. Hybrid Memory Cube (HMC). In HotChips 23.
+[34] J. Poulton, W. Dally, X. Chen, J. Eyles, T. Greer, S. Tell, J. Wilson, and T. Gray. 2013.
+     A 0.54pJ/b 20Gb/s Ground-Referenced Single-Ended Short-Reach Serial Link in
+     28nm CMOS for Advanced Packaging Applications. IEEE Journal of Solid-State
+     Circuits 48, 12 (December 2013), 3206–3218.
+[35] M. Rhu, M. Sullivan, J. Leng, and M. Erez. 2013. A Locality-Aware Memory Hier-
+     archy for Energy-Efficient GPU Architectures. In Proceedings of the International
+     Symposium on Microarchitecture (MICRO). 86–98.
+[36] T. Schloesser, F. Jakubowski, J. v. Kluge, A. Graham, S. Selsazeck, M. Popp, P.
+     Baars, K. Muemmler, P. Moll, K. Wilson, A. Buerke, D. Koehler, J. Radecker, E.
+     Erben, U. Zimmerman, T. vorrath, B. Fischer, G. Aichmayr, R. Agaiby, W. Pamler,
+     and T. Scheuster. 2008. A 6f2 Buried Wordline DRAM Cell for 40nm and Beyond.
+     In Proceedings of the International Electron Devices Meeting (IEDM). 1–4.
+[37] R. Schmitt, J.-H. Kim, W. Kim, D. Oh, J. Feng, C. Yuan, L. Luo, and J. Wilson. 2008.
+     Analyzing the Impact of Simultaneous Switching Noise on System Margin in
+     Gigabit Single-Ended Memory Systems. In DesignCon.
+[38] Y. H. Son, S. O, H. Yang, D. Jung, J. H. Ahn, J. Kim, J. Kim, and J. W. Lee. 2014. Mi-
+     crobank: Architecting Through-Silicon Interposer-Based Main Memory Systems.
+     In Proceedings of the International Conference on High Performance Computing,
+

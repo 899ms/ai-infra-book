@@ -76,18 +76,18 @@ save(f,'figure-11-3-lifecycle');data['11-3']={'kind':'teaching','focus':'prepara
 
 # Resource before/after diagram.
 f,a=canvas(6)
-a.text(.5,.92,'新作业：4 张 A 型 GPU + 16 核 CPU，同一节点',ha='center',fontsize=16,weight='bold')
+a.text(.5,.92,'新作业：4 张 H100 + 16 核 CPU，同一节点',ha='center',fontsize=16,weight='bold')
 for x,title in [(.04,'整理前'),(.55,'整理后')]:
  a.text(x+.19,.79,title,ha='center',fontsize=14,weight='bold')
  if x<.5:
-  box(a,x,.48,.37,.22,'节点 1：4 张 A 型 GPU','仅 8 核可用 → 无法启动','sand')
-  box(a,x,.15,.37,.22,'节点 2：4 张 B 型 GPU','32 核可用 → 卡型不符','pale')
+  box(a,x,.48,.37,.22,'节点 1 DGX H100：4 张 H100 空闲','仅 8 核可用 → 无法启动','sand')
+  box(a,x,.15,.37,.22,'节点 2 DGX A100：4 张 A100 空闲','32 核可用 → 卡型不符','pale')
  else:
-  box(a,x,.48,.37,.22,'节点 1：4 张 A 型 GPU','16 核可用 → 整组启动','green')
-  box(a,x,.15,.37,.22,'节点 2：4 张 B 型 GPU','24 核可用 + 接收迁移任务','pale')
+  box(a,x,.48,.37,.22,'节点 1 DGX H100：4 张 H100 空闲','16 核可用 → 整组启动','green')
+  box(a,x,.15,.37,.22,'节点 2 DGX A100：4 张 A100 空闲','24 核可用 + 接收迁移任务','pale')
 arrow(a,(.43,.57),(.53,.57));a.text(.48,.39,'迁移\n8 核任务',ha='center',fontsize=11)
 a.text(.5,.055,'状态传输与恢复 4 s；等待释放 12 s；新作业本地执行 20 s',ha='center',fontsize=12,color=C['muted'])
-save(f,'figure-11-4-placement');data['11-4']={'kind':'teaching','required_gpu_type':'A','required_gpus':4,'required_cpu':16,'before_free_cpu':[8,32],'after_free_cpu':[16,24]}
+save(f,'figure-11-4-placement');data['11-4']={'kind':'named_nodes','required_gpu_type':'H100 SXM','required_gpus':4,'required_cpu':16,'nodes':[{'system':'DGX H100','gpu':'H100 SXM','host_cores':112,'free_gpus':4},{'system':'DGX A100','gpu':'A100','host_cores':128,'free_gpus':4}],'before_free_cpu':[8,32],'after_free_cpu':[16,24],'sources':['references/text/dgx-superpod-h100-ra.txt','references/text/nvidia-a100.txt']}
 # Same verification work, different submission times.
 f,a=plt.subplots(figsize=(11,4.8));f.subplots_adjust(left=.17,right=.96,top=.93,bottom=.18);cols=[C['blue'],C['teal'],C['orange']]
 for y,starts in [(1.3,[0,10,20]),(.3,[20,30,40])]:
@@ -95,7 +95,7 @@ for y,starts in [(1.3,[0,10,20]),(.3,[20,30,40])]:
   a.broken_barh([(start,10)],(y,.5),facecolors=cols[k]);a.text(start+5,y+.25,f'样本 {k+1}',ha='center',va='center',color='white',fontsize=12)
 for k,t in enumerate([0,10,20]):a.annotate(f'样本 {k+1} 到达',(t,2.05),(t,2.55),arrowprops={'arrowstyle':'-|>','color':C['muted']},ha='center',fontsize=11)
 a.set(yticks=[.55,1.55],yticklabels=['整批后提交','逐条提交'],xlim=(-1,51),ylim=(0,2.9),xticks=[0,10,20,30,40,50],xlabel='时间 / s');a.spines['left'].set_visible(False);a.tick_params(axis='y',length=0);a.grid(axis='x',alpha=.18)
-save(f,'figure-11-5-stages');data['11-5']={'kind':'teaching','focus':'submission time versus batch completion','weight_bytes':30_000_000_000,'receivers':6,'sender_bits_per_second':200_000_000_000,'receiver_bits_per_second':50_000_000_000,'all_transfer_lower_seconds':7.2,'verification_arrivals':[0,10,20],'worker_service_seconds':10,'stream_completion_seconds':30,'batch_completion_seconds':50}
+save(f,'figure-11-5-stages');data['11-5']={'kind':'teaching','focus':'submission time versus batch completion','model':'Qwen3-8B BF16','weight_bytes':16_381_470_720,'receivers':6,'sender_bits_per_second':200_000_000_000,'receiver_bits_per_second':50_000_000_000,'all_transfer_lower_seconds':6*16_381_470_720*8/200e9,'single_transfer_lower_seconds':16_381_470_720*8/50e9,'verification_arrivals':[0,10,20],'worker_service_seconds':10,'stream_completion_seconds':30,'batch_completion_seconds':50}
 
 # Model service pathways.
 f,a=canvas(6)
@@ -113,12 +113,12 @@ save(f,'figure-11-6-service');data['11-6']={'kind':'mechanism','usage_categories
 A,B=route['routing_cost_rows'];h=np.linspace(0,1,201);qB=float(Fraction(B['expected_quality_successes_exact'])/route['scenario']['tasks']);hit=float(Fraction(B['hit_attempt_cost_exact']));miss=float(Fraction(B['miss_attempt_cost_exact']));ca=float(Fraction(A['cost_per_quality_success_exact']));cb=(h*hit+(1-h)*miss)/qB
 cross=float(Fraction(route['summary']['cost_crossover_b_hit_fraction_exact']));target=float(Fraction(route['summary']['minimum_b_hit_for_joint_target_exact']))
 f,a=plt.subplots(figsize=(10.5,5.3));f.subplots_adjust(left=.12,right=.96,bottom=.18,top=.92)
-a.plot(h*100,cb,color=C['blue'],label='B：命中率变化',lw=2.3);a.axhline(ca,color=C['orange'],label='A：前缀全命中，10 s 超过期限',lw=2)
+a.plot(h*100,cb,color=C['blue'],label='B Sonnet 5：命中率变化',lw=2.3);a.axhline(ca,color=C['orange'],label='A Haiku 4.5：前缀全命中，10 s 超过期限',lw=2)
 a.axvline(cross*100,color=C['muted'],ls='--',lw=1);a.axvline(target*100,color=C['teal'],ls='--',lw=1)
 a.axvspan(target*100,100,color=C['green'],alpha=.9,zorder=0)
-a.annotate('成本相同：约 84.9%',(cross*100,ca),(37,.031),arrowprops={'arrowstyle':'->','color':C['muted']},fontsize=12)
-a.annotate('B 达到按时通过率要求：约 91.8%',(target*100,.007),(12,.006),arrowprops={'arrowstyle':'->','color':C['teal']},fontsize=12)
-a.set(xlabel='B 请求命中率 / %',ylabel='成本单位 / 通过测试的任务',xlim=(0,100),ylim=(0,.046));a.legend(frameon=False,fontsize=11,loc='upper right');a.grid(alpha=.15)
+a.annotate(f'成本相同：约 {cross*100:.1f}%',(cross*100,ca),(37,.031),arrowprops={'arrowstyle':'->','color':C['muted']},fontsize=12)
+a.annotate(f'B 达到按时通过率要求：约 {target*100:.1f}%',(target*100,.007),(12,.006),arrowprops={'arrowstyle':'->','color':C['teal']},fontsize=12)
+a.set(xlabel='B 请求命中率 / %',ylabel='美元 / 通过测试的任务',xlim=(0,100),ylim=(0,.046));a.legend(frameon=False,fontsize=11,loc='upper right');a.grid(alpha=.15)
 save(f,'figure-11-7-routing');data['11-7']={'kind':'teaching_from_locked_calculation','source':'calculations/results/routing-cost-book.json','focus':'cost comparison constrained by deadline','h':h.tolist(),'cost_A':ca,'cost_B':cb.tolist(),'cost_crossover':cross,'joint_target_hit':target}
 
 # Recovery improves completion fraction at an additional cost.

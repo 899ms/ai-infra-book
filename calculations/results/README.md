@@ -521,12 +521,12 @@ V4非routed FP8 Linear：官方tile与scale复算。
 
 | 场景 | 费用交点 | B费用更低 | B满足联合90%目标 |
 | --- | --- | --- | --- |
-| [routing-cost-book](routing-cost-book.md) | 1291/1520 | True | True |
-| [routing-cost-half](routing-cost-half.md) | 1291/1520 | False | False |
-| [routing-cost-crossover](routing-cost-crossover.md) | 1291/1520 | False | False |
-| [routing-cost-joint-target](routing-cost-joint-target.md) | 1291/1520 | True | True |
-| [routing-cost-long-deadline](routing-cost-long-deadline.md) | 1291/1520 | False | True |
-| [routing-cost-impossible-deadline](routing-cost-impossible-deadline.md) | 1291/1520 | True | False |
+| [routing-cost-book](routing-cost-book.md) | 10879/13680 | True | True |
+| [routing-cost-half](routing-cost-half.md) | 10879/13680 | False | False |
+| [routing-cost-crossover](routing-cost-crossover.md) | 10879/13680 | False | False |
+| [routing-cost-joint-target](routing-cost-joint-target.md) | 10879/13680 | True | True |
+| [routing-cost-long-deadline](routing-cost-long-deadline.md) | 10879/13680 | False | True |
+| [routing-cost-impossible-deadline](routing-cost-impossible-deadline.md) | 10879/13680 | True | False |
 
 权重交接：完整参数、EP所有权、单播出口及分阶段容量。
 
@@ -575,11 +575,11 @@ Routing Replay元数据：官方专家几何、ID编码与显式身份字段预�
 
 | 场景 | task矩阵 FLOPs | 持久状态 bytes | 可用训练秒 | 缺少可选峰值的型号 |
 | --- | ---: | ---: | ---: | --- |
-| [training-deadline-book](training-deadline-book.md) | 5265722561667444768768 | 131051765760 | 2592000 | ['a800-40gb-active', 'h20-sxm5-96gb', 'h20-sxm5-141gb'] |
-| [training-deadline-long-sequence](training-deadline-long-sequence.md) | 7440049621676781993984 | 131051765760 | 2592000 | ['a800-40gb-active', 'h20-sxm5-96gb', 'h20-sxm5-141gb'] |
-| [training-deadline-qwen235](training-deadline-qwen235.md) | 16725983173863322681344 | 3761498152960 | 2592000 | ['a800-40gb-active', 'h20-sxm5-96gb', 'h20-sxm5-141gb'] |
-| [training-deadline-calendar](training-deadline-calendar.md) | 5265722561667444768768 | 131051765760 | 2160000 | ['a800-40gb-active', 'h20-sxm5-96gb', 'h20-sxm5-141gb'] |
-| [training-deadline-capacity](training-deadline-capacity.md) | 52657212971947130880 | 147433236480 | 2592000 | ['a800-40gb-active', 'h20-sxm5-96gb', 'h20-sxm5-141gb'] |
+| [training-deadline-book](training-deadline-book.md) | 5265722561667444768768 | 131051765760 | 2592000 | ['a800-40gb-active', 'h20-sxm5-141gb'] |
+| [training-deadline-long-sequence](training-deadline-long-sequence.md) | 7440049621676781993984 | 131051765760 | 2592000 | ['a800-40gb-active', 'h20-sxm5-141gb'] |
+| [training-deadline-qwen235](training-deadline-qwen235.md) | 16725983173863322681344 | 3761498152960 | 2592000 | ['a800-40gb-active', 'h20-sxm5-141gb'] |
+| [training-deadline-calendar](training-deadline-calendar.md) | 5265722561667444768768 | 131051765760 | 2160000 | ['a800-40gb-active', 'h20-sxm5-141gb'] |
+| [training-deadline-capacity](training-deadline-capacity.md) | 52657212971947130880 | 147433236480 | 2592000 | ['a800-40gb-active', 'h20-sxm5-141gb'] |
 
 实际DCP重分片恢复：完整逻辑载荷、容器与下一步更新分列。
 
@@ -728,25 +728,31 @@ Grouped专家矩阵：独立tile补齐与每rank工作，不是实测kernel时�
 
 | 场景 | 不同专家 | token—专家任务 | 权重bytes | 激活往返bytes | CPU ns | 搬权重GPU ns |
 | --- | ---: | ---: | ---: | ---: | --- | --- |
-| [expert-locality-book](expert-locality-book.md) | 96 | 768 | 3623878656 | 12582912 | 489567744/25 | 18632378112/125 |
-| [expert-locality-single](expert-locality-single.md) | 8 | 8 | 301989888 | 131072 | 39879808/25 | 1552698176/125 |
-| [expert-locality-prefill](expert-locality-prefill.md) | 96 | 12288 | 3623878656 | 201326592 | 30117662208/125 | 468980346624/3125 |
+| [expert-locality-book](expert-locality-book.md) | 96 | 768 | 3623878656 | 12582912 | 4932260352/275 | 1166997048576/7775 |
+| [expert-locality-single](expert-locality-single.md) | 8 | 8 | 301989888 | 131072 | 400929152/275 | 97249754048/7775 |
+| [expert-locality-prefill](expert-locality-prefill.md) | 96 | 12288 | 3623878656 | 201326592 | 6667777536/25 | 1166997048576/7775 |
 | [expert-locality-hot](expert-locality-hot.md) | 0 | 0 | 0 | 0 | 0 | 0 |
-| [expert-locality-long](expert-locality-long.md) | 96 | 49152 | 3623878656 | 805306368 | 120110648832/125 | 512466890496/3125 |
-| [expert-locality-boundary78](expert-locality-boundary78.md) | 8 | 624 | 301989888 | 10223616 | 1533318784/125 | 1552698176/125 |
-| [expert-locality-boundary79](expert-locality-boundary79.md) | 8 | 632 | 301989888 | 10354688 | 1552848512/125 | 1552698176/125 |
-| [expert-locality-fast-cpu](expert-locality-fast-cpu.md) | 96 | 768 | 3623878656 | 12582912 | 489567744/25 | 18632378112/125 |
+| [expert-locality-long](expert-locality-long.md) | 96 | 49152 | 3623878656 | 805306368 | 26599110144/25 | 255659465472/1625 |
+| [expert-locality-avx512](expert-locality-avx512.md) | 8 | 8 | 301989888 | 131072 | 400929152/275 | 97249754048/7775 |
+| [expert-locality-avx512-128](expert-locality-avx512-128.md) | 8 | 1024 | 301989888 | 16777216 | 555648128/25 | 97249754048/7775 |
+| [expert-locality-amx](expert-locality-amx.md) | 8 | 8 | 301989888 | 131072 | 400929152/275 | 97249754048/7775 |
+| [expert-locality-amx-128](expert-locality-amx-128.md) | 8 | 1024 | 301989888 | 16777216 | 4554407808/1775 | 97249754048/7775 |
 
 PD整数配比：有效阶段token/s转为同一请求单位，非设备峰值或SLO。
 
 | 场景 | P新token | D调用 | 最佳PD请求/s | 共置请求/s | KV交接bytes/请求 |
 | --- | ---: | ---: | --- | --- | ---: |
-| [pd-pool-book](pd-pool-book.md) | 8192 | 128 | 8 | 16/5 | 1207959552 |
-| [pd-pool-homogeneous](pd-pool-homogeneous.md) | 8192 | 128 | 4 | 4 | 1207959552 |
-| [pd-pool-network](pd-pool-network.md) | 8192 | 128 | 1 | 16/5 | 1207959552 |
-| [pd-pool-prefix](pd-pool-prefix.md) | 2048 | 128 | 9 | 100/17 | 1207959552 |
-| [pd-pool-first-output](pd-pool-first-output.md) | 8192 | 0 | 10 | 10 | 0 |
-| [pd-pool-long-output](pd-pool-long-output.md) | 8192 | 1024 | 19/16 | 10/11 | 1207959552 |
+| [pd-pool-book](pd-pool-book.md) | 8192 | 1024 | 125000000/27447469 | 23814473165145361328125/7894003424232391199952 | 1207959552 |
+| [pd-pool-homogeneous](pd-pool-homogeneous.md) | 8192 | 1024 | 19912109375/7026552064 | 776572265625/254401730888 | 1207959552 |
+| [pd-pool-all-h20](pd-pool-all-h20.md) | 8192 | 1024 | 1806640625/652316032 | 46250000000/15514838277 | 1207959552 |
+| [pd-pool-network](pd-pool-network.md) | 8192 | 1024 | 1 | 23814473165145361328125/7894003424232391199952 | 1207959552 |
+| [pd-pool-prefix](pd-pool-prefix.md) | 2048 | 1024 | 19982421875/3513276032 | 256487948263131103515625/52380045623862003966864 | 1207959552 |
+| [pd-pool-first-output](pd-pool-first-output.md) | 8192 | 0 | 1123046875/163079008 | 1123046875/163079008 | 0 |
+| [pd-pool-short-output](pd-pool-short-output.md) | 8192 | 128 | 4130859375/652316032 | 107017375648195361328125/18336603070164270072616 | 1207959552 |
+| [pd-pool-mla](pd-pool-mla.md) | 8192 | 1024 | 125000000/27447469 | 23814473165145361328125/7894003424232391199952 | 575668224 |
+| [pd-pool-mla-50gbps](pd-pool-mla-50gbps.md) | 8192 | 1024 | 125000000/27447469 | 23814473165145361328125/7894003424232391199952 | 575668224 |
+| [pd-pool-50gbps](pd-pool-50gbps.md) | 8192 | 1024 | 125000000/27447469 | 23814473165145361328125/7894003424232391199952 | 1207959552 |
+| [pd-pool-4k-output](pd-pool-4k-output.md) | 8192 | 4096 | 19982421875/15865043456 | 16381836027532861328125/14290259391494986733328 | 1207959552 |
 
 PD／AF串行交接：载荷、方向次数与双端staging分列，不含计算和排队。
 
@@ -757,6 +763,11 @@ PD／AF串行交接：载荷、方向次数与双端staging分列，不含计算
 | [pd-af-handoff-high-startup](pd-af-handoff-high-startup.md) | 1073741824 | 524288 | 64 | 1098741824/25 | 1600524288/25 |
 | [pd-af-handoff-qwen8](pd-af-handoff-qwen8.md) | 1207959552 | 589824 | 72 | 1208084552/25 | 9589824/25 |
 | [pd-af-handoff-qwen235](pd-af-handoff-qwen235.md) | 6308233216 | 788529152 | 24064 | 6308358216/25 | 3796529152/25 |
+| [pd-af-handoff-qwen8-mla](pd-af-handoff-qwen8-mla.md) | 575668224 | 589824 | 72 | 575793224/25 | 9589824/25 |
+| [pd-af-handoff-qwen8-50gbps](pd-af-handoff-qwen8-50gbps.md) | 1207959552 | 589824 | 72 | 604104776/25 | 9294912/25 |
+| [pd-af-handoff-qwen8-mla-50gbps](pd-af-handoff-qwen8-mla-50gbps.md) | 575668224 | 589824 | 72 | 287959112/25 | 9294912/25 |
+| [pd-af-handoff-qwen8-1024](pd-af-handoff-qwen8-1024.md) | 1207959552 | 603979776 | 73728 | 1208084552/25 | 9819979776/25 |
+| [pd-af-handoff-qwen8-mla-1024](pd-af-handoff-qwen8-mla-1024.md) | 575668224 | 603979776 | 73728 | 575793224/25 | 9819979776/25 |
 
 实际KV池与自然检索质量：八任务重复执行，Q精度控制分列。
 
@@ -829,6 +840,7 @@ Dense batch权重复用与KV交叉点：BF16/FP32 dense峰值。
 | [batch-reuse-4090-2k](batch-reuse-4090-2k.md) | 25 | 51 | None |
 | [batch-reuse-4090-8k](batch-reuse-4090-8k.md) | 6 | 13 | None |
 | [batch-reuse-no-history](batch-reuse-no-history.md) | 431440 | None | 297 |
+| [batch-reuse-rtxpro6000-mix](batch-reuse-rtxpro6000-mix.md) | 196 | 38 | None |
 
 固定512-token块的真实区间与官方工作。
 
@@ -987,20 +999,20 @@ KV分页与分支：逻辑、唯一有效和分配字节分别计量。
 
 | 场景 | 峰值积压 bytes | 丢弃 bytes | 窗口结束积压 bytes |
 | --- | ---: | ---: | ---: |
-| [feedback-queue-roomy](feedback-queue-roomy.md) | 862144.0 | 0.0 | 0.0 |
-| [feedback-queue-overflow](feedback-queue-overflow.md) | 524288.0 | 337856.0 | 0.0 |
-| [feedback-queue-late](feedback-queue-late.md) | 524288.0 | 937856.0 | 0.0 |
-| [feedback-queue-no-drain](feedback-queue-no-drain.md) | 862144.0 | 0.0 | 862144.0 |
+| [feedback-queue-roomy](feedback-queue-roomy.md) | 1262144.0 | 0.0 | 262144.0 |
+| [feedback-queue-overflow](feedback-queue-overflow.md) | 524288.0 | 737856.0 | 0.0 |
+| [feedback-queue-late](feedback-queue-late.md) | 524288.0 | 1737856.0 | 0.0 |
+| [feedback-queue-no-drain](feedback-queue-no-drain.md) | 1048576.0 | 213568.0 | 1048576.0 |
 
 周期通信需求：流体队列、错峰及漂移，非反馈网络仿真。
 
 | 场景 | 峰值需求 bytes/s | 队列峰值 bytes | 兼容度 | 末尾队列 bytes |
 | --- | ---: | ---: | ---: | ---: |
-| [periodic-queue-aligned](periodic-queue-aligned.md) | 80000000000 | 600000000.0 | 0.88 | 0.0 |
-| [periodic-queue-staggered](periodic-queue-staggered.md) | 40000000000 | 0.0 | 1.0 | 0.0 |
-| [periodic-queue-drift](periodic-queue-drift.md) | 80000000000 | 150000000.0 | 0.97 | 0.0 |
+| [periodic-queue-aligned](periodic-queue-aligned.md) | 100000000000 | 1000000000.0 | 0.8 | 0.0 |
+| [periodic-queue-staggered](periodic-queue-staggered.md) | 50000000000 | 0.0 | 1.0 | 0.0 |
+| [periodic-queue-drift](periodic-queue-drift.md) | 100000000000 | 250000000.0 | 0.95 | 0.0 |
 | [periodic-queue-overloaded](periodic-queue-overloaded.md) | 150000000000 | 10000000000.0 | -1.0 | 10000000000.0 |
-| [periodic-queue-wrapped](periodic-queue-wrapped.md) | 80000000000 | 450000000.0 | 0.91 | 0.0 |
+| [periodic-queue-wrapped](periodic-queue-wrapped.md) | 100000000000 | 750000000.0 | 0.85 | 0.0 |
 
 物理有向环前三轮：消息数与每条链路载荷分别枚举。
 
@@ -1171,6 +1183,14 @@ UB现代教学组织对照：容量与串行通信分列，非历史参数复原
 - [ub-scope-startup-blocked](ub-scope-startup-blocked.md)：single_server_tp8（仅通信比较，须另查容量）
 - [ub-scope-b2-seven](ub-scope-b2-seven.md)：two_servers_tp4_pp2（仅通信比较，须另查容量）
 - [ub-scope-one-forward](ub-scope-one-forward.md)：two_servers_tp4_pp2（仅通信比较，须另查容量）
+
+UB 互联从第一性原理推导：状态按 N+M 增长、上下文缓存溢出点、一次 64 B 读取的阶段和、连接建立与硅面积代价。
+
+| 场景 | 1024×1024 状态比 | RoCE 溢出端点数 | UB 溢出端点数 | LD/ST 往返 ns | RoCE 往返 ns | 缓存内主机数 RoCE/UB |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| [ub-fabric-book](ub-fabric-book.md) | 4854.8 | 23 | 2428 | 419 | 2222 | 8/4674 |
+| [ub-fabric-64-apps](ub-fabric-64-apps.md) | 4854.8 | 23 | 2428 | 419 | 2222 | 1/4622 |
+| [ub-fabric-1mib-cache](ub-fabric-1mib-cache.md) | 4854.8 | 46 | 9710 | 419 | 2222 | 32/18718 |
 
 公开训练投入与条件预算：
 
@@ -1392,20 +1412,73 @@ TLS/QUIC消息依赖与长早期上传：
 - [image-request-up400](image-request-up400.md)
 - [image-request-up800](image-request-up800.md)
 
+概念覆盖补齐（2026-09-11）：交换网络、核内执行、能耗、训练稳定性、广域丢包；声明输入的来源见各结果的 declared_input_sources。
+
+
+Clos 层数、半分带宽、轨道与在网归约：
+
+- [clos-cut-k64-nonblocking](clos-cut-k64-nonblocking.md)
+- [clos-cut-k64-oversub3](clos-cut-k64-oversub3.md)
+- [clos-cut-rail-aligned](clos-cut-rail-aligned.md)
+- [clos-cut-rail-shifted](clos-cut-rail-shifted.md)
+- [clos-cut-in-network](clos-cut-in-network.md)
+
+ECMP 哈希冲突与逐包喷洒：
+
+- [hash-collision-8-on-32](hash-collision-8-on-32.md)
+- [hash-collision-8-on-16](hash-collision-8-on-16.md)
+- [hash-collision-32-on-32](hash-collision-32-on-32.md)
+- [hash-collision-32-on-16](hash-collision-32-on-16.md)
+- [hash-collision-128-on-16](hash-collision-128-on-16.md)
+
+incast 反馈时延与缓冲：
+
+- [incast-feedback-book](incast-feedback-book.md)
+- [incast-feedback-4mib](incast-feedback-4mib.md)
+
+SM 占用率、延迟隐藏与 MMA 指令数：
+
+- [sm-occupancy-book-tile](sm-occupancy-book-tile.md)
+- [sm-occupancy-register-accumulator](sm-occupancy-register-accumulator.md)
+- [sm-occupancy-latency-1000ns](sm-occupancy-latency-1000ns.md)
+
+能耗层次、电压、功率密度、机柜与手机：
+
+- [energy-ledger-book](energy-ledger-book.md)
+
+临界批量与数据并行上限：
+
+- [critical-batch-book](critical-batch-book.md)
+- [critical-batch-noise-20m](critical-batch-noise-20m.md)
+
+掉队者：最大值步时间、检测与响应：
+
+- [straggler-max-sigma-2pct](straggler-max-sigma-2pct.md)
+- [straggler-max-sigma-5pct](straggler-max-sigma-5pct.md)
+
+MoE 容量因子：填充与丢弃：
+
+- [moe-capacity-book](moe-capacity-book.md)
+
+广域丢包：Mathis、BBR、重传尾部与 FEC：
+
+- [wan-loss-model-book](wan-loss-model-book.md)
+- [wan-loss-model-p036](wan-loss-model-p036.md)
+
 真实梯度两级集合通信：
 
-- [gradient-fp32-flat-contiguous-nic1](gradient-fp32-flat-contiguous-nic1.md)
-- [gradient-fp32-flat-contiguous-nic2](gradient-fp32-flat-contiguous-nic2.md)
-- [gradient-fp32-flat-interleaved-nic1](gradient-fp32-flat-interleaved-nic1.md)
-- [gradient-fp32-flat-interleaved-nic2](gradient-fp32-flat-interleaved-nic2.md)
+- [gradient-fp32-flat-contiguous-nic8](gradient-fp32-flat-contiguous-nic8.md)
+- [gradient-fp32-flat-interleaved-nic8](gradient-fp32-flat-interleaved-nic8.md)
+- [gradient-fp32-hierarchical-nic8](gradient-fp32-hierarchical-nic8.md)
+- [gradient-bf16-flat-contiguous-nic8](gradient-bf16-flat-contiguous-nic8.md)
+- [gradient-bf16-flat-interleaved-nic8](gradient-bf16-flat-interleaved-nic8.md)
+- [gradient-bf16-hierarchical-nic8](gradient-bf16-hierarchical-nic8.md)
 - [gradient-fp32-hierarchical-nic1](gradient-fp32-hierarchical-nic1.md)
-- [gradient-fp32-hierarchical-nic2](gradient-fp32-hierarchical-nic2.md)
-- [gradient-bf16-flat-contiguous-nic1](gradient-bf16-flat-contiguous-nic1.md)
-- [gradient-bf16-flat-contiguous-nic2](gradient-bf16-flat-contiguous-nic2.md)
-- [gradient-bf16-flat-interleaved-nic1](gradient-bf16-flat-interleaved-nic1.md)
-- [gradient-bf16-flat-interleaved-nic2](gradient-bf16-flat-interleaved-nic2.md)
-- [gradient-bf16-hierarchical-nic1](gradient-bf16-hierarchical-nic1.md)
-- [gradient-bf16-hierarchical-nic2](gradient-bf16-hierarchical-nic2.md)
+- [gradient-fp32-flat-contiguous-two-nic](gradient-fp32-flat-contiguous-two-nic.md)
+- [gradient-fp32-flat-interleaved-two-nic](gradient-fp32-flat-interleaved-two-nic.md)
+- [gradient-fp32-hierarchical-two-nic](gradient-fp32-hierarchical-two-nic.md)
+- [gradient-fp32-flat-contiguous-one-nic](gradient-fp32-flat-contiguous-one-nic.md)
+- [gradient-fp32-flat-contiguous-three-nic](gradient-fp32-flat-contiguous-three-nic.md)
 
 超节点规模同cohort比较：[图6-9](../figures/supernode-cost/figure.svg)，全部时长/费率为声明条件。
 
@@ -1475,6 +1548,21 @@ TLS/QUIC消息依赖与长早期上传：
 - [memory-pool-copies1](memory-pool-copies1.md)：内存池容量/声明周期读取/副本依赖，见[图6-8](memory-pool-layout.svg)。
 - [memory-pool-copies2](memory-pool-copies2.md)：内存池容量/声明周期读取/副本依赖，见[图6-8](memory-pool-layout.svg)。
 - [memory-pool-copies3](memory-pool-copies3.md)：内存池容量/声明周期读取/副本依赖，见[图6-8](memory-pool-layout.svg)。
+- [v41-forward-prefill-8192-ced](v41-forward-prefill-8192-ced.md)：v41-forward，固定官方输入和明确作用域。
+- [v41-forward-prefill-8192-reference](v41-forward-prefill-8192-reference.md)：v41-forward，固定官方输入和明确作用域。
+- [v41-forward-decode-8192-ced](v41-forward-decode-8192-ced.md)：v41-forward，固定官方输入和明确作用域。
+- [v41-forward-decode-200k-ced](v41-forward-decode-200k-ced.md)：v41-forward，固定官方输入和明确作用域。
+- [v41-forward-prefill-128-ced](v41-forward-prefill-128-ced.md)：v41-forward，固定官方输入和明确作用域。
+- [v41-forward-decode-1m-ced](v41-forward-decode-1m-ced.md)：v41-forward，固定官方输入和明确作用域。
+- [v41-flash-n8192-b1](v41-flash-n8192-b1.md)：v41-flash，固定官方输入和明确作用域。
+- [v41-flash-n131072-b1](v41-flash-n131072-b1.md)：v41-flash，固定官方输入和明确作用域。
+- [v41-flash-n1048576-b64](v41-flash-n1048576-b64.md)：v41-flash，固定官方输入和明确作用域。
+- [kv-comparison-n1-b1](kv-comparison-n1-b1.md)：kv-comparison，固定官方输入和明确作用域。
+- [kv-comparison-n8191-b1](kv-comparison-n8191-b1.md)：kv-comparison，固定官方输入和明确作用域。
+- [kv-comparison-n8192-b1](kv-comparison-n8192-b1.md)：kv-comparison，固定官方输入和明确作用域。
+- [kv-comparison-n8192-b64](kv-comparison-n8192-b64.md)：kv-comparison，固定官方输入和明确作用域。
+- [kv-comparison-n131072-b1](kv-comparison-n131072-b1.md)：kv-comparison，固定官方输入和明确作用域。
+- [kv-comparison-n1048576-b1](kv-comparison-n1048576-b1.md)：kv-comparison，固定官方输入和明确作用域。
 - [qwen36-prefill-8192](qwen36-prefill-8192.md)：qwen36-base-text-ledger，固定官方输入和明确作用域。
 - [qwen36-decode-b1](qwen36-decode-b1.md)：qwen36-base-text-ledger，固定官方输入和明确作用域。
 - [qwen36-decode-b64](qwen36-decode-b64.md)：qwen36-base-text-ledger，固定官方输入和明确作用域。
@@ -1678,6 +1766,12 @@ Qwen8 GPipe/1F1B训练流水与激活寿命：
 - [training-pipeline-1f1b-slow-stage](training-pipeline-1f1b-slow-stage.md)
 - [training-pipeline-1f1b-shared-link](training-pipeline-1f1b-shared-link.md)
 - [training-pipeline-1f1b-recompute](training-pipeline-1f1b-recompute.md)
+- [training-pipeline-interleaved-m8](training-pipeline-interleaved-m8.md)
+- [training-pipeline-interleaved-m16](training-pipeline-interleaved-m16.md)
+- [training-pipeline-zero-bubble-m8](training-pipeline-zero-bubble-m8.md)
+- [training-pipeline-zero-bubble-m16](training-pipeline-zero-bubble-m16.md)
+- [training-pipeline-dualpipe-m8](training-pipeline-dualpipe-m8.md)
+- [training-pipeline-dualpipe-m16](training-pipeline-dualpipe-m16.md)
 
 RGB预处理至视觉编码器入口：
 
@@ -1844,19 +1938,3 @@ V4共享专家FP8复制坐标：
 - [v4-optimizer-flash-mtp-declared-row-muon](v4-optimizer-flash-mtp-declared-row-muon.md)
 - [v4-optimizer-flash-stored-matrices](v4-optimizer-flash-stored-matrices.md)
 - [v4-optimizer-pro-base-declared-row-muon](v4-optimizer-pro-base-declared-row-muon.md)
-
-## 2026-09-10：V4.1 Flash 与跨模型 KV
-
-- [8K 跨模型存储与 decode 读取](kv-comparison-n8192-b1.md)：12 个模型、15 条精度/执行路径。
-- [128K 对照](kv-comparison-n131072-b1.md)与[1M 对照](kv-comparison-n1048576-b1.md)：超出官方 config 上限的模型明确跳过。
-- [V4.1 Flash 权重与结构](v41-flash-n8192-b1.md)：48 分片头、96,085 张量、全局 KV、分阶段专家子账。
-- [调研与复算说明](../research/deepseek-v41-flash/README.md)：保留两代的理由、官方 3,514→890 的复算、覆盖范围和验证方法。
-
-本组 9 场景/18 产物由专题脚本刷新，并已登记公共 reproduce；未因此重跑其他全书实验或更新旧全局 manifest。
-
-
-## 切分、通信与集群规模的综合算例
-
-- [给定模型、容量与期限选择TP和实例](parallel-choice-book.md)
-- [专家分离的dispatch、计算与combine偏斜](ep-skew-book.md)
-- [1024卡训练：超节点、出口、并行候选与恢复](supernode-scaling-book.md)

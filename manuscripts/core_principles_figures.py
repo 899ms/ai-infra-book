@@ -27,7 +27,7 @@ def draw(chapter, out):
             left=0
             for v,c in zip(vals,['green','gray','blue']):
                 a.barh(.5,v,left=left,height=.24,color=COL[c],edgecolor=COL['line']);left+=v
-            a.set(xlim=(0,24),ylim=(0,1.45),yticks=[],xticks=[0,4,8,12,16,20,24],xlabel='24 GB 可用容量的分配（GB）')
+            a.set(xlim=(0,24),ylim=(0,1.45),yticks=[],xticks=[0,4,8,12,16,20,24],xlabel='RTX 4090 的 24 GB 容量分配（GB）')
             for x,y,label,target in [(2.4,1.20,'4 条请求 KV\n4.83 GB',2.4),(7,.95,'工作区\n2.15 GB',5.9),(16,1.20,'权重余量\n17.02 GB',15.5)]:
                 a.annotate(label,xy=(target,.64),xytext=(x,y),ha='center',va='center',fontsize=12,arrowprops=dict(arrowstyle='-',color=COL['line']))
             a.text(12,.14,'BF16 参数上界 ≈ 85.1 亿',ha='center',fontsize=13)
@@ -81,10 +81,11 @@ def draw(chapter, out):
             text(a,.5,.065,'更新后发布权重，保持版本一致',12,ha='center');out.save(f,'figure-10-weight-update')
         if chapter == 11:
             f,a=plot(4.4,left=.24,bottom=.17)
-            for y,v,c in [(4,10,'blue'),(3,6,'green'),(1,1,'blue'),(0,6,'green')]:a.barh(y,v,height=.55,color=COL[c],edgecolor=COL['line']);a.text(v+.13,y,f'{v} 秒',va='center',fontsize=11)
+            cold=2+2**31/(25e9/8)
+            for y,v,c in [(4,6,'blue'),(3,cold,'green'),(1,1,'blue'),(0,cold,'green')]:a.barh(y,v,height=.55,color=COL[c],edgecolor=COL['line']);a.text(v+.13,y,f'{v:.1f} 秒' if v!=int(v) else f'{int(v)} 秒',va='center',fontsize=11)
             a.axhline(2.2,color=COL['line'],lw=.7)
-            a.annotate('',xy=(6,1.5),xytext=(1,1.5),arrowprops=dict(arrowstyle='<->',color=COL['line']));a.text(3.5,1.77,'额外等待 5 秒',ha='center',fontsize=11)
-            a.set(yticks=[4,3,1,0],yticklabels=['原模型','环境创建','加速模型','环境创建'],xlim=(0,12),ylim=(-.65,4.7),xlabel='从模型开始计时（秒）')
+            a.annotate('',xy=(cold,1.5),xytext=(1,1.5),arrowprops=dict(arrowstyle='<->',color=COL['line']));a.text(3.6,1.62,f'额外等待约 {cold-1:.1f} 秒',ha='left',fontsize=11)
+            a.set(yticks=[4,3,1,0],yticklabels=['快速服务','冷路径创建','加速模型','冷路径创建'],xlim=(0,8),ylim=(-.65,4.7),xlabel='从模型开始计时（秒）')
             out.save(f,'figure-11-environment-overlap')
         if chapter == 12:
             f,a=plot(3.5,left=.24,bottom=.21)

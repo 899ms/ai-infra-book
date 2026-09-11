@@ -24,9 +24,9 @@ All three placements replay one pinned trace: same model revision, same token se
 
 | 放置 | 地域 | 入向 B | 出向 B | 矩阵 FLOPs | 计算费 | 出网费 | 驻留费 | 合计 | 可用 |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---|
-| remote_stateless | far | 66207 | 2527 | 296505803538432 | 0.000988 | 0.000000 | 0.000000 | 0.000989 | 否 |
-| remote_warm | far | 10193 | 2527 | 60380764176384 | 0.000201 | 0.000000 | 0.000089 | 0.000291 | 否 |
-| local | near | 0 | 0 | 60380764176384 | 0.000503 | 0.000000 | 0.000000 | 0.000503 | 是 |
+| remote_stateless | far | 66207 | 2527 | 296505803538432 | 0.299682 | 0.000000 | 0.000000 | 0.299682 | 否 |
+| remote_warm | far | 10193 | 2527 | 60380764176384 | 0.061028 | 0.000000 | 0.080293 | 0.141320 | 否 |
+| local | near | 0 | 0 | 60380764176384 | 0.061028 | 0.000000 | 0.000000 | 0.061028 | 是 |
 
 可用放置按费用排序：near/local。
 因硬约束排除：far/remote_stateless、far/remote_warm。
@@ -37,17 +37,17 @@ All three placements replay one pinned trace: same model revision, same token se
 
 | 放置 | 往返 ms | 会话等待 s |
 |---|---:|---:|
-| remote_stateless | 199.0 | 5.355 |
-| remote_stateless | 207.0 | 5.451 |
-| remote_warm | 199.0 | 2.992 |
-| remote_warm | 207.0 | 3.088 |
-| local | 199.0 | 0.604 |
-| local | 207.0 | 0.604 |
+| remote_stateless | 199.0 | 2.689 |
+| remote_stateless | 207.0 | 2.785 |
+| remote_warm | 199.0 | 2.449 |
+| remote_warm | 207.0 | 2.545 |
+| local | 199.0 | 0.061 |
+| local | 207.0 | 0.061 |
 
 ## 盈亏平衡
 
-- 保温时长：可保温 121.8 s（0.03383 h）；Below this hold the warm placement is cheaper; above it the prefill it avoids no longer pays for the memory it occupies。
-- 出网价格：边界 84.166924 /GB，声明价 0.080000 /GB；Above this egress price the local placement is cheaper; below it the remote one is。
+- 保温时长：可保温 41.0 s（0.01140 h）；Below this hold the warm placement is cheaper; above it the prefill it avoids no longer pays for the memory it occupies。
+- 出网价格：不适用；The remote region is not cheaper even before any egress is charged。
 
 ## 复用比例扫描
 
@@ -55,17 +55,17 @@ All three placements replay one pinned trace: same model revision, same token se
 
 | 命中比例 | 保温合计 | 无状态合计 | 保温更便宜 |
 |---:|---:|---:|---|
-| 0.0 | 0.001078 | 0.000989 | 否 |
-| 0.1 | 0.000987 | 0.000989 | 是 |
-| 0.2 | 0.000895 | 0.000989 | 是 |
-| 0.3 | 0.000803 | 0.000989 | 是 |
-| 0.4 | 0.000709 | 0.000989 | 是 |
-| 0.5 | 0.000615 | 0.000989 | 是 |
-| 0.6 | 0.000520 | 0.000989 | 是 |
-| 0.7 | 0.000423 | 0.000989 | 是 |
-| 0.8 | 0.000327 | 0.000989 | 是 |
-| 0.9 | 0.000229 | 0.000989 | 是 |
-| 1.0 | 0.000131 | 0.000989 | 是 |
+| 0.0 | 0.379975 | 0.299682 | 否 |
+| 0.1 | 0.352455 | 0.299682 | 否 |
+| 0.2 | 0.324609 | 0.299682 | 否 |
+| 0.3 | 0.296536 | 0.299682 | 是 |
+| 0.4 | 0.268165 | 0.299682 | 是 |
+| 0.5 | 0.239524 | 0.299682 | 是 |
+| 0.6 | 0.210701 | 0.299682 | 是 |
+| 0.7 | 0.181564 | 0.299682 | 是 |
+| 0.8 | 0.152216 | 0.299682 | 是 |
+| 0.9 | 0.122584 | 0.299682 | 是 |
+| 1.0 | 0.092815 | 0.299682 | 是 |
 
 ## 口径与限制
 
@@ -85,7 +85,7 @@ All three placements replay one pinned trace: same model revision, same token se
   "inputs": {
     "trace": "thinking-off",
     "model": "qwen3-8b",
-    "device_flops_per_second": 100000000000000,
+    "device_flops_per_second": 989400000000000,
     "link_bits_per_second": 333000000,
     "state_bits": 16,
     "state_hold_hours": null,
@@ -206,7 +206,7 @@ All three placements replay one pinned trace: same model revision, same token se
   "regions": {
     "near": {
       "compute_price_per_gpu_hour": {
-        "numerator": 3,
+        "numerator": 3600,
         "denominator": 1
       },
       "egress_price_per_gb": {
@@ -214,16 +214,16 @@ All three placements replay one pinned trace: same model revision, same token se
         "denominator": 1
       },
       "state_price_per_gb_hour": {
-        "numerator": 3,
-        "denominator": 25
+        "numerator": 45,
+        "denominator": 1
       },
       "electricity_price_per_kwh": {
-        "numerator": 11,
-        "denominator": 100
+        "numerator": 0,
+        "denominator": 1
       },
       "cooling_overhead": {
-        "numerator": 5,
-        "denominator": 4
+        "numerator": 1,
+        "denominator": 1
       },
       "power_cap_kw": 400,
       "lead_time_weeks": 4,
@@ -231,34 +231,34 @@ All three placements replay one pinned trace: same model revision, same token se
     },
     "far": {
       "compute_price_per_gpu_hour": {
-        "numerator": 6,
-        "denominator": 5
+        "numerator": 3600,
+        "denominator": 1
       },
       "egress_price_per_gb": {
-        "numerator": 2,
-        "denominator": 25
+        "numerator": 0,
+        "denominator": 1
       },
       "state_price_per_gb_hour": {
-        "numerator": 1,
-        "denominator": 20
+        "numerator": 45,
+        "denominator": 1
       },
       "electricity_price_per_kwh": {
-        "numerator": 1,
-        "denominator": 25
+        "numerator": 0,
+        "denominator": 1
       },
       "cooling_overhead": {
-        "numerator": 27,
-        "denominator": 20
+        "numerator": 1,
+        "denominator": 1
       },
       "power_cap_kw": 400,
       "lead_time_weeks": 30,
-      "role": "cheaper site across the region boundary"
+      "role": "H100 SXM cloud region across the region boundary"
     }
   },
   "feasibility": [
     {
       "region": "far",
-      "role": "cheaper site across the region boundary",
+      "role": "H100 SXM cloud region across the region boundary",
       "required_kw": 250,
       "power_cap_kw": 400,
       "lead_time_weeks": 30,
@@ -679,16 +679,16 @@ All three placements replay one pinned trace: same model revision, same token se
       "outbound_bytes": 2527,
       "matrix_flops": 296505803538432,
       "compute_seconds_lower_bound": {
-        "numerator": 18097278048,
-        "denominator": 6103515625
+        "numerator": 24129704064,
+        "denominator": 80517578125
       },
       "compute_cost": {
-        "numerator": 754053252,
-        "denominator": 762939453125
+        "numerator": 24129704064,
+        "denominator": 80517578125
       },
       "egress_cost": {
-        "numerator": 2527,
-        "denominator": 12500000000
+        "numerator": 0,
+        "denominator": 1
       },
       "ingress_cost": {
         "numerator": 0,
@@ -704,8 +704,8 @@ All three placements replay one pinned trace: same model revision, same token se
         "denominator": 1
       },
       "total_cost": {
-        "numerator": 193077116887,
-        "denominator": 195312500000000
+        "numerator": 24129704064,
+        "denominator": 80517578125
       },
       "region": "far",
       "feasible": false
@@ -716,16 +716,16 @@ All three placements replay one pinned trace: same model revision, same token se
       "outbound_bytes": 2527,
       "matrix_flops": 60380764176384,
       "compute_seconds_lower_bound": {
-        "numerator": 3685349376,
-        "denominator": 6103515625
+        "numerator": 4913799168,
+        "denominator": 80517578125
       },
       "compute_cost": {
-        "numerator": 153556224,
-        "denominator": 762939453125
+        "numerator": 4913799168,
+        "denominator": 80517578125
       },
       "egress_cost": {
-        "numerator": 2527,
-        "denominator": 12500000000
+        "numerator": 0,
+        "denominator": 1
       },
       "ingress_cost": {
         "numerator": 0,
@@ -737,12 +737,12 @@ All three placements replay one pinned trace: same model revision, same token se
         "denominator": 1200000000000000000
       },
       "state_cost": {
-        "numerator": 10890381212564650893,
-        "denominator": 122070312500000000000000
+        "numerator": 98013430913081858037,
+        "denominator": 1220703125000000000000
       },
       "total_cost": {
-        "numerator": 35484054786939650893,
-        "denominator": 122070312500000000000000
+        "numerator": 284469126775671983903013,
+        "denominator": 2012939453125000000000000
       },
       "region": "far",
       "feasible": false
@@ -753,12 +753,12 @@ All three placements replay one pinned trace: same model revision, same token se
       "outbound_bytes": 0,
       "matrix_flops": 60380764176384,
       "compute_seconds_lower_bound": {
-        "numerator": 3685349376,
-        "denominator": 6103515625
+        "numerator": 4913799168,
+        "denominator": 80517578125
       },
       "compute_cost": {
-        "numerator": 76778112,
-        "denominator": 152587890625
+        "numerator": 4913799168,
+        "denominator": 80517578125
       },
       "egress_cost": {
         "numerator": 0,
@@ -778,8 +778,8 @@ All three placements replay one pinned trace: same model revision, same token se
         "denominator": 1
       },
       "total_cost": {
-        "numerator": 76778112,
-        "denominator": 152587890625
+        "numerator": 4913799168,
+        "denominator": 80517578125
       },
       "region": "near",
       "feasible": true
@@ -792,8 +792,8 @@ All three placements replay one pinned trace: same model revision, same token se
       "round_trip_bound": "low",
       "round_trip_ms": 199.0,
       "session_wait_seconds": {
-        "numerator": 43533159125561,
-        "denominator": 8129882812500
+        "numerator": 288429464041373,
+        "denominator": 107249414062500
       }
     },
     {
@@ -802,8 +802,8 @@ All three placements replay one pinned trace: same model revision, same token se
       "round_trip_bound": "high",
       "round_trip_ms": 207.0,
       "session_wait_seconds": {
-        "numerator": 44313627875561,
-        "denominator": 8129882812500
+        "numerator": 298725407791373,
+        "denominator": 107249414062500
       }
     },
     {
@@ -812,8 +812,8 @@ All three placements replay one pinned trace: same model revision, same token se
       "round_trip_bound": "low",
       "round_trip_ms": 199.0,
       "session_wait_seconds": {
-        "numerator": 4054254983347,
-        "denominator": 1354980468750
+        "numerator": 43781592524671,
+        "denominator": 17874902343750
       }
     },
     {
@@ -822,8 +822,8 @@ All three placements replay one pinned trace: same model revision, same token se
       "round_trip_bound": "high",
       "round_trip_ms": 207.0,
       "session_wait_seconds": {
-        "numerator": 4184333108347,
-        "denominator": 1354980468750
+        "numerator": 45497583149671,
+        "denominator": 17874902343750
       }
     },
     {
@@ -832,8 +832,8 @@ All three placements replay one pinned trace: same model revision, same token se
       "round_trip_bound": "low",
       "round_trip_ms": 199.0,
       "session_wait_seconds": {
-        "numerator": 3685349376,
-        "denominator": 6103515625
+        "numerator": 4913799168,
+        "denominator": 80517578125
       }
     },
     {
@@ -842,8 +842,8 @@ All three placements replay one pinned trace: same model revision, same token se
       "round_trip_bound": "high",
       "round_trip_ms": 207.0,
       "session_wait_seconds": {
-        "numerator": 3685349376,
-        "denominator": 6103515625
+        "numerator": 4913799168,
+        "denominator": 80517578125
       }
     }
   ],
@@ -857,37 +857,26 @@ All three placements replay one pinned trace: same model revision, same token se
   "hold_boundary": {
     "hold_hours": {
       "numerator": 16680473,
-      "denominator": 493125000
+      "denominator": 1463693625
     },
     "hold_seconds": {
-      "numerator": 100082838,
-      "denominator": 821875
+      "numerator": 266887568,
+      "denominator": 6505305
     },
     "saving_at_zero_hold": {
-      "numerator": 600497028,
-      "denominator": 762939453125
+      "numerator": 19215904896,
+      "denominator": 80517578125
     },
     "residency_cost_per_hour": {
-      "numerator": 227232,
-      "denominator": 9765625
+      "numerator": 8180352,
+      "denominator": 390625
     },
     "resident_state_bytes": 465371136,
     "reason": "Below this hold the warm placement is cheaper; above it the prefill it avoids no longer pays for the memory it occupies"
   },
   "egress_price_boundary": {
-    "price_per_gb": {
-      "numerator": 25963112547435349107,
-      "denominator": 308471679687500000
-    },
-    "declared_price_per_gb": {
-      "numerator": 2,
-      "denominator": 25
-    },
-    "headroom_per_gb": {
-      "numerator": 25938434813060349107,
-      "denominator": 308471679687500000
-    },
-    "reason": "Above this egress price the local placement is cheaper; below it the remote one is"
+    "price_per_gb": null,
+    "reason": "The remote region is not cheaper even before any egress is charged"
   },
   "reuse_scan": {
     "measured_cache_hit_fraction": {
@@ -901,12 +890,12 @@ All three placements replay one pinned trace: same model revision, same token se
           "denominator": 1
         },
         "warm_total_cost": {
-          "numerator": 131563579266939650893,
-          "denominator": 122070312500000000000000
+          "numerator": 764866749175671983903013,
+          "denominator": 2012939453125000000000000
         },
         "stateless_total_cost": {
-          "numerator": 193077116887,
-          "denominator": 195312500000000
+          "numerator": 24129704064,
+          "denominator": 80517578125
         },
         "warm_is_cheaper": false
       },
@@ -916,14 +905,14 @@ All three placements replay one pinned trace: same model revision, same token se
           "denominator": 10
         },
         "warm_total_cost": {
-          "numerator": 120484182786939650893,
-          "denominator": 122070312500000000000000
+          "numerator": 709469766775671983903013,
+          "denominator": 2012939453125000000000000
         },
         "stateless_total_cost": {
-          "numerator": 193077116887,
-          "denominator": 195312500000000
+          "numerator": 24129704064,
+          "denominator": 80517578125
         },
-        "warm_is_cheaper": true
+        "warm_is_cheaper": false
       },
       {
         "cache_hit_fraction": {
@@ -931,14 +920,14 @@ All three placements replay one pinned trace: same model revision, same token se
           "denominator": 5
         },
         "warm_total_cost": {
-          "numerator": 109273741986939650893,
-          "denominator": 122070312500000000000000
+          "numerator": 653417562775671983903013,
+          "denominator": 2012939453125000000000000
         },
         "stateless_total_cost": {
-          "numerator": 193077116887,
-          "denominator": 195312500000000
+          "numerator": 24129704064,
+          "denominator": 80517578125
         },
-        "warm_is_cheaper": true
+        "warm_is_cheaper": false
       },
       {
         "cache_hit_fraction": {
@@ -946,12 +935,12 @@ All three placements replay one pinned trace: same model revision, same token se
           "denominator": 10
         },
         "warm_total_cost": {
-          "numerator": 97972138626939650893,
-          "denominator": 122070312500000000000000
+          "numerator": 596909545975671983903013,
+          "denominator": 2012939453125000000000000
         },
         "stateless_total_cost": {
-          "numerator": 193077116887,
-          "denominator": 195312500000000
+          "numerator": 24129704064,
+          "denominator": 80517578125
         },
         "warm_is_cheaper": true
       },
@@ -961,12 +950,12 @@ All three placements replay one pinned trace: same model revision, same token se
           "denominator": 5
         },
         "warm_total_cost": {
-          "numerator": 86550360306939650893,
-          "denominator": 122070312500000000000000
+          "numerator": 539800654375671983903013,
+          "denominator": 2012939453125000000000000
         },
         "stateless_total_cost": {
-          "numerator": 193077116887,
-          "denominator": 195312500000000
+          "numerator": 24129704064,
+          "denominator": 80517578125
         },
         "warm_is_cheaper": true
       },
@@ -976,12 +965,12 @@ All three placements replay one pinned trace: same model revision, same token se
           "denominator": 2
         },
         "warm_total_cost": {
-          "numerator": 75019860786939650893,
-          "denominator": 122070312500000000000000
+          "numerator": 482148156775671983903013,
+          "denominator": 2012939453125000000000000
         },
         "stateless_total_cost": {
-          "numerator": 193077116887,
-          "denominator": 195312500000000
+          "numerator": 24129704064,
+          "denominator": 80517578125
         },
         "warm_is_cheaper": true
       },
@@ -991,12 +980,12 @@ All three placements replay one pinned trace: same model revision, same token se
           "denominator": 5
         },
         "warm_total_cost": {
-          "numerator": 63415963266939650893,
-          "denominator": 122070312500000000000000
+          "numerator": 424128669175671983903013,
+          "denominator": 2012939453125000000000000
         },
         "stateless_total_cost": {
-          "numerator": 193077116887,
-          "denominator": 195312500000000
+          "numerator": 24129704064,
+          "denominator": 80517578125
         },
         "warm_is_cheaper": true
       },
@@ -1006,12 +995,12 @@ All three placements replay one pinned trace: same model revision, same token se
           "denominator": 10
         },
         "warm_total_cost": {
-          "numerator": 51685647906939650893,
-          "denominator": 122070312500000000000000
+          "numerator": 365477092375671983903013,
+          "denominator": 2012939453125000000000000
         },
         "stateless_total_cost": {
-          "numerator": 193077116887,
-          "denominator": 195312500000000
+          "numerator": 24129704064,
+          "denominator": 80517578125
         },
         "warm_is_cheaper": true
       },
@@ -1021,12 +1010,12 @@ All three placements replay one pinned trace: same model revision, same token se
           "denominator": 5
         },
         "warm_total_cost": {
-          "numerator": 39870685986939650893,
-          "denominator": 122070312500000000000000
+          "numerator": 306402282775671983903013,
+          "denominator": 2012939453125000000000000
         },
         "stateless_total_cost": {
-          "numerator": 193077116887,
-          "denominator": 195312500000000
+          "numerator": 24129704064,
+          "denominator": 80517578125
         },
         "warm_is_cheaper": true
       },
@@ -1036,12 +1025,12 @@ All three placements replay one pinned trace: same model revision, same token se
           "denominator": 10
         },
         "warm_total_cost": {
-          "numerator": 27940904226939650893,
-          "denominator": 122070312500000000000000
+          "numerator": 246753373975671983903013,
+          "denominator": 2012939453125000000000000
         },
         "stateless_total_cost": {
-          "numerator": 193077116887,
-          "denominator": 195312500000000
+          "numerator": 24129704064,
+          "denominator": 80517578125
         },
         "warm_is_cheaper": true
       },
@@ -1051,12 +1040,12 @@ All three placements replay one pinned trace: same model revision, same token se
           "denominator": 1
         },
         "warm_total_cost": {
-          "numerator": 15956426946939650893,
-          "denominator": 122070312500000000000000
+          "numerator": 186830987575671983903013,
+          "denominator": 2012939453125000000000000
         },
         "stateless_total_cost": {
-          "numerator": 193077116887,
-          "denominator": 195312500000000
+          "numerator": 24129704064,
+          "denominator": 80517578125
         },
         "warm_is_cheaper": true
       }
@@ -1064,16 +1053,16 @@ All three placements replay one pinned trace: same model revision, same token se
     "ordering_changes_between": [
       {
         "cache_hit_fraction": {
-          "numerator": 1,
+          "numerator": 3,
           "denominator": 10
         },
         "warm_total_cost": {
-          "numerator": 120484182786939650893,
-          "denominator": 122070312500000000000000
+          "numerator": 596909545975671983903013,
+          "denominator": 2012939453125000000000000
         },
         "stateless_total_cost": {
-          "numerator": 193077116887,
-          "denominator": 195312500000000
+          "numerator": 24129704064,
+          "denominator": 80517578125
         },
         "warm_is_cheaper": true
       }

@@ -1,0 +1,40 @@
+{
+  "inputs": {
+    "mean_compute_seconds": "52.2",
+    "declared_sigma_seconds": "1.044",
+    "overhead_seconds": "4.5",
+    "ranks": [
+      8,
+      48,
+      1024
+    ],
+    "straggler_k_sigma": "3",
+    "model": "qwen3-8b",
+    "checkpoint_devices": 48,
+    "device_mtbf_seconds": 31536000,
+    "declared_spike_mtbf_seconds": 604800,
+    "save_bandwidth_bytes_per_second": 8000000000,
+    "recovery_ns": 120000000000,
+    "intervals_seconds": [
+      300,
+      600,
+      900,
+      1800,
+      3600
+    ]
+  },
+  "input_sources": {
+    "mean_compute_seconds": "book (chapter 10.6: 52.2 s)",
+    "declared_sigma_seconds": "book (declared)",
+    "overhead_seconds": "book (chapter 10.6: 4 s + 0.5 s)",
+    "ranks": "book (declared 8 / 48 / 1024)",
+    "straggler_k_sigma": "book (declared)",
+    "model": "configs/models/qwen3-8b/config.json",
+    "checkpoint_devices": "book (chapter 10: 48 cards)",
+    "device_mtbf_seconds": "book (checkpoint-interval scenario)",
+    "declared_spike_mtbf_seconds": "book (declared)",
+    "save_bandwidth_bytes_per_second": "book (checkpoint-interval scenario)",
+    "recovery_ns": "book (checkpoint-interval scenario)",
+    "intervals_seconds": "book (checkpoint-interval scenario)"
+  }
+}

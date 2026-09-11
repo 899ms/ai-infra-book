@@ -1,6 +1,6 @@
 # weight-handoff — qwen3-8b
 
-输入：`{"capacity_bytes": 68719476736, "common_bytes": 4294967296, "expert_parallel": 1, "kv_bytes": 25769803776, "model": "qwen3-8b", "producer_bytes_per_second": 50000000000, "receiver_bytes_per_second": 50000000000, "replicas": 1, "training_live_bytes": 42949672960}`
+输入：`{"capacity_bytes": 80000000000, "common_bytes": 4294967296, "expert_parallel": 1, "kv_bytes": 25769803776, "model": "qwen3-8b", "producer_bytes_per_second": 50000000000, "receiver_bytes_per_second": 50000000000, "replicas": 1, "training_live_bytes": 42949672960}`
 
 数值是分析计算；字节以 bytes 保存，FMA=2，不是硬件测量。
 

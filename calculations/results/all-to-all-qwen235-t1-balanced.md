@@ -17,8 +17,8 @@
 | combine_network_send_bytes | 458,752 |
 | dispatch_maximum_receive_bytes | 57,344 |
 | dispatch_endpoint_service_lower_seconds | 1.14688e-06 |
-| dispatch_pairwise_modeled_seconds | 1.5146880000000001e-05 |
-| dispatch_plus_combine_modeled_seconds | 3.0293760000000002e-05 |
+| dispatch_pairwise_modeled_seconds | 1.5146879999999998e-05 |
+| dispatch_plus_combine_modeled_seconds | 3.0293759999999995e-05 |
 | measured_seconds | `null` |
 
 dispatch

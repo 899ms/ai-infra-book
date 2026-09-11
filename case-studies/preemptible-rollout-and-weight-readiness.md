@@ -6,9 +6,9 @@
 
 RLBoost 的实验训练组使用八卡 H100 实例，额外 rollout 使用两卡实例。与后者通信时，训练实例使用 200 Gbps 前端网卡，两卡实例的前端接口为 50 Gbps；不能把训练组后端的四张 200 Gbps 网卡一起加进这条路径。[论文物理页 9](../references/outline-checks/2026-09-07/platform-routing/rlboost-nsdi26.pdf#page=9)
 
-先给一次传输 **30 GB 完整权重、同时准备六个 rollout 实例**的教学输入。30 GB 是便于手算的载荷假设，实际实验应记录序列化后字节数。每个接收端的链路下界为 `30 / (50 / 8) = 4.8 秒`；同一个训练节点的出口却要发送六份，共 180 GB，因而全部传完至少需要 `180 / (200 / 8) = 7.2 秒`。真实时间还受共享网络、内存读写、协议、加载和启动影响。这个下界针对六个实例全部就绪，不表示第一个实例也必须等到第 7.2 秒。
+以论文所用的 Qwen3-8B 为例：BF16 完整权重按 [safetensors 索引](../calculations/sources/qwen3-8b/model.safetensors.index.json)共 16,381,470,720 字节（约 16.38 GB），要同时准备六个 rollout 实例。每个接收端的链路下界为 `16.38 / (50 / 8) ≈ 2.62 秒`；同一个训练节点的出口却要发送六份，共约 98.3 GB，因而全部传完至少需要 `98.3 / (200 / 8) ≈ 3.93 秒`。真实时间还受共享网络、内存读写、协议、加载和启动影响；实验应记录序列化后的实际字节数。这个下界针对六个实例全部就绪，不表示第一个实例也必须等到第 3.93 秒。
 
-这一轮读到的 PolyRL 路径先把完整权重收到接收实例的 CPU 共享缓冲，再由 TP rank 0 分块送入 GPU、广播到 TP 组并调用模型加载。因此，接收实例使用 TP=2，并没有自动将外部网络载荷减成 15 GB。发送端还要把 FSDP 参数还原并复制到发送缓冲；网卡传输结束以后，GPU 加载、缓存处理与版本确认仍决定实例何时能接请求。[发送端](https://github.com/Terra-Flux/PolyRL/blob/44ce6fdcd30ecf2d55037513ddddd51076325a2b/rlboost/weight_transfer/fsdp_interface.py#L186)、[接收与 TP 分发](https://github.com/Terra-Flux/PolyRL/blob/44ce6fdcd30ecf2d55037513ddddd51076325a2b/rlboost/sglang/patches.py#L169)
+这一轮读到的 PolyRL 路径先把完整权重收到接收实例的 CPU 共享缓冲，再由 TP rank 0 分块送入 GPU、广播到 TP 组并调用模型加载。因此，接收实例使用 TP=2，并没有自动将外部网络载荷减半。发送端还要把 FSDP 参数还原并复制到发送缓冲；网卡传输结束以后，GPU 加载、缓存处理与版本确认仍决定实例何时能接请求。[发送端](https://github.com/Terra-Flux/PolyRL/blob/44ce6fdcd30ecf2d55037513ddddd51076325a2b/rlboost/weight_transfer/fsdp_interface.py#L186)、[接收与 TP 分发](https://github.com/Terra-Flux/PolyRL/blob/44ce6fdcd30ecf2d55037513ddddd51076325a2b/rlboost/sglang/patches.py#L169)
 
 论文允许新实例在当前同步训练轮次内拉取已有版本并开始 rollout，避免必须等到下一轮的空闲。它不消除权重准备时间。实验先标出实例出现、CPU 权重到齐、GPU 加载完成、首个有效输出四个时刻，再计算这段可用窗口里真正产出了多少训练数据。
 

@@ -47,58 +47,16 @@ def box(a,x,y,w,h,title,body='',col='pale',size=12):
  if body:a.text(x+w/2,y+h*.27,body,ha='center',va='center',fontsize=10,linespacing=1.4,color=C['muted'])
 def arrow(a,p,q,col='teal',rad=0,lw=1.5):a.add_patch(FancyArrowPatch(p,q,arrowstyle='-|>',mutation_scale=13,lw=lw,color=C[col],connectionstyle=f'arc3,rad={rad}'))
 def panel(a,x,y,t):a.text(x,y,t,fontsize=14,weight='bold',va='top')
-# Figures contain panel labels and units only; their numbers and full captions live outside.
-f,a=canvas(7)
-panel(a,.02,.98,'同一紧密互联范围')
-box(a,.29,.72,.42,.12,'内部交换互联',col='light')
-for i in range(8):
- x=.035+i*.119;box(a,x,.47,.097,.12,f'卡 {i}',size=11);arrow(a,(x+.048,.60),(.31+i*.052,.71),lw=1)
-a.plot([.02,.98],[.40,.40],color=C['line'],ls='--')
-panel(a,.02,.39,'两台服务器，经数据中心网络协作')
-for j in range(2):
- x=.025+j*.56;box(a,x,.025,.39,.21,f'服务器 {chr(65+j)}','四个参与者；本地互联',size=13);box(a,x+.12,.265,.15,.075,'NIC × 2',col='sand',size=10);arrow(a,(x+.195,.24),(x+.195,.26))
-box(a,.437,.04,.115,.14,'交换网络',size=10);arrow(a,(.30,.30),(.465,.185),'blue');arrow(a,(.535,.185),(.70,.30),'blue')
-save(f,'figure-7-1-boundaries');data['7-1']={'kind':'conceptual','ranks':8,'servers':2}
-# 2: One relationship: compute scaling against a fixed cut.
-f, a=plt.subplots(figsize=(10,5.8));f.subplots_adjust(left=.12,right=.94,bottom=.15,top=.91)
-n=np.arange(1,9);cut=336*2**20/40e9*1000;compute=20/n
-a.plot(n,cut+compute,'s-',c=C['blue'],label='计算与通信串行',lw=2)
-a.plot(n,np.maximum(cut,compute),'o-',c=C['teal'],label='计算与通信完全重叠',lw=2)
-a.plot(n,compute,':',c=C['orange'],label='计算段',lw=2)
-a.text(4.5,9.6,'割集下界：约 8.8 ms',color=C['teal'])
-a.set(xlabel='设备数相对倍数',ylabel='每步时间 / ms',xticks=n,yticks=[0,5,10,15,20,25,30],ylim=(0,32));a.legend(frameon=False,loc='upper right')
-save(f,'figure-7-2-cut');data['7-2']={'kind':'teaching','volume_per_direction_bytes':336*2**20,'cut_bandwidth_Bps':40e9,'compute_base_ms':20,'cut_ms':cut,'device_multipliers':n.tolist(),'compute_ms':compute.tolist()}
-
-# 3: Same total communication, different cross-boundary fraction.
-names=['gradient-fp32-flat-contiguous-nic2','gradient-fp32-flat-interleaved-nic2','gradient-fp32-hierarchical-nic2'];g=[calc(x) for x in names];labels=['连续平坦环','交错平坦环','分层归约']
-local=[z['summary']['local_send_bytes']/2**20 for z in g];remote=[z['summary']['remote_send_bytes']/2**20 for z in g];ts=[float(Fraction(z['summary']['serial_barrier_lower_seconds_exact']))*1000 for z in g]
-f=plt.figure(figsize=(13,9.5))
-ring_orders=[list(range(8)),[0,4,1,5,2,6,3,7]]
-for panel_index in range(3):
- ax=f.add_axes([.035+panel_index*.325,.59,.29,.36]);ax.set(xlim=(0,1),ylim=(0,1));ax.axis('off')
- ax.text(.5,.98,labels[panel_index],ha='center',va='top',fontsize=13,weight='bold')
- ax.axhspan(.58,.82,color=C['pale']);ax.axhspan(.23,.47,color=C['light'])
- ax.text(.01,.86,'服务器 A',fontsize=9);ax.text(.01,.15,'服务器 B',fontsize=9)
- positions={r:(.13+(r%4)*.24,.70 if r<4 else .35) for r in range(8)}
- if panel_index<2:
-  order=ring_orders[panel_index]
-  for edge,(u,v) in enumerate(zip(order,order[1:]+order[:1])):
-   x1,y1=positions[u];x2,y2=positions[v];col='orange' if (u<4)!=(v<4) else 'teal'
-   ar=FancyArrowPatch((x1,y1),(x2,y2),shrinkA=12,shrinkB=12,arrowstyle='-|>',mutation_scale=11,color=C[col],lw=1.4,connectionstyle='arc3,rad='+str(.13 if edge==7 else 0));ax.add_patch(ar)
-  ax.text(.5,.04,['2 条边跨服务器','8 条边跨服务器'][panel_index],ha='center',fontsize=11,color=C['orange'])
- else:
-  for r in range(4):
-   x,y=positions[r];ax.add_patch(FancyArrowPatch((x,.64),(x,.41),arrowstyle='<->',mutation_scale=10,color=C['orange'],lw=1.5))
-  ax.text(.5,.04,'本地分散归约后：各持 48 MiB',ha='center',fontsize=10)
- for r,(x,y) in positions.items():
-  ax.scatter([x],[y],s=340,fc='white',ec=C['ink'],lw=1,zorder=5)
-  ax.text(x,y,str(r),ha='center',va='center',fontsize=10,zorder=6)
-ax=f.add_axes([.13,.10,.81,.40])
-ax.bar(labels,remote,color=C['orange'],label='跨服务器')
-ax.bar(labels,local,bottom=remote,color=C['teal'],label='本地')
-for i,v in enumerate(remote):ax.text(i,v/2,f'{v:.0f} MiB',ha='center',va='center',color='white',weight='bold')
-ax.set(ylabel='逻辑发送量 / MiB',ylim=(0,3200));ax.set_yticks([0,672,1344,2016,2688]);ax.legend(frameon=False,ncol=2,loc='upper right')
-save(f,'figure-7-3-hierarchy');data['7-3']={'kind':'saved_calculation','sources':names,'local_MiB':local,'remote_MiB':remote,'lower_ms':ts,'ring_orders':ring_orders,'hierarchy_pairs':[[i,i+4] for i in range(4)],'plotted':'logical paths and local/remote bytes; lower_ms supports prose'}
+# Figures 7-1 to 7-3 are drawn at book size in teaching_revision.py; this block records their data.
+data['7-1']={'kind':'conceptual','ranks':16,'servers':2,'ranks_per_server':8,'nics_per_server':8,'nic_Bps_per_direction':50e9,'nvlink_Bps_per_direction':450e9}
+# 2: One relationship: compute scaling against a fixed cut (one NIC carries the ring's cross-server bytes).
+n=np.arange(1,9);cut=360*2**20/50e9*1000;compute=20/n
+data['7-2']={'kind':'teaching','volume_per_direction_bytes':360*2**20,'cut_bandwidth_Bps':50e9,'compute_base_ms':20,'cut_ms':cut,'device_multipliers':n.tolist(),'compute_ms':compute.tolist()}
+# 3: Same total communication, different cross-boundary fraction and NIC usage.
+names=['gradient-fp32-flat-contiguous-nic8','gradient-fp32-flat-interleaved-nic8','gradient-fp32-hierarchical-nic8'];g=[calc(x) for x in names];labels=['连续环','交错环','分层归约']
+local=[z['summary']['local_send_bytes']/2**20 for z in g];remote=[z['summary']['remote_send_bytes']/2**20 for z in g];ts=[float(Fraction(z['summary']['serial_barrier_lower_seconds_exact']))*1000 for z in g];nics=[z['summary']['remote_nics_used_per_server'] for z in g]
+ring_orders=[list(range(16)),[r for pair in zip(range(8),range(8,16)) for r in pair]]
+data['7-3']={'kind':'saved_calculation','sources':names,'local_MiB':local,'remote_MiB':remote,'lower_ms':ts,'nics_used_per_server':nics,'ring_orders':ring_orders,'hierarchy_pairs':[[i,i+8] for i in range(8)],'plotted':'logical paths and local/remote bytes; lower_ms supports prose'}
 
 # 4: Concrete responsibilities, no timing inferred from arrow length.
 f,a=canvas(9)
@@ -150,7 +108,7 @@ for name,label,col,ls in [('periodic-queue-aligned','重叠 20 ms','blue','-'),(
  axs[0].plot(tt,rr,c=C[col],ls=ls,label=label,lw=2);axs[1].plot(tt,qq,c=C[col],ls=ls,lw=2)
 axs[0].axhline(50,c=C['red'],ls='--',lw=1);axs[0].text(44,53,'出口 50 GB/s',color=C['red'],fontsize=10)
 axs[0].set(ylim=(-3,96),ylabel='到达速率 / GB/s');axs[0].legend(frameon=False,ncol=3,loc='upper center',bbox_to_anchor=(.5,1.23))
-axs[1].set(xlim=(0,60),ylim=(-20,680),xlabel='时间 / ms',ylabel='积压 / MB');axs[1].text(21,607,'600 MB',color=C['blue']);axs[1].text(21,160,'150 MB',color=C['orange'])
+axs[1].set(xlim=(0,60),ylim=(-20,1120),xlabel='时间 / ms',ylabel='积压 / MB');axs[1].text(21,1010,'1000 MB',color=C['blue']);axs[1].text(21,260,'250 MB',color=C['orange'])
 packet_data={name:calc(name)['receive_events'] for name in ['packet-reorder-balanced','packet-reorder-skewed','packet-reorder-loss']}
 save(f,'figure-7-15-congestion');data['7-15']={'kind':'saved_calculation','periodic_segments':queue_data,'feedback':calc('feedback-queue-overflow'),'packets':packet_data,'plotted':'periodic_segments only; feedback and packets support prose'}
 
@@ -174,7 +132,7 @@ for group,(label,rd,ex) in enumerate([('原始',ready,.4),('交换减半',ready,
  ax.text(-.08,base-.75,label,ha='right',va='center',fontsize=11)
  ax.text(max(rd)+ex+.04,base-.75,f'{max(rd)+ex:.1f} ms',va='center',color=C['blue'])
 ax.set(xlim=(0,2.85),xticks=[0,.5,1,1.5,2,2.5],ylim=(-.4,11),yticks=[],xlabel='时间 / ms');ax.legend(handles=[Patch(color='#dbe2e6',label='尚未就绪'),Patch(color='#f6e3c9',label='等待其他参与者'),Patch(color=C['blue'],label='交换')],ncol=3,frameon=False,loc='upper center',bbox_to_anchor=(.5,1.15))
-sizes=np.array([8192,8*2**20]);ring=np.array([14*5e-6+1.75*sizes/b for b in [25e9,75e9]])*1e6
+sizes=np.array([8192,8*2**20]);ring=np.array([14*5e-6+1.75*sizes/b for b in [50e9,150e9]])*1e6
 meas=read('experiments/ch07/07-10/rank-readiness/results/summary.json');m=[z for z in meas if z['bytes']==4096]
 save(f,'figure-7-19-progress');data['7-19']={'kind':'teaching','ready_ms':ready,'exchange_ms':.4,'ring_us':ring.tolist(),'measured':m,'plotted':'ready_ms and exchange_ms only; ring and CPU observations support prose'}
 

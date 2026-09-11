@@ -1,22 +1,26 @@
 {
  "model": "qwen3-8b",
- "prompt_tokens": 8192,
- "output_tokens": 129,
+ "prompt_tokens": 32768,
+ "output_tokens": 1025,
  "cached_prefix_tokens": 0,
  "workers": [
   {
-   "name": "A100-80GB-prefill",
-   "prefill_tokens_per_second": 16384,
-   "decode_tokens_per_second": 64,
+   "name": "A100",
+   "device": "a100-80gb-sxm",
+   "decode_batch": 32,
+   "compute_efficiency": 0.5,
+   "bandwidth_efficiency": 0.5,
    "count": 4
   },
   {
-   "name": "H20-96GB-decode",
-   "prefill_tokens_per_second": 4096,
-   "decode_tokens_per_second": 256,
+   "name": "H20",
+   "device": "h20-sxm5-96gb",
+   "decode_batch": 32,
+   "compute_efficiency": 0.5,
+   "bandwidth_efficiency": 0.5,
    "count": 4
   }
  ],
  "network_bytes_per_second": 25000000000,
- "arrival_requests_per_second": "8"
+ "arrival_requests_per_second": "1"
 }

@@ -1,0 +1,965 @@
+{
+  "schema_version": 1,
+  "calculation": "edge-deployment-tiers",
+  "scenario": {
+    "decode_result": "results/qwen3-8b-decode-b1-s8192.json",
+    "energy_ledger_result": "results/energy-ledger-book.json",
+    "efficiency_record": "experiments/ch08/08-01/efficiency.json",
+    "vision_result": "results/vision-encoding-single.json",
+    "model": "qwen3-8b",
+    "context_tokens": 8192,
+    "q4_block_bytes": 18,
+    "bf16_block_bytes": 64,
+    "tokens_per_round": 45,
+    "terminal_seconds": "0.3",
+    "screenshot_bytes": 800000,
+    "phone_joules_per_token": [
+      "0.576",
+      "0.756"
+    ],
+    "tiers": [
+      {
+        "name": "end",
+        "label": "phone, four LPDDR5X x16 channels",
+        "device": null,
+        "uplink_bits_per_second": null,
+        "rtt_seconds": "0"
+      },
+      {
+        "name": "near",
+        "label": "nearby workstation",
+        "device": "rtx-pro6000-blackwell-ws",
+        "uplink_bits_per_second": 80000000,
+        "rtt_seconds": "0.02"
+      },
+      {
+        "name": "cloud",
+        "label": "cloud region",
+        "device": "h100-sxm",
+        "uplink_bits_per_second": 6400000,
+        "rtt_seconds": "0.2"
+      }
+    ],
+    "cases": [
+      {
+        "id": "twenty-rounds",
+        "rounds": 20,
+        "deadline_seconds": 45
+      },
+      {
+        "id": "ten-rounds",
+        "rounds": 10,
+        "deadline_seconds": 23
+      },
+      {
+        "id": "ten-rounds-tight",
+        "rounds": 10,
+        "deadline_seconds": 15
+      },
+      {
+        "id": "twenty-retain-nine",
+        "rounds": 20,
+        "deadline_seconds": 45,
+        "reconnect_seconds": 1,
+        "redo_rounds": 1
+      },
+      {
+        "id": "twenty-lose-ten",
+        "rounds": 20,
+        "deadline_seconds": 45,
+        "reconnect_seconds": 1,
+        "redo_rounds": 10
+      },
+      {
+        "id": "ten-retain-seven",
+        "rounds": 10,
+        "deadline_seconds": 23,
+        "reconnect_seconds": 2,
+        "redo_rounds": 1
+      },
+      {
+        "id": "ten-lose-eight",
+        "rounds": 10,
+        "deadline_seconds": 23,
+        "reconnect_seconds": 2,
+        "redo_rounds": 8
+      }
+    ],
+    "variable_uplink": [
+      [
+        10,
+        6000000
+      ],
+      [
+        10,
+        10000000
+      ]
+    ],
+    "constant_uplink_bits_per_second": 8000000,
+    "uplink_scan_bits_per_second": [
+      2000000,
+      20000000,
+      181
+    ],
+    "encoder_devices": [
+      "rtx4090",
+      "h100-sxm"
+    ],
+    "encoder_uplink_bits_per_second": 6400000,
+    "image_bytes": 800000,
+    "fast_link_bits_per_second": 400000000000
+  },
+  "declared_input_sources": {
+    "tokens_per_round": "manuscripts/12-端边云协同.md 12.1.5 (2.9 s at the q4_0 phone bound = 45 tokens)",
+    "terminal_seconds": "book (declared task condition, 12.1.3)",
+    "screenshot_bytes": "book (declared task condition, 12.1.3)",
+    "phone_joules_per_token": "references/text/melting-point.txt lines 1514-1515 (0.16-0.21 mWh per token)",
+    "tiers": "devices: calculations/configs/hardware.json; uplink and round-trip times: book (declared network conditions)",
+    "cases": "book (declared deadlines and reconnect times)",
+    "variable_uplink": "book (declared)",
+    "constant_uplink_bits_per_second": "book (declared)",
+    "encoder_devices": "calculations/configs/hardware.json",
+    "encoder_uplink_bits_per_second": "book (declared, 12.1.3)",
+    "image_bytes": "book (declared, 12.1.3)",
+    "fast_link_bits_per_second": "references/files/specs/nvidia-connectx7-datasheet.pdf (single port up to 400 Gb/s)"
+  },
+  "summary": {
+    "step_bytes": 5465189952,
+    "q4_weight_bytes": 4257230400,
+    "kv_bytes": 1207959552,
+    "prefill_flops": 133594323353600,
+    "end_model_seconds_per_round": 2.8730554654205607,
+    "near_model_seconds_per_round": 0.13723970303571428,
+    "cloud_model_seconds_per_round": 0.07341299935522388,
+    "near_prepare_seconds": 0.2651733294037316,
+    "cloud_prepare_seconds": 0.13502559465696382,
+    "totals_twenty_rounds_seconds": [
+      63.46110930841122,
+      11.009967390118018,
+      31.60328558176144
+    ],
+    "energy_twenty_rounds_joules": [
+      [
+        518.4,
+        680.4
+      ],
+      [
+        1805.9804340708104,
+        1805.9804340708104
+      ],
+      [
+        1122.299907233009,
+        1122.299907233009
+      ]
+    ],
+    "lowest_energy_feasible_twenty_rounds": "cloud",
+    "cloud_deadline_uplink_mbit_per_second": 3.832712355982445,
+    "cloud_faster_than_near_uplink_mbit_per_second": null,
+    "measured_cloud_faster_uplink_mbit_per_second": 73.32745090401862,
+    "local_encode_seconds": 0.007931601510895885,
+    "remote_encode_seconds": 0.0013243385583181727,
+    "fast_link_transfer_difference_ms": 0.14784
+  },
+  "tiers": [
+    {
+      "tier": "end",
+      "label": "phone, four LPDDR5X x16 channels",
+      "device": null,
+      "device_name": "phone (4 x LPDDR5X x16)",
+      "bandwidth_bytes_per_second": 85600000000.0,
+      "bf16_dense_peak_flops": null,
+      "power_watts": null,
+      "step_bytes": 5465189952,
+      "step_seconds": 0.06384567700934579,
+      "tokens_per_second": 15.662767580232863,
+      "model_seconds_per_round": 2.8730554654205607,
+      "prepare_seconds": 0.0,
+      "prepare_basis": "no archived matrix peak; set to 0",
+      "uplink_bits_per_second": null,
+      "upload_seconds_per_round": 0.0,
+      "rtt_seconds": 0.0,
+      "terminal_seconds": 0.3,
+      "round_seconds": 3.173055465420561,
+      "measured_efficiency_model_seconds_per_round": null,
+      "measured_efficiency_round_seconds": null
+    },
+    {
+      "tier": "near",
+      "label": "nearby workstation",
+      "device": "rtx-pro6000-blackwell-ws",
+      "device_name": "RTX PRO 6000 Blackwell Workstation Edition",
+      "bandwidth_bytes_per_second": 1792000000000.0,
+      "bf16_dense_peak_flops": 503800000000000.0,
+      "power_watts": 600,
+      "step_bytes": 5465189952,
+      "step_seconds": 0.0030497711785714286,
+      "tokens_per_second": 327.893452146931,
+      "model_seconds_per_round": 0.13723970303571428,
+      "prepare_seconds": 0.2651733294037316,
+      "prepare_basis": "8K-context prefill FLOPs / dense BF16 peak",
+      "uplink_bits_per_second": 80000000,
+      "upload_seconds_per_round": 0.08,
+      "rtt_seconds": 0.02,
+      "terminal_seconds": 0.3,
+      "round_seconds": 0.5372397030357143,
+      "measured_efficiency_model_seconds_per_round": 0.3886953431373355,
+      "measured_efficiency_round_seconds": 0.7886953431373356
+    },
+    {
+      "tier": "cloud",
+      "label": "cloud region",
+      "device": "h100-sxm",
+      "device_name": "H100 SXM 80GB",
+      "bandwidth_bytes_per_second": 3350000000000.0,
+      "bf16_dense_peak_flops": 989400000000000.0,
+      "power_watts": 700,
+      "step_bytes": 5465189952,
+      "step_seconds": 0.0016313999856716417,
+      "tokens_per_second": 612.9704602077113,
+      "model_seconds_per_round": 0.07341299935522388,
+      "prepare_seconds": 0.13502559465696382,
+      "prepare_basis": "8K-context prefill FLOPs / dense BF16 peak",
+      "uplink_bits_per_second": 6400000,
+      "upload_seconds_per_round": 1.0,
+      "rtt_seconds": 0.2,
+      "terminal_seconds": 0.3,
+      "round_seconds": 1.573412999355224,
+      "measured_efficiency_model_seconds_per_round": 0.207923001463315,
+      "measured_efficiency_round_seconds": 1.707923001463315
+    }
+  ],
+  "cases": [
+    {
+      "id": "twenty-rounds",
+      "rounds": 20,
+      "deadline_seconds": 45,
+      "rows": [
+        {
+          "tier": "end",
+          "total_seconds": 63.46110930841122,
+          "meets_deadline": false,
+          "executed_rounds": 20,
+          "energy_joules": [
+            518.4,
+            680.4
+          ],
+          "extra_seconds": 0.0
+        },
+        {
+          "tier": "near",
+          "total_seconds": 11.009967390118018,
+          "meets_deadline": true,
+          "executed_rounds": 20,
+          "energy_joules": [
+            1805.9804340708104,
+            1805.9804340708104
+          ],
+          "extra_seconds": 0.0
+        },
+        {
+          "tier": "cloud",
+          "total_seconds": 31.60328558176144,
+          "meets_deadline": true,
+          "executed_rounds": 20,
+          "energy_joules": [
+            1122.299907233009,
+            1122.299907233009
+          ],
+          "extra_seconds": 0.0
+        }
+      ],
+      "lowest_energy_feasible": "cloud"
+    },
+    {
+      "id": "ten-rounds",
+      "rounds": 10,
+      "deadline_seconds": 23,
+      "rows": [
+        {
+          "tier": "end",
+          "total_seconds": 31.73055465420561,
+          "meets_deadline": false,
+          "executed_rounds": 10,
+          "energy_joules": [
+            259.2,
+            340.2
+          ],
+          "extra_seconds": 0.0
+        },
+        {
+          "tier": "near",
+          "total_seconds": 5.637570359760875,
+          "meets_deadline": true,
+          "executed_rounds": 10,
+          "energy_joules": [
+            982.5422158565246,
+            982.5422158565246
+          ],
+          "extra_seconds": 0.0
+        },
+        {
+          "tier": "cloud",
+          "total_seconds": 15.869155588209203,
+          "meets_deadline": true,
+          "executed_rounds": 10,
+          "energy_joules": [
+            608.4089117464418,
+            608.4089117464418
+          ],
+          "extra_seconds": 0.0
+        }
+      ],
+      "lowest_energy_feasible": "cloud"
+    },
+    {
+      "id": "ten-rounds-tight",
+      "rounds": 10,
+      "deadline_seconds": 15,
+      "rows": [
+        {
+          "tier": "end",
+          "total_seconds": 31.73055465420561,
+          "meets_deadline": false,
+          "executed_rounds": 10,
+          "energy_joules": [
+            259.2,
+            340.2
+          ],
+          "extra_seconds": 0.0
+        },
+        {
+          "tier": "near",
+          "total_seconds": 5.637570359760875,
+          "meets_deadline": true,
+          "executed_rounds": 10,
+          "energy_joules": [
+            982.5422158565246,
+            982.5422158565246
+          ],
+          "extra_seconds": 0.0
+        },
+        {
+          "tier": "cloud",
+          "total_seconds": 15.869155588209203,
+          "meets_deadline": false,
+          "executed_rounds": 10,
+          "energy_joules": [
+            608.4089117464418,
+            608.4089117464418
+          ],
+          "extra_seconds": 0.0
+        }
+      ],
+      "lowest_energy_feasible": "near"
+    },
+    {
+      "id": "twenty-retain-nine",
+      "rounds": 20,
+      "deadline_seconds": 45,
+      "reconnect_seconds": 1,
+      "redo_rounds": 1,
+      "rows": [
+        {
+          "tier": "end",
+          "total_seconds": 63.46110930841122,
+          "meets_deadline": false,
+          "executed_rounds": 20,
+          "energy_joules": [
+            518.4,
+            680.4
+          ],
+          "extra_seconds": 0.0
+        },
+        {
+          "tier": "near",
+          "total_seconds": 12.547207093153732,
+          "meets_deadline": true,
+          "executed_rounds": 21,
+          "energy_joules": [
+            1888.324255892239,
+            1888.324255892239
+          ],
+          "extra_seconds": 1.5372397030357143
+        },
+        {
+          "tier": "cloud",
+          "total_seconds": 34.17669858111667,
+          "meets_deadline": true,
+          "executed_rounds": 21,
+          "energy_joules": [
+            1173.6890067816657,
+            1173.6890067816657
+          ],
+          "extra_seconds": 2.5734129993552237
+        }
+      ],
+      "lowest_energy_feasible": "cloud"
+    },
+    {
+      "id": "twenty-lose-ten",
+      "rounds": 20,
+      "deadline_seconds": 45,
+      "reconnect_seconds": 1,
+      "redo_rounds": 10,
+      "rows": [
+        {
+          "tier": "end",
+          "total_seconds": 63.46110930841122,
+          "meets_deadline": false,
+          "executed_rounds": 20,
+          "energy_joules": [
+            518.4,
+            680.4
+          ],
+          "extra_seconds": 0.0
+        },
+        {
+          "tier": "near",
+          "total_seconds": 17.38236442047516,
+          "meets_deadline": true,
+          "executed_rounds": 30,
+          "energy_joules": [
+            2629.418652285096,
+            2629.418652285096
+          ],
+          "extra_seconds": 6.372397030357143
+        },
+        {
+          "tier": "cloud",
+          "total_seconds": 48.33741557531368,
+          "meets_deadline": false,
+          "executed_rounds": 30,
+          "energy_joules": [
+            1636.1909027195761,
+            1636.1909027195761
+          ],
+          "extra_seconds": 16.734129993552237
+        }
+      ],
+      "lowest_energy_feasible": "near"
+    },
+    {
+      "id": "ten-retain-seven",
+      "rounds": 10,
+      "deadline_seconds": 23,
+      "reconnect_seconds": 2,
+      "redo_rounds": 1,
+      "rows": [
+        {
+          "tier": "end",
+          "total_seconds": 31.73055465420561,
+          "meets_deadline": false,
+          "executed_rounds": 10,
+          "energy_joules": [
+            259.2,
+            340.2
+          ],
+          "extra_seconds": 0.0
+        },
+        {
+          "tier": "near",
+          "total_seconds": 8.174810062796588,
+          "meets_deadline": true,
+          "executed_rounds": 11,
+          "energy_joules": [
+            1064.8860376779533,
+            1064.8860376779533
+          ],
+          "extra_seconds": 2.537239703035714
+        },
+        {
+          "tier": "cloud",
+          "total_seconds": 19.442568587564427,
+          "meets_deadline": true,
+          "executed_rounds": 11,
+          "energy_joules": [
+            659.7980112950986,
+            659.7980112950986
+          ],
+          "extra_seconds": 3.5734129993552237
+        }
+      ],
+      "lowest_energy_feasible": "cloud"
+    },
+    {
+      "id": "ten-lose-eight",
+      "rounds": 10,
+      "deadline_seconds": 23,
+      "reconnect_seconds": 2,
+      "redo_rounds": 8,
+      "rows": [
+        {
+          "tier": "end",
+          "total_seconds": 31.73055465420561,
+          "meets_deadline": false,
+          "executed_rounds": 10,
+          "energy_joules": [
+            259.2,
+            340.2
+          ],
+          "extra_seconds": 0.0
+        },
+        {
+          "tier": "near",
+          "total_seconds": 11.935487984046588,
+          "meets_deadline": true,
+          "executed_rounds": 18,
+          "energy_joules": [
+            1641.2927904279534,
+            1641.2927904279534
+          ],
+          "extra_seconds": 6.297917624285715
+        },
+        {
+          "tier": "cloud",
+          "total_seconds": 30.456459583050993,
+          "meets_deadline": false,
+          "executed_rounds": 18,
+          "energy_joules": [
+            1019.5217081356956,
+            1019.5217081356956
+          ],
+          "extra_seconds": 14.587303994841792
+        }
+      ],
+      "lowest_energy_feasible": "near"
+    }
+  ],
+  "uplink": {
+    "cloud_fixed_seconds": 11.603285581761442,
+    "upload_megabits": 128.0,
+    "near_total_seconds": 11.009967390118018,
+    "cloud_deadline_uplink_bits_per_second": 3832712.355982445,
+    "cloud_faster_than_near_uplink_bits_per_second": null,
+    "cloud_never_faster_reason": "cloud time without upload already exceeds the nearby total",
+    "measured_ratio": 2.8322368421052633,
+    "measured_ratio_source": {
+      "file": "experiments/ch08/08-01/efficiency.json",
+      "context": 8192,
+      "batch": 1,
+      "decode_round_ms": 25.83,
+      "peak_read_ms": 9.12
+    },
+    "measured_cloud_fixed_seconds": 14.293485623923264,
+    "measured_near_total_seconds": 16.039080192150443,
+    "measured_cloud_faster_uplink_bits_per_second": 73327450.90401863,
+    "variable_uplink": [
+      [
+        10,
+        6000000
+      ],
+      [
+        10,
+        10000000
+      ]
+    ],
+    "variable_uplink_seconds": 28.669952248428107,
+    "constant_uplink_bits_per_second": 8000000,
+    "constant_uplink_seconds": 27.60328558176144,
+    "scan_bits_per_second": [
+      2000000.0,
+      2100000.0,
+      2200000.0,
+      2300000.0,
+      2400000.0,
+      2500000.0,
+      2600000.0,
+      2700000.0,
+      2800000.0,
+      2900000.0,
+      3000000.0,
+      3100000.0,
+      3200000.0,
+      3300000.0,
+      3400000.0,
+      3500000.0,
+      3600000.0,
+      3700000.0,
+      3800000.0,
+      3900000.0,
+      4000000.0,
+      4100000.0,
+      4200000.0,
+      4300000.0,
+      4400000.0,
+      4500000.0,
+      4600000.0,
+      4700000.0,
+      4800000.0,
+      4900000.0,
+      5000000.0,
+      5100000.0,
+      5200000.0,
+      5300000.0,
+      5400000.0,
+      5500000.0,
+      5600000.0,
+      5700000.0,
+      5800000.0,
+      5900000.0,
+      6000000.0,
+      6100000.0,
+      6200000.0,
+      6300000.0,
+      6400000.0,
+      6500000.0,
+      6600000.0,
+      6700000.0,
+      6800000.0,
+      6900000.0,
+      7000000.0,
+      7100000.0,
+      7200000.0,
+      7300000.0,
+      7400000.0,
+      7500000.0,
+      7600000.0,
+      7700000.0,
+      7800000.0,
+      7900000.0,
+      8000000.0,
+      8100000.0,
+      8200000.0,
+      8300000.0,
+      8400000.0,
+      8500000.0,
+      8600000.0,
+      8700000.0,
+      8800000.0,
+      8900000.0,
+      9000000.0,
+      9100000.0,
+      9200000.0,
+      9300000.0,
+      9400000.0,
+      9500000.0,
+      9600000.0,
+      9700000.0,
+      9800000.0,
+      9900000.0,
+      10000000.0,
+      10100000.0,
+      10200000.0,
+      10300000.0,
+      10400000.0,
+      10500000.0,
+      10600000.0,
+      10700000.0,
+      10800000.0,
+      10900000.0,
+      11000000.0,
+      11100000.0,
+      11200000.0,
+      11300000.0,
+      11400000.0,
+      11500000.0,
+      11600000.0,
+      11700000.0,
+      11800000.0,
+      11900000.0,
+      12000000.0,
+      12100000.0,
+      12200000.0,
+      12300000.0,
+      12400000.0,
+      12500000.0,
+      12600000.0,
+      12700000.0,
+      12800000.0,
+      12900000.0,
+      13000000.0,
+      13100000.0,
+      13200000.0,
+      13300000.0,
+      13400000.0,
+      13500000.0,
+      13600000.0,
+      13700000.0,
+      13800000.0,
+      13900000.0,
+      14000000.0,
+      14100000.0,
+      14200000.0,
+      14300000.0,
+      14400000.0,
+      14500000.0,
+      14600000.0,
+      14700000.0,
+      14800000.0,
+      14900000.0,
+      15000000.0,
+      15100000.0,
+      15200000.0,
+      15300000.0,
+      15400000.0,
+      15500000.0,
+      15600000.0,
+      15700000.0,
+      15800000.0,
+      15900000.0,
+      16000000.0,
+      16100000.0,
+      16200000.0,
+      16300000.0,
+      16400000.0,
+      16500000.0,
+      16600000.0,
+      16700000.0,
+      16800000.0,
+      16900000.0,
+      17000000.0,
+      17100000.0,
+      17200000.0,
+      17300000.0,
+      17400000.0,
+      17500000.0,
+      17600000.0,
+      17700000.0,
+      17800000.0,
+      17900000.0,
+      18000000.0,
+      18100000.0,
+      18200000.0,
+      18300000.0,
+      18400000.0,
+      18500000.0,
+      18600000.0,
+      18700000.0,
+      18800000.0,
+      18900000.0,
+      19000000.0,
+      19100000.0,
+      19200000.0,
+      19300000.0,
+      19400000.0,
+      19500000.0,
+      19600000.0,
+      19700000.0,
+      19800000.0,
+      19900000.0,
+      20000000.0
+    ],
+    "scan_cloud_seconds": [
+      75.60328558176144,
+      72.55566653414239,
+      69.78510376357963,
+      67.25545949480492,
+      64.93661891509477,
+      62.80328558176144,
+      60.834054812530674,
+      59.01069298916885,
+      57.317571296047156,
+      55.7412166162442,
+      54.269952248428105,
+      52.8936081624066,
+      51.60328558176144,
+      50.39116436964023,
+      49.25034440529085,
+      48.17471415319001,
+      47.158841137317,
+      46.19788017635604,
+      45.28749610807723,
+      44.423798402274265,
+      43.60328558176144,
+      42.82279777688339,
+      42.079476057951915,
+      41.37072744222656,
+      40.694194672670534,
+      40.04773002620588,
+      39.42937253828318,
+      38.837328134952934,
+      38.269952248428105,
+      37.72573456135328,
+      37.20328558176144,
+      36.70132479744772,
+      36.218670197146054,
+      35.75422897798786,
+      35.30698928546514,
+      34.876012854488714,
+      34.4604284389043,
+      34.05942593263863,
+      33.67225109900282,
+      33.29820083599873,
+      32.936618915094776,
+      32.58689213913849,
+      32.248446872084024,
+      31.92074589922176,
+      31.60328558176144,
+      31.295593274069134,
+      30.997224975700835,
+      30.70776319370174,
+      30.426814993526147,
+      30.1540102194426,
+      29.88899986747573,
+      29.63145459584595,
+      29.38106335953922,
+      29.13753215710391,
+      28.90058287905874,
+      28.669952248428107,
+      28.445390844919338,
+      28.226662205138066,
+      28.013541992017853,
+      27.80581722733106,
+      27.60328558176144,
+      27.405754717563912,
+      27.213041679322416,
+      27.024972328749392,
+      26.84138081985668,
+      26.662109111173205,
+      26.487006511994,
+      26.31592925992236,
+      26.148740127215987,
+      25.985308053671552,
+      25.825507803983665,
+      25.669219647695506,
+      25.51632906002231,
+      25.366726441976496,
+      25.220306858357187,
+      25.076969792287755,
+      24.936618915094776,
+      24.799161870421234,
+      24.66451007155736,
+      24.53257851105437,
+      24.40328558176144,
+      24.276552908494114,
+      24.15230518960458,
+      24.03047004778086,
+      23.91097788945375,
+      23.79376177223763,
+      23.67875727987465,
+      23.56590240419135,
+      23.45513743361329,
+      23.346404847816487,
+      23.239649218125077,
+      23.13481711329297,
+      23.03185701033287,
+      22.930719210080024,
+      22.831355757200036,
+      22.733720364370136,
+      22.63776834038213,
+      22.54345652193238,
+      22.450743208880084,
+      22.359588102769845,
+      22.26995224842811,
+      22.181797978455656,
+      22.095088860449966,
+      22.00978964680209,
+      21.925866226922732,
+      21.843285581761442,
+      21.7620157404916,
+      21.682025739241755,
+      21.60328558176144,
+      21.52576620191648,
+      21.449439427915287,
+      21.374277948173656,
+      21.30025527873114,
+      21.22734573213738,
+      21.155524387731592,
+      21.08476706324292,
+      21.015050287643795,
+      20.946351275192097,
+      20.878647900602022,
+      20.81191867528662,
+      20.746142724618583,
+      20.681299766158606,
+      20.617370088803696,
+      20.554334532810394,
+      20.49217447065033,
+      20.430871788657992,
+      20.370408869432673,
+      20.310768574958722,
+      20.25193423041009,
+      20.19388960860708,
+      20.136618915094775,
+      20.08010677381442,
+      20.02433821334039,
+      19.969298653656868,
+      19.914973893449755,
+      19.861350097890472,
+      19.808413786889645,
+      19.75615182379966,
+      19.70455140454625,
+      19.653600047170247,
+      19.60328558176144,
+      19.553596140767652,
+      19.504520149662675,
+      19.45604631795776,
+      19.408163630541928,
+      19.360861339337198,
+      19.314128955255416,
+      19.267956240444075,
+      19.22233320080906,
+      19.17725007880286,
+      19.132697346467324,
+      19.088665698720504,
+      19.045146046877722,
+      19.00212951239728,
+      18.959607420841902,
+      18.917571296047157,
+      18.876012854488714,
+      18.834923999840537,
+      18.794296817716496,
+      18.754123570588256,
+      18.71439669287255,
+      18.67510878618133,
+      18.636252614728473,
+      18.597821100887124,
+      18.559807320891878,
+      18.52220450068036,
+      18.48500601186897,
+      18.4482053678577,
+      18.411796220059315,
+      18.375772354248213,
+      18.340127687024598,
+      18.304856262389713,
+      18.26995224842811,
+      18.23540993409305,
+      18.20122372609134,
+      18.167388145864006,
+      18.1338978266594,
+      18.100747510695452,
+      18.067932046407908,
+      18.03544638578154,
+      18.003285581761443
+    ]
+  },
+  "encoder": {
+    "matrix_flops_per_image": 1310300569600,
+    "feature_bytes": 8192000,
+    "image_bytes": 800000,
+    "devices": [
+      {
+        "device": "rtx4090",
+        "device_name": "GeForce RTX 4090",
+        "bf16_dense_peak_flops": 165200000000000.0,
+        "encode_seconds": 0.007931601510895885
+      },
+      {
+        "device": "h100-sxm",
+        "device_name": "H100 SXM 80GB",
+        "bf16_dense_peak_flops": 989400000000000.0,
+        "encode_seconds": 0.0013243385583181727
+      }
+    ],
+    "local_device": "rtx4090",
+    "remote_device": "h100-sxm",
+    "uplink_bits_per_second": 6400000,
+    "image_upload_seconds": 1.0,
+    "feature_upload_seconds": 10.24,
+    "local_path_seconds": 10.247931601510896,
+    "remote_path_seconds": 1.0013243385583181,
+    "encode_difference_seconds": 0.006607262952577711,
+    "transfer_difference_seconds": 9.24,
+    "fast_link_bits_per_second": 400000000000,
+    "fast_link_transfer_difference_seconds": 0.00014784
+  },
+  "assumptions": [
+    "All tiers run one Qwen3-8B q4_0 checkpoint at 8K context and generate the same tokens per round; quality is fixed by construction.",
+    "Model time per round is tokens x (q4_0 weights + 8K KV) / memory bandwidth, the decode read lower bound used in 12.1.5.",
+    "Preparation is one 8K-context prefill at the dense BF16 peak; the phone has no archived matrix peak and is given zero, which only favours it.",
+    "GPU energy is TDP/TGP x busy seconds (an upper bound); phone energy is the MELTing Point measured 0.16-0.21 mWh per token.",
+    "Measured-efficiency rows scale both GPU model times by the RTX PRO 6000 batch-1 8K decode measurement of experiment 8-1.",
+    "Uplink, round-trip times, terminal time and reconnect times are declared network and task conditions.",
+    "A disconnection affects only remote tiers; redone rounds are executed again and counted again in energy."
+  ]
+}

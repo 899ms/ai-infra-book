@@ -29,11 +29,24 @@ def evaluate(case):
     dispatch = phase(case['dispatch_bytes'], rows, cols)
     combine = phase(case['combine_bytes'], cols, rows)
     compute = [v*case['flops_per_assignment']/case['compute_Fps'] for v in cols]
+    d, c, r = dispatch['lower_s'], max(compute), combine['lower_s']
+    # Two equal microbatches on three independent resources: one pass through every stage plus the longest stage once more.
+    pipeline = (d+c+r+max(d, c, r))/2
+    # Factor by which dispatch and combine (or compute) must both stretch before the pipeline stops beating the barrier.
+    comm_stretch = (2*(d+r)+c)/(d+r+max(d, r))
+    if comm_stretch*max(d, r) < c:
+        comm_stretch = 2
+    compute_stretch = (d+r+2*c)/(2*c)
+    if compute_stretch*c < max(d, r):
+        compute_stretch = (min(d, r)+2*c)/c
     return {'name': case['name'], 'send_assignments': rows, 'expert_assignments': cols,
             'expert_skew': max(cols)/(total/len(cols)),
             'dispatch': dispatch, 'combine': combine, 'compute_s': compute,
             'barrier_lower_s': dispatch['lower_s']+max(compute)+combine['lower_s'],
-            'resource_batch_rate_upper': 1/max(dispatch['lower_s'], max(compute), combine['lower_s'])}
+            'resource_batch_rate_upper': 1/max(dispatch['lower_s'], max(compute), combine['lower_s']),
+            'two_microbatch_pipeline_s': pipeline,
+            'pipeline_break_even_comm_stretch': comm_stretch,
+            'pipeline_break_even_compute_stretch': compute_stretch}
 
 
 def main():
@@ -48,6 +61,9 @@ def main():
     lines=['# 大 EP 与专家分离的偏斜算例','', '运行：`python3 calculations/ep_skew.py`。输入见 [固定场景](../scenarios/ep-skew-example.json)。','', *scenario['assumptions'], '', '| 场景 | 专家 skew | dispatch 下界 ms | 计算下界 ms | combine 下界 ms | 阶段屏障总下界 ms |', '|---|---:|---:|---:|---:|---:|']
     for r in results:
         lines.append(f"| {r['name']} | {r['expert_skew']:.2f} | {r['dispatch']['lower_s']*1000:.3f} | {max(r['compute_s'])*1000:.3f} | {r['combine']['lower_s']*1000:.3f} | {r['barrier_lower_s']*1000:.3f} |")
+    lines.extend(['', '两个等大微批次在三项独立资源上流水：总时间为单个微批次三段之和再加一次最长段；打平倍数是 dispatch 与 combine（或计算）同时被拉长多少倍时流水不再快于整批屏障。', '', '| 场景 | 整批屏障 ms | 两微批流水 ms | 通信打平倍数 | 计算打平倍数 |', '|---|---:|---:|---:|---:|'])
+    for r in results:
+        lines.append(f"| {r['name']} | {r['barrier_lower_s']*1000:.3f} | {r['two_microbatch_pipeline_s']*1000:.3f} | {r['pipeline_break_even_comm_stretch']:.3f} | {r['pipeline_break_even_compute_stretch']:.3f} |")
     (args.output_dir/'ep-skew-book.md').write_text('\n'.join(lines)+'\n')
     print('\n'.join(lines))
 

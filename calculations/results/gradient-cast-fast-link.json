@@ -4,9 +4,9 @@
   "model": "qwen3-8b",
   "scenario": {
     "model": "qwen3-8b",
-    "link_bytes_per_second": 300000000000,
-    "cpu_cast_bytes_per_second": 100000000000,
-    "gpu_cast_bytes_per_second": 1500000000000,
+    "link_bytes_per_second": 450000000000,
+    "cpu_cast_bytes_per_second": 307200000000,
+    "gpu_cast_bytes_per_second": 1008000000000,
     "copy_startup_ns": 0,
     "cpu_cast_startup_ns": 0,
     "gpu_cast_startup_ns": 0,
@@ -42,8 +42,8 @@
   "gradient_cast_paths": [
     {
       "cast_location": "cpu",
-      "ready_seconds": 0.0033554432,
-      "ready_exact_seconds": "32768/9765625",
+      "ready_seconds": 0.0012067362133333333,
+      "ready_exact_seconds": "176768/146484375",
       "link_payload_bytes": 100663296,
       "cast_read_write_bytes": 301989888,
       "gpu_peak_including_common_bytes": 100663296,
@@ -54,13 +54,13 @@
         {
           "name": "d2h_bf16",
           "start_exact_seconds": "0",
-          "end_exact_seconds": "16384/48828125",
+          "end_exact_seconds": "32768/146484375",
           "logical_bytes": 100663296
         },
         {
           "name": "cast_on_cpu",
-          "start_exact_seconds": "16384/48828125",
-          "end_exact_seconds": "32768/9765625",
+          "start_exact_seconds": "32768/146484375",
+          "end_exact_seconds": "176768/146484375",
           "logical_bytes": 301989888
         }
       ],
@@ -69,7 +69,7 @@
           "tier": "gpu",
           "name": "common_bf16_gradient",
           "start_exact_seconds": "0",
-          "end_exact_seconds": "16384/48828125",
+          "end_exact_seconds": "32768/146484375",
           "bytes": 100663296,
           "common_input": true
         },
@@ -77,15 +77,15 @@
           "tier": "host",
           "name": "bf16_staging",
           "start_exact_seconds": "0",
-          "end_exact_seconds": "32768/9765625",
+          "end_exact_seconds": "176768/146484375",
           "bytes": 100663296,
           "common_input": false
         },
         {
           "tier": "host",
           "name": "fp32_output",
-          "start_exact_seconds": "16384/48828125",
-          "end_exact_seconds": "32768/9765625",
+          "start_exact_seconds": "32768/146484375",
+          "end_exact_seconds": "176768/146484375",
           "bytes": 201326592,
           "common_input": false
         }
@@ -93,8 +93,8 @@
     },
     {
       "cast_location": "gpu",
-      "ready_seconds": 0.000872415232,
-      "ready_exact_seconds": "212992/244140625",
+      "ready_seconds": 0.0007469855695238095,
+      "ready_exact_seconds": "765952/1025390625",
       "link_payload_bytes": 201326592,
       "cast_read_write_bytes": 301989888,
       "gpu_peak_including_common_bytes": 301989888,
@@ -105,13 +105,13 @@
         {
           "name": "cast_on_gpu",
           "start_exact_seconds": "0",
-          "end_exact_seconds": "49152/244140625",
+          "end_exact_seconds": "4096/13671875",
           "logical_bytes": 301989888
         },
         {
           "name": "d2h_fp32",
-          "start_exact_seconds": "49152/244140625",
-          "end_exact_seconds": "212992/244140625",
+          "start_exact_seconds": "4096/13671875",
+          "end_exact_seconds": "765952/1025390625",
           "logical_bytes": 201326592
         }
       ],
@@ -120,7 +120,7 @@
           "tier": "gpu",
           "name": "common_bf16_gradient",
           "start_exact_seconds": "0",
-          "end_exact_seconds": "49152/244140625",
+          "end_exact_seconds": "4096/13671875",
           "bytes": 100663296,
           "common_input": true
         },
@@ -128,15 +128,15 @@
           "tier": "gpu",
           "name": "fp32_staging",
           "start_exact_seconds": "0",
-          "end_exact_seconds": "212992/244140625",
+          "end_exact_seconds": "765952/1025390625",
           "bytes": 201326592,
           "common_input": false
         },
         {
           "tier": "host",
           "name": "fp32_output",
-          "start_exact_seconds": "49152/244140625",
-          "end_exact_seconds": "212992/244140625",
+          "start_exact_seconds": "4096/13671875",
+          "end_exact_seconds": "765952/1025390625",
           "bytes": 201326592,
           "common_input": false
         }
@@ -152,9 +152,9 @@
     "bf16_bytes": 100663296,
     "fp32_bytes": 201326592,
     "cast_logical_read_write_bytes": 301989888,
-    "cpu_cast_exact_seconds": "147456/48828125",
-    "gpu_cast_exact_seconds": "49152/244140625",
-    "equal_time_link_bytes_per_second_exact": "250000000000/7",
+    "cpu_cast_exact_seconds": "384/390625",
+    "gpu_cast_exact_seconds": "4096/13671875",
+    "equal_time_link_bytes_per_second_exact": "10752000000000/73",
     "fastest_without_capacity": [
       "gpu"
     ],

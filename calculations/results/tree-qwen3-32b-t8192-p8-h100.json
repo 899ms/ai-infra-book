@@ -1,0 +1,226 @@
+{
+  "schema_version": 1,
+  "calculation": "qwen-binomial-tree-collective",
+  "model": "qwen3-32b",
+  "scenario": {
+    "batch": 1,
+    "tokens": 8192,
+    "participants": 8,
+    "bandwidth_bytes_per_second": 450000000000,
+    "startup_ns": 822,
+    "root": 0,
+    "message_dtype": "BF16",
+    "segmentation": false
+  },
+  "sources": [
+    {
+      "file": "configs/models/qwen3-32b/config.json",
+      "url": "https://huggingface.co/Qwen/Qwen3-32B/resolve/9216db5781bf21249d130ec9da846c4624c16137/config.json",
+      "revision": "9216db5781bf21249d130ec9da846c4624c16137",
+      "sha256": "97e295b63283935788fac5e4f8860862a56d4089538cafc93f0431f2ebe483bb"
+    },
+    {
+      "file": "sources/qwen3-32b/model.safetensors.index.json",
+      "url": "https://huggingface.co/Qwen/Qwen3-32B/resolve/9216db5781bf21249d130ec9da846c4624c16137/model.safetensors.index.json",
+      "revision": "9216db5781bf21249d130ec9da846c4624c16137",
+      "sha256": "bed42c6c55274bc08a1f616bceb3bcb84b3f02cb6584c573bd18c6519291ecd0"
+    },
+    {
+      "file": "sources/qwen3/modeling_qwen3.py",
+      "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+      "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+      "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+    },
+    {
+      "file": "sources/qwen3/modeling_qwen3_moe.py",
+      "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+      "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+      "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+    }
+  ],
+  "tree_rounds": [
+    {
+      "phase": "reduce",
+      "step": 0,
+      "edges": [
+        {
+          "sender": 1,
+          "receiver": 0,
+          "bytes": 83886080
+        },
+        {
+          "sender": 3,
+          "receiver": 2,
+          "bytes": 83886080
+        },
+        {
+          "sender": 5,
+          "receiver": 4,
+          "bytes": 83886080
+        },
+        {
+          "sender": 7,
+          "receiver": 6,
+          "bytes": 83886080
+        }
+      ]
+    },
+    {
+      "phase": "reduce",
+      "step": 1,
+      "edges": [
+        {
+          "sender": 2,
+          "receiver": 0,
+          "bytes": 83886080
+        },
+        {
+          "sender": 6,
+          "receiver": 4,
+          "bytes": 83886080
+        }
+      ]
+    },
+    {
+      "phase": "reduce",
+      "step": 2,
+      "edges": [
+        {
+          "sender": 4,
+          "receiver": 0,
+          "bytes": 83886080
+        }
+      ]
+    },
+    {
+      "phase": "broadcast",
+      "step": 0,
+      "edges": [
+        {
+          "sender": 0,
+          "receiver": 4,
+          "bytes": 83886080
+        }
+      ]
+    },
+    {
+      "phase": "broadcast",
+      "step": 1,
+      "edges": [
+        {
+          "sender": 0,
+          "receiver": 2,
+          "bytes": 83886080
+        },
+        {
+          "sender": 4,
+          "receiver": 6,
+          "bytes": 83886080
+        }
+      ]
+    },
+    {
+      "phase": "broadcast",
+      "step": 2,
+      "edges": [
+        {
+          "sender": 0,
+          "receiver": 1,
+          "bytes": 83886080
+        },
+        {
+          "sender": 2,
+          "receiver": 3,
+          "bytes": 83886080
+        },
+        {
+          "sender": 4,
+          "receiver": 5,
+          "bytes": 83886080
+        },
+        {
+          "sender": 6,
+          "receiver": 7,
+          "bytes": 83886080
+        }
+      ]
+    }
+  ],
+  "collective_ranks": [
+    {
+      "rank": 0,
+      "sent_bytes": 251658240,
+      "received_bytes": 251658240,
+      "reduction_adds": 125829120
+    },
+    {
+      "rank": 1,
+      "sent_bytes": 83886080,
+      "received_bytes": 83886080,
+      "reduction_adds": 0
+    },
+    {
+      "rank": 2,
+      "sent_bytes": 167772160,
+      "received_bytes": 167772160,
+      "reduction_adds": 41943040
+    },
+    {
+      "rank": 3,
+      "sent_bytes": 83886080,
+      "received_bytes": 83886080,
+      "reduction_adds": 0
+    },
+    {
+      "rank": 4,
+      "sent_bytes": 251658240,
+      "received_bytes": 251658240,
+      "reduction_adds": 83886080
+    },
+    {
+      "rank": 5,
+      "sent_bytes": 83886080,
+      "received_bytes": 83886080,
+      "reduction_adds": 0
+    },
+    {
+      "rank": 6,
+      "sent_bytes": 167772160,
+      "received_bytes": 167772160,
+      "reduction_adds": 41943040
+    },
+    {
+      "rank": 7,
+      "sent_bytes": 83886080,
+      "received_bytes": 83886080,
+      "reduction_adds": 0
+    }
+  ],
+  "summary": {
+    "activation_shape": [
+      8192,
+      5120
+    ],
+    "message_bytes_per_rank": 83886080,
+    "rounds_per_phase": 3,
+    "all_reduce_rounds": 6,
+    "all_reduce_network_send_bytes": 1174405120,
+    "all_reduce_global_reduction_adds": 293601280,
+    "maximum_rank_send_bytes": 251658240,
+    "maximum_rank_receive_bytes": 251658240,
+    "all_reduce_startup_seconds": 4.932e-06,
+    "all_reduce_bandwidth_seconds": 0.0011184810666666667,
+    "all_reduce_modeled_seconds": 0.0011234130666666667,
+    "dense_tp_all_reduce_calls": 128,
+    "dense_tp_serial_collective_seconds": 0.14379687253333334,
+    "measured_collective_seconds": null
+  },
+  "assumptions": [
+    "Same Qwen3 Dense BF16 [B*T,H] partial activation on every rank. Basic TP calls two output all-reduces per layer; no device placement or backend dispatch claim.",
+    "Binomial reduction rooted at zero followed by the reverse edge schedule for broadcast. Non-power-of-two groups skip absent partners; p=1 is identity. Integer replay validates this schedule, not floating-point bitwise equivalence.",
+    "Each edge sends the full M-byte tensor. Each round completes before the next, with independent simultaneous directed edges and one startup per round. This unsegmented algorithm is not a double binary tree, recursive halving/doubling or a model of every library tree.",
+    "Network volume is 2(p-1)M, equal to ring all-reduce volume, but rank traffic is nonuniform and critical-path transfers are full tensors. Message-size-dependent performance differs despite equal total volume.",
+    "Per-rank reduction additions are separate scalar work; precision, reduction service time, topology hops, link sharing, launch, segmentation and overlap are excluded from the declared timing model.",
+    "Bandwidth is one-direction effective link bandwidth; startup and bandwidth defaults are teaching assumptions. Serial 2L total is not complete TP iteration latency or measured NCCL performance."
+  ]
+}

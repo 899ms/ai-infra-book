@@ -1,34 +1,34 @@
 # packet-reorder — 
 
-输入：`{"lost_packets": [], "model": "qwen3-8b", "packet_bytes": 1024, "path_bytes_per_second": 1000000000, "path_delays_ns": [1000, 9000], "recovery_delay_ns": 20000, "tokens": 1}`
+输入：`{"lost_packets": [], "model": "qwen3-8b", "packet_bytes": 4096, "path_bytes_per_second": 50000000000, "path_delays_ns": [1000, 9000], "recovery_delay_ns": 20000, "tokens": 4}`
 
 数值是分析计算；字节以 bytes 保存，FMA=2，不是硬件测量。
 
 | 结果 | 值 |
 | --- | ---: |
-| payload_bytes | 8,192 |
+| payload_bytes | 32,768 |
 | packet_count | 8 |
 | retransmitted_bytes | 0 |
-| sent_bytes | 8,192 |
-| received_bytes | 8,192 |
+| sent_bytes | 32,768 |
+| received_bytes | 32,768 |
 | declared_lost_bytes | 0 |
 | suffix_replay_counterfactual_bytes | 0 |
-| peak_retained_reorder_bytes | 3,072 |
+| peak_retained_reorder_bytes | 12,288 |
 | peak_retained_packets | 3 |
-| reorder_area_exact_byte_ns | `"21430272"` |
-| first_ordered_delivery_exact_ns | `"2024"` |
-| completion_exact_ns | `"13096"` |
+| reorder_area_exact_byte_ns | `"2432434176/25"` |
+| first_ordered_delivery_exact_ns | `"27048/25"` |
+| completion_exact_ns | `"233192/25"` |
 
 | 到达 ns（精确） | 到达序号 | 释放序号 | 保留 bytes |
 | ---: | --- | --- | ---: |
-| 2024 | [0] | [0] | 0 |
-| 3048 | [2] | [] | 1024 |
-| 4072 | [4] | [] | 2048 |
-| 5096 | [6] | [] | 3072 |
-| 10024 | [1] | [1, 2] | 2048 |
-| 11048 | [3] | [3, 4] | 1024 |
-| 12072 | [5] | [5, 6] | 0 |
-| 13096 | [7] | [7] | 0 |
+| 27048/25 | [0] | [0] | 0 |
+| 29096/25 | [2] | [] | 4096 |
+| 31144/25 | [4] | [] | 8192 |
+| 33192/25 | [6] | [] | 12288 |
+| 227048/25 | [1] | [1, 2] | 8192 |
+| 229096/25 | [3] | [3, 4] | 4096 |
+| 231144/25 | [5] | [5, 6] | 0 |
+| 233192/25 | [7] | [7] | 0 |
 
 计量条件：
 

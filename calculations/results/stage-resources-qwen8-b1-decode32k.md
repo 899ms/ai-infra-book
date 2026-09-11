@@ -31,22 +31,22 @@ Conditional known-work service bounds; full runtime remains unknown.
 | sources[3].url | https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py |
 | sources[3].revision | 0720e206c6ba28887e4d60ef60a6a089f6c1cc76 |
 | sources[3].sha256 | 3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8 |
-| sources[4].file | sources/hardware/nvidia-h100-page.html |
+| sources[4].file | sources/hardware/nvidia-h100-page.md |
 | sources[4].url | https://www.nvidia.com/en-us/data-center/h100/ |
 | sources[4].revision | snapshot-2026-09-08 |
-| sources[4].sha256 | 8fe697dfa96dceeeed6e7a16517294e15d9100cc0e9f1e6e5edbce78699b4681 |
+| sources[4].sha256 | 9ec9b79f149ced935b19b3a44d07ce385859e49fcb33dfdfeb35adc7b7d00fe0 |
 | sources[5].file | ../references/files/specs/nvidia-h100.pdf |
 | sources[5].url | https://dam-cdn.nvd.orangelogic.com/AssetLink/705n6ur546g0uk43w0117r17n8042d73.pdf |
 | sources[5].revision | book-official-archive-2026-09-06 |
 | sources[5].sha256 | 3641614979809a027a8aabdc2e77639efb8fcd0f8dc7873a22ba2125489f5a27 |
-| sources[6].file | sources/hardware/nvidia-ptx-isa-9-3.html |
+| sources[6].file | sources/hardware/nvidia-ptx-isa-9-3.md |
 | sources[6].url | https://docs.nvidia.com/cuda/parallel-thread-execution/index.html |
 | sources[6].revision | snapshot-2026-09-08 |
-| sources[6].sha256 | 940cc68f858cefdf82425b47ee3bac3afde447c8a85b95f43d7d6fb1f46b4413 |
-| sources[7].file | research/h05-next-review/cuda-programming-guide-12.8.1.html |
+| sources[6].sha256 | 0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7 |
+| sources[7].file | research/h05-next-review/cuda-programming-guide-12.8.1.md |
 | sources[7].url | https://docs.nvidia.com/cuda/archive/12.8.1/cuda-c-programming-guide/index.html |
 | sources[7].revision | CUDA12.8.1 archive |
-| sources[7].sha256 | cdc49d93372b4e03e94d56f24345373f82ad76b8663c745073463263009637ce |
+| sources[7].sha256 | f7f46a910869e1f1102ee7193b536dc6c9a356c224b51734f240168266ea5e25 |
 | device.id | h100-sxm |
 | device.vendor | NVIDIA |
 | device.memory.nominal_capacity | 80 |
@@ -11314,7 +11314,7 @@ Conditional known-work service bounds; full runtime remains unknown.
 | compute_only_bounds.global_resource_seconds.vector_fp32 | 2.3251215695067262e-06 |
 | compute_only_bounds.global_resource_seconds.matrix_bf16 | 3.483337094804932e-05 |
 | compute_only_bounds.known_global_max_seconds | 3.483337094804932e-05 |
-| compute_only_bounds.known_serial_stage_max_sum_seconds | 3.4833371904701036e-05 |
+| compute_only_bounds.known_serial_stage_max_sum_seconds | 3.483337190470104e-05 |
 | compute_only_bounds.accounted_global_max_seconds | unknown (null) |
 | compute_only_bounds.accounted_serial_stage_lower_bound_seconds | unknown (null) |
 | capacity.comparison_bytes | 21213456384 |

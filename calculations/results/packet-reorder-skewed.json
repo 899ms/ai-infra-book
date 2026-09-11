@@ -3,13 +3,13 @@
   "calculation": "packet-reorder",
   "scenario": {
     "model": "qwen3-8b",
-    "tokens": 1,
-    "packet_bytes": 1024,
+    "tokens": 4,
+    "packet_bytes": 4096,
     "path_delays_ns": [
       1000,
       9000
     ],
-    "path_bytes_per_second": 1000000000,
+    "path_bytes_per_second": 50000000000,
     "lost_packets": [],
     "recovery_delay_ns": 20000
   },
@@ -42,88 +42,88 @@
   "transmissions": [
     {
       "sequence": 0,
-      "bytes": 1024,
+      "bytes": 4096,
       "path": 0,
       "retry": false,
       "lost": false,
       "start_exact_ns": "0",
-      "end_exact_ns": "1024",
-      "arrival_exact_ns": "2024"
+      "end_exact_ns": "2048/25",
+      "arrival_exact_ns": "27048/25"
     },
     {
       "sequence": 1,
-      "bytes": 1024,
+      "bytes": 4096,
       "path": 1,
       "retry": false,
       "lost": false,
       "start_exact_ns": "0",
-      "end_exact_ns": "1024",
-      "arrival_exact_ns": "10024"
+      "end_exact_ns": "2048/25",
+      "arrival_exact_ns": "227048/25"
     },
     {
       "sequence": 2,
-      "bytes": 1024,
+      "bytes": 4096,
       "path": 0,
       "retry": false,
       "lost": false,
-      "start_exact_ns": "1024",
-      "end_exact_ns": "2048",
-      "arrival_exact_ns": "3048"
+      "start_exact_ns": "2048/25",
+      "end_exact_ns": "4096/25",
+      "arrival_exact_ns": "29096/25"
     },
     {
       "sequence": 3,
-      "bytes": 1024,
+      "bytes": 4096,
       "path": 1,
       "retry": false,
       "lost": false,
-      "start_exact_ns": "1024",
-      "end_exact_ns": "2048",
-      "arrival_exact_ns": "11048"
+      "start_exact_ns": "2048/25",
+      "end_exact_ns": "4096/25",
+      "arrival_exact_ns": "229096/25"
     },
     {
       "sequence": 4,
-      "bytes": 1024,
+      "bytes": 4096,
       "path": 0,
       "retry": false,
       "lost": false,
-      "start_exact_ns": "2048",
-      "end_exact_ns": "3072",
-      "arrival_exact_ns": "4072"
+      "start_exact_ns": "4096/25",
+      "end_exact_ns": "6144/25",
+      "arrival_exact_ns": "31144/25"
     },
     {
       "sequence": 5,
-      "bytes": 1024,
+      "bytes": 4096,
       "path": 1,
       "retry": false,
       "lost": false,
-      "start_exact_ns": "2048",
-      "end_exact_ns": "3072",
-      "arrival_exact_ns": "12072"
+      "start_exact_ns": "4096/25",
+      "end_exact_ns": "6144/25",
+      "arrival_exact_ns": "231144/25"
     },
     {
       "sequence": 6,
-      "bytes": 1024,
+      "bytes": 4096,
       "path": 0,
       "retry": false,
       "lost": false,
-      "start_exact_ns": "3072",
-      "end_exact_ns": "4096",
-      "arrival_exact_ns": "5096"
+      "start_exact_ns": "6144/25",
+      "end_exact_ns": "8192/25",
+      "arrival_exact_ns": "33192/25"
     },
     {
       "sequence": 7,
-      "bytes": 1024,
+      "bytes": 4096,
       "path": 1,
       "retry": false,
       "lost": false,
-      "start_exact_ns": "3072",
-      "end_exact_ns": "4096",
-      "arrival_exact_ns": "13096"
+      "start_exact_ns": "6144/25",
+      "end_exact_ns": "8192/25",
+      "arrival_exact_ns": "233192/25"
     }
   ],
   "receive_events": [
     {
-      "time_exact_ns": "2024",
+      "time_exact_ns": "27048/25",
       "arrived": [
         0
       ],
@@ -134,7 +134,7 @@
       "retained_bytes": 0
     },
     {
-      "time_exact_ns": "3048",
+      "time_exact_ns": "29096/25",
       "arrived": [
         2
       ],
@@ -142,10 +142,10 @@
       "retained_sequences": [
         2
       ],
-      "retained_bytes": 1024
+      "retained_bytes": 4096
     },
     {
-      "time_exact_ns": "4072",
+      "time_exact_ns": "31144/25",
       "arrived": [
         4
       ],
@@ -154,10 +154,10 @@
         2,
         4
       ],
-      "retained_bytes": 2048
+      "retained_bytes": 8192
     },
     {
-      "time_exact_ns": "5096",
+      "time_exact_ns": "33192/25",
       "arrived": [
         6
       ],
@@ -167,10 +167,10 @@
         4,
         6
       ],
-      "retained_bytes": 3072
+      "retained_bytes": 12288
     },
     {
-      "time_exact_ns": "10024",
+      "time_exact_ns": "227048/25",
       "arrived": [
         1
       ],
@@ -182,10 +182,10 @@
         4,
         6
       ],
-      "retained_bytes": 2048
+      "retained_bytes": 8192
     },
     {
-      "time_exact_ns": "11048",
+      "time_exact_ns": "229096/25",
       "arrived": [
         3
       ],
@@ -196,10 +196,10 @@
       "retained_sequences": [
         6
       ],
-      "retained_bytes": 1024
+      "retained_bytes": 4096
     },
     {
-      "time_exact_ns": "12072",
+      "time_exact_ns": "231144/25",
       "arrived": [
         5
       ],
@@ -211,7 +211,7 @@
       "retained_bytes": 0
     },
     {
-      "time_exact_ns": "13096",
+      "time_exact_ns": "233192/25",
       "arrived": [
         7
       ],
@@ -225,50 +225,50 @@
   "delivery": [
     {
       "sequence": 0,
-      "delivery_exact_ns": "2024"
+      "delivery_exact_ns": "27048/25"
     },
     {
       "sequence": 1,
-      "delivery_exact_ns": "10024"
+      "delivery_exact_ns": "227048/25"
     },
     {
       "sequence": 2,
-      "delivery_exact_ns": "10024"
+      "delivery_exact_ns": "227048/25"
     },
     {
       "sequence": 3,
-      "delivery_exact_ns": "11048"
+      "delivery_exact_ns": "229096/25"
     },
     {
       "sequence": 4,
-      "delivery_exact_ns": "11048"
+      "delivery_exact_ns": "229096/25"
     },
     {
       "sequence": 5,
-      "delivery_exact_ns": "12072"
+      "delivery_exact_ns": "231144/25"
     },
     {
       "sequence": 6,
-      "delivery_exact_ns": "12072"
+      "delivery_exact_ns": "231144/25"
     },
     {
       "sequence": 7,
-      "delivery_exact_ns": "13096"
+      "delivery_exact_ns": "233192/25"
     }
   ],
   "summary": {
-    "payload_bytes": 8192,
+    "payload_bytes": 32768,
     "packet_count": 8,
     "retransmitted_bytes": 0,
-    "sent_bytes": 8192,
-    "received_bytes": 8192,
+    "sent_bytes": 32768,
+    "received_bytes": 32768,
     "declared_lost_bytes": 0,
     "suffix_replay_counterfactual_bytes": 0,
-    "peak_retained_reorder_bytes": 3072,
+    "peak_retained_reorder_bytes": 12288,
     "peak_retained_packets": 3,
-    "reorder_area_exact_byte_ns": "21430272",
-    "first_ordered_delivery_exact_ns": "2024",
-    "completion_exact_ns": "13096"
+    "reorder_area_exact_byte_ns": "2432434176/25",
+    "first_ordered_delivery_exact_ns": "27048/25",
+    "completion_exact_ns": "233192/25"
   },
   "assumptions": [
     "官方模型hidden_size确定单个BF16 [tokens,H]载荷；报文大小、独立路径速率和延迟均为教学输入，不是网卡规格。只算payload，不含头部、ACK、编码或物理多跳流量。",

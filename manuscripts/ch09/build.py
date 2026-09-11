@@ -80,18 +80,22 @@ a.add_patch(Rectangle((.56,.11),.22,.72,fc=C['pale'],alpha=.5,zorder=0))
 a.text(.67,.045,'计算可暂停，状态仍驻留',ha='center',fontsize=12)
 save(f,'figure-9-2-state');data['9-2']={'type':'schematic_state_lifetime','stages':stages,'retention':'all shown states retained through tool wait; optional EC reuse'}
 
-# PD pool: exact frozen enumeration.
+# PD pool: exact frozen enumeration over four A100 and four H20 with stage rates derived from datasheet peaks.
 z=calc('pd-pool-book');f,ax=plt.subplots(figsize=(9,7));f.subplots_adjust(left=.15,right=.80,bottom=.14,top=.93);grid=np.zeros((5,5))
 rows=z['pool_assignments'];data['9-3']={'type':'frozen_calculation','source':'pd-pool-book','assignments':rows}
+rates={d['device']:d for d in z['derived_stage_rates']}
+pA=1/num(rates['a100-80gb-sxm']['prefill']['seconds_exact']);dA=1/num(rates['a100-80gb-sxm']['decode']['seconds_per_request_exact'])
+pH=1/num(rates['h20-sxm5-96gb']['prefill']['seconds_exact']);dH=1/num(rates['h20-sxm5-96gb']['decode']['seconds_per_request_exact'])
+data['9-3']['per_card_rates']={'A100':{'prefill':pA,'decode':dA},'H20':{'prefill':pH,'decode':dH}}
 for row in rows:
- pa=row['prefill_workers']['prefill-oriented'];pb=row['prefill_workers']['decode-oriented']
- grid[pb,pa]=num(row['bound_requests_per_second_exact'])
- assert abs(grid[pb,pa]-min(2*pa+.5*pb,.5*(4-pa)+2*(4-pb),25e9/1207959552))<1e-12
-im=ax.imshow(grid,origin='lower',cmap='YlGnBu',vmin=0,vmax=8)
+ pa=row['prefill_workers']['A100'];ph=row['prefill_workers']['H20']
+ grid[ph,pa]=num(row['bound_requests_per_second_exact'])
+ assert abs(grid[ph,pa]-min(pa*pA+ph*pH,(4-pa)*dA+(4-ph)*dH,25e9/1207959552))<1e-9
+im=ax.imshow(grid,origin='lower',cmap='YlGnBu',vmin=0,vmax=7)
 for j in range(5):
- for i in range(5):ax.text(i,j,f'{grid[j,i]:g}',ha='center',va='center',color='white' if grid[j,i]>4 else C['ink'],fontsize=13)
+ for i in range(5):ax.text(i,j,f'{grid[j,i]:.2f}',ha='center',va='center',color='white' if grid[j,i]>3.5 else C['ink'],fontsize=12)
 ax.add_patch(plt.Rectangle((3.52,-.48),.96,.96,fill=False,edgecolor=C['orange'],lw=3))
-ax.set(xticks=range(5),yticks=range(5),xlabel='分给 P 的 A 类 worker 数',ylabel='分给 P 的 B 类 worker 数')
+ax.set(xticks=range(5),yticks=range(5),xlabel='分给 P 的 A100 数',ylabel='分给 P 的 H20 数')
 cax=f.add_axes([.84,.15,.025,.73]);f.colorbar(im,cax=cax).set_label('请求率上界 / 请求·s⁻¹')
 save(f,'figure-9-3-pd')
 # Local CPU/GPU execution.
@@ -110,20 +114,35 @@ ax.set(xlabel='每次启动与同步 / μs',ylabel='串行交接时间 / ms',xli
 ax.annotate('差值约 0.36 ms',xy=(5,base+.360),xytext=(7,49.0),arrowprops={'arrowstyle':'->','color':C['muted']},fontsize=12)
 ax.legend(frameon=False);ax.grid(alpha=.15)
 save(f,'figure-9-8-handoff');data['9-8']={'type':'same_payload_startup_sensitivity','summary':z['summary'],'startup_us':alpha.tolist(),'one_message_ms':(base+alpha/1000).tolist(),'many_messages_ms':(base+72*alpha/1000).tolist(),'same_payload_ms':[base+.005,base+.360]}
+# One PD snapshot versus one AF decode step: GQA and compact MLA states, frozen results at 25 and 50 GB/s.
+mla={k:calc(n) for k,n in [('gqa25','pd-af-handoff-qwen8'),('mla25','pd-af-handoff-qwen8-mla'),('gqa50','pd-af-handoff-qwen8-50gbps'),('mla50','pd-af-handoff-qwen8-mla-50gbps')]}
+assert mla['mla25']['summary']['kv_bytes_per_token']==70272 and mla['mla25']['summary']['pd_snapshot_bytes']==575668224 and mla['mla25']['mla_compact_path']['extra_flops_per_step']==2046820352
+for k,bw in [('gqa25',25e9),('mla25',25e9),('gqa50',50e9),('mla50',50e9)]:
+ sm=mla[k]['summary'];assert sm['af_total_bytes']==589824;assert abs(num(sm['equal_time_startup_ns_exact'])-(sm['pd_snapshot_bytes']-589824)/(71*bw)*1e9)<1e-3
+alpha=np.linspace(0,800,161)
+data['9-mla-handoff']={'type':'frozen_calculation','sources':['pd-af-handoff-qwen8','pd-af-handoff-qwen8-mla','pd-af-handoff-qwen8-50gbps','pd-af-handoff-qwen8-mla-50gbps'],'network_bytes_per_second':25e9,'startup_us':alpha.tolist(),'pd_gqa_ms':(1207959552/25e9*1e3+alpha/1e3).tolist(),'pd_mla_ms':(575668224/25e9*1e3+alpha/1e3).tolist(),'af_step_ms':(589824/25e9*1e3+72*alpha/1e3).tolist(),'equal_time_startup_us':{k:num(v['summary']['equal_time_startup_ns_exact'])/1e3 for k,v in mla.items()},'kv_bytes_per_token':{'gqa':147456,'mla':70272},'mla_extra_flops_per_step':2046820352}
 
-# Expert reuse teaching curve, verify boundary against stored rational results.
-m=np.arange(1,161);W=37748736;tasks=8*m;cpu=(16*5e-6+tasks*16384/25e9+np.maximum(tasks*37748736/2e12,8*W/200e9))*1e3;gpu=(8*5e-6+8*W/25e9+np.maximum(tasks*37748736/100e12,8*W/1e12))*1e3
-for k in [78,79]:
- z=calc('expert-locality-boundary'+str(k))['summary'];assert abs(cpu[k-1]-num(z['cpu_service_ns_exact'])/1e6)<1e-9;assert abs(gpu[k-1]-num(z['weight_copy_service_ns_exact'])/1e6)<1e-9
-f,ax=plt.subplots(figsize=(12,6));f.subplots_adjust(left=.10,right=.96,bottom=.17,top=.88);ax.plot(m,cpu,color=C['teal'],lw=2.3,label='CPU 就地计算＋激活交接');ax.plot(m,gpu,color=C['orange'],lw=2.3,label='搬一次权重＋GPU 计算');ax.axvspan(1,78.5,color=C['teal'],alpha=.07);ax.axvspan(78.5,160,color=C['orange'],alpha=.07);ax.axvline(78.5,color=C['line'],ls='--');ax.annotate('从 79 个 token 起 GPU 更快',xy=(78.5,12.42),xytext=(88,7),arrowprops={'arrowstyle':'->','color':C['muted']},fontsize=11);ax.set(xlabel='每个热点专家的 token 数',ylabel='八个专家依次执行的时间 / ms',xlim=(1,160),ylim=(0,28));ax.legend(frameon=False);ax.grid(alpha=.15)
-save(f,'figure-9-6-reuse');data['9-6']={'type':'declared_model','tokens_per_expert':m.tolist(),'cpu_ms':cpu.tolist(),'weight_copy_gpu_ms':gpu.tolist(),'scenario':calc('expert-locality-boundary78')['scenario']}
-# Replica preparation is paid once; batch savings accumulate.
-z=calc('replica-payback-book')['summary'];f,ax=plt.subplots(figsize=(10,6));f.subplots_adjust(left=.12,right=.96,bottom=.16,top=.92)
-n=np.arange(0,65);setup=num(z['serialized_copy_setup_ns_exact'])/1e6;delta=num(z['per_batch_saving_ns_exact'])/1e6
-ax.plot(n,n*delta-setup,color=C['teal'],lw=2.3);ax.axhline(0,color=C['line']);ax.scatter([27],[27*delta-setup],color=C['orange'])
-ax.annotate('第 27 批开始净获益',(27,27*delta-setup),xytext=(30,-7),fontsize=12,arrowprops={'arrowstyle':'->'})
-ax.text(2,-10,'一次准备约 10.6 ms',fontsize=11);ax.set(xlabel='热点持续的批数',ylabel='累计净节省 / ms',xlim=(0,64),ylim=(-12,18),xticks=[0,16,32,48,64]);ax.grid(alpha=.15)
-save(f,'figure-9-10-experts');data['9-10']={'type':'replica_payback','replica_summary':z,'batches':n.tolist(),'net_saving_ms':(n*delta-setup).tolist()}
+# Expert reuse on the KTransformers paper machine: one Xeon 8452Y socket (AVX-512 1.8, AMX 21.3 TFLOP/s, 220 GB/s), A100 40GB PCIe at 50% of peak.
+m=np.arange(1,1025);W=37748736;tasks=8*m
+def cpu_path(C):return (16*5e-6+tasks*16384/25e9+np.maximum(tasks*37748736/C,8*W/220e9))*1e3
+cpu=cpu_path(1.8e12);amx=cpu_path(21.3e12);gpu=(8*5e-6+8*W/25e9+np.maximum(tasks*37748736/156e12,8*W/777.5e9))*1e3
+for name,arr,k in [('expert-locality-avx512',cpu,1),('expert-locality-avx512-128',cpu,128),('expert-locality-amx',amx,1),('expert-locality-amx-128',amx,128)]:
+ z=calc(name)['summary'];assert abs(arr[k-1]-num(z['cpu_service_ns_exact'])/1e6)<1e-9;assert abs(gpu[k-1]-num(z['weight_copy_service_ns_exact'])/1e6)<1e-9
+assert cpu[70]<gpu[70] and cpu[71]>gpu[71] and amx[687]<gpu[687] and amx[688]>gpu[688]
+f,ax=plt.subplots(figsize=(12,6));f.subplots_adjust(left=.10,right=.96,bottom=.17,top=.88)
+ax.plot(m,cpu,color=C['teal'],lw=2.3,label='CPU 就地计算，AVX-512');ax.plot(m,amx,color=C['blue'],lw=2.3,label='CPU 就地计算，AMX');ax.plot(m,gpu,color=C['orange'],lw=2.3,label='搬一次权重＋GPU 计算')
+ax.set_xscale('log',base=2);ax.set(xlabel='每个热点专家的 token 数',ylabel='八个专家依次执行的时间 / ms',xlim=(1,1024),ylim=(0,30),xticks=[1,4,16,64,256,1024],xticklabels=['1','4','16','64','256','1024']);ax.minorticks_off();ax.legend(frameon=False);ax.grid(alpha=.15)
+save(f,'figure-9-6-reuse');data['9-6']={'type':'declared_model','tokens_per_expert':m.tolist(),'cpu_avx512_ms':cpu.tolist(),'cpu_amx_ms':amx.tolist(),'weight_copy_gpu_ms':gpu.tolist(),'crossover_tokens':{'avx512':72,'amx':689},'scenario':calc('expert-locality-avx512')['scenario']}
+# Replica preparation is paid once; batch savings accumulate. Same HGX H100 batch, two copy paths.
+zr={'nvlink':calc('replica-payback-hgx-h100-nvlink')['summary'],'cx7':calc('replica-payback-hgx-h100-cx7')['summary']};f,ax=plt.subplots(figsize=(10,6));f.subplots_adjust(left=.12,right=.96,bottom=.16,top=.92)
+n=np.arange(0,65);delta=num(zr['nvlink']['per_batch_saving_ns_exact'])/1e6;assert zr['cx7']['per_batch_saving_ns_exact']==zr['nvlink']['per_batch_saving_ns_exact']
+net={}
+for key,col,title,dy in [('nvlink','teal','同一台 HGX 内经 NVLink',4),('cx7','orange','跨服务器经 ConnectX-7',-4)]:
+ setup=num(zr[key]['serialized_copy_setup_ns_exact'])/1e6;k=zr[key]['algebraic_strict_payback_batches'];assert k==int(setup//delta)+1
+ net[key]=(n*delta-setup).tolist();ax.plot(n,n*delta-setup,color=C[col],lw=2.3,label=f'{title}：准备 {setup:.2f} ms')
+ ax.scatter([k],[k*delta-setup],color=C[col],zorder=3);ax.annotate(f'第 {k} 批回本',(k,k*delta-setup),xytext=(k+4,k*delta-setup+dy),fontsize=12,arrowprops={'arrowstyle':'->'})
+ax.axhline(0,color=C['line']);ax.set(xlabel='热点持续的批数',ylabel='累计净节省 / ms',xlim=(0,64),ylim=(-7,17),yticks=[-5,0,5,10,15],xticks=[0,16,32,48,64]);ax.legend(frameon=False,loc='upper left');ax.grid(alpha=.15)
+save(f,'figure-9-10-experts');data['9-10']={'type':'replica_payback','sources':['replica-payback-hgx-h100-nvlink','replica-payback-hgx-h100-cx7'],'replica_summary':zr,'batches':n.tolist(),'net_saving_ms':net}
 
 # Page availability, not bytes read, determines usable prefix length.
 f,a=canvas(5);z=calc('cache-restart-book')['summary']
@@ -146,14 +165,20 @@ a.text(.025,.62,'经池中转',fontsize=14,weight='bold')
 box(a,.755,.055,.21,.14,'后续实例','取回，替代重算',col='green');arrow(a,(.50,.35),(.75,.125),'teal',rad=.12);a.text(.43,.15,'再次复用同一对象',fontsize=12,color=C['teal'])
 save(f,'figure-9-16-composition');data['9-16']={'type':'direct_vs_pool_reuse','state_GiB':1.125,'direct_payload_GiB':1.125,'pool_initial_payload_GiB':2.25,'additional_read_GiB':1.125}
 
-# Same startup backlog, different spare service capacities.
-f,ax=plt.subplots(figsize=(10,6));f.subplots_adjust(left=.11,right=.96,bottom=.16,top=.92);tt=np.linspace(0,55,551);series={}
-for mu,col in [(8,'teal'),(5,'orange')]:
- q=np.where(tt<=10,4*tt,np.maximum(0,40-(mu-4)*(tt-10)));series[str(mu)]=q.tolist();ax.plot(tt,q,label=f'服务 {mu} 请求/s，净排空 {mu-4} 请求/s',color=C[col],lw=2.3)
-ax.axvline(10,color=C['line'],ls='--');ax.text(11,43,'就绪：积压 40 请求',fontsize=12)
-for t in [20,50]:ax.scatter([t],[0],color=C['ink'],zorder=3);ax.annotate(f'{t} s 排空',xy=(t,0),xytext=(t-4,8),arrowprops={'arrowstyle':'->'},fontsize=12)
-ax.set(xlabel='从启动开始的时间 / s',ylabel='积压请求数',ylim=(-2,50),xlim=(0,55),xticks=[0,10,20,30,40,50]);ax.legend(frameon=False,fontsize=11);ax.grid(alpha=.15)
-save(f,'figure-9-17-service');data['9-17']={'type':'startup_backlog_drain','startup_s':10,'arrival_rps':4,'time_s':tt.tolist(),'queues':series,'drain_time_from_start_s':[20,50]}
+# Same startup backlog, different spare service capacities: direct PD, ideal chunked colocation, colocation without chunking.
+zb=calc('pd-pool-book');mu_pd=num(zb['summary']['best_pd_bound_requests_per_second_exact']);mu_co=num(zb['summary']['colocated_bound_requests_per_second_exact'])
+def overlap_seconds(d):
+ comp=num(d['prefill']['compute_seconds_exact'])+1024*num(d['decode']['step_compute_seconds_exact'])/32
+ mem=num(d['prefill']['memory_seconds_exact'])+1024*num(d['decode']['step_memory_seconds_exact'])/32
+ return max(comp,mem)
+mu_ch=sum(4/overlap_seconds(d) for d in zb['derived_stage_rates'])
+lam=3.5;f,ax=plt.subplots(figsize=(10,6));f.subplots_adjust(left=.11,right=.96,bottom=.16,top=.92);tt=np.linspace(0,80,801);series={};drain=[]
+for mu,col,label in [(mu_pd,'teal','直接 PD'),(mu_ch,'blue','理想分块共置'),(mu_co,'orange','不分块共置')]:
+ q=np.where(tt<=10,lam*tt,np.maximum(0,lam*10-(mu-lam)*(tt-10)));series[f'{mu:.2f}']=q.tolist();ax.plot(tt,q,label=f'{label}：{mu:.2f} 请求/s',color=C[col],lw=2.3)
+ if mu>lam:drain.append(10+lam*10/(mu-lam))
+ax.axvline(10,color=C['line'],ls='--');ax.axvline(60,color=C['red'],ls=':');ax.text(11,50,'就绪：积压 35 请求',fontsize=12);ax.text(61,50,'期限 60 s',fontsize=12,color=C['red'])
+ax.set(xlabel='从启动开始的时间 / s',ylabel='积压请求数',ylim=(-2,70),xlim=(0,80),xticks=[0,10,20,30,40,50,60,70,80]);ax.legend(frameon=False,fontsize=11);ax.grid(alpha=.15)
+save(f,'figure-9-17-service');data['9-17']={'type':'startup_backlog_drain','startup_s':10,'arrival_rps':lam,'time_s':tt.tolist(),'queues':series,'drain_time_from_start_s':drain}
 
 exec(compile((HERE/'extra-figures.py').read_text(), str(HERE/'extra-figures.py'), 'exec'))
 
@@ -164,6 +189,9 @@ sys.path.insert(0,str(HERE.parent))
 from teaching_revision import draw as draw_teaching
 teaching_outputs,teaching_checks=draw_teaching(HERE,data)
 outputs=list(dict.fromkeys(outputs+teaching_outputs))
+# UB-EP figures are drawn before the reading edition is assembled so the HTML embeds every active figure.
+from ub_ep_figures import draw as draw_ub_ep
+outputs += draw_ub_ep(9, HERE)
 # Render formulas on the build machine; bundle all image/font bytes into HTML.
 md=HERE.parent/'09-分布式推理.md';raw=md.read_text();maths=[]
 def protect(match):
@@ -193,8 +221,6 @@ from preview_output import preview_path
 page=readable_diagrams(page)
 hp=preview_path(md);hp.write_text(page)
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')
-from ub_ep_figures import draw as draw_ub_ep
-outputs += draw_ub_ep(9, HERE)
 from book_assets import sync_figure_index
 active_assets=sync_figure_index(HERE)
 artifacts=outputs+[HERE.parent/'ub_ep_figures.py',HERE/'ub-ep-layout-validation.json',ROOT/'calculations/results/ep-skew-book.json',HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',hp,md]+active_assets

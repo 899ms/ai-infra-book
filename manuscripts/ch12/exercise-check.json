@@ -12,9 +12,11 @@
     ]
   },
   "12-3": {
-    "extra_edge_encoding_s": 9.32,
+    "rtx4090_encode_s": 0.007931601510895885,
+    "h100_encode_s": 0.0013243385583181727,
+    "extra_edge_encoding_s": 9.246607262952578,
     "migration_preparation_s": 7.7108864,
-    "fast_link_extra_transfer_ms": 0.29568,
+    "fast_link_extra_transfer_ms": 0.14784,
     "extra_restore_minimum_rounds": 22
   },
   "12-5": {
@@ -29,55 +31,155 @@
     "joint_failure": 0.024900000000000002
   },
   "12-8": {
+    "twenty_rounds_times_s": [
+      63.46110930841122,
+      11.009967390118018,
+      31.60328558176144
+    ],
+    "twenty_rounds_energy_J": [
+      [
+        518.4,
+        680.4
+      ],
+      [
+        1805.9804340708104,
+        1805.9804340708104
+      ],
+      [
+        1122.299907233009,
+        1122.299907233009
+      ]
+    ],
+    "cloud_deadline_uplink_Mbps": 3.832712355982445,
+    "cloud_time_without_upload_s": 11.603285581761442,
+    "near_time_s": 11.009967390118018,
     "ten_rounds_times_s": [
-      32,
-      22,
-      24
+      31.73055465420561,
+      5.637570359760875,
+      15.869155588209203
     ],
-    "ten_rounds_cost": [
-      0.03,
-      0.04,
-      0.033
+    "ten_rounds_energy_J": [
+      [
+        259.2,
+        340.2
+      ],
+      [
+        982.5422158565246,
+        982.5422158565246
+      ],
+      [
+        608.4089117464418,
+        608.4089117464418
+      ]
     ],
-    "ten_rounds_cloud_double_rate_cost": 0.041,
-    "variable_bandwidth_twenty_rounds_s": 44.06666666666666,
+    "ten_rounds_23s_choice": "cloud",
+    "ten_rounds_15s_choice": "near",
+    "variable_bandwidth_twenty_rounds_s": 28.669952248428107,
+    "constant_8Mbps_s": 27.60328558176144,
     "ten_rounds_recovery": {
-      "retain_seven_total_s": [
-        32,
-        25.9,
-        28.299999999999997
-      ],
-      "retain_seven_remaining_s": [
-        6.4,
-        7.699999999999999,
-        8.899999999999999
-      ],
-      "lose_eight_total_s": [
-        32,
-        39.199999999999996,
-        44.4
-      ],
-      "lose_eight_remaining_s": [
-        6.4,
-        21.0,
-        25.0
-      ],
-      "retain_seven_cost": [
-        0.03,
-        0.044,
-        0.0363
-      ],
-      "lose_eight_cost": [
-        0.03,
-        0.07200000000000001,
-        0.0594
-      ],
-      "deadline_23s": "no feasible candidate under either recovery outcome"
+      "ten-retain-seven": {
+        "times_s": [
+          31.73055465420561,
+          8.174810062796588,
+          19.442568587564427
+        ],
+        "energy_J": [
+          [
+            259.2,
+            340.2
+          ],
+          [
+            1064.8860376779533,
+            1064.8860376779533
+          ],
+          [
+            659.7980112950986,
+            659.7980112950986
+          ]
+        ],
+        "remaining_after_disconnect_s": [
+          null,
+          3.6117191091071428,
+          6.720238998065671
+        ],
+        "choice": "cloud"
+      },
+      "ten-lose-eight": {
+        "times_s": [
+          31.73055465420561,
+          11.935487984046588,
+          30.456459583050993
+        ],
+        "energy_J": [
+          [
+            259.2,
+            340.2
+          ],
+          [
+            1641.2927904279534,
+            1641.2927904279534
+          ],
+          [
+            1019.5217081356956,
+            1019.5217081356956
+          ]
+        ],
+        "remaining_after_disconnect_s": [
+          null,
+          7.372397030357144,
+          17.73412999355224
+        ],
+        "choice": "near"
+      }
     }
   },
   "12-4": {
     "connection_new_each_s": 12,
     "connection_reuse_s": 0.4,
     "saved_s": 11.6
+  },
+  "12-9": {
+    "bus_GBps": 85.6,
+    "bf16_step_s": 0.1909436770093458,
+    "bf16_token_per_s": 5.237146448955493,
+    "q4_step_s": 0.06384567700934579,
+    "q4_token_per_s": 15.662767580232863,
+    "phone_12gb_free_bytes": 3392711360,
+    "phone_12gb_8k_requests": 2,
+    "phone_12gb_single_context_tokens": 23008,
+    "power_ceiling_token_per_s": [
+      18.253968253968253,
+      23.958333333333336
+    ]
+  },
+  "12-10": {
+    "mathis_Mbps": [
+      0.15479771131567618,
+      0.30526520346158753
+    ],
+    "send_only_s": [
+      18.32791955311479,
+      9.293951514382162
+    ],
+    "expected_losses": 34.3,
+    "rounds_cdf": "(1-p**n)**245",
+    "expected_completion_s": 0.7639545776801243,
+    "p99_completion_s": 1.2465198798798798,
+    "fec_repair": [
+      63,
+      20
+    ],
+    "fec_overhead": [
+      0.2571428571428571,
+      0.08163265306122448
+    ],
+    "fec_completion_s": [
+      0.24871433033033033,
+      0.24721849849849847
+    ],
+    "retransmit_p99_s": [
+      1.2465198798798798,
+      0.8465198798798799
+    ]
   }
 }

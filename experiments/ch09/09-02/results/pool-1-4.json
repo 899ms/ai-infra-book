@@ -25,57 +25,163 @@
       "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
       "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
       "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+    },
+    {
+      "file": "sources/hardware/nvidia-a100-page.md",
+      "url": "https://www.nvidia.com/en-us/data-center/a100/",
+      "revision": "snapshot-2026-09-08",
+      "sha256": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed"
+    },
+    {
+      "file": "../references/files/specs/nvidia-a100.pdf",
+      "url": "https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf",
+      "revision": "book-official-archive-2026-09-06",
+      "sha256": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815"
+    },
+    {
+      "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+      "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+      "revision": "snapshot-2026-09-08",
+      "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+    }
+  ],
+  "derived_stage_rates": [
+    {
+      "device": "a100-80gb-sxm",
+      "device_name": "A100 80GB SXM",
+      "model": "qwen3-8b",
+      "peak_tera_ops_per_second": 312,
+      "memory_bandwidth_bytes_per_second": 2039000000000.0,
+      "nominal_capacity_bytes": 80000000000,
+      "effective_flops_per_second_exact": "156000000000000",
+      "effective_bytes_per_second_exact": "1019500000000",
+      "prefill": {
+        "new_tokens": 2048,
+        "matrix_flops": 29688662589440,
+        "weight_bytes": 15153588224,
+        "compute_seconds_exact": "362410432/1904296875",
+        "memory_seconds_exact": "59193704/3982421875",
+        "seconds_exact": "362410432/1904296875",
+        "bound": "compute",
+        "tokens_per_second_exact": "60937500000/5662663"
+      },
+      "decode": {
+        "batch": 32,
+        "average_history_tokens": 2560,
+        "calls_per_request": 1024,
+        "step_matrix_flops": 532695482368,
+        "step_weight_bytes": 15137073152,
+        "step_kv_bytes": 12084314112,
+        "step_compute_seconds_exact": "32513152/9521484375",
+        "step_memory_seconds_exact": "106333544/3982421875",
+        "step_seconds_exact": "106333544/3982421875",
+        "bound": "memory",
+        "calls_per_second_exact": "15929687500/13291693",
+        "seconds_per_request_exact": "3402673408/3982421875"
+      },
+      "resident_bytes_at_full_batch": 30876985344,
+      "fits_nominal_capacity": true,
+      "colocated_seconds_per_request_exact": "4056561443648/3882861328125",
+      "sources": [
+        {
+          "file": "sources/hardware/nvidia-a100-page.md",
+          "url": "https://www.nvidia.com/en-us/data-center/a100/",
+          "revision": "snapshot-2026-09-08",
+          "sha256": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed"
+        },
+        {
+          "file": "../references/files/specs/nvidia-a100.pdf",
+          "url": "https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf",
+          "revision": "book-official-archive-2026-09-06",
+          "sha256": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815"
+        },
+        {
+          "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+          "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+          "revision": "snapshot-2026-09-08",
+          "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+        },
+        {
+          "file": "configs/models/qwen3-8b/config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+          "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+          "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+        },
+        {
+          "file": "sources/qwen3-8b/model.safetensors.index.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+          "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+          "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+        },
+        {
+          "file": "sources/qwen3/modeling_qwen3.py",
+          "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+          "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+          "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+        },
+        {
+          "file": "sources/qwen3/modeling_qwen3_moe.py",
+          "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+          "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+          "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+        }
+      ]
     }
   ],
   "scenario": {
     "model": "qwen3-8b",
-    "prompt_tokens": 32768,
-    "output_tokens": 129,
+    "prompt_tokens": 2048,
+    "output_tokens": 1025,
     "cached_prefix_tokens": 0,
     "workers": [
       {
-        "name": "A100-80GB-prefill",
-        "prefill_tokens_per_second": 16384,
-        "decode_tokens_per_second": 64,
+        "name": "A100",
+        "device": "a100-80gb-sxm",
+        "decode_batch": 32,
+        "compute_efficiency": 0.5,
+        "bandwidth_efficiency": 0.5,
         "count": 8
       }
     ],
     "network_bytes_per_second": 25000000000,
-    "arrival_requests_per_second": "2"
+    "arrival_requests_per_second": "7/2",
+    "kv_layout": "gqa",
+    "kv_model": "deepseek-v3"
   },
   "summary": {
-    "new_prefill_tokens_per_request": 32768,
-    "decode_calls_per_request": 128,
-    "full_prompt_state_bytes": 4831838208,
-    "pd_transfer_bytes_per_request": 4831838208,
-    "network_capacity_requests_per_second_exact": "48828125/9437184",
+    "new_prefill_tokens_per_request": 2048,
+    "decode_calls_per_request": 1024,
+    "kv_layout": "gqa",
+    "kv_bytes_per_token": 147456,
+    "full_prompt_state_bytes": 301989888,
+    "pd_transfer_bytes_per_request": 301989888,
+    "network_capacity_requests_per_second_exact": "48828125/589824",
     "assignments": 9,
     "best_prefill_workers": {
-      "A100-80GB-prefill": 4
+      "A100": 2
     },
     "best_decode_workers": {
-      "A100-80GB-prefill": 4
+      "A100": 6
     },
-    "best_pd_bound_requests_per_second_exact": "2",
-    "colocated_bound_requests_per_second_exact": "2",
-    "pd_to_colocated_bound_ratio_exact": "1",
+    "best_pd_bound_requests_per_second_exact": "11947265625/1701336704",
+    "colocated_bound_requests_per_second_exact": "3882861328125/507070180456",
+    "pd_to_colocated_bound_ratio_exact": "63383772557/69116803600",
     "best_bottlenecks": [
-      "prefill",
       "decode"
     ],
-    "arrival_strictly_below_best_pd_bound": false,
-    "arrival_strictly_below_colocated_bound": false
+    "arrival_strictly_below_best_pd_bound": true,
+    "arrival_strictly_below_colocated_bound": true
   },
   "pool_assignments": [
     {
       "prefill_workers": {
-        "A100-80GB-prefill": 0
+        "A100": 0
       },
       "decode_workers": {
-        "A100-80GB-prefill": 8
+        "A100": 8
       },
       "prefill_requests_per_second_exact": "0",
-      "decode_requests_per_second_exact": "4",
+      "decode_requests_per_second_exact": "3982421875/425334176",
       "bound_requests_per_second_exact": "0",
       "bottlenecks": [
         "prefill"
@@ -85,125 +191,124 @@
     },
     {
       "prefill_workers": {
-        "A100-80GB-prefill": 1
+        "A100": 1
       },
       "decode_workers": {
-        "A100-80GB-prefill": 7
+        "A100": 7
       },
-      "prefill_requests_per_second_exact": "1/2",
-      "decode_requests_per_second_exact": "7/2",
-      "bound_requests_per_second_exact": "1/2",
+      "prefill_requests_per_second_exact": "1904296875/362410432",
+      "decode_requests_per_second_exact": "27876953125/3402673408",
+      "bound_requests_per_second_exact": "1904296875/362410432",
       "bottlenecks": [
         "prefill"
       ],
-      "strictly_below_all_capacity_bounds": false,
-      "network_demand_at_bound_exact_bytes_per_second": "2415919104"
+      "strictly_below_all_capacity_bounds": true,
+      "network_demand_at_bound_exact_bytes_per_second": "8985600000000000/5662663"
     },
     {
       "prefill_workers": {
-        "A100-80GB-prefill": 2
+        "A100": 2
       },
       "decode_workers": {
-        "A100-80GB-prefill": 6
+        "A100": 6
       },
-      "prefill_requests_per_second_exact": "1",
-      "decode_requests_per_second_exact": "3",
-      "bound_requests_per_second_exact": "1",
-      "bottlenecks": [
-        "prefill"
-      ],
-      "strictly_below_all_capacity_bounds": false,
-      "network_demand_at_bound_exact_bytes_per_second": "4831838208"
-    },
-    {
-      "prefill_workers": {
-        "A100-80GB-prefill": 3
-      },
-      "decode_workers": {
-        "A100-80GB-prefill": 5
-      },
-      "prefill_requests_per_second_exact": "3/2",
-      "decode_requests_per_second_exact": "5/2",
-      "bound_requests_per_second_exact": "3/2",
-      "bottlenecks": [
-        "prefill"
-      ],
-      "strictly_below_all_capacity_bounds": false,
-      "network_demand_at_bound_exact_bytes_per_second": "7247757312"
-    },
-    {
-      "prefill_workers": {
-        "A100-80GB-prefill": 4
-      },
-      "decode_workers": {
-        "A100-80GB-prefill": 4
-      },
-      "prefill_requests_per_second_exact": "2",
-      "decode_requests_per_second_exact": "2",
-      "bound_requests_per_second_exact": "2",
-      "bottlenecks": [
-        "prefill",
-        "decode"
-      ],
-      "strictly_below_all_capacity_bounds": false,
-      "network_demand_at_bound_exact_bytes_per_second": "9663676416"
-    },
-    {
-      "prefill_workers": {
-        "A100-80GB-prefill": 5
-      },
-      "decode_workers": {
-        "A100-80GB-prefill": 3
-      },
-      "prefill_requests_per_second_exact": "5/2",
-      "decode_requests_per_second_exact": "3/2",
-      "bound_requests_per_second_exact": "3/2",
+      "prefill_requests_per_second_exact": "1904296875/181205216",
+      "decode_requests_per_second_exact": "11947265625/1701336704",
+      "bound_requests_per_second_exact": "11947265625/1701336704",
       "bottlenecks": [
         "decode"
       ],
-      "strictly_below_all_capacity_bounds": false,
-      "network_demand_at_bound_exact_bytes_per_second": "7247757312"
+      "strictly_below_all_capacity_bounds": true,
+      "network_demand_at_bound_exact_bytes_per_second": "28187136000000000/13291693"
     },
     {
       "prefill_workers": {
-        "A100-80GB-prefill": 6
+        "A100": 3
       },
       "decode_workers": {
-        "A100-80GB-prefill": 2
+        "A100": 5
       },
-      "prefill_requests_per_second_exact": "3",
-      "decode_requests_per_second_exact": "1",
-      "bound_requests_per_second_exact": "1",
+      "prefill_requests_per_second_exact": "5712890625/362410432",
+      "decode_requests_per_second_exact": "19912109375/3402673408",
+      "bound_requests_per_second_exact": "19912109375/3402673408",
       "bottlenecks": [
         "decode"
       ],
-      "strictly_below_all_capacity_bounds": false,
-      "network_demand_at_bound_exact_bytes_per_second": "4831838208"
+      "strictly_below_all_capacity_bounds": true,
+      "network_demand_at_bound_exact_bytes_per_second": "23489280000000000/13291693"
     },
     {
       "prefill_workers": {
-        "A100-80GB-prefill": 7
+        "A100": 4
       },
       "decode_workers": {
-        "A100-80GB-prefill": 1
+        "A100": 4
       },
-      "prefill_requests_per_second_exact": "7/2",
-      "decode_requests_per_second_exact": "1/2",
-      "bound_requests_per_second_exact": "1/2",
+      "prefill_requests_per_second_exact": "1904296875/90602608",
+      "decode_requests_per_second_exact": "3982421875/850668352",
+      "bound_requests_per_second_exact": "3982421875/850668352",
+      "bottlenecks": [
+        "decode"
+      ],
+      "strictly_below_all_capacity_bounds": true,
+      "network_demand_at_bound_exact_bytes_per_second": "18791424000000000/13291693"
+    },
+    {
+      "prefill_workers": {
+        "A100": 5
+      },
+      "decode_workers": {
+        "A100": 3
+      },
+      "prefill_requests_per_second_exact": "9521484375/362410432",
+      "decode_requests_per_second_exact": "11947265625/3402673408",
+      "bound_requests_per_second_exact": "11947265625/3402673408",
+      "bottlenecks": [
+        "decode"
+      ],
+      "strictly_below_all_capacity_bounds": true,
+      "network_demand_at_bound_exact_bytes_per_second": "14093568000000000/13291693"
+    },
+    {
+      "prefill_workers": {
+        "A100": 6
+      },
+      "decode_workers": {
+        "A100": 2
+      },
+      "prefill_requests_per_second_exact": "5712890625/181205216",
+      "decode_requests_per_second_exact": "3982421875/1701336704",
+      "bound_requests_per_second_exact": "3982421875/1701336704",
       "bottlenecks": [
         "decode"
       ],
       "strictly_below_all_capacity_bounds": false,
-      "network_demand_at_bound_exact_bytes_per_second": "2415919104"
+      "network_demand_at_bound_exact_bytes_per_second": "9395712000000000/13291693"
     },
     {
       "prefill_workers": {
-        "A100-80GB-prefill": 8
+        "A100": 7
       },
       "decode_workers": {
-        "A100-80GB-prefill": 0
+        "A100": 1
       },
-      "prefill_requests_per_second_exact": "4",
+      "prefill_requests_per_second_exact": "13330078125/362410432",
+      "decode_requests_per_second_exact": "3982421875/3402673408",
+      "bound_requests_per_second_exact": "3982421875/3402673408",
+      "bottlenecks": [
+        "decode"
+      ],
+      "strictly_below_all_capacity_bounds": false,
+      "network_demand_at_bound_exact_bytes_per_second": "4697856000000000/13291693"
+    },
+    {
+      "prefill_workers": {
+        "A100": 8
+      },
+      "decode_workers": {
+        "A100": 0
+      },
+      "prefill_requests_per_second_exact": "1904296875/45301304",
       "decode_requests_per_second_exact": "0",
       "bound_requests_per_second_exact": "0",
       "bottlenecks": [
@@ -215,21 +320,22 @@
   ],
   "pool_worker_rates": [
     {
-      "name": "A100-80GB-prefill",
+      "name": "A100",
       "count": 8,
-      "prefill_service_seconds_exact": "2",
-      "decode_service_seconds_exact": "2",
-      "colocated_requests_per_second_exact": "1/4"
+      "prefill_service_seconds_exact": "362410432/1904296875",
+      "decode_service_seconds_exact": "3402673408/3982421875",
+      "colocated_requests_per_second_exact": "3882861328125/4056561443648"
     }
   ],
   "assumptions": [
-    "两个教学worker类型不是A100/H20规格或实测；每个worker代表已能容纳该完整模型与所需KV的独立服务副本，可为一组设备。模型放置、并行组、实际内存可行性须另外验收。",
+    "每个worker代表已能容纳该完整模型与所需KV的独立服务副本。device形式的worker按hardware.json锁定的官方峰值乘以声明效率，用模型forward账推出两阶段服务时间；显式token/s形式则直接采用给定的有效能力。",
     "输入阶段token/s必须对应相同模型、精度、上下文、batch和质量条件下的有效服务能力。prefill按新处理token数，decode按调用次数；prefill最后logits产生首输出，所以G输出需要G-1次decode。",
     "每个worker固定分配P或D，池内允许理想流量分配；独立资源容量取min，异构副本的请求/s先相加。共置每副本先加两个阶段的资源秒再取倒数，假定阶段共享资源且无额外混跑惩罚。",
     "这是给定服务能力的稳态上界。没有请求排队、时变负载、启动同步、流水填充、transfer窗口限制、SLO、能耗或费用，不能把低于上界视为稳定性或尾延迟保证。",
     "P已命中前缀仅减少其新token工作；假设D冷缓存，仍交接完整prompt状态。跨长度复用相同token/s只是一项教学敏感性假设，实际需重新校准。",
     "KV使用state模块的默认BF16与模型状态约定，不含格式转换、分片复制、路由元数据或双端temporary。网络给共享有效单向payload带宽上界，收发不重复相加。",
     "仅一个输出时不需要D调用或KV交接，最优把全部worker给P；多输出时要求两个池都有正能力。到达率恰等容量不标为严格低于，余量也不代替SLO证据。",
-    "枚举内最大值只对当前整数候选与假设成立；同值选输入顺序中的首项，不是唯一配比或真实系统最优。"
+    "枚举内最大值只对当前整数候选与假设成立；同值选输入顺序中的首项，不是唯一配比或真实系统最优。",
+    "kv_layout=mla 时，交接状态按锁定 DeepSeek-V3 config 的紧凑 MLA 每 token 字节（层数×(d_c+d_r)×2 B）乘相同 prompt 长度；其余阶段速率与模型不变，只比较交接字节的影响。"
   ]
 }

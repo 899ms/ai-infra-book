@@ -7,10 +7,10 @@
     "resident_experts": 32,
     "routing": "balanced",
     "counts": null,
-    "cpu_flops_per_second": 2000000000000,
-    "gpu_flops_per_second": 100000000000000,
-    "dram_bytes_per_second": 200000000000,
-    "hbm_bytes_per_second": 1000000000000,
+    "cpu_flops_per_second": 1800000000000,
+    "gpu_flops_per_second": 156000000000000,
+    "dram_bytes_per_second": 220000000000,
+    "hbm_bytes_per_second": 777500000000,
     "link_bytes_per_second": 25000000000,
     "startup_ns": 5000
   },
@@ -52,12 +52,12 @@
     "remote_matrix_flops": 463856467968,
     "per_assignment_activation_roundtrip_bytes": 201326592,
     "remote_tasks_per_active_expert_exact": "128",
-    "cpu_matrix_ns_exact": "28991029248/125",
-    "cpu_weight_read_ns_exact": "452984832/25",
+    "cpu_matrix_ns_exact": "6442450944/25",
+    "cpu_weight_read_ns_exact": "905969664/55",
     "cpu_dominant_resource": "compute",
-    "cpu_service_ns_exact": "30117662208/125",
-    "weight_copy_service_ns_exact": "468980346624/3125",
-    "gpu_resident_service_ns_exact": "14495514624/3125",
+    "cpu_service_ns_exact": "6667777536/25",
+    "weight_copy_service_ns_exact": "1166997048576/7775",
+    "gpu_resident_service_ns_exact": "7247757312/1555",
     "cpu_lower_than_weight_copy_in_declared_model": false,
     "extra_gpu_weights_for_all_experts_per_layer": 3623878656
   },
@@ -2246,7 +2246,7 @@
       "launches": 192,
       "memory_weight_bytes": 3623878656,
       "matrix_flops": 463856467968,
-      "service_ns_exact": "30117662208/125"
+      "service_ns_exact": "6667777536/25"
     },
     {
       "name": "copy weights to GPU",
@@ -2254,7 +2254,7 @@
       "launches": 96,
       "memory_weight_bytes": 3623878656,
       "matrix_flops": 463856467968,
-      "service_ns_exact": "468980346624/3125"
+      "service_ns_exact": "1166997048576/7775"
     },
     {
       "name": "GPU resident reference",
@@ -2262,24 +2262,24 @@
       "launches": 0,
       "memory_weight_bytes": 3623878656,
       "matrix_flops": 463856467968,
-      "service_ns_exact": "14495514624/3125"
+      "service_ns_exact": "7247757312/1555"
     }
   ],
   "locality_reuse_regions": [
     {
       "min_tokens_per_expert": 1,
-      "max_tokens_per_expert": 78,
+      "max_tokens_per_expert": 71,
       "winner": "cpu"
     },
     {
-      "min_tokens_per_expert": 79,
+      "min_tokens_per_expert": 72,
       "max_tokens_per_expert": null,
       "winner": "copy-to-gpu"
     }
   ],
   "reuse_knees": {
-    "cpu_equal_compute_weight_tokens_exact": "10",
-    "gpu_equal_compute_weight_tokens_exact": "100"
+    "cpu_equal_compute_weight_tokens_exact": "90/11",
+    "gpu_equal_compute_weight_tokens_exact": "62400/311"
   },
   "assumptions": [
     "复用获益区间覆盖每专家m≥1的全部整数，精确分段解两侧max的转折与等时根，末段null上界表示无穷。比较同一个非驻留专家一次BF16权重搬运和m次任务；均匀专家批可同比放大，非均匀批不能按平均m套逐专家结论。",
@@ -2288,6 +2288,6 @@
     "只比较非驻留专家子账。GPU常驻专家可并行的工作、attention、router、归约和完整请求不在本结果；全GPU参考需要额外权重容量，未作可行性保证。",
     "CPU每个非空专家发送一批输入并返回一批结果，激活均BF16，每个token—expert任务各算一份；直方图没有token身份，不推断跨专家去重。每方向每非空专家一次启动。",
     "时长为明确教学路径：CPU先交接激活再计max(矩阵服务,理想权重读取)，搬权重路径先复制再计GPU同类服务；按资源聚合下界，不含各专家不均衡、padding、小矩阵效率、激活访存、格式转换、NUMA和内部依赖。",
-    "计算与带宽均为有效服务假设，不引用CPU AMX或GPU宣传值。BF16权重不代表特定KTransformers量化格式，不能据此声称CPU/GPU实际胜负。"
+    "默认参数取KTransformers SOSP 2025论文平台：单路Xeon Platinum 8452Y的AVX-512内核1.8 TFLOP/s与AMX内核21.3 TFLOP/s（论文图3实测峰值）、同路DRAM 220 GB/s（Intel MLC实测）；GPU取A100 40GB PCIe官方峰值312 TFLOP/s与1555 GB/s的50%；PCIe 4.0 x16理论32 GB/s，采用25 GB/s有效值。BF16权重不代表特定KTransformers量化格式。"
   ]
 }

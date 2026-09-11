@@ -72,17 +72,17 @@ python3 -m venv /tmp/ch05-book-venv
 | 5-4 | 先算一个输出，再算相邻输出。蓝色表示所用的 A 行，橙色表示所用的 W 列，绿色表示本次得到的输出元素。图中矩阵缩小为示 | [SVG](figure-5-reuse-steps.svg) | [PNG](figure-5-reuse-steps.png) | [PDF](figure-5-reuse-steps.pdf) |
 | 5-5 | 固定当前 m×n 输出块，沿 K 依次搬入对应的 A、W 块，反复更新同一份部分和，全部累加结束后才写回。A、W 输入为 | [SVG](figure-5-tile-working-set.svg) | [PNG](figure-5-tile-working-set.png) | [PDF](figure-5-tile-working-set.pdf) |
 | 5-6 | 每个点标出输出块形状。扩大输出块能减少跨接口的重复读取，但需要更多局部存储。虚线为三份矩阵各经过一次的 128 MiB； | [SVG](figure-5-2-tiles.svg) | [PNG](figure-5-2-tiles.png) | [PDF](figure-5-2-tiles.pdf) |
-| 5-7 | 条形总长均表示 96 KiB。24 KiB 的工作集能放四份，80 KiB 的只能放一份。 | [SVG](figure-5-tile-residency.svg) | [PNG](figure-5-tile-residency.png) | [PDF](figure-5-tile-residency.pdf) |
+| 5-7 | 条形总长均表示 RTX PRO 6000 一个 SM 的 100 KB 共享内存。24 KiB 的工作集连同每 | [SVG](figure-5-tile-residency.svg) | [PNG](figure-5-tile-residency.png) | [PDF](figure-5-tile-residency.pdf) |
 | 5-8 | 同一列的 32 个不同字由 32 个 lane 同时请求。上半图行跨度为 32 个字，请求集中到同一 bank；下半图补 | [SVG](figure-5-3-banks.svg) | [PNG](figure-5-3-banks.png) | [PDF](figure-5-3-banks.pdf) |
 | 5-9 | 上行由一组处理完整一行，输入保留到归一化结束；下行把一行分为八段，先求局部和，再合并，最后重读输入并归一化。每行 409 | [SVG](figure-5-4-reduction.svg) | [PNG](figure-5-4-reduction.png) | [PDF](figure-5-4-reduction.pdf) |
 | 5-10 | 切输出行 $M$ 或输出列 $N$，各执行者得到不同位置的完整结果，需要时再拼起来；切归约维 $K$，各执行者得到同一输 | [SVG](figure-5-split-axes.svg) | [PNG](figure-5-split-axes.png) | [PDF](figure-5-split-axes.pdf) |
 | 5-11 | 上半图的完整 T 经过一次写出与一次读回；下半图中局部片段 t 直接传给乘法。两种方式仍读取 G、U 并写出 Z，图中省 | [SVG](figure-5-fusion-path.svg) | [PNG](figure-5-fusion-path.png) | [PDF](figure-5-fusion-path.pdf) |
 | 5-12 | 每少保存一个 24 MiB 中间量，就少一次写出和一次读入，共 48 MiB。G、U 为 BF16，最终输出占 1 by | [SVG](figure-5-5-boundaries.svg) | [PNG](figure-5-5-boundaries.png) | [PDF](figure-5-5-boundaries.pdf) |
-| 5-13 | 块 0 在 2–5 μs 使用槽 A，所以块 2 到 5 μs 才能开始写入 A。图中抽取三个时段；4–5 μs 的块  | [SVG](figure-5-buffer-slots.svg) | [PNG](figure-5-buffer-slots.png) | [PDF](figure-5-buffer-slots.pdf) |
-| 5-14 | 两个输入槽交替复用，让搬运与计算重叠。每块搬运 2 μs、计算 3 μs，资源独立，忽略同步开销；同一颜色表示同一槽，计 | [SVG](figure-5-6-fusion-buffer.svg) | [PNG](figure-5-6-fusion-buffer.png) | [PDF](figure-5-6-fusion-buffer.pdf) |
+| 5-13 | 块 0 在 1.29–1.57 μs 使用槽 A，此后槽 A 已经空出；块 2 要等搬运器在 2.58 μs  | [SVG](figure-5-buffer-slots.svg) | [PNG](figure-5-buffer-slots.png) | [PDF](figure-5-buffer-slots.pdf) |
+| 5-14 | 两个输入槽交替复用，让搬运与计算重叠。H100 一个 SM 上每块搬运 1.29 μs、计算 0.28 μs， | [SVG](figure-5-6-fusion-buffer.svg) | [PNG](figure-5-6-fusion-buffer.png) | [PDF](figure-5-6-fusion-buffer.pdf) |
 | 5-15 | 上半图保存完整 S、P，两份 FP32 矩阵各占 256 MiB，写出与读回合计 1 GiB。下半图只传递已处理部分的最 | [SVG](figure-5-attention-storage.svg) | [PNG](figure-5-attention-storage.png) | [PDF](figure-5-attention-storage.pdf) |
 | 5-16 | 两个块的分数分别为 0、ln 2，值分别为 1、3。最大值增大后，将旧指数和与旧加权值同时乘以 1/2，再加上新块的贡献 | [SVG](figure-5-7-online-softmax.svg) | [PNG](figure-5-7-online-softmax.png) | [PDF](figure-5-7-online-softmax.pdf) |
-| 5-17 | 快速缓冲为 128 KiB，序列长 8192、头维度 128，无掩码；每个点对应正文表格的一种 K/V 块大小。横轴为缓 | [SVG](figure-5-8-attention-tradeoff.svg) | [PNG](figure-5-8-attention-tradeoff.png) | [PDF](figure-5-8-attention-tradeoff.pdf) |
+| 5-17 | 快速缓冲为 RTX PRO 6000 一个线程块的 99 KB 共享内存，序列长 8192、头维度 128，无 | [SVG](figure-5-8-attention-tradeoff.svg) | [PNG](figure-5-8-attention-tradeoff.png) | [PDF](figure-5-8-attention-tradeoff.pdf) |
 | 5-18 | 循环层次决定临时数据需要保存多久。外层选输出块，创建十六 KiB 累加器；内层 ko 反复读取 A、W 块，全部归约结束 | [SVG](figure-5-9-polyhedral.svg) | [PNG](figure-5-9-polyhedral.png) | [PDF](figure-5-9-polyhedral.pdf) |
 | 5-19 | 同样两个部分和，先相加得到零，再做 SiLU 仍为零；先对各部分做 SiLU 再相加，得到约 0.4621。两个数说明把 | [SVG](figure-5-activation-order.svg) | [PNG](figure-5-activation-order.png) | [PDF](figure-5-activation-order.pdf) |
 | 5-20 | 一行分成两个块，后一块中的十决定整行尺度。第一项要先按这一尺度映射，再舍入到格式允许的值，最后反量化。 | [SVG](figure-5-quantization-scale.svg) | [PNG](figure-5-quantization-scale.png) | [PDF](figure-5-quantization-scale.pdf) |
@@ -95,11 +95,11 @@ python3 -m venv /tmp/ch05-book-venv
 | 5-27 | 三次 graph launch 对应十八个加速器 kernel。图重放减少主机提交次数，加速器仍执行原图各节点；本图按自 | [SVG](figure-5-runtime-2.svg) | [PNG](figure-5-runtime-2.png) | [PDF](figure-5-runtime-2.pdf) |
 | 5-28 | 先融合再重放，主机发起三次图执行，加速器执行十五个 kernel。融合减少加速器内核数，图重放减少主机提交次数。 | [SVG](figure-5-runtime-3.svg) | [PNG](figure-5-runtime-3.png) | [PDF](figure-5-runtime-3.pdf) |
 | 5-29 | 图执行时读取记录的地址 G。新输入位于 X 时先复制到 G；上游直接写 G 时沿用同一缓冲，省去中间复制。 | [SVG](figure-5-graph-address.svg) | [PNG](figure-5-graph-address.png) | [PDF](figure-5-graph-address.pdf) |
-| 5-30 | 橙色为准备，蓝色为额外输入复制，绿色为加速器计算。普通方式四十微秒；图的两 MiB 输入约二十七微秒，十六 MiB 输入 | [SVG](figure-5-13-graph-copy.svg) | [PNG](figure-5-13-graph-copy.png) | [PDF](figure-5-13-graph-copy.pdf) |
+| 5-30 | 橙色为准备，蓝色为额外输入复制，绿色为加速器计算。普通方式 40 μs；图的两 MiB 输入约 27 μs，十 | [SVG](figure-5-13-graph-copy.svg) | [PNG](figure-5-13-graph-copy.png) | [PDF](figure-5-13-graph-copy.pdf) |
 | 5-31 | 256 行的调用补齐到 512 行的桶，1536 行的调用补齐到 2048 行的桶，2048 行恰好落在桶的边界上。灰色 | [SVG](figure-5-shape-buckets.svg) | [PNG](figure-5-shape-buckets.png) | [PDF](figure-5-shape-buckets.pdf) |
 | 5-32 | 同一组调用反复执行时，最省时的策略随复用次数变化。曲线采用例 5-12 的形状、处理率和准备时间，不同策略适用的整数调用 | [SVG](figure-5-14-specialization.svg) | [PNG](figure-5-14-specialization.png) | [PDF](figure-5-14-specialization.pdf) |
-| 5-33 | 粗粒度执行先完成八块投影，再启动八块激活。每块投影约 32.2 μs、激活约 39.3 μs，两次主机启动各五微秒；竖线 | [SVG](figure-5-15-persistent.svg) | [PNG](figure-5-15-persistent.png) | [PDF](figure-5-15-persistent.pdf) |
-| 5-34 | 矩阵与向量资源独立、缓冲充足。每个任务另计 0.7 μs 调度与通知，首块投影完成后即可激活，八块流水约三百五十八微秒结 | [SVG](figure-5-persistent-blocks.svg) | [PNG](figure-5-persistent-blocks.png) | [PDF](figure-5-persistent-blocks.pdf) |
+| 5-33 | 粗粒度执行先完成八块投影，再启动八块激活。按 RTX PRO 6000 的矩阵峰值与显存带宽，每块投影约 12 | [SVG](figure-5-15-persistent.svg) | [PNG](figure-5-15-persistent.png) | [PDF](figure-5-15-persistent.pdf) |
+| 5-34 | 矩阵与向量资源独立、缓冲充足。每个任务另计 0.7 μs 调度与通知，首块投影完成后即可激活；投影首尾相接，激 | [SVG](figure-5-persistent-blocks.svg) | [PNG](figure-5-persistent-blocks.png) | [PDF](figure-5-persistent-blocks.pdf) |
 | 5-35 | 收尾等待 A、B 两条分支。A 从 60 μs 缩短至 15 μs 后，较慢分支由 A 切换为 B，请求从 80 μs  | [SVG](figure-5-16-critical-path.svg) | [PNG](figure-5-16-critical-path.png) | [PDF](figure-5-16-critical-path.pdf) |
 | 5-36 | 全局驻留与逐层逻辑读取分开比较。上方仅计全局 KV 容量，下方读取包含全局条目、局部窗口和索引；两栏各自采用相同横轴尺度 | [SVG](figure-5-v41-traffic.svg) | [PNG](figure-5-v41-traffic.png) | [PDF](figure-5-v41-traffic.pdf) |
 | 5-37 | 同轮替换前的请求时间减去替换后的请求时间，正值表示替换后更快。Qwen3-8B，7239-token 输入、强制 32- | [SVG](figure-5-17-request.svg) | [PNG](figure-5-17-request.png) | [PDF](figure-5-17-request.pdf) |

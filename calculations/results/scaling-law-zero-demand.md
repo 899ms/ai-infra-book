@@ -1,6 +1,6 @@
 # C19 scaling-law — synthetic_teaching
 
-{"data_kind": "synthetic_teaching", "fit_sse": 1.2424559257230936e-29, "holdout_rmse": 2.9261626308334948e-15, "lifetime_calls": 0, "optimal_candidate_N": 8000000000.0, "task_quality_prediction": null}
+{"data_kind": "synthetic_teaching", "fit_sse": 1.2227344030925683e-29, "holdout_rmse": 3.2934537262255428e-15, "lifetime_calls": 0, "optimal_candidate_N": 8000000000.0, "task_quality_prediction": null}
 
 | Budget FLOPs | N | D | Predicted loss |
 | --- | --- | --- | --- |
@@ -19,18 +19,18 @@
 
 | Record | Split | Observed loss | Predicted loss | Residual | Outside fit box |
 | --- | --- | --- | --- | --- | --- |
-| fit-0 | fit | 3 | 3 | 2.22e-15 | False |
-| fit-1 | fit | 2.7071068 | 2.7071068 | 8.882e-16 | False |
+| fit-0 | fit | 3 | 3 | 1.776e-15 | False |
+| fit-1 | fit | 2.7071068 | 2.7071068 | 4.441e-16 | False |
 | fit-2 | fit | 2.5 | 2.5 | 0 | False |
-| fit-3 | fit | 2.7071068 | 2.7071068 | 1.332e-15 | False |
-| fit-4 | fit | 2.4142136 | 2.4142136 | 0 | False |
-| fit-5 | fit | 2.2071068 | 2.2071068 | -8.882e-16 | False |
-| fit-6 | fit | 2.5 | 2.5 | 4.441e-16 | False |
-| fit-7 | fit | 2.2071068 | 2.2071068 | -8.882e-16 | False |
-| fit-8 | fit | 2 | 2 | -1.776e-15 | False |
-| holdout-9 | holdout | 2.1547005 | 2.1547005 | -1.332e-15 | False |
+| fit-3 | fit | 2.7071068 | 2.7071068 | 4.441e-16 | False |
+| fit-4 | fit | 2.4142136 | 2.4142136 | -4.441e-16 | False |
+| fit-5 | fit | 2.2071068 | 2.2071068 | -1.332e-15 | False |
+| fit-6 | fit | 2.5 | 2.5 | 0 | False |
+| fit-7 | fit | 2.2071068 | 2.2071068 | -1.332e-15 | False |
+| fit-8 | fit | 2 | 2 | -2.22e-15 | False |
+| holdout-9 | holdout | 2.1547005 | 2.1547005 | -1.776e-15 | False |
 | holdout-10 | holdout | 1.7071068 | 1.7071068 | -3.109e-15 | True |
-| holdout-11 | holdout | 1.5 | 1.5 | -3.775e-15 | True |
+| holdout-11 | holdout | 1.5 | 1.5 | -4.441e-15 | True |
 
 | Allocation policy (common teaching anchor) | Budget FLOPs | N | D |
 | --- | --- | --- | --- |
@@ -45,10 +45,10 @@
 
 | Size pair | Equal-cost call count | Status |
 | --- | --- | --- |
-| 2e+09 / 4e+09 | 1688654668.8053007 | nonnegative_crossing |
-| 2e+09 / 8e+09 | 575826259.8890567 | nonnegative_crossing |
-| 2e+09 / 1.6e+10 | 230357109.01499107 | nonnegative_crossing |
-| 4e+09 / 8e+09 | 19412055.43093477 | nonnegative_crossing |
+| 2e+09 / 4e+09 | 1688654668.805294 | nonnegative_crossing |
+| 2e+09 / 8e+09 | 575826259.8890545 | nonnegative_crossing |
+| 2e+09 / 1.6e+10 | 230357109.01499015 | nonnegative_crossing |
+| 4e+09 / 8e+09 | 19412055.4309348 | nonnegative_crossing |
 | 4e+09 / 1.6e+10 | None | negative_crossing |
 | 8e+09 / 1.6e+10 | None | negative_crossing |
 

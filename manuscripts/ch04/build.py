@@ -88,13 +88,14 @@ box(a,.63,.12,.22,.20,'缩放、合并与转换\n规定输出格式');arrow(a,(.
 save(f,'figure-4-5-precision');data['4-5']={'kind':'teaching_format','weights':4096**2,'bf16_bytes':33554432,'four_bit_bytes':8388608,'scale_bytes':524288}
 # Concurrency limits bandwidth even when the physical interface is faster.
 f,a=plt.subplots(figsize=(11,5.5));f.subplots_adjust(left=.10,right=.96,bottom=.16,top=.90)
-n=np.arange(0,10001);transaction=128;latency=500e-9
-for bandwidth,col in [(1e12,'blue'),(2e12,'teal')]:
- a.plot(n,np.minimum(bandwidth,n*transaction/latency)/1e12,color=C[col],lw=2.5,label=f'接口带宽 {bandwidth/1e12:.0f} TB/s')
-for threshold,rate in [(3907,1),(7813,2)]:
+n=np.arange(0,10001);transaction=128;latency=500e-9;windows=[calc('window-qwen3-8b-rtx4090-n4096'),calc('window-qwen3-8b-rtx5090-n4096')]
+bandwidths=[w['scenario']['bandwidth_bytes_per_second'] for w in windows];thresholds=[w['summary']['required_transactions'] for w in windows]
+for bandwidth,col,name in [(bandwidths[0],'blue','RTX 4090'),(bandwidths[1],'teal','RTX 5090')]:
+ a.plot(n,np.minimum(bandwidth,n*transaction/latency)/1e12,color=C[col],lw=2.5,label=f'{name}：{bandwidth/1e9:.0f} GB/s')
+for threshold,rate in zip(thresholds,[b/1e12 for b in bandwidths]):
  a.plot(threshold,rate,'o',color=C['orange']);a.annotate(f'至少 {threshold} 个',xy=(threshold,rate),xytext=(threshold+350,rate-.23),fontsize=11,arrowprops={'arrowstyle':'-','color':C['gray']})
 a.axvline(4096,color=C['gray'],ls=':',lw=1);a.set(xlim=(0,10000),ylim=(0,2.25),xlabel='可同时未完成的请求数 N',ylabel='可达到的带宽上界 / TB/s');a.legend(frameon=False,loc='upper left');a.grid(axis='y',alpha=.15)
-save(f,'figure-4-7-memory');data['4-7']={'kind':'teaching_concurrency','transaction_bytes':transaction,'latency_seconds':latency,'interface_bytes_per_second':[1e12,2e12],'minimum_requests':[3907,7813],'requests':n.tolist(),'bandwidth_upper_bytes_per_second':[np.minimum(bw,n*transaction/latency).tolist() for bw in [1e12,2e12]]}
+save(f,'figure-4-7-memory');data['4-7']={'kind':'named_device_concurrency','sources':['calculations/results/window-qwen3-8b-rtx4090-n4096.json','calculations/results/window-qwen3-8b-rtx5090-n4096.json'],'transaction_bytes':transaction,'latency_seconds':latency,'interface_bytes_per_second':bandwidths,'minimum_requests':thresholds,'requests':n.tolist(),'bandwidth_upper_bytes_per_second':[np.minimum(bw,n*transaction/latency).tolist() for bw in bandwidths]}
 # One input pipeline, three buffer capacities.
 p=calc('attention-input-base');f,axes=plt.subplots(3,1,figsize=(12,8.8),sharex=True);f.subplots_adjust(left=.12,right=.96,bottom=.09,top=.91,hspace=.58)
 for a,slots in zip(axes,[1,2,3]):
@@ -102,17 +103,17 @@ for a,slots in zip(axes,[1,2,3]):
  for t in r['chunks']:
   y=t['chunk'];a.barh(y,t['slot_released']-t['issue_start'],left=t['issue_start'],height=.64,color='#e8ecef');a.barh(y,t['transfer_end']-t['issue_start'],left=t['issue_start'],height=.44,color=C['blue']);a.barh(y,t['compute_end']-t['compute_start'],left=t['compute_start'],height=.44,color=C['teal']);a.plot(t['data_ready'],y,'|',color=C['orange'],markersize=11)
  a.set_yticks(range(4),['块 0','块 1','块 2','块 3']);a.invert_yaxis();a.set_xlim(0,1320);a.set_title(f'{slots} 个输入槽：完成 {r["finish_tick"]} tick',loc='left',fontsize=12);a.set_xticks([0,320,640,960,1280]);a.tick_params(labelbottom=True)
-axes[-1].set_xlabel('时间 / 教学 tick')
+axes[-1].set_xlabel('时间 / tick（B200 SM 时钟周期）')
 f.text(.12,.966,'蓝：输入传输　橙线：数据就绪　绿：计算　浅灰：槽位占用至计算结束',fontsize=11)
 save(f,'figure-4-9-pipeline');data['4-9']={'input_scenario':p['scenario'],'input_rows':p['rows'],'displayed_schedules':teaching['baseline'][:3]}
 # Same bandwidth change, two message sizes; independent axes show startup cost.
 f,axes=plt.subplots(1,2,figsize=(12,4.7));f.subplots_adjust(left=.08,right=.96,bottom=.20,top=.77,wspace=.42)
-payload=np.array([8192,2097152]);rates=np.array([1e11,2e11]);total=[]
+payload=np.array([8192,2097152]);rates=np.array(teaching['interconnect']['rates'],dtype=float);alpha=teaching['interconnect']['alpha_us'];total=[]
 for a,size,label in zip(axes,payload,['M=1：8 KiB','M=256：2 MiB']):
- ser=size/rates*1e6;total.append((ser+2).tolist());a.bar([0,1],[2,2],color=C['orange'],label='启动');a.bar([0,1],ser,bottom=2,color=C['blue'],label='传输');a.set_xticks([0,1],['100 GB/s','200 GB/s']);a.set_title(label,loc='left',fontsize=12);a.set_ylabel('时间 / μs');a.set_ylim(0,max(ser+2)*1.2)
- for i,v in enumerate(ser+2):a.text(i,v+max(ser+2)*.025,f'{v:.2f}' if size==8192 else f'{v:.1f}',ha='center',fontsize=11)
+ ser=size/rates*1e6;total.append((ser+alpha).tolist());a.bar([0,1],[alpha,alpha],color=C['orange'],label='启动');a.bar([0,1],ser,bottom=alpha,color=C['blue'],label='传输');a.set_xticks([0,1],['A100 300 GB/s','H100 450 GB/s']);a.set_title(label,loc='left',fontsize=12);a.set_ylabel('时间 / μs');a.set_ylim(0,max(ser+alpha)*1.2)
+ for i,v in enumerate(ser+alpha):a.text(i,v+max(ser+alpha)*.025,f'{v:.2f}',ha='center',fontsize=11)
 axes[0].legend(frameon=False,ncol=2,loc='upper left',bbox_to_anchor=(0,1.38))
-save(f,'figure-4-11-interconnect');data['4-11']={'kind':'teaching','payload_bytes':payload.tolist(),'one_way_bytes_per_second':rates.tolist(),'alpha_seconds':2e-6,'total_us':total}
+save(f,'figure-4-11-interconnect');data['4-11']={'kind':'nvlink_per_direction','devices':['A100 SXM','H100 SXM'],'payload_bytes':payload.tolist(),'one_way_bytes_per_second':rates.tolist(),'alpha_seconds':alpha/1e6,'total_us':total}
 # Fixed weights and growing KV: one remaining resource constraint.
 f,a=plt.subplots(figsize=(11,5.5));f.subplots_adjust(left=.11,right=.96,bottom=.16,top=.94)
 b=np.arange(1,33);W=15136811008;K=1207959552;a.plot(b,np.full(len(b),W/1e9),color=C['blue'],lw=2,label='本步所用权重：每批读一次');a.plot(b,b*K/1e9,color=C['teal'],lw=2,label='KV：每请求读取一次');a.axvline(13,color=C['orange'],ls=':');a.annotate('从 batch 13 起，KV 超过权重',xy=(13,13*K/1e9),xytext=(16,9),arrowprops={'arrowstyle':'->','color':C['orange']},fontsize=11);a.set_xlabel('batch B');a.set_ylabel('每步读取 / GB');a.set_xlim(1,32);a.set_ylim(0,42);a.legend(frameon=False,fontsize=11,loc='upper left')

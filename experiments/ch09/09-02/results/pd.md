@@ -1,30 +1,30 @@
 # 实验 9-2 结果：A100＋H20 的 PD 分离
 
-每 worker 速率为声明假设：A100 prefill 16,384 tok/s／decode 64 tok/s；H20 prefill 4,096／decode 256。链路 25 GB/s。
+阶段能力：A100 80GB SXM（312 TFLOP/s、2039 GB/s）与 H20 SXM5 96GB（148 TFLOP/s、4096 GB/s）峰值乘 50%，decode 批量 32。链路 25 GB/s。
 
-| 布局 | 场景 | 每请求交接 | PD 上界 | 共置上界 | PD/共置 | 链路容量 | 瓶颈 |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| 共置（8 张 A100 都做两件事） | 输入 2K／输出 128／无命中 | 0.281 GiB | 3.500 req/s | 3.765 req/s | 0.93× | 82.784 req/s | decode | P:A100-80GB-prefill×1 D:A100-80GB-prefill×7 |
-| 共置（8 张 A100 都做两件事） | 输入 8K／输出 128／无命中 | 1.125 GiB | 3.000 req/s | 3.200 req/s | 0.94× | 20.696 req/s | decode | P:A100-80GB-prefill×2 D:A100-80GB-prefill×6 |
-| 共置（8 张 A100 都做两件事） | 输入 8K／输出 1024／无命中 | 1.125 GiB | 0.438 req/s | 0.485 req/s | 0.90× | 20.696 req/s | decode | P:A100-80GB-prefill×1 D:A100-80GB-prefill×7 |
-| 共置（8 张 A100 都做两件事） | 输入 8K／输出 128／命中 6K 前缀 | 1.125 GiB | 3.500 req/s | 3.765 req/s | 0.93× | 20.696 req/s | decode | P:A100-80GB-prefill×1 D:A100-80GB-prefill×7 |
-| 共置（8 张 A100 都做两件事） | 输入 32K／输出 128／无命中 | 4.500 GiB | 2.000 req/s | 2.000 req/s | 1.00× | 5.174 req/s | prefill、decode | P:A100-80GB-prefill×4 D:A100-80GB-prefill×4 |
-| 共置（8 张 A100 都做两件事） | 输入 8K／输出 128／到达率 8 | 1.125 GiB | 3.000 req/s | 3.200 req/s | 0.94× | 20.696 req/s | decode | P:A100-80GB-prefill×2 D:A100-80GB-prefill×6 |
-| 同构 PD（A100 4＋4） | 输入 2K／输出 128／无命中 | 0.281 GiB | 3.500 req/s | 3.765 req/s | 0.93× | 82.784 req/s | decode | P:A100-80GB-prefill×1 D:A100-80GB-prefill×7 |
-| 同构 PD（A100 4＋4） | 输入 8K／输出 128／无命中 | 1.125 GiB | 3.000 req/s | 3.200 req/s | 0.94× | 20.696 req/s | decode | P:A100-80GB-prefill×2 D:A100-80GB-prefill×6 |
-| 同构 PD（A100 4＋4） | 输入 8K／输出 1024／无命中 | 1.125 GiB | 0.438 req/s | 0.485 req/s | 0.90× | 20.696 req/s | decode | P:A100-80GB-prefill×1 D:A100-80GB-prefill×7 |
-| 同构 PD（A100 4＋4） | 输入 8K／输出 128／命中 6K 前缀 | 1.125 GiB | 3.500 req/s | 3.765 req/s | 0.93× | 20.696 req/s | decode | P:A100-80GB-prefill×1 D:A100-80GB-prefill×7 |
-| 同构 PD（A100 4＋4） | 输入 32K／输出 128／无命中 | 4.500 GiB | 2.000 req/s | 2.000 req/s | 1.00× | 5.174 req/s | prefill、decode | P:A100-80GB-prefill×4 D:A100-80GB-prefill×4 |
-| 同构 PD（A100 4＋4） | 输入 8K／输出 128／到达率 8 | 1.125 GiB | 3.000 req/s | 3.200 req/s | 0.94× | 20.696 req/s | decode | P:A100-80GB-prefill×2 D:A100-80GB-prefill×6 |
-| 异构 PD（A100 4 做 prefill，H20 4 做 decode） | 输入 2K／输出 128／无命中 | 0.281 GiB | 9.000 req/s | 5.882 req/s | 1.53× | 82.784 req/s | decode | P:A100-80GB-prefill×2 D:A100-80GB-prefill×2,H20-96GB-decode×4 |
-| 异构 PD（A100 4 做 prefill，H20 4 做 decode） | 输入 8K／输出 128／无命中 | 1.125 GiB | 8.000 req/s | 3.200 req/s | 2.50× | 20.696 req/s | prefill、decode | P:A100-80GB-prefill×4 D:H20-96GB-decode×4 |
-| 异构 PD（A100 4 做 prefill，H20 4 做 decode） | 输入 8K／输出 1024／无命中 | 1.125 GiB | 1.188 req/s | 0.909 req/s | 1.31× | 20.696 req/s | decode | P:A100-80GB-prefill×1 D:A100-80GB-prefill×3,H20-96GB-decode×4 |
-| 异构 PD（A100 4 做 prefill，H20 4 做 decode） | 输入 8K／输出 128／命中 6K 前缀 | 1.125 GiB | 9.000 req/s | 5.882 req/s | 1.53× | 20.696 req/s | decode | P:A100-80GB-prefill×2 D:A100-80GB-prefill×2,H20-96GB-decode×4 |
-| 异构 PD（A100 4 做 prefill，H20 4 做 decode） | 输入 32K／输出 128／无命中 | 4.500 GiB | 2.250 req/s | 1.471 req/s | 1.53× | 5.174 req/s | prefill | P:A100-80GB-prefill×4,H20-96GB-decode×2 D:H20-96GB-decode×2 |
-| 异构 PD（A100 4 做 prefill，H20 4 做 decode） | 输入 8K／输出 128／到达率 8 | 1.125 GiB | 8.000 req/s | 3.200 req/s | 2.50× | 20.696 req/s | prefill、decode | P:A100-80GB-prefill×4 D:H20-96GB-decode×4 |
-| 全 H20（8 张） | 输入 2K／输出 128／无命中 | 0.281 GiB | 8.000 req/s | 8.000 req/s | 1.00× | 82.784 req/s | prefill、decode | P:H20-96GB-decode×4 D:H20-96GB-decode×4 |
-| 全 H20（8 张） | 输入 8K／输出 128／无命中 | 1.125 GiB | 3.000 req/s | 3.200 req/s | 0.94× | 20.696 req/s | prefill | P:H20-96GB-decode×6 D:H20-96GB-decode×2 |
-| 全 H20（8 张） | 输入 8K／输出 1024／无命中 | 1.125 GiB | 1.250 req/s | 1.333 req/s | 0.94× | 20.696 req/s | decode | P:H20-96GB-decode×3 D:H20-96GB-decode×5 |
-| 全 H20（8 张） | 输入 8K／输出 128／命中 6K 前缀 | 1.125 GiB | 8.000 req/s | 8.000 req/s | 1.00× | 20.696 req/s | prefill、decode | P:H20-96GB-decode×4 D:H20-96GB-decode×4 |
-| 全 H20（8 张） | 输入 32K／输出 128／无命中 | 4.500 GiB | 0.875 req/s | 0.941 req/s | 0.93× | 5.174 req/s | prefill | P:H20-96GB-decode×7 D:H20-96GB-decode×1 |
-| 全 H20（8 张） | 输入 8K／输出 128／到达率 8 | 1.125 GiB | 3.000 req/s | 3.200 req/s | 0.94× | 20.696 req/s | prefill | P:H20-96GB-decode×6 D:H20-96GB-decode×2 |
+| 布局 | 场景 | 每请求交接 | PD 上界 | 共置上界 | PD/共置 | 链路容量 | 瓶颈 | 最优分工 |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | --- | --- |
+| 共置（8 张 A100 都做两件事） | 输入 8K／输出 1024／无命中 | 1.125 GiB | 2.834 req/s | 3.053 req/s | 0.93× | 20.696 req/s | decode | P:A100×3 D:A100×5 |
+| 共置（8 张 A100 都做两件事） | 输入 8K／输出 128／无命中 | 1.125 GiB | 7.006 req/s | 7.486 req/s | 0.94× | 20.696 req/s | prefill | P:A100×6 D:A100×2 |
+| 共置（8 张 A100 都做两件事） | 输入 8K／输出 4096／无命中 | 1.125 GiB | 0.879 req/s | 0.907 req/s | 0.97× | 20.696 req/s | decode | P:A100×1 D:A100×7 |
+| 共置（8 张 A100 都做两件事） | 输入 8K／输出 1024／命中 6K 前缀 | 1.125 GiB | 3.967 req/s | 3.995 req/s | 0.99× | 20.696 req/s | decode | P:A100×1 D:A100×7 |
+| 共置（8 张 A100 都做两件事） | 输入 2K／输出 1024／无命中 | 0.281 GiB | 7.022 req/s | 7.657 req/s | 0.92× | 82.784 req/s | decode | P:A100×2 D:A100×6 |
+| 共置（8 张 A100 都做两件事） | 输入 32K／输出 1024／无命中 | 4.500 GiB | 0.740 req/s | 0.773 req/s | 0.96× | 5.174 req/s | decode | P:A100×4 D:A100×4 |
+| 同构 PD（A100 4＋4） | 输入 8K／输出 1024／无命中 | 1.125 GiB | 2.834 req/s | 3.053 req/s | 0.93× | 20.696 req/s | decode | P:A100×3 D:A100×5 |
+| 同构 PD（A100 4＋4） | 输入 8K／输出 128／无命中 | 1.125 GiB | 7.006 req/s | 7.486 req/s | 0.94× | 20.696 req/s | prefill | P:A100×6 D:A100×2 |
+| 同构 PD（A100 4＋4） | 输入 8K／输出 4096／无命中 | 1.125 GiB | 0.879 req/s | 0.907 req/s | 0.97× | 20.696 req/s | decode | P:A100×1 D:A100×7 |
+| 同构 PD（A100 4＋4） | 输入 8K／输出 1024／命中 6K 前缀 | 1.125 GiB | 3.967 req/s | 3.995 req/s | 0.99× | 20.696 req/s | decode | P:A100×1 D:A100×7 |
+| 同构 PD（A100 4＋4） | 输入 2K／输出 1024／无命中 | 0.281 GiB | 7.022 req/s | 7.657 req/s | 0.92× | 82.784 req/s | decode | P:A100×2 D:A100×6 |
+| 同构 PD（A100 4＋4） | 输入 32K／输出 1024／无命中 | 4.500 GiB | 0.740 req/s | 0.773 req/s | 0.96× | 5.174 req/s | decode | P:A100×4 D:A100×4 |
+| 异构 PD（A100 4 做 prefill，H20 4 做 decode） | 输入 8K／输出 1024／无命中 | 1.125 GiB | 4.554 req/s | 3.017 req/s | 1.51× | 20.696 req/s | decode | P:A100×4 D:H20×4 |
+| 异构 PD（A100 4 做 prefill，H20 4 做 decode） | 输入 8K／输出 128／无命中 | 1.125 GiB | 6.333 req/s | 5.836 req/s | 1.09× | 20.696 req/s | prefill | P:A100×4,H20×3 D:H20×1 |
+| 异构 PD（A100 4 做 prefill，H20 4 做 decode） | 输入 8K／输出 4096／无命中 | 1.125 GiB | 1.260 req/s | 1.146 req/s | 1.10× | 20.696 req/s | decode | P:A100×2 D:A100×2,H20×4 |
+| 异构 PD（A100 4 做 prefill，H20 4 做 decode） | 输入 8K／输出 1024／命中 6K 前缀 | 1.125 GiB | 5.688 req/s | 4.897 req/s | 1.16× | 20.696 req/s | decode | P:A100×2 D:A100×2,H20×4 |
+| 异构 PD（A100 4 做 prefill，H20 4 做 decode） | 输入 2K／输出 1024／无命中 | 0.281 GiB | 10.575 req/s | 8.668 req/s | 1.22× | 82.784 req/s | decode | P:A100×3 D:A100×1,H20×4 |
+| 异构 PD（A100 4 做 prefill，H20 4 做 decode） | 输入 32K／输出 1024／无命中 | 4.500 GiB | 0.904 req/s | 0.691 req/s | 1.31× | 5.174 req/s | prefill | P:A100×4,H20×1 D:H20×3 |
+| 全 H20（8 张） | 输入 8K／输出 1024／无命中 | 1.125 GiB | 2.770 req/s | 2.981 req/s | 0.93× | 20.696 req/s | prefill | P:H20×5 D:H20×3 |
+| 全 H20（8 张） | 输入 8K／输出 128／无命中 | 1.125 GiB | 3.877 req/s | 4.186 req/s | 0.93× | 20.696 req/s | prefill | P:H20×7 D:H20×1 |
+| 全 H20（8 张） | 输入 8K／输出 4096／无命中 | 1.125 GiB | 1.261 req/s | 1.386 req/s | 0.91× | 20.696 req/s | decode | P:H20×3 D:H20×5 |
+| 全 H20（8 张） | 输入 8K／输出 1024／命中 6K 前缀 | 1.125 GiB | 5.693 req/s | 5.798 req/s | 0.98× | 20.696 req/s | decode | P:H20×3 D:H20×5 |
+| 全 H20（8 张） | 输入 2K／输出 1024／无命中 | 0.281 GiB | 9.404 req/s | 9.679 req/s | 0.97× | 82.784 req/s | decode | P:H20×4 D:H20×4 |
+| 全 H20（8 张） | 输入 32K／输出 1024／无命中 | 4.500 GiB | 0.575 req/s | 0.610 req/s | 0.94× | 5.174 req/s | prefill | P:H20×6 D:H20×2 |

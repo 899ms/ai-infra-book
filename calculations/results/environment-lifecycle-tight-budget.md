@@ -1,6 +1,6 @@
 # environment-lifecycle — declared-environment-budget
 
-输入：`{"dirty_bytes": 134217728, "effective_transfer_bytes_per_second": 1073741824, "environments": 32, "hot_readonly_bytes": 268435456, "lead_seconds": "1", "local_budget_bytes": 8589934592, "prediction_hit_probability": "3/4", "preparation_seconds": "2", "private_overhead_bytes": 4194304, "snapshot_delta_bytes": 134217728, "template_bytes": 2147483648, "touched_bytes": 536870912, "warm_environment_bytes": 2147483648, "wrong_prediction_timeout_seconds": "3"}`
+输入：`{"dirty_bytes": 134217728, "effective_transfer_bytes_per_second": 3125000000, "environments": 32, "hot_readonly_bytes": 268435456, "lead_seconds": "1", "local_budget_bytes": 8589934592, "prediction_hit_probability": "3/4", "preparation_seconds": "2", "private_overhead_bytes": 4194304, "snapshot_delta_bytes": 134217728, "template_bytes": 2147483648, "touched_bytes": 536870912, "warm_environment_bytes": 2147483648, "wrong_prediction_timeout_seconds": "3"}`
 
 数值是分析计算；字节以 bytes 保存，FMA=2，不是硬件测量。
 
@@ -16,20 +16,20 @@ clone_placements
 
 | placement | per_environment_local_bytes | total_local_bytes | separately_retained_shared_template_bytes | total_bytes_across_declared_pools | memory_only_environment_upper_bound | initial_local_data_install_bytes | aggregate_serial_transfer_lower_exact_seconds |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| "full_copy" | 2151677952 | 68853694464 | 2147483648 | 71001178112 | 3 | 68719476736 | "64" |
-| "install_touched" | 541065216 | 17314086912 | 2147483648 | 19461570560 | 15 | 17179869184 | "16" |
-| "share_readonly_copy_dirty" | 138412032 | 4429185024 | 2147483648 | 6576668672 | 62 | 4294967296 | "4" |
-| "localize_hot_readonly" | 406847488 | 13019119616 | 2147483648 | 15166603264 | 21 | 12884901888 | "12" |
+| "full_copy" | 2151677952 | 68853694464 | 2147483648 | 71001178112 | 3 | 68719476736 | "1073741824/48828125" |
+| "install_touched" | 541065216 | 17314086912 | 2147483648 | 19461570560 | 15 | 17179869184 | "268435456/48828125" |
+| "share_readonly_copy_dirty" | 138412032 | 4429185024 | 2147483648 | 6576668672 | 62 | 4294967296 | "67108864/48828125" |
+| "localize_hot_readonly" | 406847488 | 13019119616 | 2147483648 | 15166603264 | 21 | 12884901888 | "201326592/48828125" |
 
 creation_paths
 
 | path | declared_source_fetch_bytes | declared_local_install_bytes | serial_byte_service_lower_exact_seconds | create_api_seconds | first_tool_complete_seconds | reconnect_seconds | measured |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| "cold_template" | 2147483648 | 536870912 | "5/2" | null | null | null | false |
-| "warm_template" | 0 | 536870912 | "1/2" | null | null | null | false |
-| "pause_resume" | 536870912 | 536870912 | "1" | null | null | null | false |
-| "snapshot_clone" | 536870912 | 536870912 | "1" | null | null | null | false |
-| "clean_rebuild" | 2147483648 | 2147483648 | "4" | null | null | null | false |
+| "cold_template" | 2147483648 | 536870912 | "8388608/9765625" | null | null | null | false |
+| "warm_template" | 0 | 536870912 | "8388608/48828125" | null | null | null | false |
+| "pause_resume" | 536870912 | 536870912 | "16777216/48828125" | null | null | null | false |
+| "snapshot_clone" | 536870912 | 536870912 | "16777216/48828125" | null | null | null | false |
+| "clean_rebuild" | 2147483648 | 2147483648 | "67108864/48828125" | null | null | null | false |
 
 measured_prewarm_trials
 
@@ -48,7 +48,7 @@ measured_prewarm_trials
 | 1 | "predict-50ms" | 12 | 14 | 10 | 2 | 0.020857457 | 0.099724666 | [0.041711458, 0.039500417, 0.031358125, 0.039366792, 0.03170325, 0.044734291, 0.042893083, 0.042248792, 0.039109542, 0.043946167, 0.042882333, 0.043602, 0.039239917, 0.040006542] | 0.256214459 | 13.567460541 | null | 251 | 38223872 | 20373057.76772301 | "39791128452584/1953125" | 13.558774396 | 0.0594260625 |
 | 1 | "predict-fullgap" | 12 | 14 | 10 | 2 | 2.18232375 | 2.250489958 | [0.031045166, 0.036757333, 0.033865, 0.031408875, 0.03579775, 0.03272175, 0.032852292, 0.037109208, 0.034964125, 0.040757666, 0.032927208, 0.032383542, 0.032494417, 0.032825667] | 0.274754041 | 13.592056083 | null | 232 | 38223872 | 501725932.09391516 | "979933461120928/1953125" | 13.5694500415 | 0.061241958 |
 
-snapshot_budget：`{"shared_base_bytes": 2147483648, "branch_delta_bytes": 134217728, "branches": 32, "total_base_plus_private_deltas_bytes": 6442450944, "full_independent_snapshots_bytes": 68719476736, "one_delta_upload_lower_exact_seconds": "1/8", "incremental_format_supported_by_measured_platform": null}`
+snapshot_budget：`{"shared_base_bytes": 2147483648, "branch_delta_bytes": 134217728, "branches": 32, "total_base_plus_private_deltas_bytes": 6442450944, "full_independent_snapshots_bytes": 68719476736, "one_delta_upload_lower_exact_seconds": "2097152/48828125", "incremental_format_supported_by_measured_platform": null}`
 
 prewarm_budget：`{"expected_call_preparation_wait_exact_seconds": "5/4", "expected_avoided_wait_exact_seconds": "3/4", "expected_allocated_pretool_environment_seconds": "3", "expected_unused_environment_seconds": "1", "expected_pretool_memory_byte_seconds": "6442450944", "expected_extra_pretool_memory_byte_seconds_vs_demand": "2147483648", "expected_unused_memory_byte_seconds": "2147483648", "cpu_core_seconds": null}`
 

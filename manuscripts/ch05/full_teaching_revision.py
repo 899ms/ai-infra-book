@@ -72,11 +72,11 @@ def draw(here,data):
         d=data['5-15']
         for fine,name in [(False,'15-persistent'),(True,'persistent-blocks')]:
             f,a=plot(3.5,left=.19)
-            proj=d['projection_us']+(.7 if fine else 0);act=d['activation_us']+(.7 if fine else 0)
-            first=5+proj if fine else 10+8*proj
-            for i in range(8):
-                a.barh(0,proj,left=5+i*proj,height=.45,color=COL['blue'],edgecolor=COL['line']);a.barh(1,act,left=first+i*act,height=.45,color=COL['green'],edgecolor=COL['line'])
-            a.set(yticks=[0,1],yticklabels=['投影','激活'],xlim=(0,610),ylim=(-.6,1.6),xlabel='时间（μs）');a.invert_yaxis();a.axvline(first,ls='--',color='#a56c28');save(f,name)
+            bars=d['timelines']['fine' if fine else 'coarse']
+            for b in bars:
+                a.barh(0,b['projection_end']-b['projection_start'],left=b['projection_start'],height=.45,color=COL['blue'],edgecolor=COL['line'])
+                a.barh(1,b['activation_end']-b['activation_start'],left=b['activation_start'],height=.45,color=COL['green'],edgecolor=COL['line'])
+            a.set(yticks=[0,1],yticklabels=['投影','激活'],xlim=(0,135),xticks=range(0,131,20),ylim=(-.6,1.6),xlabel='时间（μs）');a.invert_yaxis();a.axvline(bars[0]['activation_start'],ls='--',color='#a56c28');save(f,name)
         f,a=canvas(4.9)
         for i,A in enumerate([60,15]):
             y=.58-i*.45;text(a,.04,y+.32,f'A 为 {A} μs：请求 {10+max(A,40)+10} μs',14)

@@ -1,0 +1,26 @@
+{
+  "inputs": {
+    "senders": [
+      8,
+      16,
+      64
+    ],
+    "sender_bytes_per_second": 50000000000,
+    "egress_bytes_per_second": 50000000000,
+    "free_buffer_bytes": 1048576,
+    "declared_one_hop_cable_m": 30,
+    "declared_propagation_ns_per_m": 5,
+    "mtu_bytes": 1500,
+    "declared_end_to_end_rtt_ns": 20000
+  },
+  "input_sources": {
+    "senders": "book (declared N)",
+    "sender_bytes_per_second": "references/text/nvidia-connectx7-datasheet.txt line 23 (up to 400Gb/s)",
+    "egress_bytes_per_second": "references/text/nvidia-connectx7-datasheet.txt line 23 (up to 400Gb/s)",
+    "free_buffer_bytes": "book (chapter 7.5 buffer examples 512 KiB / 1 MiB)",
+    "declared_one_hop_cable_m": "book (declared)",
+    "declared_propagation_ns_per_m": "book (declared 5 ns/m)",
+    "mtu_bytes": "references/text/dcqcn.txt line 457 (assuming a 1500 byte MTU)",
+    "declared_end_to_end_rtt_ns": "book (chapter 7.5 feedback example 20 us)"
+  }
+}

@@ -17,7 +17,7 @@ SOURCE_FILES = {
         "sources/shared-airtime/llc-snap-header.h",
         "sources/shared-airtime/tack-sigcomm2020.pdf",
         "sources/shared-airtime/LICENSE.ns3",
-        "sources/shared-airtime/wifi-design-3.44.html",
+        "sources/shared-airtime/wifi-design-3.44.md",
     ),
     "cubic": (
         "sources/congestion-controllers/rfc9438.txt",
@@ -25,7 +25,7 @@ SOURCE_FILES = {
     ),
     "hystart": (
         "sources/congestion-controllers/rfc9406.txt",
-        "sources/congestion-controllers/errata-check.html",
+        "sources/congestion-controllers/errata-check.md",
     ),
     "bbr": (
         "sources/congestion-controllers/tcp_bbr.c",
@@ -37,7 +37,7 @@ SOURCE_FILES = {
     "quic": (
         "sources/protocol-rfc/rfc9000.txt",
         "sources/protocol-rfc/rfc9002.txt",
-        "sources/protocol-rfc/rfc9002-errata7539.html",
+        "sources/protocol-rfc/rfc9002-errata7539.md",
     ),
 }
 

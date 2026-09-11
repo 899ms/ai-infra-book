@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "calculation": "hash-collision",
+  "scenario": {
+    "flows": 8,
+    "uplinks": 32,
+    "spray_paths": 8,
+    "spray_tokens": 1024,
+    "spray_packet_bytes": 4096,
+    "spray_path_delays_ns": [
+      1000,
+      2000,
+      3000,
+      4000,
+      5000,
+      6000,
+      7000,
+      8000
+    ],
+    "spray_path_bytes_per_second": 50000000000,
+    "spray_model": "qwen3-8b"
+  },
+  "declared_input_sources": {
+    "flows": "book (8 servers on one rail leaf, one cross-group flow each; rail-optimized topology of chapter 7.2.5: flows of one shifted pairing leave 8 different leaves and cannot collide, so the colliding set is the flows sharing ONE leaf)",
+    "uplinks": "results/clos-cut-k64-nonblocking.md (leaf_uplinks 32: k=64 nonblocking leaf, 32 downlinks + 32 uplinks)",
+    "spray_paths": "references/text/uec-spec-10.txt line 16045 (packet spraying over many entropies; 8 declared)",
+    "spray_tokens": "book (8 MiB message, chapter 7)",
+    "spray_packet_bytes": "book (declared)",
+    "spray_path_delays_ns": "book (declared)",
+    "spray_path_bytes_per_second": "references/text/nvidia-connectx7-datasheet.txt line 23 (up to 400Gb/s)",
+    "spray_model": "configs/models/qwen3-8b/config.json"
+  },
+  "method": "exact truncated-exponential polynomial: P(max<=L) = n! [x^n] (sum_{j<=L} x^j/j!)^m / m^n",
+  "summary": {
+    "flows": 8,
+    "uplinks": 32,
+    "ideal_load_per_uplink_exact": "1/4",
+    "expected_max_load_exact": "7149497699/4294967296",
+    "expected_max_load": 1.6646221510600299,
+    "expected_max_over_ideal": 6.6584886042401195,
+    "p99_max_load": 3,
+    "probability_no_collision_exact": "828316125/2147483648",
+    "probability_no_collision": 0.38571475306525826,
+    "expected_empty_uplinks_exact": "852891037441/34359738368",
+    "expected_empty_uplinks": 24.82239615175058,
+    "effective_uplinks_exact": "34359738368/7149497699",
+    "effective_uplinks": 4.805895436934807,
+    "effective_fraction_of_nominal_cut_exact": "1073741824/7149497699",
+    "effective_fraction_of_nominal_cut": 0.15018423240421272
+  },
+  "max_load_distribution": [
+    {
+      "max_load": 1,
+      "probability_exact": "828316125/2147483648",
+      "probability": 0.38571475306525826,
+      "cumulative_exact": "828316125/2147483648"
+    },
+    {
+      "max_load": 2,
+      "probability_exact": "9722590605/17179869184",
+      "probability": 0.5659292571363039,
+      "cumulative_exact": "16349119605/17179869184"
+    },
+    {
+      "max_load": 3,
+      "probability_exact": "99697395/2147483648",
+      "probability": 0.04642521729692817,
+      "cumulative_exact": "17146698765/17179869184"
+    },
+    {
+      "max_load": 4,
+      "probability_exact": "64645385/34359738368",
+      "probability": 0.0018814283248502761,
+      "cumulative_exact": "34358042915/34359738368"
+    },
+    {
+      "max_load": 5,
+      "probability_exact": "208537/4294967296",
+      "probability": 4.855380393564701e-05,
+      "cumulative_exact": "34359711211/34359738368"
+    },
+    {
+      "max_load": 6,
+      "probability_exact": "6727/8589934592",
+      "probability": 7.831258699297905e-07,
+      "cumulative_exact": "34359738119/34359738368"
+    },
+    {
+      "max_load": 7,
+      "probability_exact": "31/4294967296",
+      "probability": 7.2177499532699585e-09,
+      "cumulative_exact": "34359738367/34359738368"
+    },
+    {
+      "max_load": 8,
+      "probability_exact": "1/34359738368",
+      "probability": 2.9103830456733704e-11,
+      "cumulative_exact": "1"
+    }
+  ],
+  "per_packet_spray": {
+    "paths": 8,
+    "path_delays_ns": [
+      1000,
+      2000,
+      3000,
+      4000,
+      5000,
+      6000,
+      7000,
+      8000
+    ],
+    "payload_bytes": 8388608,
+    "packet_count": 2048,
+    "first_ordered_delivery_exact_ns": "27048/25",
+    "completion_exact_ns": "724288/25",
+    "peak_retained_reorder_bytes": 1388544,
+    "peak_retained_packets": 339,
+    "reorder_area_exact_byte_ns": "143232466944/5",
+    "single_path_serial_counterfactual_exact_ns": "4219304/25",
+    "spray_speedup_exact": "527413/90536",
+    "reorder_wait_exact_ns": "0",
+    "sources": [
+      {
+        "file": "configs/models/qwen3-8b/config.json",
+        "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+        "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+        "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+      },
+      {
+        "file": "sources/qwen3-8b/model.safetensors.index.json",
+        "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+        "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+        "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+      },
+      {
+        "file": "sources/qwen3/modeling_qwen3.py",
+        "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+        "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+        "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+      },
+      {
+        "file": "sources/qwen3/modeling_qwen3_moe.py",
+        "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+        "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+        "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+      }
+    ]
+  },
+  "assumptions": [
+    "每条流独立、均匀地哈希到 m 条等速上行；流大小相同。这是 ECMP 的教学模型，不是具体交换机哈希函数或实际流量分布。",
+    "n 条流是同一台叶交换机（多轨拓扑中的同一条 rail）上必须穿过脊层的流，m 是该叶的上行数（clos-cut 结果：k=64 无阻塞叶 32 条，3:1 超额订阅叶 16 条）。错位配对的八条流从八台不同的叶交换机出发，彼此不会在同一叶的上行上冲突，因此不构成一个 n=8、m=8 的场景。",
+    "最大负载分布用截断指数多项式精确计算（有理数），期望与 99 分位均为精确值；不做模拟。",
+    "有效割集 = 理想每链路流数 / E[最大负载]：假定各流受最忙链路限速到同一速率（公平共享），其余链路的空闲容量不能被已经分配的流使用。",
+    "逐包喷洒复用 packet-reorder 模型：按序号轮转路径、各路径独立串行、无丢包，接收端按连续前缀交付。路径延迟为声明输入；乱序等待 = 完成时刻减去理想并行传输加最长路径延迟。"
+  ]
+}

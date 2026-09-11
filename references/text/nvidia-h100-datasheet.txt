@@ -1,0 +1,201 @@
+DATASHEET
+
+
+
+
+NVIDIA H100 TENSOR CORE GPU
+Unprecedented performance, scalability, and
+security for every data center.
+
+
+
+An Order-of-Magnitude Leap for                                                 SPECIFICATIONS
+
+Accelerated Computing                                                                                                 H100
+                                                                                                                      SXM
+                                                                                                                                                   H100
+                                                                                                                                                   PCIe
+The NVIDIA H100 Tensor Core GPU delivers unprecedented performance,            FP64                               30 TFLOPS                 24 TFLOPS
+scalability, and security for every workload. With NVIDIA NVLink Switch
+                                                         ®        ®
+                                                                               FP64 Tensor Core                   60 TFLOPS                 48 TFLOPS
+System, up to 256 H100 GPUs can be connected to accelerate exascale            FP32                               60 TFLOPS                 48 TFLOPS
+workloads, while the dedicated Transformer Engine supports trillion-           TF32 Tensor Core                1,000 TFLOPS*               800 TFLOPS*
+parameter language models. H100 uses breakthrough innovations in the           BFLOAT16                        2,000 TFLOPS*             1,600 TFLOPS*
+NVIDIA Hopper™ architecture to deliver industry-leading conversational AI,     Tensor Core
+
+speeding up large language models by 30X over the previous generation.         FP16 Tensor Core                2,000 TFLOPS*             1,600 TFLOPS*
+                                                                               FP8 Tensor Core                 4,000 TFLOPS*             3,200 TFLOPS*
+Securely Accelerate Workloads from Enterprise                                  INT8 Tensor Core                  4,000 TOPS*               3,200 TOPS*
+
+to Exascale                                                                    GPU memory                             80GB                         80GB
+                                                                               GPU memory                            3TB/s                         2TB/s
+NVIDIA H100 GPUs feature fourth-generation Tensor Cores and the                bandwidth
+Transformer Engine with FP8 precision, further extending NVIDIA’s market-      Decoders                            7 NVDEC                    7 NVDEC
+leading AI leadership with up to 9X faster training and an incredible 30X                                            7 JPEG                    7 JPEG
+inference speedup on large language models. For high-performance               Max thermal design                     700W                         350W
+computing (HPC) applications, H100 triples the floating-point operations per   power (TDP)
+
+second (FLOPS) of FP64 and adds dynamic programming (DPX) instructions to      Multi-Instance GPUs                  Up to 7 MIGS @ 10GB each
+
+deliver up to 7X higher performance. With second-generation Multi-Instance     Form factor                            SXM                          PCIe
+                                                                                                                                              dual-slot
+GPU (MIG), built-in NVIDIA confidential computing, and NVIDIA NVLink Switch
+                                                                                                                                             air-cooled
+System, H100 securely accelerates all workloads for every data center from
+                                                                               Interconnect                      NVLink:                    NVLink:
+enterprise to exascale.                                                                                        900GB/s PCIe               600GB/s PCIe
+                                                                                                               Gen5: 128GB/s              Gen5: 128GB/s
+H100 is part of the complete NVIDIA data center solution that incorporates
+                                                                               Server options                  NVIDIA HGX ™                 Partner and
+building blocks across hardware, networking, software, libraries, and                                        H100 partner and                 NVIDIA-
+optimized AI models and applications from the NVIDIA NGC™ catalog.                                           NVIDIA-Certified                Certified
+                                                                                                              Systems™ with                Systems with
+Representing the most powerful end-to-end AI and HPC platform for data
+                                                                                                                4 or 8 GPUs                  1–8 GPUs
+centers, it allows researchers to deliver real-world results and deploy                                        NVIDIA DGX ™
+solutions into production at scale.                                                                          H100 with 8 GPUs
+                                                                               * Shown with sparsity. Specifications 1/2 lower without sparsity.
+
+
+
+
+                                                                                                         NVIDIA H100 TENSOR CORE GPU | DATA SHEET | 1
+   Up to 9X Higher AI Training on                                                            Up to 30X Higher AI Inference                                                 Up to 7X Higher Performance for
+   Largest Models                                                                           Performance on Largest Models                                                HPC Applications
+   Mixture of Experts (395 Billion                                                           Megatron Chatbot Inference
+   Parameters)                                                                               (530 Billion Parameters)
+                                                                               20 hours                            30X                                                     7X
+                                                                                to train                                                                     30X                                                        7X
+                                                                                                                                                                            6X
+                                                                  1.8X                                             25X
+                                                                                                                                                                                                6X
+ Sequences per Second
+
+
+
+
+                                                                                              Throughput per GPU
+                                                                                                                   20X                                                     5X
+                                                                                                                                             20X
+                                                                                                                                                                           4X
+                                                                                    9X                             15X
+                                                                                                                             16X
+                                                                                                                                                                           3X
+                                                                                                                   10X
+                                                                                                                                                                           2X
+                                                                                                                   5X
+                                                                                                                                                                            1X
+                                                                                7 days
+                                                                               to train                             0
+                                                                                                                          2 seconds      1.5 seconds      1 second           0
+                 128                                  4,000                      8,000
+                                                                                                                                                                                         3D Fast Fourier             Genome
+                                           Number of GPUs                                                                                  Latency                                       Transform (FFT)            Sequencing
+                                                                                                                         H100 to A100 Comparison – Relative Performance
+                        NVIDIA A100 Tensor core GPU           NVIDIA H100 Tensor core GPU                                                                                            H100 to A100 Comparison – Relative Performance
+
+   Projected performance subject to change. Training Mixture                                 Projected performance subject to change. Inference on Megatron                Projected performance subject to change. 3D FFT (4K^3)
+   of Experts (MoE) Transformer Switch-XXL variant with 395B                                 530B parameter model based chatbot for input sequence                         throughput | A100 cluster: HDR IB network | H100 cluster:
+   parameters on 1T token dataset | A100 cluster: HDR IB                                     length=128, output sequence length =20 | A100 cluster: HDR IB                 NVLink Switch System, NDR IB | Genome Sequencing (Smith-
+   network | H100 cluster: NVLink Switch System, NDR IB                                      network | H100 cluster: NVLink Switch System, NDR IB                          Waterman) | 1 A100 | 1 H100
+
+
+
+
+The Technology Breakthroughs of NVIDIA Hopper
+
+                                       WORLD’S MOST                                                                           TRANSFORMER ENGINE                                             NVLINK SWITCH SYSTEM
+                                       ADVANCED CHIP                                                       The Transformer Engine uses                                                    The NVLink Switch System
+               Built with 80 billion transistors                                                           software and Hopper Tensor Core                                                enables the scaling of multi-GPU
+               using a cutting-edge TSMC 4N                                                                technology designed to accelerate                                              input/output (IO) across multiple
+               process custom tailored for                                                                 training for models built from the                                             servers at 900 gigabytes per
+NVIDIA’s accelerated compute needs, H100 is the                                             world’s most important AI model building block,                               second (GB/s) bidirectional per GPU, over 7X the
+world’s most advanced chip ever built. It features                                          the transformer. Hopper Tensor Cores can apply                                bandwidth of PCIe Gen5. The system supports
+major advances to accelerate AI, HPC, memory                                                mixed FP8 and FP16 precisions to dramatically                                 clusters of up to 256 H100s and delivers 9X higher
+bandwidth, interconnect, and communication at                                               accelerate AI calculations for transformers.                                  bandwidth than InfiniBand HDR on the NVIDIA
+data center scale.                                                                                                                                                        Ampere architecture.
+
+
+
+
+                                       NVIDIA CONFIDENTIAL                                                                    SECOND-GENERATION                                              DPX INSTRUCTION
+                                       COMPUTING                                                                              MULTI-INSTANCE GPU (MIG)                                   Hopper’s DPX instructions
+                NVIDIA Confidential Computing                                                               The Hopper architecture’s                                                    accelerate dynamic
+                is a built-in security feature of                                                           second-generation MIG supports                                               programming algorithms by
+                Hopper that makes NVIDIA H100                                                               multi-tenant, multi-user                                                     40X compared to CPUs and
+the world’s first accelerator with confidential                                             configurations in virtualized environments,                                   7X compared to NVIDIA Ampere architecture
+computing capabilities. Users can protect                                                   securely partitioning the GPU into isolated,                                  GPUs. This leads to dramatically faster
+the confidentiality and integrity of their data                                             right-size instances to maximize quality of                                   times in disease diagnosis, real-time routing
+and applications in use while accessing the                                                 service (QoS) for 7X more secured tenants.                                    optimizations, and graph analytics.
+unsurpassed acceleration of H100 GPUs.
+
+
+
+
+NVIDIA H100 CNX Converged Accelerator
+NVIDIA H100 CNX combines the power of the NVIDIA H100 with the advanced networking
+capabilities of the NVIDIA ConnectX®-7 smart network interface card (SmartNIC) in a
+single, unique platform. This convergence delivers unparalleled performance for GPU-
+powered IO-intensive workloads, such as distributed AI training in the enterprise data
+center and 5G processing at the edge. Learn more about NVIDIA H100 CNX.
+
+
+                                                                                                                                                                                  NVIDIA H100 TENSOR CORE GPU | DATA SHEET | 2
+Enterprise-Ready
+The NVIDIA H100 Tensor Core GPU— powered by the NVIDIA Hopper architecture, the
+new engine for the world’s AI infrastructure—is an integral part of the NVIDIA data center
+platform. Built for deep learning, HPC, and data analytics, the platform accelerates over
+2,700 applications, including every major deep learning framework. Additionally, NVIDIA
+AI Enterprise, an end-to-end, cloud-native suite of AI and data analytics software, is
+certified to run on H100 in hypervisor-based virtual infrastructure with VMware vSphere.
+This enables management and scaling of AI workloads in a hybrid cloud environment. The
+complete NVIDIA platform is available everywhere, from data center to edge, delivering
+both dramatic performance gains and cost-saving opportunities.
+
+
+
+
+OPTIMIZED SOFTWARE AND
+SERVICES FOR ENTERPRISE
+
+                                                                     EVERY DEEP LEARNING FRAMEWORK
+
+
+
+
+                                                                 2,000+ GPU-ACCELERATED APPLICATIONS
+
+
+                   HPC
+                         Altair nanoFluidX                     HPC
+                                                                     Altair ultraFluidX                             HPC
+                                                                                                                          AMBER                            HPC
+                                                                                                                                                                 ANSYS Fluent
+
+                   HPC
+                         DS SIMULIA Abaqus                     HPC
+                                                                     GAUSSIAN                                       HPC
+                                                                                                                          GROMACS                          HPC
+                                                                                                                                                                 NAMD
+
+                   HPC
+                         OpenFOAM                              HPC
+                                                                     VASP                                           HPC
+                                                                                                                          WRF                              HPC
+                                                                                                                                                                 Simcenter STAR-CCM+
+
+
+
+
+Ready to Get Started?
+
+To learn more about the NVIDIA H100 Tensor Core GPU, visit: www.nvidia.com/h100
+
+
+
+
+© 2022 NVIDIA Corporation and affiliates. All rights reserved. NVIDIA, the NVIDIA logo, ConnectX, DGX, HGX, Hopper, NGC, NVIDIA-Certified Systems, and NVLink
+are trademarks and/or registered trademarks of NVIDIA Corporation and affiliates in the U.S. and other countries. Other company and product names may be
+trademarks of the respective owners with which they are associated. 2287922. May22
+

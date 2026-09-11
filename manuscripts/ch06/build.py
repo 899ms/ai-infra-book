@@ -60,9 +60,9 @@ for row,(groups,label) in enumerate([(8,'八个单卡实例'),(2,'两个四卡�
    if k<count-1:arrow(a,(gx+gw,y+.063),(gx+w/count-.001,y+.063),lw=1)
   if groups<=2:a.text(x+w/2,y+.013,'一个独立推理实例',ha='center',fontsize=9,color=C['teal'])
 a.set_ylim(.32,1)
-place=calc('placement-qwen8-tp8-pp1-dp1');w1=16381470720;k1=1208107008;u=2**31
-w8=2048223232;k8=151013376
-save(f,'figure-6-1-placement');data['6-1']={'kind':'declared_placement','instance_groups':[8,2,1],'capacity_bytes':[[w1,k1,u],[w8,k8,u]],'tp8_saved_max_bytes':place['summary']['maximum_card_resident_bytes']}
+place=calc('qwen235-placement-tp8-kv-replica');fmt=place['ranks'][0]['formats'][0];u=2**31
+w1=470187269120;k1=1577058304;w8=fmt['weight_bytes'];k8=fmt['kv_bytes_per_request']
+save(f,'figure-6-1-placement');data['6-1']={'kind':'declared_placement','model':'qwen3-235b-a22b','instance_groups':[8,2,1],'capacity_bytes':[[w1,k1,u],[w8,k8,u]],'tp8_saved_max_bytes':fmt['weight_bytes']+fmt['kv_bytes_per_request']+u,'max_sessions_per_server':place['cohort'][0]['maximum_requests']}
 # 2: Explicit TP split dimensions and partial-result flow.
 f,a=canvas(8)
 box(a,.015,.42,.17,.21,'完整输入 X','m × h',size=14)
@@ -75,7 +75,7 @@ box(a,.60,.04,.375,.13,'完整输出 Y = Y0 + Y1','AllReduce：求和后每卡�
 arrow(a,(.98,.80),(.98,.105),'orange',rad=-.07)
 arrow(a,(.905,.295),(.905,.175),'orange')
 a.text(.03,.965,'上投影按列分片 → 激活留在本地 → 下投影按行分片 → 输出求和',fontsize=13,va='top')
-save(f,'figure-6-2-tp');data['6-2']={'kind':'tp_partial_outputs_with_pipeline_text_data','ffn_dims':[4096,12288,4096],'tp4_weight_bytes':3*4096*3072*2,'pipeline_stages':4,'microbatches':4,'slots':7,'utilization':4/7}
+save(f,'figure-6-2-tp');data['6-2']={'kind':'tp_partial_outputs_with_pipeline_text_data','ffn_dims':[4096,12288,4096],'tp4_weight_bytes':3*5120*6400*2,'pipeline_stages':4,'microbatches':4,'slots':7,'utilization':4/7}
 # Independent PP diagram: one microbatch per color, one millisecond per cell.
 f,ax=plt.subplots(figsize=(11,4.6));f.subplots_adjust(left=.11,right=.98,bottom=.18,top=.9)
 for stage in range(4):
@@ -140,33 +140,35 @@ save(f,'route-observation')
 # 4: Message size changes algorithm choice.
 f,ax=plt.subplots(figsize=(10,6));f.subplots_adjust(left=.10,right=.96,bottom=.15,top=.93)
 
-M=np.logspace(2,8,300);ring=14*2e-6+1.75*M/50e9;tree=6*(2e-6+M/50e9)
-ax.loglog(M,ring*1e6,color=C['blue'],lw=2.2,label='Ring');ax.loglog(M,tree*1e6,color=C['orange'],lw=2.2,label='未分段二项树');ax.set(xlabel='每卡完整输入 / bytes',ylabel='模型时间 / μs',xlim=(100,1e8),ylim=(8,20000));ax.legend(frameon=False,loc='upper left');ax.grid(which='major',alpha=.2)
-for y,col in [(28.28672,'blue'),(12.98304,'orange')]:ax.scatter([8192],[y],color=C[col],s=30)
-ax.set_xticks([1e2,1e3,1e4,1e5,1e6,1e7,1e8]);ax.set_yticks([10,100,1000,10000])
-cross=16e-6*50e9/4.25
+from continuity_model import generate
+continuous=generate();co=continuous['collectives'];A,BW=co['alpha_s'],co['bandwidth_Bps']
+M=np.logspace(2,8,300);ring=14*A+1.75*M/BW;tree=6*(A+M/BW)
+ax.loglog(M,ring*1e6,color=C['blue'],lw=2.2,label='Ring');ax.loglog(M,tree*1e6,color=C['orange'],lw=2.2,label='未分段二项树');ax.set(xlabel='每卡完整输入 / bytes',ylabel='模型时间 / μs',xlim=(100,1e8),ylim=(3,5000));ax.legend(frameon=False,loc='upper left');ax.grid(which='major',alpha=.2)
+for y,col in [(co['ring_s']*1e6,'blue'),(co['tree_s']*1e6,'orange')]:ax.scatter([10240],[y],color=C[col],s=30)
+ax.set_xticks([1e2,1e3,1e4,1e5,1e6,1e7,1e8]);ax.set_yticks([10,100,1000])
+cross=co['crossover_bytes']
 ax.axvline(cross,color=C['muted'],ls=':',lw=1)
-ax.annotate('约 184 KiB：排序翻转',(cross,34.6),xytext=(8e5,100),fontsize=12,arrowprops={'arrowstyle':'->','color':C['muted']})
-ax.axvline(8192,color=C['line'],ls='--');ax.text(8192,8.8,'8 KiB',ha='center',fontsize=11)
-ax.axvline(64*2**20,color=C['line'],ls='--');ax.text(64*2**20,8.8,'64 MiB',ha='center',fontsize=11)
-save(f,'figure-6-7-collectives');data['6-4']={'kind':'declared_time_models','participants':8,'startup_seconds':2e-6,'bandwidth_bytes_per_second':50e9,'message_bytes':M.tolist(),'ring_seconds':ring.tolist(),'tree_seconds':tree.tolist(),'ring_reference':calc('ring-qwen3-8b-t1-p8')['summary'],'tree_reference':calc('tree-qwen3-8b-t1-p8')['summary']}
+ax.annotate('约 680 KiB：排序翻转',(cross,14*A*1e6+1.75*cross/BW*1e6),xytext=(3e6,40),fontsize=12,arrowprops={'arrowstyle':'->','color':C['muted']})
+ax.axvline(10240,color=C['line'],ls='--');ax.text(10240,3.4,'10 KiB',ha='center',fontsize=11)
+ax.axvline(80*2**20,color=C['line'],ls='--');ax.text(80*2**20,3.4,'80 MiB',ha='center',fontsize=11)
+save(f,'figure-6-7-collectives');data['6-4']={'kind':'h100_nvlink_time_models','participants':8,'startup_seconds':A,'bandwidth_bytes_per_second':BW,'message_bytes':M.tolist(),'ring_seconds':ring.tolist(),'tree_seconds':tree.tolist(),'crossover_bytes':cross,'ring_reference':calc('ring-qwen3-32b-t1-p8-h100')['summary'],'tree_reference':calc('tree-qwen3-32b-t1-p8-h100')['summary']}
 # 5: Faster isolated communication can delay the concurrent finish.
 f,axs=plt.subplots(1,2,figsize=(12,5.5));f.subplots_adjust(left=.10,right=.95,bottom=.18,top=.87,wspace=.40)
 ax=axs[0]
-ax.barh([1,0],[.24,.18],height=.36,color=[C['blue'],C['orange']])
-for y,t in [(1,.24),(0,.18)]:ax.text(t+.012,y,f'{t:.2f} ms',va='center',fontsize=12)
-ax.set(yticks=[1,0],yticklabels=['A','B'],xlabel='时间 / ms',xlim=(0,.72),ylim=(-.65,1.65));ax.set_title('通信独占：B 更快',fontsize=14,loc='left')
+ax.barh([1,0],[2.674,36.919],height=.36,color=[C['blue'],C['orange']])
+for y,t in [(1,2.674),(0,36.919)]:ax.text(t+.5,y,f'{t:.2f} ms',va='center',fontsize=12)
+ax.set(yticks=[1,0],yticklabels=['4 MiB','64 MiB'],xlabel='时间 / ms',xlim=(0,50),ylim=(-.65,1.65));ax.set_title('通信单独运行',fontsize=14,loc='left')
 ax=axs[1]
-for base,comm,compute,col in [(1.1,.26,.44,'blue'),(0,.20,.62,'orange')]:
+for base,comm,compute,col in [(1.1,6.141,11.523,'blue'),(0,45.209,12.885,'orange')]:
  ax.barh(base+.15,comm,height=.24,color=C[col],alpha=.45)
  ax.barh(base-.15,compute,height=.24,color=C[col])
  ax.text(.015,base+.15,'通信',va='center',fontsize=10)
  ax.text(.015,base-.15,'计算',va='center',fontsize=10,color='white')
- ax.plot([compute,compute],[base-.36,base+.36],ls='--',color=C[col])
- ax.text(compute+.018,base,f'{compute:.2f} ms',va='center',fontsize=11,color=C[col])
-ax.set(yticks=[1.1,0],yticklabels=['A','B'],xlabel='从同时就绪起的时间 / ms',xlim=(0,.78),ylim=(-.65,1.75));ax.set_title('并发执行：A 先完成',fontsize=14,loc='left')
+ end=max(comm,compute);ax.plot([end,end],[base-.36,base+.36],ls='--',color=C[col])
+ ax.text(end+.5,base,f'{end:.2f} ms',va='center',fontsize=11,color=C[col])
+ax.set(yticks=[1.1,0],yticklabels=['4 MiB','64 MiB'],xlabel='从同时开始起的时间 / ms',xlim=(0,56),ylim=(-.65,1.75));ax.set_title('同时运行',fontsize=14,loc='left')
 
-save(f,'figure-6-8-resources');data['6-5']={'kind':'concurrency_choice_with_cpu_text_data','teaching_ms':{'independent_comm':[.24,.18],'shared_comm':[.26,.20],'shared_compute':[.44,.62]},'measured_64MiB_ms':{'comm':[36.919,45.209],'compute':[11.031,12.885]},'measurement_source':'experiments/ch06/06-05/README.md'}
+save(f,'figure-6-8-resources');data['6-5']={'kind':'measured_gloo_concurrency','message_MiB':[4,64],'measured_ms':{'independent_comm':[2.674,36.919],'independent_compute':[11.531,11.031],'shared_comm':[6.141,45.209],'shared_compute':[11.523,12.885],'shared_group':[11.582,45.242],'independent_group':[[2.726,11.538],[36.956,11.079]]},'measurement_source':'experiments/ch06/06-05/README.md'}
 # 6: Same per-rank sends, different busiest-link traffic.
 paths=calc('collective-paths-book')['collective_path_patterns']
 f=plt.figure(figsize=(13,5.2))
@@ -187,7 +189,7 @@ for i,z in enumerate(paths):
 ax.set(xticks=xx,xticklabels=['1','2','3'],xlabel='轮次',ylabel='最大单向链路传输量 / MiB',ylim=(0,5.6));ax.legend(ncol=2,frameon=False,fontsize=11)
 numa=[calc(name)['summary'] for name in ['staging-all-a-grouped','staging-local-grouped','staging-local-alternating']]
 
-save(f,'figure-6-9-topology');data['6-6']={'kind':'declared_topology','ports':{'radix':32,'leaf_options':[[16,16],[24,8]],'port_GBs':50},'collective_patterns':paths,'numa_summaries':numa}
+save(f,'figure-6-9-topology');data['6-6']={'kind':'sourced_topology','ports':{'radix':64,'leaf_options':[[32,32],[48,16]],'port_GBs':25},'collective_patterns':paths,'numa_summaries':numa}
 # 7: Each system connects groups through an explicit communication layer.
 f,a=canvas(8)
 for y,title,left,right,middle,detail in [
@@ -202,43 +204,37 @@ for y,title,left,right,middle,detail in [
  a.text(.5,y-.014,detail,ha='center',fontsize=11)
 save(f,'figure-6-10-systems');data['6-7']={'kind':'sourced_organization_not_performance','nvidia_gpu_counts':[8,16,8,72],'tpu_v4_cube':[4,4,4],'cloudmatrix384':{'NPUs':384,'CPUs':192},'source_note':'Model generations are not normalized performance measurements or inferred design motives.'}
 # 8: Remote read frequency versus attainable bandwidth.
-pool=calc('memory-pool-copies1');demand=np.array(pool['capacity']['job_demand_bytes'])/2**30
-freq=np.array([1/60,1,20]);demand_bw=16*2**30*freq/1e9
+from continuity_model import generate
+pool=generate()['memory_pool'];demand=np.array(pool['demand_bytes'])/1e9
+freq=np.array(pool['frequency_per_s']);demand_bw=np.array(pool['demand_Bps'])/1e9;win=pool['windows'][0]['window_Bps']/1e9
 f,ax=plt.subplots(figsize=(10,6));f.subplots_adjust(left=.10,right=.96,bottom=.15,top=.94)
-fs=np.logspace(-2,1.5,200);ax.loglog(fs,16*2**30*fs/1e9,color=C['blue'],lw=2.5)
-ax.axhline(40,color=C['red'],ls='--',label='路径：40 GB/s')
-ax.axhline(16.384,color=C['orange'],ls=':',label='128 个在途事务：约 16.4 GB/s')
+fs=np.logspace(-2,1.5,200);ax.loglog(fs,pool['borrowed_bytes']*fs/1e9,color=C['blue'],lw=2.5)
+ax.axhline(50,color=C['red'],ls='--',label='路径：50 GB/s')
+ax.axhline(win,color=C['orange'],ls=':',label='128 个在途事务：约 4.36 GB/s')
 for i,v in enumerate(demand_bw):
  ax.scatter(freq[i],v,color=C['blue'],s=45,zorder=3)
- label=['每分钟一次\n约 0.29 GB/s','每秒一次\n约 17 GB/s','每秒二十次\n约 344 GB/s'][i]
+ label=['每分钟一次\n约 0.33 GB/s','每秒一次\n20 GB/s','每秒二十次\n400 GB/s'][i]
  offset=[(12,-5),(12,-40),(-125,12)][i]
  ax.annotate(label,(freq[i],v),xytext=offset,textcoords='offset points',fontsize=11)
-ax.set(xlabel='完整读取 16 GiB 的频率 / 次每秒',ylabel='所需平均带宽 / GB/s',xlim=(.01,40),ylim=(.1,1500))
+ax.set(xlabel='完整读取 20 GB 的频率 / 次每秒',ylabel='所需平均带宽 / GB/s',xlim=(.01,40),ylim=(.1,1500))
 ax.set_xticks([.01,.1,1,10]);ax.set_yticks([.1,1,10,100,1000]);ax.legend(frameon=False,loc='upper left',fontsize=11);ax.grid(which='major',alpha=.15)
 
-save(f,'figure-6-11-memory-pool');data['6-8']={'kind':'teaching_snapshot','demand_GiB':demand.tolist(),'physical_use_GiB':[64,64,32,32],'frequency_per_second':freq.tolist(),'mean_payload_GBs':demand_bw.tolist(),'window_bound_GBs':128*256/2e-6/1e9}
+save(f,'figure-6-11-memory-pool');data['6-8']={'kind':'h100_pool_cx7_path','demand_GB':demand.tolist(),'physical_use_GB':(np.array(pool['physical_after_bytes'])/1e9).tolist(),'frequency_per_second':freq.tolist(),'mean_payload_GBs':demand_bw.tolist(),'window_bound_GBs':win,'path_GBs':pool['path_Bps']/1e9,'borrowed_GB':pool['borrowed_bytes']/1e9}
 # Continuous model: derive service and cost from the same layer execution.
-from continuity_model import generate
-continuous=generate()
 f=plt.figure(figsize=(12,5.8));colors=['muted','blue','teal','orange'];labels=['八个单卡实例','四个两卡实例','两个四卡实例','一个八卡实例']
 curve_data={}
 for pos,(phase,title) in enumerate([('healthy','无故障条件'),('fault','20 ms 故障，60 ms 开始重做')]):
- ax=f.add_axes([.08+pos*.49,.17,.38,.69]);deadlines=np.arange(20,221,dtype=float);curves=[]
+ ax=f.add_axes([.08+pos*.49,.17,.38,.69]);deadlines=np.arange(20,241,dtype=float);curves=[]
  for i,c in enumerate(continuous['candidates']):
-  times=np.array(c[phase+'_completion_ms']);cost=c[phase+'_cost']
+  times=np.array(c[phase+'_completion_ms']);cost=c[phase+'_gpu_seconds']
   # Include exact completions so each step occurs at the actual event, not a sampled deadline.
   ds=np.unique(np.r_[deadlines,times[(times>=20)&(times<=220)]])
-  counts=(times[:,None]<=ds[None,:]).sum(axis=0);ys=np.full(len(ds),np.nan);ok=counts>=3;ys[ok]=cost/counts[ok]
+  counts=(times[:,None]<=ds[None,:]).sum(axis=0);ys=np.full(len(ds),np.nan);ok=(counts>=3)&c['capacity_fits'];ys[ok]=cost/counts[ok]
   ax.step(ds,ys,where='post',color=C[colors[i]],lw=2,label=labels[i])
-  curves.append({'tp':c['tp'],'deadlines_ms':ds.tolist(),'completion_ms':times.tolist(),'total_cost':cost,'cost_per_valid':[None if np.isnan(x) else float(x) for x in ys]})
- ax.axvline(90,color=C['line'],ls='--');ax.set(xlim=(20,220),ylim=(0,1.2),xlabel='八步续写期限 / ms',ylabel='平均成本 / 成本单位')
+  curves.append({'tp':c['tp'],'capacity_fits':c['capacity_fits'],'deadlines_ms':ds.tolist(),'completion_ms':times.tolist(),'total_gpu_seconds':cost,'cost_per_valid':[None if np.isnan(x) else float(x) for x in ys]})
+ ax.axvline(130,color=C['line'],ls='--');ax.set(xlim=(20,240),ylim=(0,1.9),xlabel='八步续写期限 / ms',ylabel='每个按时会话 / GPU·s')
  ax.set_title(title,loc='left',fontsize=13);ax.legend(fontsize=10,frameon=False,loc='upper right');curve_data[phase]=curves
 save(f,'figure-6-12-scale-cost');data['continuous_execution']=continuous;data['deadline_curves']=curve_data
-# Preserve old independent service-time teaching schedule as companion data.
-legacy={}
-for phase,name in [('healthy','supernode-qwen3-8b-n4-d250-healthy'),('fault','supernode-qwen3-8b-n4-d250-long')]:
- z=calc(name);legacy[phase]=[{'tp':c['tp'],'completion_ms':[x['completion_ms'] for x in c['schedule']['requests']],'cost':float(Fraction(c['cost']['full_declared_cost_exact']))} for c in z['candidates']]
-data['legacy_schedule']=legacy
 exec(compile((HERE/'visual_examples.py').read_text(),str(HERE/'visual_examples.py'),'exec'))
 # Topic names identify data independently of the printed figure numbering.
 keys={'6-1':'placement','6-2':'tp_pipeline','6-3':'expert_reuse','6-4':'collectives','6-5':'concurrency','6-6':'physical_paths','6-7':'systems','6-8':'remote_memory'}

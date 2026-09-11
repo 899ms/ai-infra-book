@@ -1,0 +1,1274 @@
+       The Macroscopic Behavior of the TCP Congestion Avoidance Algorithm
+                                 Matthew Mathis, Je rey Semke, Jamshid Mahdavi 
+                                 <mathis@psc.edu> <semke@psc.edu> <mahdavi@psc.edu>
+                                           Pittsburgh Supercomputing Center
+
+                                                           Teunis Ott
+                                                       <tjo@bellcore.com>
+                                                             Bellcore
+
+Abstract                                                               Our initial inspiration for this work was the \heuris-
+                                                                   tic analysis" by Sally Floyd [Flo91].
+In this paper, we analyze a performance model for the                  This paper follows a rst principles derivation of
+TCP Congestion Avoidance algorithm. The model pre-                 the stationary distribution of the congestion window of
+dicts the bandwidth of a sustained TCP connection sub-             ideal TCP Congestion Avoidance subject to indepen-
+jected to light to moderate packet losses, such as loss            dent congestion signals with constant probability. The
+caused by network congestion. It assumes that TCP                  derivation, by Teunis Ott, was presented at DIMACS
+avoids retransmission timeouts and always has su-                 [OKM96b] and is available on line [OKM96a]. The full
+cient receiver window and sender data. The model pre-              derivation and formal analysis is quite complex and is
+dicts the Congestion Avoidance performance of nearly               expected to appear in a future paper.
+all TCP implementations under restricted conditions                    We present a simple approximate derivation of the
+and of TCP with Selective Acknowledgements over a                  model, under the assumption that the congestion signal
+much wider range of Internet conditions.                           losses are periodic. This arrives at the same mathemat-
+    We verify the model through both simulation and                ical form as the full derivation, although the constant
+live Internet measurements. The simulations test sev-              of proportionality is slightly di erent. This paper is
+eral TCP implementations under a range of loss con-                focused on evaluating the model's applicability and im-
+ditions and in environments with both drop-tail and                pact to the Internet.
+RED queuing. The model is also compared to live In-                    The model applies whenever TCP's performance is
+ternet measurements using the TReno diagnostic and                 determined solely by the Congestion Avoidance algo-
+real TCP implementations.                                          rithm (described below). We hypothesize that it ap-
+    We also present several applications of the model to           plies to nearly all implementations of SACK TCP (TCP
+problems of bandwidth allocation in the Internet. We               with Selective Acknowledgements) [MMFR96] under
+use the model to analyze networks with multiple con-               most normal Internet conditions and to Reno TCP
+gested gateways; this analysis shows strong agreement              [Jac90, Ste94, Ste97] under more restrictive conditions.
+with prior work in this area. Finally, we present sev-             To test our hypothesis we examine the performance
+eral important implications about the behavior of the              of the TCP Congestion Avoidance algorithm in three
+Internet in the presence of high load from diverse user            ways. First, we look at several TCP implementations
+communities.                                                       in a simulator, exploring the performance e ects of ran-
+                                                                   dom packet loss, packet loss due to drop-tail queu-
+1 Introduction                                                     ing, phase e ects [FJ92], and Random Early Detection
+                                                                   (RED) queuing [FJ93]. Next, we compare the model to
+Trac dynamics in the Internet are heavily in uenced               Internet measurements using results from the TReno
+by the behavior of the TCP Congestion Avoidance al-                (\tree-no") [Mat96] user mode performance diagnos-
+gorithm [Jac88a, Ste97]. This paper investigates an                tic. Finally, we compare the model to measurements
+analytical performance model for this algorithm. The               of packet traces of real TCP implementations.
+model predicts end-to-end TCP performance from prop-                   Many of our experiments are conducted with an up-
+erties of the underlying IP path. This paper is a rst              dated version of the FACK TCP [MM96a], designed
+step at discovering the relationship between end-to-end            for use with Selective Acknowledgements. We call this
+application performance, as observed by an Internet                Forward Acknowledgments with Rate-Halving (FACK-
+user, and hop-by-hop IP performance, as might be mon-              RH) [MM96b]. Except as noted, the di erences between
+itored and marketed by an Internet Service Provider.               FACK-RH and other TCP implementations do not have
+    This work is supported in part by National Science Founda-
+                                                                   signi cant e ects on the results. See Appendix A for
+tion Grant No. NCR-9415552.                                        more information about FACK-RH.
+congestion window (packets)                                           lowed by one drop. Under these assumptions the con-
+ W                                                                    gestion window (cwnd in most implementations) tra-
+                                                                      verses a perfectly periodic sawtooth. Let the maximum
+                                                                      value of the window be W packets. Then by the def-
+ W                                                                    inition of Congestion Avoidance, we know that during
+  2
+                                                                      equilibrium, the minimum window must be W=2 pack-
+                                                                      ets. If the receiver is acknowledging every segment, then
+ 0                                                                    the window opens by one segment per round trip, so
+      0         W
+                            W            3W
+                                                  2W                  each cycle must be W=2 round trips, or RT T  W=2
+                2                         2
+                                                           Time (RTT) seconds. The total data     delivered is the area under the
+                                                                      sawtooth, which is ( W2 )2 + 12 ( W2 )2 = 38 W 2 packets per
+                                                                      cycle. By assumption, each cycle also delivers 1=p pack-
+  Figure 1: TCP window          evolution     under  periodic   loss  ets (neglecting the data transmitted during recovery).
+   Each cycle delivers ( W2 )2 + 21 ( W2 )2 = 1=p packets and takes   Solving for W we get:
+                     W=2 round trip times.                                                           r
+                                                                                                W = 3p   8                     (1)
+2 The Model
+                                                                      Substitute W into the bandwidth equation below:
+The TCP Congestion Avoidance algorithm [Jac88a]
+drives the steady-state behavior of TCP under condi-                    BW    =  data per cycle = MSS  38 W 2 = MSS=p      q
+tions of light to moderate packet losses. It calls for in-                       time per cycle        RTT  W2        RT T    2
+creasing the congestion window by a constant amount                                                                           3p
+on each round trip and for decreasing it by a constant                                                             p           (2)
+multiplicative factor on each congestion signal.1 Al-                 Collect the constants in one term, C = 3=2, then we
+though we assume that congestion is signaled by packet                arrive at:
+loss, we do not assume that every packet loss is a new
+congestion signal. For all SACK-based TCPs, multiple                                        BW = MSSRTT pp
+                                                                                                            C                  (3)
+losses within one round trip are treated as a single con-                 Other forms of this derivation have been published
+gestion signal. This complicates our measurements of                  [Flo91,  LM94] and several people have reported unpub-
+congestion signals.                                                   lished,  \back-of-the-envelope"    versions of this calcula-
+     We can easily estimate TCP's performance by mak-                 tion  [Mat94a,  Cla96].
+ing some gross simpli cations. Assume that TCP is
+running over a lossy path which has a constant round                         Derivation         ACK Strategy            Cp
+trip time (RTT) because it has sucient bandwidth and                       Periodic Loss        Every Packet 1:22 = p3=2
+low enough total load that it never sustains any queues.
+For ease of derivation, we approximate random packet                      (derived   above)        Delayed         0:87 = 3=4
+loss at constant probability p by assuming that the                        Random Loss           Every Packet          1.31
+link delivers approximately 1=p consecutive packets, fol-                follows [OKM96a]          Delayed             0.93
+    1 The window is normally opened at the constant rate of one
+maximum segment size (MSS) per round trip time (RTT)
+                                                                      Table 1: Derived values of C under di erent assump-
+and halved on each congestion signal. In actual implementations,      tions.
+there are a number of important details to this algorithm.                The constant of proportionality (C) lumps to-
+   Opening the congestion window at a constant rate is actu-
+ally implemented by opening the window by small increments            gether   several terms that are typically constant for a
+on each acknowledgment, such that if every segment is acknowl-        given combination of TCP implementation, ACK strat-
+edged, the window is opened by one segment per round trip. Let
+W be the window size in packets. Each acknowledgment adjusts
+                                                                      egy (delayed vs non-delayed)2, and loss mechanism. In-
+the window: W += 1=W , such that W acknowledgments later              cluded in the TCP implementation's contribution to C
+W has increased by 1. Since W equals cwnd=M SS , we have              2 The Delayed Acknowledgment (\DA") algorithm [Ste94] sup-
+                
+cwnd += M SS M SS=cwnd, which is how the window opening            presses half of the TCP acknowledgments to reduce the number
+phase of congestion avoidance appears in the code.                 of tiny messages in the Internet. This changes the Congestion
+   When the congestionwindow is halved on a congestionsignal, it   Avoidance algorithm because the window increase is driven by
+is normally rounded down to an integral number of segments. In     the returning acknowledgments. The net e ect is that when the
+most implementations the window is never adjusted below some       TCP receiver sends Delayed Acknowledgments, the sender only
+  oor, typically 2 segments. Both derivations neglect rounding     opens the window by M SS=2 on each round trip. This term can
+and this low window limit. [Flo91] considers rounding, resulting   be p
+                                                                      carried through any of the derivations and always reduces C
+in a small correction term.                                        by 2.
+   We are also neglecting the details of TCP data recovery and       The receiver always suppresses Delayed Acknowledgements
+retransmission. Some form of Fast Retransmit and/or Fast Re-       when it holds partial data. During recovery the receiver acknowl-
+covery, with or without SACK, is required. The important detail    edges every incoming segment. The receiver also suppresses De-
+is that the loss recovery is completed in roughly one round trip   layed Acknowledgements (or more precisely, transmits acknowl-
+time, TCP's Self-clock is preserved, and that the new congestion   edgements on a timer) when the data packets arrive more than
+window is half of the old congestion window.                       200 ms apart.
+                                                                     There are also a number of TCP implementations which have
+are the constants used in the Congestion Avoidance al-             proper de nition for p is the number of congestion
+gorithm itself.                                                    signals per acknowledged packet.
+    The model is not expected to apply under a number                 Although these derivations are for a rather restricted
+of situations where pure Congestion Avoidance does not             setting, our empirical results suggest that the model is
+fully control TCP performance. In general these phe-               more widely applicable.
+nomenon reduce the performance relative to that which
+is predicted by the model. Some of these situations are:           3 Simulation
+   1. If the data receiver is announcing too small a win-          All of our simulations use the LBL simulator, \ns ver-
+      dow, then TCP's performance is likely to be fully            sion 1", which can be obtained via FTP [MF95].
+      controlled by the receiver's window and not at all              Most of the simulations in this paper were conducted
+      by the Congestion Avoidance algorithm.                       using the topology in Figure 2. The simulator associates
+   2. Likewise, if the sender does not always have data            queuing properties (drop mechanism, queue size, etc.)
+      to send, the model is not likely to apply.                   with links. The nodes (represented by circles) imple-
+                                                                   ment TCP, and do not themselves model queues. We
+   3. The elapsed time consumed by TCP timeouts is                 were careful to run the simulations for sucient time to
+      not modeled. Many non-SACK TCP implemen-                     obtain good measures of TCP's average performance4.
+      tations su er from timeouts when they experience                This single link is far too simple to model the com-
+      multiple packet losses within one round trip time            plexity of a real path through the Internet. However,
+      [Flo95, MM96a]. These TCP implementations do                 by manipulating the parameters (delay, BW, loss rate)
+      not t the model in environments where they ex-               and queuing models (drop-tail, RED) we will explore
+      perience such losses.                                        the properties of the performance model.
+   4. TCP implementations which exhibit go-back-N
+      behaviors do not attain the performance projected
+      by the model because the model does not account
+                                                                      TCP                                                    TCP
+                                                                     Sender                                                 Receiver
+
+      for the window consumed by needlessly retrans-
+                                                                                          Link with constant delay,
+                                                                                            drop-tail queuing, or
+
+      mitting data. Although we have not studied these                                         RED queuing
+
+
+      situations extensively, we believe that Slow-start,                     Figure 2: The simulation topologies
+      either following a timeout or as part of a normal
+      Tahoe recovery, has at least partially go-back-N
+      behavior, particularly when the average window is
+      small.                                                       3.1 Queueless Random Packet Loss
+   5. TCP implementations which use other window                   In our rst set of experiments, the single link in Fig-
+      opening strategies (e.g. TCP Vegas [BOP94,                   ure 2 was con gured to model the conditions under
+      DLY95]) will not t the model.                                which Equation 3 was derived in [OKM96a]: constant
+                                                                   delay and xed random packet loss. These conditions
+   6. In some situations, TCP may require multiple                 were represented by a lossy, high bandwidth link5 which
+      cycles of the Congestion Avoidance algorithm to              does not sustain a queue.
+      reach steady-state3 . As a result, short connections             The choice of our FACK-RH TCP implementation
+      do not t the model.                                          does not a ect the results in this section, except that
+    Except for Item 6, all of these situations reduce              it is able to remain in Congestion Avoidance at higher
+TCP's average throughput. Under many circumstances                 loss rates than other TCPs. This phenomenon will be
+it will be useful to view Equation 3 as a bound on per-            discussed in detail in Section 3.4. The receiver is using
+formance. Given that Delayed Acknowledgements are                  standard Delayed Acknowledgements.
+mandatory, C is normally less than 1. Thus in many                     The network was simulated for various combinations
+practical situations, we can use a simpler bound:                  of delay, MSS, and packet loss. The simulation used
+                                                                   three typical values for MSS: 536, 1460, and 4312
+                                                                 bytes. The one-way delay spanned ve values from 3 ms
+                   BW < RTT p1p
+                             MSS                       (4)         to 300 ms; and the probability of packet loss was ran-
+                                                                   domly selected across four orders of magnitude, span-
+    We will show that it is important that appropriate             ning roughly from 0.00003 to 0.3 (uniformly distributed
+measurements be used for p and RTT. For example                       4 This was done by using the bandwidth-delay product to esti-
+SACK TCP will typically treat multiple packet losses in            mate an appropriate duration for the simulation, such that Con-
+one RTT as a single congestion signal. For this case, the          gestion Avoidance experienced 50 or more cycles. The duration
+bugs in their Delayed Acknowledgment algorithms such that they     was con rmed from instruments in the simulator.
+                                                                      5 In order to make sure that the link bandwidth was not a
+send acknowledgmentsless frequentlythan 1 per 2 data segments.     limiting factor, the link bandwidth selected was more than 10
+These bugs further reduce C .                                      times the estimated bandwidth required. We then con rmed that
+   3 This problem is discussed in Appendix B. All of the simula-
+tions in this paper are suciently long such that they unambigu-   the link did not sustain a queue.
+ously reach equilibrium.
+in log(p)). Since each loss was independent (and as-
+sumed to be relatively widely spaced), each loss was
+considered to be a congestion signal.
+    In Figure 3 we assume C = 1 and plot the simulation
+vs. the model. Each point represents one combination
+of RTT, MSS, and p in the simulation. The X axis
+                                                                Simulation bits/s
+
+
+represents the bandwidth estimated by the model from
+                                                                                                                                                           FACK RH DA
+                                                                        2
+
+these measurements, while the Y axis represents the
+bandwidth as measured by the simulation. Note that
+                                                                   1e+08
+
+
+the bandwidth, spanning nearly ve orders of magni-                      5
+
+tude, has a fairly strong t along one edge of the data.
+However, there are many outlying points where the sim-                  2
+
+
+ulation does not attain the predicted bandwidth.                   1e+07
+
+    In Figure 4 we plot a di erent view of the same data
+to better illuminate the underlying behaviors. Simula-
+                                                                        5
+
+
+tions that experienced timeouts are indicated with open
+markers. For the remainder of the gures (except where
+                                                                        2
+
+
+noted), we rescale the Y axis by RTT=MSS. The Y                    1e+06
+
+
+axis is then BW  RTT=MSS which, from classical pro-                    5
+
+tocol theory, is a performance-based estimate of the av-
+erage window size6 .                                                    2
+
+    We plot p on the X axis, with the loss rate increasing
+to the right.
+                                                                   1e+05
+
+
+    To provide a common reference for comparing data                    5
+
+
+between experiments, we plot the line corresponding                                                                                                          Model bits/s
+
+to the model with C = 1 in Figure 4 and subsequent
+                                                                            5   1e+05   2        5   1e+06   2    5   1e+07      2   5   1e+08       2
+
+
+  gures.                                                                    Figure 3: The Measured vs. Estimated BW
+    When p < 0:01 (the left side of the graph) the t be-         The simulation used three typical values for M SS : 536, 1460,
+tween the model and the simulation data is quite plau-           and 4312 bytes. The one-way delay spanned from 3 ms to 300
+sible. By looking at the data at p = 0:0001 we estimate           ms; and the probability of packet loss was randomly selected
+                                                                   between 0.00003 to 0.3. In the model we have assumed C
+C to be 0.9, which agrees with the Delayed ACK en-                                           to be 1.
+tries in Table 1. Notice that the simulation and model
+have slightly di erent slopes, which we will investigate        BW * RTT/MSS
+in Section 3.5.                                                                                                                                          FACK RH DA
+    When the average loss rate (p) is large (the right side          200                                                                                 With Timeouts
+
+of the graph), the loss of multiple packets per RTT be-                                                                                                  Model, C=1
+
+
+comes likely. If too many packets are lost, TCP will lose            100
+
+its Self-clock and be forced to rely on a retransmission
+timeout, followed by a Slow-start to recover. As men-                  50
+
+
+tioned above, timeouts are known not to t the model.
+Note that the open markers indicate if there were any                  20
+
+timeouts in the simulation for a given data point. Many
+of the open markers near p = 0:01 experienced only a                   10
+
+few timeouts, such that the dominant behavior was still
+Congestion Avoidance, and the model more or less ts.                    5
+
+
+By the time the loss rate gets to p = 0:1 the timeout
+behavior becomes signi cant. Our choice of FACK-RH                      2
+
+TCP alters the transition between these behaviors. We
+compare di erentpTCP implementations in Section 3.4.                    1
+
+    Note that C= p can be viewed as the model's esti-
+mate of window size. This makes sense because packet                  0.5
+
+losses and acknowledgment arrivals drive window ad-
+justments. Although time scale and packet size do de-                                                                                                             loss (p)
+
+termine the total bandwidth, they only indirectly a ect
+                                                                            2       5 0.0001 2        5 0.001 2       5   0.01   2   5   0.1     2
+
+
+the window through congestion signals.                                                      Figure 4: Window vs. Loss
+  6 In this paper, \window" always means \window in packets",    This is a di erent view of the same data as in Figure 3. Each
+and not \window in bytes."                                                    point has been rescaled in both axes.
+3.2 Environments with Queuing
+Since, under the assumptions of Section 2, the Conges-
+tion Avoidance algorithm is only sensitive to packet loss
+and Acknowledgement arrivals we expect the model to
+continue to correctly predict the window when queuing                BW * RTT/MSS
+
+
+delays are experienced. Thus, with an appropriate de -                                                                         Min Reno DA
+
+
+nition for RTT, the model should hold for environments
+                                                                         100                                                   Model, C=1
+
+
+with queuing.                                                             50
+
+    We performed a set of simulations using bottlenecked
+links where queuing could take place. We used a drop-
+tail link (Figure 2 with drop-tail) with RTT = 60 ms
+                                                                          20
+
+
+and MSS = 1024 bytes. The link bandwidth was varied                       10
+
+from 10 kb/s to 10 Mb/s, while the queue size was varied
+from 5 to 30 packets. Therefore, the ratio of delay-                       5
+
+bandwidth product to queue length spanned from 15:1
+to 1:400. The simulations in Figures 5 and 6 were all                      2
+
+performed with the stock Reno module in the simulator.
+    In Figure 5 we plot the data using the xed part of                     1
+
+
+the RTT, which includes only propagation delay and
+copy time. Clearly the t is poor.
+                                                                         0.5
+
+
+    In Figure 6 we re-plot the same data, but use the
+RTT as measured by a MIB-like instrument in the sim-                     0.2
+
+
+ulated TCP itself. The instrument uses the round trip
+time as measured by the RTTM algorithm [JBB92] to
+                                                                         0.1
+                                                                                                                                     loss (p)
+compute the round trip time averaged across the entire                         0.0001   2   5   0.001   2   5   0.01   2   5
+
+connection. This is the average RTT as sampled by the
+connection itself.                                                                Figure 5: Estimated Window vs. Loss.
+    This transformation has the e ect of making the Y                 Simulations of Reno over a bottlenecked link with a drop-tail
+                                                                      queue, without correcting for queuing delay. The RT T was 60
+axis a measurement-based estimate of the average win-                ms and the M SS was 1 kbyte. The bandwidth was varied from
+dow. It moves individual points up (relative to the up-              10 kb/s to 10 Mb/s, and the queue size was varied from 5 to 30
+per graph) to re ect the queuing delay.                                                          packets.
+    The slope of the data does not quite agree with the
+model, and there are four clusters of outliers. The slope            BW * RTT/MSS
+
+(which we will investigate in Section 3.5) is the same as                                                                      Reno DA
+
+
+in Figure 4.
+                                                                         100                                                   Model, C=1
+
+
+    The four clusters of outliers are due to the long                     80
+
+
+packet times at the bottleneck link causing the De-                       60
+
+layed ACK timer to expire. This e ectively inhibits the                   50
+
+Delayed ACK algorithm such that everypdata packet                         40
+
+causes an ACK, raising C by a factor of 2 for the af-
+fected points, which lie on a line parallel to the rest of
+                                                                          30
+
+
+the data.
+                                                                          25
+
+
+    We conclude that it is necessary to use an RTT mea-
+                                                                          20
+
+
+surement that is appropriate for the connection. The                      15
+
+RTT as sampled by the connection itself is always ap-
+propriate. Under some circumstances it may be possible                    10
+
+to use other simpler measures of RTT , such as the time                    8
+
+average of the queue at the bottleneck.
+    Reno ts the model under these conditions because                       6
+
+
+the idealized topology in Figure 2 drops exactly one                       5
+
+
+packet at the onset of congestion 7 , and Reno's Fast                      4
+
+
+   7 It has been observed that Reno TCP's Self-clock is fragile in             0.0001   2   5   0.001   2   5   0.01   2   5
+                                                                                                                                     loss (p)
+
+the presence of multiplelost packets within one round trip [Hoe95,
+Flo95, Hoe96, FF96, MM96a, LM94]. In the simulator, a single                      Figure 6: Estimated Window vs. Loss.
+TCP connection in ongoing Congestion Avoidance nearly always               This is a di erent view of the same data as Figure 5,
+causes the queue at the bottleneck to drop exactly exactly one              transformed by using TCP's measure of the RT T .
+packet when it lls. This is because the TCP opens the window
+very gradually, and there is no cross trac or ACK compression
+to introduce jitter. Under these conditions Reno avoids any of its
+problems with closely spaced losses.
+Recovery and Fast Retransmit algorithms are sucient                   In Figure 7 we have reconstructed9 one of the sim-
+to preserve the Self-clock. Under these conditions Reno             ulations from [FJ92], using two SACK TCP connec-
+exhibits idealized Congestion Avoidance and ts the                  tions through a single bottlenecked link with a drop-tail
+model. If the simulations are re-run using other TCP                router. Rather than reconstructing the complete sim-
+implementations with standard Congestion Avoidance                  ulation in which the variable delay is adjusted across
+algorithms 8 the resulting data is nearly identical to Fig-         many closely spaced values, we present a detailed anal-
+ures 5 and 6. For NewReno, SACK and FACK the data                   ysis of one operating point,  = 9:9 ms. In this case,
+points agree within the quantization errors present in              the packets from connection 2 are most likely to arrive
+the simulation instruments. This is expected, because               just after queue space has been freed, but just before
+all are either derived from the original Reno code, or              packets from connection 1. Since the packets from con-
+were expressly designed to have the same overall be-                nection 2 have a signi cant advantage when competing
+havior as Reno when subjected to isolated losses.                   for the last packet slot in the queue, connection 1 sees
+                                                                    more packet drops.
+3.3 Phase E ects                                                       The packets are 1 kbyte long, so they arrive at the
+                                                                    receiver (node K1) every 10 ms. The 15 packet queue
+Phase e ects [FJ92] are phenomena in which a small                  at link L slightly underbu ers the network. We added
+change in path delay (on the order of a few packet times)           instrumentation to both the bottlenecked link and the
+has a profound e ect on the observed TCP performance.               TCP implementations, shown in Table 2. The Link
+It arises because packets leaving the bottlenecked link             column presents the link instruments on L, including
+induce correlation between the packet arrival and the               total link bandwidth and the time average of the queue
+freeing of queue space at the same bottleneck. In this              length, expressed as the average queuing delay. The two
+section we will show why phase e ects are consistent                TCP columns present our MIB-like TCP instruments
+with the model, and what this implies about the future              for the two TCP connections, except for the RTT Es-
+of Internet performance instrumentation.                            timate row, which is the average RTT computed by
+                                                                    adding the average queue length of the link to the min-
+                                                                    imum RTT of the entire path.
+                                                                       The loss instruments in the TCP implementation
+                                                                    categorize each loss depending on how it a ected the
+      S1
+
+                                                                    congestion window. Losses that trigger successful
+           8Mbps                           TCP 1                    (clock-preserving) divide-by-two window adjustments
+                   5ms                                              are counted as \CA events". All other downward win-
+                                       L     0.8Mbps                dow adjustments (i.e. timeouts) are counted as \non-
+                            R1
+                                              100ms
+                                                         K1
+                                                                    CA events". Additional losses which are detected while
+                  8Mbps
+   Variable delay = δ                                               already in recovery and do not cause their own win-
+                                           TCP 2                    dow adjustments and are counted as \other losses"10 .
+                                                                    In the drop-tail case (on the left side of the table), we
+                                                                    can see that TCP1 experienced 103 CA events and 37
+      S2
+                                                                    non-CA events (timeouts). During those same recovery
+                                                                    intervals, there were an additional 76 losses which were
+                                                                    not counted as congestion signals. Note that p is the
+            Figure 7: Phase E ects topology.                        number of CA events per acknowledged segment. The
+  8  The simulator includes models for several di erent TCP im-     link loss instruments, by contrast, do not categorize lost
+plementations. Tahoe [Jac88a] and Reno (describedin [Ste97] and     packets, and cannot distinguish losses triggering conges-
+[Jac90]) are well known. The simulator also includes a SACK im-     tion avoidance.
+plementation \SACK1" [Flo96], which was based on the original
+[JB88] SACK, but has been updated to RFC 2018 [MMFR96].
+                                                                       The TCP RTT instrument is the same as in the
+This is, by design, a fairly straightforward implementation of      previous section (i.e. based on the RTTM algorithm).
+SACK TCP using Reno-style congestion control. NewReno is               Note that even though the delay is di erent by only
+a version of Reno that has some modi cations to correct what is     4.9 ms there is about a factor of 4 di erence in the per-
+essentially a bug that frequently causes needless timeouts in re-   formance. This is because the loss rate experienced by
+sponse to multiple-packet congestion signals. This modi cation         9 Our simulation is identical, except that we raised the re-
+was rst suggested by Janie Hoe [Hoe95, CH95] and has been
+thoroughly analyzed [Flo95, FF96].                                  ceiver's window such that it does not interfere with the Con-
+   Tahoe TCP has signi cantly di erent steady-state behavior        gestion Avoidance algorithm. This alters the overall behavior
+than newer TCP implementations. Whenever a loss is de-              somewhat because the dominant connection can potentially cap-
+tected the congestion window is reduced to 1 (without changing      ture the full bandwidth of the link.
+ssthresh). This causes a Slow-start, taking roughly log2 W round      10 Every loss episode counts as exactly one CA or non-CA event.
+trips, and delivering roughly W segments). Tahoe does not t         Episodes in which there was a Fast Retransmit, but Fast Recovery
+the model in a badly underbu ered network (due to persistent        was unsuccessful at preserving the Self-clock or additional losses
+repeated timeouts). At higher loss rates when a larger fraction     caused additional window reductions were counted as non-CA
+of the overall time is spent in Slow-Start, Tahoe has a slightly    events.
+di erent shape, and therefore the model is less accurate.              All additional retransmissions (occurring in association with
+                                                                    either a timeout or congestion signal) are counted as additional
+                                                                    lost packets.
+                               Table 2: Phase e ects with queue limit = 15,  = 9:9
+                        Drop Tail                                                    RED
+              Link      TCP1        TCP2               = 9:9ms           Link TCP1          TCP2
+               781        133         648       Bandwidth        kb/s      798       430       368
+               259 103+37+76 41+0+2 losses (CA+timo+other) 139 64+0+1 73+0+1
+             48795       8287       40508               packets          49853 26851         23002
+             0.0053 0.0124          0.0010                 p             0.0028 0.0024       0.0032
+                          325         315       TCP RTT           ms                 304       307
+             83.49                              Link Delay        ms      77.47
+                          305         315     RTT Estimate ms                        299       309
+                     288 (118%) 279 (57%) Link Model             kb/s             405 (6%) 393 (7%)
+                      177 (34%) 638 (2%) TCP Model               kb/s             432 (1%) 370 (1%)
+                              Table 3: Phase e ects with queue limit = 100,  = 9:9
+                        Drop Tail                                                    RED
+               Link     TCP1       TCP2               = 9:9ms           Link TCP1          TCP2
+                800       244        556       Bandwidth        kb/s      798       401       397
+                 20    12+0+3     5+0+0 losses (CA+timo+other) 137 68+0+0 69+0+0
+              50000 15250          34750               packets          49845 25039         24806
+              0.0004 0.0008        0.0001                 p             0.0027 0.0027       0.0028
+                         1029       1029       TCP RTT           ms                 304       307
+              801.03                           Link Delay        ms     77.25
+                         1022       1032     RTT Estimate        ms                 299       308
+                      313 (29%) 310 (45%) Link Model            kb/s             409 (3%) 396 (1%)
+                      222 (10%) 518 (7%) TCP Model              kb/s             404 (1%) 395 (1%)
+
+each connection is di erent by an order of magnitude.               TCP instruments12. The residual di erences between
+    The model is used to predict performance in two                 the results predicted by the model are due to p not
+di erent ways. The rst technique, the Link Model,                   being precisely uniform between the two TCP connec-
+uses only the link instruments, while the second, the               tions. This may re ect some residual bias in RED, and
+TCP Model, uses only the TCP instruments. Clearly                   bears further investigation.
+applying the model to the aggregate link statistics or to              In Table 3 we repeated the simulations from Table 2,
+TCP1 statistics (with 37 timeouts) in the drop-tail case            but increased the packet queue limit at link L to 100. As
+can not yield accurate results. The model11 applied                 you would expect, this only slightly changes the RED
+to TCP2's internal instruments correctly predicts the               case. However, there are several interesting changes to
+bandwidth.                                                          the drop tail case.
+    Random Early Detection (RED) [FJ93] is a form                      Average RTT has risen to a full second. Without
+of Active Queue Management [B+ 97], which manages                   RED to regulate the queue length, SACK TCP only
+the queue length in a router by strategically discarding            halves its window when it lls the 100 packet queue.
+packets before queues actually ll. Among many gains,                TCP's window is being regulated against a full queue,
+this permits the router to randomize the packet losses              rather than some other operating point closer to the
+across all connections, because it can choose to drop               onset of queued data. Even if both connections expe-
+packets independent of the instantaneous queue length,              rience a packet loss in the same RTT , the queue will
+and before it is compelled to drop packets by bu er                 not fully drain. We can gauge the queue sizes from the
+exhaustion.                                                         average link delay instrument: 800 ms corresponds to
+    In the phase e ects paper [FJ92], it is observed that           80 packets. We know that the peak is 100 packets, so
+if a router uses RED instead of drop-tail queuing, the              the minimum queue is likely to be near 60 packets, or
+phase e ects disappear. In the right side of Table 2 we             600 ms! This is not likely to please interactive users.
+present a simulation which is identical to the left side,              The tripling of the RTT requires an order of mag-
+but using RED at the bottleneck (link L). With RED,                 nitude lower loss to sustain (roughly) constant band-
+the link instruments are in nearer agreement with the               width. The model is less accurate, even when applied
+TCP instruments; so the model gives fairly consistent               to the TCP instruments because the loss sample size is
+results when calculated from either link statistics or              too small, causing a large uncertainty in p. Excluding
+  11Since we are most interested in the drop-tail simulation near   the initial Slow-start, TCP2 only experienced 5 losses
+p = 0:01, we estimated a locally-accurate value of C = 0:8 by         12 Note that RED also lowered the average link delay, lowered
+examining the data used in Figure 6 in the previous section. This   the total packet losses, raised the aggregate throughput. RED
+value of C was used for all the model bandwidths shown in Ta-       usually signals congestion with isolated losses. Therefore Reno
+bles 2 and 3.                                                       might operate as well as SACK TCP in this environment.
+during the 500 second measurement interval (i.e. each                    We wish to compare how well di erent TCP implemen-
+Congestion Avoidance cycle took 100 seconds!)                            tations t the model by investigating two aspects of
+    The symptoms of overbu ering without RED are:                        their behavior. We rst investigate the transition from
+long queuing delays and very long convergence time for                   Congestion Avoidance behavior at moderate p to time-
+the congestion control algorithm.                                        out driven behavior at larger p. In the next section, we
+    Also note that our opening problem of projecting                     investigate a least squares t to the model itself.
+end-to-end TCP performance from hop-by-hop path                              As mentioned earlier, the model does not predict the
+properties requires reasonable assurance that the link                   performance when TCP is timeout driven. Although in
+statistics collected at any one hop are indicative of                    our simulations timeouts do not cause a serious per-
+that hop's contribution to the end-to-end path statis-                   formance penalty, we have not included cross trac or
+tics. This requirement is not met with drop-tail routers,                other e ects that might raise the variance of the RT T
+where correlation in the trac causes correlation in the                 and thus raise the calculated retransmission timeout.
+drops.                                                                   Although Figure 4 might seem to imply that the model
+    If packet losses are not randomized at each bottle-                    ts timeouts, remember that this was in a queueless
+neck, then hop-by-hop performance metrics may not                        environment, where there is zero variance in the RT T.
+have any bearing upon end-to-end performance. RED                        Under more realistic conditions it is likely that timeouts
+(or possibly some other form of Active Queue Manage-                     will signi cantly reduce the performance relative to the
+ment) is required for estimating end-to-end performance                  model's prediction.
+from link statistics. Conversely, if a provider wishes to                    We simulated all of the TCP implementations sup-
+assure end-to-end path performance, then all routers                     ported by the simulator8, with and without Delayed
+(and other potential bottlenecks) must randomize their                   ACK receivers, and instrumented the simulator to tab-
+losses across all connections common to a given queue                    ulate all downward window adjustments into the same
+or bottleneck.                                                           two categories as used in the previous section. The rst,
+    Also note that if the losses are randomized, C=pp is                 \CA events," includes all successful (clock preserving)
+a bound on the window size for all connections through                   divide-by-two window adjustments. The second, \non-
+any bottleneck or sequence of bottlenecks. Further-                      CA events", includes all other downward window ad-
+more, connections which share the same (randomized                       justments. In Figure 8 we plot the proportion of all
+loss) bottleneck tend to equalize their windows [CJ89].                  downward adjustments which were successful invoca-
+We suspect that this is the implicit resource allocation                 tions of the Congestion Avoidance algorithm. (This
+principle already in e ect in the Internet today.13                      data is also summarized on the right side of Table 4).
+                                                                             FACK-RH TCP avoids timeouts under more se-
+3.4 E ect of TCP Implementation                                          vere loss than the other TCP implementations because
+                                                                         it normally sends one segment of new data after the
+                                                                           rst duplicate acknowledgment but before reaching the
+                                                                         dupack threshold (triggering the rst retransmission{
+Proportion
+                                                                         see Appendix A). All of the other TCP's are unable
+    1.00
+                                                         FACK RH
+                                                                         to recover from14 a single loss unless the window is at
+                                                                         least 5 packets . The horizontal position of the steep
+                                                         FACK RH DA
+    0.90                                                 Sack1
+                                                         Sack1 DA
+                                                                         downward transition re ects the loss rate at which the
+                                                                         various TCPs no longer retain sucient average window
+    0.80                                                 Reno
+                                                         Reno DA
+                                                                         for Fast Retransmit. Under random loss SACK, Reno,
+    0.70
+                                                         New Reno
+    0.60                                                 New Reno DA
+                                                                         NewReno, and Tahoe all have essentially the same char-
+                                                                         acteristics.
+                                                         Tahoe
+    0.50
+                                                         Tahoe DA
+    0.40
+
+    0.30
+
+    0.20
+                                                                         3.5 Fitting the slope
+                                                                         As we have observed in the previous sections, the win-
+                                                                         dow vs. loss data falls on a fairly straight line on a log-
+    0.10
+
+
+                                                                         log plot, but the slope is not quite 1=2. This suggests
+    0.00
+                                                              loss (p)
+             5    0.01   2       5    0.1   2       5
+                                                                         that a better model might be in the following form:
+   Figure 8: Algorithm dominance vs packet loss.
+  The fraction of all downward window adjustments                                            BW = MSSRTT Cp
+                                                                                                               k
+                                                                                                                                 (5)
+ which are successful (clock-preserving) divide-by-two
+                window adjustments.                                      Where k is roughly 1=2.
+  13 Note that our observation is independent of the model in               We performed a least mean squared t between
+this paper. To the extent that the window is only determined             Equation 5 and the TCP performance as measured in
+by losses (which isn't quite true) and that losses are equalized at      the simulator. The results are shown in Table 4. All
+bottlenecks (which also isn't true without RED, etc.), the Internet        14 One packet is lost, the next three cause duplicate acknowl-
+must tend to equalize windows.                                           edgements, which are only counted. The lost packet is not re-
+                                                                         transmitted until the fth packet is acknowledged.
+                                                         Least Mean Squares           Proportion of successful
+ Acknowledgement              TCP                                 t                       W=2 adjustments
+     Scheme               Implement-               Equation 3         Equation 5
+                              ation          N          C           k         C     p = :01 p = 0:033 p = 0:1
+                             FACK            16   1:352  0:090 0:513 1:205  0:047 0:996      0:985      0:738
+         No                  SACK            11   1:346  0:052 0:508 1:247  0:033 0:992      0:822      0:497
+       Delayed                Reno           12   1:331  0:054 0:521 1:096  0:009 0:935      0:765      0:331
+        ACKs               New Reno          12   1:357  0:055 0:516 1:167  0:020 0:983      0:896      0:517
+                             Tahoe           11   1:254  0:079 0:534 0:920  0:015 0:974      0:796      0:367
+                           FACK DA           15   0:928  0:086 0:519 0:783  0:045 1:000      0:929      0:725
+       Delayed             SACK DA           10   0:938  0:036 0:518 0:792  0:012 0:952      0:664      0:112
+        ACKs                Reno DA          10   0:939  0:046 0:524 0:752  0:015 0:919      0:595      0:157
+                         New Reno DA         11   0:935  0:045 0:526 0:738  0:006 0:942      0:635      0:176
+                           Tahoe DA          11   0:883  0:076 0:542 0:596  0:012 0:919      0:590      0:173
+                                   Table 4: Comparison of various TCP implementations.
+
+simulations which experienced timeouts were excluded,
+so the t was applied to runs exhibiting only the Con-
+gestion Avoidance algorithm15. The number of such
+runs are shown in column N.
+    For k = 0:5, the values of C are quite close to
+the derived values. The quality of the t is also quite
+good. pAs expected, Delayed Acknowledgements change
+C by 2. When k is allowed to vary slightly, the t
+becomes even better still, and the best values for k are           BW * RTT/MSS
+
+only slightly o from 0:5. This slight correction to                     40                                               TReno
+
+
+k probably re ects some of the simplifying assumptions                  30                                              (Timeouts)
+                                                                                                                         Model, C=1
+
+used in the derivation of Equation 3. One simpli cation                 20
+
+is that TCP implementations perform rounding down                       15
+
+to integral values in several calculations which update
+cwnd. The derivation of the model assumes cwnd varies
+                                                                        10
+
+
+smoothly, which overestimates the total amount of data                   7
+
+transferred in a congestion avoidance cycle. Another                     5
+
+simpli cation is that the model expects the window to                    4
+
+begin increasing again immediatelyafter it is cut in half.               3
+
+However, recovery takes a full RTT , during which TCP
+may not open the window. We plan to investigate the
+                                                                         2
+
+
+e ects of these simpli cations in the future.
+                                                                       1.5
+
+                                                                         1
+
+
+4 TReno results                                                        0.7
+
+                                                                       0.5
+
+Much of our experimentation in TCP congestion dy-                      0.4
+
+namics has been done using the TReno performance                       0.3
+
+diagnostic [Mat96]. It was developed as part of                                                                           Loss Rate (p)
+
+our research into Internet performance measurement                           0.001     2     5   0.01   2   5    0.1
+
+
+under the IETF IP Performance Metrics working                                        Figure 9: TReno measurement data
+group [Mat97]. TReno is a natural succession to the                This data ts Equation 3 with C = 0:744  0:193 or to Equation 5
+windowed ping diagnostic [Mat94b]. (The FACK-RH                    with k = 0:617; C = 0:375  0:054. These are poorer than
+algorithm for TCP is the result of the evolution of the            the ts in Table 4, in part because the TReno data extends to
+congestion control implemented in TReno.)                          much worse loss rates, where the e ects of rounding become more
+                                                                   pronounced. The C values are lower, indicating about 20% lower
+    TReno is designed to measure the single stream bulk            performance than TCP in a simulator.
+transfer capacity over an Internet path by implement-
+ing TCP Congestion Avoidance in a user mode diagnos-
+tic tool. It is an amalgam of two existing algorithms:
+traceroute [Jac88b] and an idealized version of TCP
+congestion control. TReno probes the network with ei-
+  15 FACK ts less well because it avoids timeouts and thus in-
+cludes data at larger p, where rounding terms become signi cant.
+ther ICMP ECHO packets (as in the ping program),
+or low-TTL UDP packets, which solicit ICMP errors
+(as in the traceroute program). The probe packets are
+subject to queuing, delay and congestion-related loss                 BW * RTT/MSS
+
+comparable to TCP data and acknowledgment packets.                         80                                                              Set 1
+
+The packets carry sequence numbers which are re ected                      70                                                              (Timeouts)
+
+in the replies, such that TReno can always determine                       60
+                                                                                                                                            Model, C=1
+
+
+which probe packet caused each response, and can use                       50
+
+this information to emulate TCP.
+    This has an advantage over true TCP for exper-
+                                                                           40
+
+
+imenting with congestion control algorithms because
+                                                                           35
+
+
+TReno only implements those algorithms and does not
+                                                                           30
+
+
+need to implement the rest of the TCP protocol, such
+                                                                           25
+
+
+as the three-way SYN handshake or reliable data de-                        20
+
+livery. Furthermore, TReno is far better instrumented
+than any of today's TCP implementations. Thus it is a                      15
+
+good vehicle to test congestion control algorithms over
+real Internet paths, which are often not well-represented
+by the idealized queuing models used in simulations.
+                                                                           10
+
+
+    However, TReno has some intrinsic di erences from                       8
+
+real TCP. For one thing, TReno does not keep any state                      7
+
+
+(corresponding to the TCP receiver's state) at the far                      6
+
+
+end of the path. Both the sender's and receiver's be-                       5
+
+haviors are emulated at the near end of the path. Thus                                                                                           loss (p)
+
+it has no way to distinguish between properties (such
+                                                                            0.0001       2       5           0.001   2        5     0.01
+
+
+as losses or delay) of the forward and reverse paths16 .                             Figure 10: Measured TCP data, Set 1
+    For our investigation, TReno was run at random                       This data ts Equation 3 with C = 0:700  0:057 or to
+times over the course of a week to two hosts utilizing                 Equation 5 with k = 0:525; C = 0:574  0:045. These values
+di erent Internet providers. Due to normal uctuation                      for C are about 25% lower than TCP in a simulator.
+in Internet load we observed nearly two orders of mag-
+nitude uctuations in loss rates. Each test lasted 60
+                                                                      BW * RTT/MSS
+
+
+seconds and measured model parameters p and RTT
+                                                                           80                                                              Set 2
+                                                                                                                                           (Timeouts)
+
+from MIB-like instruments.                                                 60                                                              Too short
+
+    The TReno data17 is very similar to the simulator                      50
+                                                                                                                                            Model, C=1
+
+
+data in Figure 4, except that the timeouts have a more
+profound negative impact on performance. If the runs
+                                                                           40
+
+
+containing timeouts are neglected, the data is quite sim-                  30
+
+ilar.                                                                      25
+
+    Also note that TReno su ered far more timeouts                         20
+
+than FACK-RH in the simulator, even though they have
+nearly identical internal algorithms. This is discussed                    15
+
+in the next section, where we make similar observations
+about the TCP data.                                                        10
+
+                                                                            8
+
+5 TCP measurements                                                          6
+
+
+In this section, we measured actual TCP transfers to                        5
+
+
+two Internet sites in order to test the model. This was                     4
+
+done by using a slightly modi ed version of \tcptrace"
+[Ost96] to post-process packet traces to reconstruct p
+                                                                            3
+                                                                                                                                                 loss (p)
+
+and RTT from TCP's perspective. These instruments
+                                                                                     2       5       0.001       2       5   0.01   2
+
+
+are nearly identical to the instruments used in the TCP                              Figure 11: Measured TCP data, Set 2
+simulations.                                                               This data ts Equation 3 with C = 0:908  0:134 or to
+  16 If the ICMP replies originate from a router, (such as interme-     Equation 5 with k = 0:611; C = 0:418  0:058. Some of the
+diate traceroute hops) TReno may su er from a low performance          individual data points are above the C = 1 reference line. The
+ICMP implementation on the router. This is not an issue in the        live Internet measurements were not over long enough intervals
+data presented here, because the end systems can send ICMP               to permit trimming the Slow-start overshoot described in
+replies at full rate.                                                 Appendix B. This data set may have been subject to Slow-start
+  17 TReno emulates Delayed Acknowledgements.                                                    overshoot.
+    This experiment proved to be far more dicult than               tion signals, resulting in a large uncertainty in p. The
+expected. We encountered a number of diculties with                 open circles on the left side of Figure 11 have observ-
+the test paths themselves. The Internet is vastly noisier            able vertical banding in the data corresponding to 1, 2
+and less uniform than any simulation [Pax97a, Pax97b].               or 3 total congestion avoidance cycles.20. Traces with 4
+Furthermore, several paths exhibited behaviors that are              or more congestion avoidance cycles are included in the
+beyond the scope of the model18.                                     good data (solid squares).
+    The tests were run at random times over the course                   Our test script also used conventional diagnostic
+of 10 days, at an average rate of once per hour to each              tools to measure background path properties bracketing
+remote site. The period included a holiday weekend                   the TCP tests. Although we measured several param-
+(with unusually low background trac), and was not                   eters, the RTT statistics were particularly interesting.
+the same week as the TReno data.                                     For \not under test" conditions, the minimumRT T was
+    During our testing, the connections transferred as               72.9 ms, and the average RTT was 82 ms21. From the
+much data as possible in 100 seconds of elapsed time                 tcptrace statistics, we know that during the test trans-
+to two di erent Internet sites. Figure 10 shows that                 fers the average RTT rose to 461 ms22.
+the model ts fairly well to data collected to one tar-                   Our TCP transfers were sucient to substantially
+get. If you compare this to Figure 4 it is in reasonable             alter the delay statistics of the path. We believe this to
+agreement, considering the di erence in scale.                       be an intrinsic property of Congestion Avoidance: any
+    Figure 11, on the other hand, does not t as well.                long-running TCP connection which remains in Con-
+It is illustrative to dissect the data to understand what            gestion Avoidance raises the link delay and/or loss rate
+is happening over this path, and how it relates to the               to nd its share of the bottleneck bandwidth. Then
+model's applicability. Our rst observation is that there             Equation 3 will agree with the actual bandwidth for the
+are too many timeouts (indicated by open circles), con-              connection, and if the losses at the bottleneck are su-
+sidering the low overall loss rate.                                  ciently randomized, the link statistics (delay and loss)
+    To diagnose this phenomenon, we looked at the raw                will be common to all trac sharing the bottleneck.
+packet traces from several of the transfers. Nearly all of               In general, the current Internet does not seem to
+the timeouts were the result of losing an entire window              exhibit this property. We suspect that this is due to a
+of consecutive packets. These short \outages" were not               combination of e ects, including Reno's inability to sus-
+preceded by any unusual uctuation in delay. Further-                 tain TCP's Self-clock in the presence of closely-spaced
+more, the following (Tahoe-style) recovery exhibited                 losses, the prevalence of drop-tail queues and faulty
+no SACK blocks or step advances in the acknowledg-                   router implementations.
+ment number. Therefore an entire window of data had
+been lost on the forward path. This phenomenon has                   6 Multiple Congested Gateways
+been observed over many paths in the Internet [Pax97b,
+p305] and is present in Figures 9 and 10, as well. Lore              In this section we apply the model to the problem of
+in the provider community attributes this phenomenon                 TCP fairness in networks with multiple congested gate-
+to an interaction between routing cache updates and                  ways. Floyd published a simulation and heuristic anal-
+the packet    forwarding microcode in some commercial                ysis of this problem in 1991 [Flo91]. In this paper,
+routers19 .                                                          she analyzed the following problem: given a network
+    Our second observation (regarding traces without                 of 2n gateways, where n are congested by connections
+timeouts) is that the number of \CA events" is very                  that use only one of the congested gateways, what por-
+small, with many traces showing 3 or fewer successful                tion of the available bandwidth will a connection pass-
+window halving episodes. An investigation of the trace               ing through all n congested gateways receive? The
+statistics reveals that the path had a huge maximum                  analysis of this problem presented by Floyd computes
+round trip time (1800 ms), and that during some of our               bandwidth by determining the packet loss rate for each
+test transfers the average round trip time was as large              connection23 . Here, we demonstrate that the same re-
+as a full second. This suggests that the path is over-
+bu ered and there is no active queue management in                     20 The bands are at roughly p = 0:00015; 0:00035 and 0:0005.
+                                                                          Each backgroundmeasurementconsisted of 200 RT T samples
+e ect to regulate the queue length at the bottleneck.                  21
+                                                                     taken either shortly before or shortly after each test TCP transfer.
+    Real TCP over this path exhibits the same symp-                  The median of the measurement averages was 80 ms for the \not
+toms as the simulation of an overbu ered link without                under test" case.
+RED in Section 3.3: long queuing delays and very long                  22 The median of the measurement averages was 466 ms for the
+cycle times for the congestion avoidance algorithm. As a             \under test" cases.
+consequence, our 100 second measurement interval was                    Unfortunately, the burst losses obscured our background loss
+                                                                     rate measurement, because in the average they caused much more
+not really long enough and captured only a few conges-               packet loss than the true congestion signals. Since they caused
+  18 One discarded path su ered from packet reordering which         TCP timeouts, they were implicitly excluded from the TCP data,
+was severe enough where the majority of the retransmissions were     but not from our background measurements.
+spurious.                                                               Note that to some extent the burst losses and the RED-less
+  19 Note that burst losses and massive reordering are not de-       overbu ering are complementary bugs because each at least par-
+tectable using tools with low sampling rates. These sorts of prob-   tially mitigates the e ects of the other.
+                                                                       23 We should note that Floyd's work was published three years
+lem can most easily be diagnosed in the production Internet with     prior to Mathis [Mat94a] and ve years prior to Ott [OKM96a].
+tools that operate at normal TCP transfer rates.
+      0
+
+ 0        1a       1b   2a       2b      3a        3b   4a         4b   5a       5b     0                       B0  p 1                         (12)
+               1             2                 3              4              5                                  B 1 + n(2n 1)
+                   1                                                                             In the case of overbu ered, drop-tail gateways,
+                                                                                              where Q is large and phase e ects are not an issue,
+          1             2        2        3        3    4          4    5        5
+
+
+                                      source                sink             gateway          we get a slightly di erent result:
+                                                              : 1.5Mbps, 50ms delay
+                                                                                                                   B0  1                        (13)
+                                                              : 10Mbps, 5ms delay
+                                                                                                                    B 1 + n3=2
+Figure 12: The multiple congested gateways scenario.                                             It is useful to note that C has dropped out of the
+                                                                                              calculation. A precise estimate of C was not needed.
+                                                                                                 In this section, we have used Equation 3 to estimate
+sults can be obtained by using Equation 3.                                                    TCP performance and bandwidth allocation in a com-
+   Figure 12 (from [Flo91]) shows the exact scenario we                                       plex network topology. Our calculation agrees with the
+are interested in analyzing. Each dotted line indicates                                       prior heuristic estimates for this environment.
+a connection from a source to a sink. Generalizing the
+parameters, we de ne  to be the individual delay of the                                      7 Implications for the Internet
+long links (50 ms in Figure 12) and  to be the delay
+of the short links (5 ms in Figure 12). The round-trip
+delay for Connection i is:                                                                                                                          University User
+
+                                                                                                                                                  (10 Mb/s ethernet)
+
+                   i = 2 + Q + 4               (6)
+                                                                                                 Data Center
+
+
+
+   Here, we add a term Q which represents the average
+delay due to queuing at the bottleneck router.24 The                                                                          Link, L
+round-trip delay for Connection 0 is:                                                              Router
+                                                                                                                         (50 ms, Lossy Link)
+                                                                                                                                                        Router
+
+
+
+                0 = 2(2n 1) + nQ + 4             (7)
+    The model can then be used to predict the band-                                                                                                   1000 Users
+
+width for each connection:
+                                                                                              1000 WWW servers
+                                                                                                                                                      (28.8 kb/s,
+                                                                                                                                               Queue Length = 5 packets)
+
+
+
+                     Bi = C MSS
+                             i pp
+                                  1                  (8)                                                    Figure 13: Simpli ed Internet Topology
+                                                                                              In this section we use Equation 3 to investigate some
+                    B0 = C MSS  p
+                            0 np
+                                  1                  (9)                                      properties of trac and congestion in the global Inter-
+                                                                                              net. Figure 13 is a very simpli ed schematic of the
+    The total link bandwidth used at each congested hop                                       Internet. To the left are information providers, includ-
+is given by the sum of these two values:                                                      ing a large population of WWW servers and other large
+                                                                                              data centers, such as supercomputing resources.
+          B = B0 + Bi = C MSSpp ( pn1 + 1)
+                                            i     (10)                                          To the right are information consumers, including a
+                                       0                                                      large population of modem-based users and a smaller
+    The fraction of the bandwidth used by Connection                                          population of Research and Education users, who are
+0 is then given by (divide Equation 9 by Equation 10):                                        trying to retrieve data from the data center.
+                                                                                                 The link between the data suppliers and consumers
+                                                                                              represents a long path through an intra-continental In-
+     B0 = 1 p =            1                                                           (11)   ternet. For illustration purposes we assume that the
+     B 1 + 0i
+              n    p            nQ +4
+                 1 + n( 21)+Q++4
+                       2(2n
+                                         )                                                    path can be modeled as having a single bottleneck, such
+                                                                                             that the entire path has a xed average delay and a vari-
+   The rst part of Equation 11 exactly matches                                                able loss rate due to the total load at the bottleneck.
+Floyd's result [Flo91, Claim 5, Equation 3]25. The sec-                                       Furthermore we assume that each individual data sup-
+ond part of Equation 11 lls in the precise formulae for                                       plier or consumer shown in Figure 13 presents an in-
+the delays. If we assume Q and  are small, we again                                         signi cant fraction of the total load on the link. The
+match Floyd's results [Flo91, Corollary 6].                                                   loss rate on L is determined by the aggregate load (of
+                                                                                              many modems and R&E users) on the link and is uni-
+  24 We make the assumption that  is the same for all of the
+                                     Q                                                        form across all users. Thus the individual connections
+connections being considered. This is probably not a realistic as-
+sumption, but it does allow us to simplify the problem somewhat.
+                                                                                              have no detectable e ect upon the loss rate.
+  25 Noting that we are using an increase-by-1 window in-                                         We wish to investigate how changes in the loss rate at
+crease algorithm, which is identical for both the long and short                              link L might a ect the various information consumers
+connections.                                                                                  and to explore some strategies that might be used to
+                                                                                                                         control the elapsed time needed to move scienti c data
+                                                                                                                         sets.
+                                                                                                                             First we consider TCP congestion control at the
+                                                                                                                         modems, which are the likely bottlenecks for the low
+Loss rate (%) or RTT (units of 1/10 second)                                                                              end users. A full-sized packet (1000 bytes) takes about
+                                                                                               CA-Events                 277 ms of modem transmission time. The RT T of the
+   12.00                                                                                       Modem RTT
+                                                                                                                         unloaded path is about 400 ms (1000 byte packets ow-
+                                                                                               Loss at L
+                                                                                                                         ing in one direction, 40 byte acknowledgements owing
+                                                                                                                         in the other). Assume 5 packets of queue space at the
+   11.00                                                                                       Loss at Modem
+                                                                                               Total Loss
+   10.00
+                                                                                                                         modem, then the maximum window size is between 6
+     9.00                                                                                                                and 7 packets, so the \half window" must be roughly
+                                                                                                                         3 packets, yielding an average window of about 5 pack-
+     8.00
+                                                                                                                         ets. Since the data packets arrive at the clients with
+     7.00                                                                                                                more than 200 ms headway, acknowledgements will be
+                                                                                                                         sent for every segment (due to the Delayed Acknowl-
+                                                                                                                         edgement timer). Thus we assume that C = 1:2 (the
+     6.00
+
+     5.00
+                                                                                                                         non-Delayed Acknowledgement periodic case from Ta-
+     4.00                                                                                                                ble 1), so the 5 packet average window requires a loss
+                                                                                                                         rate of roughly 4% (p = 0:04). This can be observed
+     3.00
+                                                                                                                         on the far left edge of Figure 14. (We are assuming
+     2.00                                                                                                                FACK-RH TCP).
+                                                                                                                             The packet loss at the modem provides feedback to
+     1.00
+                                                                                                                         the TCP sender to regulate the queue at the modem.
+     0.00                                                                                                                This queue assures that the modem utilization is high,
+                                                                                                    loss (p) at link L
+                                                                                                                         such that data is delivered to the receiver every 277 ms.
+                                                                                                                         These data packets cause the receiver to generate ac-
+             0.001    2            5    0.01       2       5         0.1       2       5
+
+
+
+ Figure 14: Packet loss experienced by modem users.                                                                      knowledgements every 277 ms, which clock more data
+  Packet loss on link L is largely o set by reduced loss at the                                                          out of the server at a nearly constant average rate.
+  modem. \Total loss" is computed from the link instruments,                                                                 Next we want to consider what happens if link L
+  \CA-Events" from the instruments in the TCP. (This is for                                                              loses about 3% of the packets. Since this is not enough
+                       FACK-RH TCP).                                                                                     to throttle TCP down to 28.8 kb/s, the modem must
+                                                                                                                         still be introducing some loss, but less than before.
+                                                                                                                         Since the modem is still introducing loss, it must still
+Simulation Bandwidth (b/s)
+
+
+                                                                                                                         have a signi cant average queue, so the server still sends
+        2                                                                                      mss=4312
+                                                                                               mss=1460
+   1e+07
+                                                                                               mss=536
+                                                                                                                         data every 277 ms. With any SACK TCP (including
+        5                                                                                      Modem
+                                                                                                                         FACK-RH), only the missing data is retransmitted, so
+        2                                                                                                                the average goodput for the modem user continues to
+   1e+06                                                                                                                 be 28.8 kb/s. Therefore the 3% loss on link L has an
+        5                                                                                                                insigni cant e ect on the modem user.
+                                                                                                                             As the loss rate rises beyond 3%, the queue at the
+        2
+                                                                                                                         modem becomes shorter, reducing the RTT from about
+   1e+05
+                                                                                                                         1.2 seconds down toward 400 ms. Note that a 5 packet
+        5
+                                                                                                                         queue overbu ers the path, so the utilization does not
+        2                                                                                                                start to fall until the loss rate approaches 10%26.
+                                                                                                                             Now consider the plight of an R&E user (See Fig-
+                                                                                                                         ure 15). What performance limitations are imposed on
+   1e+04
+
+
+                                                                                                                         the R&E user by 3% loss? From Equation 3, the aver-
+        5
+
+        2
+                                                                                                                         age window size must be about 5 packets. If these are
+   1e+03
+                                                                                                                         536 byte packets (with a 100 ms RTT), the user can get
+     500                                                                                                                 no more than about 250 kb/s. Timeouts and other dif-
+                                                                                                                           culties could further reduce this performance. At 250
+                                                                                                                         kb/s, moving 1 Gigabyte of data27 takes over 8 hours.
+     200
+                                                                                                    loss (p) at link L
+             0.001    2        5       0.01    2       5       0.1         2       5       1
+                                                                                                                           26 Note that this is FACK-RH TCP, which does substantially
+              Figure 15: E ect of loss rate at link L.                                                                   better than other TCPs in this region.
+                                                                                                                           Many recovery episodes exhibit multiple dropped packets (note
+ While modem users (with a 1000 byte MSS) do not notice loss
+     on link L until it is quite high, R&E users su er severe                                                            that the total link loss rate and CA-Events di er) so Reno has no
+performance degradation, particularly when using a small M SS .                                                          hope of preserving its Self-clock. As the peak window size falls
+                                                                                                                         below 5 packets, conventional Fast Retransmit will also fail.
+                                                                                                                           27 Note that at today's prices, with disk space available at be-
+                                                                                                                         low $100 per Gigabyte, workstations commonly have several Gi-
+                                                                                                                         gabytes of disk space. It is not at all unusual for researchers to
+As a consequence, some researchers have been known              FACK-RH, which treats multiple packet losses as
+to express mail tapes instead of using the Internet to       single congestion signals, ts the model across a very
+transfer data sets.                                          wide range of conditions. Its behavior is very close to
+   Suppose the R&E user needs to move 1 Gigabyte of          ideal TCP Congestion Avoidance. Reno, on the other
+data in 2 hours. This requires a sustained transfer rate     hand, stumbles very easily and deviates from the model
+of about 1 Mb/s. What loss rate does the user need           under fairly ordinary conditions.
+to meet this requirement? Assume C < 1 (because the             To produce a model that applies to all loss rates, we
+R&E receivers will be using Delayed Acknowledgments)         need to have a model for timeout-driven behavior.
+and invert Equation 4 to get a bound on p:                      Overbu ering without RED or some other form of
+                                                           queue management does not interact well with SACK
+                            MSS 2
+                    p < BWRTT                         (14)   TCP. A single pair of end-systems running SACK over
+                                                             a long Internet path without RED are likely to sustain
+                                                             persistent, unpleasantly long queues.
+    The model predicts that the R&E user needs a loss           The model can be used to predict how TCP shares
+rate better than 0.18% (p = 0:0018) with 536 byte pack-      Internet bandwidth. It can also be used to predict the
+ets. At 1460 bytes, the maximumloss rate rises to 1.4%.      e ects of TCP upon the Internet, and represents an
+If the R&E user upgrades to FDDI (and uses 4312 byte         equilibrium process between loss, delay and bandwidth.
+packets), Equation 14 suggests that the network only
+needs to have less than 11% loss.
+    In practice, we need to consider the actual value of     9 Acknowledgements
+C and potential bottlenecks in all other parts of the        We would like to thank Sally Floyd and Steve McCann
+system, as well as the details of the particular TCP im-     (LBL's ns simulator), as well as Shawn Ostermann (tcp-
+plementation. This calculation using the model agrees        trace) for making their software publicly available, with-
+with the simulation shown in Figure 15.                      out which we would have been unable to complete this
+    Note that the speci c results in this section are very   work. We would also like to thank Dr. Floyd for allow-
+sensitive to many of our assumptions, especially to the      ing us to use Figure 12 from [Flo91]. We appreciate the
+use of FACK-RH TCP and the 5 packet queue at the             willingness of Mark Allman, Kevin Lahey, and Hari Bal-
+modem. Di erent assumptions will change the rela-            akrishnan to allow us to use equipment at their sites for
+tive positions of the data in our graphs, but the overall    our remote testing. We would also like to acknowledge
+trends are due to intrinsic properties of TCP congestion     Bruce Loftis, for his assistance in tting parameters to
+control and the Congestion Avoidance algorithm.              the data, and Susan Blackman, for making suggestions
+    We can draw some useful rules-of-thumb from our          to improve the readability of this paper.
+observations. First, each factor of 3 in the MSS (4312
+to 1460, or 1460 to 536) lowers the required end-to-end
+loss rate by nearly an order of magnitude. Furthermore,      A FACK-RH TCP
+a network which is viewed as excellent by modem users
+can be totally inadequate for a Research and Education       The FACK-RH TCP used in the simulations and in
+user.                                                        the TReno experiment is slightly di erent than the
+                                                             FACK version presented at Sigcomm96 [MM96a]. We
+8 Conclusion                                                 replaced \Overdamping" and \Rampdown" by a com-
+                                                             bined \Rate-Halving" algorithm, which preserves the
+We have shown, through simulation and live observa-          best properties of each. Rate-Halving quickly nds
+tions, that the model in Equation 3 can be used to           the correct window size following packet loss, even un-
+predict the bandwidth of Congestion Avoidance-based          der adverse conditions, while maintaining TCP's Self-
+TCP implementations under many conditions.                   clock. In addition, we strengthen the retransmis-
+   In the simulator all presented TCPs t the model           sion strategy by decoupling it completely from conges-
+when losses are infrequent or isolated. However, since       tion control considerations during recovery. An algo-
+di erent TCPs vary in their susceptibility to timeouts,      rithm we call \Thresholded Retransmission" moves the
+they diverge from the model at di erent points.              tcprexmtthresh logic to the SACK scoreboard and ap-
+   Live Internet tests show rough agreement with the         plies it to every loss, not just the rst. We also add
+model in cases where no pathological behaviors are           \Lost Retransmission Detection" to determine when re-
+present in the path.                                         transmitted segments have been lost in the network.
+   The model is most accurate when using delay and               Rate-Halving congestion control adjusts the window
+loss instruments in the TCP itself, or when loss is          by sending one segment per two ACKs for exactly one
+randomized at the bottleneck. With non-randomized            round trip during recovery. This sets the new window
+losses, such as drop-tail queues, the model may not be       to exactly one-half of the data which was actually held
+able to predict end-to-end performance from aggregate        in the network during the lossy round trip. At the be-
+link statistics.                                             ginning of the lossy round trip snd:cwnd segments have
+                                                             been injected into the network. Given that there have
+want to transfer a few Gigabytes of data at one time.        been some losses, we expect to receive (snd:cwnd loss)
+                                                             acknowledgments. Under Rate-Halving we send half as
+many segments, so the net e ect on the congestion win-       the case over most Internet paths so the Slow-start will
+dow is:                                                      drive up the loss rate (or run out of receiver window)
+                                                           causing TCP to converge more quickly. It is unclear
+             snd:cwnd = snd:cwnd  2
+                                        loss          (15)   how signi cant this overshoot is in the operational In-
+                                                             ternet.
+This algorithm can remain in Congestion Avoidance,              In all of our simulations we estimate the time re-
+without timing out, at higher loss rates than algorithms     quired for the connection to reach steady-state, and ex-
+that wait for half of the packets to drain from the net-     clude the initial overshoot when measuring loss, delay
+work when the window is halved.                              and bandwidth.
+    We detect when exactly one round trip has elapsed
+by comparing the value of the forward-most SACK              References
+block in each ACK to the value of snd:nxt saved at           [B+ 97]    Robert Braden et al. Recommendations on
+the time the rst SACK block arrived.
+    Bounding-Parameters add additional controls to                      Queue Management and Congestion Avoid-
+guarantee that the nal window is appropriate, in spite                  ance in the Internet, March 1997. Internet
+of potential pathological network or receiver behaviors.                draft draft-irtf-e2e-queue-mgt-00.txt (Work
+For example, a TCP receiver which sends super uous                      in progress).
+ACKs could cause Rate-Halving to settle upon an inap-        [BOP94] Lawrence S. Brakmo, Sean W. O'Malley,
+propriately large window. Bounding-Parameters assure                    and Larry L. Peterson. TCP Vegas: New
+that this and other pathologies still result in reasonable              Techniques for Congestion Detection and
+windows. Since the Bounding-Parameters have no ef-                      Avoidance. Proceedings of ACM SIG-
+fect under normal operation, they have no e ect on the                  COMM '94, August 1994.
+results in this paper.
+    We are continuing to tinker with some of the de-         [CH95] David D. Clark and Janey C. Hoe. Start-
+tails of these algorithms, but mostly in areas that have                up Dynamics of TCP's Congestion Con-
+only minute e ects on normal bulk TCP operations.                       trol and Avoidance Schemes. Technical re-
+The current state of our TCP work is documented at                      port, Internet End-to-End Research Group,
+http://www.psc.edu/networking/tcp.html.                                 1995. Presentation. Cited for acknowledge-
+                                                                        ment purposes only.
+B Reaching Equilibrium                                       [CJ89]     D. Chiu and R. Jain. Analysis of the In-
+                                                                        crease/Decrease Algorithms for Congestion
+In several of our simulations and measurements we                       Avoidance in Computer Networks. Journal
+noted that an excessive amount of time was sometimes                    of Computer Networks and ISDN, 17(1):1{
+required for TCP to reach equilibrium (steady-state).                   14, June 1989.
+    One interpretation of Equation 3 is that the average
+window size in packets will tend to C=pp. However,           [Cla96] Dave Clark. Private communication, De-
+during a Slow-start (without Delayed ACKs), the ex-                     cember 1996. Derivation of Bandwidth vs.
+pected window size is on the order of 1=p when the                      Loss.
+  rst packet is dropped, 2=p when the loss is detected,      [DLY95] Peter B. Danzig, Zhen Liu, and Limim Yan.
+and back down to 1=p by the end of recovery (assum-                     An Evaluation of TCP Vegas by Live Em-
+ing SACK TCP). This window is much        too
+                                             large if p                ulation. ACM SIGMetrics '95, 1995.
+is small. It then takes roughly log2 C=1=ppp congestion
+signals to bring the window 1down to1 the proper size.       [FF96]     Kevin Fall and Sally Floyd. Simulations-
+This requires the delivery of p log2 C pp packets, which                Based Comparisons of Tahoe, Reno and
+is large if p is small.                                                 SACK TCP. Computer Communications
+                                                                        Review, 26(3), July 1996.
+    The e ect of this overshoot can be signi cant. Sup-
+pose   p = 1=256 (approximately 0:004) then we have          [FJ92]     Sally Floyd and Van Jacobson. On Traf-
+1=pp = 16 and log2 1=pp = 4. So it takes roughly 1000                    c Phase E ects in Packet-Switched Gate-
+packets to come into equilibrium. At 1500 bytes/packet,                 ways. Internetworking: Research and Expe-
+this is more than 1.5 Mbytes of data.                                   rience, 3(3):115{156, September 1992.
+    The average window in steady state will be 16 pack-
+ets (24 kbytes). If the path has a 100 ms RTT, the           [FJ93]     Sally Floyd and Van Jacobson. Random
+steady state average bandwidth will be close to 2 Mb/s.                 Early Detection Gateways for Congestion
+However the peak window and bandwidth might be                          Avoidance. IEEE/ACM Transactions on
+larger by a factor 16: 256 packet (6 Mbytes) and                        Networking, August 1993.
+30 Mb/s. (This is a factor of 11==p pp ). The overshoot      [Flo91]    Sally Floyd. Connections with Multiple
+will be this pronounced only if it consumes a negligible                Congested Gateways in Packet-Switched
+fraction of the bottleneck link. Clearly this will not be
+         Networks, Part 1: One-way Trac. Com-           [Mat96]  Matthew Mathis. Diagnosing Internet Con-
+         puter Communications Review, 21(5), Oc-                  gestion with a Transport Layer Perfor-
+         tober 1991.                                              mance Tool. Proceedings of INET'96, June
+                                                                  1996.
+[Flo95]  Sally Floyd. TCP and Successive Fast
+         Retransmits, February 1995. Obtain via          [Mat97] Matthew Mathis. Internet Performance
+         ftp://ftp.ee.lbl.gov/papers/fastretrans.ps.              and IP Provider Metrics information page.
+                                                                  Obtain via http://www.psc.edu/~mathis/
+[Flo96]  Sally Floyd. SACK TCP: The sender's                      ippm/, 1997.
+         congestion control algorithms for the im-
+         plementation sack1 in LBNL's ns sim-            [MF95] Steven McCanne and Sally Floyd. ns{
+         ulator (viewgraphs). Technical report,                   LBL Network Simulator. Obtain via:
+         TCP Large Windows Working Group of                       http://www{nrg.ee.lbl.gov/ns/, 1995.
+         the IETF, March 1996. Obtain via                [MM96a] Matthew Mathis and Jamshid Mahdavi.
+         ftp://ftp.ee.lbl.gov/talks/sacks.ps.                     Forward Acknowledgment: Re ning TCP
+[Hoe95] Janey C. Hoe. Startup Dynamics of                         Congestion Control. Proceedings of ACM
+         TCP's Congestion Control and Avoidance                   SIGCOMM '96, August 1996.
+         Schemes. Master's thesis, Massachusetts         [MM96b] Matthew                               Mathis
+         Institute of Technology, June 1995.                      and Jamshid Mahdavi. TCP Rate-Halving
+[Hoe96] Janey C. Hoe. Improving the Start-up Be-                  with Bounding Parameters, October 1996.
+         havior of a Congestion Control Scheme for                Obtain via: http://www.psc.edu/network-
+         TCP. Proceedings of ACM SIGCOMM '96,                     ing/papers/FACKnotes/current/.
+         August 1996.                                    [MMFR96] Matthew Mathis, Jamshid Mahdavi, Sally
+[Jac88a] Van Jacobson. Congestion Avoidance and                   Floyd, and Allyn Romanow. TCP Selective
+         Control. Proceedings of ACM SIGCOMM                      Acknowledgement Options, October 1996.
+         '88, August 1988.                                        Request for Comments 2018.
+[Jac88b] Van Jacobson. Traceroute Source Code,           [OKM96a] Teunis Ott, J.H.B. Kemperman, and
+         1988. Obtain via ftp from ftp.ee.lbl.gov.                Matt Mathis. The Stationary Behav-
+                                                                  ior of Ideal TCP Congestion Avoidance.
+[Jac90]  Van Jacobson. Modi ed TCP Congestion                     In progress, August 1996. Obtain via
+         Avoidance Algorithm. Email to end2end-                   pub/tjo/TCPwindow.ps using anonymous
+         interest Mailing List, April 1990. Obtain                ftp to ftp.bellcore.com, See also [OKM96b].,
+         via               ftp://ftp.ee.lbl.gov/email/            August 1996.
+         vanj.90apr30.txt.                               [OKM96b] Teunis J. Ott, J.H.B. Kemperman, and
+[JB88]   Van Jacobson and Robert Braden. TCP                      Matt Mathis. Window Size Behavior in
+         Extensions for Long-Delay Paths, October                 TCP/IP with Constant Loss Probability,
+         1988. Request for Comments 1072.                         November 1996.
+[JBB92] Van Jacobson, Robert Braden, and Dave            [Ost96] Shawn Ostermann. tcptrace TCP dump-
+         Borman. TCP Extensions for High Perfor-                    le               analysis            tool.
+         mance, May 1992. Request for Comments                    Obtain via http://jarok.cs.ohiou.edu/soft-
+         1323.                                                    ware/tcptrace/tcptrace.html, 1996.
+[LM94] T.V. Lakshman and U. Madhow. The Per-             [Pax97a] Vern Paxson. Automated Packet Trace
+         formance of TCP/IP for Networks with                     Analysis of TCP Implementations. Proceed-
+         High Bandwidth-Delay Products and Ran-                   ings of ACM SIGCOMM '97, August 1997.
+         dom Loss. IFIP Transactions C-26, High          [Pax97b] Vern Paxson. Measurements and Analy-
+         Performance Networking, pages 135{150,                   sis of End-to-End Internet Dynamics. PhD
+         1994.                                                    thesis, University of California, Berkeley,
+[Mat94a] Matthew Mathis. Private communication,                   April 1997.
+         November 1994. Derivation of Bandwidth          [Ste94]  W. Richard Stevens. TCP/IP Illustrated,
+         vs. Loss.                                                volume 1. Addison-Wesley, Reading MA,
+[Mat94b] Matthew B. Mathis. Windowed Ping: An                     1994.
+         IP Layer Performance Diagnostic. Proceed-       [Ste97]  W. Richard Stevens. TCP Slow Start, Con-
+         ings of INET'94/JENC5, 2, June 1994.                     gestion Avoidance, Fast Retransmit, and
+                                                                  Fast Recovery Algorithms, January 1997.
+                                                                  Request for Comments 2001.
+

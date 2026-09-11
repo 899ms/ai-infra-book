@@ -1,0 +1,38 @@
+{
+  "inputs": {
+    "threads_per_block": 256,
+    "declared_registers_per_thread": 128,
+    "tile_m": 128,
+    "tile_n": 128,
+    "tile_k": 64,
+    "accumulator_in_shared": true,
+    "extra_shared_bytes": 0,
+    "declared_warp_size": 32,
+    "hbm_bytes_per_second": 3350000000000,
+    "sms": 132,
+    "declared_latency_ns": 600,
+    "declared_outstanding_loads_per_warp": 4,
+    "declared_load_bytes_per_thread": 16,
+    "declared_mma_shape": [
+      16,
+      8,
+      16
+    ]
+  },
+  "input_sources": {
+    "threads_per_block": "book (declared 8 warps)",
+    "declared_registers_per_thread": "book (declared)",
+    "tile_m": "book (chapter 4.3.2 tile)",
+    "tile_n": "book (chapter 4.3.2 tile)",
+    "tile_k": "book (chapter 4.3.2 tile)",
+    "accumulator_in_shared": "book (chapter 4.3.2: operands and accumulator in the 96 KiB buffer)",
+    "extra_shared_bytes": "book",
+    "declared_warp_size": "book (declared; not in archived texts)",
+    "hbm_bytes_per_second": "references/text/nvidia-h100-spec.txt line 383 (3.35TB/s)",
+    "sms": "references/text/nvidia-h100.txt line 644 (132 SMs)",
+    "declared_latency_ns": "book (declared; no archived measurement)",
+    "declared_outstanding_loads_per_warp": "book (declared)",
+    "declared_load_bytes_per_thread": "book (declared 128-bit load)",
+    "declared_mma_shape": "book (declared; shape not in archived texts)"
+  }
+}

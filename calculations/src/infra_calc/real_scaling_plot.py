@@ -49,7 +49,7 @@ def render():
         if not row['feasible']: continue
         outside = row['outside_fit_box']
         axes[1].plot(calls,row['upfront_cost']+calls*row['cost_per_call'], linestyle='--' if outside else '-',label=f"N={row['N']/1e9:g}B" + ('; outside fit box' if outside else ''))
-    axes[1].set(xscale='log',yscale='log',xlabel=f"Lifetime calls ({scenario['input_tokens']} input; {scenario['returned_tokens']} returned tokens)",ylabel='Declared abstract cost units',title=f"Target loss {scenario['target_loss']}; training + inference proxy")
+    axes[1].set(xscale='log',yscale='log',xlabel=f"Lifetime calls ({scenario['input_tokens']} input; {scenario['returned_tokens']} returned tokens)",ylabel=(result['cost_basis']['name']+' GPU-seconds (MFU '+format(result['cost_basis']['mfu'],'g')+')') if result.get('cost_basis') else 'Declared abstract cost units',title=f"Target loss {scenario['target_loss']}; training + inference proxy")
     axes[1].legend(fontsize=8)
     for ax in axes: ax.grid(alpha=.2)
     fig.suptitle('Real-data fit and conditional lifecycle — no hardware price or task-quality claim',fontsize=11)

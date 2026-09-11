@@ -1,0 +1,620 @@
+        Scalable Hierarchical Aggregation Protocol
+      (SHArP): A Hardware Architecture for Efficient
+                     Data Reduction
+   Richard L. Graham, Devendar Bureddy      Gil Bloch, Dror Goldenerg, Mike Dubman, Sasha Kotchubievsky,
+  Pak Lui, Hal Rosenstock and Gilad Shainer   Vladimir Koushnir, Lion Levi, Alex Margolin, Tamir Ronen,
+           Mellanox Technologies, Inc.            Alexander Shpiner, Oded Wertheim and Eitan Zahavi
+                Sunnyvale, California                                                   Mellanox Technologies, Inc.
+     Email: richardg, devendar, pak, hal, shainer                                             Yokneam, Isreal
+                   @mellanox.com                                        Email: gil, gdror, miked, sashakot, vladimirk, lionl, alexm,
+                                                                              tamir, alexshp, oddedw, eitan @mellanox.com
+
+
+
+   Abstract—Increased system size and a greater reliance on uti-               capabilities. Today HPC systems use many-core host elements
+lizing system parallelism to achieve computational needs, requires             that utilize, for example, X86, Power, or ARM processors,
+innovative system architectures to meet the simulation challenges.             General Purpose Graphical Processing Units (GPGPUs) and
+As a step towards a new network class of co-processors -
+intelligent network devices, which manipulate data traversing the              Field Programmable Gate Arrays (FPGAs)[9], to keep scaling
+data-center network, this paper describes the SHArP technology                 the system performance.
+designed to offload collective operation processing to the network.               Much of the focus on increasing system capabilities has
+This is implemented in Mellanox’s SwitchIB-2 ASIC, using in-                   been on increasing micro-processor and compute accelerator
+network trees to reduce data from a group of sources, and                      capabilities. This may be through increased computational
+to distribute the result. Multiple parallel jobs with several
+partially overlapping groups are supported each with several                   abilities, e.g. adding vector processing facilities, raw hard-
+reduction operations in-flight. Large performance enhancements                 ware capabilities, e.g. increased clock frequency, of individual
+are obtained, with an improvement of a factor of 2.1 for an eight              components, the increase in the number of such components,
+byte MPI Allreduce() operation on 128 hosts, going from 6.01                   or some combination thereof. Network capabilities have also
+to 2.83 microseconds. Pipelining is used for an improvement of                 increased dramatically over the same period, with changes
+a factor of 3.24 in the latency of a 4096 byte MPI Allreduce()
+operations, declining from 46.93 to 14.48 microseconds.                        such as increases in bandwidth, decreases in latency, and com-
+                                                                               munication technologies like InfiniBand RDMA that offload
+                          I. I NTRODUCTION                                     processing from the CPU to the network. However, the CPU
+                                                                               has remained the focal point of system data management.
+   In recent decades the quest for a steady increase in High Per-                 As the number of compute elements grows, and the need
+formance Computing (HPC) capabilities has caused significant                   to expose and utilize higher levels of parallelism grows, it is
+changes in the architecture of such systems, to meet the ever                  essential to reconsider system architectures, and focus on de-
+growing simulation needs. Many architectural features have                     veloping architectures that lend themselves better to providing
+been invented to support this demand. This has included the                    extreme-scale simulation capabilities. This includes support
+introduction of vector compute capabilities to single processor                for processing data at the appropriate places in the system and
+systems, such as the CDC Star-100[1] and the Cray-1[2],                        reducing the amount of data that is moved between memory
+followed by the introduction of small-scale parallel vector                    locations [10], [11]. Consequently, modern HPC architectures
+computing such as the Cray-XMP[3], custom-processor-based                      should investigate alternative specialized system elements that
+tightly-coupled MPPs such as the CM-5[4] and the Cray                          distribute the data manipulation, as appropriate, rather than
+T3D[5], followed by systems of clustered commercial-off-the-                   having all data processing handled by a local or remote CPU.
+shelf micro-processors, such as the Dell PowerEdge C8220                          Collaboration between all system devices and software
+Stampede at TACC[6] and the Cray XK7 Titan computer                            to produce a well-balanced architecture across the various
+at ORNL[7]. For a decade or so the latter systems relied                       compute elements, networking, and data storage infrastructures
+mostly on Central Processing Unit (CPU) frequency up-ticks                     is known as the Co-Design architecture. Co-Design exploits
+to provide the increase in computational power. But, as a                      system efficiency and optimizes performance by ensuring
+consequence of the end of Dennard scaling[8], the single CPU                   that all components serve as co-processors in the system,
+frequency has plateaued, with contemporary HPC cluster per-                    creating synergies between the hardware and the software, and
+formance increases depending on rising numbers of compute                      between the different hardware elements within the system.
+engines per silicon device to provide the desired computational                The capabilities described in this paper are directed towards
+ c 2016 IEEE. Personal use of this material is permitted. Permission from      such an architecture. The concept of Co-Design first presented
+IEEE must be obtained for all other uses, in any current or future media, including
+reprinting/republishing this material for advertising or promotional purposes,
+creating new collective works, for resale or redistribution to servers or lists, or
+reuse of any copyrighted component of this work in other works.
+by DeMicheli [12] within the environment of chip design and         is unique to this design is the emphasis on scale, with support
+later expanded to distributed systems and networks [13].            for large radix reduction trees and simultaneous overlapping
+   Mellanox focuses on CPU offload technologies performed           running jobs, each with multiple outstanding aggregation op-
+by the network as data moves through it, be it on the Host          erations.
+Channel Adapter or the switch. This frees up CPU cycles for            In subsequent sections we will describe previous work, the
+computation, reduces the amount of data transferred over the        SHArP abstraction, how it is implemented in SwitchIB-2, and
+network, allows for efficient pipelining of network and com-        provide some experimental data to demonstrate the effective-
+putation, and provides for very low communication latencies.        ness of this approach in increasing system performance, and
+To accomplish a marked increase in application performance,         making available more CPU cycles for computation.
+there has been an effort to optimize often used communication
+patterns, such as collective operations, in addition to the                             II. P REVIOUS W ORK
+continuous improvements to basic communication metrics,
+such as point-to-point bandwidth, latency, and message rate.           In the past extensive work has been done on improving per-
+   A key requirement for the success of new network fea-            formance of blocking and nonblocking barrier and reduction
+tures is the ability of applications to use the feature without     algorithms.
+requiring application-level modifications. In order to achieve         Algorithmic work performed by Venkata et al. [16] de-
+this, it is a requirement to expose new features via Appli-         veloped short vector blocking and non blocking reduction
+cation Programmer Interfaces (API) which are ubiquitous in          and barrier operations using a recursive K-ing type host-
+HPC, such as the Message Passing Interface (MPI)[14]. With          based approach, and extended work by Thakur [17]. Vadhiar
+the emergence of the OpenSHMEM[15] specification it is              et al. [18] presented implementations of blocking reduction,
+preferable to support this API too. In this paper we focus on       gather and broadcast operations using sequential, chain, binary,
+the optimization of reduction operations. The MPI standard          binomial tree and Rabsnseifner algorithms. Hoefler et al. [19]
+defines several types of collective operations that result in       studied several implementations of nonblocking MPI Allre-
+data reductions, including blocking and nonblocking variants        duce() operations, showing performance gains when using
+of MPI Barrier(), MPI Allreduce(), MPI Reduce(), MPI Re-            large communicators and large messages.
+duce scatter(), MPI Scan() and MPI Exscan(). The Open-                 Some work aimed to optimize collective operations for
+SHMEM specification currently defines blocking shmem -              specific topologies. Representative examples are ref. [20] and
+barrier all(), shmem barrier(), and the reduction operations        [21], which optimized collectives for mesh topologies, and for
+shmem dt op to all(), where dt stand for a data type, and           hypercubes, respectively.
+op for the reduction operations. The supported capabilities            Other work presented hardware support for performance
+described in this paper are generic, however they are targeted      improvement. Conventionally, most implementations use the
+at supporting these two very important APIs.                        CPU to setup and manage collective operations, with the
+   This paper describes the Scalable Hierarchical Aggregation       network just used as a data conduit. However, Quadrics[22]
+Protocol (SHArP) introduced to greatly decrease the latency of      implemented support for broadcast and barrier in network
+reduction operations. SHArP defines a protocol for reduction        device hardware. Recently IBM’s Blue Gene supercomputer
+operations, which is instantiated in Mellanox’s SwitchIB-2          included network-level hardware support for barrier and re-
+device, providing support for small data reduce and allreduce,      duction operations. Its preliminary version Blue Gene/L [23]
+and for barrier. It optimizes these often used global operations    which uses torus interconnect [24], provided up to twice
+by performing the reduction operations on the data as it            throughput performance gain of all-to-all collective opera-
+traverses a reduction tree in the network, reducing the volume      tions [25], [26]. On a 512 node system the latency of the
+of data as it goes up the tree, instead of using a CPU-based        16 byte MPI Allreduce() the latency was 4.22 µ-seconds.
+algorithm where the data traverses the network multiple times.      Later, a message passing framework DCMF for the next-
+The technology enables the the manipulation of data while it        generation supercomputer Blue Gene/P was introduced [27].
+is being transferred within the data center network, instead        MPI collectives optimization algorithms for this generation of
+of waiting for the data to reach the CPU to operate on this         Blue Gene were analyzed in [28]. The recent version Blue
+data. The wide reduction trees used provide a highly scalable       Gene/Q [29] provides additional performance improvements
+algorithm, reducing the latency of an eight byte data reduction     for MPI collectives [30]. On a 96,304 node system, the latency
+on a system of 128 hosts by a factor of 2.1. The effect of this     of a short allreduce is about 6.5 µ-seconds. IBM’s PERCS sys-
+optimization on overall application performance depends on          tem [31] fully offloads collective reduction operations to hard-
+the frequency of using such calls, as well as the the skew          ware. Finally, Mai et al. presented the NetAgg platform [32],
+in the collective initiation across the group of participating      which uses in-network middleboxes for partition/aggregation
+processes. The greater the skew, the less pronounced the            operations, to provide efficient network link utilization. Cray’s
+impact. However, the later is true of for any aggregation           Aries network [33] implemented 64 byte reduction support in
+algorithm, whether implemented in hardware or software.             the HCA, supporting reduction trees with a radix of up to
+   As described in section II, this is not the first time support   32. The eight byte MPI Allreduce() latency for about 12,000
+for aggregation is provided within the network. However, what       process with 16 processes per host was close to ten u-seconds.
+   Several API’s have been proposed for offloading collec-
+tive operation management to the HCA. This includes the
+Mellanox’s CORE-Direct [34], protocol, Portal 4.0 triggered
+operations [35], and an extension to Portals 4.0 [36]. All
+these support protocols that use end-point management of
+the collective operations, whereas in the current approach
+the end-points are involved only in collective initiation and
+completion, with the switching infrastructure supporting the
+collective operation management.
+
+               III. AGGREGATION P ROTOCOL                                             (a) Physical Network Topology
+
+   A goal of the new network co-processor architecture is to
+optimize completion time of frequently used global commu-
+nication patterns and to minimize their CPU utilization. The
+first set of patterns being targeted are global reductions of
+small amounts of data, and include barrier synchronization,
+and small data reductions.
+   SHArP provides an abstraction describing data reduction.
+The protocol defines aggregation nodes (ANs) in an ag-
+gregation tree, which are basic components of in-network                         (b) Logical SHArP Tree. Note that in the
+reduction operation offloading. In this abstraction, data enters                 SHArP abstraction an Aggregation Node
+                                                                                 may be hosted by an end-node.
+the aggregation tree from its leaves, and makes it’s way up
+the tree, with data reductions occurring at each AN, with the                        Fig. 1: SHArP Tree example.
+global aggregate ending up at the root of the tree. This result
+is distributed in a method that may be independent of the
+aggregation pattern.                                                 B. Aggregation Trees
+   Much of the communication processing of these operations             The aggregation tree defines the reduction pattern for data
+is moved to the network, providing host-independent progress,        entering from the end-nodes, with the result ending up in the
+and minimizing application exposure to the negative effects          root of the tree. ANs are connected in a logical tree topology.
+of system noise. The implementation manipulates data as it              Figure 1 shows an example of a SHArP tree allocation over
+traverses the network, minimizing data motion. The design            the physical network topology. Figure 1a shows an example
+benefits from the high degree of network-level parallelism,          of physical network fat tree topology, and Figure 1b is the
+with the high-radix InfiniBand switches to use shallow reduc-        SHArP tree allocation over this topology. Generally, since the
+tion trees.                                                          SHArP tree is logical, it can be created over any topology.
+   The aggregation protocol is described in the following            The optimization of tree allocation over given topology is out
+subsections. Data enters the aggregation tree at its leaves, with    of scope of this paper.
+the aggregation nodes operating on the data as it travels up the        SHArP end-nodes (denoted in the figure by blue stars) are
+tree to the root. Aggregation groups are used to minimize the        connected to ANs (denoted in the figure by red stars), and,
+aggregation data path.                                               together with the ANs, define a SHArP tree. As seen in the
+                                                                     figure, ANs are usually implemented in a switch, but also
+A. Aggregation Nodes                                                 can be implemented in a host. In addition, the connections
+   The aggregation node is a logical construct, and specifically     between ANs are logical and, hence, do not have to follow the
+a node in an aggregation tree. It accepts data from its children,    physical topology. Moreover, the end-nodes are not necessarily
+reduces the data, and if appropriate, forwards the result to its     connected to the physically nearest switch, or AN, in a SHArP
+parent. If the node is defined as the root, it starts distributing   tree. One node of the tree is defined as a root, and that defines
+the result, instead of forwarding it up the tree. The operations     the parent-children hierarchy for the ANs in the tree.
+supported by the protocol are those that keep the volume of             Generally, each AN can participate in several trees, however
+the resulting data the same as that coming in from an indi-          each reduction operation can use only a single tree at a time.
+vidual child in the tree. This supports barrier-synchronization,     Above the SHArP level,l single reduction can be split into
+with zero size user data, as well as vector reductions, with         multiple smaller reduction operations, each performed on the
+operations such as a summation.                                      same or different trees.
+   An aggregation can be implemented in different ways. It              The protocol does not define the data transport, so that
+can be instantiated, as a process running in a server connected      communication can occur using a range of transports, such
+to the cluster, as a process running in a switch device, or as       as RDMA-enabled protocols like InfiniBand or RDMA over
+part of the switch hardware.                                         Converged Ethernet (RoCE). It also does not handle packet
+loss or packet reordering, requiring a reliable transport which
+provides reliable, in-order delivery of packets to the upper
+layer.
+   Multiple trees are supported to better distribute the load
+over the system, and utilize available aggregation resources.
+No assumptions are made about the physical topology of the
+underlying network, and trees may overlay any physical net-                        Fig. 2: SHArP Header schematic.
+work topology, such as a fat-tree, DragonFly+, and hypercube.
+C. Aggregation Group
+   As a mechanism for improving system resource utilization,
+the implementation defines the concept of a group, which
+includes a subset of the hosts, that are attached to the leaf
+nodes of the tree. A group may be defined to include the subset
+of hosts spanning a communicator. When the group is formed,
+the AN creates a description of its children and its parent (if it
+is not the root) thus defining a sub-tree over which reductions
+will take. A given tree supports multiple groups, from a single
+job as well as from multiple jobs belonging to different users.
+   As a performance optimization, once a group has been
+defined and the corresponding sub-tree setup, this sub-tree may
+be trimmed, terminating it at the level is the sub-tree’s where
+its width become one the rest of the way to the root of the
+tree. This is done to eliminate the need for all data to reach
+the root of the tree; rather, it only must reach the highest level
+in the tree needed to reduce that data. The detailed algorithm
+of distributed group creation is out the scope of the paper.
+   For example a SHArP group is created when a new MPI
+communicator is created. This group contains a subset of MPI
+processes that are members of this communicator, one MPI
+process per host, or perhaps one MPI process per socket. Each        Fig. 3: SHArP Header including data type, size, and number
+group member is responsible for on-host or on-socket data            of elements, as well as operation code.
+aggregation, before passing this aggregated data to the SHArP
+protocol.
+   To avoid potential deadlock in the collective operation, one      description, i.e., the data type, data size, and number of such
+must ensure end-to-end availability of SHArP resources, such         elements, and the aggregation operations to be performed, such
+as buffers, in the ANs. If this is not ensured, the simultaneous     as a min or sum operation.
+and uncoordinated execution of multiple reduction operations            An aggregation node receiving aggregation requests collects
+competing for the same AN resources may result in several            these from all its children and performs the aggregation
+reduction operations waiting for the availability of the same        operation once all the expected requests arrive. An internal
+AN resources, allowing none to complete. Resource allocation         data structure per collective operation at each AN is used to
+methods are not covered in this paper. When the result arrives       track the progress of a collective operation. These are allocated
+at its targets, the implementation ensures that none of the          on the arrival of the first message associated with the collective
+resources used in the reduction are still in use. This may be        operation, and freed once the operation has completed locally.
+used for flow control purposes.                                      The result of the aggregation operation is sent by the AN as
+                                                                     a part of a new aggregation request to its parent aggregation
+D. Aggregation Operations                                            node. The root aggregation node performs the final aggregation
+  An aggregation operation is performed with participation           producing the result of the aggregation operation.
+of each member of the aggregation group. To initiate such               Upon completion of the aggregation operation, the root ag-
+an operation, each member of the aggregation group sends             gregation node forwards the aggregation result to the specified
+an aggregation request message to its leaf aggregation node.         destinations. The destination may be one of several targets,
+The SHArP request message includes the aggregation request           including one of the requesting processes, such as in the case
+header followed by the reduction payload. Figures 2 and 3            of MPI Reduce(), all the group processes, such as in the
+show the format of the SHArP message.                                case of an MPI Allreduce() operation, or a separate process
+  The aggregation request header contains all needed infor-          that may not be a member of the reduction group, such as
+mation to perform the aggregation. This includes the data            in the case of big data MapReduce type of operations. An
+aggregation tree can be used to distribute the data in the
+these cases. The target may also be a user-defined InfiniBand
+multicast address. It is important to note that while multicast
+data distribution is supported by the underlying transport, it
+provides an unreliable delivery mechanism. Any reliability
+protocol needed must be provided on top of this mechanism.
+E. Fault Handling
+   Several types of errors may occur and include transport-level
+errors, end-node errors, and SHArP protocol errors. The main
+goal of the fault handling mechanism is to notify the host-        Fig. 4: SHArP Node implemented as a virtual TCA within the
+processes of such errors, under the assumption that some data      SwitchIB-2.
+is lost, and therefore the aggregation operation can’t complete
+successfully. When this happens, the allocated AN resources
+are freed, as there is no guarantee that the specific error can    integrated into the switch ASIC, which adds to its ability
+be dealt with, and the end-user processes are notified, so the     to provide the best performance in terms of bandwidth and
+application can make a decision how to proceed, whether it         latency. As illustrated in Figure 4, an internal logical port
+can recover from the error, or whether it must abort.              connects an InfiniBand SHArP TCA to the switch. This TCA
+   With all types of errors, a management entity, known as the     provides an InifinBand transport termination point, which
+Aggregation Manager (AM), is notified of the error, if possible.   serves as the mechanism for targeting data to be manipulated
+The AM will attempt to notify the end-node processes of            by the aggregation logic, and as the source for the result of
+the error, and then revoke the SHArP resource allocation           such aggregation, as required by the aggregation protocol.
+associated with the running job. Both in-band SHArP mon-           The TCA supports both Reliable Connection (RC) transport
+itoring capabilities, as well as InfiniBand network monitoring     to enable reliable delivery of data through the aggregation
+capabilities are used to detect errors. Since SHArP is also in-    tree as well as Unreliable Datagram (UD) transport to enable
+tended to support MPI and SHMEM communication libraries,           Multicast distribution of the aggregation result. Data is sent
+which do not bound the duration of an aggregation operation,       in the direction of the root, when aggregation is taking place,
+timeouts can’t be relied on for error detection. Description of    using the RC transport. The results may be distributed from
+the software infrastructure supporting the hardware capabilities   the root down the tree using the RC transport, and to a UD
+is beyond the scope of this paper.                                 multicast group using the UD transport. A high performance
+   SHArP errors, such as tree connection failure or errors         hardware implementation of the aggregation node functionality
+within the Target Channel Adapter (TCA), are detected by           is embedded into the TCA hardware.
+the SHArP hardware implementation. The AM is notified as              The aggregation node implementation includes a high per-
+the result of such error detection.                                formance Arithmetic Logic Unit (ALU), used to perform the
+   Transport specific errors, such as data transmission errors,    aggregation operations supported by the aggregation node. It
+link errors, and switch failure, are handled by the transport      can operate on 32- and 64-bit signed and unsigned integers
+layer and its monitoring infrastructure. If the transport layer    and floating point data. The supported operations include sum,
+can recover from such errors, and data transmission proceeds,      min and max, MPIs MinLoc and MaxLoc, bitwise OR, AND,
+the AM is not notified of such errors.                             and XOR, which include all the operations, with the exception
+   Errors in the end-nodes, such as connection failure and         of the product, needed to support the MPI standard and the
+process failure, are detected by the leaf switches, when they      OpenSHMEM specification.
+attempt to communicate with the host, and result in AM                While floating point summation and multiplication opera-
+notification.                                                      tions are both commutative, they are not associative. That
+                                                                   is, (a+b)+c not necessarily equal to a+(b+c). While per-
+F. SwitchIB-2-Based Aggregation Support                            forming a non-commutative reduction operation on floating
+   The implementation of support for the switch-based reduc-       point operands, the implementation needs to take care of the
+tion operations is based on the SHArP protocol described           order of execution to enable repeatable operation results. As
+in Section III. The aggregation node logic is implemented          an example, 1020 − (1020 + ) = 0 is not the same as
+as an InfiniBand TCA integrated into the switch ASIC. The          (1020 − 1020 ) −  = −. Therefore, the operation can not
+transport used for communication between ANs and between           be performed in the order the aggregation requests arrive at
+AN and hosts in the aggregation tree is the InfiniBand Reliable    the aggregation node, since this order is non-deterministic. Re-
+Connection (RC) transport. The results are distributed from the    quests are collected in the TCA, with the reduction performed
+root to the leaf nodes, or hosts, down the tree, or to a target    only after all operands are available, in a predetermined fixed
+InfiniBand Multi-cast group. Details are provided below.           order. SwitchIB-2 implements a predictable operation ordering
+   Mellanox’s SwitchIB-2 implements support for SHArP over         to enable repeatable results regardless of the order of arrival
+the InfiniBand network. The SHArP aggregation node is              of the aggregation requests.
+   An important design goal for the SwitchIB-2 SHArP im-           erations are initiated, only if resources are available, otherwise
+plementation is that this functionality be useful in large-scale   operation initialization is delayed.
+production environments, with either few large running jobs,
+or many smaller jobs. While such jobs may not share compute                               V. E XPERIMENTS
+nodes, they could still use some of the same switches, and it        To study of the switch-based SHArP collective acceleration
+is essential to minimize the impact of a running job on the        hardware, the performance of the collective operations was
+other ones. To reduce the impact of a collective operation on      measured as a function of message size and number of hosts,
+other data flows, and avoid switch buffer resources being used     and compared with data obtained using optimized host-based
+for long periods of time, which waiting for data from a late       methods.
+arriving process to reach the reduction node, the aggregation
+support is implemented in a separate unit, the TCA, within         A. System Configuration
+the ASIC and does not require dedicated virtual lanes. The            The test system included 128 node dual socket hosts, with
+implementation support for up to 64 trees per aggregation          each processor being a 2.6 GHz Intel E5-2697 v3 Haswell
+node, a large number of groups and hundreds of outstanding         processor. Mellanox’s SwitchIB-2 switches, with support for
+aggregation operations enables many applications running at        the SHArP protocol, and ConnectX-4 Host Channel Adapters
+the same time to run at the same time using overlapping switch     were used.
+resources. Multiple reduction groups per job are also supported       Mellanox OFED version 3.2-1.0.1.1 of the InfiniBand verbs
+each being able to perform several simultaneous reduction          was is use, with Red-Hat Linux version 7.2 operating sys-
+operations efficiently.                                            tem. A pre-release version of Mellanox’s subnet manager
+   Access to the SHArP trees from the host is controlled by        with SHArP support was used. Pre-release versions of the
+the privileged SHArPd which obtains the list of allocated          Aggregation Manager, which manages the aggregation control-
+resources from the Aggregation Manager (AM). The SHArPd,           path, and SHArP Daemon, which handles host-local control-
+in lieu of RDMA CM running on the switch, is involved in           path management were also used. A pre-release version of
+establishing the RC connections between the hosts and the          SwitchIB-2 firmware was used, with SHArP control-path
+leaf switches, and enforces the resource allocation provided       support.
+by the AM. In addition, InfiniBand Partition Keys (pkey’s)            Since the latencies of the barrier and small-sized data
+are used for traffic isolation. For each job, the AM determines    reduction operations are becoming rather small, effects of
+the switch resources allocated to the job, and passes this         system noise have a measurable effect on the performance
+information to all relevant AN’s, which track this resource,       of these collective operations. As such, several default sys-
+and the amount of resources in current use by the application,     tem settings were modified to reduce the effect of the sys-
+not allowing it to exceed the allocation.                          tem activity, and the Central Processing Unit (CPU) en-
+                                                                   tering one of the C-states. The kernel/OS settings include
+                 IV. MPI I MPLEMENTATION                           the command lline options intel pstate=disable, isolcpus=1,
+                                                                   nohz full=1 and rcu nocbs=1. They also include sysctl vm -
+   In the MPI implementation a SHArP group is mapped to            stat interval=1200, sysctl kernel.numa balancing=0, sysctl
+an MPI communicator. New group formation includes new              kernel.nmi watchdog=0 and disable THP: echo never ¿
+group formation, group trim operation, and a query for the         /sys/kernel/mm/transparent hugepage/enabled. The BIOS set-
+resource allocation for the group. The cost of these operations    ting changes include disabling the SMI interrupts including
+are logarithmic in the tree radix. Group formation and trim        ‘’Processor Power and Utilization Monitoring” and ‘’Memory
+are accelerated by the Aggregation Nodes.                          Pre-Failure Notification”. In addition disable C-states, set
+   The implementation uses a non-blocking interface to post        static max performance, disable turbo-boost and disable hyper-
+a work request to the RC QP connected to a laef switch,            threading.
+to locally initiate a collective operation. A MPI Barrier()
+is initiated with a SHArP barrier, and MPI Reduce() and            B. Communication Libraries
+MPI Allreduce() are initiated with an allreduce SHArP work           A pre-release version of HPC-X[37] is used. The MPI
+request. Blocking and non-blocking collective operations are       collective FCA[38] library version 3.4 is used, with initial
+implemented using the same interfaces. The MPI Reduce() is         SHArP support. Some comparison runs were performed using
+implemented in this manner, for ease of tracking credits, with     MVAPICH-2[39] version 2.2a.
+the result discarded by all but the root of the communicator.
+Collective operation completion is detected by a completion        C. Performance Tests
+event received after the result is delivered to the QP. The          A low-level verbs test, and the OSU collective latency test
+current implementation uses the aggregation tree to distribute     version 5.2 [40] for MPI Barrier() and MPI Allreduce() were
+the results to all members of the communicator.                    used. All tests were run with a single process per host.
+   The MPI implementation keeps track of the number of               The basic verbs-level tests consisted of a tight loop around
+outstanding collective operations posted to the network, as        individual collective operations, such as a SHArP-level barrier.
+well as the amount of buffer space in use. New collective op-      This consists of two steps: 1) posting the SHArP barrier
+message to the HCA, and 2) polling the SHArP completion                       TABLE III: A comparison of MPI Allreduce() and Native
+queue for completion of the reduction operation. In a pipelined               Allreduce() average latencies (µ-seconds) on optimized sys-
+algorithm, a single MPI-level message was fragmented into                     tem. The latency difference (Diff) is in units of µ-seconds.
+multiple SHArP messages which were simultaneously in flight.                                                      Number of Hosts
+   In addition, the impact of using the SHArP based aggrega-                   Size                32                  64                   128
+                                                                               [B]       MPI         Native      MPI     Native      MPI      Native
+tion support on the OpenFOAM [41] application is studied.
+                                                                               0         2.83      2.59 (0.24)   2.83  2.57 (0.26)   2.88   2.63 (0.25)
+                                                                               8         2.95      2.66 (0.29)   3.10  2.68 (0.42)   3.15   2.79 (0.36)
+                 VI. MI CRO -B ENCHMARK R ESULTS                               16        2.89      2.72 (0.17)   3.04  2.70 (0.34)   3.03   2.86 (0.17)
+                                                                               32        3.01      2.72 (0.29)   3.17  2.85 (0.32)   3.24   2.92 (0.32)
+A. Native SHArP Measurements                                                   64        3.06      2.89 (0.17)   3.24  2.92 (0.32)   3.24   3.04 (0.20)
+                                                                               128       3.24      3.06 (0.18)   3.44  3.10 (0.34)   3.57   3.25 (0.32)
+   Table I present the results of SHArP-based latency mea-
+surements for barrier and allreduce operations. In all of these
+measurements the hosts are equally distributed across eight
+leaf switches configured in a two-level fat tree topology with                128 host count. The SHArP-based approach consistently out-
+100Gbps links.                                                                performs a host-based algorithm, which uses InfiniBand mul-
+                                                                              ticast capabilities. At this scale the latency of the host-based
+TABLE I: Native SHArP Allreduce() average latency (µ-                         methods are at least 50% than the SHArP-based methods.
+seconds). Optimized system with turbo-mode off.                               The difference from the MVAPICH-2 implementation is even
+                                                                              larger, showing that the host-based HPC-X algorithms are
+                                  Number of Hosts
+                     Message      32   64     128                             efficient, and provide a fair comparison for the SHArP based
+                     Size [B]                                                 algorithms.
+                     0            2.59   2.57     2.63
+                     8            2.66   2.68     2.79                        TABLE IV: MPI Allreduce() and MPI Barrier() average la-
+                     16           2.72   2.70     2.86
+                     32           2.72   2.85     2.92                        tency (µ-seconds) for several implementations on 128 hosts, 1
+                     64           2.89   2.92     3.04                        process per host. The latency difference (Diff) is in % relative
+                     128          3.06   3.10     3.25                        to SHArP based measurements.
+                     256          3.89   3.99     4.21
+                                                                                      Message        HPC-X SHArP      HPC-X Host     MVAPICH-2
+                                                                                      Size [B]          Based            Based        Host Based
+  Table II compares the performance of the SHArP-based                                0(barrier)         2.91         5.25 (80.4%)   11.47 (290%)
+barrier and allreduce collectives on a system tuned for reduced                       8                  2.83         6.01 (112%)    11.90 (320%)
+system activity (Opt), as described in section V, and a system                        16                 2.79         5.95 (56.9%)   11.27 (304%)
+configured with default settings (Unopt). When 64 hosts are                           32                 3.94         6.19 (57.1%)   11.69 (197%)
+                                                                                      64                 3.02         6.80 (125%)    12.03 (298%)
+used, the impact on performance is relatively small, on the                           128                4.30         7.69 (78.8%)   14.08 (227%)
+order of 5%. However, at 128 nodes the impact isin the range
+of 10 to 20%.
+                                                                                 Table V shows MPI Allreduce() latencies for message sizes
+TABLE II: Native Allreduce() and Barrier() average latency                    that exceed the SHArP hardware maximum message size. This
+(µ-seconds). One process per host. Comparison of optimized                    is achieved by posting multiple SHArP reduction operations,
+system to out-of-the-box system settings.                                     pipelining the reduction of message fragments. This improved
+                                                                              performance, with a peak speedup of almost a factor of four
+   Message                64 Hosts                       128 Hosts
+   Size [B]                                                                   at 2048 bytes.
+                   Opt    Unopt      % Diff     Opt      Unopt       % Diff
+   0 (Barrier)     2.57    2.70       5.0       2.63      3.17        20.5    TABLE V: MPI Allreduce() average latency (µ-seconds) on
+   8               2.68    2.85       6.3       2.79      3.43        22.9    128 hosts, one process per host. Comparison of pipelined
+   16              2.70    2.79       3.3       2.86      3.15        10.1
+   32              2.85    2.90       1.7       2.92      3.36        15.1    SHArP-based algorithm with host-based algorithm.
+   64              2.92    3.06       4.8       3.04      3.45        13.5                      Message     SHArP     Host      SHArP
+   128             3.10    3.24       4.5       3.25      3.68        13.2                      Size [B]     based    Based   improvement
+   256             3.99    4.02       0.8       4.21      4.82        14.5                                                       factor
+                                                                                                8            2.76     5.82        2.11
+                                                                                                16           2.76     5.91        2.14
+                                                                                                32           2.86     6.04        2.11
+B. MPI-Level SHArP Measurements
+                                                                                                64           3.01     6.76        2.25
+   Table III reports the latencies of MPI Allreduce() and                                       128          3.24     7.37        2.27
+                                                                                                256          3.50     8.99        2.57
+MPI Barrier() compared with native SHArP data. The MPI                                          512          4.06     11.11       2.74
+integration increases latency by two to four tenths of a µ-                                     1024         5.49     18.04       3.29
+second.                                                                                         2048         8.44     33.61       3.98
+   Table IV compares the performance of MPI Barrier() and                                       4096         14.48    46.93       3.24
+MPI Allreduce() from several different implementations at
+TABLE VI: MPI Allreduce() average latency (µ-seconds) on          TABLE VII: OpenFOAM performance as a function of the
+128 hosts, one process per host. Comparison of result deitri-     MPI library implementation. The numbers in brackets indicate
+butiong using RC down the reduction tree, UD multicast, and       the % improvement in run-time when using SHArP capabili-
+both with a host-based algorithm. Size is given in bytes.         ties.
+   size   RC Only   RC & UD (default)   UD Only   Host based            Number of    HPC-X with      Default     HPC-X with
+   4        2.7           2.5             2.46       5.68               Processes    HCOLL no       Open MPI     HCOLL with
+   8        2.7           2.51            2.45       5.78                              SHArP                       SHArP
+   16      2.71           2.56            2.52       5.89               28              1892        1892(0%)      1892 (0%)
+   32      2.82           2.56            2.51       6.00               56              832        866 (4.09%)   824 (1.05%)
+   64      2.96           2.67            2.61       6.78               112             426        469 (9.96%)   424 (0.59%)
+   128     3.14           2.96            2.92       7.3                224             249        285 (14.3%)   248 (0.39%)
+                                                                        448             159        194 (22.4%)   155 (2.50%)
+   256     3.44           3.75            3.71       8.59
+                                                                        896             127        167 (31.4%)   121 (4.75%)
+   512      4.1           4.29            4.19      10.69
+                                                                        1792            118        180 (52.6%)   116 (1.65%)
+   1024    5.51           5.5             5.43      18.67               2688            136        206(51.3%)    127 (7.18%)
+   2048    8.45           7.94            7.47       33.7               3584            174                      151 (15.2%)
+   4096    14.62         13.31           11.54      46.89
+
+
+                                                                                        VIII. D ISCUSSION
+             VII. O PEN FOAM P ERFORMANCE
+                                                                     Small and medium data reduction operations are frequently
+   Understanding the impact of the SHArP technology on            used by many scientific applications. The need for rapid
+application performance is important. To have an impact such      synchronization of many processes is also great, especially
+applications must use either barrier orsmall reduction opera-     when using programming models that rely on explicit synchro-
+tions. Also, application load imbalance must be smaller than      nization to maintain application consistency, such as OpenSH-
+the duration of the collective operation to exhibit significant   MEM. This is contrary MPI send-receive-like semantics where
+impact on application performance.                                the synchronization is implicit, as part of the protocol. The
+                                                                  SHArP capabilities are designed to provide very low network-
+   We have chosen to use the OpenFOAM [41] application for
+                                                                  level latency reduction and synchronization capabilities, thus
+these measurements. The benchmark run was the Lid Driven
+                                                                  addressing these needs. In addition, this capability is designed
+Cavity Flow, using the icoFoam solver, with 1 million cells.
+                                                                  to minimize the software path for such operations.
+   The tests were run using HPC-X and base Open MPI.                 To achieve scalable low-latency performance, the implemen-
+HPC-X’s collective MPI Allreduce() algorithms are shared-         tation takes advantage of the large switch radix, 36 ports in the
+memory aware. The collective operation used most frequently       case of SwitchIB-2, by mapping the SHArP reduction tree onto
+by OpenFOAM is an eight byte MPI Allreduce() used by the          the underlying physical topology in such a way that minimizes
+conjugate gradient solver.                                        the network costs between aggregation nodes. In particular,
+   The host-based MPI Allreduce() used by HPC-X is a highly       there is a preference to map connected aggregation nodes
+optimized derivative of the recursive k’ing algorithm that        to directly connected switches, where possible, to minimize
+leverages the InfiniBand hardware multicast capabilities. It      switch latency costs, as well as link utilization. This results in
+also support a SHArP based version of MPI Allreduce(). The        shallow, high-radix reduction trees, and while the experiments
+default Open MPI implementation uses a more traditional           run for this paper were for a system with a topology of a
+recursive-doubling MPI Allreduce().                               two-level fat-tree, this approach is expected to be efficient for
+   Table VII present the total run time for this test case,       other topologies. The high-radix trees provide a high degree
+as a funciton of MPI implementation and of the number of          of reduction parallelism, while rapidly reducing the volume
+processes. As the results show, using the SHArP capabilities      of data on the network. Thus, data traverses a small number
+improves overall application performance. When comparing          of switches, often one switch per tree level. In the case of a
+to the implementation using the highly optimized host-based       fat-tree topology based on a 36-port SwitchIB-2 supporting a
+algorithm, overall application performance improves anywhere      full bisection-bandwidth, the data volume is reduced by up to
+from half a percent to fifteen percent. Discarding the last two   a factor of 18 at each level in the tree.
+data points, since overall run time is increased, five percent       The particular configuration chosen for this paper’s exper-
+improvement is the upper limit on performance improvement         iments uses eight leaf switches, with the 32, 64, and 128
+for this particular test case.                                    host configurations differing only in the number of children
+   Comparing the performance of the test case using the           each AN has at the first-level in the tree. As barrier data in
+SHArP capabilities to the more traditional MPI Allreduce()        table I shows, the native performance is almost constant as
+implementation, we see a far larger performance improvement.      a function of the number of children when the only changes
+Overall application performance is improved in the range of       in the tree are the number of children the AN has. There is
+four to 50%, or four to 30%, when considering only the            a weak dependence on the size of the reduction of 0.10 and
+runs for which an increased number of processes being used        0.22 micro-seconds when the number of children at the first-
+reduces overall application run-time.                             level AN is increased from four to eight, and then from eight
+to sixteen, respectively. This is due to the larger number of       above an equivalent optimized host-based algorithm. Large
+individual data reductions that are performed, as well as the       improvements are shown over the full range of measurements,
+added volume of data the ASIC must handle.                          up to 4096 bytes.
+   MPI-level comparisons are also provided, as this is the             Finally, as has been shown by the OpenFOAM test case,
+communication API used by the vast majority of parallel             application run time is reduced by using the SHArP capabili-
+HPC applications. Table III compares the latencies for the          ties, with its impact being more pronounced with increased
+MPI level reduction capabilities to the native capabilities. This   use of SHArP optimized collective operations. The more
+table shows that the current MPI-level support generally adds       load balanced the applications are, the greater the impact
+overhead in the range of 200-400 nano-seconds. This overhead        on overall application performance. This is generally true
+is expected to be independent of the size of the reduction          for collective operations that aggregate data, with the SHArP
+group, with a dependence on message size when an inline             based algorithms being such operations.
+send is used to initiate the reduction operation.
+   This paper relies to a certain degree on performance compar-                             IX. C ONCLUSIONS
+isons to host-based MPI-level reduction operations to highlight
+                                                                       This paper presents the SHArP architecture and its im-
+the performance advantages of the SHArP-based approach. It
+                                                                    plementation in the SwitchIB-2 ASIC. The capability shows
+is important to demonstrate that the measuring stick indeed
+                                                                    very good performance characteristics for small-sized data re-
+does provide a good comparison for such purposes. Table
+                                                                    ductions, with industry leading performance. By mapping the
+IV compares the MPI-level performance of MPI Barrier()
+                                                                    aggregation trees well onto the underlying physical trees and
+and MPI Allreduce() of SHArP-based implementations, to
+                                                                    taking advantage of the high degree of parallelism available
+an industry leading and highly optimized host-based meth-
+                                                                    at the network level, this approach is expected to scale well
+ods supported by HPC-X, and to MVAPICH-2, a widely
+                                                                    to very large systems. In addition, one can take advantage
+used InfiniBand-supporting MPI implementation. Both are
+                                                                    of the large amount of outstanding operations supported by
+considered high-performance implementations for InfiniBand-
+                                                                    the switches, by pipelining SHArP reduction operations to
+based systems. As table IV shows, HPC-X’s SHArP-based
+                                                                    extend the range of reduction sizes that can benefit from these
+implementation is at least fifty percent better than it’s host-
+                                                                    capabilities.
+based approach. At 128 nodes, the implementation is at a
+factor of three to four times better than the ones supported           The current approach has more potential for improved
+by the MVAPICH-2 implementation. The SHArP-based ap-                performance over end-point (HCA) based approaches, because
+proach does indeed provide exceptional performance, with the        of the greater degree of aggregation concurrency available
+difference in latencies expected to grow as the system size         from the high-radix Mellanox InfiniBand switches. In addition,
+grows.                                                              the data paths tend to be shorter, with the data not required
+   Comparing SHArP estimated eight byte MPI Allreduce()             to travel to the network edge to be reduced. For topologies
+performance to that reported for the highly integrated BG/L         where all switches are edge switches, such as hypercubes, the
+and BG/P machines, SHArP latencies are a bit smaller than           virtual nature of the AN implies that switch traversal does not
+the BG/L latencies. The SHArP latency is comparable to that         imply paying the additional cost of a reduction at each switch
+of the BG/P platform. However, the SHArP implementation             traversal, thus enabling the use of shallow aggregation trees
+supports an environment where jobs may share host and               even for such network topologies.
+network resources, and does not require taking up virtual lanes
+                                                                                                R EFERENCES
+to provide switch buffer resources for SHArP reductions. The
+BG/P per router latencies are quite a bit lower than those          [1] P. B. Schneck, Supercomputer Architecture. Boston, MA: Springer
+of the SwitchIB-2, but the latter supports a much wider tree            US, 1987, ch. The CDC STAR-100, pp. 99–117. [Online]. Available:
+                                                                        http://dx.doi.org/10.1007/978-1-4615-7957-1 5
+node radix, with the latency of these small data reductions         [2] R. M. Russell, “The cray-1 computer system,” Commun. ACM,
+being weakly dependent on the number of input operands. This            vol. 21, no. 1, pp. 63–72, Jan. 1978. [Online]. Available: http:
+supports shallow reduction trees, thus providing low overall            //doi.acm.org/10.1145/359327.359336
+                                                                    [3] M. C. August, G. M. Brost, C. C. Hsiung, and A. J. Schiffleger, “Cray
+reduction latencies.                                                    x-mp: The birth of a supercomputer,” Computer, vol. 22, no. 1, pp.
+   Even though the switch can perform reductions on payloads            45–52, Jan. 1989. [Online]. Available: http://dx.doi.org/10.1109/2.19822
+of up to 256 bytes, independent of the size of the individual       [4] C. E. Leiserson, Z. S. Abuhamdeh, D. C. Douglas, C. R. Feynman,
+elements, the ability of the device to handle multiple out-             M. N. Ganmukhi, J. V. Hill, D. Hillis, B. C. Kuszmaul, M. A.
+                                                                        St. Pierre, D. S. Wells, M. C. Wong, S.-W. Yang, and R. Zak,
+standing collective operations is used to pipeline reductions.          “The network architecture of the connection machine cm-5 (extended
+This capability is used to support the reduction of larger data         abstract),” in Proceedings of the Fourth Annual ACM Symposium
+blocks, using software level message fragmentation and re-              on Parallel Algorithms and Architectures, ser. SPAA ’92. New
+                                                                        York, NY, USA: ACM, 1992, pp. 272–285. [Online]. Available:
+assembly. As table V shows, this greatly increases the range            http://doi.acm.org/10.1145/140901.141883
+of SHArP’s utility. In this particular set of measurements,         [5] R. Kessler and J. Schwarzmeier, “Cray t3d: a new dimension for cray
+the benefit over the host-based approach continues to grow              research,” in Compcon Spring ’93, Digest of Papers., feb 1993, pp. 176
+                                                                        –182.
+in relative proportions up to a size of 2048 bytes, where the       [6] https://www.tacc.utexas.edu/systems/stampede.
+latency of the SHArP-based approach is about a factor of four       [7] https://www.olcf.ornl.gov/computing-resources/titan-cray-xk7/.
+ [8] H. Esmaeilzadeh, E. Blem, R. S. Amant, K. Sankaralingam, and                [28] A. Faraj, S. Kumar, B. Smith, A. Mamidala, and J. Gunnels, “Mpi collec-
+     D. Burger, “Dark silicon and the end of multicore scaling,” in Computer          tive communications on the blue gene/p supercomputer: Algorithms and
+     Architecture (ISCA), 2011 38th Annual International Symposium on.                optimizations,” in High Performance Interconnects, 2009. HOTI 2009.
+     IEEE, 2011, pp. 365–376.                                                         17th IEEE Symposium on. IEEE, 2009, pp. 63–72.
+ [9] M. C. Herbordt, T. VanCourt, Y. Gu, B. Sukhwani, A. Conti, J. Model,        [29] R. A. Haring, M. Ohmacht, T. W. Fox, M. K. Gschwind, D. L. Satter-
+     and D. DiSabello, “Achieving high performance with fpga-based com-               field, K. Sugavanam, P. W. Coteus, P. Heidelberger, M. A. Blumrich,
+     puting,” Computer, vol. 40, no. 3, p. 50, 2007.                                  R. W. Wisniewski et al., “The ibm blue gene/q compute chip,” Micro,
+[10] G. Kestor, R. Gioiosa, D. J. Kerbyson, and A. Hoisie, “Quantifying the           IEEE, vol. 32, no. 2, pp. 48–60, 2012.
+     energy cost of data movement in scientific applications,” in 2013 IEEE      [30] S. Kumar, A. Mamidala, P. Heidelberger, D. Chen, and D. Faraj,
+     international symposium on workload characterization (IISWC). IEEE,              “Optimization of mpi collective operations on the ibm blue gene/q
+     2013, pp. 56–65.                                                                 supercomputer,” Int. J. High Perform. Comput. Appl., vol. 28, no. 4,
+[11] D. Tiwari, S. S. Vazhkudai, Y. Kim, X. Ma, S. Boboila, and P. J.                 pp. 450–464, Nov. 2014. [Online]. Available: http://dx.doi.org/10.1177/
+     Desnoyers, “Reducing data movement costs using energy-efficient, ac-             1094342014552086
+     tive computation on ssd,” in Presented as part of the 2012 Workshop on      [31] B. Arimilli, R. Arimilli, V. Chung, S. Clark, W. Denzel, B. Drerup,
+     Power-Aware Computing and Systems, 2012.                                         T. Hoefler, J. Joyner, J. Lewis, J. Li et al., “The percs high-performance
+[12] G. DeMicheli and M. Sami, Hardware/software Co-design. Springer                  interconnect,” in High Performance Interconnects (HOTI), 2010 IEEE
+     Science & Business Media, 2013, vol. 310.                                        18th Annual Symposium on. IEEE, 2010, pp. 75–82.
+[13] F. Balarin, Hardware-software co-design of embedded systems: the            [32] L. Mai, L. Rupprecht, A. Alim, P. Costa, M. Migliavacca, P. Pietzuch,
+     POLIS approach. Springer Science & Business Media, 1997.                         and A. L. Wolf, “Netagg: Using middleboxes for application-specific
+[14] http://www.mpi-forum.org.                                                        on-path aggregation in data centres,” in Proceedings of the 10th ACM
+[15] http://www.openshmem.org.                                                        International on Conference on emerging Networking Experiments and
+[16] M. G. Venkata, P. Shamis, R. Sampath, R. L. Graham, and J. S.                    Technologies. ACM, 2014, pp. 249–262.
+     Ladd, “Optimizing blocking and nonblocking reduction operations for         [33] B. A. snf E. Froese snf L. Kaplan and D. Roweth, “Cray xc series
+     multicore systems: Hierarchical design and implementation,” in Clus-             network,” Cray Inc., Tech. Rep., 2012.
+     ter Computing (CLUSTER), 2013 IEEE International Conference on.             [34] R. L. Graham, S. Poole, P. Shamis, G. Bloch, N. Bloch, H. Chapman,
+     IEEE, 2013, pp. 1–8.                                                             M. Kagan, A. Shahar, I. Rabinovitz, and G. Shainer, “Connectx-
+[17] R. Thakur and R. Rabenseifner, “Optimization of collective communi-              2 infiniband management queues: First investigation of the new
+     cation operations in mpich,” International Journal of High Performance           support for network offloaded collective operations,” in Proceedings
+     Computing Applications, vol. 19, pp. 49–66, 2005.                                of the 2010 10th IEEE/ACM International Conference on Cluster,
+[18] S. S. Vadhiyar, G. E. Fagg, and J. Dongarra, “Automatically tuned col-           Cloud and Grid Computing, ser. CCGRID ’10. Washington, DC,
+     lective communications,” in In Proceedings of SC99: High Performance             USA: IEEE Computer Society, 2010, pp. 53–62. [Online]. Available:
+     Networking and Computing. IEEE Computer Society, 2000, p. 3.                     http://dx.doi.org/10.1109/CCGRID.2010.9
+[19] T. Hoefler, J. M. Squyres, and W. Rehm, “A case for nonblocking             [35] B. Barrett, R. Brightwell, S. Hemmert, K. Pedretti, K. Wheeler, K. D.
+     collective operations,” in In Frontiers of High Performance Computing            Underwood, R. Reisen, A. B. Maccabe, and T. Hudson, “The portals
+     and Networking - ISPA 2006 Workshops. Springer, 2006, pp. 155–164.               4.0 network programming interface, technical report sand201210087,”
+[20] M. Barnett, R. J. Littlefield, D. G. Payne, and R. A. van de Geijn,              Sandia National Laboratory, Tech. Rep., 2012.
+     “Global combine on mesh architectures with wormhole routing,” in            [36] T. Schneider, T. Hoefler, R. Grant, B. Barrett, and R. Brightwell,
+     The Seventh International Parallel Processing Symposium, Proceedings,            “Protocols for Fully Offloaded Collective Operations on Accelerated
+     Newport Beach, California, USA, April 13-16, 1993., 1993, pp. 156–               Network Adapters,” in Parallel Processing (ICPP), 2013 42nd Inter-
+     162. [Online]. Available: http://dx.doi.org/10.1109/IPPS.1993.262873             national Conference on, Oct. 2013, pp. 593–602.
+[21] V. W. Liu, C. Chen, and R. B. Chen, “Optimal all-to-all personalized        [37] http://www.mellanox.com/page/products dyn?product family=189&
+     exchange in d-nary banyan multistage interconnection networks,”                  mtag=hpc-x.
+     Journal of Combinatorial Optimization, vol. 14, no. 2, pp. 131–142,         [38] http://www.mellanox.com/page/products dyn?product family=104&
+     2007. [Online]. Available: http://dx.doi.org/10.1007/s10878-007-9065-5           mtag=fca2.
+[22] F. Petrini, S. Coll, E. Frachtemberg, and A. Hoisie, Hardware-and-          [39] http://mvapich.cse.ohio-state.edu/overview/.
+     software-based collective communication on the Quadrics network.,           [40] http://mvapich.cse.ohio-state.edu/benchmarks/.
+     Jan 2001. [Online]. Available: http://www.osti.gov/scitech/servlets/purl/   [41] H. G. Weller, G. Tabor, H. Jasak, and C. Fureby, “A tensorial
+     975699                                                                           approach to computational continuum mechanics using object-oriented
+[23] A. Gara, M. A. Blumrich, D. Chen, G.-T. Chiu, P. Coteus, M. E.                   techniques,” Comput. Phys., vol. 12, no. 6, pp. 620–631, Nov. 1998.
+     Giampapa, R. A. Haring, P. Heidelberger, D. Hoenicke, G. V. Kopcsay              [Online]. Available: http://dx.doi.org/10.1063/1.168744
+     et al., “Overview of the blue gene/l system architecture,” IBM Journal
+     of Research and Development, vol. 49, no. 2, pp. 195–212, 2005.
+[24] N. R. Adiga, M. A. Blumrich, D. Chen, P. Coteus et al., “Blue
+     gene/l torus interconnection network,” IBM Journal of Research and
+     Development, vol. 49, no. 2/3, p. 265, 2005.
+[25] S. Kumar, Y. Sabharwal, R. Garg, and P. Heidelberger, “Optimization
+     of all-to-all communication on the blue gene/l supercomputer,”
+     in Proceedings of the 2008 37th International Conference on
+     Parallel Processing, ser. ICPP ’08. Washington, DC, USA: IEEE
+     Computer Society, 2008, pp. 320–329. [Online]. Available: http:
+     //dx.doi.org/10.1109/ICPP.2008.83
+[26] G. Almási, P. Heidelberger, C. J. Archer, X. Martorell, C. C. Erway,
+     J. E. Moreira, B. Steinmacher-Burow, and Y. Zheng, “Optimization of
+     mpi collective communication on bluegene/l systems,” in Proceedings
+     of the 19th annual international conference on Supercomputing. ACM,
+     2005, pp. 253–262.
+[27] S. Kumar, G. Dozsa, G. Almasi, P. Heidelberger, D. Chen, M. E.
+     Giampapa, M. Blocksome, A. Faraj, J. Parker, J. Ratterman,
+     B. Smith, and C. J. Archer, “The deep computing messaging
+     framework: Generalized scalable message passing on the blue gene/p
+     supercomputer,” in Proceedings of the 22Nd Annual International
+     Conference on Supercomputing, ser. ICS ’08. New York, NY, USA:
+     ACM, 2008, pp. 94–103. [Online]. Available: http://doi.acm.org/10.
+     1145/1375527.1375544
+

@@ -51,6 +51,8 @@ from .topics import v4_moe_training
 from .topics import vision_preprocess
 from .topics import training_pipeline_gemm_state
 from .topics import training_pipeline_schedule
+from .topics import clos_cut, hash_collision, sm_occupancy, energy_ledger, critical_batch, straggler_max, moe_capacity, wan_loss_model
+from .topics import edge_tiers
 from .topics import real_scaling_lifecycle, v4_training_primitives, v4_hc_training, v4_attention_training, v4_attention_projections, v4_compressor_training, v4_compressor_overlap
 from .topics import v4_prefix_continuation
 from .topics import flux_vae_decode, architecture_variants
@@ -514,6 +516,17 @@ def run() -> dict:
         result = hierarchical_gradient.calculate(**row["inputs"])
         save(row["id"], result)
         gradient_rows.append((row["id"], result))
+    gap_rows = {}
+    for key, module in (("clos_cut", clos_cut.calculate), ("hash_collision", hash_collision.calculate),
+                        ("incast_feedback", feedback_queue.incast), ("sm_occupancy", sm_occupancy.calculate),
+                        ("energy_ledger", energy_ledger.calculate), ("critical_batch", critical_batch.calculate),
+                        ("straggler_max", straggler_max.calculate), ("moe_capacity", moe_capacity.calculate),
+                        ("wan_loss_model", wan_loss_model.calculate), ("edge_tiers", edge_tiers.calculate)):
+        gap_rows[key] = []
+        for row in scenarios.get(key, []):
+            result = module(**row["inputs"], input_sources=row.get("input_sources"))
+            save(row["id"], result)
+            gap_rows[key].append((row["id"], result))
     supernode_rows = []
     for row in scenarios.get("supernode_cohort_cost", []):
         result = supernode_cohort_cost.calculate(**row["inputs"])
@@ -1678,6 +1691,15 @@ def run() -> dict:
     lines.extend(['', '图片文件请求预算：[图12-1](../figures/image-request/figure.svg)', ''])
     for name, result in image_request_rows:
         lines.append(f'- [{name}]({name}.md)')
+    lines.extend(['', '概念覆盖补齐（2026-09-11）：交换网络、核内执行、能耗、训练稳定性、广域丢包；声明输入的来源见各结果的 declared_input_sources。', ''])
+    for key, title in (("clos_cut", "Clos 层数、半分带宽、轨道与在网归约"), ("hash_collision", "ECMP 哈希冲突与逐包喷洒"),
+                       ("incast_feedback", "incast 反馈时延与缓冲"), ("sm_occupancy", "SM 占用率、延迟隐藏与 MMA 指令数"),
+                       ("energy_ledger", "能耗层次、电压、功率密度、机柜与手机"), ("critical_batch", "临界批量与数据并行上限"),
+                       ("straggler_max", "掉队者：最大值步时间、检测与响应"), ("moe_capacity", "MoE 容量因子：填充与丢弃"),
+                       ("wan_loss_model", "广域丢包：Mathis、BBR、重传尾部与 FEC")):
+        lines.extend(['', title + '：', ''])
+        for name, result in gap_rows.get(key, []):
+            lines.append(f'- [{name}]({name}.md)')
     lines.extend(['', '真实梯度两级集合通信：', ''])
     for name, result in gradient_rows:
         lines.append(f'- [{name}]({name}.md)')

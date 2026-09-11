@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "calculation": "hash-collision",
+  "scenario": {
+    "flows": 8,
+    "uplinks": 16,
+    "spray_paths": 0,
+    "spray_tokens": 1024,
+    "spray_packet_bytes": 4096,
+    "spray_path_delays_ns": null,
+    "spray_path_bytes_per_second": 50000000000,
+    "spray_model": "qwen3-8b"
+  },
+  "declared_input_sources": {
+    "flows": "book (8 servers on one rail leaf, one cross-group flow each; rail-optimized topology of chapter 7.2.5: flows of one shifted pairing leave 8 different leaves and cannot collide, so the colliding set is the flows sharing ONE leaf)",
+    "uplinks": "results/clos-cut-k64-oversub3.md (leaf_uplinks 16: k=64 leaf at 3:1 oversubscription, 48 downlinks + 16 uplinks)",
+    "spray_paths": "book"
+  },
+  "method": "exact truncated-exponential polynomial: P(max<=L) = n! [x^n] (sum_{j<=L} x^j/j!)^m / m^n",
+  "summary": {
+    "flows": 8,
+    "uplinks": 16,
+    "ideal_load_per_uplink_exact": "1/2",
+    "expected_max_load_exact": "69219991/33554432",
+    "expected_max_load": 2.062916487455368,
+    "expected_max_over_ideal": 4.125832974910736,
+    "p99_max_load": 4,
+    "probability_no_collision_exact": "2027025/16777216",
+    "probability_no_collision": 0.12082010507583618,
+    "expected_empty_uplinks_exact": "2562890625/268435456",
+    "expected_empty_uplinks": 9.547511581331491,
+    "effective_uplinks_exact": "268435456/69219991",
+    "effective_uplinks": 3.878004780439801,
+    "effective_fraction_of_nominal_cut_exact": "16777216/69219991",
+    "effective_fraction_of_nominal_cut": 0.24237529877748756
+  },
+  "max_load_distribution": [
+    {
+      "max_load": 1,
+      "probability_exact": "2027025/16777216",
+      "probability": 0.12082010507583618,
+      "cumulative_exact": "2027025/16777216"
+    },
+    {
+      "max_load": 2,
+      "probability_exact": "95311125/134217728",
+      "probability": 0.7101232185959816,
+      "cumulative_exact": "111527325/134217728"
+    },
+    {
+      "max_load": 3,
+      "probability_exact": "2602635/16777216",
+      "probability": 0.15512913465499878,
+      "cumulative_exact": "132348405/134217728"
+    },
+    {
+      "max_load": 4,
+      "probability_exact": "3543225/268435456",
+      "probability": 0.013199541717767715,
+      "cumulative_exact": "268240035/268435456"
+    },
+    {
+      "max_load": 5,
+      "probability_exact": "23625/33554432",
+      "probability": 0.0007040798664093018,
+      "cumulative_exact": "268429035/268435456"
+    },
+    {
+      "max_load": 6,
+      "probability_exact": "1575/67108864",
+      "probability": 2.346932888031006e-05,
+      "cumulative_exact": "268435335/268435456"
+    },
+    {
+      "max_load": 7,
+      "probability_exact": "15/33554432",
+      "probability": 4.470348358154297e-07,
+      "cumulative_exact": "268435455/268435456"
+    },
+    {
+      "max_load": 8,
+      "probability_exact": "1/268435456",
+      "probability": 3.725290298461914e-09,
+      "cumulative_exact": "1"
+    }
+  ],
+  "per_packet_spray": null,
+  "assumptions": [
+    "每条流独立、均匀地哈希到 m 条等速上行；流大小相同。这是 ECMP 的教学模型，不是具体交换机哈希函数或实际流量分布。",
+    "n 条流是同一台叶交换机（多轨拓扑中的同一条 rail）上必须穿过脊层的流，m 是该叶的上行数（clos-cut 结果：k=64 无阻塞叶 32 条，3:1 超额订阅叶 16 条）。错位配对的八条流从八台不同的叶交换机出发，彼此不会在同一叶的上行上冲突，因此不构成一个 n=8、m=8 的场景。",
+    "最大负载分布用截断指数多项式精确计算（有理数），期望与 99 分位均为精确值；不做模拟。",
+    "有效割集 = 理想每链路流数 / E[最大负载]：假定各流受最忙链路限速到同一速率（公平共享），其余链路的空闲容量不能被已经分配的流使用。",
+    "逐包喷洒复用 packet-reorder 模型：按序号轮转路径、各路径独立串行、无丢包，接收端按连续前缀交付。路径延迟为声明输入；乱序等待 = 完成时刻减去理想并行传输加最长路径延迟。"
+  ]
+}

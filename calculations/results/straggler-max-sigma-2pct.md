@@ -1,14 +1,14 @@
 # straggler-max — 
 
-输入：`{"checkpoint_devices": 48, "declared_sigma_seconds": "1.044", "declared_spike_mtbf_seconds": 604800, "device_mtbf_seconds": 31536000, "intervals_seconds": [300, 600, 900, 1800, 3600], "mean_compute_seconds": "52.2", "model": "qwen3-8b", "overhead_seconds": "4.5", "ranks": [8, 48, 1024], "recovery_ns": 120000000000, "save_bandwidth_bytes_per_second": 8000000000, "straggler_k_sigma": "3"}`
+输入：`{"checkpoint_devices": 48, "declared_sigma_seconds": "1.044", "declared_spike_mtbf_seconds": 604800, "device_mtbf_seconds": 29122560, "intervals_seconds": [300, 600, 900, 1800, 3600], "mean_compute_seconds": "52.2", "model": "qwen3-8b", "overhead_seconds": "0.58", "ranks": [8, 48, 1024], "recovery_ns": 120000000000, "save_bandwidth_bytes_per_second": 7000000000, "straggler_k_sigma": "3"}`
 
 数值是分析计算；字节以 bytes 保存，FMA=2，不是硬件测量。
 
 | 结果 | 值 |
 | --- | ---: |
-| expected_step_seconds | `{"8": 58.186238719511266, "48": 59.031378199603, "1024": 60.09116214383592}` |
+| expected_step_seconds | `{"8": 54.266238719511264, "48": 55.111378199602996, "1024": 56.17116214383592}` |
 | expected_standard_max | `{"8": 1.4236003060452715, "48": 2.2331208808457803, "1024": 3.2482396013754027}` |
-| mean_step_seconds | 56.7 |
+| mean_step_seconds | 52.78 |
 
 计量条件：
 

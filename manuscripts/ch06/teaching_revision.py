@@ -17,7 +17,21 @@ def draw(here,data):
         f,a=plot(3.6,left=.24);left=np.zeros(2)
         for i,label,col in [(0,'权重','blue'),(1,'KV','green'),(2,'工作区','orange')]:
             v=np.array(data['capacity_plot']['segments_GB'])[:,i];a.barh([0,1],v,left=left,height=.45,label=label,color=COL[col],edgecolor=COL['line']);left+=v
-        a.axvline(24,ls='--',color='#777777');a.set(yticks=[0,1],yticklabels=['单卡实例','八卡中的每卡'],xlim=(0,25),xlabel='每卡内存占用（GB）');a.invert_yaxis();f.subplots_adjust(top=.84);a.legend(frameon=False,ncol=3,loc='lower center',bbox_to_anchor=(.5,1.0));save(f,'2-capacity')
+        a.axvline(80,ls='--',color='#777777');a.text(84,.5,'H100：80 GB',fontsize=11,va='center');[a.text(max(t+6,86),j,f'{t:.1f} GB' if t>100 else f'{t:.2f} GB',va='center',fontsize=11) for j,t in enumerate(left)];a.set(yticks=[0,1],yticklabels=['单卡实例','八卡中的每卡'],xlim=(0,560),xlabel='每卡内存占用（GB）');a.invert_yaxis();f.subplots_adjust(top=.84);a.legend(frameon=False,ncol=3,loc='lower center',bbox_to_anchor=(.5,1.0));save(f,'2-capacity')
+        dm=data['continuous_execution']['dense_moe']['models'];names=['Qwen3-32B','Qwen3-30B-A3B','Qwen3.6-35B-A3B']
+        f,axs=plt.subplots(1,2,figsize=(420/72,3.6));f.subplots_adjust(left=.12,right=.98,bottom=.12,top=.80,wspace=.45)
+        a=axs[0];ctx=['32768','131072','262144'];x=np.arange(3)
+        for i,(m,col) in enumerate(zip(dm,['blue','orange','green'])):
+            vals=[m['state_per_request'][c]/1e9 if (c!='262144' or m['model']=='qwen3.6-35b-a3b') else np.nan for c in ctx]
+            a.bar(x+(i-1)*.27,vals,width=.27,color=COL[col],edgecolor=COL['line'],label=names[i])
+        a.set(xticks=x,xticklabels=['32K','128K','256K'],ylabel='每请求状态（GB）',ylim=(0,40));a.set_title('上下文与状态',fontsize=11)
+        f.legend(*a.get_legend_handles_labels(),frameon=False,ncol=3,loc='upper center',bbox_to_anchor=(.5,1.0),fontsize=11,handlelength=1,columnspacing=.8)
+        a=axs[1];w=np.array([m['b64_weight_read_s']*1e3 for m in dm]);st=np.array([m['b64_state_read_s']*1e3 for m in dm])
+        a.bar(range(3),w,color=COL['gray'],edgecolor=COL['line'],label='权重');a.bar(range(3),st,bottom=w,color=COL['purple'],edgecolor=COL['line'],label='状态')
+        for j in range(3):a.text(j,w[j]+st[j]+4,f'{w[j]+st[j]:.0f}',ha='center',fontsize=11)
+        a.legend(frameon=False,loc='upper right',fontsize=11,handlelength=1)
+        a.set(xticks=range(3),xticklabels=['32B','30B-A3B','3.6-35B'],ylabel='读取时间（ms）',ylim=(0,210));a.set_title('batch 64、32K',fontsize=11)
+        save(f,'dense-moe')
         for rows,name in [(False,'tp-columns'),(True,'tp-rows')]:
             f,a=canvas(4.4);text(a,.04,.94,'同一乘法：[2, 3] × [[1, 4], [2, 5]]',12)
             for i in range(2):
@@ -66,27 +80,27 @@ def draw(here,data):
                 if r==0:text(a,.255+card*.21,y+.20,f'卡 {card}',12,ha='center')
         text(a,.5,.03,'格内为已归约的数据块编号',11,ha='center');save(f,'ring-gather')
         f,a=plot(3.9,left=.19);left=np.zeros(4)
-        for key,label,col in [('local_s','本地','blue'),('communication_s','归约','orange'),('serial_s','串行','gray')]:
+        for key,label,col in [('local_s','本地','blue'),('communication_s','归约','orange')]:
             v=np.array([x[key]*1000 for x in data['continuous_execution']['first_steps']]);a.barh(range(4),v,left=left,height=.5,color=COL[col],edgecolor=COL['line'],label=label);left+=v
-        a.set(yticks=range(4),yticklabels=['TP 1','TP 2','TP 4','TP 8'],xlim=(0,18),xlabel='一次 decode 的时间（ms）');a.invert_yaxis();a.legend(ncol=3,frameon=False);save(f,'10-tp-time')
+        a.set(yticks=range(4),yticklabels=['TP 1','TP 2','TP 4','TP 8'],xlim=(0,32),xlabel='一次 decode 的时间（ms）');a.invert_yaxis();a.legend(ncol=2,frameon=False);save(f,'10-tp-time')
         d=data['collectives'];f,a=plot(3.7)
         for key,label,c in [('ring_seconds','环','#267398'),('tree_seconds','二项树','#a56c28')]:a.loglog(d['message_bytes'],np.array(d[key])*1e6,label=label,color=c)
         a.set(xlabel='每卡输入大小（bytes）',ylabel='通信时间（μs）');a.legend(frameon=False);save(f,'11-collectives')
-        d=data['concurrency']['teaching_ms']
+        d=data['concurrency']['measured_ms']
         for concurrent,name in [(False,'12-resources'),(True,'resources-concurrent')]:
             f,a=plot(3.5,left=.24)
-            if concurrent:
-                for i in range(2):
-                    a.barh(i-.16,d['shared_comm'][i],height=.28,color=COL['orange'],edgecolor=COL['line']);a.barh(i+.16,d['shared_compute'][i],height=.28,color=COL['blue'],edgecolor=COL['line'])
-                for c,l in [('orange','通信'),('blue','计算')]:a.barh([],[],color=COL[c],label=l)
-                a.legend(frameon=False)
-            else:a.barh([0,1],d['independent_comm'],height=.45,color=COL['orange'],edgecolor=COL['line'])
-            a.set(yticks=[0,1],yticklabels=['配置 A','配置 B'],xlim=(0,.7),xlabel='从同时就绪起计时（ms）' if concurrent else '独立通信时间（ms）');a.invert_yaxis();save(f,name)
+            comm=d['shared_comm' if concurrent else 'independent_comm'];comp=d['shared_compute' if concurrent else 'independent_compute']
+            for i in range(2):
+                a.barh(i-.16,comm[i],height=.28,color=COL['orange'],edgecolor=COL['line']);a.barh(i+.16,comp[i],height=.28,color=COL['blue'],edgecolor=COL['line'])
+                a.text(comm[i]+.6,i-.16,f'{comm[i]+1e-9:.2f}',va='center',fontsize=11);a.text(comp[i]+.6,i+.16,f'{comp[i]+1e-9:.2f}',va='center',fontsize=11)
+            from matplotlib.patches import Patch
+            a.legend(handles=[Patch(facecolor=COL[c],edgecolor=COL['line'],label=l) for c,l in [('orange','通信'),('blue','矩阵乘')]],frameon=False,loc='lower right')
+            a.set(yticks=[0,1],yticklabels=['4 MiB','64 MiB'],xlim=(0,56),xlabel='同时开始后的时间（ms）' if concurrent else '单独运行的时间（ms）');a.invert_yaxis();save(f,name)
         f,a=canvas(4.6)
-        for row,(down,up) in enumerate([(16,16),(24,8)]):
-            y=.62-row*.43;text(a,.04,y+.26,f'{down} 下联 + {up} 上联 = 32 个端口',13)
-            for i in range(32):box(a,.045+(i%16)*.058,y+(1-i//16)*.075,.045,.055,'','blue' if i<down else 'orange')
-            text(a,.5,y-.075,f'下联 {down*50} GB/s → 上联 {up*50} GB/s',12,ha='center')
+        for row,(down,up) in enumerate([(32,32),(48,16)]):
+            y=.62-row*.43;text(a,.04,y+.26,f'{down} 下联 + {up} 上联 = 64 个端口',13)
+            for i in range(64):box(a,.045+(i%32)*.0292,y+(1-i//32)*.075,.022,.055,'','blue' if i<down else 'orange')
+            text(a,.5,y-.075,f'下联 {down*25} GB/s → 上联 {up*25} GB/s',12,ha='center')
         save(f,'13-ports')
         patterns=data['physical_paths']['collective_patterns']
         for i,p in enumerate(patterns):
@@ -110,22 +124,30 @@ def draw(here,data):
         save(f,'16-systems')
         for after,name in [(False,'17-pool-placement'),(True,'pool-after')]:
             f,a=plot(3.8)
-            for i,v in enumerate([64,48,32,32]):a.bar(i,v,color=COL[['blue','green','orange','purple'][i]],edgecolor=COL['line'],width=.6)
-            if after:a.bar(1,16,bottom=48,color=COL['blue'],edgecolor=COL['line'],width=.6);a.text(1,56,'16',ha='center',va='center',fontsize=12)
-            else:a.text(.05,76,'任务 0 另需 16 GiB，尚未分配',fontsize=12)
-            a.axhline(64,ls='--',color='#777777');a.set(xticks=range(4),xticklabels=[f'节点 {i}' for i in range(4)],ylim=(0,84),ylabel='已占用物理内存（GiB）');save(f,name)
+            for i,v in enumerate([80,60,40,40]):a.bar(i,v,color=COL[['blue','green','orange','purple'][i]],edgecolor=COL['line'],width=.6)
+            if after:a.bar(1,20,bottom=60,color=COL['blue'],edgecolor=COL['line'],width=.6);a.text(1,70,'20',ha='center',va='center',fontsize=12)
+            else:a.text(.05,95,'任务 0 另需 20 GB，尚未分配',fontsize=12)
+            a.axhline(80,ls='--',color='#777777');a.set(xticks=range(4),xticklabels=[f'节点 {i}' for i in range(4)],ylim=(0,105),ylabel='已占用物理内存（GB）');save(f,name)
         f,a=canvas(4.6);text(a,.04,.94,'在途请求：已经发出，尚未收到结果',13)
         for i in range(4):
             y=.70-i*.15;box(a,.04,y,.21,.10,f'请求 {i}','blue',11);arrow(a,(.25,y+.05),(.72,y+.05));box(a,.73,y,.23,.10,'256 字节','green',11)
-        text(a,.5,.09,'往返 2 μs；允许 128 个请求同时在途',12,ha='center');save(f,'18-read-window')
-        d=data['remote_memory'];f,a=plot(3.7);a.loglog(d['frequency_per_second'],d['mean_payload_GBs'],color='#267398',label='16 GiB × 读取频率');a.axhline(40,color='#a56c28',label='路径：40 GB/s');a.axhline(d['window_bound_GBs'],ls='--',color='#388768',label='在途窗口：16.4 GB/s');a.set(xlabel='每秒完整读取次数',ylabel='平均带宽需求（GB/s）');a.legend(frameon=False,loc='upper left');save(f,'19-memory-pool')
-        for i,c in enumerate(data['continuous_execution']['candidates']):
+        text(a,.5,.09,'往返 7.52 μs；允许 128 个请求同时在途',12,ha='center');save(f,'18-read-window')
+        d=data['remote_memory'];f,a=plot(3.7);a.loglog(d['frequency_per_second'],d['mean_payload_GBs'],color='#267398',label='20 GB × 读取频率');a.axhline(d['path_GBs'],color='#a56c28',label='路径：50 GB/s');a.axhline(d['window_bound_GBs'],ls='--',color='#388768',label='在途窗口：4.36 GB/s');a.set(xlabel='每秒完整读取次数',ylabel='平均带宽需求（GB/s）');a.legend(frameon=False,loc='upper left');save(f,'19-memory-pool')
+        cands=data['continuous_execution']['candidates'];cap=data['continuous_execution']['capacity']
+        f,a=plot(3.6,left=.20);left=np.zeros(4)
+        for key,label,col in [('weights','权重','blue'),('kv','KV','green'),('workspace','工作区','orange')]:
+            v=np.array([cap[str(c['tp'])][key]*(c['sessions_per_instance'] if key=='kv' else 1)/1e9 for c in cands]);a.barh(range(4),v,left=left,height=.5,color=COL[col],edgecolor=COL['line'],label=label);left+=v
+        for j,t in enumerate(left):a.text(t+1.5,j,f'{t:.2f}',va='center',fontsize=11)
+        a.axvline(80,ls='--',color='#777777');a.set(yticks=range(4),yticklabels=['TP 1 × 8','TP 2 × 4','TP 4 × 2','TP 8 × 1'],xlim=(0,118),xlabel='每卡内存需求（GB）');a.invert_yaxis();f.subplots_adjust(top=.84);a.legend(ncol=3,frameon=False,loc='lower center',bbox_to_anchor=(.5,1.0));save(f,'session-capacity')
+        for i,c in enumerate(cands):
+            if not c['capacity_fits']:continue
             f,a=plot(3.6,left=.20);instances=c['instances'];service=c['service_ms'];shown=min(instances,4)
             for req in range(4):
                 lane=req%instances;start=req//instances*service;a.barh(lane,service,left=start,height=.52,color=COL[['blue','green','orange','purple'][req]],edgecolor=COL['line']);a.text(start+service/2,lane,f'会话 {req}',fontsize=11,ha='center',va='center')
-            a.axvline(90,ls='--',color='#777777');a.set(yticks=range(shown),yticklabels=[f'实例 {j}' for j in range(shown)],xlim=(0,150),ylim=(-.6,shown-.4),xlabel='从四会话到达起计时（ms）');a.invert_yaxis();save(f,'20-session-schedule' if i==0 else f'session-tp{c["tp"]}')
+            a.axvline(130,ls='--',color='#777777');a.set(yticks=range(shown),yticklabels=[f'实例 {j}' for j in range(shown)],xlim=(0,180),ylim=(-.6,shown-.4),xlabel='从四会话到达起计时（ms）');a.invert_yaxis();save(f,f'session-tp{c["tp"]}')
         for phase,name in [('healthy','21-scale-cost'),('fault','scale-cost-fault')]:
             f,a=plot(3.8)
-            for c,col in zip(data['deadline_curves'][phase],['#267398','#388768','#a56c28','#86649b']):a.step(c['deadlines_ms'],[np.nan if v is None else v for v in c['cost_per_valid']],where='post',label=f'TP {c["tp"]}',color=col)
-            a.axvline(90,ls='--',color='#777777');a.set(xlim=(20,220),ylim=(0,.95),xlabel='完成期限（ms）',ylabel='每个按时完成会话的成本');a.legend(ncol=2,frameon=False);save(f,name)
+            for c,col in zip(data['deadline_curves'][phase],['#267398','#388768','#a56c28','#86649b']):
+                if c['capacity_fits']:a.step(c['deadlines_ms'],[np.nan if v is None else v for v in c['cost_per_valid']],where='post',label=f'TP {c["tp"]}',color=col)
+            a.axvline(130,ls='--',color='#777777');a.set(xlim=(80,240),ylim=(0,.8),xlabel='完成期限（ms）',ylabel='每个按时会话（GPU·s）');a.legend(ncol=3,frameon=False);save(f,name)
     out.finish();return out.outputs,out.checks

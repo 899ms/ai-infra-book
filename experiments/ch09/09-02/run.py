@@ -7,7 +7,8 @@ H20 SXM5 96GB 做 decode，比较共置、同构 PD、异构 PD 与角色对换�
 分别评价首 token、逐 token 延迟及费用。
 
 本实验不重算：由 `calculations/calc.py pd-pool` 现场生成。
-设备效率是**标明的假设**（本文件顶部），不是实测记录。
+阶段能力由硬件表峰值乘 50% 效率、经 Qwen3-8B 逐算子账的 Roofline 推出；
+50% 以第 8 章 RTX PRO 6000 批量 64 的实测输出间隔校准。
 """
 import json
 import os
@@ -20,9 +21,9 @@ ROOT = os.path.abspath(os.path.join(HERE, '..', '..', '..'))
 CALC = os.path.join(ROOT, 'calculations', 'calc.py')
 RESULTS = os.path.join(HERE, 'results')
 
-# 声明的每 worker 服务速率（假设，不是实测）：A100 计算强、H20 带宽强
-A100 = dict(name='A100-80GB-prefill', prefill_tokens_per_second=16384, decode_tokens_per_second=64)
-H20 = dict(name='H20-96GB-decode', prefill_tokens_per_second=4096, decode_tokens_per_second=256)
+# 每张卡按硬件表峰值 ×50% 推出阶段能力；decode 批量 32。A100 算力强，H20 带宽强。
+A100 = dict(name='A100', device='a100-80gb-sxm', decode_batch=32, compute_efficiency=0.5, bandwidth_efficiency=0.5)
+H20 = dict(name='H20', device='h20-sxm5-96gb', decode_batch=32, compute_efficiency=0.5, bandwidth_efficiency=0.5)
 LINK = 25_000_000_000
 
 LAYOUTS = [
@@ -33,12 +34,12 @@ LAYOUTS = [
 ]
 
 SCANS = [
-    ('输入 2K／输出 128／无命中', 2048, 129, 0, '4'),
-    ('输入 8K／输出 128／无命中', 8192, 129, 0, '4'),
-    ('输入 8K／输出 1024／无命中', 8192, 1025, 0, '4'),
-    ('输入 8K／输出 128／命中 6K 前缀', 8192, 129, 6144, '4'),
-    ('输入 32K／输出 128／无命中', 32768, 129, 0, '2'),
-    ('输入 8K／输出 128／到达率 8', 8192, 129, 0, '8'),
+    ('输入 8K／输出 1024／无命中', 8192, 1025, 0, '7/2'),
+    ('输入 8K／输出 128／无命中', 8192, 129, 0, '7/2'),
+    ('输入 8K／输出 4096／无命中', 8192, 4097, 0, '7/2'),
+    ('输入 8K／输出 1024／命中 6K 前缀', 8192, 1025, 6144, '7/2'),
+    ('输入 2K／输出 1024／无命中', 2048, 1025, 0, '7/2'),
+    ('输入 32K／输出 1024／无命中', 32768, 1025, 0, '1'),
 ]
 
 
@@ -73,18 +74,18 @@ def main() -> int:
                              best_decode_workers=s['best_decode_workers']))
 
     result = dict(schema_version=1, experiment='9-2', title='A100＋H20 的 PD 分离',
-                  worker_rates=dict(a100=A100, h20=H20,
-                                    note='每 worker 服务速率是声明假设，不是实测。'),
+                  worker_devices=dict(a100=A100, h20=H20,
+                                      note='阶段能力由硬件表峰值乘 50% 效率推出，逐卡明细见各 pool-*.json 的 derived_stage_rates。'),
                   link_bytes_per_second=LINK, rows=rows,
                   source_note='由 calculations/calc.py pd-pool 现场生成。',
                   python_version=sys.version)
     json.dump(result, open(os.path.join(RESULTS, 'pd.json'), 'w'), indent=2, ensure_ascii=False)
 
     lines = ['# 实验 9-2 结果：A100＋H20 的 PD 分离', '',
-             '每 worker 速率为声明假设：A100 prefill 16,384 tok/s／decode 64 tok/s；'
-             'H20 prefill 4,096／decode 256。链路 %.0f GB/s。' % (LINK / 1e9), '',
-             '| 布局 | 场景 | 每请求交接 | PD 上界 | 共置上界 | PD/共置 | 链路容量 | 瓶颈 |',
-             '| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |']
+             '阶段能力：A100 80GB SXM（312 TFLOP/s、2039 GB/s）与 H20 SXM5 96GB（148 TFLOP/s、4096 GB/s）'
+             '峰值乘 50%%，decode 批量 32。链路 %.0f GB/s。' % (LINK / 1e9), '',
+             '| 布局 | 场景 | 每请求交接 | PD 上界 | 共置上界 | PD/共置 | 链路容量 | 瓶颈 | 最优分工 |',
+             '| --- | --- | ---: | ---: | ---: | ---: | ---: | --- | --- |']
     for r in rows:
         if 'error' in r:
             lines.append('| %s | %s | 调用失败：%s | — | — | — | — | — | — |' % (

@@ -1,10 +1,11 @@
 {
   "assumptions": [
-    "教学输入，非实测。四个 attention 发送端、四个独立专家接收端；每端口每方向 25 GB/s，双向独立；所有分派跨池。",
+    "两台 HGX H100 服务器（第 7 章的基础配置）：四个 attention 发送端在服务器 A，四个专家接收端在服务器 B，所有分派跨服务器。每张 H100 配一张 ConnectX-7 400 Gb/s 网卡，每方向 50 GB/s，双向独立；交换网络每方向承载 4×50=200 GB/s。",
     "1024 token 各选 8 个不同逻辑专家，四列表示专家组而非单个专家。按 token—专家逐份发送，无同目标去重，无返回端预归约。",
-    "BF16 激活每份 8192 B；单份专家计算为 6×4096×1536 FLOPs，有效算力假设 100 TFLOP/s。只计计算，不计权重、padding、启动、排队与元数据。",
+    "BF16 激活每份 8192 B；单份专家计算为 6×4096×1536 FLOPs，有效算力取 H100 SXM BF16 稠密峰值 989.4 TFLOP/s 的 50%，即 494.7 TFLOP/s（第 9.2.3 节的效率约定）。只计计算，不计权重、padding、启动、排队与元数据。",
+    "“两池间只剩一条 400 Gb/s 链路”把割集降到每方向 50 GB/s；“同一台 HGX”把两池放在一台服务器的八张卡上，端口为每张 H100 的 NVLink 每方向 450 GB/s，NVSwitch 割集每方向 4×450=1800 GB/s。",
     "单阶段下界取发送端、接收端和共享割集的最大值；总下界只适用于 dispatch、计算、combine 间有整批屏障的调度，不能用来估计任意重叠流水。",
-    "resource_batch_rate_upper 假设三个阶段资源独立且双向全双工；共享 HBM、半双工链路或跨层共用设备时须合计占用后重算。"
+    "resource_batch_rate_upper 与两微批流水假设三个阶段资源独立且双向全双工；共享 HBM、半双工链路或跨层共用设备时须合计占用后重算。"
   ],
   "results": [
     {
@@ -23,106 +24,33 @@
       ],
       "expert_skew": 1.0,
       "dispatch": {
-        "send_s": 0.00067108864,
-        "receive_s": 0.00067108864,
-        "cut_s": 0.00067108864,
-        "lower_s": 0.00067108864,
+        "send_s": 0.00033554432,
+        "receive_s": 0.00033554432,
+        "cut_s": 0.00033554432,
+        "lower_s": 0.00033554432,
         "total_bytes": 67108864
       },
       "combine": {
-        "send_s": 0.00067108864,
-        "receive_s": 0.00067108864,
-        "cut_s": 0.00067108864,
-        "lower_s": 0.00067108864,
+        "send_s": 0.00033554432,
+        "receive_s": 0.00033554432,
+        "cut_s": 0.00033554432,
+        "lower_s": 0.00033554432,
         "total_bytes": 67108864
       },
       "compute_s": [
-        0.00077309411328,
-        0.00077309411328,
-        0.00077309411328,
-        0.00077309411328
+        0.0001562753412734991,
+        0.0001562753412734991,
+        0.0001562753412734991,
+        0.0001562753412734991
       ],
-      "barrier_lower_s": 0.00211527139328,
-      "resource_batch_rate_upper": 1293.5035758548313
+      "barrier_lower_s": 0.0008273639812734991,
+      "resource_batch_rate_upper": 2980.2322387695312,
+      "two_microbatch_pipeline_s": 0.0005814541506367495,
+      "pipeline_break_even_comm_stretch": 1.4885789367293307,
+      "pipeline_break_even_compute_stretch": 3.1471354166666665
     },
     {
       "name": "热点组",
-      "send_assignments": [
-        2048,
-        2048,
-        2048,
-        2048
-      ],
-      "expert_assignments": [
-        5120,
-        1024,
-        1024,
-        1024
-      ],
-      "expert_skew": 2.5,
-      "dispatch": {
-        "send_s": 0.00067108864,
-        "receive_s": 0.0016777216,
-        "cut_s": 0.00067108864,
-        "lower_s": 0.0016777216,
-        "total_bytes": 67108864
-      },
-      "combine": {
-        "send_s": 0.0016777216,
-        "receive_s": 0.00067108864,
-        "cut_s": 0.00067108864,
-        "lower_s": 0.0016777216,
-        "total_bytes": 67108864
-      },
-      "compute_s": [
-        0.0019327352832,
-        0.00038654705664,
-        0.00038654705664,
-        0.00038654705664
-      ],
-      "barrier_lower_s": 0.0052881784832,
-      "resource_batch_rate_upper": 517.4014303419325
-    },
-    {
-      "name": "均衡但共享出口受限",
-      "send_assignments": [
-        2048,
-        2048,
-        2048,
-        2048
-      ],
-      "expert_assignments": [
-        2048,
-        2048,
-        2048,
-        2048
-      ],
-      "expert_skew": 1.0,
-      "dispatch": {
-        "send_s": 0.00067108864,
-        "receive_s": 0.00067108864,
-        "cut_s": 0.00268435456,
-        "lower_s": 0.00268435456,
-        "total_bytes": 67108864
-      },
-      "combine": {
-        "send_s": 0.00067108864,
-        "receive_s": 0.00067108864,
-        "cut_s": 0.00268435456,
-        "lower_s": 0.00268435456,
-        "total_bytes": 67108864
-      },
-      "compute_s": [
-        0.00077309411328,
-        0.00077309411328,
-        0.00077309411328,
-        0.00077309411328
-      ],
-      "barrier_lower_s": 0.006141803233279999,
-      "resource_batch_rate_upper": 372.5290298461914
-    },
-    {
-      "name": "热点组且 dispatch 用 FP8",
       "send_assignments": [
         2048,
         2048,
@@ -141,23 +69,149 @@
         "receive_s": 0.0008388608,
         "cut_s": 0.00033554432,
         "lower_s": 0.0008388608,
-        "total_bytes": 33554432
+        "total_bytes": 67108864
       },
       "combine": {
-        "send_s": 0.0016777216,
-        "receive_s": 0.00067108864,
-        "cut_s": 0.00067108864,
-        "lower_s": 0.0016777216,
+        "send_s": 0.0008388608,
+        "receive_s": 0.00033554432,
+        "cut_s": 0.00033554432,
+        "lower_s": 0.0008388608,
         "total_bytes": 67108864
       },
       "compute_s": [
-        0.0019327352832,
-        0.00038654705664,
-        0.00038654705664,
-        0.00038654705664
+        0.00039068835318374775,
+        7.813767063674954e-05,
+        7.813767063674954e-05,
+        7.813767063674954e-05
       ],
-      "barrier_lower_s": 0.0044493176832,
-      "resource_batch_rate_upper": 517.4014303419325
+      "barrier_lower_s": 0.002068409953183748,
+      "resource_batch_rate_upper": 1192.0928955078125,
+      "two_microbatch_pipeline_s": 0.001453635376591874,
+      "pipeline_break_even_comm_stretch": 1.488578936729331,
+      "pipeline_break_even_compute_stretch": 3.1471354166666665
+    },
+    {
+      "name": "均衡但两池间只剩一条 400 Gb/s 链路",
+      "send_assignments": [
+        2048,
+        2048,
+        2048,
+        2048
+      ],
+      "expert_assignments": [
+        2048,
+        2048,
+        2048,
+        2048
+      ],
+      "expert_skew": 1.0,
+      "dispatch": {
+        "send_s": 0.00033554432,
+        "receive_s": 0.00033554432,
+        "cut_s": 0.00134217728,
+        "lower_s": 0.00134217728,
+        "total_bytes": 67108864
+      },
+      "combine": {
+        "send_s": 0.00033554432,
+        "receive_s": 0.00033554432,
+        "cut_s": 0.00134217728,
+        "lower_s": 0.00134217728,
+        "total_bytes": 67108864
+      },
+      "compute_s": [
+        0.0001562753412734991,
+        0.0001562753412734991,
+        0.0001562753412734991,
+        0.0001562753412734991
+      ],
+      "barrier_lower_s": 0.002840629901273499,
+      "resource_batch_rate_upper": 745.0580596923828,
+      "two_microbatch_pipeline_s": 0.0020914035906367495,
+      "pipeline_break_even_comm_stretch": 1.3721447341823327,
+      "pipeline_break_even_compute_stretch": 9.588541666666666
+    },
+    {
+      "name": "热点组且 dispatch 用 FP8",
+      "send_assignments": [
+        2048,
+        2048,
+        2048,
+        2048
+      ],
+      "expert_assignments": [
+        5120,
+        1024,
+        1024,
+        1024
+      ],
+      "expert_skew": 2.5,
+      "dispatch": {
+        "send_s": 0.00016777216,
+        "receive_s": 0.0004194304,
+        "cut_s": 0.00016777216,
+        "lower_s": 0.0004194304,
+        "total_bytes": 33554432
+      },
+      "combine": {
+        "send_s": 0.0008388608,
+        "receive_s": 0.00033554432,
+        "cut_s": 0.00033554432,
+        "lower_s": 0.0008388608,
+        "total_bytes": 67108864
+      },
+      "compute_s": [
+        0.00039068835318374775,
+        7.813767063674954e-05,
+        7.813767063674954e-05,
+        7.813767063674954e-05
+      ],
+      "barrier_lower_s": 0.0016489795531837478,
+      "resource_batch_rate_upper": 1192.0928955078125,
+      "two_microbatch_pipeline_s": 0.0012439201765918739,
+      "pipeline_break_even_comm_stretch": 1.3862947240751968,
+      "pipeline_break_even_compute_stretch": 2.6103515625
+    },
+    {
+      "name": "热点组，两池同在一台 HGX（NVLink）",
+      "send_assignments": [
+        2048,
+        2048,
+        2048,
+        2048
+      ],
+      "expert_assignments": [
+        5120,
+        1024,
+        1024,
+        1024
+      ],
+      "expert_skew": 2.5,
+      "dispatch": {
+        "send_s": 3.7282702222222224e-05,
+        "receive_s": 9.320675555555555e-05,
+        "cut_s": 3.7282702222222224e-05,
+        "lower_s": 9.320675555555555e-05,
+        "total_bytes": 67108864
+      },
+      "combine": {
+        "send_s": 9.320675555555555e-05,
+        "receive_s": 3.7282702222222224e-05,
+        "cut_s": 3.7282702222222224e-05,
+        "lower_s": 9.320675555555555e-05,
+        "total_bytes": 67108864
+      },
+      "compute_s": [
+        0.00039068835318374775,
+        7.813767063674954e-05,
+        7.813767063674954e-05,
+        7.813767063674954e-05
+      ],
+      "barrier_lower_s": 0.0005771018642948589,
+      "resource_batch_rate_upper": 2559.58487590154,
+      "two_microbatch_pipeline_s": 0.0004838951087393033,
+      "pipeline_break_even_comm_stretch": 2,
+      "pipeline_break_even_compute_stretch": 1.2385706018518519
     }
   ]
 }

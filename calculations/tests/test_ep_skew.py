@@ -32,7 +32,7 @@ class EPSkewTest(unittest.TestCase):
         case=self.case(2); original=module.evaluate(case)
         case['endpoint_Bps']*=100
         faster=module.evaluate(case)
-        self.assertEqual(original['dispatch']['lower_s'],64*2**20/25e9)
+        self.assertEqual(original['dispatch']['lower_s'],64*2**20/50e9)
         self.assertEqual(faster['barrier_lower_s'],original['barrier_lower_s'])
     def test_fp8_does_not_speed_up_combine_or_compute(self):
         hot,fp8=[module.evaluate(self.case(i)) for i in (1,3)]

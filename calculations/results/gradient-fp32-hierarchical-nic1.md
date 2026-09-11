@@ -1,60 +1,80 @@
 # 真实梯度的两级集合通信
 
-参数：`model.layers.0.mlp.gate_proj.weight`；形状 [12288, 4096]；每rank 201,326,592 bytes。
-组织：hierarchical；每服务器NIC数：1。
+参数：`model.layers.0.mlp.gate_proj.weight`；形状 [12288, 4096]；每rank 201,326,592 bytes；参与者 16。
+组织：hierarchical；每服务器 8 rank、1 NIC（messages striped over server NICs）；NIC 50,000,000,000 bytes/s，本地 450,000,000,000 bytes/s，共享出口 None。
 
 | 阶段 | 轮数 | 发送 bytes | 跨服务器发送 bytes | 串行屏障下界 seconds（精确） |
 | --- | ---: | ---: | ---: | ---: |
-| local_reduce_scatter | 3 | 1207959552 | 0 | 1189023/1562500000 |
-| cross_server_allreduce | 2 | 402653184 | 402653184 | 6294581/781250000 |
-| local_all_gather | 3 | 1207959552 | 0 | 1189023/1562500000 |
+| local_reduce_scatter | 7 | 2818572288 | 0 | 29797453/75000000000 |
+| cross_server_allreduce | 2 | 402653184 | 402653184 | 50352473/12500000000 |
+| local_all_gather | 7 | 2818572288 | 0 | 29797453/75000000000 |
 
-全网发送 2,818,572,288 bytes；跨服务器 402,653,184 bytes；标量归约加法 352,321,536 次。
-串行屏障下界 1870901/195312500 seconds；预算未被此必要下界排除：True。实际训练期限是否可行仍未知。
+全网发送 6,039,797,760 bytes；跨服务器 402,653,184 bytes（每方向 201,326,592）；标量归约加法 754,974,720 次；每服务器用到 1 张 NIC。
+串行屏障下界 22606859/4687500000 seconds；预算未被此必要下界排除：False。实际训练期限是否可行仍未知。
 
 | 物理资源 | bytes | 声明 bytes/s | 必要服务 seconds（精确） |
 | --- | ---: | ---: | ---: |
-| cut.0->1 | 201326592 | 40000000000 | 49152/9765625 |
-| cut.1->0 | 201326592 | 40000000000 | 49152/9765625 |
-| local.0->1 | 301989888 | 200000000000 | 73728/48828125 |
-| local.1->2 | 301989888 | 200000000000 | 73728/48828125 |
-| local.2->3 | 301989888 | 200000000000 | 73728/48828125 |
-| local.3->0 | 301989888 | 200000000000 | 73728/48828125 |
-| local.4->5 | 301989888 | 200000000000 | 73728/48828125 |
-| local.5->6 | 301989888 | 200000000000 | 73728/48828125 |
-| local.6->7 | 301989888 | 200000000000 | 73728/48828125 |
-| local.7->4 | 301989888 | 200000000000 | 73728/48828125 |
-| rank0.rx | 352321536 | 200000000000 | 86016/48828125 |
-| rank0.tx | 352321536 | 200000000000 | 86016/48828125 |
-| rank1.rx | 352321536 | 200000000000 | 86016/48828125 |
-| rank1.tx | 352321536 | 200000000000 | 86016/48828125 |
-| rank2.rx | 352321536 | 200000000000 | 86016/48828125 |
-| rank2.tx | 352321536 | 200000000000 | 86016/48828125 |
-| rank3.rx | 352321536 | 200000000000 | 86016/48828125 |
-| rank3.tx | 352321536 | 200000000000 | 86016/48828125 |
-| rank4.rx | 352321536 | 200000000000 | 86016/48828125 |
-| rank4.tx | 352321536 | 200000000000 | 86016/48828125 |
-| rank5.rx | 352321536 | 200000000000 | 86016/48828125 |
-| rank5.tx | 352321536 | 200000000000 | 86016/48828125 |
-| rank6.rx | 352321536 | 200000000000 | 86016/48828125 |
-| rank6.tx | 352321536 | 200000000000 | 86016/48828125 |
-| rank7.rx | 352321536 | 200000000000 | 86016/48828125 |
-| rank7.tx | 352321536 | 200000000000 | 86016/48828125 |
-| server0.egress | 201326592 | 40000000000 | 49152/9765625 |
-| server0.ingress | 201326592 | 40000000000 | 49152/9765625 |
-| server0.nic0.rx | 201326592 | 25000000000 | 393216/48828125 |
-| server0.nic0.tx | 201326592 | 25000000000 | 393216/48828125 |
-| server1.egress | 201326592 | 40000000000 | 49152/9765625 |
-| server1.ingress | 201326592 | 40000000000 | 49152/9765625 |
-| server1.nic0.rx | 201326592 | 25000000000 | 393216/48828125 |
-| server1.nic0.tx | 201326592 | 25000000000 | 393216/48828125 |
-| shared_cut.bidirectional | 402653184 | 80000000000 | 49152/9765625 |
+| cut.0->1 | 201326592 | 50000000000 | 196608/48828125 |
+| cut.1->0 | 201326592 | 50000000000 | 196608/48828125 |
+| local.0->1 | 352321536 | 450000000000 | 114688/146484375 |
+| local.1->2 | 352321536 | 450000000000 | 114688/146484375 |
+| local.10->11 | 352321536 | 450000000000 | 114688/146484375 |
+| local.11->12 | 352321536 | 450000000000 | 114688/146484375 |
+| local.12->13 | 352321536 | 450000000000 | 114688/146484375 |
+| local.13->14 | 352321536 | 450000000000 | 114688/146484375 |
+| local.14->15 | 352321536 | 450000000000 | 114688/146484375 |
+| local.15->8 | 352321536 | 450000000000 | 114688/146484375 |
+| local.2->3 | 352321536 | 450000000000 | 114688/146484375 |
+| local.3->4 | 352321536 | 450000000000 | 114688/146484375 |
+| local.4->5 | 352321536 | 450000000000 | 114688/146484375 |
+| local.5->6 | 352321536 | 450000000000 | 114688/146484375 |
+| local.6->7 | 352321536 | 450000000000 | 114688/146484375 |
+| local.7->0 | 352321536 | 450000000000 | 114688/146484375 |
+| local.8->9 | 352321536 | 450000000000 | 114688/146484375 |
+| local.9->10 | 352321536 | 450000000000 | 114688/146484375 |
+| rank0.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank0.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank1.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank1.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank10.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank10.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank11.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank11.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank12.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank12.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank13.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank13.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank14.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank14.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank15.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank15.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank2.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank2.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank3.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank3.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank4.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank4.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank5.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank5.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank6.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank6.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank7.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank7.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank8.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank8.tx | 377487360 | 450000000000 | 8192/9765625 |
+| rank9.rx | 377487360 | 450000000000 | 8192/9765625 |
+| rank9.tx | 377487360 | 450000000000 | 8192/9765625 |
+| server0.nic0.rx | 201326592 | 50000000000 | 196608/48828125 |
+| server0.nic0.tx | 201326592 | 50000000000 | 196608/48828125 |
+| server1.nic0.rx | 201326592 | 50000000000 | 196608/48828125 |
+| server1.nic0.tx | 201326592 | 50000000000 | 196608/48828125 |
+| shared_cut.bidirectional | 402653184 | 100000000000 | 196608/48828125 |
 
 - One real first-layer gate parameter gradient per rank; each rank contributes different sample data to the same coordinates. Not activations, whole-model gradients, or framework buckets.
 - FP32/BF16 are declared gradient wire/operand widths. Rank contribution identities prove algebraic sum coverage, not floating-point reassociation equivalence or backend accumulation precision.
-- Two servers each own four fixed ranks. Hierarchy executes local RS, corresponding-owner two-rank AR, local AG with stage/round barriers; no overlapping stages or unmodeled algorithm substitutions.
-- Remote messages stripe disjoint whole-element intervals over one/two NICs, never duplicate payload. Each source/destination NIC, shared egress/ingress and shared bidirectional cut has its own declared rate; shared40GB/s server edges do not grow with NIC count.
-- All rates and startup are teaching inputs. Each round bound is max(resource bytes/rate)+startup; serialized barrier bounds omit reduction work, propagation, buffering, topology latency and interference. They are not executable timing or deadline guarantees.
+- Two servers each own 8 fixed ranks. Hierarchy executes local RS over 8 ranks, corresponding-owner two-rank AR, local AG with stage/round barriers; no overlapping stages or unmodeled algorithm substitutions.
+- Remote messages stripe disjoint whole-element intervals over the 1 server NIC(s), never duplicate payload. The switch cut between the servers carries the aggregate NIC rate; no shared server egress is declared.
+- All rates and startup are declared inputs. Each round bound is max(resource bytes/rate)+startup; serialized barrier bounds omit reduction work, propagation, buffering, topology latency and interference. They are not executable timing or deadline guarantees.
 - Logical network sends count payload once. Endpoint receive, NIC, ingress and cut counters represent distinct resource demands; their sum is not additional gradient payload or HBM traffic.
 - No padding is introduced. Missing paths/resources or invalid rates reject. Budget pass only means this communication lower bound has not excluded the candidate; real training feasibility remains unknown.
 
@@ -67,9 +87,14 @@
     "model": "qwen3-8b",
     "gradient_dtype": "FP32",
     "algorithm": "hierarchical",
+    "ranks_per_server": 8,
     "nics_per_server": 1,
-    "startup_ns": 2000,
-    "budget_ns": 40000000,
+    "nic_bytes_per_second": 50000000000,
+    "local_bytes_per_second": 450000000000,
+    "shared_egress_bytes_per_second": null,
+    "nic_assignment": "messages striped over server NICs",
+    "startup_ns": 833,
+    "budget_ns": 3000000,
     "bandwidth_overrides": null
   },
   "sources": [
@@ -111,49 +136,107 @@
     "selected_parameter_copies": 1,
     "template_layer_copies": 36,
     "initial_contributors_per_rank": 1,
-    "chunks": 8,
-    "chunk_elements": 6291456
+    "participants": 16,
+    "chunks": 16,
+    "chunk_elements": 3145728,
+    "chunk_bytes": 12582912
   },
   "rank_mapping": [
     {
       "rank": 0,
       "server": 0,
-      "card": 0
+      "card": 0,
+      "nic": null
     },
     {
       "rank": 1,
       "server": 0,
-      "card": 1
+      "card": 1,
+      "nic": null
     },
     {
       "rank": 2,
       "server": 0,
-      "card": 2
+      "card": 2,
+      "nic": null
     },
     {
       "rank": 3,
       "server": 0,
-      "card": 3
+      "card": 3,
+      "nic": null
     },
     {
       "rank": 4,
-      "server": 1,
-      "card": 0
+      "server": 0,
+      "card": 4,
+      "nic": null
     },
     {
       "rank": 5,
-      "server": 1,
-      "card": 1
+      "server": 0,
+      "card": 5,
+      "nic": null
     },
     {
       "rank": 6,
-      "server": 1,
-      "card": 2
+      "server": 0,
+      "card": 6,
+      "nic": null
     },
     {
       "rank": 7,
+      "server": 0,
+      "card": 7,
+      "nic": null
+    },
+    {
+      "rank": 8,
       "server": 1,
-      "card": 3
+      "card": 0,
+      "nic": null
+    },
+    {
+      "rank": 9,
+      "server": 1,
+      "card": 1,
+      "nic": null
+    },
+    {
+      "rank": 10,
+      "server": 1,
+      "card": 2,
+      "nic": null
+    },
+    {
+      "rank": 11,
+      "server": 1,
+      "card": 3,
+      "nic": null
+    },
+    {
+      "rank": 12,
+      "server": 1,
+      "card": 4,
+      "nic": null
+    },
+    {
+      "rank": 13,
+      "server": 1,
+      "card": 5,
+      "nic": null
+    },
+    {
+      "rank": 14,
+      "server": 1,
+      "card": 6,
+      "nic": null
+    },
+    {
+      "rank": 15,
+      "server": 1,
+      "card": 7,
+      "nic": null
     }
   ],
   "flat_ring_order": null,
@@ -173,8 +256,8 @@
             1
           ],
           "element_start": 0,
-          "element_stop": 12582912,
-          "bytes": 50331648,
+          "element_stop": 6291456,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 0,
@@ -194,10 +277,10 @@
             {
               "sender": "r0:local",
               "receiver": "r1:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
               "element_start": 0,
-              "element_stop": 12582912,
+              "element_stop": 6291456,
               "path": [
                 "rank0.tx",
                 "local.0->1",
@@ -214,9 +297,9 @@
             2,
             3
           ],
-          "element_start": 12582912,
-          "element_stop": 25165824,
-          "bytes": 50331648,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 2,
@@ -236,10 +319,10 @@
             {
               "sender": "r1:local",
               "receiver": "r2:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 12582912,
-              "element_stop": 25165824,
+              "element_start": 6291456,
+              "element_stop": 12582912,
               "path": [
                 "rank1.tx",
                 "local.1->2",
@@ -256,9 +339,9 @@
             4,
             5
           ],
-          "element_start": 25165824,
-          "element_stop": 37748736,
-          "bytes": 50331648,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 4,
@@ -278,10 +361,10 @@
             {
               "sender": "r2:local",
               "receiver": "r3:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 25165824,
-              "element_stop": 37748736,
+              "element_start": 12582912,
+              "element_stop": 18874368,
               "path": [
                 "rank2.tx",
                 "local.2->3",
@@ -292,15 +375,15 @@
         },
         {
           "sender": 3,
-          "receiver": 0,
+          "receiver": 4,
           "operation": "reduce",
           "chunks": [
             6,
             7
           ],
-          "element_start": 37748736,
-          "element_stop": 50331648,
-          "bytes": 50331648,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 6,
@@ -319,15 +402,15 @@
           "stripes": [
             {
               "sender": "r3:local",
-              "receiver": "r0:local",
-              "bytes": 50331648,
+              "receiver": "r4:local",
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 37748736,
-              "element_stop": 50331648,
+              "element_start": 18874368,
+              "element_stop": 25165824,
               "path": [
                 "rank3.tx",
-                "local.3->0",
-                "rank0.rx"
+                "local.3->4",
+                "rank4.rx"
               ]
             }
           ]
@@ -337,21 +420,21 @@
           "receiver": 5,
           "operation": "reduce",
           "chunks": [
-            0,
-            1
+            8,
+            9
           ],
-          "element_start": 0,
-          "element_stop": 12582912,
-          "bytes": 50331648,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 0,
+              "chunk": 8,
               "contributors": [
                 4
               ]
             },
             {
-              "chunk": 1,
+              "chunk": 9,
               "contributors": [
                 4
               ]
@@ -362,10 +445,10 @@
             {
               "sender": "r4:local",
               "receiver": "r5:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 0,
-              "element_stop": 12582912,
+              "element_start": 25165824,
+              "element_stop": 31457280,
               "path": [
                 "rank4.tx",
                 "local.4->5",
@@ -379,21 +462,21 @@
           "receiver": 6,
           "operation": "reduce",
           "chunks": [
-            2,
-            3
+            10,
+            11
           ],
-          "element_start": 12582912,
-          "element_stop": 25165824,
-          "bytes": 50331648,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 2,
+              "chunk": 10,
               "contributors": [
                 5
               ]
             },
             {
-              "chunk": 3,
+              "chunk": 11,
               "contributors": [
                 5
               ]
@@ -404,10 +487,10 @@
             {
               "sender": "r5:local",
               "receiver": "r6:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 12582912,
-              "element_stop": 25165824,
+              "element_start": 31457280,
+              "element_stop": 37748736,
               "path": [
                 "rank5.tx",
                 "local.5->6",
@@ -421,21 +504,21 @@
           "receiver": 7,
           "operation": "reduce",
           "chunks": [
-            4,
-            5
+            12,
+            13
           ],
-          "element_start": 25165824,
-          "element_stop": 37748736,
-          "bytes": 50331648,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 4,
+              "chunk": 12,
               "contributors": [
                 6
               ]
             },
             {
-              "chunk": 5,
+              "chunk": 13,
               "contributors": [
                 6
               ]
@@ -446,10 +529,10 @@
             {
               "sender": "r6:local",
               "receiver": "r7:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 25165824,
-              "element_stop": 37748736,
+              "element_start": 37748736,
+              "element_stop": 44040192,
               "path": [
                 "rank6.tx",
                 "local.6->7",
@@ -460,24 +543,24 @@
         },
         {
           "sender": 7,
-          "receiver": 4,
+          "receiver": 0,
           "operation": "reduce",
           "chunks": [
-            6,
-            7
+            14,
+            15
           ],
-          "element_start": 37748736,
+          "element_start": 44040192,
           "element_stop": 50331648,
-          "bytes": 50331648,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 6,
+              "chunk": 14,
               "contributors": [
                 7
               ]
             },
             {
-              "chunk": 7,
+              "chunk": 15,
               "contributors": [
                 7
               ]
@@ -487,15 +570,351 @@
           "stripes": [
             {
               "sender": "r7:local",
-              "receiver": "r4:local",
-              "bytes": 50331648,
+              "receiver": "r0:local",
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 37748736,
+              "element_start": 44040192,
               "element_stop": 50331648,
               "path": [
                 "rank7.tx",
-                "local.7->4",
-                "rank4.rx"
+                "local.7->0",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 9,
+          "operation": "reduce",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                8
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r8:local",
+              "receiver": "r9:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank8.tx",
+                "local.8->9",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 10,
+          "operation": "reduce",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                9
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r9:local",
+              "receiver": "r10:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank9.tx",
+                "local.9->10",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 11,
+          "operation": "reduce",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                10
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r10:local",
+              "receiver": "r11:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank10.tx",
+                "local.10->11",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 12,
+          "operation": "reduce",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                11
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r11:local",
+              "receiver": "r12:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank11.tx",
+                "local.11->12",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 13,
+          "operation": "reduce",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                12
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r12:local",
+              "receiver": "r13:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank12.tx",
+                "local.12->13",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 14,
+          "operation": "reduce",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                13
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r13:local",
+              "receiver": "r14:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank13.tx",
+                "local.13->14",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 15,
+          "operation": "reduce",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                14
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r14:local",
+              "receiver": "r15:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank14.tx",
+                "local.14->15",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 8,
+          "operation": "reduce",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r15:local",
+              "receiver": "r8:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank15.tx",
+                "local.15->8",
+                "rank8.rx"
               ]
             }
           ]
@@ -505,10 +924,10 @@
         {
           "sender": "r0:local",
           "receiver": "r1:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
           "element_start": 0,
-          "element_stop": 12582912,
+          "element_stop": 6291456,
           "path": [
             "rank0.tx",
             "local.0->1",
@@ -518,10 +937,10 @@
         {
           "sender": "r1:local",
           "receiver": "r2:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 12582912,
-          "element_stop": 25165824,
+          "element_start": 6291456,
+          "element_stop": 12582912,
           "path": [
             "rank1.tx",
             "local.1->2",
@@ -531,10 +950,10 @@
         {
           "sender": "r2:local",
           "receiver": "r3:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 25165824,
-          "element_stop": 37748736,
+          "element_start": 12582912,
+          "element_stop": 18874368,
           "path": [
             "rank2.tx",
             "local.2->3",
@@ -543,24 +962,24 @@
         },
         {
           "sender": "r3:local",
-          "receiver": "r0:local",
-          "bytes": 50331648,
+          "receiver": "r4:local",
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 37748736,
-          "element_stop": 50331648,
+          "element_start": 18874368,
+          "element_stop": 25165824,
           "path": [
             "rank3.tx",
-            "local.3->0",
-            "rank0.rx"
+            "local.3->4",
+            "rank4.rx"
           ]
         },
         {
           "sender": "r4:local",
           "receiver": "r5:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 0,
-          "element_stop": 12582912,
+          "element_start": 25165824,
+          "element_stop": 31457280,
           "path": [
             "rank4.tx",
             "local.4->5",
@@ -570,10 +989,10 @@
         {
           "sender": "r5:local",
           "receiver": "r6:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 12582912,
-          "element_stop": 25165824,
+          "element_start": 31457280,
+          "element_stop": 37748736,
           "path": [
             "rank5.tx",
             "local.5->6",
@@ -583,10 +1002,10 @@
         {
           "sender": "r6:local",
           "receiver": "r7:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 25165824,
-          "element_stop": 37748736,
+          "element_start": 37748736,
+          "element_stop": 44040192,
           "path": [
             "rank6.tx",
             "local.6->7",
@@ -595,48 +1014,176 @@
         },
         {
           "sender": "r7:local",
-          "receiver": "r4:local",
-          "bytes": 50331648,
+          "receiver": "r0:local",
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 37748736,
+          "element_start": 44040192,
           "element_stop": 50331648,
           "path": [
             "rank7.tx",
-            "local.7->4",
-            "rank4.rx"
+            "local.7->0",
+            "rank0.rx"
+          ]
+        },
+        {
+          "sender": "r8:local",
+          "receiver": "r9:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank8.tx",
+            "local.8->9",
+            "rank9.rx"
+          ]
+        },
+        {
+          "sender": "r9:local",
+          "receiver": "r10:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank9.tx",
+            "local.9->10",
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:local",
+          "receiver": "r11:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank10.tx",
+            "local.10->11",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:local",
+          "receiver": "r12:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank11.tx",
+            "local.11->12",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:local",
+          "receiver": "r13:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank12.tx",
+            "local.12->13",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:local",
+          "receiver": "r14:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank13.tx",
+            "local.13->14",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:local",
+          "receiver": "r15:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank14.tx",
+            "local.14->15",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:local",
+          "receiver": "r8:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank15.tx",
+            "local.15->8",
+            "rank8.rx"
           ]
         }
       ],
       "resource_bytes": {
-        "rank0.tx": 50331648,
-        "local.0->1": 50331648,
-        "rank1.rx": 50331648,
-        "rank1.tx": 50331648,
-        "local.1->2": 50331648,
-        "rank2.rx": 50331648,
-        "rank2.tx": 50331648,
-        "local.2->3": 50331648,
-        "rank3.rx": 50331648,
-        "rank3.tx": 50331648,
-        "local.3->0": 50331648,
-        "rank0.rx": 50331648,
-        "rank4.tx": 50331648,
-        "local.4->5": 50331648,
-        "rank5.rx": 50331648,
-        "rank5.tx": 50331648,
-        "local.5->6": 50331648,
-        "rank6.rx": 50331648,
-        "rank6.tx": 50331648,
-        "local.6->7": 50331648,
-        "rank7.rx": 50331648,
-        "rank7.tx": 50331648,
-        "local.7->4": 50331648,
-        "rank4.rx": 50331648
+        "rank0.tx": 25165824,
+        "local.0->1": 25165824,
+        "rank1.rx": 25165824,
+        "rank1.tx": 25165824,
+        "local.1->2": 25165824,
+        "rank2.rx": 25165824,
+        "rank2.tx": 25165824,
+        "local.2->3": 25165824,
+        "rank3.rx": 25165824,
+        "rank3.tx": 25165824,
+        "local.3->4": 25165824,
+        "rank4.rx": 25165824,
+        "rank4.tx": 25165824,
+        "local.4->5": 25165824,
+        "rank5.rx": 25165824,
+        "rank5.tx": 25165824,
+        "local.5->6": 25165824,
+        "rank6.rx": 25165824,
+        "rank6.tx": 25165824,
+        "local.6->7": 25165824,
+        "rank7.rx": 25165824,
+        "rank7.tx": 25165824,
+        "local.7->0": 25165824,
+        "rank0.rx": 25165824,
+        "rank8.tx": 25165824,
+        "local.8->9": 25165824,
+        "rank9.rx": 25165824,
+        "rank9.tx": 25165824,
+        "local.9->10": 25165824,
+        "rank10.rx": 25165824,
+        "rank10.tx": 25165824,
+        "local.10->11": 25165824,
+        "rank11.rx": 25165824,
+        "rank11.tx": 25165824,
+        "local.11->12": 25165824,
+        "rank12.rx": 25165824,
+        "rank12.tx": 25165824,
+        "local.12->13": 25165824,
+        "rank13.rx": 25165824,
+        "rank13.tx": 25165824,
+        "local.13->14": 25165824,
+        "rank14.rx": 25165824,
+        "rank14.tx": 25165824,
+        "local.14->15": 25165824,
+        "rank15.rx": 25165824,
+        "rank15.tx": 25165824,
+        "local.15->8": 25165824,
+        "rank8.rx": 25165824
       },
-      "resource_lower_seconds_exact": "12288/48828125",
-      "barrier_lower_seconds_exact": "396341/1562500000",
+      "resource_lower_seconds_exact": "8192/146484375",
+      "barrier_lower_seconds_exact": "4256779/75000000000",
       "barrier_start_seconds_exact": "0",
-      "barrier_finish_seconds_exact": "396341/1562500000"
+      "barrier_finish_seconds_exact": "4256779/75000000000"
     },
     {
       "round": 1,
@@ -649,25 +1196,25 @@
           "receiver": 1,
           "operation": "reduce",
           "chunks": [
-            6,
-            7
+            14,
+            15
           ],
-          "element_start": 37748736,
+          "element_start": 44040192,
           "element_stop": 50331648,
-          "bytes": 50331648,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 6,
+              "chunk": 14,
               "contributors": [
                 0,
-                3
+                7
               ]
             },
             {
-              "chunk": 7,
+              "chunk": 15,
               "contributors": [
                 0,
-                3
+                7
               ]
             }
           ],
@@ -676,9 +1223,9 @@
             {
               "sender": "r0:local",
               "receiver": "r1:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 37748736,
+              "element_start": 44040192,
               "element_stop": 50331648,
               "path": [
                 "rank0.tx",
@@ -697,8 +1244,8 @@
             1
           ],
           "element_start": 0,
-          "element_stop": 12582912,
-          "bytes": 50331648,
+          "element_stop": 6291456,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 0,
@@ -720,10 +1267,10 @@
             {
               "sender": "r1:local",
               "receiver": "r2:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
               "element_start": 0,
-              "element_stop": 12582912,
+              "element_stop": 6291456,
               "path": [
                 "rank1.tx",
                 "local.1->2",
@@ -740,9 +1287,9 @@
             2,
             3
           ],
-          "element_start": 12582912,
-          "element_stop": 25165824,
-          "bytes": 50331648,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 2,
@@ -764,10 +1311,10 @@
             {
               "sender": "r2:local",
               "receiver": "r3:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 12582912,
-              "element_stop": 25165824,
+              "element_start": 6291456,
+              "element_stop": 12582912,
               "path": [
                 "rank2.tx",
                 "local.2->3",
@@ -778,15 +1325,15 @@
         },
         {
           "sender": 3,
-          "receiver": 0,
+          "receiver": 4,
           "operation": "reduce",
           "chunks": [
             4,
             5
           ],
-          "element_start": 25165824,
-          "element_stop": 37748736,
-          "bytes": 50331648,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 4,
@@ -807,15 +1354,15 @@
           "stripes": [
             {
               "sender": "r3:local",
-              "receiver": "r0:local",
-              "bytes": 50331648,
+              "receiver": "r4:local",
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 25165824,
-              "element_stop": 37748736,
+              "element_start": 12582912,
+              "element_stop": 18874368,
               "path": [
                 "rank3.tx",
-                "local.3->0",
-                "rank0.rx"
+                "local.3->4",
+                "rank4.rx"
               ]
             }
           ]
@@ -828,22 +1375,22 @@
             6,
             7
           ],
-          "element_start": 37748736,
-          "element_stop": 50331648,
-          "bytes": 50331648,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 6,
               "contributors": [
-                4,
-                7
+                3,
+                4
               ]
             },
             {
               "chunk": 7,
               "contributors": [
-                4,
-                7
+                3,
+                4
               ]
             }
           ],
@@ -852,10 +1399,10 @@
             {
               "sender": "r4:local",
               "receiver": "r5:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 37748736,
-              "element_stop": 50331648,
+              "element_start": 18874368,
+              "element_stop": 25165824,
               "path": [
                 "rank4.tx",
                 "local.4->5",
@@ -869,22 +1416,22 @@
           "receiver": 6,
           "operation": "reduce",
           "chunks": [
-            0,
-            1
+            8,
+            9
           ],
-          "element_start": 0,
-          "element_stop": 12582912,
-          "bytes": 50331648,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 0,
+              "chunk": 8,
               "contributors": [
                 4,
                 5
               ]
             },
             {
-              "chunk": 1,
+              "chunk": 9,
               "contributors": [
                 4,
                 5
@@ -896,10 +1443,10 @@
             {
               "sender": "r5:local",
               "receiver": "r6:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 0,
-              "element_stop": 12582912,
+              "element_start": 25165824,
+              "element_stop": 31457280,
               "path": [
                 "rank5.tx",
                 "local.5->6",
@@ -913,22 +1460,22 @@
           "receiver": 7,
           "operation": "reduce",
           "chunks": [
-            2,
-            3
+            10,
+            11
           ],
-          "element_start": 12582912,
-          "element_stop": 25165824,
-          "bytes": 50331648,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 2,
+              "chunk": 10,
               "contributors": [
                 5,
                 6
               ]
             },
             {
-              "chunk": 3,
+              "chunk": 11,
               "contributors": [
                 5,
                 6
@@ -940,10 +1487,10 @@
             {
               "sender": "r6:local",
               "receiver": "r7:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 12582912,
-              "element_stop": 25165824,
+              "element_start": 31457280,
+              "element_stop": 37748736,
               "path": [
                 "rank6.tx",
                 "local.6->7",
@@ -954,25 +1501,25 @@
         },
         {
           "sender": 7,
-          "receiver": 4,
+          "receiver": 0,
           "operation": "reduce",
           "chunks": [
-            4,
-            5
+            12,
+            13
           ],
-          "element_start": 25165824,
-          "element_stop": 37748736,
-          "bytes": 50331648,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 4,
+              "chunk": 12,
               "contributors": [
                 6,
                 7
               ]
             },
             {
-              "chunk": 5,
+              "chunk": 13,
               "contributors": [
                 6,
                 7
@@ -983,15 +1530,367 @@
           "stripes": [
             {
               "sender": "r7:local",
-              "receiver": "r4:local",
-              "bytes": 50331648,
+              "receiver": "r0:local",
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 25165824,
-              "element_stop": 37748736,
+              "element_start": 37748736,
+              "element_stop": 44040192,
               "path": [
                 "rank7.tx",
-                "local.7->4",
-                "rank4.rx"
+                "local.7->0",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 9,
+          "operation": "reduce",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                8,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                8,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r8:local",
+              "receiver": "r9:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank8.tx",
+                "local.8->9",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 10,
+          "operation": "reduce",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                8,
+                9
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                8,
+                9
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r9:local",
+              "receiver": "r10:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank9.tx",
+                "local.9->10",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 11,
+          "operation": "reduce",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                9,
+                10
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                9,
+                10
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r10:local",
+              "receiver": "r11:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank10.tx",
+                "local.10->11",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 12,
+          "operation": "reduce",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                10,
+                11
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                10,
+                11
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r11:local",
+              "receiver": "r12:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank11.tx",
+                "local.11->12",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 13,
+          "operation": "reduce",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                11,
+                12
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                11,
+                12
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r12:local",
+              "receiver": "r13:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank12.tx",
+                "local.12->13",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 14,
+          "operation": "reduce",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                12,
+                13
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                12,
+                13
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r13:local",
+              "receiver": "r14:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank13.tx",
+                "local.13->14",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 15,
+          "operation": "reduce",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                13,
+                14
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                13,
+                14
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r14:local",
+              "receiver": "r15:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank14.tx",
+                "local.14->15",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 8,
+          "operation": "reduce",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r15:local",
+              "receiver": "r8:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank15.tx",
+                "local.15->8",
+                "rank8.rx"
               ]
             }
           ]
@@ -1001,9 +1900,9 @@
         {
           "sender": "r0:local",
           "receiver": "r1:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 37748736,
+          "element_start": 44040192,
           "element_stop": 50331648,
           "path": [
             "rank0.tx",
@@ -1014,10 +1913,10 @@
         {
           "sender": "r1:local",
           "receiver": "r2:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
           "element_start": 0,
-          "element_stop": 12582912,
+          "element_stop": 6291456,
           "path": [
             "rank1.tx",
             "local.1->2",
@@ -1027,10 +1926,10 @@
         {
           "sender": "r2:local",
           "receiver": "r3:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 12582912,
-          "element_stop": 25165824,
+          "element_start": 6291456,
+          "element_stop": 12582912,
           "path": [
             "rank2.tx",
             "local.2->3",
@@ -1039,24 +1938,24 @@
         },
         {
           "sender": "r3:local",
-          "receiver": "r0:local",
-          "bytes": 50331648,
+          "receiver": "r4:local",
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 25165824,
-          "element_stop": 37748736,
+          "element_start": 12582912,
+          "element_stop": 18874368,
           "path": [
             "rank3.tx",
-            "local.3->0",
-            "rank0.rx"
+            "local.3->4",
+            "rank4.rx"
           ]
         },
         {
           "sender": "r4:local",
           "receiver": "r5:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 37748736,
-          "element_stop": 50331648,
+          "element_start": 18874368,
+          "element_stop": 25165824,
           "path": [
             "rank4.tx",
             "local.4->5",
@@ -1066,10 +1965,10 @@
         {
           "sender": "r5:local",
           "receiver": "r6:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 0,
-          "element_stop": 12582912,
+          "element_start": 25165824,
+          "element_stop": 31457280,
           "path": [
             "rank5.tx",
             "local.5->6",
@@ -1079,10 +1978,10 @@
         {
           "sender": "r6:local",
           "receiver": "r7:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 12582912,
-          "element_stop": 25165824,
+          "element_start": 31457280,
+          "element_stop": 37748736,
           "path": [
             "rank6.tx",
             "local.6->7",
@@ -1091,48 +1990,176 @@
         },
         {
           "sender": "r7:local",
-          "receiver": "r4:local",
-          "bytes": 50331648,
+          "receiver": "r0:local",
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 25165824,
-          "element_stop": 37748736,
+          "element_start": 37748736,
+          "element_stop": 44040192,
           "path": [
             "rank7.tx",
-            "local.7->4",
-            "rank4.rx"
+            "local.7->0",
+            "rank0.rx"
+          ]
+        },
+        {
+          "sender": "r8:local",
+          "receiver": "r9:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank8.tx",
+            "local.8->9",
+            "rank9.rx"
+          ]
+        },
+        {
+          "sender": "r9:local",
+          "receiver": "r10:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank9.tx",
+            "local.9->10",
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:local",
+          "receiver": "r11:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank10.tx",
+            "local.10->11",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:local",
+          "receiver": "r12:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank11.tx",
+            "local.11->12",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:local",
+          "receiver": "r13:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank12.tx",
+            "local.12->13",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:local",
+          "receiver": "r14:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank13.tx",
+            "local.13->14",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:local",
+          "receiver": "r15:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank14.tx",
+            "local.14->15",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:local",
+          "receiver": "r8:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank15.tx",
+            "local.15->8",
+            "rank8.rx"
           ]
         }
       ],
       "resource_bytes": {
-        "rank0.tx": 50331648,
-        "local.0->1": 50331648,
-        "rank1.rx": 50331648,
-        "rank1.tx": 50331648,
-        "local.1->2": 50331648,
-        "rank2.rx": 50331648,
-        "rank2.tx": 50331648,
-        "local.2->3": 50331648,
-        "rank3.rx": 50331648,
-        "rank3.tx": 50331648,
-        "local.3->0": 50331648,
-        "rank0.rx": 50331648,
-        "rank4.tx": 50331648,
-        "local.4->5": 50331648,
-        "rank5.rx": 50331648,
-        "rank5.tx": 50331648,
-        "local.5->6": 50331648,
-        "rank6.rx": 50331648,
-        "rank6.tx": 50331648,
-        "local.6->7": 50331648,
-        "rank7.rx": 50331648,
-        "rank7.tx": 50331648,
-        "local.7->4": 50331648,
-        "rank4.rx": 50331648
+        "rank0.tx": 25165824,
+        "local.0->1": 25165824,
+        "rank1.rx": 25165824,
+        "rank1.tx": 25165824,
+        "local.1->2": 25165824,
+        "rank2.rx": 25165824,
+        "rank2.tx": 25165824,
+        "local.2->3": 25165824,
+        "rank3.rx": 25165824,
+        "rank3.tx": 25165824,
+        "local.3->4": 25165824,
+        "rank4.rx": 25165824,
+        "rank4.tx": 25165824,
+        "local.4->5": 25165824,
+        "rank5.rx": 25165824,
+        "rank5.tx": 25165824,
+        "local.5->6": 25165824,
+        "rank6.rx": 25165824,
+        "rank6.tx": 25165824,
+        "local.6->7": 25165824,
+        "rank7.rx": 25165824,
+        "rank7.tx": 25165824,
+        "local.7->0": 25165824,
+        "rank0.rx": 25165824,
+        "rank8.tx": 25165824,
+        "local.8->9": 25165824,
+        "rank9.rx": 25165824,
+        "rank9.tx": 25165824,
+        "local.9->10": 25165824,
+        "rank10.rx": 25165824,
+        "rank10.tx": 25165824,
+        "local.10->11": 25165824,
+        "rank11.rx": 25165824,
+        "rank11.tx": 25165824,
+        "local.11->12": 25165824,
+        "rank12.rx": 25165824,
+        "rank12.tx": 25165824,
+        "local.12->13": 25165824,
+        "rank13.rx": 25165824,
+        "rank13.tx": 25165824,
+        "local.13->14": 25165824,
+        "rank14.rx": 25165824,
+        "rank14.tx": 25165824,
+        "local.14->15": 25165824,
+        "rank15.rx": 25165824,
+        "rank15.tx": 25165824,
+        "local.15->8": 25165824,
+        "rank8.rx": 25165824
       },
-      "resource_lower_seconds_exact": "12288/48828125",
-      "barrier_lower_seconds_exact": "396341/1562500000",
-      "barrier_start_seconds_exact": "396341/1562500000",
-      "barrier_finish_seconds_exact": "396341/781250000"
+      "resource_lower_seconds_exact": "8192/146484375",
+      "barrier_lower_seconds_exact": "4256779/75000000000",
+      "barrier_start_seconds_exact": "4256779/75000000000",
+      "barrier_finish_seconds_exact": "4256779/37500000000"
     },
     {
       "round": 2,
@@ -1145,27 +2172,27 @@
           "receiver": 1,
           "operation": "reduce",
           "chunks": [
-            4,
-            5
+            12,
+            13
           ],
-          "element_start": 25165824,
-          "element_stop": 37748736,
-          "bytes": 50331648,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 4,
+              "chunk": 12,
               "contributors": [
                 0,
-                2,
-                3
+                6,
+                7
               ]
             },
             {
-              "chunk": 5,
+              "chunk": 13,
               "contributors": [
                 0,
-                2,
-                3
+                6,
+                7
               ]
             }
           ],
@@ -1174,10 +2201,10 @@
             {
               "sender": "r0:local",
               "receiver": "r1:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 25165824,
-              "element_stop": 37748736,
+              "element_start": 37748736,
+              "element_stop": 44040192,
               "path": [
                 "rank0.tx",
                 "local.0->1",
@@ -1191,27 +2218,27 @@
           "receiver": 2,
           "operation": "reduce",
           "chunks": [
-            6,
-            7
+            14,
+            15
           ],
-          "element_start": 37748736,
+          "element_start": 44040192,
           "element_stop": 50331648,
-          "bytes": 50331648,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 6,
+              "chunk": 14,
               "contributors": [
                 0,
                 1,
-                3
+                7
               ]
             },
             {
-              "chunk": 7,
+              "chunk": 15,
               "contributors": [
                 0,
                 1,
-                3
+                7
               ]
             }
           ],
@@ -1220,9 +2247,9 @@
             {
               "sender": "r1:local",
               "receiver": "r2:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 37748736,
+              "element_start": 44040192,
               "element_stop": 50331648,
               "path": [
                 "rank1.tx",
@@ -1241,8 +2268,8 @@
             1
           ],
           "element_start": 0,
-          "element_stop": 12582912,
-          "bytes": 50331648,
+          "element_stop": 6291456,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 0,
@@ -1266,10 +2293,10 @@
             {
               "sender": "r2:local",
               "receiver": "r3:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
               "element_start": 0,
-              "element_stop": 12582912,
+              "element_stop": 6291456,
               "path": [
                 "rank2.tx",
                 "local.2->3",
@@ -1280,15 +2307,15 @@
         },
         {
           "sender": 3,
-          "receiver": 0,
+          "receiver": 4,
           "operation": "reduce",
           "chunks": [
             2,
             3
           ],
-          "element_start": 12582912,
-          "element_stop": 25165824,
-          "bytes": 50331648,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 2,
@@ -1311,15 +2338,15 @@
           "stripes": [
             {
               "sender": "r3:local",
-              "receiver": "r0:local",
-              "bytes": 50331648,
+              "receiver": "r4:local",
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 12582912,
-              "element_stop": 25165824,
+              "element_start": 6291456,
+              "element_stop": 12582912,
               "path": [
                 "rank3.tx",
-                "local.3->0",
-                "rank0.rx"
+                "local.3->4",
+                "rank4.rx"
               ]
             }
           ]
@@ -1332,24 +2359,24 @@
             4,
             5
           ],
-          "element_start": 25165824,
-          "element_stop": 37748736,
-          "bytes": 50331648,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 4,
               "contributors": [
-                4,
-                6,
-                7
+                2,
+                3,
+                4
               ]
             },
             {
               "chunk": 5,
               "contributors": [
-                4,
-                6,
-                7
+                2,
+                3,
+                4
               ]
             }
           ],
@@ -1358,10 +2385,10 @@
             {
               "sender": "r4:local",
               "receiver": "r5:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 25165824,
-              "element_stop": 37748736,
+              "element_start": 12582912,
+              "element_stop": 18874368,
               "path": [
                 "rank4.tx",
                 "local.4->5",
@@ -1378,21 +2405,4293 @@
             6,
             7
           ],
-          "element_start": 37748736,
-          "element_stop": 50331648,
-          "bytes": 50331648,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 6,
               "contributors": [
+                3,
+                4,
+                5
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                3,
+                4,
+                5
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r5:local",
+              "receiver": "r6:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank5.tx",
+                "local.5->6",
+                "rank6.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 6,
+          "receiver": 7,
+          "operation": "reduce",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
                 4,
                 5,
+                6
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                4,
+                5,
+                6
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r6:local",
+              "receiver": "r7:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank6.tx",
+                "local.6->7",
+                "rank7.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 7,
+          "receiver": 0,
+          "operation": "reduce",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                5,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r7:local",
+              "receiver": "r0:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank7.tx",
+                "local.7->0",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 9,
+          "operation": "reduce",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                8,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                8,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r8:local",
+              "receiver": "r9:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank8.tx",
+                "local.8->9",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 10,
+          "operation": "reduce",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                8,
+                9,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                8,
+                9,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r9:local",
+              "receiver": "r10:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank9.tx",
+                "local.9->10",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 11,
+          "operation": "reduce",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                8,
+                9,
+                10
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                8,
+                9,
+                10
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r10:local",
+              "receiver": "r11:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank10.tx",
+                "local.10->11",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 12,
+          "operation": "reduce",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                9,
+                10,
+                11
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                9,
+                10,
+                11
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r11:local",
+              "receiver": "r12:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank11.tx",
+                "local.11->12",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 13,
+          "operation": "reduce",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                10,
+                11,
+                12
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                10,
+                11,
+                12
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r12:local",
+              "receiver": "r13:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank12.tx",
+                "local.12->13",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 14,
+          "operation": "reduce",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                11,
+                12,
+                13
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                11,
+                12,
+                13
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r13:local",
+              "receiver": "r14:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank13.tx",
+                "local.13->14",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 15,
+          "operation": "reduce",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                12,
+                13,
+                14
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                12,
+                13,
+                14
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r14:local",
+              "receiver": "r15:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank14.tx",
+                "local.14->15",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 8,
+          "operation": "reduce",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r15:local",
+              "receiver": "r8:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank15.tx",
+                "local.15->8",
+                "rank8.rx"
+              ]
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "sender": "r0:local",
+          "receiver": "r1:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank0.tx",
+            "local.0->1",
+            "rank1.rx"
+          ]
+        },
+        {
+          "sender": "r1:local",
+          "receiver": "r2:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank1.tx",
+            "local.1->2",
+            "rank2.rx"
+          ]
+        },
+        {
+          "sender": "r2:local",
+          "receiver": "r3:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank2.tx",
+            "local.2->3",
+            "rank3.rx"
+          ]
+        },
+        {
+          "sender": "r3:local",
+          "receiver": "r4:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank3.tx",
+            "local.3->4",
+            "rank4.rx"
+          ]
+        },
+        {
+          "sender": "r4:local",
+          "receiver": "r5:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank4.tx",
+            "local.4->5",
+            "rank5.rx"
+          ]
+        },
+        {
+          "sender": "r5:local",
+          "receiver": "r6:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank5.tx",
+            "local.5->6",
+            "rank6.rx"
+          ]
+        },
+        {
+          "sender": "r6:local",
+          "receiver": "r7:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank6.tx",
+            "local.6->7",
+            "rank7.rx"
+          ]
+        },
+        {
+          "sender": "r7:local",
+          "receiver": "r0:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank7.tx",
+            "local.7->0",
+            "rank0.rx"
+          ]
+        },
+        {
+          "sender": "r8:local",
+          "receiver": "r9:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank8.tx",
+            "local.8->9",
+            "rank9.rx"
+          ]
+        },
+        {
+          "sender": "r9:local",
+          "receiver": "r10:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank9.tx",
+            "local.9->10",
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:local",
+          "receiver": "r11:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank10.tx",
+            "local.10->11",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:local",
+          "receiver": "r12:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank11.tx",
+            "local.11->12",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:local",
+          "receiver": "r13:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank12.tx",
+            "local.12->13",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:local",
+          "receiver": "r14:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank13.tx",
+            "local.13->14",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:local",
+          "receiver": "r15:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank14.tx",
+            "local.14->15",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:local",
+          "receiver": "r8:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank15.tx",
+            "local.15->8",
+            "rank8.rx"
+          ]
+        }
+      ],
+      "resource_bytes": {
+        "rank0.tx": 25165824,
+        "local.0->1": 25165824,
+        "rank1.rx": 25165824,
+        "rank1.tx": 25165824,
+        "local.1->2": 25165824,
+        "rank2.rx": 25165824,
+        "rank2.tx": 25165824,
+        "local.2->3": 25165824,
+        "rank3.rx": 25165824,
+        "rank3.tx": 25165824,
+        "local.3->4": 25165824,
+        "rank4.rx": 25165824,
+        "rank4.tx": 25165824,
+        "local.4->5": 25165824,
+        "rank5.rx": 25165824,
+        "rank5.tx": 25165824,
+        "local.5->6": 25165824,
+        "rank6.rx": 25165824,
+        "rank6.tx": 25165824,
+        "local.6->7": 25165824,
+        "rank7.rx": 25165824,
+        "rank7.tx": 25165824,
+        "local.7->0": 25165824,
+        "rank0.rx": 25165824,
+        "rank8.tx": 25165824,
+        "local.8->9": 25165824,
+        "rank9.rx": 25165824,
+        "rank9.tx": 25165824,
+        "local.9->10": 25165824,
+        "rank10.rx": 25165824,
+        "rank10.tx": 25165824,
+        "local.10->11": 25165824,
+        "rank11.rx": 25165824,
+        "rank11.tx": 25165824,
+        "local.11->12": 25165824,
+        "rank12.rx": 25165824,
+        "rank12.tx": 25165824,
+        "local.12->13": 25165824,
+        "rank13.rx": 25165824,
+        "rank13.tx": 25165824,
+        "local.13->14": 25165824,
+        "rank14.rx": 25165824,
+        "rank14.tx": 25165824,
+        "local.14->15": 25165824,
+        "rank15.rx": 25165824,
+        "rank15.tx": 25165824,
+        "local.15->8": 25165824,
+        "rank8.rx": 25165824
+      },
+      "resource_lower_seconds_exact": "8192/146484375",
+      "barrier_lower_seconds_exact": "4256779/75000000000",
+      "barrier_start_seconds_exact": "4256779/37500000000",
+      "barrier_finish_seconds_exact": "4256779/25000000000"
+    },
+    {
+      "round": 3,
+      "stage": "local_reduce_scatter",
+      "phase": "reduce_scatter",
+      "step": 3,
+      "messages": [
+        {
+          "sender": 0,
+          "receiver": 1,
+          "operation": "reduce",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                5,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r0:local",
+              "receiver": "r1:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank0.tx",
+                "local.0->1",
+                "rank1.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 1,
+          "receiver": 2,
+          "operation": "reduce",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r1:local",
+              "receiver": "r2:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank1.tx",
+                "local.1->2",
+                "rank2.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 2,
+          "receiver": 3,
+          "operation": "reduce",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                7
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r2:local",
+              "receiver": "r3:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank2.tx",
+                "local.2->3",
+                "rank3.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 3,
+          "receiver": 4,
+          "operation": "reduce",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r3:local",
+              "receiver": "r4:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank3.tx",
+                "local.3->4",
+                "rank4.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 4,
+          "receiver": 5,
+          "operation": "reduce",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                1,
+                2,
+                3,
+                4
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                1,
+                2,
+                3,
+                4
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r4:local",
+              "receiver": "r5:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank4.tx",
+                "local.4->5",
+                "rank5.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 5,
+          "receiver": 6,
+          "operation": "reduce",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                2,
+                3,
+                4,
+                5
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                2,
+                3,
+                4,
+                5
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r5:local",
+              "receiver": "r6:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank5.tx",
+                "local.5->6",
+                "rank6.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 6,
+          "receiver": 7,
+          "operation": "reduce",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                3,
+                4,
+                5,
+                6
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                3,
+                4,
+                5,
+                6
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r6:local",
+              "receiver": "r7:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank6.tx",
+                "local.6->7",
+                "rank7.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 7,
+          "receiver": 0,
+          "operation": "reduce",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                4,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r7:local",
+              "receiver": "r0:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank7.tx",
+                "local.7->0",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 9,
+          "operation": "reduce",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                8,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                8,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r8:local",
+              "receiver": "r9:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank8.tx",
+                "local.8->9",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 10,
+          "operation": "reduce",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                8,
+                9,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                8,
+                9,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r9:local",
+              "receiver": "r10:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank9.tx",
+                "local.9->10",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 11,
+          "operation": "reduce",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                8,
+                9,
+                10,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                8,
+                9,
+                10,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r10:local",
+              "receiver": "r11:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank10.tx",
+                "local.10->11",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 12,
+          "operation": "reduce",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                8,
+                9,
+                10,
+                11
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                8,
+                9,
+                10,
+                11
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r11:local",
+              "receiver": "r12:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank11.tx",
+                "local.11->12",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 13,
+          "operation": "reduce",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                9,
+                10,
+                11,
+                12
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r12:local",
+              "receiver": "r13:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank12.tx",
+                "local.12->13",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 14,
+          "operation": "reduce",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                10,
+                11,
+                12,
+                13
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r13:local",
+              "receiver": "r14:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank13.tx",
+                "local.13->14",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 15,
+          "operation": "reduce",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                11,
+                12,
+                13,
+                14
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                11,
+                12,
+                13,
+                14
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r14:local",
+              "receiver": "r15:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank14.tx",
+                "local.14->15",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 8,
+          "operation": "reduce",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r15:local",
+              "receiver": "r8:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank15.tx",
+                "local.15->8",
+                "rank8.rx"
+              ]
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "sender": "r0:local",
+          "receiver": "r1:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank0.tx",
+            "local.0->1",
+            "rank1.rx"
+          ]
+        },
+        {
+          "sender": "r1:local",
+          "receiver": "r2:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank1.tx",
+            "local.1->2",
+            "rank2.rx"
+          ]
+        },
+        {
+          "sender": "r2:local",
+          "receiver": "r3:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank2.tx",
+            "local.2->3",
+            "rank3.rx"
+          ]
+        },
+        {
+          "sender": "r3:local",
+          "receiver": "r4:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank3.tx",
+            "local.3->4",
+            "rank4.rx"
+          ]
+        },
+        {
+          "sender": "r4:local",
+          "receiver": "r5:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank4.tx",
+            "local.4->5",
+            "rank5.rx"
+          ]
+        },
+        {
+          "sender": "r5:local",
+          "receiver": "r6:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank5.tx",
+            "local.5->6",
+            "rank6.rx"
+          ]
+        },
+        {
+          "sender": "r6:local",
+          "receiver": "r7:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank6.tx",
+            "local.6->7",
+            "rank7.rx"
+          ]
+        },
+        {
+          "sender": "r7:local",
+          "receiver": "r0:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank7.tx",
+            "local.7->0",
+            "rank0.rx"
+          ]
+        },
+        {
+          "sender": "r8:local",
+          "receiver": "r9:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank8.tx",
+            "local.8->9",
+            "rank9.rx"
+          ]
+        },
+        {
+          "sender": "r9:local",
+          "receiver": "r10:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank9.tx",
+            "local.9->10",
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:local",
+          "receiver": "r11:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank10.tx",
+            "local.10->11",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:local",
+          "receiver": "r12:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank11.tx",
+            "local.11->12",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:local",
+          "receiver": "r13:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank12.tx",
+            "local.12->13",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:local",
+          "receiver": "r14:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank13.tx",
+            "local.13->14",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:local",
+          "receiver": "r15:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank14.tx",
+            "local.14->15",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:local",
+          "receiver": "r8:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank15.tx",
+            "local.15->8",
+            "rank8.rx"
+          ]
+        }
+      ],
+      "resource_bytes": {
+        "rank0.tx": 25165824,
+        "local.0->1": 25165824,
+        "rank1.rx": 25165824,
+        "rank1.tx": 25165824,
+        "local.1->2": 25165824,
+        "rank2.rx": 25165824,
+        "rank2.tx": 25165824,
+        "local.2->3": 25165824,
+        "rank3.rx": 25165824,
+        "rank3.tx": 25165824,
+        "local.3->4": 25165824,
+        "rank4.rx": 25165824,
+        "rank4.tx": 25165824,
+        "local.4->5": 25165824,
+        "rank5.rx": 25165824,
+        "rank5.tx": 25165824,
+        "local.5->6": 25165824,
+        "rank6.rx": 25165824,
+        "rank6.tx": 25165824,
+        "local.6->7": 25165824,
+        "rank7.rx": 25165824,
+        "rank7.tx": 25165824,
+        "local.7->0": 25165824,
+        "rank0.rx": 25165824,
+        "rank8.tx": 25165824,
+        "local.8->9": 25165824,
+        "rank9.rx": 25165824,
+        "rank9.tx": 25165824,
+        "local.9->10": 25165824,
+        "rank10.rx": 25165824,
+        "rank10.tx": 25165824,
+        "local.10->11": 25165824,
+        "rank11.rx": 25165824,
+        "rank11.tx": 25165824,
+        "local.11->12": 25165824,
+        "rank12.rx": 25165824,
+        "rank12.tx": 25165824,
+        "local.12->13": 25165824,
+        "rank13.rx": 25165824,
+        "rank13.tx": 25165824,
+        "local.13->14": 25165824,
+        "rank14.rx": 25165824,
+        "rank14.tx": 25165824,
+        "local.14->15": 25165824,
+        "rank15.rx": 25165824,
+        "rank15.tx": 25165824,
+        "local.15->8": 25165824,
+        "rank8.rx": 25165824
+      },
+      "resource_lower_seconds_exact": "8192/146484375",
+      "barrier_lower_seconds_exact": "4256779/75000000000",
+      "barrier_start_seconds_exact": "4256779/25000000000",
+      "barrier_finish_seconds_exact": "4256779/18750000000"
+    },
+    {
+      "round": 4,
+      "stage": "local_reduce_scatter",
+      "phase": "reduce_scatter",
+      "step": 4,
+      "messages": [
+        {
+          "sender": 0,
+          "receiver": 1,
+          "operation": "reduce",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                4,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r0:local",
+              "receiver": "r1:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank0.tx",
+                "local.0->1",
+                "rank1.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 1,
+          "receiver": 2,
+          "operation": "reduce",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                5,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r1:local",
+              "receiver": "r2:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank1.tx",
+                "local.1->2",
+                "rank2.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 2,
+          "receiver": 3,
+          "operation": "reduce",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r2:local",
+              "receiver": "r3:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank2.tx",
+                "local.2->3",
+                "rank3.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 3,
+          "receiver": 4,
+          "operation": "reduce",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                7
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r3:local",
+              "receiver": "r4:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank3.tx",
+                "local.3->4",
+                "rank4.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 4,
+          "receiver": 5,
+          "operation": "reduce",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r4:local",
+              "receiver": "r5:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank4.tx",
+                "local.4->5",
+                "rank5.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 5,
+          "receiver": 6,
+          "operation": "reduce",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r5:local",
+              "receiver": "r6:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank5.tx",
+                "local.5->6",
+                "rank6.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 6,
+          "receiver": 7,
+          "operation": "reduce",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r6:local",
+              "receiver": "r7:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank6.tx",
+                "local.6->7",
+                "rank7.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 7,
+          "receiver": 0,
+          "operation": "reduce",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                3,
+                4,
+                5,
+                6,
                 7
               ]
             },
             {
               "chunk": 7,
               "contributors": [
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r7:local",
+              "receiver": "r0:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank7.tx",
+                "local.7->0",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 9,
+          "operation": "reduce",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                8,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                8,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r8:local",
+              "receiver": "r9:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank8.tx",
+                "local.8->9",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 10,
+          "operation": "reduce",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                8,
+                9,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                8,
+                9,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r9:local",
+              "receiver": "r10:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank9.tx",
+                "local.9->10",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 11,
+          "operation": "reduce",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                8,
+                9,
+                10,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                8,
+                9,
+                10,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r10:local",
+              "receiver": "r11:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank10.tx",
+                "local.10->11",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 12,
+          "operation": "reduce",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r11:local",
+              "receiver": "r12:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank11.tx",
+                "local.11->12",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 13,
+          "operation": "reduce",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r12:local",
+              "receiver": "r13:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank12.tx",
+                "local.12->13",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 14,
+          "operation": "reduce",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r13:local",
+              "receiver": "r14:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank13.tx",
+                "local.13->14",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 15,
+          "operation": "reduce",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                10,
+                11,
+                12,
+                13,
+                14
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                10,
+                11,
+                12,
+                13,
+                14
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r14:local",
+              "receiver": "r15:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank14.tx",
+                "local.14->15",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 8,
+          "operation": "reduce",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r15:local",
+              "receiver": "r8:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank15.tx",
+                "local.15->8",
+                "rank8.rx"
+              ]
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "sender": "r0:local",
+          "receiver": "r1:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank0.tx",
+            "local.0->1",
+            "rank1.rx"
+          ]
+        },
+        {
+          "sender": "r1:local",
+          "receiver": "r2:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank1.tx",
+            "local.1->2",
+            "rank2.rx"
+          ]
+        },
+        {
+          "sender": "r2:local",
+          "receiver": "r3:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank2.tx",
+            "local.2->3",
+            "rank3.rx"
+          ]
+        },
+        {
+          "sender": "r3:local",
+          "receiver": "r4:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank3.tx",
+            "local.3->4",
+            "rank4.rx"
+          ]
+        },
+        {
+          "sender": "r4:local",
+          "receiver": "r5:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank4.tx",
+            "local.4->5",
+            "rank5.rx"
+          ]
+        },
+        {
+          "sender": "r5:local",
+          "receiver": "r6:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank5.tx",
+            "local.5->6",
+            "rank6.rx"
+          ]
+        },
+        {
+          "sender": "r6:local",
+          "receiver": "r7:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank6.tx",
+            "local.6->7",
+            "rank7.rx"
+          ]
+        },
+        {
+          "sender": "r7:local",
+          "receiver": "r0:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank7.tx",
+            "local.7->0",
+            "rank0.rx"
+          ]
+        },
+        {
+          "sender": "r8:local",
+          "receiver": "r9:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank8.tx",
+            "local.8->9",
+            "rank9.rx"
+          ]
+        },
+        {
+          "sender": "r9:local",
+          "receiver": "r10:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank9.tx",
+            "local.9->10",
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:local",
+          "receiver": "r11:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank10.tx",
+            "local.10->11",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:local",
+          "receiver": "r12:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank11.tx",
+            "local.11->12",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:local",
+          "receiver": "r13:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank12.tx",
+            "local.12->13",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:local",
+          "receiver": "r14:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank13.tx",
+            "local.13->14",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:local",
+          "receiver": "r15:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank14.tx",
+            "local.14->15",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:local",
+          "receiver": "r8:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank15.tx",
+            "local.15->8",
+            "rank8.rx"
+          ]
+        }
+      ],
+      "resource_bytes": {
+        "rank0.tx": 25165824,
+        "local.0->1": 25165824,
+        "rank1.rx": 25165824,
+        "rank1.tx": 25165824,
+        "local.1->2": 25165824,
+        "rank2.rx": 25165824,
+        "rank2.tx": 25165824,
+        "local.2->3": 25165824,
+        "rank3.rx": 25165824,
+        "rank3.tx": 25165824,
+        "local.3->4": 25165824,
+        "rank4.rx": 25165824,
+        "rank4.tx": 25165824,
+        "local.4->5": 25165824,
+        "rank5.rx": 25165824,
+        "rank5.tx": 25165824,
+        "local.5->6": 25165824,
+        "rank6.rx": 25165824,
+        "rank6.tx": 25165824,
+        "local.6->7": 25165824,
+        "rank7.rx": 25165824,
+        "rank7.tx": 25165824,
+        "local.7->0": 25165824,
+        "rank0.rx": 25165824,
+        "rank8.tx": 25165824,
+        "local.8->9": 25165824,
+        "rank9.rx": 25165824,
+        "rank9.tx": 25165824,
+        "local.9->10": 25165824,
+        "rank10.rx": 25165824,
+        "rank10.tx": 25165824,
+        "local.10->11": 25165824,
+        "rank11.rx": 25165824,
+        "rank11.tx": 25165824,
+        "local.11->12": 25165824,
+        "rank12.rx": 25165824,
+        "rank12.tx": 25165824,
+        "local.12->13": 25165824,
+        "rank13.rx": 25165824,
+        "rank13.tx": 25165824,
+        "local.13->14": 25165824,
+        "rank14.rx": 25165824,
+        "rank14.tx": 25165824,
+        "local.14->15": 25165824,
+        "rank15.rx": 25165824,
+        "rank15.tx": 25165824,
+        "local.15->8": 25165824,
+        "rank8.rx": 25165824
+      },
+      "resource_lower_seconds_exact": "8192/146484375",
+      "barrier_lower_seconds_exact": "4256779/75000000000",
+      "barrier_start_seconds_exact": "4256779/18750000000",
+      "barrier_finish_seconds_exact": "4256779/15000000000"
+    },
+    {
+      "round": 5,
+      "stage": "local_reduce_scatter",
+      "phase": "reduce_scatter",
+      "step": 5,
+      "messages": [
+        {
+          "sender": 0,
+          "receiver": 1,
+          "operation": "reduce",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r0:local",
+              "receiver": "r1:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank0.tx",
+                "local.0->1",
+                "rank1.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 1,
+          "receiver": 2,
+          "operation": "reduce",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r1:local",
+              "receiver": "r2:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank1.tx",
+                "local.1->2",
+                "rank2.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 2,
+          "receiver": 3,
+          "operation": "reduce",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r2:local",
+              "receiver": "r3:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank2.tx",
+                "local.2->3",
+                "rank3.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 3,
+          "receiver": 4,
+          "operation": "reduce",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r3:local",
+              "receiver": "r4:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank3.tx",
+                "local.3->4",
+                "rank4.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 4,
+          "receiver": 5,
+          "operation": "reduce",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                7
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r4:local",
+              "receiver": "r5:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank4.tx",
+                "local.4->5",
+                "rank5.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 5,
+          "receiver": 6,
+          "operation": "reduce",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r5:local",
+              "receiver": "r6:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank5.tx",
+                "local.5->6",
+                "rank6.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 6,
+          "receiver": 7,
+          "operation": "reduce",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r6:local",
+              "receiver": "r7:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank6.tx",
+                "local.6->7",
+                "rank7.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 7,
+          "receiver": 0,
+          "operation": "reduce",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r7:local",
+              "receiver": "r0:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank7.tx",
+                "local.7->0",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 9,
+          "operation": "reduce",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                8,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                8,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r8:local",
+              "receiver": "r9:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank8.tx",
+                "local.8->9",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 10,
+          "operation": "reduce",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                8,
+                9,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                8,
+                9,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r9:local",
+              "receiver": "r10:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank9.tx",
+                "local.9->10",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 11,
+          "operation": "reduce",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                8,
+                9,
+                10,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                8,
+                9,
+                10,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r10:local",
+              "receiver": "r11:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank10.tx",
+                "local.10->11",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 12,
+          "operation": "reduce",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r11:local",
+              "receiver": "r12:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank11.tx",
+                "local.11->12",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 13,
+          "operation": "reduce",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r12:local",
+              "receiver": "r13:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank12.tx",
+                "local.12->13",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 14,
+          "operation": "reduce",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r13:local",
+              "receiver": "r14:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank13.tx",
+                "local.13->14",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 15,
+          "operation": "reduce",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                9,
+                10,
+                11,
+                12,
+                13,
+                14
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                9,
+                10,
+                11,
+                12,
+                13,
+                14
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r14:local",
+              "receiver": "r15:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank14.tx",
+                "local.14->15",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 8,
+          "operation": "reduce",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r15:local",
+              "receiver": "r8:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank15.tx",
+                "local.15->8",
+                "rank8.rx"
+              ]
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "sender": "r0:local",
+          "receiver": "r1:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank0.tx",
+            "local.0->1",
+            "rank1.rx"
+          ]
+        },
+        {
+          "sender": "r1:local",
+          "receiver": "r2:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank1.tx",
+            "local.1->2",
+            "rank2.rx"
+          ]
+        },
+        {
+          "sender": "r2:local",
+          "receiver": "r3:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank2.tx",
+            "local.2->3",
+            "rank3.rx"
+          ]
+        },
+        {
+          "sender": "r3:local",
+          "receiver": "r4:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank3.tx",
+            "local.3->4",
+            "rank4.rx"
+          ]
+        },
+        {
+          "sender": "r4:local",
+          "receiver": "r5:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank4.tx",
+            "local.4->5",
+            "rank5.rx"
+          ]
+        },
+        {
+          "sender": "r5:local",
+          "receiver": "r6:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank5.tx",
+            "local.5->6",
+            "rank6.rx"
+          ]
+        },
+        {
+          "sender": "r6:local",
+          "receiver": "r7:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank6.tx",
+            "local.6->7",
+            "rank7.rx"
+          ]
+        },
+        {
+          "sender": "r7:local",
+          "receiver": "r0:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank7.tx",
+            "local.7->0",
+            "rank0.rx"
+          ]
+        },
+        {
+          "sender": "r8:local",
+          "receiver": "r9:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank8.tx",
+            "local.8->9",
+            "rank9.rx"
+          ]
+        },
+        {
+          "sender": "r9:local",
+          "receiver": "r10:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank9.tx",
+            "local.9->10",
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:local",
+          "receiver": "r11:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank10.tx",
+            "local.10->11",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:local",
+          "receiver": "r12:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank11.tx",
+            "local.11->12",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:local",
+          "receiver": "r13:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank12.tx",
+            "local.12->13",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:local",
+          "receiver": "r14:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank13.tx",
+            "local.13->14",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:local",
+          "receiver": "r15:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank14.tx",
+            "local.14->15",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:local",
+          "receiver": "r8:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank15.tx",
+            "local.15->8",
+            "rank8.rx"
+          ]
+        }
+      ],
+      "resource_bytes": {
+        "rank0.tx": 25165824,
+        "local.0->1": 25165824,
+        "rank1.rx": 25165824,
+        "rank1.tx": 25165824,
+        "local.1->2": 25165824,
+        "rank2.rx": 25165824,
+        "rank2.tx": 25165824,
+        "local.2->3": 25165824,
+        "rank3.rx": 25165824,
+        "rank3.tx": 25165824,
+        "local.3->4": 25165824,
+        "rank4.rx": 25165824,
+        "rank4.tx": 25165824,
+        "local.4->5": 25165824,
+        "rank5.rx": 25165824,
+        "rank5.tx": 25165824,
+        "local.5->6": 25165824,
+        "rank6.rx": 25165824,
+        "rank6.tx": 25165824,
+        "local.6->7": 25165824,
+        "rank7.rx": 25165824,
+        "rank7.tx": 25165824,
+        "local.7->0": 25165824,
+        "rank0.rx": 25165824,
+        "rank8.tx": 25165824,
+        "local.8->9": 25165824,
+        "rank9.rx": 25165824,
+        "rank9.tx": 25165824,
+        "local.9->10": 25165824,
+        "rank10.rx": 25165824,
+        "rank10.tx": 25165824,
+        "local.10->11": 25165824,
+        "rank11.rx": 25165824,
+        "rank11.tx": 25165824,
+        "local.11->12": 25165824,
+        "rank12.rx": 25165824,
+        "rank12.tx": 25165824,
+        "local.12->13": 25165824,
+        "rank13.rx": 25165824,
+        "rank13.tx": 25165824,
+        "local.13->14": 25165824,
+        "rank14.rx": 25165824,
+        "rank14.tx": 25165824,
+        "local.14->15": 25165824,
+        "rank15.rx": 25165824,
+        "rank15.tx": 25165824,
+        "local.15->8": 25165824,
+        "rank8.rx": 25165824
+      },
+      "resource_lower_seconds_exact": "8192/146484375",
+      "barrier_lower_seconds_exact": "4256779/75000000000",
+      "barrier_start_seconds_exact": "4256779/15000000000",
+      "barrier_finish_seconds_exact": "4256779/12500000000"
+    },
+    {
+      "round": 6,
+      "stage": "local_reduce_scatter",
+      "phase": "reduce_scatter",
+      "step": 6,
+      "messages": [
+        {
+          "sender": 0,
+          "receiver": 1,
+          "operation": "reduce",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r0:local",
+              "receiver": "r1:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank0.tx",
+                "local.0->1",
+                "rank1.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 1,
+          "receiver": 2,
+          "operation": "reduce",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r1:local",
+              "receiver": "r2:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank1.tx",
+                "local.1->2",
+                "rank2.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 2,
+          "receiver": 3,
+          "operation": "reduce",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r2:local",
+              "receiver": "r3:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank2.tx",
+                "local.2->3",
+                "rank3.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 3,
+          "receiver": 4,
+          "operation": "reduce",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r3:local",
+              "receiver": "r4:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank3.tx",
+                "local.3->4",
+                "rank4.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 4,
+          "receiver": 5,
+          "operation": "reduce",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                7
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r4:local",
+              "receiver": "r5:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank4.tx",
+                "local.4->5",
+                "rank5.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 5,
+          "receiver": 6,
+          "operation": "reduce",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                7
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
                 4,
                 5,
                 7
@@ -1404,9 +6703,9 @@
             {
               "sender": "r5:local",
               "receiver": "r6:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 37748736,
+              "element_start": 44040192,
               "element_stop": 50331648,
               "path": [
                 "rank5.tx",
@@ -1425,12 +6724,16 @@
             1
           ],
           "element_start": 0,
-          "element_stop": 12582912,
-          "bytes": 50331648,
+          "element_stop": 6291456,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 0,
               "contributors": [
+                0,
+                1,
+                2,
+                3,
                 4,
                 5,
                 6
@@ -1439,6 +6742,10 @@
             {
               "chunk": 1,
               "contributors": [
+                0,
+                1,
+                2,
+                3,
                 4,
                 5,
                 6
@@ -1450,10 +6757,10 @@
             {
               "sender": "r6:local",
               "receiver": "r7:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
               "element_start": 0,
-              "element_stop": 12582912,
+              "element_stop": 6291456,
               "path": [
                 "rank6.tx",
                 "local.6->7",
@@ -1464,19 +6771,23 @@
         },
         {
           "sender": 7,
-          "receiver": 4,
+          "receiver": 0,
           "operation": "reduce",
           "chunks": [
             2,
             3
           ],
-          "element_start": 12582912,
-          "element_stop": 25165824,
-          "bytes": 50331648,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 2,
               "contributors": [
+                1,
+                2,
+                3,
+                4,
                 5,
                 6,
                 7
@@ -1485,6 +6796,10 @@
             {
               "chunk": 3,
               "contributors": [
+                1,
+                2,
+                3,
+                4,
                 5,
                 6,
                 7
@@ -1495,15 +6810,447 @@
           "stripes": [
             {
               "sender": "r7:local",
-              "receiver": "r4:local",
-              "bytes": 50331648,
+              "receiver": "r0:local",
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 12582912,
-              "element_stop": 25165824,
+              "element_start": 6291456,
+              "element_stop": 12582912,
               "path": [
                 "rank7.tx",
-                "local.7->4",
-                "rank4.rx"
+                "local.7->0",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 9,
+          "operation": "reduce",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                8,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                8,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r8:local",
+              "receiver": "r9:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank8.tx",
+                "local.8->9",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 10,
+          "operation": "reduce",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                8,
+                9,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                8,
+                9,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r9:local",
+              "receiver": "r10:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank9.tx",
+                "local.9->10",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 11,
+          "operation": "reduce",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                8,
+                9,
+                10,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                8,
+                9,
+                10,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r10:local",
+              "receiver": "r11:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank10.tx",
+                "local.10->11",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 12,
+          "operation": "reduce",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r11:local",
+              "receiver": "r12:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank11.tx",
+                "local.11->12",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 13,
+          "operation": "reduce",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r12:local",
+              "receiver": "r13:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank12.tx",
+                "local.12->13",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 14,
+          "operation": "reduce",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r13:local",
+              "receiver": "r14:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank13.tx",
+                "local.13->14",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 15,
+          "operation": "reduce",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r14:local",
+              "receiver": "r15:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank14.tx",
+                "local.14->15",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 8,
+          "operation": "reduce",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r15:local",
+              "receiver": "r8:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank15.tx",
+                "local.15->8",
+                "rank8.rx"
               ]
             }
           ]
@@ -1513,10 +7260,10 @@
         {
           "sender": "r0:local",
           "receiver": "r1:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 25165824,
-          "element_stop": 37748736,
+          "element_start": 12582912,
+          "element_stop": 18874368,
           "path": [
             "rank0.tx",
             "local.0->1",
@@ -1526,10 +7273,10 @@
         {
           "sender": "r1:local",
           "receiver": "r2:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 37748736,
-          "element_stop": 50331648,
+          "element_start": 18874368,
+          "element_stop": 25165824,
           "path": [
             "rank1.tx",
             "local.1->2",
@@ -1539,10 +7286,10 @@
         {
           "sender": "r2:local",
           "receiver": "r3:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 0,
-          "element_stop": 12582912,
+          "element_start": 25165824,
+          "element_stop": 31457280,
           "path": [
             "rank2.tx",
             "local.2->3",
@@ -1551,24 +7298,24 @@
         },
         {
           "sender": "r3:local",
-          "receiver": "r0:local",
-          "bytes": 50331648,
+          "receiver": "r4:local",
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 12582912,
-          "element_stop": 25165824,
+          "element_start": 31457280,
+          "element_stop": 37748736,
           "path": [
             "rank3.tx",
-            "local.3->0",
-            "rank0.rx"
+            "local.3->4",
+            "rank4.rx"
           ]
         },
         {
           "sender": "r4:local",
           "receiver": "r5:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 25165824,
-          "element_stop": 37748736,
+          "element_start": 37748736,
+          "element_stop": 44040192,
           "path": [
             "rank4.tx",
             "local.4->5",
@@ -1578,9 +7325,9 @@
         {
           "sender": "r5:local",
           "receiver": "r6:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 37748736,
+          "element_start": 44040192,
           "element_stop": 50331648,
           "path": [
             "rank5.tx",
@@ -1591,10 +7338,10 @@
         {
           "sender": "r6:local",
           "receiver": "r7:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
           "element_start": 0,
-          "element_stop": 12582912,
+          "element_stop": 6291456,
           "path": [
             "rank6.tx",
             "local.6->7",
@@ -1603,65 +7350,193 @@
         },
         {
           "sender": "r7:local",
-          "receiver": "r4:local",
-          "bytes": 50331648,
+          "receiver": "r0:local",
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 12582912,
-          "element_stop": 25165824,
+          "element_start": 6291456,
+          "element_stop": 12582912,
           "path": [
             "rank7.tx",
-            "local.7->4",
-            "rank4.rx"
+            "local.7->0",
+            "rank0.rx"
+          ]
+        },
+        {
+          "sender": "r8:local",
+          "receiver": "r9:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank8.tx",
+            "local.8->9",
+            "rank9.rx"
+          ]
+        },
+        {
+          "sender": "r9:local",
+          "receiver": "r10:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank9.tx",
+            "local.9->10",
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:local",
+          "receiver": "r11:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank10.tx",
+            "local.10->11",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:local",
+          "receiver": "r12:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank11.tx",
+            "local.11->12",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:local",
+          "receiver": "r13:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank12.tx",
+            "local.12->13",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:local",
+          "receiver": "r14:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank13.tx",
+            "local.13->14",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:local",
+          "receiver": "r15:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank14.tx",
+            "local.14->15",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:local",
+          "receiver": "r8:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank15.tx",
+            "local.15->8",
+            "rank8.rx"
           ]
         }
       ],
       "resource_bytes": {
-        "rank0.tx": 50331648,
-        "local.0->1": 50331648,
-        "rank1.rx": 50331648,
-        "rank1.tx": 50331648,
-        "local.1->2": 50331648,
-        "rank2.rx": 50331648,
-        "rank2.tx": 50331648,
-        "local.2->3": 50331648,
-        "rank3.rx": 50331648,
-        "rank3.tx": 50331648,
-        "local.3->0": 50331648,
-        "rank0.rx": 50331648,
-        "rank4.tx": 50331648,
-        "local.4->5": 50331648,
-        "rank5.rx": 50331648,
-        "rank5.tx": 50331648,
-        "local.5->6": 50331648,
-        "rank6.rx": 50331648,
-        "rank6.tx": 50331648,
-        "local.6->7": 50331648,
-        "rank7.rx": 50331648,
-        "rank7.tx": 50331648,
-        "local.7->4": 50331648,
-        "rank4.rx": 50331648
+        "rank0.tx": 25165824,
+        "local.0->1": 25165824,
+        "rank1.rx": 25165824,
+        "rank1.tx": 25165824,
+        "local.1->2": 25165824,
+        "rank2.rx": 25165824,
+        "rank2.tx": 25165824,
+        "local.2->3": 25165824,
+        "rank3.rx": 25165824,
+        "rank3.tx": 25165824,
+        "local.3->4": 25165824,
+        "rank4.rx": 25165824,
+        "rank4.tx": 25165824,
+        "local.4->5": 25165824,
+        "rank5.rx": 25165824,
+        "rank5.tx": 25165824,
+        "local.5->6": 25165824,
+        "rank6.rx": 25165824,
+        "rank6.tx": 25165824,
+        "local.6->7": 25165824,
+        "rank7.rx": 25165824,
+        "rank7.tx": 25165824,
+        "local.7->0": 25165824,
+        "rank0.rx": 25165824,
+        "rank8.tx": 25165824,
+        "local.8->9": 25165824,
+        "rank9.rx": 25165824,
+        "rank9.tx": 25165824,
+        "local.9->10": 25165824,
+        "rank10.rx": 25165824,
+        "rank10.tx": 25165824,
+        "local.10->11": 25165824,
+        "rank11.rx": 25165824,
+        "rank11.tx": 25165824,
+        "local.11->12": 25165824,
+        "rank12.rx": 25165824,
+        "rank12.tx": 25165824,
+        "local.12->13": 25165824,
+        "rank13.rx": 25165824,
+        "rank13.tx": 25165824,
+        "local.13->14": 25165824,
+        "rank14.rx": 25165824,
+        "rank14.tx": 25165824,
+        "local.14->15": 25165824,
+        "rank15.rx": 25165824,
+        "rank15.tx": 25165824,
+        "local.15->8": 25165824,
+        "rank8.rx": 25165824
       },
-      "resource_lower_seconds_exact": "12288/48828125",
-      "barrier_lower_seconds_exact": "396341/1562500000",
-      "barrier_start_seconds_exact": "396341/781250000",
-      "barrier_finish_seconds_exact": "1189023/1562500000"
+      "resource_lower_seconds_exact": "8192/146484375",
+      "barrier_lower_seconds_exact": "4256779/75000000000",
+      "barrier_start_seconds_exact": "4256779/12500000000",
+      "barrier_finish_seconds_exact": "29797453/75000000000"
     },
     {
-      "round": 3,
+      "round": 7,
       "stage": "cross_server_allreduce",
       "phase": "reduce_scatter",
       "step": 0,
       "messages": [
         {
-          "sender": 3,
-          "receiver": 7,
+          "sender": 7,
+          "receiver": 15,
           "operation": "reduce",
           "chunks": [
             0
           ],
           "element_start": 0,
-          "element_stop": 6291456,
-          "bytes": 25165824,
+          "element_stop": 3145728,
+          "bytes": 12582912,
           "contributions": [
             {
               "chunk": 0,
@@ -1669,46 +7544,7 @@
                 0,
                 1,
                 2,
-                3
-              ]
-            }
-          ],
-          "remote": true,
-          "stripes": [
-            {
-              "sender": "r3:nic0",
-              "receiver": "r7:nic0",
-              "bytes": 25165824,
-              "nic": 0,
-              "element_start": 0,
-              "element_stop": 6291456,
-              "path": [
-                "rank3.tx",
-                "server0.nic0.tx",
-                "server0.egress",
-                "cut.0->1",
-                "shared_cut.bidirectional",
-                "server1.ingress",
-                "server1.nic0.rx",
-                "rank7.rx"
-              ]
-            }
-          ]
-        },
-        {
-          "sender": 7,
-          "receiver": 3,
-          "operation": "reduce",
-          "chunks": [
-            1
-          ],
-          "element_start": 6291456,
-          "element_stop": 12582912,
-          "bytes": 25165824,
-          "contributions": [
-            {
-              "chunk": 1,
-              "contributors": [
+                3,
                 4,
                 5,
                 6,
@@ -1720,34 +7556,77 @@
           "stripes": [
             {
               "sender": "r7:nic0",
-              "receiver": "r3:nic0",
-              "bytes": 25165824,
+              "receiver": "r15:nic0",
+              "bytes": 12582912,
               "nic": 0,
-              "element_start": 6291456,
-              "element_stop": 12582912,
+              "element_start": 0,
+              "element_stop": 3145728,
               "path": [
                 "rank7.tx",
+                "server0.nic0.tx",
+                "cut.0->1",
+                "shared_cut.bidirectional",
+                "server1.nic0.rx",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 7,
+          "operation": "reduce",
+          "chunks": [
+            1
+          ],
+          "element_start": 3145728,
+          "element_stop": 6291456,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 1,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r15:nic0",
+              "receiver": "r7:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 3145728,
+              "element_stop": 6291456,
+              "path": [
+                "rank15.tx",
                 "server1.nic0.tx",
-                "server1.egress",
                 "cut.1->0",
                 "shared_cut.bidirectional",
-                "server0.ingress",
                 "server0.nic0.rx",
-                "rank3.rx"
+                "rank7.rx"
               ]
             }
           ]
         },
         {
           "sender": 0,
-          "receiver": 4,
+          "receiver": 8,
           "operation": "reduce",
           "chunks": [
             2
           ],
-          "element_start": 12582912,
-          "element_stop": 18874368,
-          "bytes": 25165824,
+          "element_start": 6291456,
+          "element_stop": 9437184,
+          "bytes": 12582912,
           "contributions": [
             {
               "chunk": 2,
@@ -1755,7 +7634,11 @@
                 0,
                 1,
                 2,
-                3
+                3,
+                4,
+                5,
+                6,
+                7
               ]
             }
           ],
@@ -1763,38 +7646,355 @@
           "stripes": [
             {
               "sender": "r0:nic0",
-              "receiver": "r4:nic0",
-              "bytes": 25165824,
+              "receiver": "r8:nic0",
+              "bytes": 12582912,
               "nic": 0,
-              "element_start": 12582912,
-              "element_stop": 18874368,
+              "element_start": 6291456,
+              "element_stop": 9437184,
               "path": [
                 "rank0.tx",
                 "server0.nic0.tx",
-                "server0.egress",
                 "cut.0->1",
                 "shared_cut.bidirectional",
-                "server1.ingress",
                 "server1.nic0.rx",
-                "rank4.rx"
+                "rank8.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 0,
+          "operation": "reduce",
+          "chunks": [
+            3
+          ],
+          "element_start": 9437184,
+          "element_stop": 12582912,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 3,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r8:nic0",
+              "receiver": "r0:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 9437184,
+              "element_stop": 12582912,
+              "path": [
+                "rank8.tx",
+                "server1.nic0.tx",
+                "cut.1->0",
+                "shared_cut.bidirectional",
+                "server0.nic0.rx",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 1,
+          "receiver": 9,
+          "operation": "reduce",
+          "chunks": [
+            4
+          ],
+          "element_start": 12582912,
+          "element_stop": 15728640,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r1:nic0",
+              "receiver": "r9:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 12582912,
+              "element_stop": 15728640,
+              "path": [
+                "rank1.tx",
+                "server0.nic0.tx",
+                "cut.0->1",
+                "shared_cut.bidirectional",
+                "server1.nic0.rx",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 1,
+          "operation": "reduce",
+          "chunks": [
+            5
+          ],
+          "element_start": 15728640,
+          "element_stop": 18874368,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 5,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r9:nic0",
+              "receiver": "r1:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 15728640,
+              "element_stop": 18874368,
+              "path": [
+                "rank9.tx",
+                "server1.nic0.tx",
+                "cut.1->0",
+                "shared_cut.bidirectional",
+                "server0.nic0.rx",
+                "rank1.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 2,
+          "receiver": 10,
+          "operation": "reduce",
+          "chunks": [
+            6
+          ],
+          "element_start": 18874368,
+          "element_stop": 22020096,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r2:nic0",
+              "receiver": "r10:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 18874368,
+              "element_stop": 22020096,
+              "path": [
+                "rank2.tx",
+                "server0.nic0.tx",
+                "cut.0->1",
+                "shared_cut.bidirectional",
+                "server1.nic0.rx",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 2,
+          "operation": "reduce",
+          "chunks": [
+            7
+          ],
+          "element_start": 22020096,
+          "element_stop": 25165824,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 7,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r10:nic0",
+              "receiver": "r2:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 22020096,
+              "element_stop": 25165824,
+              "path": [
+                "rank10.tx",
+                "server1.nic0.tx",
+                "cut.1->0",
+                "shared_cut.bidirectional",
+                "server0.nic0.rx",
+                "rank2.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 3,
+          "receiver": 11,
+          "operation": "reduce",
+          "chunks": [
+            8
+          ],
+          "element_start": 25165824,
+          "element_stop": 28311552,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r3:nic0",
+              "receiver": "r11:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 25165824,
+              "element_stop": 28311552,
+              "path": [
+                "rank3.tx",
+                "server0.nic0.tx",
+                "cut.0->1",
+                "shared_cut.bidirectional",
+                "server1.nic0.rx",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 3,
+          "operation": "reduce",
+          "chunks": [
+            9
+          ],
+          "element_start": 28311552,
+          "element_stop": 31457280,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 9,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r11:nic0",
+              "receiver": "r3:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 28311552,
+              "element_stop": 31457280,
+              "path": [
+                "rank11.tx",
+                "server1.nic0.tx",
+                "cut.1->0",
+                "shared_cut.bidirectional",
+                "server0.nic0.rx",
+                "rank3.rx"
               ]
             }
           ]
         },
         {
           "sender": 4,
-          "receiver": 0,
+          "receiver": 12,
           "operation": "reduce",
           "chunks": [
-            3
+            10
           ],
-          "element_start": 18874368,
-          "element_stop": 25165824,
-          "bytes": 25165824,
+          "element_start": 31457280,
+          "element_stop": 34603008,
+          "bytes": 12582912,
           "contributions": [
             {
-              "chunk": 3,
+              "chunk": 10,
               "contributors": [
+                0,
+                1,
+                2,
+                3,
                 4,
                 5,
                 6,
@@ -1806,81 +8006,85 @@
           "stripes": [
             {
               "sender": "r4:nic0",
-              "receiver": "r0:nic0",
-              "bytes": 25165824,
+              "receiver": "r12:nic0",
+              "bytes": 12582912,
               "nic": 0,
-              "element_start": 18874368,
-              "element_stop": 25165824,
+              "element_start": 31457280,
+              "element_stop": 34603008,
               "path": [
                 "rank4.tx",
-                "server1.nic0.tx",
-                "server1.egress",
-                "cut.1->0",
+                "server0.nic0.tx",
+                "cut.0->1",
                 "shared_cut.bidirectional",
-                "server0.ingress",
-                "server0.nic0.rx",
-                "rank0.rx"
+                "server1.nic0.rx",
+                "rank12.rx"
               ]
             }
           ]
         },
         {
-          "sender": 1,
-          "receiver": 5,
+          "sender": 12,
+          "receiver": 4,
           "operation": "reduce",
           "chunks": [
-            4
+            11
           ],
-          "element_start": 25165824,
-          "element_stop": 31457280,
-          "bytes": 25165824,
+          "element_start": 34603008,
+          "element_stop": 37748736,
+          "bytes": 12582912,
           "contributions": [
             {
-              "chunk": 4,
+              "chunk": 11,
               "contributors": [
-                0,
-                1,
-                2,
-                3
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
           "remote": true,
           "stripes": [
             {
-              "sender": "r1:nic0",
-              "receiver": "r5:nic0",
-              "bytes": 25165824,
+              "sender": "r12:nic0",
+              "receiver": "r4:nic0",
+              "bytes": 12582912,
               "nic": 0,
-              "element_start": 25165824,
-              "element_stop": 31457280,
+              "element_start": 34603008,
+              "element_stop": 37748736,
               "path": [
-                "rank1.tx",
-                "server0.nic0.tx",
-                "server0.egress",
-                "cut.0->1",
+                "rank12.tx",
+                "server1.nic0.tx",
+                "cut.1->0",
                 "shared_cut.bidirectional",
-                "server1.ingress",
-                "server1.nic0.rx",
-                "rank5.rx"
+                "server0.nic0.rx",
+                "rank4.rx"
               ]
             }
           ]
         },
         {
           "sender": 5,
-          "receiver": 1,
+          "receiver": 13,
           "operation": "reduce",
           "chunks": [
-            5
+            12
           ],
-          "element_start": 31457280,
-          "element_stop": 37748736,
-          "bytes": 25165824,
+          "element_start": 37748736,
+          "element_stop": 40894464,
+          "bytes": 12582912,
           "contributions": [
             {
-              "chunk": 5,
+              "chunk": 12,
               "contributors": [
+                0,
+                1,
+                2,
+                3,
                 4,
                 5,
                 6,
@@ -1892,81 +8096,85 @@
           "stripes": [
             {
               "sender": "r5:nic0",
-              "receiver": "r1:nic0",
-              "bytes": 25165824,
+              "receiver": "r13:nic0",
+              "bytes": 12582912,
               "nic": 0,
-              "element_start": 31457280,
-              "element_stop": 37748736,
+              "element_start": 37748736,
+              "element_stop": 40894464,
               "path": [
                 "rank5.tx",
-                "server1.nic0.tx",
-                "server1.egress",
-                "cut.1->0",
+                "server0.nic0.tx",
+                "cut.0->1",
                 "shared_cut.bidirectional",
-                "server0.ingress",
-                "server0.nic0.rx",
-                "rank1.rx"
+                "server1.nic0.rx",
+                "rank13.rx"
               ]
             }
           ]
         },
         {
-          "sender": 2,
-          "receiver": 6,
+          "sender": 13,
+          "receiver": 5,
           "operation": "reduce",
           "chunks": [
-            6
+            13
           ],
-          "element_start": 37748736,
+          "element_start": 40894464,
           "element_stop": 44040192,
-          "bytes": 25165824,
+          "bytes": 12582912,
           "contributions": [
             {
-              "chunk": 6,
+              "chunk": 13,
               "contributors": [
-                0,
-                1,
-                2,
-                3
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
           "remote": true,
           "stripes": [
             {
-              "sender": "r2:nic0",
-              "receiver": "r6:nic0",
-              "bytes": 25165824,
+              "sender": "r13:nic0",
+              "receiver": "r5:nic0",
+              "bytes": 12582912,
               "nic": 0,
-              "element_start": 37748736,
+              "element_start": 40894464,
               "element_stop": 44040192,
               "path": [
-                "rank2.tx",
-                "server0.nic0.tx",
-                "server0.egress",
-                "cut.0->1",
+                "rank13.tx",
+                "server1.nic0.tx",
+                "cut.1->0",
                 "shared_cut.bidirectional",
-                "server1.ingress",
-                "server1.nic0.rx",
-                "rank6.rx"
+                "server0.nic0.rx",
+                "rank5.rx"
               ]
             }
           ]
         },
         {
           "sender": 6,
-          "receiver": 2,
+          "receiver": 14,
           "operation": "reduce",
           "chunks": [
-            7
+            14
           ],
           "element_start": 44040192,
-          "element_stop": 50331648,
-          "bytes": 25165824,
+          "element_stop": 47185920,
+          "bytes": 12582912,
           "contributions": [
             {
-              "chunk": 7,
+              "chunk": 14,
               "contributors": [
+                0,
+                1,
+                2,
+                3,
                 4,
                 5,
                 6,
@@ -1978,20 +8186,63 @@
           "stripes": [
             {
               "sender": "r6:nic0",
-              "receiver": "r2:nic0",
-              "bytes": 25165824,
+              "receiver": "r14:nic0",
+              "bytes": 12582912,
               "nic": 0,
               "element_start": 44040192,
-              "element_stop": 50331648,
+              "element_stop": 47185920,
               "path": [
                 "rank6.tx",
+                "server0.nic0.tx",
+                "cut.0->1",
+                "shared_cut.bidirectional",
+                "server1.nic0.rx",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 6,
+          "operation": "reduce",
+          "chunks": [
+            15
+          ],
+          "element_start": 47185920,
+          "element_stop": 50331648,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 15,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r14:nic0",
+              "receiver": "r6:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 47185920,
+              "element_stop": 50331648,
+              "path": [
+                "rank14.tx",
                 "server1.nic0.tx",
-                "server1.egress",
                 "cut.1->0",
                 "shared_cut.bidirectional",
-                "server0.ingress",
                 "server0.nic0.rx",
-                "rank2.rx"
+                "rank6.rx"
               ]
             }
           ]
@@ -1999,200 +8250,324 @@
       ],
       "edges": [
         {
-          "sender": "r3:nic0",
-          "receiver": "r7:nic0",
-          "bytes": 25165824,
+          "sender": "r7:nic0",
+          "receiver": "r15:nic0",
+          "bytes": 12582912,
           "nic": 0,
           "element_start": 0,
-          "element_stop": 6291456,
+          "element_stop": 3145728,
           "path": [
-            "rank3.tx",
+            "rank7.tx",
             "server0.nic0.tx",
-            "server0.egress",
             "cut.0->1",
             "shared_cut.bidirectional",
-            "server1.ingress",
             "server1.nic0.rx",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:nic0",
+          "receiver": "r7:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 3145728,
+          "element_stop": 6291456,
+          "path": [
+            "rank15.tx",
+            "server1.nic0.tx",
+            "cut.1->0",
+            "shared_cut.bidirectional",
+            "server0.nic0.rx",
             "rank7.rx"
           ]
         },
         {
-          "sender": "r7:nic0",
-          "receiver": "r3:nic0",
-          "bytes": 25165824,
+          "sender": "r0:nic0",
+          "receiver": "r8:nic0",
+          "bytes": 12582912,
           "nic": 0,
           "element_start": 6291456,
-          "element_stop": 12582912,
-          "path": [
-            "rank7.tx",
-            "server1.nic0.tx",
-            "server1.egress",
-            "cut.1->0",
-            "shared_cut.bidirectional",
-            "server0.ingress",
-            "server0.nic0.rx",
-            "rank3.rx"
-          ]
-        },
-        {
-          "sender": "r0:nic0",
-          "receiver": "r4:nic0",
-          "bytes": 25165824,
-          "nic": 0,
-          "element_start": 12582912,
-          "element_stop": 18874368,
+          "element_stop": 9437184,
           "path": [
             "rank0.tx",
             "server0.nic0.tx",
-            "server0.egress",
             "cut.0->1",
             "shared_cut.bidirectional",
-            "server1.ingress",
             "server1.nic0.rx",
-            "rank4.rx"
+            "rank8.rx"
           ]
         },
         {
-          "sender": "r4:nic0",
+          "sender": "r8:nic0",
           "receiver": "r0:nic0",
-          "bytes": 25165824,
+          "bytes": 12582912,
           "nic": 0,
-          "element_start": 18874368,
-          "element_stop": 25165824,
+          "element_start": 9437184,
+          "element_stop": 12582912,
           "path": [
-            "rank4.tx",
+            "rank8.tx",
             "server1.nic0.tx",
-            "server1.egress",
             "cut.1->0",
             "shared_cut.bidirectional",
-            "server0.ingress",
             "server0.nic0.rx",
             "rank0.rx"
           ]
         },
         {
           "sender": "r1:nic0",
-          "receiver": "r5:nic0",
-          "bytes": 25165824,
+          "receiver": "r9:nic0",
+          "bytes": 12582912,
           "nic": 0,
-          "element_start": 25165824,
-          "element_stop": 31457280,
+          "element_start": 12582912,
+          "element_stop": 15728640,
           "path": [
             "rank1.tx",
             "server0.nic0.tx",
-            "server0.egress",
             "cut.0->1",
             "shared_cut.bidirectional",
-            "server1.ingress",
             "server1.nic0.rx",
-            "rank5.rx"
+            "rank9.rx"
           ]
         },
         {
-          "sender": "r5:nic0",
+          "sender": "r9:nic0",
           "receiver": "r1:nic0",
-          "bytes": 25165824,
+          "bytes": 12582912,
           "nic": 0,
-          "element_start": 31457280,
-          "element_stop": 37748736,
+          "element_start": 15728640,
+          "element_stop": 18874368,
           "path": [
-            "rank5.tx",
+            "rank9.tx",
             "server1.nic0.tx",
-            "server1.egress",
             "cut.1->0",
             "shared_cut.bidirectional",
-            "server0.ingress",
             "server0.nic0.rx",
             "rank1.rx"
           ]
         },
         {
           "sender": "r2:nic0",
-          "receiver": "r6:nic0",
-          "bytes": 25165824,
+          "receiver": "r10:nic0",
+          "bytes": 12582912,
           "nic": 0,
-          "element_start": 37748736,
-          "element_stop": 44040192,
+          "element_start": 18874368,
+          "element_stop": 22020096,
           "path": [
             "rank2.tx",
             "server0.nic0.tx",
-            "server0.egress",
             "cut.0->1",
             "shared_cut.bidirectional",
-            "server1.ingress",
             "server1.nic0.rx",
-            "rank6.rx"
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:nic0",
+          "receiver": "r2:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 22020096,
+          "element_stop": 25165824,
+          "path": [
+            "rank10.tx",
+            "server1.nic0.tx",
+            "cut.1->0",
+            "shared_cut.bidirectional",
+            "server0.nic0.rx",
+            "rank2.rx"
+          ]
+        },
+        {
+          "sender": "r3:nic0",
+          "receiver": "r11:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 25165824,
+          "element_stop": 28311552,
+          "path": [
+            "rank3.tx",
+            "server0.nic0.tx",
+            "cut.0->1",
+            "shared_cut.bidirectional",
+            "server1.nic0.rx",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:nic0",
+          "receiver": "r3:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 28311552,
+          "element_stop": 31457280,
+          "path": [
+            "rank11.tx",
+            "server1.nic0.tx",
+            "cut.1->0",
+            "shared_cut.bidirectional",
+            "server0.nic0.rx",
+            "rank3.rx"
+          ]
+        },
+        {
+          "sender": "r4:nic0",
+          "receiver": "r12:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 31457280,
+          "element_stop": 34603008,
+          "path": [
+            "rank4.tx",
+            "server0.nic0.tx",
+            "cut.0->1",
+            "shared_cut.bidirectional",
+            "server1.nic0.rx",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:nic0",
+          "receiver": "r4:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 34603008,
+          "element_stop": 37748736,
+          "path": [
+            "rank12.tx",
+            "server1.nic0.tx",
+            "cut.1->0",
+            "shared_cut.bidirectional",
+            "server0.nic0.rx",
+            "rank4.rx"
+          ]
+        },
+        {
+          "sender": "r5:nic0",
+          "receiver": "r13:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 37748736,
+          "element_stop": 40894464,
+          "path": [
+            "rank5.tx",
+            "server0.nic0.tx",
+            "cut.0->1",
+            "shared_cut.bidirectional",
+            "server1.nic0.rx",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:nic0",
+          "receiver": "r5:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 40894464,
+          "element_stop": 44040192,
+          "path": [
+            "rank13.tx",
+            "server1.nic0.tx",
+            "cut.1->0",
+            "shared_cut.bidirectional",
+            "server0.nic0.rx",
+            "rank5.rx"
           ]
         },
         {
           "sender": "r6:nic0",
-          "receiver": "r2:nic0",
-          "bytes": 25165824,
+          "receiver": "r14:nic0",
+          "bytes": 12582912,
           "nic": 0,
           "element_start": 44040192,
-          "element_stop": 50331648,
+          "element_stop": 47185920,
           "path": [
             "rank6.tx",
+            "server0.nic0.tx",
+            "cut.0->1",
+            "shared_cut.bidirectional",
+            "server1.nic0.rx",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:nic0",
+          "receiver": "r6:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 47185920,
+          "element_stop": 50331648,
+          "path": [
+            "rank14.tx",
             "server1.nic0.tx",
-            "server1.egress",
             "cut.1->0",
             "shared_cut.bidirectional",
-            "server0.ingress",
             "server0.nic0.rx",
-            "rank2.rx"
+            "rank6.rx"
           ]
         }
       ],
       "resource_bytes": {
-        "rank3.tx": 25165824,
+        "rank7.tx": 12582912,
         "server0.nic0.tx": 100663296,
-        "server0.egress": 100663296,
         "cut.0->1": 100663296,
         "shared_cut.bidirectional": 201326592,
-        "server1.ingress": 100663296,
         "server1.nic0.rx": 100663296,
-        "rank7.rx": 25165824,
-        "rank7.tx": 25165824,
+        "rank15.rx": 12582912,
+        "rank15.tx": 12582912,
         "server1.nic0.tx": 100663296,
-        "server1.egress": 100663296,
         "cut.1->0": 100663296,
-        "server0.ingress": 100663296,
         "server0.nic0.rx": 100663296,
-        "rank3.rx": 25165824,
-        "rank0.tx": 25165824,
-        "rank4.rx": 25165824,
-        "rank4.tx": 25165824,
-        "rank0.rx": 25165824,
-        "rank1.tx": 25165824,
-        "rank5.rx": 25165824,
-        "rank5.tx": 25165824,
-        "rank1.rx": 25165824,
-        "rank2.tx": 25165824,
-        "rank6.rx": 25165824,
-        "rank6.tx": 25165824,
-        "rank2.rx": 25165824
+        "rank7.rx": 12582912,
+        "rank0.tx": 12582912,
+        "rank8.rx": 12582912,
+        "rank8.tx": 12582912,
+        "rank0.rx": 12582912,
+        "rank1.tx": 12582912,
+        "rank9.rx": 12582912,
+        "rank9.tx": 12582912,
+        "rank1.rx": 12582912,
+        "rank2.tx": 12582912,
+        "rank10.rx": 12582912,
+        "rank10.tx": 12582912,
+        "rank2.rx": 12582912,
+        "rank3.tx": 12582912,
+        "rank11.rx": 12582912,
+        "rank11.tx": 12582912,
+        "rank3.rx": 12582912,
+        "rank4.tx": 12582912,
+        "rank12.rx": 12582912,
+        "rank12.tx": 12582912,
+        "rank4.rx": 12582912,
+        "rank5.tx": 12582912,
+        "rank13.rx": 12582912,
+        "rank13.tx": 12582912,
+        "rank5.rx": 12582912,
+        "rank6.tx": 12582912,
+        "rank14.rx": 12582912,
+        "rank14.tx": 12582912,
+        "rank6.rx": 12582912
       },
-      "resource_lower_seconds_exact": "196608/48828125",
-      "barrier_lower_seconds_exact": "6294581/1562500000",
-      "barrier_start_seconds_exact": "1189023/1562500000",
-      "barrier_finish_seconds_exact": "1870901/390625000"
+      "resource_lower_seconds_exact": "98304/48828125",
+      "barrier_lower_seconds_exact": "50352473/25000000000",
+      "barrier_start_seconds_exact": "29797453/75000000000",
+      "barrier_finish_seconds_exact": "22606859/9375000000"
     },
     {
-      "round": 4,
+      "round": 8,
       "stage": "cross_server_allreduce",
       "phase": "all_gather",
       "step": 0,
       "messages": [
         {
-          "sender": 3,
-          "receiver": 7,
+          "sender": 7,
+          "receiver": 15,
           "operation": "copy",
           "chunks": [
             1
           ],
-          "element_start": 6291456,
-          "element_stop": 12582912,
-          "bytes": 25165824,
+          "element_start": 3145728,
+          "element_stop": 6291456,
+          "bytes": 12582912,
           "contributions": [
             {
               "chunk": 1,
@@ -2204,42 +8579,48 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
           "remote": true,
           "stripes": [
             {
-              "sender": "r3:nic0",
-              "receiver": "r7:nic0",
-              "bytes": 25165824,
+              "sender": "r7:nic0",
+              "receiver": "r15:nic0",
+              "bytes": 12582912,
               "nic": 0,
-              "element_start": 6291456,
-              "element_stop": 12582912,
+              "element_start": 3145728,
+              "element_stop": 6291456,
               "path": [
-                "rank3.tx",
+                "rank7.tx",
                 "server0.nic0.tx",
-                "server0.egress",
                 "cut.0->1",
                 "shared_cut.bidirectional",
-                "server1.ingress",
                 "server1.nic0.rx",
-                "rank7.rx"
+                "rank15.rx"
               ]
             }
           ]
         },
         {
-          "sender": 7,
-          "receiver": 3,
+          "sender": 15,
+          "receiver": 7,
           "operation": "copy",
           "chunks": [
             0
           ],
           "element_start": 0,
-          "element_stop": 6291456,
-          "bytes": 25165824,
+          "element_stop": 3145728,
+          "bytes": 12582912,
           "contributions": [
             {
               "chunk": 0,
@@ -2251,42 +8632,48 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
           "remote": true,
           "stripes": [
             {
-              "sender": "r7:nic0",
-              "receiver": "r3:nic0",
-              "bytes": 25165824,
+              "sender": "r15:nic0",
+              "receiver": "r7:nic0",
+              "bytes": 12582912,
               "nic": 0,
               "element_start": 0,
-              "element_stop": 6291456,
+              "element_stop": 3145728,
               "path": [
-                "rank7.tx",
+                "rank15.tx",
                 "server1.nic0.tx",
-                "server1.egress",
                 "cut.1->0",
                 "shared_cut.bidirectional",
-                "server0.ingress",
                 "server0.nic0.rx",
-                "rank3.rx"
+                "rank7.rx"
               ]
             }
           ]
         },
         {
           "sender": 0,
-          "receiver": 4,
+          "receiver": 8,
           "operation": "copy",
           "chunks": [
             3
           ],
-          "element_start": 18874368,
-          "element_stop": 25165824,
-          "bytes": 25165824,
+          "element_start": 9437184,
+          "element_stop": 12582912,
+          "bytes": 12582912,
           "contributions": [
             {
               "chunk": 3,
@@ -2298,7 +8685,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -2306,34 +8701,32 @@
           "stripes": [
             {
               "sender": "r0:nic0",
-              "receiver": "r4:nic0",
-              "bytes": 25165824,
+              "receiver": "r8:nic0",
+              "bytes": 12582912,
               "nic": 0,
-              "element_start": 18874368,
-              "element_stop": 25165824,
+              "element_start": 9437184,
+              "element_stop": 12582912,
               "path": [
                 "rank0.tx",
                 "server0.nic0.tx",
-                "server0.egress",
                 "cut.0->1",
                 "shared_cut.bidirectional",
-                "server1.ingress",
                 "server1.nic0.rx",
-                "rank4.rx"
+                "rank8.rx"
               ]
             }
           ]
         },
         {
-          "sender": 4,
+          "sender": 8,
           "receiver": 0,
           "operation": "copy",
           "chunks": [
             2
           ],
-          "element_start": 12582912,
-          "element_stop": 18874368,
-          "bytes": 25165824,
+          "element_start": 6291456,
+          "element_stop": 9437184,
+          "bytes": 12582912,
           "contributions": [
             {
               "chunk": 2,
@@ -2345,26 +8738,32 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
           "remote": true,
           "stripes": [
             {
-              "sender": "r4:nic0",
+              "sender": "r8:nic0",
               "receiver": "r0:nic0",
-              "bytes": 25165824,
+              "bytes": 12582912,
               "nic": 0,
-              "element_start": 12582912,
-              "element_stop": 18874368,
+              "element_start": 6291456,
+              "element_stop": 9437184,
               "path": [
-                "rank4.tx",
+                "rank8.tx",
                 "server1.nic0.tx",
-                "server1.egress",
                 "cut.1->0",
                 "shared_cut.bidirectional",
-                "server0.ingress",
                 "server0.nic0.rx",
                 "rank0.rx"
               ]
@@ -2373,14 +8772,14 @@
         },
         {
           "sender": 1,
-          "receiver": 5,
+          "receiver": 9,
           "operation": "copy",
           "chunks": [
             5
           ],
-          "element_start": 31457280,
-          "element_stop": 37748736,
-          "bytes": 25165824,
+          "element_start": 15728640,
+          "element_stop": 18874368,
+          "bytes": 12582912,
           "contributions": [
             {
               "chunk": 5,
@@ -2392,7 +8791,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -2400,34 +8807,32 @@
           "stripes": [
             {
               "sender": "r1:nic0",
-              "receiver": "r5:nic0",
-              "bytes": 25165824,
+              "receiver": "r9:nic0",
+              "bytes": 12582912,
               "nic": 0,
-              "element_start": 31457280,
-              "element_stop": 37748736,
+              "element_start": 15728640,
+              "element_stop": 18874368,
               "path": [
                 "rank1.tx",
                 "server0.nic0.tx",
-                "server0.egress",
                 "cut.0->1",
                 "shared_cut.bidirectional",
-                "server1.ingress",
                 "server1.nic0.rx",
-                "rank5.rx"
+                "rank9.rx"
               ]
             }
           ]
         },
         {
-          "sender": 5,
+          "sender": 9,
           "receiver": 1,
           "operation": "copy",
           "chunks": [
             4
           ],
-          "element_start": 25165824,
-          "element_stop": 31457280,
-          "bytes": 25165824,
+          "element_start": 12582912,
+          "element_stop": 15728640,
+          "bytes": 12582912,
           "contributions": [
             {
               "chunk": 4,
@@ -2439,26 +8844,32 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
           "remote": true,
           "stripes": [
             {
-              "sender": "r5:nic0",
+              "sender": "r9:nic0",
               "receiver": "r1:nic0",
-              "bytes": 25165824,
+              "bytes": 12582912,
               "nic": 0,
-              "element_start": 25165824,
-              "element_stop": 31457280,
+              "element_start": 12582912,
+              "element_stop": 15728640,
               "path": [
-                "rank5.tx",
+                "rank9.tx",
                 "server1.nic0.tx",
-                "server1.egress",
                 "cut.1->0",
                 "shared_cut.bidirectional",
-                "server0.ingress",
                 "server0.nic0.rx",
                 "rank1.rx"
               ]
@@ -2467,14 +8878,14 @@
         },
         {
           "sender": 2,
-          "receiver": 6,
+          "receiver": 10,
           "operation": "copy",
           "chunks": [
             7
           ],
-          "element_start": 44040192,
-          "element_stop": 50331648,
-          "bytes": 25165824,
+          "element_start": 22020096,
+          "element_stop": 25165824,
+          "bytes": 12582912,
           "contributions": [
             {
               "chunk": 7,
@@ -2486,7 +8897,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -2494,34 +8913,32 @@
           "stripes": [
             {
               "sender": "r2:nic0",
-              "receiver": "r6:nic0",
-              "bytes": 25165824,
+              "receiver": "r10:nic0",
+              "bytes": 12582912,
               "nic": 0,
-              "element_start": 44040192,
-              "element_stop": 50331648,
+              "element_start": 22020096,
+              "element_stop": 25165824,
               "path": [
                 "rank2.tx",
                 "server0.nic0.tx",
-                "server0.egress",
                 "cut.0->1",
                 "shared_cut.bidirectional",
-                "server1.ingress",
                 "server1.nic0.rx",
-                "rank6.rx"
+                "rank10.rx"
               ]
             }
           ]
         },
         {
-          "sender": 6,
+          "sender": 10,
           "receiver": 2,
           "operation": "copy",
           "chunks": [
             6
           ],
-          "element_start": 37748736,
-          "element_stop": 44040192,
-          "bytes": 25165824,
+          "element_start": 18874368,
+          "element_stop": 22020096,
+          "bytes": 12582912,
           "contributions": [
             {
               "chunk": 6,
@@ -2533,7 +8950,386 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r10:nic0",
+              "receiver": "r2:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 18874368,
+              "element_stop": 22020096,
+              "path": [
+                "rank10.tx",
+                "server1.nic0.tx",
+                "cut.1->0",
+                "shared_cut.bidirectional",
+                "server0.nic0.rx",
+                "rank2.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 3,
+          "receiver": 11,
+          "operation": "copy",
+          "chunks": [
+            9
+          ],
+          "element_start": 28311552,
+          "element_stop": 31457280,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r3:nic0",
+              "receiver": "r11:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 28311552,
+              "element_stop": 31457280,
+              "path": [
+                "rank3.tx",
+                "server0.nic0.tx",
+                "cut.0->1",
+                "shared_cut.bidirectional",
+                "server1.nic0.rx",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 3,
+          "operation": "copy",
+          "chunks": [
+            8
+          ],
+          "element_start": 25165824,
+          "element_stop": 28311552,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r11:nic0",
+              "receiver": "r3:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 25165824,
+              "element_stop": 28311552,
+              "path": [
+                "rank11.tx",
+                "server1.nic0.tx",
+                "cut.1->0",
+                "shared_cut.bidirectional",
+                "server0.nic0.rx",
+                "rank3.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 4,
+          "receiver": 12,
+          "operation": "copy",
+          "chunks": [
+            11
+          ],
+          "element_start": 34603008,
+          "element_stop": 37748736,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r4:nic0",
+              "receiver": "r12:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 34603008,
+              "element_stop": 37748736,
+              "path": [
+                "rank4.tx",
+                "server0.nic0.tx",
+                "cut.0->1",
+                "shared_cut.bidirectional",
+                "server1.nic0.rx",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 4,
+          "operation": "copy",
+          "chunks": [
+            10
+          ],
+          "element_start": 31457280,
+          "element_stop": 34603008,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r12:nic0",
+              "receiver": "r4:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 31457280,
+              "element_stop": 34603008,
+              "path": [
+                "rank12.tx",
+                "server1.nic0.tx",
+                "cut.1->0",
+                "shared_cut.bidirectional",
+                "server0.nic0.rx",
+                "rank4.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 5,
+          "receiver": 13,
+          "operation": "copy",
+          "chunks": [
+            13
+          ],
+          "element_start": 40894464,
+          "element_stop": 44040192,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r5:nic0",
+              "receiver": "r13:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 40894464,
+              "element_stop": 44040192,
+              "path": [
+                "rank5.tx",
+                "server0.nic0.tx",
+                "cut.0->1",
+                "shared_cut.bidirectional",
+                "server1.nic0.rx",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 5,
+          "operation": "copy",
+          "chunks": [
+            12
+          ],
+          "element_start": 37748736,
+          "element_stop": 40894464,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r13:nic0",
+              "receiver": "r5:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 37748736,
+              "element_stop": 40894464,
+              "path": [
+                "rank13.tx",
+                "server1.nic0.tx",
+                "cut.1->0",
+                "shared_cut.bidirectional",
+                "server0.nic0.rx",
+                "rank5.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 6,
+          "receiver": 14,
+          "operation": "copy",
+          "chunks": [
+            15
+          ],
+          "element_start": 47185920,
+          "element_stop": 50331648,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -2541,20 +9337,71 @@
           "stripes": [
             {
               "sender": "r6:nic0",
-              "receiver": "r2:nic0",
-              "bytes": 25165824,
+              "receiver": "r14:nic0",
+              "bytes": 12582912,
               "nic": 0,
-              "element_start": 37748736,
-              "element_stop": 44040192,
+              "element_start": 47185920,
+              "element_stop": 50331648,
               "path": [
                 "rank6.tx",
+                "server0.nic0.tx",
+                "cut.0->1",
+                "shared_cut.bidirectional",
+                "server1.nic0.rx",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 6,
+          "operation": "copy",
+          "chunks": [
+            14
+          ],
+          "element_start": 44040192,
+          "element_stop": 47185920,
+          "bytes": 12582912,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": true,
+          "stripes": [
+            {
+              "sender": "r14:nic0",
+              "receiver": "r6:nic0",
+              "bytes": 12582912,
+              "nic": 0,
+              "element_start": 44040192,
+              "element_stop": 47185920,
+              "path": [
+                "rank14.tx",
                 "server1.nic0.tx",
-                "server1.egress",
                 "cut.1->0",
                 "shared_cut.bidirectional",
-                "server0.ingress",
                 "server0.nic0.rx",
-                "rank2.rx"
+                "rank6.rx"
               ]
             }
           ]
@@ -2562,186 +9409,310 @@
       ],
       "edges": [
         {
-          "sender": "r3:nic0",
-          "receiver": "r7:nic0",
-          "bytes": 25165824,
+          "sender": "r7:nic0",
+          "receiver": "r15:nic0",
+          "bytes": 12582912,
           "nic": 0,
-          "element_start": 6291456,
-          "element_stop": 12582912,
+          "element_start": 3145728,
+          "element_stop": 6291456,
           "path": [
-            "rank3.tx",
+            "rank7.tx",
             "server0.nic0.tx",
-            "server0.egress",
             "cut.0->1",
             "shared_cut.bidirectional",
-            "server1.ingress",
             "server1.nic0.rx",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:nic0",
+          "receiver": "r7:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 0,
+          "element_stop": 3145728,
+          "path": [
+            "rank15.tx",
+            "server1.nic0.tx",
+            "cut.1->0",
+            "shared_cut.bidirectional",
+            "server0.nic0.rx",
             "rank7.rx"
           ]
         },
         {
-          "sender": "r7:nic0",
-          "receiver": "r3:nic0",
-          "bytes": 25165824,
-          "nic": 0,
-          "element_start": 0,
-          "element_stop": 6291456,
-          "path": [
-            "rank7.tx",
-            "server1.nic0.tx",
-            "server1.egress",
-            "cut.1->0",
-            "shared_cut.bidirectional",
-            "server0.ingress",
-            "server0.nic0.rx",
-            "rank3.rx"
-          ]
-        },
-        {
           "sender": "r0:nic0",
-          "receiver": "r4:nic0",
-          "bytes": 25165824,
+          "receiver": "r8:nic0",
+          "bytes": 12582912,
           "nic": 0,
-          "element_start": 18874368,
-          "element_stop": 25165824,
+          "element_start": 9437184,
+          "element_stop": 12582912,
           "path": [
             "rank0.tx",
             "server0.nic0.tx",
-            "server0.egress",
             "cut.0->1",
             "shared_cut.bidirectional",
-            "server1.ingress",
             "server1.nic0.rx",
-            "rank4.rx"
+            "rank8.rx"
           ]
         },
         {
-          "sender": "r4:nic0",
+          "sender": "r8:nic0",
           "receiver": "r0:nic0",
-          "bytes": 25165824,
+          "bytes": 12582912,
           "nic": 0,
-          "element_start": 12582912,
-          "element_stop": 18874368,
+          "element_start": 6291456,
+          "element_stop": 9437184,
           "path": [
-            "rank4.tx",
+            "rank8.tx",
             "server1.nic0.tx",
-            "server1.egress",
             "cut.1->0",
             "shared_cut.bidirectional",
-            "server0.ingress",
             "server0.nic0.rx",
             "rank0.rx"
           ]
         },
         {
           "sender": "r1:nic0",
-          "receiver": "r5:nic0",
-          "bytes": 25165824,
+          "receiver": "r9:nic0",
+          "bytes": 12582912,
           "nic": 0,
-          "element_start": 31457280,
-          "element_stop": 37748736,
+          "element_start": 15728640,
+          "element_stop": 18874368,
           "path": [
             "rank1.tx",
             "server0.nic0.tx",
-            "server0.egress",
             "cut.0->1",
             "shared_cut.bidirectional",
-            "server1.ingress",
             "server1.nic0.rx",
-            "rank5.rx"
+            "rank9.rx"
           ]
         },
         {
-          "sender": "r5:nic0",
+          "sender": "r9:nic0",
           "receiver": "r1:nic0",
-          "bytes": 25165824,
+          "bytes": 12582912,
           "nic": 0,
-          "element_start": 25165824,
-          "element_stop": 31457280,
+          "element_start": 12582912,
+          "element_stop": 15728640,
           "path": [
-            "rank5.tx",
+            "rank9.tx",
             "server1.nic0.tx",
-            "server1.egress",
             "cut.1->0",
             "shared_cut.bidirectional",
-            "server0.ingress",
             "server0.nic0.rx",
             "rank1.rx"
           ]
         },
         {
           "sender": "r2:nic0",
-          "receiver": "r6:nic0",
-          "bytes": 25165824,
+          "receiver": "r10:nic0",
+          "bytes": 12582912,
           "nic": 0,
-          "element_start": 44040192,
-          "element_stop": 50331648,
+          "element_start": 22020096,
+          "element_stop": 25165824,
           "path": [
             "rank2.tx",
             "server0.nic0.tx",
-            "server0.egress",
             "cut.0->1",
             "shared_cut.bidirectional",
-            "server1.ingress",
             "server1.nic0.rx",
-            "rank6.rx"
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:nic0",
+          "receiver": "r2:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 18874368,
+          "element_stop": 22020096,
+          "path": [
+            "rank10.tx",
+            "server1.nic0.tx",
+            "cut.1->0",
+            "shared_cut.bidirectional",
+            "server0.nic0.rx",
+            "rank2.rx"
+          ]
+        },
+        {
+          "sender": "r3:nic0",
+          "receiver": "r11:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 28311552,
+          "element_stop": 31457280,
+          "path": [
+            "rank3.tx",
+            "server0.nic0.tx",
+            "cut.0->1",
+            "shared_cut.bidirectional",
+            "server1.nic0.rx",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:nic0",
+          "receiver": "r3:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 25165824,
+          "element_stop": 28311552,
+          "path": [
+            "rank11.tx",
+            "server1.nic0.tx",
+            "cut.1->0",
+            "shared_cut.bidirectional",
+            "server0.nic0.rx",
+            "rank3.rx"
+          ]
+        },
+        {
+          "sender": "r4:nic0",
+          "receiver": "r12:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 34603008,
+          "element_stop": 37748736,
+          "path": [
+            "rank4.tx",
+            "server0.nic0.tx",
+            "cut.0->1",
+            "shared_cut.bidirectional",
+            "server1.nic0.rx",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:nic0",
+          "receiver": "r4:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 31457280,
+          "element_stop": 34603008,
+          "path": [
+            "rank12.tx",
+            "server1.nic0.tx",
+            "cut.1->0",
+            "shared_cut.bidirectional",
+            "server0.nic0.rx",
+            "rank4.rx"
+          ]
+        },
+        {
+          "sender": "r5:nic0",
+          "receiver": "r13:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 40894464,
+          "element_stop": 44040192,
+          "path": [
+            "rank5.tx",
+            "server0.nic0.tx",
+            "cut.0->1",
+            "shared_cut.bidirectional",
+            "server1.nic0.rx",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:nic0",
+          "receiver": "r5:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 37748736,
+          "element_stop": 40894464,
+          "path": [
+            "rank13.tx",
+            "server1.nic0.tx",
+            "cut.1->0",
+            "shared_cut.bidirectional",
+            "server0.nic0.rx",
+            "rank5.rx"
           ]
         },
         {
           "sender": "r6:nic0",
-          "receiver": "r2:nic0",
-          "bytes": 25165824,
+          "receiver": "r14:nic0",
+          "bytes": 12582912,
           "nic": 0,
-          "element_start": 37748736,
-          "element_stop": 44040192,
+          "element_start": 47185920,
+          "element_stop": 50331648,
           "path": [
             "rank6.tx",
+            "server0.nic0.tx",
+            "cut.0->1",
+            "shared_cut.bidirectional",
+            "server1.nic0.rx",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:nic0",
+          "receiver": "r6:nic0",
+          "bytes": 12582912,
+          "nic": 0,
+          "element_start": 44040192,
+          "element_stop": 47185920,
+          "path": [
+            "rank14.tx",
             "server1.nic0.tx",
-            "server1.egress",
             "cut.1->0",
             "shared_cut.bidirectional",
-            "server0.ingress",
             "server0.nic0.rx",
-            "rank2.rx"
+            "rank6.rx"
           ]
         }
       ],
       "resource_bytes": {
-        "rank3.tx": 25165824,
+        "rank7.tx": 12582912,
         "server0.nic0.tx": 100663296,
-        "server0.egress": 100663296,
         "cut.0->1": 100663296,
         "shared_cut.bidirectional": 201326592,
-        "server1.ingress": 100663296,
         "server1.nic0.rx": 100663296,
-        "rank7.rx": 25165824,
-        "rank7.tx": 25165824,
+        "rank15.rx": 12582912,
+        "rank15.tx": 12582912,
         "server1.nic0.tx": 100663296,
-        "server1.egress": 100663296,
         "cut.1->0": 100663296,
-        "server0.ingress": 100663296,
         "server0.nic0.rx": 100663296,
-        "rank3.rx": 25165824,
-        "rank0.tx": 25165824,
-        "rank4.rx": 25165824,
-        "rank4.tx": 25165824,
-        "rank0.rx": 25165824,
-        "rank1.tx": 25165824,
-        "rank5.rx": 25165824,
-        "rank5.tx": 25165824,
-        "rank1.rx": 25165824,
-        "rank2.tx": 25165824,
-        "rank6.rx": 25165824,
-        "rank6.tx": 25165824,
-        "rank2.rx": 25165824
+        "rank7.rx": 12582912,
+        "rank0.tx": 12582912,
+        "rank8.rx": 12582912,
+        "rank8.tx": 12582912,
+        "rank0.rx": 12582912,
+        "rank1.tx": 12582912,
+        "rank9.rx": 12582912,
+        "rank9.tx": 12582912,
+        "rank1.rx": 12582912,
+        "rank2.tx": 12582912,
+        "rank10.rx": 12582912,
+        "rank10.tx": 12582912,
+        "rank2.rx": 12582912,
+        "rank3.tx": 12582912,
+        "rank11.rx": 12582912,
+        "rank11.tx": 12582912,
+        "rank3.rx": 12582912,
+        "rank4.tx": 12582912,
+        "rank12.rx": 12582912,
+        "rank12.tx": 12582912,
+        "rank4.rx": 12582912,
+        "rank5.tx": 12582912,
+        "rank13.rx": 12582912,
+        "rank13.tx": 12582912,
+        "rank5.rx": 12582912,
+        "rank6.tx": 12582912,
+        "rank14.rx": 12582912,
+        "rank14.tx": 12582912,
+        "rank6.rx": 12582912
       },
-      "resource_lower_seconds_exact": "196608/48828125",
-      "barrier_lower_seconds_exact": "6294581/1562500000",
-      "barrier_start_seconds_exact": "1870901/390625000",
-      "barrier_finish_seconds_exact": "2755637/312500000"
+      "resource_lower_seconds_exact": "98304/48828125",
+      "barrier_lower_seconds_exact": "50352473/25000000000",
+      "barrier_start_seconds_exact": "22606859/9375000000",
+      "barrier_finish_seconds_exact": "331912291/75000000000"
     },
     {
-      "round": 5,
+      "round": 9,
       "stage": "local_all_gather",
       "phase": "all_gather",
       "step": 0,
@@ -2754,9 +9725,9 @@
             2,
             3
           ],
-          "element_start": 12582912,
-          "element_stop": 25165824,
-          "bytes": 50331648,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 2,
@@ -2768,7 +9739,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -2781,7 +9760,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -2790,10 +9777,10 @@
             {
               "sender": "r0:local",
               "receiver": "r1:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 12582912,
-              "element_stop": 25165824,
+              "element_start": 6291456,
+              "element_stop": 12582912,
               "path": [
                 "rank0.tx",
                 "local.0->1",
@@ -2810,9 +9797,9 @@
             4,
             5
           ],
-          "element_start": 25165824,
-          "element_stop": 37748736,
-          "bytes": 50331648,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 4,
@@ -2824,7 +9811,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -2837,7 +9832,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -2846,10 +9849,10 @@
             {
               "sender": "r1:local",
               "receiver": "r2:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 25165824,
-              "element_stop": 37748736,
+              "element_start": 12582912,
+              "element_stop": 18874368,
               "path": [
                 "rank1.tx",
                 "local.1->2",
@@ -2866,9 +9869,9 @@
             6,
             7
           ],
-          "element_start": 37748736,
-          "element_stop": 50331648,
-          "bytes": 50331648,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 6,
@@ -2880,7 +9883,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -2893,7 +9904,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -2902,10 +9921,10 @@
             {
               "sender": "r2:local",
               "receiver": "r3:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 37748736,
-              "element_stop": 50331648,
+              "element_start": 18874368,
+              "element_stop": 25165824,
               "path": [
                 "rank2.tx",
                 "local.2->3",
@@ -2916,18 +9935,18 @@
         },
         {
           "sender": 3,
-          "receiver": 0,
+          "receiver": 4,
           "operation": "copy",
           "chunks": [
-            0,
-            1
+            8,
+            9
           ],
-          "element_start": 0,
-          "element_stop": 12582912,
-          "bytes": 50331648,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 0,
+              "chunk": 8,
               "contributors": [
                 0,
                 1,
@@ -2936,11 +9955,19 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
-              "chunk": 1,
+              "chunk": 9,
               "contributors": [
                 0,
                 1,
@@ -2949,7 +9976,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -2957,15 +9992,15 @@
           "stripes": [
             {
               "sender": "r3:local",
-              "receiver": "r0:local",
-              "bytes": 50331648,
+              "receiver": "r4:local",
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 0,
-              "element_stop": 12582912,
+              "element_start": 25165824,
+              "element_stop": 31457280,
               "path": [
                 "rank3.tx",
-                "local.3->0",
-                "rank0.rx"
+                "local.3->4",
+                "rank4.rx"
               ]
             }
           ]
@@ -2975,15 +10010,15 @@
           "receiver": 5,
           "operation": "copy",
           "chunks": [
-            2,
-            3
+            10,
+            11
           ],
-          "element_start": 12582912,
-          "element_stop": 25165824,
-          "bytes": 50331648,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 2,
+              "chunk": 10,
               "contributors": [
                 0,
                 1,
@@ -2992,11 +10027,19 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
-              "chunk": 3,
+              "chunk": 11,
               "contributors": [
                 0,
                 1,
@@ -3005,7 +10048,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -3014,10 +10065,10 @@
             {
               "sender": "r4:local",
               "receiver": "r5:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 12582912,
-              "element_stop": 25165824,
+              "element_start": 31457280,
+              "element_stop": 37748736,
               "path": [
                 "rank4.tx",
                 "local.4->5",
@@ -3031,15 +10082,15 @@
           "receiver": 6,
           "operation": "copy",
           "chunks": [
-            4,
-            5
+            12,
+            13
           ],
-          "element_start": 25165824,
-          "element_stop": 37748736,
-          "bytes": 50331648,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 4,
+              "chunk": 12,
               "contributors": [
                 0,
                 1,
@@ -3048,11 +10099,19 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
-              "chunk": 5,
+              "chunk": 13,
               "contributors": [
                 0,
                 1,
@@ -3061,7 +10120,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -3070,10 +10137,10 @@
             {
               "sender": "r5:local",
               "receiver": "r6:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 25165824,
-              "element_stop": 37748736,
+              "element_start": 37748736,
+              "element_stop": 44040192,
               "path": [
                 "rank5.tx",
                 "local.5->6",
@@ -3087,15 +10154,15 @@
           "receiver": 7,
           "operation": "copy",
           "chunks": [
-            6,
-            7
+            14,
+            15
           ],
-          "element_start": 37748736,
+          "element_start": 44040192,
           "element_stop": 50331648,
-          "bytes": 50331648,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 6,
+              "chunk": 14,
               "contributors": [
                 0,
                 1,
@@ -3104,11 +10171,19 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
-              "chunk": 7,
+              "chunk": 15,
               "contributors": [
                 0,
                 1,
@@ -3117,7 +10192,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -3126,9 +10209,9 @@
             {
               "sender": "r6:local",
               "receiver": "r7:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 37748736,
+              "element_start": 44040192,
               "element_stop": 50331648,
               "path": [
                 "rank6.tx",
@@ -3140,15 +10223,15 @@
         },
         {
           "sender": 7,
-          "receiver": 4,
+          "receiver": 0,
           "operation": "copy",
           "chunks": [
             0,
             1
           ],
           "element_start": 0,
-          "element_stop": 12582912,
-          "bytes": 50331648,
+          "element_stop": 6291456,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 0,
@@ -3160,7 +10243,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -3173,7 +10264,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -3181,15 +10280,591 @@
           "stripes": [
             {
               "sender": "r7:local",
-              "receiver": "r4:local",
-              "bytes": 50331648,
+              "receiver": "r0:local",
+              "bytes": 25165824,
               "nic": null,
               "element_start": 0,
-              "element_stop": 12582912,
+              "element_stop": 6291456,
               "path": [
                 "rank7.tx",
-                "local.7->4",
-                "rank4.rx"
+                "local.7->0",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 9,
+          "operation": "copy",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r8:local",
+              "receiver": "r9:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank8.tx",
+                "local.8->9",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 10,
+          "operation": "copy",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r9:local",
+              "receiver": "r10:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank9.tx",
+                "local.9->10",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 11,
+          "operation": "copy",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r10:local",
+              "receiver": "r11:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank10.tx",
+                "local.10->11",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 12,
+          "operation": "copy",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r11:local",
+              "receiver": "r12:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank11.tx",
+                "local.11->12",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 13,
+          "operation": "copy",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r12:local",
+              "receiver": "r13:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank12.tx",
+                "local.12->13",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 14,
+          "operation": "copy",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r13:local",
+              "receiver": "r14:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank13.tx",
+                "local.13->14",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 15,
+          "operation": "copy",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r14:local",
+              "receiver": "r15:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank14.tx",
+                "local.14->15",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 8,
+          "operation": "copy",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r15:local",
+              "receiver": "r8:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank15.tx",
+                "local.15->8",
+                "rank8.rx"
               ]
             }
           ]
@@ -3199,10 +10874,10 @@
         {
           "sender": "r0:local",
           "receiver": "r1:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 12582912,
-          "element_stop": 25165824,
+          "element_start": 6291456,
+          "element_stop": 12582912,
           "path": [
             "rank0.tx",
             "local.0->1",
@@ -3212,10 +10887,10 @@
         {
           "sender": "r1:local",
           "receiver": "r2:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 25165824,
-          "element_stop": 37748736,
+          "element_start": 12582912,
+          "element_stop": 18874368,
           "path": [
             "rank1.tx",
             "local.1->2",
@@ -3225,10 +10900,10 @@
         {
           "sender": "r2:local",
           "receiver": "r3:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 37748736,
-          "element_stop": 50331648,
+          "element_start": 18874368,
+          "element_stop": 25165824,
           "path": [
             "rank2.tx",
             "local.2->3",
@@ -3237,24 +10912,24 @@
         },
         {
           "sender": "r3:local",
-          "receiver": "r0:local",
-          "bytes": 50331648,
+          "receiver": "r4:local",
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 0,
-          "element_stop": 12582912,
+          "element_start": 25165824,
+          "element_stop": 31457280,
           "path": [
             "rank3.tx",
-            "local.3->0",
-            "rank0.rx"
+            "local.3->4",
+            "rank4.rx"
           ]
         },
         {
           "sender": "r4:local",
           "receiver": "r5:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 12582912,
-          "element_stop": 25165824,
+          "element_start": 31457280,
+          "element_stop": 37748736,
           "path": [
             "rank4.tx",
             "local.4->5",
@@ -3264,10 +10939,10 @@
         {
           "sender": "r5:local",
           "receiver": "r6:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 25165824,
-          "element_stop": 37748736,
+          "element_start": 37748736,
+          "element_stop": 44040192,
           "path": [
             "rank5.tx",
             "local.5->6",
@@ -3277,9 +10952,9 @@
         {
           "sender": "r6:local",
           "receiver": "r7:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 37748736,
+          "element_start": 44040192,
           "element_stop": 50331648,
           "path": [
             "rank6.tx",
@@ -3289,51 +10964,179 @@
         },
         {
           "sender": "r7:local",
-          "receiver": "r4:local",
-          "bytes": 50331648,
+          "receiver": "r0:local",
+          "bytes": 25165824,
           "nic": null,
           "element_start": 0,
-          "element_stop": 12582912,
+          "element_stop": 6291456,
           "path": [
             "rank7.tx",
-            "local.7->4",
-            "rank4.rx"
+            "local.7->0",
+            "rank0.rx"
+          ]
+        },
+        {
+          "sender": "r8:local",
+          "receiver": "r9:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank8.tx",
+            "local.8->9",
+            "rank9.rx"
+          ]
+        },
+        {
+          "sender": "r9:local",
+          "receiver": "r10:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank9.tx",
+            "local.9->10",
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:local",
+          "receiver": "r11:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank10.tx",
+            "local.10->11",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:local",
+          "receiver": "r12:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank11.tx",
+            "local.11->12",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:local",
+          "receiver": "r13:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank12.tx",
+            "local.12->13",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:local",
+          "receiver": "r14:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank13.tx",
+            "local.13->14",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:local",
+          "receiver": "r15:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank14.tx",
+            "local.14->15",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:local",
+          "receiver": "r8:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank15.tx",
+            "local.15->8",
+            "rank8.rx"
           ]
         }
       ],
       "resource_bytes": {
-        "rank0.tx": 50331648,
-        "local.0->1": 50331648,
-        "rank1.rx": 50331648,
-        "rank1.tx": 50331648,
-        "local.1->2": 50331648,
-        "rank2.rx": 50331648,
-        "rank2.tx": 50331648,
-        "local.2->3": 50331648,
-        "rank3.rx": 50331648,
-        "rank3.tx": 50331648,
-        "local.3->0": 50331648,
-        "rank0.rx": 50331648,
-        "rank4.tx": 50331648,
-        "local.4->5": 50331648,
-        "rank5.rx": 50331648,
-        "rank5.tx": 50331648,
-        "local.5->6": 50331648,
-        "rank6.rx": 50331648,
-        "rank6.tx": 50331648,
-        "local.6->7": 50331648,
-        "rank7.rx": 50331648,
-        "rank7.tx": 50331648,
-        "local.7->4": 50331648,
-        "rank4.rx": 50331648
+        "rank0.tx": 25165824,
+        "local.0->1": 25165824,
+        "rank1.rx": 25165824,
+        "rank1.tx": 25165824,
+        "local.1->2": 25165824,
+        "rank2.rx": 25165824,
+        "rank2.tx": 25165824,
+        "local.2->3": 25165824,
+        "rank3.rx": 25165824,
+        "rank3.tx": 25165824,
+        "local.3->4": 25165824,
+        "rank4.rx": 25165824,
+        "rank4.tx": 25165824,
+        "local.4->5": 25165824,
+        "rank5.rx": 25165824,
+        "rank5.tx": 25165824,
+        "local.5->6": 25165824,
+        "rank6.rx": 25165824,
+        "rank6.tx": 25165824,
+        "local.6->7": 25165824,
+        "rank7.rx": 25165824,
+        "rank7.tx": 25165824,
+        "local.7->0": 25165824,
+        "rank0.rx": 25165824,
+        "rank8.tx": 25165824,
+        "local.8->9": 25165824,
+        "rank9.rx": 25165824,
+        "rank9.tx": 25165824,
+        "local.9->10": 25165824,
+        "rank10.rx": 25165824,
+        "rank10.tx": 25165824,
+        "local.10->11": 25165824,
+        "rank11.rx": 25165824,
+        "rank11.tx": 25165824,
+        "local.11->12": 25165824,
+        "rank12.rx": 25165824,
+        "rank12.tx": 25165824,
+        "local.12->13": 25165824,
+        "rank13.rx": 25165824,
+        "rank13.tx": 25165824,
+        "local.13->14": 25165824,
+        "rank14.rx": 25165824,
+        "rank14.tx": 25165824,
+        "local.14->15": 25165824,
+        "rank15.rx": 25165824,
+        "rank15.tx": 25165824,
+        "local.15->8": 25165824,
+        "rank8.rx": 25165824
       },
-      "resource_lower_seconds_exact": "12288/48828125",
-      "barrier_lower_seconds_exact": "396341/1562500000",
-      "barrier_start_seconds_exact": "2755637/312500000",
-      "barrier_finish_seconds_exact": "7087263/781250000"
+      "resource_lower_seconds_exact": "8192/146484375",
+      "barrier_lower_seconds_exact": "4256779/75000000000",
+      "barrier_start_seconds_exact": "331912291/75000000000",
+      "barrier_finish_seconds_exact": "33616907/7500000000"
     },
     {
-      "round": 6,
+      "round": 10,
       "stage": "local_all_gather",
       "phase": "all_gather",
       "step": 1,
@@ -3347,8 +11150,8 @@
             1
           ],
           "element_start": 0,
-          "element_stop": 12582912,
-          "bytes": 50331648,
+          "element_stop": 6291456,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 0,
@@ -3360,7 +11163,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -3373,7 +11184,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -3382,10 +11201,10 @@
             {
               "sender": "r0:local",
               "receiver": "r1:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
               "element_start": 0,
-              "element_stop": 12582912,
+              "element_stop": 6291456,
               "path": [
                 "rank0.tx",
                 "local.0->1",
@@ -3402,9 +11221,9 @@
             2,
             3
           ],
-          "element_start": 12582912,
-          "element_stop": 25165824,
-          "bytes": 50331648,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 2,
@@ -3416,7 +11235,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -3429,7 +11256,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -3438,10 +11273,10 @@
             {
               "sender": "r1:local",
               "receiver": "r2:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 12582912,
-              "element_stop": 25165824,
+              "element_start": 6291456,
+              "element_stop": 12582912,
               "path": [
                 "rank1.tx",
                 "local.1->2",
@@ -3458,9 +11293,9 @@
             4,
             5
           ],
-          "element_start": 25165824,
-          "element_stop": 37748736,
-          "bytes": 50331648,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 4,
@@ -3472,7 +11307,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -3485,7 +11328,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -3494,10 +11345,10 @@
             {
               "sender": "r2:local",
               "receiver": "r3:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 25165824,
-              "element_stop": 37748736,
+              "element_start": 12582912,
+              "element_stop": 18874368,
               "path": [
                 "rank2.tx",
                 "local.2->3",
@@ -3508,15 +11359,15 @@
         },
         {
           "sender": 3,
-          "receiver": 0,
+          "receiver": 4,
           "operation": "copy",
           "chunks": [
             6,
             7
           ],
-          "element_start": 37748736,
-          "element_stop": 50331648,
-          "bytes": 50331648,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 6,
@@ -3528,7 +11379,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -3541,7 +11400,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -3549,15 +11416,15 @@
           "stripes": [
             {
               "sender": "r3:local",
-              "receiver": "r0:local",
-              "bytes": 50331648,
+              "receiver": "r4:local",
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 37748736,
-              "element_stop": 50331648,
+              "element_start": 18874368,
+              "element_stop": 25165824,
               "path": [
                 "rank3.tx",
-                "local.3->0",
-                "rank0.rx"
+                "local.3->4",
+                "rank4.rx"
               ]
             }
           ]
@@ -3567,15 +11434,15 @@
           "receiver": 5,
           "operation": "copy",
           "chunks": [
-            0,
-            1
+            8,
+            9
           ],
-          "element_start": 0,
-          "element_stop": 12582912,
-          "bytes": 50331648,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 0,
+              "chunk": 8,
               "contributors": [
                 0,
                 1,
@@ -3584,11 +11451,19 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
-              "chunk": 1,
+              "chunk": 9,
               "contributors": [
                 0,
                 1,
@@ -3597,7 +11472,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -3606,10 +11489,10 @@
             {
               "sender": "r4:local",
               "receiver": "r5:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 0,
-              "element_stop": 12582912,
+              "element_start": 25165824,
+              "element_stop": 31457280,
               "path": [
                 "rank4.tx",
                 "local.4->5",
@@ -3623,15 +11506,15 @@
           "receiver": 6,
           "operation": "copy",
           "chunks": [
-            2,
-            3
+            10,
+            11
           ],
-          "element_start": 12582912,
-          "element_stop": 25165824,
-          "bytes": 50331648,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 2,
+              "chunk": 10,
               "contributors": [
                 0,
                 1,
@@ -3640,11 +11523,19 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
-              "chunk": 3,
+              "chunk": 11,
               "contributors": [
                 0,
                 1,
@@ -3653,7 +11544,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -3662,10 +11561,10 @@
             {
               "sender": "r5:local",
               "receiver": "r6:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 12582912,
-              "element_stop": 25165824,
+              "element_start": 31457280,
+              "element_stop": 37748736,
               "path": [
                 "rank5.tx",
                 "local.5->6",
@@ -3679,12 +11578,300 @@
           "receiver": 7,
           "operation": "copy",
           "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r6:local",
+              "receiver": "r7:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank6.tx",
+                "local.6->7",
+                "rank7.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 7,
+          "receiver": 0,
+          "operation": "copy",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r7:local",
+              "receiver": "r0:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank7.tx",
+                "local.7->0",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 9,
+          "operation": "copy",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r8:local",
+              "receiver": "r9:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank8.tx",
+                "local.8->9",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 10,
+          "operation": "copy",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r9:local",
+              "receiver": "r10:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank9.tx",
+                "local.9->10",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 11,
+          "operation": "copy",
+          "chunks": [
             4,
             5
           ],
-          "element_start": 25165824,
-          "element_stop": 37748736,
-          "bytes": 50331648,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 4,
@@ -3696,7 +11883,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -3709,38 +11904,46 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
           "remote": false,
           "stripes": [
             {
-              "sender": "r6:local",
-              "receiver": "r7:local",
-              "bytes": 50331648,
+              "sender": "r10:local",
+              "receiver": "r11:local",
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 25165824,
-              "element_stop": 37748736,
+              "element_start": 12582912,
+              "element_stop": 18874368,
               "path": [
-                "rank6.tx",
-                "local.6->7",
-                "rank7.rx"
+                "rank10.tx",
+                "local.10->11",
+                "rank11.rx"
               ]
             }
           ]
         },
         {
-          "sender": 7,
-          "receiver": 4,
+          "sender": 11,
+          "receiver": 12,
           "operation": "copy",
           "chunks": [
             6,
             7
           ],
-          "element_start": 37748736,
-          "element_stop": 50331648,
-          "bytes": 50331648,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 6,
@@ -3752,7 +11955,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -3765,23 +11976,319 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
           "remote": false,
           "stripes": [
             {
-              "sender": "r7:local",
-              "receiver": "r4:local",
-              "bytes": 50331648,
+              "sender": "r11:local",
+              "receiver": "r12:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank11.tx",
+                "local.11->12",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 13,
+          "operation": "copy",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r12:local",
+              "receiver": "r13:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank12.tx",
+                "local.12->13",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 14,
+          "operation": "copy",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r13:local",
+              "receiver": "r14:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank13.tx",
+                "local.13->14",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 15,
+          "operation": "copy",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r14:local",
+              "receiver": "r15:local",
+              "bytes": 25165824,
               "nic": null,
               "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank14.tx",
+                "local.14->15",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 8,
+          "operation": "copy",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r15:local",
+              "receiver": "r8:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
               "element_stop": 50331648,
               "path": [
-                "rank7.tx",
-                "local.7->4",
-                "rank4.rx"
+                "rank15.tx",
+                "local.15->8",
+                "rank8.rx"
               ]
             }
           ]
@@ -3791,10 +12298,10 @@
         {
           "sender": "r0:local",
           "receiver": "r1:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
           "element_start": 0,
-          "element_stop": 12582912,
+          "element_stop": 6291456,
           "path": [
             "rank0.tx",
             "local.0->1",
@@ -3804,10 +12311,10 @@
         {
           "sender": "r1:local",
           "receiver": "r2:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 12582912,
-          "element_stop": 25165824,
+          "element_start": 6291456,
+          "element_stop": 12582912,
           "path": [
             "rank1.tx",
             "local.1->2",
@@ -3817,10 +12324,10 @@
         {
           "sender": "r2:local",
           "receiver": "r3:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 25165824,
-          "element_stop": 37748736,
+          "element_start": 12582912,
+          "element_stop": 18874368,
           "path": [
             "rank2.tx",
             "local.2->3",
@@ -3829,24 +12336,24 @@
         },
         {
           "sender": "r3:local",
-          "receiver": "r0:local",
-          "bytes": 50331648,
+          "receiver": "r4:local",
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 37748736,
-          "element_stop": 50331648,
+          "element_start": 18874368,
+          "element_stop": 25165824,
           "path": [
             "rank3.tx",
-            "local.3->0",
-            "rank0.rx"
+            "local.3->4",
+            "rank4.rx"
           ]
         },
         {
           "sender": "r4:local",
           "receiver": "r5:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 0,
-          "element_stop": 12582912,
+          "element_start": 25165824,
+          "element_stop": 31457280,
           "path": [
             "rank4.tx",
             "local.4->5",
@@ -3856,10 +12363,10 @@
         {
           "sender": "r5:local",
           "receiver": "r6:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 12582912,
-          "element_stop": 25165824,
+          "element_start": 31457280,
+          "element_stop": 37748736,
           "path": [
             "rank5.tx",
             "local.5->6",
@@ -3869,10 +12376,10 @@
         {
           "sender": "r6:local",
           "receiver": "r7:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 25165824,
-          "element_stop": 37748736,
+          "element_start": 37748736,
+          "element_stop": 44040192,
           "path": [
             "rank6.tx",
             "local.6->7",
@@ -3881,51 +12388,179 @@
         },
         {
           "sender": "r7:local",
-          "receiver": "r4:local",
-          "bytes": 50331648,
+          "receiver": "r0:local",
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 37748736,
+          "element_start": 44040192,
           "element_stop": 50331648,
           "path": [
             "rank7.tx",
-            "local.7->4",
-            "rank4.rx"
+            "local.7->0",
+            "rank0.rx"
+          ]
+        },
+        {
+          "sender": "r8:local",
+          "receiver": "r9:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank8.tx",
+            "local.8->9",
+            "rank9.rx"
+          ]
+        },
+        {
+          "sender": "r9:local",
+          "receiver": "r10:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank9.tx",
+            "local.9->10",
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:local",
+          "receiver": "r11:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank10.tx",
+            "local.10->11",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:local",
+          "receiver": "r12:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank11.tx",
+            "local.11->12",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:local",
+          "receiver": "r13:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank12.tx",
+            "local.12->13",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:local",
+          "receiver": "r14:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank13.tx",
+            "local.13->14",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:local",
+          "receiver": "r15:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank14.tx",
+            "local.14->15",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:local",
+          "receiver": "r8:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank15.tx",
+            "local.15->8",
+            "rank8.rx"
           ]
         }
       ],
       "resource_bytes": {
-        "rank0.tx": 50331648,
-        "local.0->1": 50331648,
-        "rank1.rx": 50331648,
-        "rank1.tx": 50331648,
-        "local.1->2": 50331648,
-        "rank2.rx": 50331648,
-        "rank2.tx": 50331648,
-        "local.2->3": 50331648,
-        "rank3.rx": 50331648,
-        "rank3.tx": 50331648,
-        "local.3->0": 50331648,
-        "rank0.rx": 50331648,
-        "rank4.tx": 50331648,
-        "local.4->5": 50331648,
-        "rank5.rx": 50331648,
-        "rank5.tx": 50331648,
-        "local.5->6": 50331648,
-        "rank6.rx": 50331648,
-        "rank6.tx": 50331648,
-        "local.6->7": 50331648,
-        "rank7.rx": 50331648,
-        "rank7.tx": 50331648,
-        "local.7->4": 50331648,
-        "rank4.rx": 50331648
+        "rank0.tx": 25165824,
+        "local.0->1": 25165824,
+        "rank1.rx": 25165824,
+        "rank1.tx": 25165824,
+        "local.1->2": 25165824,
+        "rank2.rx": 25165824,
+        "rank2.tx": 25165824,
+        "local.2->3": 25165824,
+        "rank3.rx": 25165824,
+        "rank3.tx": 25165824,
+        "local.3->4": 25165824,
+        "rank4.rx": 25165824,
+        "rank4.tx": 25165824,
+        "local.4->5": 25165824,
+        "rank5.rx": 25165824,
+        "rank5.tx": 25165824,
+        "local.5->6": 25165824,
+        "rank6.rx": 25165824,
+        "rank6.tx": 25165824,
+        "local.6->7": 25165824,
+        "rank7.rx": 25165824,
+        "rank7.tx": 25165824,
+        "local.7->0": 25165824,
+        "rank0.rx": 25165824,
+        "rank8.tx": 25165824,
+        "local.8->9": 25165824,
+        "rank9.rx": 25165824,
+        "rank9.tx": 25165824,
+        "local.9->10": 25165824,
+        "rank10.rx": 25165824,
+        "rank10.tx": 25165824,
+        "local.10->11": 25165824,
+        "rank11.rx": 25165824,
+        "rank11.tx": 25165824,
+        "local.11->12": 25165824,
+        "rank12.rx": 25165824,
+        "rank12.tx": 25165824,
+        "local.12->13": 25165824,
+        "rank13.rx": 25165824,
+        "rank13.tx": 25165824,
+        "local.13->14": 25165824,
+        "rank14.rx": 25165824,
+        "rank14.tx": 25165824,
+        "local.14->15": 25165824,
+        "rank15.rx": 25165824,
+        "rank15.tx": 25165824,
+        "local.15->8": 25165824,
+        "rank8.rx": 25165824
       },
-      "resource_lower_seconds_exact": "12288/48828125",
-      "barrier_lower_seconds_exact": "396341/1562500000",
-      "barrier_start_seconds_exact": "7087263/781250000",
-      "barrier_finish_seconds_exact": "14570867/1562500000"
+      "resource_lower_seconds_exact": "8192/146484375",
+      "barrier_lower_seconds_exact": "4256779/75000000000",
+      "barrier_start_seconds_exact": "33616907/7500000000",
+      "barrier_finish_seconds_exact": "113475283/25000000000"
     },
     {
-      "round": 7,
+      "round": 11,
       "stage": "local_all_gather",
       "phase": "all_gather",
       "step": 2,
@@ -3935,15 +12570,15 @@
           "receiver": 1,
           "operation": "copy",
           "chunks": [
-            6,
-            7
+            14,
+            15
           ],
-          "element_start": 37748736,
+          "element_start": 44040192,
           "element_stop": 50331648,
-          "bytes": 50331648,
+          "bytes": 25165824,
           "contributions": [
             {
-              "chunk": 6,
+              "chunk": 14,
               "contributors": [
                 0,
                 1,
@@ -3952,11 +12587,19 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
-              "chunk": 7,
+              "chunk": 15,
               "contributors": [
                 0,
                 1,
@@ -3965,7 +12608,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -3974,9 +12625,9 @@
             {
               "sender": "r0:local",
               "receiver": "r1:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 37748736,
+              "element_start": 44040192,
               "element_stop": 50331648,
               "path": [
                 "rank0.tx",
@@ -3995,8 +12646,8 @@
             1
           ],
           "element_start": 0,
-          "element_stop": 12582912,
-          "bytes": 50331648,
+          "element_stop": 6291456,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 0,
@@ -4008,7 +12659,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -4021,7 +12680,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -4030,10 +12697,10 @@
             {
               "sender": "r1:local",
               "receiver": "r2:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
               "element_start": 0,
-              "element_stop": 12582912,
+              "element_stop": 6291456,
               "path": [
                 "rank1.tx",
                 "local.1->2",
@@ -4050,9 +12717,9 @@
             2,
             3
           ],
-          "element_start": 12582912,
-          "element_stop": 25165824,
-          "bytes": 50331648,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 2,
@@ -4064,7 +12731,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -4077,7 +12752,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -4086,10 +12769,10 @@
             {
               "sender": "r2:local",
               "receiver": "r3:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 12582912,
-              "element_stop": 25165824,
+              "element_start": 6291456,
+              "element_stop": 12582912,
               "path": [
                 "rank2.tx",
                 "local.2->3",
@@ -4100,15 +12783,15 @@
         },
         {
           "sender": 3,
-          "receiver": 0,
+          "receiver": 4,
           "operation": "copy",
           "chunks": [
             4,
             5
           ],
-          "element_start": 25165824,
-          "element_stop": 37748736,
-          "bytes": 50331648,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 4,
@@ -4120,7 +12803,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -4133,7 +12824,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -4141,15 +12840,15 @@
           "stripes": [
             {
               "sender": "r3:local",
-              "receiver": "r0:local",
-              "bytes": 50331648,
+              "receiver": "r4:local",
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 25165824,
-              "element_stop": 37748736,
+              "element_start": 12582912,
+              "element_stop": 18874368,
               "path": [
                 "rank3.tx",
-                "local.3->0",
-                "rank0.rx"
+                "local.3->4",
+                "rank4.rx"
               ]
             }
           ]
@@ -4162,9 +12861,9 @@
             6,
             7
           ],
-          "element_start": 37748736,
-          "element_stop": 50331648,
-          "bytes": 50331648,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 6,
@@ -4176,7 +12875,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -4189,7 +12896,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -4198,9 +12913,5705 @@
             {
               "sender": "r4:local",
               "receiver": "r5:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank4.tx",
+                "local.4->5",
+                "rank5.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 5,
+          "receiver": 6,
+          "operation": "copy",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r5:local",
+              "receiver": "r6:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank5.tx",
+                "local.5->6",
+                "rank6.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 6,
+          "receiver": 7,
+          "operation": "copy",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r6:local",
+              "receiver": "r7:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank6.tx",
+                "local.6->7",
+                "rank7.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 7,
+          "receiver": 0,
+          "operation": "copy",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r7:local",
+              "receiver": "r0:local",
+              "bytes": 25165824,
               "nic": null,
               "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank7.tx",
+                "local.7->0",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 9,
+          "operation": "copy",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r8:local",
+              "receiver": "r9:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank8.tx",
+                "local.8->9",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 10,
+          "operation": "copy",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r9:local",
+              "receiver": "r10:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank9.tx",
+                "local.9->10",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 11,
+          "operation": "copy",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r10:local",
+              "receiver": "r11:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank10.tx",
+                "local.10->11",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 12,
+          "operation": "copy",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r11:local",
+              "receiver": "r12:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank11.tx",
+                "local.11->12",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 13,
+          "operation": "copy",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r12:local",
+              "receiver": "r13:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank12.tx",
+                "local.12->13",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 14,
+          "operation": "copy",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r13:local",
+              "receiver": "r14:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank13.tx",
+                "local.13->14",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 15,
+          "operation": "copy",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r14:local",
+              "receiver": "r15:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank14.tx",
+                "local.14->15",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 8,
+          "operation": "copy",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r15:local",
+              "receiver": "r8:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank15.tx",
+                "local.15->8",
+                "rank8.rx"
+              ]
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "sender": "r0:local",
+          "receiver": "r1:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank0.tx",
+            "local.0->1",
+            "rank1.rx"
+          ]
+        },
+        {
+          "sender": "r1:local",
+          "receiver": "r2:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank1.tx",
+            "local.1->2",
+            "rank2.rx"
+          ]
+        },
+        {
+          "sender": "r2:local",
+          "receiver": "r3:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank2.tx",
+            "local.2->3",
+            "rank3.rx"
+          ]
+        },
+        {
+          "sender": "r3:local",
+          "receiver": "r4:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank3.tx",
+            "local.3->4",
+            "rank4.rx"
+          ]
+        },
+        {
+          "sender": "r4:local",
+          "receiver": "r5:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank4.tx",
+            "local.4->5",
+            "rank5.rx"
+          ]
+        },
+        {
+          "sender": "r5:local",
+          "receiver": "r6:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank5.tx",
+            "local.5->6",
+            "rank6.rx"
+          ]
+        },
+        {
+          "sender": "r6:local",
+          "receiver": "r7:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank6.tx",
+            "local.6->7",
+            "rank7.rx"
+          ]
+        },
+        {
+          "sender": "r7:local",
+          "receiver": "r0:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank7.tx",
+            "local.7->0",
+            "rank0.rx"
+          ]
+        },
+        {
+          "sender": "r8:local",
+          "receiver": "r9:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank8.tx",
+            "local.8->9",
+            "rank9.rx"
+          ]
+        },
+        {
+          "sender": "r9:local",
+          "receiver": "r10:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank9.tx",
+            "local.9->10",
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:local",
+          "receiver": "r11:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank10.tx",
+            "local.10->11",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:local",
+          "receiver": "r12:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank11.tx",
+            "local.11->12",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:local",
+          "receiver": "r13:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank12.tx",
+            "local.12->13",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:local",
+          "receiver": "r14:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank13.tx",
+            "local.13->14",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:local",
+          "receiver": "r15:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank14.tx",
+            "local.14->15",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:local",
+          "receiver": "r8:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank15.tx",
+            "local.15->8",
+            "rank8.rx"
+          ]
+        }
+      ],
+      "resource_bytes": {
+        "rank0.tx": 25165824,
+        "local.0->1": 25165824,
+        "rank1.rx": 25165824,
+        "rank1.tx": 25165824,
+        "local.1->2": 25165824,
+        "rank2.rx": 25165824,
+        "rank2.tx": 25165824,
+        "local.2->3": 25165824,
+        "rank3.rx": 25165824,
+        "rank3.tx": 25165824,
+        "local.3->4": 25165824,
+        "rank4.rx": 25165824,
+        "rank4.tx": 25165824,
+        "local.4->5": 25165824,
+        "rank5.rx": 25165824,
+        "rank5.tx": 25165824,
+        "local.5->6": 25165824,
+        "rank6.rx": 25165824,
+        "rank6.tx": 25165824,
+        "local.6->7": 25165824,
+        "rank7.rx": 25165824,
+        "rank7.tx": 25165824,
+        "local.7->0": 25165824,
+        "rank0.rx": 25165824,
+        "rank8.tx": 25165824,
+        "local.8->9": 25165824,
+        "rank9.rx": 25165824,
+        "rank9.tx": 25165824,
+        "local.9->10": 25165824,
+        "rank10.rx": 25165824,
+        "rank10.tx": 25165824,
+        "local.10->11": 25165824,
+        "rank11.rx": 25165824,
+        "rank11.tx": 25165824,
+        "local.11->12": 25165824,
+        "rank12.rx": 25165824,
+        "rank12.tx": 25165824,
+        "local.12->13": 25165824,
+        "rank13.rx": 25165824,
+        "rank13.tx": 25165824,
+        "local.13->14": 25165824,
+        "rank14.rx": 25165824,
+        "rank14.tx": 25165824,
+        "local.14->15": 25165824,
+        "rank15.rx": 25165824,
+        "rank15.tx": 25165824,
+        "local.15->8": 25165824,
+        "rank8.rx": 25165824
+      },
+      "resource_lower_seconds_exact": "8192/146484375",
+      "barrier_lower_seconds_exact": "4256779/75000000000",
+      "barrier_start_seconds_exact": "113475283/25000000000",
+      "barrier_finish_seconds_exact": "86170657/18750000000"
+    },
+    {
+      "round": 12,
+      "stage": "local_all_gather",
+      "phase": "all_gather",
+      "step": 3,
+      "messages": [
+        {
+          "sender": 0,
+          "receiver": 1,
+          "operation": "copy",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r0:local",
+              "receiver": "r1:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank0.tx",
+                "local.0->1",
+                "rank1.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 1,
+          "receiver": 2,
+          "operation": "copy",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r1:local",
+              "receiver": "r2:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank1.tx",
+                "local.1->2",
+                "rank2.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 2,
+          "receiver": 3,
+          "operation": "copy",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r2:local",
+              "receiver": "r3:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank2.tx",
+                "local.2->3",
+                "rank3.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 3,
+          "receiver": 4,
+          "operation": "copy",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r3:local",
+              "receiver": "r4:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank3.tx",
+                "local.3->4",
+                "rank4.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 4,
+          "receiver": 5,
+          "operation": "copy",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r4:local",
+              "receiver": "r5:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank4.tx",
+                "local.4->5",
+                "rank5.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 5,
+          "receiver": 6,
+          "operation": "copy",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r5:local",
+              "receiver": "r6:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank5.tx",
+                "local.5->6",
+                "rank6.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 6,
+          "receiver": 7,
+          "operation": "copy",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r6:local",
+              "receiver": "r7:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank6.tx",
+                "local.6->7",
+                "rank7.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 7,
+          "receiver": 0,
+          "operation": "copy",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r7:local",
+              "receiver": "r0:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank7.tx",
+                "local.7->0",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 9,
+          "operation": "copy",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r8:local",
+              "receiver": "r9:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank8.tx",
+                "local.8->9",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 10,
+          "operation": "copy",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r9:local",
+              "receiver": "r10:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank9.tx",
+                "local.9->10",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 11,
+          "operation": "copy",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r10:local",
+              "receiver": "r11:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank10.tx",
+                "local.10->11",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 12,
+          "operation": "copy",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r11:local",
+              "receiver": "r12:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank11.tx",
+                "local.11->12",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 13,
+          "operation": "copy",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r12:local",
+              "receiver": "r13:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank12.tx",
+                "local.12->13",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 14,
+          "operation": "copy",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r13:local",
+              "receiver": "r14:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank13.tx",
+                "local.13->14",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 15,
+          "operation": "copy",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r14:local",
+              "receiver": "r15:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank14.tx",
+                "local.14->15",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 8,
+          "operation": "copy",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r15:local",
+              "receiver": "r8:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank15.tx",
+                "local.15->8",
+                "rank8.rx"
+              ]
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "sender": "r0:local",
+          "receiver": "r1:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank0.tx",
+            "local.0->1",
+            "rank1.rx"
+          ]
+        },
+        {
+          "sender": "r1:local",
+          "receiver": "r2:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank1.tx",
+            "local.1->2",
+            "rank2.rx"
+          ]
+        },
+        {
+          "sender": "r2:local",
+          "receiver": "r3:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank2.tx",
+            "local.2->3",
+            "rank3.rx"
+          ]
+        },
+        {
+          "sender": "r3:local",
+          "receiver": "r4:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank3.tx",
+            "local.3->4",
+            "rank4.rx"
+          ]
+        },
+        {
+          "sender": "r4:local",
+          "receiver": "r5:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank4.tx",
+            "local.4->5",
+            "rank5.rx"
+          ]
+        },
+        {
+          "sender": "r5:local",
+          "receiver": "r6:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank5.tx",
+            "local.5->6",
+            "rank6.rx"
+          ]
+        },
+        {
+          "sender": "r6:local",
+          "receiver": "r7:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank6.tx",
+            "local.6->7",
+            "rank7.rx"
+          ]
+        },
+        {
+          "sender": "r7:local",
+          "receiver": "r0:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank7.tx",
+            "local.7->0",
+            "rank0.rx"
+          ]
+        },
+        {
+          "sender": "r8:local",
+          "receiver": "r9:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank8.tx",
+            "local.8->9",
+            "rank9.rx"
+          ]
+        },
+        {
+          "sender": "r9:local",
+          "receiver": "r10:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank9.tx",
+            "local.9->10",
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:local",
+          "receiver": "r11:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank10.tx",
+            "local.10->11",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:local",
+          "receiver": "r12:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank11.tx",
+            "local.11->12",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:local",
+          "receiver": "r13:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank12.tx",
+            "local.12->13",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:local",
+          "receiver": "r14:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank13.tx",
+            "local.13->14",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:local",
+          "receiver": "r15:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank14.tx",
+            "local.14->15",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:local",
+          "receiver": "r8:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank15.tx",
+            "local.15->8",
+            "rank8.rx"
+          ]
+        }
+      ],
+      "resource_bytes": {
+        "rank0.tx": 25165824,
+        "local.0->1": 25165824,
+        "rank1.rx": 25165824,
+        "rank1.tx": 25165824,
+        "local.1->2": 25165824,
+        "rank2.rx": 25165824,
+        "rank2.tx": 25165824,
+        "local.2->3": 25165824,
+        "rank3.rx": 25165824,
+        "rank3.tx": 25165824,
+        "local.3->4": 25165824,
+        "rank4.rx": 25165824,
+        "rank4.tx": 25165824,
+        "local.4->5": 25165824,
+        "rank5.rx": 25165824,
+        "rank5.tx": 25165824,
+        "local.5->6": 25165824,
+        "rank6.rx": 25165824,
+        "rank6.tx": 25165824,
+        "local.6->7": 25165824,
+        "rank7.rx": 25165824,
+        "rank7.tx": 25165824,
+        "local.7->0": 25165824,
+        "rank0.rx": 25165824,
+        "rank8.tx": 25165824,
+        "local.8->9": 25165824,
+        "rank9.rx": 25165824,
+        "rank9.tx": 25165824,
+        "local.9->10": 25165824,
+        "rank10.rx": 25165824,
+        "rank10.tx": 25165824,
+        "local.10->11": 25165824,
+        "rank11.rx": 25165824,
+        "rank11.tx": 25165824,
+        "local.11->12": 25165824,
+        "rank12.rx": 25165824,
+        "rank12.tx": 25165824,
+        "local.12->13": 25165824,
+        "rank13.rx": 25165824,
+        "rank13.tx": 25165824,
+        "local.13->14": 25165824,
+        "rank14.rx": 25165824,
+        "rank14.tx": 25165824,
+        "local.14->15": 25165824,
+        "rank15.rx": 25165824,
+        "rank15.tx": 25165824,
+        "local.15->8": 25165824,
+        "rank8.rx": 25165824
+      },
+      "resource_lower_seconds_exact": "8192/146484375",
+      "barrier_lower_seconds_exact": "4256779/75000000000",
+      "barrier_start_seconds_exact": "86170657/18750000000",
+      "barrier_finish_seconds_exact": "348939407/75000000000"
+    },
+    {
+      "round": 13,
+      "stage": "local_all_gather",
+      "phase": "all_gather",
+      "step": 4,
+      "messages": [
+        {
+          "sender": 0,
+          "receiver": 1,
+          "operation": "copy",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r0:local",
+              "receiver": "r1:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank0.tx",
+                "local.0->1",
+                "rank1.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 1,
+          "receiver": 2,
+          "operation": "copy",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r1:local",
+              "receiver": "r2:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank1.tx",
+                "local.1->2",
+                "rank2.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 2,
+          "receiver": 3,
+          "operation": "copy",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r2:local",
+              "receiver": "r3:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank2.tx",
+                "local.2->3",
+                "rank3.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 3,
+          "receiver": 4,
+          "operation": "copy",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r3:local",
+              "receiver": "r4:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank3.tx",
+                "local.3->4",
+                "rank4.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 4,
+          "receiver": 5,
+          "operation": "copy",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r4:local",
+              "receiver": "r5:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank4.tx",
+                "local.4->5",
+                "rank5.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 5,
+          "receiver": 6,
+          "operation": "copy",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r5:local",
+              "receiver": "r6:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank5.tx",
+                "local.5->6",
+                "rank6.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 6,
+          "receiver": 7,
+          "operation": "copy",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r6:local",
+              "receiver": "r7:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank6.tx",
+                "local.6->7",
+                "rank7.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 7,
+          "receiver": 0,
+          "operation": "copy",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r7:local",
+              "receiver": "r0:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank7.tx",
+                "local.7->0",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 9,
+          "operation": "copy",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r8:local",
+              "receiver": "r9:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank8.tx",
+                "local.8->9",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 10,
+          "operation": "copy",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r9:local",
+              "receiver": "r10:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank9.tx",
+                "local.9->10",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 11,
+          "operation": "copy",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r10:local",
+              "receiver": "r11:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank10.tx",
+                "local.10->11",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 12,
+          "operation": "copy",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r11:local",
+              "receiver": "r12:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank11.tx",
+                "local.11->12",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 13,
+          "operation": "copy",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r12:local",
+              "receiver": "r13:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank12.tx",
+                "local.12->13",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 14,
+          "operation": "copy",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r13:local",
+              "receiver": "r14:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank13.tx",
+                "local.13->14",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 15,
+          "operation": "copy",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r14:local",
+              "receiver": "r15:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank14.tx",
+                "local.14->15",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 8,
+          "operation": "copy",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r15:local",
+              "receiver": "r8:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank15.tx",
+                "local.15->8",
+                "rank8.rx"
+              ]
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "sender": "r0:local",
+          "receiver": "r1:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank0.tx",
+            "local.0->1",
+            "rank1.rx"
+          ]
+        },
+        {
+          "sender": "r1:local",
+          "receiver": "r2:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank1.tx",
+            "local.1->2",
+            "rank2.rx"
+          ]
+        },
+        {
+          "sender": "r2:local",
+          "receiver": "r3:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank2.tx",
+            "local.2->3",
+            "rank3.rx"
+          ]
+        },
+        {
+          "sender": "r3:local",
+          "receiver": "r4:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank3.tx",
+            "local.3->4",
+            "rank4.rx"
+          ]
+        },
+        {
+          "sender": "r4:local",
+          "receiver": "r5:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank4.tx",
+            "local.4->5",
+            "rank5.rx"
+          ]
+        },
+        {
+          "sender": "r5:local",
+          "receiver": "r6:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank5.tx",
+            "local.5->6",
+            "rank6.rx"
+          ]
+        },
+        {
+          "sender": "r6:local",
+          "receiver": "r7:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank6.tx",
+            "local.6->7",
+            "rank7.rx"
+          ]
+        },
+        {
+          "sender": "r7:local",
+          "receiver": "r0:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank7.tx",
+            "local.7->0",
+            "rank0.rx"
+          ]
+        },
+        {
+          "sender": "r8:local",
+          "receiver": "r9:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank8.tx",
+            "local.8->9",
+            "rank9.rx"
+          ]
+        },
+        {
+          "sender": "r9:local",
+          "receiver": "r10:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank9.tx",
+            "local.9->10",
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:local",
+          "receiver": "r11:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank10.tx",
+            "local.10->11",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:local",
+          "receiver": "r12:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank11.tx",
+            "local.11->12",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:local",
+          "receiver": "r13:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank12.tx",
+            "local.12->13",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:local",
+          "receiver": "r14:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank13.tx",
+            "local.13->14",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:local",
+          "receiver": "r15:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank14.tx",
+            "local.14->15",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:local",
+          "receiver": "r8:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank15.tx",
+            "local.15->8",
+            "rank8.rx"
+          ]
+        }
+      ],
+      "resource_bytes": {
+        "rank0.tx": 25165824,
+        "local.0->1": 25165824,
+        "rank1.rx": 25165824,
+        "rank1.tx": 25165824,
+        "local.1->2": 25165824,
+        "rank2.rx": 25165824,
+        "rank2.tx": 25165824,
+        "local.2->3": 25165824,
+        "rank3.rx": 25165824,
+        "rank3.tx": 25165824,
+        "local.3->4": 25165824,
+        "rank4.rx": 25165824,
+        "rank4.tx": 25165824,
+        "local.4->5": 25165824,
+        "rank5.rx": 25165824,
+        "rank5.tx": 25165824,
+        "local.5->6": 25165824,
+        "rank6.rx": 25165824,
+        "rank6.tx": 25165824,
+        "local.6->7": 25165824,
+        "rank7.rx": 25165824,
+        "rank7.tx": 25165824,
+        "local.7->0": 25165824,
+        "rank0.rx": 25165824,
+        "rank8.tx": 25165824,
+        "local.8->9": 25165824,
+        "rank9.rx": 25165824,
+        "rank9.tx": 25165824,
+        "local.9->10": 25165824,
+        "rank10.rx": 25165824,
+        "rank10.tx": 25165824,
+        "local.10->11": 25165824,
+        "rank11.rx": 25165824,
+        "rank11.tx": 25165824,
+        "local.11->12": 25165824,
+        "rank12.rx": 25165824,
+        "rank12.tx": 25165824,
+        "local.12->13": 25165824,
+        "rank13.rx": 25165824,
+        "rank13.tx": 25165824,
+        "local.13->14": 25165824,
+        "rank14.rx": 25165824,
+        "rank14.tx": 25165824,
+        "local.14->15": 25165824,
+        "rank15.rx": 25165824,
+        "rank15.tx": 25165824,
+        "local.15->8": 25165824,
+        "rank8.rx": 25165824
+      },
+      "resource_lower_seconds_exact": "8192/146484375",
+      "barrier_lower_seconds_exact": "4256779/75000000000",
+      "barrier_start_seconds_exact": "348939407/75000000000",
+      "barrier_finish_seconds_exact": "58866031/12500000000"
+    },
+    {
+      "round": 14,
+      "stage": "local_all_gather",
+      "phase": "all_gather",
+      "step": 5,
+      "messages": [
+        {
+          "sender": 0,
+          "receiver": 1,
+          "operation": "copy",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r0:local",
+              "receiver": "r1:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank0.tx",
+                "local.0->1",
+                "rank1.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 1,
+          "receiver": 2,
+          "operation": "copy",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r1:local",
+              "receiver": "r2:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank1.tx",
+                "local.1->2",
+                "rank2.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 2,
+          "receiver": 3,
+          "operation": "copy",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r2:local",
+              "receiver": "r3:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank2.tx",
+                "local.2->3",
+                "rank3.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 3,
+          "receiver": 4,
+          "operation": "copy",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r3:local",
+              "receiver": "r4:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank3.tx",
+                "local.3->4",
+                "rank4.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 4,
+          "receiver": 5,
+          "operation": "copy",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r4:local",
+              "receiver": "r5:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank4.tx",
+                "local.4->5",
+                "rank5.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 5,
+          "receiver": 6,
+          "operation": "copy",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r5:local",
+              "receiver": "r6:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank5.tx",
+                "local.5->6",
+                "rank6.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 6,
+          "receiver": 7,
+          "operation": "copy",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r6:local",
+              "receiver": "r7:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank6.tx",
+                "local.6->7",
+                "rank7.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 7,
+          "receiver": 0,
+          "operation": "copy",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r7:local",
+              "receiver": "r0:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank7.tx",
+                "local.7->0",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 9,
+          "operation": "copy",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r8:local",
+              "receiver": "r9:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank8.tx",
+                "local.8->9",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 10,
+          "operation": "copy",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r9:local",
+              "receiver": "r10:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank9.tx",
+                "local.9->10",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 11,
+          "operation": "copy",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r10:local",
+              "receiver": "r11:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank10.tx",
+                "local.10->11",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 12,
+          "operation": "copy",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r11:local",
+              "receiver": "r12:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank11.tx",
+                "local.11->12",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 13,
+          "operation": "copy",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r12:local",
+              "receiver": "r13:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank12.tx",
+                "local.12->13",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 14,
+          "operation": "copy",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r13:local",
+              "receiver": "r14:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank13.tx",
+                "local.13->14",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 15,
+          "operation": "copy",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r14:local",
+              "receiver": "r15:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank14.tx",
+                "local.14->15",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 8,
+          "operation": "copy",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r15:local",
+              "receiver": "r8:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank15.tx",
+                "local.15->8",
+                "rank8.rx"
+              ]
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "sender": "r0:local",
+          "receiver": "r1:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank0.tx",
+            "local.0->1",
+            "rank1.rx"
+          ]
+        },
+        {
+          "sender": "r1:local",
+          "receiver": "r2:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank1.tx",
+            "local.1->2",
+            "rank2.rx"
+          ]
+        },
+        {
+          "sender": "r2:local",
+          "receiver": "r3:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank2.tx",
+            "local.2->3",
+            "rank3.rx"
+          ]
+        },
+        {
+          "sender": "r3:local",
+          "receiver": "r4:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank3.tx",
+            "local.3->4",
+            "rank4.rx"
+          ]
+        },
+        {
+          "sender": "r4:local",
+          "receiver": "r5:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank4.tx",
+            "local.4->5",
+            "rank5.rx"
+          ]
+        },
+        {
+          "sender": "r5:local",
+          "receiver": "r6:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank5.tx",
+            "local.5->6",
+            "rank6.rx"
+          ]
+        },
+        {
+          "sender": "r6:local",
+          "receiver": "r7:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank6.tx",
+            "local.6->7",
+            "rank7.rx"
+          ]
+        },
+        {
+          "sender": "r7:local",
+          "receiver": "r0:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank7.tx",
+            "local.7->0",
+            "rank0.rx"
+          ]
+        },
+        {
+          "sender": "r8:local",
+          "receiver": "r9:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank8.tx",
+            "local.8->9",
+            "rank9.rx"
+          ]
+        },
+        {
+          "sender": "r9:local",
+          "receiver": "r10:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank9.tx",
+            "local.9->10",
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:local",
+          "receiver": "r11:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank10.tx",
+            "local.10->11",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:local",
+          "receiver": "r12:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank11.tx",
+            "local.11->12",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:local",
+          "receiver": "r13:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank12.tx",
+            "local.12->13",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:local",
+          "receiver": "r14:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank13.tx",
+            "local.13->14",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:local",
+          "receiver": "r15:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank14.tx",
+            "local.14->15",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:local",
+          "receiver": "r8:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank15.tx",
+            "local.15->8",
+            "rank8.rx"
+          ]
+        }
+      ],
+      "resource_bytes": {
+        "rank0.tx": 25165824,
+        "local.0->1": 25165824,
+        "rank1.rx": 25165824,
+        "rank1.tx": 25165824,
+        "local.1->2": 25165824,
+        "rank2.rx": 25165824,
+        "rank2.tx": 25165824,
+        "local.2->3": 25165824,
+        "rank3.rx": 25165824,
+        "rank3.tx": 25165824,
+        "local.3->4": 25165824,
+        "rank4.rx": 25165824,
+        "rank4.tx": 25165824,
+        "local.4->5": 25165824,
+        "rank5.rx": 25165824,
+        "rank5.tx": 25165824,
+        "local.5->6": 25165824,
+        "rank6.rx": 25165824,
+        "rank6.tx": 25165824,
+        "local.6->7": 25165824,
+        "rank7.rx": 25165824,
+        "rank7.tx": 25165824,
+        "local.7->0": 25165824,
+        "rank0.rx": 25165824,
+        "rank8.tx": 25165824,
+        "local.8->9": 25165824,
+        "rank9.rx": 25165824,
+        "rank9.tx": 25165824,
+        "local.9->10": 25165824,
+        "rank10.rx": 25165824,
+        "rank10.tx": 25165824,
+        "local.10->11": 25165824,
+        "rank11.rx": 25165824,
+        "rank11.tx": 25165824,
+        "local.11->12": 25165824,
+        "rank12.rx": 25165824,
+        "rank12.tx": 25165824,
+        "local.12->13": 25165824,
+        "rank13.rx": 25165824,
+        "rank13.tx": 25165824,
+        "local.13->14": 25165824,
+        "rank14.rx": 25165824,
+        "rank14.tx": 25165824,
+        "local.14->15": 25165824,
+        "rank15.rx": 25165824,
+        "rank15.tx": 25165824,
+        "local.15->8": 25165824,
+        "rank8.rx": 25165824
+      },
+      "resource_lower_seconds_exact": "8192/146484375",
+      "barrier_lower_seconds_exact": "4256779/75000000000",
+      "barrier_start_seconds_exact": "58866031/12500000000",
+      "barrier_finish_seconds_exact": "71490593/15000000000"
+    },
+    {
+      "round": 15,
+      "stage": "local_all_gather",
+      "phase": "all_gather",
+      "step": 6,
+      "messages": [
+        {
+          "sender": 0,
+          "receiver": 1,
+          "operation": "copy",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r0:local",
+              "receiver": "r1:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank0.tx",
+                "local.0->1",
+                "rank1.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 1,
+          "receiver": 2,
+          "operation": "copy",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r1:local",
+              "receiver": "r2:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank1.tx",
+                "local.1->2",
+                "rank2.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 2,
+          "receiver": 3,
+          "operation": "copy",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r2:local",
+              "receiver": "r3:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank2.tx",
+                "local.2->3",
+                "rank3.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 3,
+          "receiver": 4,
+          "operation": "copy",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r3:local",
+              "receiver": "r4:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank3.tx",
+                "local.3->4",
+                "rank4.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 4,
+          "receiver": 5,
+          "operation": "copy",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r4:local",
+              "receiver": "r5:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
               "element_stop": 50331648,
               "path": [
                 "rank4.tx",
@@ -4219,8 +18630,8 @@
             1
           ],
           "element_start": 0,
-          "element_stop": 12582912,
-          "bytes": 50331648,
+          "element_stop": 6291456,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 0,
@@ -4232,7 +18643,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -4245,7 +18664,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -4254,10 +18681,10 @@
             {
               "sender": "r5:local",
               "receiver": "r6:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
               "element_start": 0,
-              "element_stop": 12582912,
+              "element_stop": 6291456,
               "path": [
                 "rank5.tx",
                 "local.5->6",
@@ -4274,9 +18701,9 @@
             2,
             3
           ],
-          "element_start": 12582912,
-          "element_stop": 25165824,
-          "bytes": 50331648,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 2,
@@ -4288,7 +18715,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -4301,7 +18736,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -4310,10 +18753,10 @@
             {
               "sender": "r6:local",
               "receiver": "r7:local",
-              "bytes": 50331648,
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 12582912,
-              "element_stop": 25165824,
+              "element_start": 6291456,
+              "element_stop": 12582912,
               "path": [
                 "rank6.tx",
                 "local.6->7",
@@ -4324,15 +18767,15 @@
         },
         {
           "sender": 7,
-          "receiver": 4,
+          "receiver": 0,
           "operation": "copy",
           "chunks": [
             4,
             5
           ],
-          "element_start": 25165824,
-          "element_stop": 37748736,
-          "bytes": 50331648,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
           "contributions": [
             {
               "chunk": 4,
@@ -4344,7 +18787,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -4357,7 +18808,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ],
@@ -4365,15 +18824,591 @@
           "stripes": [
             {
               "sender": "r7:local",
-              "receiver": "r4:local",
-              "bytes": 50331648,
+              "receiver": "r0:local",
+              "bytes": 25165824,
               "nic": null,
-              "element_start": 25165824,
-              "element_stop": 37748736,
+              "element_start": 12582912,
+              "element_stop": 18874368,
               "path": [
                 "rank7.tx",
-                "local.7->4",
-                "rank4.rx"
+                "local.7->0",
+                "rank0.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 8,
+          "receiver": 9,
+          "operation": "copy",
+          "chunks": [
+            6,
+            7
+          ],
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r8:local",
+              "receiver": "r9:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 18874368,
+              "element_stop": 25165824,
+              "path": [
+                "rank8.tx",
+                "local.8->9",
+                "rank9.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 9,
+          "receiver": 10,
+          "operation": "copy",
+          "chunks": [
+            8,
+            9
+          ],
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r9:local",
+              "receiver": "r10:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 25165824,
+              "element_stop": 31457280,
+              "path": [
+                "rank9.tx",
+                "local.9->10",
+                "rank10.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 10,
+          "receiver": 11,
+          "operation": "copy",
+          "chunks": [
+            10,
+            11
+          ],
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r10:local",
+              "receiver": "r11:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 31457280,
+              "element_stop": 37748736,
+              "path": [
+                "rank10.tx",
+                "local.10->11",
+                "rank11.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 11,
+          "receiver": 12,
+          "operation": "copy",
+          "chunks": [
+            12,
+            13
+          ],
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r11:local",
+              "receiver": "r12:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 37748736,
+              "element_stop": 44040192,
+              "path": [
+                "rank11.tx",
+                "local.11->12",
+                "rank12.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 12,
+          "receiver": 13,
+          "operation": "copy",
+          "chunks": [
+            14,
+            15
+          ],
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r12:local",
+              "receiver": "r13:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 44040192,
+              "element_stop": 50331648,
+              "path": [
+                "rank12.tx",
+                "local.12->13",
+                "rank13.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 13,
+          "receiver": 14,
+          "operation": "copy",
+          "chunks": [
+            0,
+            1
+          ],
+          "element_start": 0,
+          "element_stop": 6291456,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r13:local",
+              "receiver": "r14:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 0,
+              "element_stop": 6291456,
+              "path": [
+                "rank13.tx",
+                "local.13->14",
+                "rank14.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 14,
+          "receiver": 15,
+          "operation": "copy",
+          "chunks": [
+            2,
+            3
+          ],
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r14:local",
+              "receiver": "r15:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 6291456,
+              "element_stop": 12582912,
+              "path": [
+                "rank14.tx",
+                "local.14->15",
+                "rank15.rx"
+              ]
+            }
+          ]
+        },
+        {
+          "sender": 15,
+          "receiver": 8,
+          "operation": "copy",
+          "chunks": [
+            4,
+            5
+          ],
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "bytes": 25165824,
+          "contributions": [
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ],
+          "remote": false,
+          "stripes": [
+            {
+              "sender": "r15:local",
+              "receiver": "r8:local",
+              "bytes": 25165824,
+              "nic": null,
+              "element_start": 12582912,
+              "element_stop": 18874368,
+              "path": [
+                "rank15.tx",
+                "local.15->8",
+                "rank8.rx"
               ]
             }
           ]
@@ -4383,10 +19418,10 @@
         {
           "sender": "r0:local",
           "receiver": "r1:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 37748736,
-          "element_stop": 50331648,
+          "element_start": 18874368,
+          "element_stop": 25165824,
           "path": [
             "rank0.tx",
             "local.0->1",
@@ -4396,10 +19431,10 @@
         {
           "sender": "r1:local",
           "receiver": "r2:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 0,
-          "element_stop": 12582912,
+          "element_start": 25165824,
+          "element_stop": 31457280,
           "path": [
             "rank1.tx",
             "local.1->2",
@@ -4409,10 +19444,10 @@
         {
           "sender": "r2:local",
           "receiver": "r3:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 12582912,
-          "element_stop": 25165824,
+          "element_start": 31457280,
+          "element_stop": 37748736,
           "path": [
             "rank2.tx",
             "local.2->3",
@@ -4421,23 +19456,23 @@
         },
         {
           "sender": "r3:local",
-          "receiver": "r0:local",
-          "bytes": 50331648,
+          "receiver": "r4:local",
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 25165824,
-          "element_stop": 37748736,
+          "element_start": 37748736,
+          "element_stop": 44040192,
           "path": [
             "rank3.tx",
-            "local.3->0",
-            "rank0.rx"
+            "local.3->4",
+            "rank4.rx"
           ]
         },
         {
           "sender": "r4:local",
           "receiver": "r5:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 37748736,
+          "element_start": 44040192,
           "element_stop": 50331648,
           "path": [
             "rank4.tx",
@@ -4448,10 +19483,10 @@
         {
           "sender": "r5:local",
           "receiver": "r6:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
           "element_start": 0,
-          "element_stop": 12582912,
+          "element_stop": 6291456,
           "path": [
             "rank5.tx",
             "local.5->6",
@@ -4461,10 +19496,10 @@
         {
           "sender": "r6:local",
           "receiver": "r7:local",
-          "bytes": 50331648,
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 12582912,
-          "element_stop": 25165824,
+          "element_start": 6291456,
+          "element_stop": 12582912,
           "path": [
             "rank6.tx",
             "local.6->7",
@@ -4473,48 +19508,176 @@
         },
         {
           "sender": "r7:local",
-          "receiver": "r4:local",
-          "bytes": 50331648,
+          "receiver": "r0:local",
+          "bytes": 25165824,
           "nic": null,
-          "element_start": 25165824,
-          "element_stop": 37748736,
+          "element_start": 12582912,
+          "element_stop": 18874368,
           "path": [
             "rank7.tx",
-            "local.7->4",
-            "rank4.rx"
+            "local.7->0",
+            "rank0.rx"
+          ]
+        },
+        {
+          "sender": "r8:local",
+          "receiver": "r9:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 18874368,
+          "element_stop": 25165824,
+          "path": [
+            "rank8.tx",
+            "local.8->9",
+            "rank9.rx"
+          ]
+        },
+        {
+          "sender": "r9:local",
+          "receiver": "r10:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 25165824,
+          "element_stop": 31457280,
+          "path": [
+            "rank9.tx",
+            "local.9->10",
+            "rank10.rx"
+          ]
+        },
+        {
+          "sender": "r10:local",
+          "receiver": "r11:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 31457280,
+          "element_stop": 37748736,
+          "path": [
+            "rank10.tx",
+            "local.10->11",
+            "rank11.rx"
+          ]
+        },
+        {
+          "sender": "r11:local",
+          "receiver": "r12:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 37748736,
+          "element_stop": 44040192,
+          "path": [
+            "rank11.tx",
+            "local.11->12",
+            "rank12.rx"
+          ]
+        },
+        {
+          "sender": "r12:local",
+          "receiver": "r13:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 44040192,
+          "element_stop": 50331648,
+          "path": [
+            "rank12.tx",
+            "local.12->13",
+            "rank13.rx"
+          ]
+        },
+        {
+          "sender": "r13:local",
+          "receiver": "r14:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 0,
+          "element_stop": 6291456,
+          "path": [
+            "rank13.tx",
+            "local.13->14",
+            "rank14.rx"
+          ]
+        },
+        {
+          "sender": "r14:local",
+          "receiver": "r15:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 6291456,
+          "element_stop": 12582912,
+          "path": [
+            "rank14.tx",
+            "local.14->15",
+            "rank15.rx"
+          ]
+        },
+        {
+          "sender": "r15:local",
+          "receiver": "r8:local",
+          "bytes": 25165824,
+          "nic": null,
+          "element_start": 12582912,
+          "element_stop": 18874368,
+          "path": [
+            "rank15.tx",
+            "local.15->8",
+            "rank8.rx"
           ]
         }
       ],
       "resource_bytes": {
-        "rank0.tx": 50331648,
-        "local.0->1": 50331648,
-        "rank1.rx": 50331648,
-        "rank1.tx": 50331648,
-        "local.1->2": 50331648,
-        "rank2.rx": 50331648,
-        "rank2.tx": 50331648,
-        "local.2->3": 50331648,
-        "rank3.rx": 50331648,
-        "rank3.tx": 50331648,
-        "local.3->0": 50331648,
-        "rank0.rx": 50331648,
-        "rank4.tx": 50331648,
-        "local.4->5": 50331648,
-        "rank5.rx": 50331648,
-        "rank5.tx": 50331648,
-        "local.5->6": 50331648,
-        "rank6.rx": 50331648,
-        "rank6.tx": 50331648,
-        "local.6->7": 50331648,
-        "rank7.rx": 50331648,
-        "rank7.tx": 50331648,
-        "local.7->4": 50331648,
-        "rank4.rx": 50331648
+        "rank0.tx": 25165824,
+        "local.0->1": 25165824,
+        "rank1.rx": 25165824,
+        "rank1.tx": 25165824,
+        "local.1->2": 25165824,
+        "rank2.rx": 25165824,
+        "rank2.tx": 25165824,
+        "local.2->3": 25165824,
+        "rank3.rx": 25165824,
+        "rank3.tx": 25165824,
+        "local.3->4": 25165824,
+        "rank4.rx": 25165824,
+        "rank4.tx": 25165824,
+        "local.4->5": 25165824,
+        "rank5.rx": 25165824,
+        "rank5.tx": 25165824,
+        "local.5->6": 25165824,
+        "rank6.rx": 25165824,
+        "rank6.tx": 25165824,
+        "local.6->7": 25165824,
+        "rank7.rx": 25165824,
+        "rank7.tx": 25165824,
+        "local.7->0": 25165824,
+        "rank0.rx": 25165824,
+        "rank8.tx": 25165824,
+        "local.8->9": 25165824,
+        "rank9.rx": 25165824,
+        "rank9.tx": 25165824,
+        "local.9->10": 25165824,
+        "rank10.rx": 25165824,
+        "rank10.tx": 25165824,
+        "local.10->11": 25165824,
+        "rank11.rx": 25165824,
+        "rank11.tx": 25165824,
+        "local.11->12": 25165824,
+        "rank12.rx": 25165824,
+        "rank12.tx": 25165824,
+        "local.12->13": 25165824,
+        "rank13.rx": 25165824,
+        "rank13.tx": 25165824,
+        "local.13->14": 25165824,
+        "rank14.rx": 25165824,
+        "rank14.tx": 25165824,
+        "local.14->15": 25165824,
+        "rank15.rx": 25165824,
+        "rank15.tx": 25165824,
+        "local.15->8": 25165824,
+        "rank8.rx": 25165824
       },
-      "resource_lower_seconds_exact": "12288/48828125",
-      "barrier_lower_seconds_exact": "396341/1562500000",
-      "barrier_start_seconds_exact": "14570867/1562500000",
-      "barrier_finish_seconds_exact": "1870901/195312500"
+      "resource_lower_seconds_exact": "8192/146484375",
+      "barrier_lower_seconds_exact": "4256779/75000000000",
+      "barrier_start_seconds_exact": "71490593/15000000000",
+      "barrier_finish_seconds_exact": "22606859/4687500000"
     }
   ],
   "ownership_boundaries": [
@@ -4572,6 +19735,54 @@
               "contributors": [
                 0
               ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0
+              ]
             }
           ]
         },
@@ -4622,6 +19833,54 @@
             },
             {
               "chunk": 7,
+              "contributors": [
+                1
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                1
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                1
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                1
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                1
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                1
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                1
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                1
+              ]
+            },
+            {
+              "chunk": 15,
               "contributors": [
                 1
               ]
@@ -4678,6 +19937,54 @@
               "contributors": [
                 2
               ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                2
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                2
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                2
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                2
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                2
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                2
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                2
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                2
+              ]
             }
           ]
         },
@@ -4728,6 +20035,54 @@
             },
             {
               "chunk": 7,
+              "contributors": [
+                3
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                3
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                3
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                3
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                3
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                3
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                3
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                3
+              ]
+            },
+            {
+              "chunk": 15,
               "contributors": [
                 3
               ]
@@ -4784,6 +20139,54 @@
               "contributors": [
                 4
               ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                4
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                4
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                4
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                4
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                4
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                4
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                4
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                4
+              ]
             }
           ]
         },
@@ -4834,6 +20237,54 @@
             },
             {
               "chunk": 7,
+              "contributors": [
+                5
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                5
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                5
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                5
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                5
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                5
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                5
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                5
+              ]
+            },
+            {
+              "chunk": 15,
               "contributors": [
                 5
               ]
@@ -4890,6 +20341,54 @@
               "contributors": [
                 6
               ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                6
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                6
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                6
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                6
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                6
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                6
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                6
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                6
+              ]
             }
           ]
         },
@@ -4942,6 +20441,862 @@
               "chunk": 7,
               "contributors": [
                 7
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                7
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                7
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                7
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                7
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                7
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                7
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                7
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                7
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 8,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                8
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                8
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 9,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                9
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                9
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 10,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                10
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                10
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 11,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                11
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                11
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 12,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                12
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                12
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 13,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                13
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                13
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 14,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                14
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                14
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 15,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                15
               ]
             }
           ]
@@ -4950,7 +21305,7 @@
     },
     {
       "after": "local_reduce_scatter:reduce_scatter",
-      "round_count": 3,
+      "round_count": 7,
       "ranks": [
         {
           "rank": 0,
@@ -4961,7 +21316,11 @@
                 0,
                 1,
                 2,
-                3
+                3,
+                4,
+                5,
+                6,
+                7
               ]
             },
             {
@@ -4970,7 +21329,11 @@
                 0,
                 1,
                 2,
-                3
+                3,
+                4,
+                5,
+                6,
+                7
               ]
             }
           ]
@@ -4984,7 +21347,11 @@
                 0,
                 1,
                 2,
-                3
+                3,
+                4,
+                5,
+                6,
+                7
               ]
             },
             {
@@ -4993,7 +21360,11 @@
                 0,
                 1,
                 2,
-                3
+                3,
+                4,
+                5,
+                6,
+                7
               ]
             }
           ]
@@ -5007,7 +21378,11 @@
                 0,
                 1,
                 2,
-                3
+                3,
+                4,
+                5,
+                6,
+                7
               ]
             },
             {
@@ -5016,7 +21391,11 @@
                 0,
                 1,
                 2,
-                3
+                3,
+                4,
+                5,
+                6,
+                7
               ]
             }
           ]
@@ -5025,21 +21404,29 @@
           "rank": 3,
           "chunks": [
             {
-              "chunk": 0,
+              "chunk": 8,
               "contributors": [
                 0,
                 1,
                 2,
-                3
+                3,
+                4,
+                5,
+                6,
+                7
               ]
             },
             {
-              "chunk": 1,
+              "chunk": 9,
               "contributors": [
                 0,
                 1,
                 2,
-                3
+                3,
+                4,
+                5,
+                6,
+                7
               ]
             }
           ]
@@ -5048,8 +21435,12 @@
           "rank": 4,
           "chunks": [
             {
-              "chunk": 2,
+              "chunk": 10,
               "contributors": [
+                0,
+                1,
+                2,
+                3,
                 4,
                 5,
                 6,
@@ -5057,8 +21448,12 @@
               ]
             },
             {
-              "chunk": 3,
+              "chunk": 11,
               "contributors": [
+                0,
+                1,
+                2,
+                3,
                 4,
                 5,
                 6,
@@ -5071,8 +21466,12 @@
           "rank": 5,
           "chunks": [
             {
-              "chunk": 4,
+              "chunk": 12,
               "contributors": [
+                0,
+                1,
+                2,
+                3,
                 4,
                 5,
                 6,
@@ -5080,8 +21479,12 @@
               ]
             },
             {
-              "chunk": 5,
+              "chunk": 13,
               "contributors": [
+                0,
+                1,
+                2,
+                3,
                 4,
                 5,
                 6,
@@ -5094,8 +21497,12 @@
           "rank": 6,
           "chunks": [
             {
-              "chunk": 6,
+              "chunk": 14,
               "contributors": [
+                0,
+                1,
+                2,
+                3,
                 4,
                 5,
                 6,
@@ -5103,8 +21510,12 @@
               ]
             },
             {
-              "chunk": 7,
+              "chunk": 15,
               "contributors": [
+                0,
+                1,
+                2,
+                3,
                 4,
                 5,
                 6,
@@ -5119,6 +21530,10 @@
             {
               "chunk": 0,
               "contributors": [
+                0,
+                1,
+                2,
+                3,
                 4,
                 5,
                 6,
@@ -5128,10 +21543,262 @@
             {
               "chunk": 1,
               "contributors": [
+                0,
+                1,
+                2,
+                3,
                 4,
                 5,
                 6,
                 7
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 8,
+          "chunks": [
+            {
+              "chunk": 2,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 9,
+          "chunks": [
+            {
+              "chunk": 4,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 10,
+          "chunks": [
+            {
+              "chunk": 6,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 11,
+          "chunks": [
+            {
+              "chunk": 8,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 12,
+          "chunks": [
+            {
+              "chunk": 10,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 13,
+          "chunks": [
+            {
+              "chunk": 12,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 14,
+          "chunks": [
+            {
+              "chunk": 14,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 15,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5140,7 +21807,7 @@
     },
     {
       "after": "cross_server_allreduce:reduce_scatter",
-      "round_count": 4,
+      "round_count": 8,
       "ranks": [
         {
           "rank": 0,
@@ -5155,7 +21822,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5173,7 +21848,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5191,13 +21874,125 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
         },
         {
           "rank": 3,
+          "chunks": [
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 4,
+          "chunks": [
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 5,
+          "chunks": [
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 6,
+          "chunks": [
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 7,
           "chunks": [
             {
               "chunk": 1,
@@ -5209,13 +22004,21 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
         },
         {
-          "rank": 4,
+          "rank": 8,
           "chunks": [
             {
               "chunk": 2,
@@ -5227,13 +22030,21 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
         },
         {
-          "rank": 5,
+          "rank": 9,
           "chunks": [
             {
               "chunk": 4,
@@ -5245,13 +22056,21 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
         },
         {
-          "rank": 6,
+          "rank": 10,
           "chunks": [
             {
               "chunk": 6,
@@ -5263,13 +22082,125 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
         },
         {
-          "rank": 7,
+          "rank": 11,
+          "chunks": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 12,
+          "chunks": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 13,
+          "chunks": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 14,
+          "chunks": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 15,
           "chunks": [
             {
               "chunk": 0,
@@ -5281,7 +22212,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5290,7 +22229,7 @@
     },
     {
       "after": "cross_server_allreduce:all_gather",
-      "round_count": 5,
+      "round_count": 9,
       "ranks": [
         {
           "rank": 0,
@@ -5305,7 +22244,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5318,7 +22265,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5336,7 +22291,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5349,7 +22312,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5367,7 +22338,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5380,7 +22359,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5389,7 +22376,7 @@
           "rank": 3,
           "chunks": [
             {
-              "chunk": 0,
+              "chunk": 8,
               "contributors": [
                 0,
                 1,
@@ -5398,11 +22385,19 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
-              "chunk": 1,
+              "chunk": 9,
               "contributors": [
                 0,
                 1,
@@ -5411,7 +22406,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5420,7 +22423,7 @@
           "rank": 4,
           "chunks": [
             {
-              "chunk": 2,
+              "chunk": 10,
               "contributors": [
                 0,
                 1,
@@ -5429,11 +22432,19 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
-              "chunk": 3,
+              "chunk": 11,
               "contributors": [
                 0,
                 1,
@@ -5442,7 +22453,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5451,7 +22470,7 @@
           "rank": 5,
           "chunks": [
             {
-              "chunk": 4,
+              "chunk": 12,
               "contributors": [
                 0,
                 1,
@@ -5460,11 +22479,19 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
-              "chunk": 5,
+              "chunk": 13,
               "contributors": [
                 0,
                 1,
@@ -5473,7 +22500,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5482,7 +22517,7 @@
           "rank": 6,
           "chunks": [
             {
-              "chunk": 6,
+              "chunk": 14,
               "contributors": [
                 0,
                 1,
@@ -5491,11 +22526,19 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
-              "chunk": 7,
+              "chunk": 15,
               "contributors": [
                 0,
                 1,
@@ -5504,7 +22547,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5522,7 +22573,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5535,7 +22594,391 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 8,
+          "chunks": [
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 9,
+          "chunks": [
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 10,
+          "chunks": [
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 11,
+          "chunks": [
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 12,
+          "chunks": [
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 13,
+          "chunks": [
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 14,
+          "chunks": [
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 15,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5544,7 +22987,7 @@
     },
     {
       "after": "local_all_gather:all_gather",
-      "round_count": 8,
+      "round_count": 16,
       "ranks": [
         {
           "rank": 0,
@@ -5559,7 +23002,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5572,7 +23023,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5585,7 +23044,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5598,7 +23065,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5611,7 +23086,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5624,7 +23107,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5637,7 +23128,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5650,7 +23149,183 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5668,7 +23343,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5681,7 +23364,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5694,7 +23385,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5707,7 +23406,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5720,7 +23427,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5733,7 +23448,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5746,7 +23469,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5759,7 +23490,183 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5777,7 +23684,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5790,7 +23705,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5803,7 +23726,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5816,7 +23747,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5829,7 +23768,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5842,7 +23789,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5855,7 +23810,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5868,7 +23831,183 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5886,7 +24025,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5899,7 +24046,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5912,7 +24067,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5925,7 +24088,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5938,7 +24109,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5951,7 +24130,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5964,7 +24151,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -5977,7 +24172,183 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -5995,7 +24366,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6008,7 +24387,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6021,7 +24408,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6034,7 +24429,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6047,7 +24450,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6060,7 +24471,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6073,7 +24492,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6086,7 +24513,183 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -6104,7 +24707,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6117,7 +24728,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6130,7 +24749,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6143,7 +24770,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6156,7 +24791,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6169,7 +24812,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6182,7 +24833,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6195,7 +24854,183 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -6213,7 +25048,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6226,7 +25069,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6239,7 +25090,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6252,7 +25111,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6265,7 +25132,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6278,7 +25153,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6291,7 +25174,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6304,7 +25195,183 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -6322,7 +25389,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6335,7 +25410,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6348,7 +25431,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6361,7 +25452,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6374,7 +25473,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6387,7 +25494,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6400,7 +25515,15 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             },
             {
@@ -6413,7 +25536,2911 @@
                 4,
                 5,
                 6,
-                7
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 8,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 9,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 10,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 11,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 12,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 13,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 14,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 15,
+          "chunks": [
+            {
+              "chunk": 0,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 1,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 2,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 3,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 4,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 5,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 6,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 7,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 8,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 9,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 10,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 11,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 12,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 13,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 14,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            {
+              "chunk": 15,
+              "contributors": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
               ]
             }
           ]
@@ -6425,449 +28452,689 @@
     {
       "resource": "cut.0->1",
       "bytes": 201326592,
-      "bandwidth_bytes_per_second": 40000000000,
-      "service_seconds_exact": "49152/9765625"
+      "bandwidth_bytes_per_second": 50000000000,
+      "service_seconds_exact": "196608/48828125"
     },
     {
       "resource": "cut.1->0",
       "bytes": 201326592,
-      "bandwidth_bytes_per_second": 40000000000,
-      "service_seconds_exact": "49152/9765625"
+      "bandwidth_bytes_per_second": 50000000000,
+      "service_seconds_exact": "196608/48828125"
     },
     {
       "resource": "local.0->1",
-      "bytes": 301989888,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "73728/48828125"
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
     },
     {
       "resource": "local.1->2",
-      "bytes": 301989888,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "73728/48828125"
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
+    },
+    {
+      "resource": "local.10->11",
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
+    },
+    {
+      "resource": "local.11->12",
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
+    },
+    {
+      "resource": "local.12->13",
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
+    },
+    {
+      "resource": "local.13->14",
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
+    },
+    {
+      "resource": "local.14->15",
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
+    },
+    {
+      "resource": "local.15->8",
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
     },
     {
       "resource": "local.2->3",
-      "bytes": 301989888,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "73728/48828125"
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
     },
     {
-      "resource": "local.3->0",
-      "bytes": 301989888,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "73728/48828125"
+      "resource": "local.3->4",
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
     },
     {
       "resource": "local.4->5",
-      "bytes": 301989888,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "73728/48828125"
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
     },
     {
       "resource": "local.5->6",
-      "bytes": 301989888,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "73728/48828125"
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
     },
     {
       "resource": "local.6->7",
-      "bytes": 301989888,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "73728/48828125"
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
     },
     {
-      "resource": "local.7->4",
-      "bytes": 301989888,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "73728/48828125"
+      "resource": "local.7->0",
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
+    },
+    {
+      "resource": "local.8->9",
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
+    },
+    {
+      "resource": "local.9->10",
+      "bytes": 352321536,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "114688/146484375"
     },
     {
       "resource": "rank0.rx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank0.tx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank1.rx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank1.tx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
+    },
+    {
+      "resource": "rank10.rx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
+    },
+    {
+      "resource": "rank10.tx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
+    },
+    {
+      "resource": "rank11.rx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
+    },
+    {
+      "resource": "rank11.tx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
+    },
+    {
+      "resource": "rank12.rx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
+    },
+    {
+      "resource": "rank12.tx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
+    },
+    {
+      "resource": "rank13.rx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
+    },
+    {
+      "resource": "rank13.tx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
+    },
+    {
+      "resource": "rank14.rx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
+    },
+    {
+      "resource": "rank14.tx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
+    },
+    {
+      "resource": "rank15.rx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
+    },
+    {
+      "resource": "rank15.tx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank2.rx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank2.tx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank3.rx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank3.tx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank4.rx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank4.tx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank5.rx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank5.tx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank6.rx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank6.tx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank7.rx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "rank7.tx",
-      "bytes": 352321536,
-      "bandwidth_bytes_per_second": 200000000000,
-      "service_seconds_exact": "86016/48828125"
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
-      "resource": "server0.egress",
-      "bytes": 201326592,
-      "bandwidth_bytes_per_second": 40000000000,
-      "service_seconds_exact": "49152/9765625"
+      "resource": "rank8.rx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
-      "resource": "server0.ingress",
-      "bytes": 201326592,
-      "bandwidth_bytes_per_second": 40000000000,
-      "service_seconds_exact": "49152/9765625"
+      "resource": "rank8.tx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
+    },
+    {
+      "resource": "rank9.rx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
+    },
+    {
+      "resource": "rank9.tx",
+      "bytes": 377487360,
+      "bandwidth_bytes_per_second": 450000000000,
+      "service_seconds_exact": "8192/9765625"
     },
     {
       "resource": "server0.nic0.rx",
       "bytes": 201326592,
-      "bandwidth_bytes_per_second": 25000000000,
-      "service_seconds_exact": "393216/48828125"
+      "bandwidth_bytes_per_second": 50000000000,
+      "service_seconds_exact": "196608/48828125"
     },
     {
       "resource": "server0.nic0.tx",
       "bytes": 201326592,
-      "bandwidth_bytes_per_second": 25000000000,
-      "service_seconds_exact": "393216/48828125"
-    },
-    {
-      "resource": "server1.egress",
-      "bytes": 201326592,
-      "bandwidth_bytes_per_second": 40000000000,
-      "service_seconds_exact": "49152/9765625"
-    },
-    {
-      "resource": "server1.ingress",
-      "bytes": 201326592,
-      "bandwidth_bytes_per_second": 40000000000,
-      "service_seconds_exact": "49152/9765625"
+      "bandwidth_bytes_per_second": 50000000000,
+      "service_seconds_exact": "196608/48828125"
     },
     {
       "resource": "server1.nic0.rx",
       "bytes": 201326592,
-      "bandwidth_bytes_per_second": 25000000000,
-      "service_seconds_exact": "393216/48828125"
+      "bandwidth_bytes_per_second": 50000000000,
+      "service_seconds_exact": "196608/48828125"
     },
     {
       "resource": "server1.nic0.tx",
       "bytes": 201326592,
-      "bandwidth_bytes_per_second": 25000000000,
-      "service_seconds_exact": "393216/48828125"
+      "bandwidth_bytes_per_second": 50000000000,
+      "service_seconds_exact": "196608/48828125"
     },
     {
       "resource": "shared_cut.bidirectional",
       "bytes": 402653184,
-      "bandwidth_bytes_per_second": 80000000000,
-      "service_seconds_exact": "49152/9765625"
+      "bandwidth_bytes_per_second": 100000000000,
+      "service_seconds_exact": "196608/48828125"
     }
   ],
   "stages": [
     {
       "stage": "local_reduce_scatter",
-      "rounds": 3,
-      "send_bytes": 1207959552,
+      "rounds": 7,
+      "send_bytes": 2818572288,
       "remote_send_bytes": 0,
-      "barrier_lower_seconds_exact": "1189023/1562500000"
+      "barrier_lower_seconds_exact": "29797453/75000000000"
     },
     {
       "stage": "cross_server_allreduce",
       "rounds": 2,
       "send_bytes": 402653184,
       "remote_send_bytes": 402653184,
-      "barrier_lower_seconds_exact": "6294581/781250000"
+      "barrier_lower_seconds_exact": "50352473/12500000000"
     },
     {
       "stage": "local_all_gather",
-      "rounds": 3,
-      "send_bytes": 1207959552,
+      "rounds": 7,
+      "send_bytes": 2818572288,
       "remote_send_bytes": 0,
-      "barrier_lower_seconds_exact": "1189023/1562500000"
+      "barrier_lower_seconds_exact": "29797453/75000000000"
     }
   ],
   "traffic_account": {
-    "logical_send_bytes": 2818572288,
+    "logical_send_bytes": 6039797760,
     "resources": [
       {
         "resource": "cut.0->1",
         "bytes": 201326592,
-        "bandwidth_bytes_per_second": 40000000000,
-        "service_seconds": 0.0050331648
+        "bandwidth_bytes_per_second": 50000000000,
+        "service_seconds": 0.00402653184
       },
       {
         "resource": "cut.1->0",
         "bytes": 201326592,
-        "bandwidth_bytes_per_second": 40000000000,
-        "service_seconds": 0.0050331648
+        "bandwidth_bytes_per_second": 50000000000,
+        "service_seconds": 0.00402653184
       },
       {
         "resource": "local.0->1",
-        "bytes": 301989888,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00150994944
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
       },
       {
         "resource": "local.1->2",
-        "bytes": 301989888,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00150994944
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
+      },
+      {
+        "resource": "local.10->11",
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
+      },
+      {
+        "resource": "local.11->12",
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
+      },
+      {
+        "resource": "local.12->13",
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
+      },
+      {
+        "resource": "local.13->14",
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
+      },
+      {
+        "resource": "local.14->15",
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
+      },
+      {
+        "resource": "local.15->8",
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
       },
       {
         "resource": "local.2->3",
-        "bytes": 301989888,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00150994944
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
       },
       {
-        "resource": "local.3->0",
-        "bytes": 301989888,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00150994944
+        "resource": "local.3->4",
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
       },
       {
         "resource": "local.4->5",
-        "bytes": 301989888,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00150994944
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
       },
       {
         "resource": "local.5->6",
-        "bytes": 301989888,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00150994944
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
       },
       {
         "resource": "local.6->7",
-        "bytes": 301989888,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00150994944
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
       },
       {
-        "resource": "local.7->4",
-        "bytes": 301989888,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00150994944
+        "resource": "local.7->0",
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
+      },
+      {
+        "resource": "local.8->9",
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
+      },
+      {
+        "resource": "local.9->10",
+        "bytes": 352321536,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0007829367466666667
       },
       {
         "resource": "rank0.rx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank0.tx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank1.rx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank1.tx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
+      },
+      {
+        "resource": "rank10.rx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
+      },
+      {
+        "resource": "rank10.tx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
+      },
+      {
+        "resource": "rank11.rx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
+      },
+      {
+        "resource": "rank11.tx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
+      },
+      {
+        "resource": "rank12.rx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
+      },
+      {
+        "resource": "rank12.tx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
+      },
+      {
+        "resource": "rank13.rx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
+      },
+      {
+        "resource": "rank13.tx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
+      },
+      {
+        "resource": "rank14.rx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
+      },
+      {
+        "resource": "rank14.tx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
+      },
+      {
+        "resource": "rank15.rx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
+      },
+      {
+        "resource": "rank15.tx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank2.rx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank2.tx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank3.rx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank3.tx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank4.rx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank4.tx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank5.rx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank5.tx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank6.rx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank6.tx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank7.rx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "rank7.tx",
-        "bytes": 352321536,
-        "bandwidth_bytes_per_second": 200000000000,
-        "service_seconds": 0.00176160768
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
-        "resource": "server0.egress",
-        "bytes": 201326592,
-        "bandwidth_bytes_per_second": 40000000000,
-        "service_seconds": 0.0050331648
+        "resource": "rank8.rx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
-        "resource": "server0.ingress",
-        "bytes": 201326592,
-        "bandwidth_bytes_per_second": 40000000000,
-        "service_seconds": 0.0050331648
+        "resource": "rank8.tx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
+      },
+      {
+        "resource": "rank9.rx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
+      },
+      {
+        "resource": "rank9.tx",
+        "bytes": 377487360,
+        "bandwidth_bytes_per_second": 450000000000,
+        "service_seconds": 0.0008388608
       },
       {
         "resource": "server0.nic0.rx",
         "bytes": 201326592,
-        "bandwidth_bytes_per_second": 25000000000,
-        "service_seconds": 0.00805306368
+        "bandwidth_bytes_per_second": 50000000000,
+        "service_seconds": 0.00402653184
       },
       {
         "resource": "server0.nic0.tx",
         "bytes": 201326592,
-        "bandwidth_bytes_per_second": 25000000000,
-        "service_seconds": 0.00805306368
-      },
-      {
-        "resource": "server1.egress",
-        "bytes": 201326592,
-        "bandwidth_bytes_per_second": 40000000000,
-        "service_seconds": 0.0050331648
-      },
-      {
-        "resource": "server1.ingress",
-        "bytes": 201326592,
-        "bandwidth_bytes_per_second": 40000000000,
-        "service_seconds": 0.0050331648
+        "bandwidth_bytes_per_second": 50000000000,
+        "service_seconds": 0.00402653184
       },
       {
         "resource": "server1.nic0.rx",
         "bytes": 201326592,
-        "bandwidth_bytes_per_second": 25000000000,
-        "service_seconds": 0.00805306368
+        "bandwidth_bytes_per_second": 50000000000,
+        "service_seconds": 0.00402653184
       },
       {
         "resource": "server1.nic0.tx",
         "bytes": 201326592,
-        "bandwidth_bytes_per_second": 25000000000,
-        "service_seconds": 0.00805306368
+        "bandwidth_bytes_per_second": 50000000000,
+        "service_seconds": 0.00402653184
       },
       {
         "resource": "shared_cut.bidirectional",
         "bytes": 402653184,
-        "bandwidth_bytes_per_second": 80000000000,
-        "service_seconds": 0.0050331648
+        "bandwidth_bytes_per_second": 100000000000,
+        "service_seconds": 0.00402653184
       }
     ],
     "rounds": [
@@ -6875,275 +29142,900 @@
         "round": 0,
         "phase": "reduce_scatter",
         "resource_bytes": {
-          "rank0.tx": 50331648,
-          "local.0->1": 50331648,
-          "rank1.rx": 50331648,
-          "rank1.tx": 50331648,
-          "local.1->2": 50331648,
-          "rank2.rx": 50331648,
-          "rank2.tx": 50331648,
-          "local.2->3": 50331648,
-          "rank3.rx": 50331648,
-          "rank3.tx": 50331648,
-          "local.3->0": 50331648,
-          "rank0.rx": 50331648,
-          "rank4.tx": 50331648,
-          "local.4->5": 50331648,
-          "rank5.rx": 50331648,
-          "rank5.tx": 50331648,
-          "local.5->6": 50331648,
-          "rank6.rx": 50331648,
-          "rank6.tx": 50331648,
-          "local.6->7": 50331648,
-          "rank7.rx": 50331648,
-          "rank7.tx": 50331648,
-          "local.7->4": 50331648,
-          "rank4.rx": 50331648
+          "rank0.tx": 25165824,
+          "local.0->1": 25165824,
+          "rank1.rx": 25165824,
+          "rank1.tx": 25165824,
+          "local.1->2": 25165824,
+          "rank2.rx": 25165824,
+          "rank2.tx": 25165824,
+          "local.2->3": 25165824,
+          "rank3.rx": 25165824,
+          "rank3.tx": 25165824,
+          "local.3->4": 25165824,
+          "rank4.rx": 25165824,
+          "rank4.tx": 25165824,
+          "local.4->5": 25165824,
+          "rank5.rx": 25165824,
+          "rank5.tx": 25165824,
+          "local.5->6": 25165824,
+          "rank6.rx": 25165824,
+          "rank6.tx": 25165824,
+          "local.6->7": 25165824,
+          "rank7.rx": 25165824,
+          "rank7.tx": 25165824,
+          "local.7->0": 25165824,
+          "rank0.rx": 25165824,
+          "rank8.tx": 25165824,
+          "local.8->9": 25165824,
+          "rank9.rx": 25165824,
+          "rank9.tx": 25165824,
+          "local.9->10": 25165824,
+          "rank10.rx": 25165824,
+          "rank10.tx": 25165824,
+          "local.10->11": 25165824,
+          "rank11.rx": 25165824,
+          "rank11.tx": 25165824,
+          "local.11->12": 25165824,
+          "rank12.rx": 25165824,
+          "rank12.tx": 25165824,
+          "local.12->13": 25165824,
+          "rank13.rx": 25165824,
+          "rank13.tx": 25165824,
+          "local.13->14": 25165824,
+          "rank14.rx": 25165824,
+          "rank14.tx": 25165824,
+          "local.14->15": 25165824,
+          "rank15.rx": 25165824,
+          "rank15.tx": 25165824,
+          "local.15->8": 25165824,
+          "rank8.rx": 25165824
         },
-        "resource_lower_seconds": 0.00025165824,
-        "barrier_lower_with_startup_seconds": 0.00025365824
+        "resource_lower_seconds": 5.592405333333333e-05,
+        "barrier_lower_with_startup_seconds": 5.675705333333333e-05
       },
       {
         "round": 1,
         "phase": "reduce_scatter",
         "resource_bytes": {
-          "rank0.tx": 50331648,
-          "local.0->1": 50331648,
-          "rank1.rx": 50331648,
-          "rank1.tx": 50331648,
-          "local.1->2": 50331648,
-          "rank2.rx": 50331648,
-          "rank2.tx": 50331648,
-          "local.2->3": 50331648,
-          "rank3.rx": 50331648,
-          "rank3.tx": 50331648,
-          "local.3->0": 50331648,
-          "rank0.rx": 50331648,
-          "rank4.tx": 50331648,
-          "local.4->5": 50331648,
-          "rank5.rx": 50331648,
-          "rank5.tx": 50331648,
-          "local.5->6": 50331648,
-          "rank6.rx": 50331648,
-          "rank6.tx": 50331648,
-          "local.6->7": 50331648,
-          "rank7.rx": 50331648,
-          "rank7.tx": 50331648,
-          "local.7->4": 50331648,
-          "rank4.rx": 50331648
+          "rank0.tx": 25165824,
+          "local.0->1": 25165824,
+          "rank1.rx": 25165824,
+          "rank1.tx": 25165824,
+          "local.1->2": 25165824,
+          "rank2.rx": 25165824,
+          "rank2.tx": 25165824,
+          "local.2->3": 25165824,
+          "rank3.rx": 25165824,
+          "rank3.tx": 25165824,
+          "local.3->4": 25165824,
+          "rank4.rx": 25165824,
+          "rank4.tx": 25165824,
+          "local.4->5": 25165824,
+          "rank5.rx": 25165824,
+          "rank5.tx": 25165824,
+          "local.5->6": 25165824,
+          "rank6.rx": 25165824,
+          "rank6.tx": 25165824,
+          "local.6->7": 25165824,
+          "rank7.rx": 25165824,
+          "rank7.tx": 25165824,
+          "local.7->0": 25165824,
+          "rank0.rx": 25165824,
+          "rank8.tx": 25165824,
+          "local.8->9": 25165824,
+          "rank9.rx": 25165824,
+          "rank9.tx": 25165824,
+          "local.9->10": 25165824,
+          "rank10.rx": 25165824,
+          "rank10.tx": 25165824,
+          "local.10->11": 25165824,
+          "rank11.rx": 25165824,
+          "rank11.tx": 25165824,
+          "local.11->12": 25165824,
+          "rank12.rx": 25165824,
+          "rank12.tx": 25165824,
+          "local.12->13": 25165824,
+          "rank13.rx": 25165824,
+          "rank13.tx": 25165824,
+          "local.13->14": 25165824,
+          "rank14.rx": 25165824,
+          "rank14.tx": 25165824,
+          "local.14->15": 25165824,
+          "rank15.rx": 25165824,
+          "rank15.tx": 25165824,
+          "local.15->8": 25165824,
+          "rank8.rx": 25165824
         },
-        "resource_lower_seconds": 0.00025165824,
-        "barrier_lower_with_startup_seconds": 0.00025365824
+        "resource_lower_seconds": 5.592405333333333e-05,
+        "barrier_lower_with_startup_seconds": 5.675705333333333e-05
       },
       {
         "round": 2,
         "phase": "reduce_scatter",
         "resource_bytes": {
-          "rank0.tx": 50331648,
-          "local.0->1": 50331648,
-          "rank1.rx": 50331648,
-          "rank1.tx": 50331648,
-          "local.1->2": 50331648,
-          "rank2.rx": 50331648,
-          "rank2.tx": 50331648,
-          "local.2->3": 50331648,
-          "rank3.rx": 50331648,
-          "rank3.tx": 50331648,
-          "local.3->0": 50331648,
-          "rank0.rx": 50331648,
-          "rank4.tx": 50331648,
-          "local.4->5": 50331648,
-          "rank5.rx": 50331648,
-          "rank5.tx": 50331648,
-          "local.5->6": 50331648,
-          "rank6.rx": 50331648,
-          "rank6.tx": 50331648,
-          "local.6->7": 50331648,
-          "rank7.rx": 50331648,
-          "rank7.tx": 50331648,
-          "local.7->4": 50331648,
-          "rank4.rx": 50331648
+          "rank0.tx": 25165824,
+          "local.0->1": 25165824,
+          "rank1.rx": 25165824,
+          "rank1.tx": 25165824,
+          "local.1->2": 25165824,
+          "rank2.rx": 25165824,
+          "rank2.tx": 25165824,
+          "local.2->3": 25165824,
+          "rank3.rx": 25165824,
+          "rank3.tx": 25165824,
+          "local.3->4": 25165824,
+          "rank4.rx": 25165824,
+          "rank4.tx": 25165824,
+          "local.4->5": 25165824,
+          "rank5.rx": 25165824,
+          "rank5.tx": 25165824,
+          "local.5->6": 25165824,
+          "rank6.rx": 25165824,
+          "rank6.tx": 25165824,
+          "local.6->7": 25165824,
+          "rank7.rx": 25165824,
+          "rank7.tx": 25165824,
+          "local.7->0": 25165824,
+          "rank0.rx": 25165824,
+          "rank8.tx": 25165824,
+          "local.8->9": 25165824,
+          "rank9.rx": 25165824,
+          "rank9.tx": 25165824,
+          "local.9->10": 25165824,
+          "rank10.rx": 25165824,
+          "rank10.tx": 25165824,
+          "local.10->11": 25165824,
+          "rank11.rx": 25165824,
+          "rank11.tx": 25165824,
+          "local.11->12": 25165824,
+          "rank12.rx": 25165824,
+          "rank12.tx": 25165824,
+          "local.12->13": 25165824,
+          "rank13.rx": 25165824,
+          "rank13.tx": 25165824,
+          "local.13->14": 25165824,
+          "rank14.rx": 25165824,
+          "rank14.tx": 25165824,
+          "local.14->15": 25165824,
+          "rank15.rx": 25165824,
+          "rank15.tx": 25165824,
+          "local.15->8": 25165824,
+          "rank8.rx": 25165824
         },
-        "resource_lower_seconds": 0.00025165824,
-        "barrier_lower_with_startup_seconds": 0.00025365824
+        "resource_lower_seconds": 5.592405333333333e-05,
+        "barrier_lower_with_startup_seconds": 5.675705333333333e-05
       },
       {
         "round": 3,
         "phase": "reduce_scatter",
         "resource_bytes": {
-          "rank3.tx": 25165824,
-          "server0.nic0.tx": 100663296,
-          "server0.egress": 100663296,
-          "cut.0->1": 100663296,
-          "shared_cut.bidirectional": 201326592,
-          "server1.ingress": 100663296,
-          "server1.nic0.rx": 100663296,
-          "rank7.rx": 25165824,
-          "rank7.tx": 25165824,
-          "server1.nic0.tx": 100663296,
-          "server1.egress": 100663296,
-          "cut.1->0": 100663296,
-          "server0.ingress": 100663296,
-          "server0.nic0.rx": 100663296,
-          "rank3.rx": 25165824,
           "rank0.tx": 25165824,
+          "local.0->1": 25165824,
+          "rank1.rx": 25165824,
+          "rank1.tx": 25165824,
+          "local.1->2": 25165824,
+          "rank2.rx": 25165824,
+          "rank2.tx": 25165824,
+          "local.2->3": 25165824,
+          "rank3.rx": 25165824,
+          "rank3.tx": 25165824,
+          "local.3->4": 25165824,
           "rank4.rx": 25165824,
           "rank4.tx": 25165824,
-          "rank0.rx": 25165824,
-          "rank1.tx": 25165824,
+          "local.4->5": 25165824,
           "rank5.rx": 25165824,
           "rank5.tx": 25165824,
-          "rank1.rx": 25165824,
-          "rank2.tx": 25165824,
+          "local.5->6": 25165824,
           "rank6.rx": 25165824,
           "rank6.tx": 25165824,
-          "rank2.rx": 25165824
+          "local.6->7": 25165824,
+          "rank7.rx": 25165824,
+          "rank7.tx": 25165824,
+          "local.7->0": 25165824,
+          "rank0.rx": 25165824,
+          "rank8.tx": 25165824,
+          "local.8->9": 25165824,
+          "rank9.rx": 25165824,
+          "rank9.tx": 25165824,
+          "local.9->10": 25165824,
+          "rank10.rx": 25165824,
+          "rank10.tx": 25165824,
+          "local.10->11": 25165824,
+          "rank11.rx": 25165824,
+          "rank11.tx": 25165824,
+          "local.11->12": 25165824,
+          "rank12.rx": 25165824,
+          "rank12.tx": 25165824,
+          "local.12->13": 25165824,
+          "rank13.rx": 25165824,
+          "rank13.tx": 25165824,
+          "local.13->14": 25165824,
+          "rank14.rx": 25165824,
+          "rank14.tx": 25165824,
+          "local.14->15": 25165824,
+          "rank15.rx": 25165824,
+          "rank15.tx": 25165824,
+          "local.15->8": 25165824,
+          "rank8.rx": 25165824
         },
-        "resource_lower_seconds": 0.00402653184,
-        "barrier_lower_with_startup_seconds": 0.00402853184
+        "resource_lower_seconds": 5.592405333333333e-05,
+        "barrier_lower_with_startup_seconds": 5.675705333333333e-05
       },
       {
         "round": 4,
-        "phase": "all_gather",
+        "phase": "reduce_scatter",
         "resource_bytes": {
-          "rank3.tx": 25165824,
-          "server0.nic0.tx": 100663296,
-          "server0.egress": 100663296,
-          "cut.0->1": 100663296,
-          "shared_cut.bidirectional": 201326592,
-          "server1.ingress": 100663296,
-          "server1.nic0.rx": 100663296,
-          "rank7.rx": 25165824,
-          "rank7.tx": 25165824,
-          "server1.nic0.tx": 100663296,
-          "server1.egress": 100663296,
-          "cut.1->0": 100663296,
-          "server0.ingress": 100663296,
-          "server0.nic0.rx": 100663296,
-          "rank3.rx": 25165824,
           "rank0.tx": 25165824,
+          "local.0->1": 25165824,
+          "rank1.rx": 25165824,
+          "rank1.tx": 25165824,
+          "local.1->2": 25165824,
+          "rank2.rx": 25165824,
+          "rank2.tx": 25165824,
+          "local.2->3": 25165824,
+          "rank3.rx": 25165824,
+          "rank3.tx": 25165824,
+          "local.3->4": 25165824,
           "rank4.rx": 25165824,
           "rank4.tx": 25165824,
-          "rank0.rx": 25165824,
-          "rank1.tx": 25165824,
+          "local.4->5": 25165824,
           "rank5.rx": 25165824,
           "rank5.tx": 25165824,
-          "rank1.rx": 25165824,
-          "rank2.tx": 25165824,
+          "local.5->6": 25165824,
           "rank6.rx": 25165824,
           "rank6.tx": 25165824,
-          "rank2.rx": 25165824
+          "local.6->7": 25165824,
+          "rank7.rx": 25165824,
+          "rank7.tx": 25165824,
+          "local.7->0": 25165824,
+          "rank0.rx": 25165824,
+          "rank8.tx": 25165824,
+          "local.8->9": 25165824,
+          "rank9.rx": 25165824,
+          "rank9.tx": 25165824,
+          "local.9->10": 25165824,
+          "rank10.rx": 25165824,
+          "rank10.tx": 25165824,
+          "local.10->11": 25165824,
+          "rank11.rx": 25165824,
+          "rank11.tx": 25165824,
+          "local.11->12": 25165824,
+          "rank12.rx": 25165824,
+          "rank12.tx": 25165824,
+          "local.12->13": 25165824,
+          "rank13.rx": 25165824,
+          "rank13.tx": 25165824,
+          "local.13->14": 25165824,
+          "rank14.rx": 25165824,
+          "rank14.tx": 25165824,
+          "local.14->15": 25165824,
+          "rank15.rx": 25165824,
+          "rank15.tx": 25165824,
+          "local.15->8": 25165824,
+          "rank8.rx": 25165824
         },
-        "resource_lower_seconds": 0.00402653184,
-        "barrier_lower_with_startup_seconds": 0.00402853184
+        "resource_lower_seconds": 5.592405333333333e-05,
+        "barrier_lower_with_startup_seconds": 5.675705333333333e-05
       },
       {
         "round": 5,
-        "phase": "all_gather",
+        "phase": "reduce_scatter",
         "resource_bytes": {
-          "rank0.tx": 50331648,
-          "local.0->1": 50331648,
-          "rank1.rx": 50331648,
-          "rank1.tx": 50331648,
-          "local.1->2": 50331648,
-          "rank2.rx": 50331648,
-          "rank2.tx": 50331648,
-          "local.2->3": 50331648,
-          "rank3.rx": 50331648,
-          "rank3.tx": 50331648,
-          "local.3->0": 50331648,
-          "rank0.rx": 50331648,
-          "rank4.tx": 50331648,
-          "local.4->5": 50331648,
-          "rank5.rx": 50331648,
-          "rank5.tx": 50331648,
-          "local.5->6": 50331648,
-          "rank6.rx": 50331648,
-          "rank6.tx": 50331648,
-          "local.6->7": 50331648,
-          "rank7.rx": 50331648,
-          "rank7.tx": 50331648,
-          "local.7->4": 50331648,
-          "rank4.rx": 50331648
+          "rank0.tx": 25165824,
+          "local.0->1": 25165824,
+          "rank1.rx": 25165824,
+          "rank1.tx": 25165824,
+          "local.1->2": 25165824,
+          "rank2.rx": 25165824,
+          "rank2.tx": 25165824,
+          "local.2->3": 25165824,
+          "rank3.rx": 25165824,
+          "rank3.tx": 25165824,
+          "local.3->4": 25165824,
+          "rank4.rx": 25165824,
+          "rank4.tx": 25165824,
+          "local.4->5": 25165824,
+          "rank5.rx": 25165824,
+          "rank5.tx": 25165824,
+          "local.5->6": 25165824,
+          "rank6.rx": 25165824,
+          "rank6.tx": 25165824,
+          "local.6->7": 25165824,
+          "rank7.rx": 25165824,
+          "rank7.tx": 25165824,
+          "local.7->0": 25165824,
+          "rank0.rx": 25165824,
+          "rank8.tx": 25165824,
+          "local.8->9": 25165824,
+          "rank9.rx": 25165824,
+          "rank9.tx": 25165824,
+          "local.9->10": 25165824,
+          "rank10.rx": 25165824,
+          "rank10.tx": 25165824,
+          "local.10->11": 25165824,
+          "rank11.rx": 25165824,
+          "rank11.tx": 25165824,
+          "local.11->12": 25165824,
+          "rank12.rx": 25165824,
+          "rank12.tx": 25165824,
+          "local.12->13": 25165824,
+          "rank13.rx": 25165824,
+          "rank13.tx": 25165824,
+          "local.13->14": 25165824,
+          "rank14.rx": 25165824,
+          "rank14.tx": 25165824,
+          "local.14->15": 25165824,
+          "rank15.rx": 25165824,
+          "rank15.tx": 25165824,
+          "local.15->8": 25165824,
+          "rank8.rx": 25165824
         },
-        "resource_lower_seconds": 0.00025165824,
-        "barrier_lower_with_startup_seconds": 0.00025365824
+        "resource_lower_seconds": 5.592405333333333e-05,
+        "barrier_lower_with_startup_seconds": 5.675705333333333e-05
       },
       {
         "round": 6,
-        "phase": "all_gather",
+        "phase": "reduce_scatter",
         "resource_bytes": {
-          "rank0.tx": 50331648,
-          "local.0->1": 50331648,
-          "rank1.rx": 50331648,
-          "rank1.tx": 50331648,
-          "local.1->2": 50331648,
-          "rank2.rx": 50331648,
-          "rank2.tx": 50331648,
-          "local.2->3": 50331648,
-          "rank3.rx": 50331648,
-          "rank3.tx": 50331648,
-          "local.3->0": 50331648,
-          "rank0.rx": 50331648,
-          "rank4.tx": 50331648,
-          "local.4->5": 50331648,
-          "rank5.rx": 50331648,
-          "rank5.tx": 50331648,
-          "local.5->6": 50331648,
-          "rank6.rx": 50331648,
-          "rank6.tx": 50331648,
-          "local.6->7": 50331648,
-          "rank7.rx": 50331648,
-          "rank7.tx": 50331648,
-          "local.7->4": 50331648,
-          "rank4.rx": 50331648
+          "rank0.tx": 25165824,
+          "local.0->1": 25165824,
+          "rank1.rx": 25165824,
+          "rank1.tx": 25165824,
+          "local.1->2": 25165824,
+          "rank2.rx": 25165824,
+          "rank2.tx": 25165824,
+          "local.2->3": 25165824,
+          "rank3.rx": 25165824,
+          "rank3.tx": 25165824,
+          "local.3->4": 25165824,
+          "rank4.rx": 25165824,
+          "rank4.tx": 25165824,
+          "local.4->5": 25165824,
+          "rank5.rx": 25165824,
+          "rank5.tx": 25165824,
+          "local.5->6": 25165824,
+          "rank6.rx": 25165824,
+          "rank6.tx": 25165824,
+          "local.6->7": 25165824,
+          "rank7.rx": 25165824,
+          "rank7.tx": 25165824,
+          "local.7->0": 25165824,
+          "rank0.rx": 25165824,
+          "rank8.tx": 25165824,
+          "local.8->9": 25165824,
+          "rank9.rx": 25165824,
+          "rank9.tx": 25165824,
+          "local.9->10": 25165824,
+          "rank10.rx": 25165824,
+          "rank10.tx": 25165824,
+          "local.10->11": 25165824,
+          "rank11.rx": 25165824,
+          "rank11.tx": 25165824,
+          "local.11->12": 25165824,
+          "rank12.rx": 25165824,
+          "rank12.tx": 25165824,
+          "local.12->13": 25165824,
+          "rank13.rx": 25165824,
+          "rank13.tx": 25165824,
+          "local.13->14": 25165824,
+          "rank14.rx": 25165824,
+          "rank14.tx": 25165824,
+          "local.14->15": 25165824,
+          "rank15.rx": 25165824,
+          "rank15.tx": 25165824,
+          "local.15->8": 25165824,
+          "rank8.rx": 25165824
         },
-        "resource_lower_seconds": 0.00025165824,
-        "barrier_lower_with_startup_seconds": 0.00025365824
+        "resource_lower_seconds": 5.592405333333333e-05,
+        "barrier_lower_with_startup_seconds": 5.675705333333333e-05
       },
       {
         "round": 7,
+        "phase": "reduce_scatter",
+        "resource_bytes": {
+          "rank7.tx": 12582912,
+          "server0.nic0.tx": 100663296,
+          "cut.0->1": 100663296,
+          "shared_cut.bidirectional": 201326592,
+          "server1.nic0.rx": 100663296,
+          "rank15.rx": 12582912,
+          "rank15.tx": 12582912,
+          "server1.nic0.tx": 100663296,
+          "cut.1->0": 100663296,
+          "server0.nic0.rx": 100663296,
+          "rank7.rx": 12582912,
+          "rank0.tx": 12582912,
+          "rank8.rx": 12582912,
+          "rank8.tx": 12582912,
+          "rank0.rx": 12582912,
+          "rank1.tx": 12582912,
+          "rank9.rx": 12582912,
+          "rank9.tx": 12582912,
+          "rank1.rx": 12582912,
+          "rank2.tx": 12582912,
+          "rank10.rx": 12582912,
+          "rank10.tx": 12582912,
+          "rank2.rx": 12582912,
+          "rank3.tx": 12582912,
+          "rank11.rx": 12582912,
+          "rank11.tx": 12582912,
+          "rank3.rx": 12582912,
+          "rank4.tx": 12582912,
+          "rank12.rx": 12582912,
+          "rank12.tx": 12582912,
+          "rank4.rx": 12582912,
+          "rank5.tx": 12582912,
+          "rank13.rx": 12582912,
+          "rank13.tx": 12582912,
+          "rank5.rx": 12582912,
+          "rank6.tx": 12582912,
+          "rank14.rx": 12582912,
+          "rank14.tx": 12582912,
+          "rank6.rx": 12582912
+        },
+        "resource_lower_seconds": 0.00201326592,
+        "barrier_lower_with_startup_seconds": 0.00201409892
+      },
+      {
+        "round": 8,
         "phase": "all_gather",
         "resource_bytes": {
-          "rank0.tx": 50331648,
-          "local.0->1": 50331648,
-          "rank1.rx": 50331648,
-          "rank1.tx": 50331648,
-          "local.1->2": 50331648,
-          "rank2.rx": 50331648,
-          "rank2.tx": 50331648,
-          "local.2->3": 50331648,
-          "rank3.rx": 50331648,
-          "rank3.tx": 50331648,
-          "local.3->0": 50331648,
-          "rank0.rx": 50331648,
-          "rank4.tx": 50331648,
-          "local.4->5": 50331648,
-          "rank5.rx": 50331648,
-          "rank5.tx": 50331648,
-          "local.5->6": 50331648,
-          "rank6.rx": 50331648,
-          "rank6.tx": 50331648,
-          "local.6->7": 50331648,
-          "rank7.rx": 50331648,
-          "rank7.tx": 50331648,
-          "local.7->4": 50331648,
-          "rank4.rx": 50331648
+          "rank7.tx": 12582912,
+          "server0.nic0.tx": 100663296,
+          "cut.0->1": 100663296,
+          "shared_cut.bidirectional": 201326592,
+          "server1.nic0.rx": 100663296,
+          "rank15.rx": 12582912,
+          "rank15.tx": 12582912,
+          "server1.nic0.tx": 100663296,
+          "cut.1->0": 100663296,
+          "server0.nic0.rx": 100663296,
+          "rank7.rx": 12582912,
+          "rank0.tx": 12582912,
+          "rank8.rx": 12582912,
+          "rank8.tx": 12582912,
+          "rank0.rx": 12582912,
+          "rank1.tx": 12582912,
+          "rank9.rx": 12582912,
+          "rank9.tx": 12582912,
+          "rank1.rx": 12582912,
+          "rank2.tx": 12582912,
+          "rank10.rx": 12582912,
+          "rank10.tx": 12582912,
+          "rank2.rx": 12582912,
+          "rank3.tx": 12582912,
+          "rank11.rx": 12582912,
+          "rank11.tx": 12582912,
+          "rank3.rx": 12582912,
+          "rank4.tx": 12582912,
+          "rank12.rx": 12582912,
+          "rank12.tx": 12582912,
+          "rank4.rx": 12582912,
+          "rank5.tx": 12582912,
+          "rank13.rx": 12582912,
+          "rank13.tx": 12582912,
+          "rank5.rx": 12582912,
+          "rank6.tx": 12582912,
+          "rank14.rx": 12582912,
+          "rank14.tx": 12582912,
+          "rank6.rx": 12582912
         },
-        "resource_lower_seconds": 0.00025165824,
-        "barrier_lower_with_startup_seconds": 0.00025365824
+        "resource_lower_seconds": 0.00201326592,
+        "barrier_lower_with_startup_seconds": 0.00201409892
+      },
+      {
+        "round": 9,
+        "phase": "all_gather",
+        "resource_bytes": {
+          "rank0.tx": 25165824,
+          "local.0->1": 25165824,
+          "rank1.rx": 25165824,
+          "rank1.tx": 25165824,
+          "local.1->2": 25165824,
+          "rank2.rx": 25165824,
+          "rank2.tx": 25165824,
+          "local.2->3": 25165824,
+          "rank3.rx": 25165824,
+          "rank3.tx": 25165824,
+          "local.3->4": 25165824,
+          "rank4.rx": 25165824,
+          "rank4.tx": 25165824,
+          "local.4->5": 25165824,
+          "rank5.rx": 25165824,
+          "rank5.tx": 25165824,
+          "local.5->6": 25165824,
+          "rank6.rx": 25165824,
+          "rank6.tx": 25165824,
+          "local.6->7": 25165824,
+          "rank7.rx": 25165824,
+          "rank7.tx": 25165824,
+          "local.7->0": 25165824,
+          "rank0.rx": 25165824,
+          "rank8.tx": 25165824,
+          "local.8->9": 25165824,
+          "rank9.rx": 25165824,
+          "rank9.tx": 25165824,
+          "local.9->10": 25165824,
+          "rank10.rx": 25165824,
+          "rank10.tx": 25165824,
+          "local.10->11": 25165824,
+          "rank11.rx": 25165824,
+          "rank11.tx": 25165824,
+          "local.11->12": 25165824,
+          "rank12.rx": 25165824,
+          "rank12.tx": 25165824,
+          "local.12->13": 25165824,
+          "rank13.rx": 25165824,
+          "rank13.tx": 25165824,
+          "local.13->14": 25165824,
+          "rank14.rx": 25165824,
+          "rank14.tx": 25165824,
+          "local.14->15": 25165824,
+          "rank15.rx": 25165824,
+          "rank15.tx": 25165824,
+          "local.15->8": 25165824,
+          "rank8.rx": 25165824
+        },
+        "resource_lower_seconds": 5.592405333333333e-05,
+        "barrier_lower_with_startup_seconds": 5.675705333333333e-05
+      },
+      {
+        "round": 10,
+        "phase": "all_gather",
+        "resource_bytes": {
+          "rank0.tx": 25165824,
+          "local.0->1": 25165824,
+          "rank1.rx": 25165824,
+          "rank1.tx": 25165824,
+          "local.1->2": 25165824,
+          "rank2.rx": 25165824,
+          "rank2.tx": 25165824,
+          "local.2->3": 25165824,
+          "rank3.rx": 25165824,
+          "rank3.tx": 25165824,
+          "local.3->4": 25165824,
+          "rank4.rx": 25165824,
+          "rank4.tx": 25165824,
+          "local.4->5": 25165824,
+          "rank5.rx": 25165824,
+          "rank5.tx": 25165824,
+          "local.5->6": 25165824,
+          "rank6.rx": 25165824,
+          "rank6.tx": 25165824,
+          "local.6->7": 25165824,
+          "rank7.rx": 25165824,
+          "rank7.tx": 25165824,
+          "local.7->0": 25165824,
+          "rank0.rx": 25165824,
+          "rank8.tx": 25165824,
+          "local.8->9": 25165824,
+          "rank9.rx": 25165824,
+          "rank9.tx": 25165824,
+          "local.9->10": 25165824,
+          "rank10.rx": 25165824,
+          "rank10.tx": 25165824,
+          "local.10->11": 25165824,
+          "rank11.rx": 25165824,
+          "rank11.tx": 25165824,
+          "local.11->12": 25165824,
+          "rank12.rx": 25165824,
+          "rank12.tx": 25165824,
+          "local.12->13": 25165824,
+          "rank13.rx": 25165824,
+          "rank13.tx": 25165824,
+          "local.13->14": 25165824,
+          "rank14.rx": 25165824,
+          "rank14.tx": 25165824,
+          "local.14->15": 25165824,
+          "rank15.rx": 25165824,
+          "rank15.tx": 25165824,
+          "local.15->8": 25165824,
+          "rank8.rx": 25165824
+        },
+        "resource_lower_seconds": 5.592405333333333e-05,
+        "barrier_lower_with_startup_seconds": 5.675705333333333e-05
+      },
+      {
+        "round": 11,
+        "phase": "all_gather",
+        "resource_bytes": {
+          "rank0.tx": 25165824,
+          "local.0->1": 25165824,
+          "rank1.rx": 25165824,
+          "rank1.tx": 25165824,
+          "local.1->2": 25165824,
+          "rank2.rx": 25165824,
+          "rank2.tx": 25165824,
+          "local.2->3": 25165824,
+          "rank3.rx": 25165824,
+          "rank3.tx": 25165824,
+          "local.3->4": 25165824,
+          "rank4.rx": 25165824,
+          "rank4.tx": 25165824,
+          "local.4->5": 25165824,
+          "rank5.rx": 25165824,
+          "rank5.tx": 25165824,
+          "local.5->6": 25165824,
+          "rank6.rx": 25165824,
+          "rank6.tx": 25165824,
+          "local.6->7": 25165824,
+          "rank7.rx": 25165824,
+          "rank7.tx": 25165824,
+          "local.7->0": 25165824,
+          "rank0.rx": 25165824,
+          "rank8.tx": 25165824,
+          "local.8->9": 25165824,
+          "rank9.rx": 25165824,
+          "rank9.tx": 25165824,
+          "local.9->10": 25165824,
+          "rank10.rx": 25165824,
+          "rank10.tx": 25165824,
+          "local.10->11": 25165824,
+          "rank11.rx": 25165824,
+          "rank11.tx": 25165824,
+          "local.11->12": 25165824,
+          "rank12.rx": 25165824,
+          "rank12.tx": 25165824,
+          "local.12->13": 25165824,
+          "rank13.rx": 25165824,
+          "rank13.tx": 25165824,
+          "local.13->14": 25165824,
+          "rank14.rx": 25165824,
+          "rank14.tx": 25165824,
+          "local.14->15": 25165824,
+          "rank15.rx": 25165824,
+          "rank15.tx": 25165824,
+          "local.15->8": 25165824,
+          "rank8.rx": 25165824
+        },
+        "resource_lower_seconds": 5.592405333333333e-05,
+        "barrier_lower_with_startup_seconds": 5.675705333333333e-05
+      },
+      {
+        "round": 12,
+        "phase": "all_gather",
+        "resource_bytes": {
+          "rank0.tx": 25165824,
+          "local.0->1": 25165824,
+          "rank1.rx": 25165824,
+          "rank1.tx": 25165824,
+          "local.1->2": 25165824,
+          "rank2.rx": 25165824,
+          "rank2.tx": 25165824,
+          "local.2->3": 25165824,
+          "rank3.rx": 25165824,
+          "rank3.tx": 25165824,
+          "local.3->4": 25165824,
+          "rank4.rx": 25165824,
+          "rank4.tx": 25165824,
+          "local.4->5": 25165824,
+          "rank5.rx": 25165824,
+          "rank5.tx": 25165824,
+          "local.5->6": 25165824,
+          "rank6.rx": 25165824,
+          "rank6.tx": 25165824,
+          "local.6->7": 25165824,
+          "rank7.rx": 25165824,
+          "rank7.tx": 25165824,
+          "local.7->0": 25165824,
+          "rank0.rx": 25165824,
+          "rank8.tx": 25165824,
+          "local.8->9": 25165824,
+          "rank9.rx": 25165824,
+          "rank9.tx": 25165824,
+          "local.9->10": 25165824,
+          "rank10.rx": 25165824,
+          "rank10.tx": 25165824,
+          "local.10->11": 25165824,
+          "rank11.rx": 25165824,
+          "rank11.tx": 25165824,
+          "local.11->12": 25165824,
+          "rank12.rx": 25165824,
+          "rank12.tx": 25165824,
+          "local.12->13": 25165824,
+          "rank13.rx": 25165824,
+          "rank13.tx": 25165824,
+          "local.13->14": 25165824,
+          "rank14.rx": 25165824,
+          "rank14.tx": 25165824,
+          "local.14->15": 25165824,
+          "rank15.rx": 25165824,
+          "rank15.tx": 25165824,
+          "local.15->8": 25165824,
+          "rank8.rx": 25165824
+        },
+        "resource_lower_seconds": 5.592405333333333e-05,
+        "barrier_lower_with_startup_seconds": 5.675705333333333e-05
+      },
+      {
+        "round": 13,
+        "phase": "all_gather",
+        "resource_bytes": {
+          "rank0.tx": 25165824,
+          "local.0->1": 25165824,
+          "rank1.rx": 25165824,
+          "rank1.tx": 25165824,
+          "local.1->2": 25165824,
+          "rank2.rx": 25165824,
+          "rank2.tx": 25165824,
+          "local.2->3": 25165824,
+          "rank3.rx": 25165824,
+          "rank3.tx": 25165824,
+          "local.3->4": 25165824,
+          "rank4.rx": 25165824,
+          "rank4.tx": 25165824,
+          "local.4->5": 25165824,
+          "rank5.rx": 25165824,
+          "rank5.tx": 25165824,
+          "local.5->6": 25165824,
+          "rank6.rx": 25165824,
+          "rank6.tx": 25165824,
+          "local.6->7": 25165824,
+          "rank7.rx": 25165824,
+          "rank7.tx": 25165824,
+          "local.7->0": 25165824,
+          "rank0.rx": 25165824,
+          "rank8.tx": 25165824,
+          "local.8->9": 25165824,
+          "rank9.rx": 25165824,
+          "rank9.tx": 25165824,
+          "local.9->10": 25165824,
+          "rank10.rx": 25165824,
+          "rank10.tx": 25165824,
+          "local.10->11": 25165824,
+          "rank11.rx": 25165824,
+          "rank11.tx": 25165824,
+          "local.11->12": 25165824,
+          "rank12.rx": 25165824,
+          "rank12.tx": 25165824,
+          "local.12->13": 25165824,
+          "rank13.rx": 25165824,
+          "rank13.tx": 25165824,
+          "local.13->14": 25165824,
+          "rank14.rx": 25165824,
+          "rank14.tx": 25165824,
+          "local.14->15": 25165824,
+          "rank15.rx": 25165824,
+          "rank15.tx": 25165824,
+          "local.15->8": 25165824,
+          "rank8.rx": 25165824
+        },
+        "resource_lower_seconds": 5.592405333333333e-05,
+        "barrier_lower_with_startup_seconds": 5.675705333333333e-05
+      },
+      {
+        "round": 14,
+        "phase": "all_gather",
+        "resource_bytes": {
+          "rank0.tx": 25165824,
+          "local.0->1": 25165824,
+          "rank1.rx": 25165824,
+          "rank1.tx": 25165824,
+          "local.1->2": 25165824,
+          "rank2.rx": 25165824,
+          "rank2.tx": 25165824,
+          "local.2->3": 25165824,
+          "rank3.rx": 25165824,
+          "rank3.tx": 25165824,
+          "local.3->4": 25165824,
+          "rank4.rx": 25165824,
+          "rank4.tx": 25165824,
+          "local.4->5": 25165824,
+          "rank5.rx": 25165824,
+          "rank5.tx": 25165824,
+          "local.5->6": 25165824,
+          "rank6.rx": 25165824,
+          "rank6.tx": 25165824,
+          "local.6->7": 25165824,
+          "rank7.rx": 25165824,
+          "rank7.tx": 25165824,
+          "local.7->0": 25165824,
+          "rank0.rx": 25165824,
+          "rank8.tx": 25165824,
+          "local.8->9": 25165824,
+          "rank9.rx": 25165824,
+          "rank9.tx": 25165824,
+          "local.9->10": 25165824,
+          "rank10.rx": 25165824,
+          "rank10.tx": 25165824,
+          "local.10->11": 25165824,
+          "rank11.rx": 25165824,
+          "rank11.tx": 25165824,
+          "local.11->12": 25165824,
+          "rank12.rx": 25165824,
+          "rank12.tx": 25165824,
+          "local.12->13": 25165824,
+          "rank13.rx": 25165824,
+          "rank13.tx": 25165824,
+          "local.13->14": 25165824,
+          "rank14.rx": 25165824,
+          "rank14.tx": 25165824,
+          "local.14->15": 25165824,
+          "rank15.rx": 25165824,
+          "rank15.tx": 25165824,
+          "local.15->8": 25165824,
+          "rank8.rx": 25165824
+        },
+        "resource_lower_seconds": 5.592405333333333e-05,
+        "barrier_lower_with_startup_seconds": 5.675705333333333e-05
+      },
+      {
+        "round": 15,
+        "phase": "all_gather",
+        "resource_bytes": {
+          "rank0.tx": 25165824,
+          "local.0->1": 25165824,
+          "rank1.rx": 25165824,
+          "rank1.tx": 25165824,
+          "local.1->2": 25165824,
+          "rank2.rx": 25165824,
+          "rank2.tx": 25165824,
+          "local.2->3": 25165824,
+          "rank3.rx": 25165824,
+          "rank3.tx": 25165824,
+          "local.3->4": 25165824,
+          "rank4.rx": 25165824,
+          "rank4.tx": 25165824,
+          "local.4->5": 25165824,
+          "rank5.rx": 25165824,
+          "rank5.tx": 25165824,
+          "local.5->6": 25165824,
+          "rank6.rx": 25165824,
+          "rank6.tx": 25165824,
+          "local.6->7": 25165824,
+          "rank7.rx": 25165824,
+          "rank7.tx": 25165824,
+          "local.7->0": 25165824,
+          "rank0.rx": 25165824,
+          "rank8.tx": 25165824,
+          "local.8->9": 25165824,
+          "rank9.rx": 25165824,
+          "rank9.tx": 25165824,
+          "local.9->10": 25165824,
+          "rank10.rx": 25165824,
+          "rank10.tx": 25165824,
+          "local.10->11": 25165824,
+          "rank11.rx": 25165824,
+          "rank11.tx": 25165824,
+          "local.11->12": 25165824,
+          "rank12.rx": 25165824,
+          "rank12.tx": 25165824,
+          "local.12->13": 25165824,
+          "rank13.rx": 25165824,
+          "rank13.tx": 25165824,
+          "local.13->14": 25165824,
+          "rank14.rx": 25165824,
+          "rank14.tx": 25165824,
+          "local.14->15": 25165824,
+          "rank15.rx": 25165824,
+          "rank15.tx": 25165824,
+          "local.15->8": 25165824,
+          "rank8.rx": 25165824
+        },
+        "resource_lower_seconds": 5.592405333333333e-05,
+        "barrier_lower_with_startup_seconds": 5.675705333333333e-05
       }
     ],
-    "aggregate_resource_lower_seconds": 0.00805306368,
-    "sum_round_resource_lower_seconds": 0.009563013120000002,
-    "barrier_lower_with_startup_seconds": 0.009579013119999999
+    "aggregate_resource_lower_seconds": 0.00402653184,
+    "sum_round_resource_lower_seconds": 0.0048094685866666665,
+    "barrier_lower_with_startup_seconds": 0.0048227965866666665
   },
   "summary": {
-    "network_send_bytes": 2818572288,
-    "local_send_bytes": 2415919104,
+    "network_send_bytes": 6039797760,
+    "local_send_bytes": 5637144576,
     "remote_send_bytes": 402653184,
-    "reduction_scalar_adds": 352321536,
+    "remote_send_bytes_per_direction": 201326592,
+    "reduction_scalar_adds": 754974720,
     "final_gradient_bytes_per_rank": [
+      201326592,
+      201326592,
+      201326592,
+      201326592,
+      201326592,
+      201326592,
+      201326592,
+      201326592,
       201326592,
       201326592,
       201326592,
@@ -7153,25 +30045,30 @@
       201326592,
       201326592
     ],
-    "rounds": 8,
-    "aggregate_resource_lower_seconds_exact": "393216/48828125",
+    "rounds": 16,
+    "first_round_remote_edges": 0,
+    "remote_nics_used_per_server": 1,
+    "aggregate_resource_lower_seconds_exact": "196608/48828125",
     "largest_aggregate_resources": [
+      "cut.0->1",
+      "cut.1->0",
       "server0.nic0.rx",
       "server0.nic0.tx",
       "server1.nic0.rx",
-      "server1.nic0.tx"
+      "server1.nic0.tx",
+      "shared_cut.bidirectional"
     ],
-    "serial_barrier_lower_seconds_exact": "1870901/195312500",
-    "necessary_budget_not_excluded": true,
+    "serial_barrier_lower_seconds_exact": "22606859/4687500000",
+    "necessary_budget_not_excluded": false,
     "actual_training_deadline_feasible": null,
     "measured_seconds": null
   },
   "assumptions": [
     "One real first-layer gate parameter gradient per rank; each rank contributes different sample data to the same coordinates. Not activations, whole-model gradients, or framework buckets.",
     "FP32/BF16 are declared gradient wire/operand widths. Rank contribution identities prove algebraic sum coverage, not floating-point reassociation equivalence or backend accumulation precision.",
-    "Two servers each own four fixed ranks. Hierarchy executes local RS, corresponding-owner two-rank AR, local AG with stage/round barriers; no overlapping stages or unmodeled algorithm substitutions.",
-    "Remote messages stripe disjoint whole-element intervals over one/two NICs, never duplicate payload. Each source/destination NIC, shared egress/ingress and shared bidirectional cut has its own declared rate; shared40GB/s server edges do not grow with NIC count.",
-    "All rates and startup are teaching inputs. Each round bound is max(resource bytes/rate)+startup; serialized barrier bounds omit reduction work, propagation, buffering, topology latency and interference. They are not executable timing or deadline guarantees.",
+    "Two servers each own 8 fixed ranks. Hierarchy executes local RS over 8 ranks, corresponding-owner two-rank AR, local AG with stage/round barriers; no overlapping stages or unmodeled algorithm substitutions.",
+    "Remote messages stripe disjoint whole-element intervals over the 1 server NIC(s), never duplicate payload. The switch cut between the servers carries the aggregate NIC rate; no shared server egress is declared.",
+    "All rates and startup are declared inputs. Each round bound is max(resource bytes/rate)+startup; serialized barrier bounds omit reduction work, propagation, buffering, topology latency and interference. They are not executable timing or deadline guarantees.",
     "Logical network sends count payload once. Endpoint receive, NIC, ingress and cut counters represent distinct resource demands; their sum is not additional gradient payload or HBM traffic.",
     "No padding is introduced. Missing paths/resources or invalid rates reject. Budget pass only means this communication lower bound has not excluded the candidate; real training feasibility remains unknown."
   ]

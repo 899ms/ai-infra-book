@@ -148,4 +148,4 @@ ACK 策略为每个 ack-eliciting 包立即生成独立单范围 ACK；ACK 出�
 
 - [RFC9000](https://www.rfc-editor.org/rfc/rfc9000.txt) — `f88aae47f8b18e102024916e975e919201d8dde689cba79b01079eaedd402e22`
 - [RFC9002](https://www.rfc-editor.org/rfc/rfc9002.txt) — `3a8a54eea1ad5d1c134a548bf15edfa0e21bfb4106dbd7db3c09cace842099af`
-- [RFC9002 Verified Errata7539](https://www.rfc-editor.org/errata/eid7539) — `685a6ef4fabde4fe163d1e86d6fb7aea7ded40ceab07a8a70e8027a4a9d0e23a`
+- [RFC9002 Verified Errata7539](https://www.rfc-editor.org/errata/eid7539) — `9b5338a8ac92a5968da09b63ee28616fb923b89ed4389f1cacd75b66693a7be7`

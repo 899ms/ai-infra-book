@@ -111,9 +111,9 @@ def draw(here):
         # PP: layers split into stages; activations cross the boundary per microbatch.
         f, a = canvas(2.9)
         box(a, .02, .44, .10, .18, '输入', 'gray', 11); arrow(a, (.12, .53), (.15, .53))
-        box(a, .15, .34, .28, .36, '卡 0\n层 0–17 的权重', 'blue', 11); arrow(a, (.43, .53), (.46, .53))
+        box(a, .15, .34, .28, .36, '卡 0\n层 0–31 的权重', 'blue', 11); arrow(a, (.43, .53), (.46, .53))
         box(a, .46, .44, .10, .18, '激活', 'orange', 11); arrow(a, (.56, .53), (.59, .53))
-        box(a, .59, .34, .28, .36, '卡 1\n层 18–35 的权重', 'green', 11); arrow(a, (.87, .53), (.90, .53))
+        box(a, .59, .34, .28, .36, '卡 1\n层 32–63 的权重', 'green', 11); arrow(a, (.87, .53), (.90, .53))
         box(a, .90, .44, .08, .18, '输出', 'gray', 11)
         arrow(a, (.59, .27), (.43, .27)); text(a, .51, .16, '训练：梯度沿相同边界反向传递', 11, ha='center')
         out.save(f, 'figure-6-pp')

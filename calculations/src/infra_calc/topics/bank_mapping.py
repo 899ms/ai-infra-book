@@ -28,7 +28,7 @@ def calculate(stride_words: int = 32, access: str = 'column', ports: int = 1,
     positive_int(stride_words,'stride_words')
     if stride_words<32: raise ValueError('Stride must hold 32 columns without overlap')
     if access not in ('row','column','same-word'): raise ValueError('Unknown access pattern')
-    read_source('sources/hardware/nvidia-async-copies-13-2-1.html')
+    read_source('sources/hardware/nvidia-async-copies-13-2-1.md')
     addresses=([i for i in range(32)] if access=='row' else [i*stride_words for i in range(32)]
                if access=='column' else [0]*32)
     result=service(addresses,32,ports,broadcast)

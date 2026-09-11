@@ -1,6 +1,6 @@
 # C19 scaling-law — synthetic_teaching
 
-{"data_kind": "synthetic_teaching", "fit_sse": 2.3320966169321213e-07, "holdout_rmse": 0.002779212196743435, "lifetime_calls": 365000000, "optimal_candidate_N": 4000000000.0, "task_quality_prediction": null}
+{"data_kind": "synthetic_teaching", "fit_sse": 2.3320966169329546e-07, "holdout_rmse": 0.002779212196743132, "lifetime_calls": 365000000, "optimal_candidate_N": 4000000000.0, "task_quality_prediction": null}
 
 | Budget FLOPs | N | D | Predicted loss |
 | --- | --- | --- | --- |
@@ -45,10 +45,10 @@
 
 | Size pair | Equal-cost call count | Status |
 | --- | --- | --- |
-| 2e+09 / 4e+09 | 1930755100.7993765 | nonnegative_crossing |
-| 2e+09 / 8e+09 | 658421066.9494982 | nonnegative_crossing |
-| 2e+09 / 1.6e+10 | 265925126.77361265 | nonnegative_crossing |
-| 4e+09 / 8e+09 | 22254050.02455914 | nonnegative_crossing |
+| 2e+09 / 4e+09 | 1930755100.7993648 | nonnegative_crossing |
+| 2e+09 / 8e+09 | 658421066.9494942 | nonnegative_crossing |
+| 2e+09 / 1.6e+10 | 265925126.77361095 | nonnegative_crossing |
+| 4e+09 / 8e+09 | 22254050.024559036 | nonnegative_crossing |
 | 4e+09 / 1.6e+10 | None | negative_crossing |
 | 8e+09 / 1.6e+10 | None | negative_crossing |
 

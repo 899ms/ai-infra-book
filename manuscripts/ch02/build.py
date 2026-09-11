@@ -153,14 +153,14 @@ rows=[(cap,16,24_000_000_000),(cap70,8,80_000_000_000),(cap70,4,80_000_000_000)]
 a=axs[0];y=np.arange(3);left=np.zeros(3)
 for field,label,col in [('weight_bytes','权重','blue'),('workspace_bytes','固定预留','orange'),('kv_bytes_per_request','1 条请求 KV','teal')]:
  vals=np.array([z[field]/1e9 for z in entries]);a.barh(y,vals,left=left,label=label,color=C[col],height=.5);left+=vals
-for i,z in enumerate(entries):a.plot([z['capacity_bytes']/1e9]*2,[i-.32,i+.32],color=C['ink'],lw=2);a.text(2,i+.37,f"容量 {z['capacity_bytes']/1e9:.0f} GB：最多容纳 {z['maximum_requests']} 条",fontsize=10)
+for i,z in enumerate(entries):a.plot([z['capacity_bytes']/1e9]*2,[i-.32,i+.32],color=C['ink'],lw=2);a.text(2,i+.37,f"{ {24_000_000_000:'RTX 4090',80_000_000_000:'H100 SXM'}[z['capacity_bytes']]} {z['capacity_bytes']/1e9:.0f} GB：最多容纳 {z['maximum_requests']} 条",fontsize=10)
 a.set_yticks(y,['Qwen8\nBF16','70B\n8-bit 方案','70B\n4-bit 方案']);a.invert_yaxis();a.set_xlim(0,87);a.set_xlabel('GB');a.set_title('A  权重、状态与容量',loc='left',fontsize=14);a.legend(loc='upper center',bbox_to_anchor=(.5,-.13),ncol=3,fontsize=9,frameon=False)
 a=axs[1];c32=load('llama70-capacity-32k')
 y8=next(z['maximum_requests'] for z in cap70['capacity_comparisons'] if z['matrix_bits']==4 and z['capacity_bytes']==80_000_000_000)
 y32=next(z['maximum_requests'] for z in c32['capacity_comparisons'] if z['matrix_bits']==4 and z['capacity_bytes']==80_000_000_000)
 a.bar(['8K 上下文','32K 上下文'],[y8,y32],color=[C['blue'],C['orange']]);a.set_ylabel('容量允许的独立请求数');a.set_title('B  上下文增长挤占并发容量',loc='left',fontsize=14)
 for i,z in enumerate([y8,y32]):a.text(i,z+.25,str(z),ha='center')
-a.set_ylim(0,17);a.text(.5,.88,'70B · 4-bit 量化 · 80 GB\n固定预留 2 GiB',transform=a.transAxes,ha='center',fontsize=11)
+a.set_ylim(0,17);a.text(.5,.88,'70B · 4-bit 量化 · H100 SXM 80 GB\n固定预留 2 GiB',transform=a.transAxes,ha='center',fontsize=11)
 save(f,'figure-2-9-capacity');data['figure_2_9']={'capacity_rows':entries,'history_capacity':{'history_tokens':[8192,32768],'maximum_requests':[y8,y32]}}
 # Figure 8: request timeline and separate known resource / measured quality observations.
 f,a=canvas('图 2-8  请求输入与计算状态映射','统一资源请求：S=0、P=128、G=4、B=1；首输出来自 prefill，decode 调用为 G−1=3。',9)

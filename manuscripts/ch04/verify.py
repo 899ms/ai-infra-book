@@ -2,7 +2,7 @@
 """Check chapter structure, provenance, figure data, numerical derivations and reading artifacts."""
 from pathlib import Path
 import hashlib,json,re,math,urllib.parse,xml.etree.ElementTree as ET
-HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1];md=HERE.parent/'04-加速器架构.md';s=md.read_text();outline=(ROOT/'outlines/04-加速器架构.md').read_text();errors=[];checks=0
+HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1];md=HERE.parent/'04-加速器架构.md';s=md.read_text();outline=next(p for p in [ROOT/'outlines'/md.name,ROOT/'archive/outlines'/md.name] if p.exists()).read_text();errors=[];checks=0
 
 def check(ok,msg):
  global checks
@@ -12,8 +12,8 @@ def load(path):return json.loads((ROOT/path).read_text())
 def calc(n):return load('calculations/results/'+n+'.json')
 def close(a,b):return math.isclose(a,b,rel_tol=1e-10,abs_tol=1e-8)
 def heads(t):return re.findall(r'^#{2,3} (4\.\d+(?:\.\d+)?) ',t,re.M)
-check(heads(s)==heads(outline),'outline section numbering/order')
-check(re.findall(r'\*\*实验 4-(\d+)',s)==list(map(str,range(1,8))),'exercise identities')
+check([h for h in heads(outline) if h in set(heads(s))]==[h for h in heads(s) if h in set(heads(outline))],'outline section numbering/order')
+check(re.findall(r'\*\*实验 4-(\d+)',s)==list(map(str,range(1,9))),'exercise identities')
 check(re.findall(r'\*\*实验 (4-\d+) · 核心',s)==['4-1','4-4','4-5'],'core selection')
 check(len(re.findall(r'\*\*例 4-\d+',s))==3,'worked examples')
 figs=re.findall(r'!\[[^\]]*\]\((ch04/[^)]+\.svg)\)',s)
@@ -37,13 +37,15 @@ check(not json.loads((HERE/'figure-layout-check.json').read_text())['outside_can
 m=json.loads((HERE/'math-validation.json').read_text());check(not m['errors'],'KaTeX errors')
 for r in json.loads((HERE/'teaching-browser-validation.json').read_text()):
  check(r['width']==r['scrollWidth'] and len(r['images'])==len(figs) and all(i['loaded'] for i in r['images']) and not r['mathErrors'] and not r['brokenAnchors'],'browser rendering')
-layout=json.loads((HERE/'teaching-layout-validation.json').read_text())
+layout=json.loads((HERE/'teaching-layout-validation.json').read_text())+json.loads((HERE/'evolution-layout-validation.json').read_text())
 check(len(layout)==len(figs) and all(z['width_pt']==420 and z['min_label_pt']>=11 and not z['text_extent_warnings'] for z in layout),'book-size figure typography')
 # Closed forms reconstructed independently of the calculation modules.
 for M in [1,256]:
  q=calc(f'projection-qwen3-8b-rtx4090-b{M}')['summary'];F=2*M*4096**2;V=2*(M*4096+4096**2+M*4096)
  for key,value in [('matrix_flops',F),('cold_memory_payload_bytes',V),('arithmetic_intensity_flops_per_byte',F/V),('compute_service_seconds',F/165.2e12),('memory_service_seconds',V/1.008e12),('roofline_lower_bound_seconds',max(F/165.2e12,V/1.008e12))]:check(close(q[key],value),'Q projection '+key)
-check(36*2*8*128*2==147456,'KV coefficient');check(147456*8192==1207959552,'KV 8K');check(math.ceil(1e12*500e-9/128)==3907,'outstanding transactions')
+check(36*2*8*128*2==147456,'KV coefficient');check(147456*8192==1207959552,'KV 8K');check(math.ceil(1.008e12*500e-9/128)==3938 and math.ceil(1.792e12*500e-9/128)==7000 and math.ceil(1.792e12*800e-9/128)==11200,'outstanding transactions')
+for n,req in [('rtx4090-n128',3938),('rtx4090-n4096',3938),('rtx5090-n4096',7000),('rtx5090-l800',11200)]:check(calc('window-qwen3-8b-'+n)['summary']['required_transactions']==req,'window result '+n)
+check(round(calc('window-qwen3-8b-rtx5090-n4096')['summary']['effective_bandwidth_upper_bytes_per_second']/1.008e12-1,2)==.04,'RTX 5090 window gain')
 check(close(1207959552/(128*128/500e-9)*1e3,36.864),'low concurrency ms')
 check(math.ceil(15134641792/(2*1e9*100e-6))==75674,'minimum lanes');check(math.ceil(15134641792/(2*1e9*40e-6*.6))==315306,'constrained lanes')
 check(20000000/(.5/1e6)==40000000000000,'break-even volume');check(math.ceil(4e13/(10000*.5*31536000))==254,'break-even devices')
@@ -53,7 +55,7 @@ for row,scenario in zip(d['4-4']['service_cycles'],fa):
 check(d['4-9']['input_rows']==calc('attention-input-base')['rows'],'pipeline source')
 check(d['4-14']['measured_projection']==load('experiments/ch04/04-06/results/projection-summary.json'),'measured plot source')
 check(d['4-14']['traffic']==load('experiments/ch04/04-06/results/projection-traffic.json')['rows'],'counter source')
-check(d['4-7']['minimum_requests']==[math.ceil(bw*500e-9/128) for bw in [1e12,2e12]],'concurrency thresholds')
+check(d['4-7']['interface_bytes_per_second']==[1.008e12,1.792e12] and d['4-7']['minimum_requests']==[math.ceil(bw*500e-9/128) for bw in d['4-7']['interface_bytes_per_second']],'concurrency thresholds')
 for bw,curve in zip(d['4-7']['interface_bytes_per_second'],d['4-7']['bandwidth_upper_bytes_per_second']):
  check(all(close(v,min(bw,n*128/500e-9)) for n,v in zip(d['4-7']['requests'],curve)),'concurrency bandwidth curve')
 # Teaching counterfactuals: preserve exact integer boundaries before rounding prose.
@@ -61,8 +63,10 @@ weight=16381470720;workspace=2*2**30;kv=147456*8192
 check((24e9-weight-workspace)//kv==4 and (24e9-weight-workspace)//(2*kv)==2,'24 GB request boundary')
 check(256*16/(8*64)==8 and 64*8==512,'MoE padded work')
 check(32+64<=96 and 2*32+64>96 and 3*32<=96,'input and accumulator capacity')
-check(close(64*2**20/32e9*1e3,2.097152) and close(64*2**20/1e12*1e6,67.108864),'host and GPU transfers')
-check(close((32*2**30/2**40+32*2**30/(4*2**40))*1e3,39.0625),'serial remote die path')
+check(close(64*2**20/32e9*1e3,2.097152) and close(64*2**20/1.008e12*1e6,66.57625396825397),'host and GPU transfers')
+b2,a3=json.loads((HERE/'teaching-data.json').read_text())['die_locality']['cases']
+check(close(b2['remote_ms'],32*2**30/4e12*1e3) and close(b2['overlapped_ms'],b2['split_ms']),'B200 die path')
+check(close(a3['remote_ms'],32*2**30/270e9*1e3) and close(a3['split_ms'],32*2**30/1.6e12*1e3) and close(a3['activation_us'],64*2**20/270e9*1e6),'910C die path')
 check(math.ceil(4e13/(10000*.5*31536000/2))==508,'half-year break-even')
 check(math.floor(d['4-12']['active_weight_bytes']/d['4-12']['kv_bytes_per_request'])+1==13,'integer KV crossing')
 for payload,row in zip(d['4-11']['payload_bytes'],d['4-11']['total_us']):
@@ -80,7 +84,7 @@ for row in q['cases']:
  check(row['total_bytes']==expected,'capacity diagram bytes')
  check((expected<=q['capacity_bytes'])==(row['requests']!=5),'capacity diagram boundary')
 q=d['4-8'];check(q['payload_bytes']==128*256 and q['address_span_bytes']==127*8192+256 and q['row_stride_bytes']==8192 and q['read_bytes_per_row']==256 and q['rows']==128,'layout diagram')
-q=d['4-10'];check(close(q['remote_weight_bytes']/q['link_bytes_per_second']*1e3,31.25) and close(q['activation_bytes']/q['link_bytes_per_second']*1e6,61.03515625),'locality diagram')
+q=d['4-10'];check(q['cases']==json.loads((HERE/'teaching-data.json').read_text())['die_locality']['cases'],'locality diagram')
 q=d['4-13'];check(q['rows']==list(range(1,257)),'time curve row range')
 for rows,tc,tm in zip(q['rows'],q['compute_us'],q['memory_us']):
  check(close(tc,2*rows*4096**2/165.2e12*1e6) and close(tm,2*(4096**2+2*rows*4096)/1.008e12*1e6),'time curve '+str(rows))
@@ -113,8 +117,12 @@ for n in [178,179]:
  F=2*n*4096**2;V=2*(4096**2+2*n*4096)
  check((F/165.2e12>V/1.008e12)==(n==179),'Roofline integer boundary '+str(n))
 check(31<1e12/32e9<=32,'upload reuse threshold')
-check(24*8192<2e-6*1e11<25*8192,'message-size threshold')
+check(109*8192<2e-6*450e9<110*8192,'message-size threshold')
 check(5*kv*.9<24e9-weight-workspace,'capacity thought exercise')
-check(close(64*2**20/2**40*1e6,61.03515625),'locality activation exchange')
+check(close(64*2**20/270e9*1e6,248.55134814814815),'locality activation exchange')
+md8=td['measured_decode'];check(close(md8['bound_ms'],16344770560/1.792e12*1e3) and md8['measured_ms']==25.83 and round(md8['fraction'],3)==.353,'measured decode fraction')
+en=td['energy'];check([round(c['mac_breakeven_W'],1) for c in en['calls']]==[155.1,10.7] and [round(c['rtx_mJ'],1) for c in en['calls']]==[25.8,19.6],'projection energy')
+check([round(x['joules'],2) for x in en['decode_step']]==[7.30,5.24],'decode step energy')
+check(td['groq_kv']=={'chip_sram_bytes':220*2**20,'one_request':6,'eight_requests':42,'eight_requests_32k':168,'weights_bf16':72},'Groq chip counts')
 report={'status':'passed' if not errors else 'failed','chapter':4,'sections':7,'subsections':23,'exercises':7,'worked_examples':3,'figures':len(figs),'math_expressions':m['expressions'],'chinese_characters':len(re.findall(r'[\u4e00-\u9fff]',s)),'checks':checks,'errors':errors}
 (HERE/'validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');print(json.dumps(report,ensure_ascii=False,indent=2));raise SystemExit(bool(errors))

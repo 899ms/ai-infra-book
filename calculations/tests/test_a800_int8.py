@@ -13,7 +13,7 @@ class A800Int8Tests(unittest.TestCase):
         self.assertEqual(peak['tera_ops_per_second'], 1247)
         self.assertEqual((peak['sparsity'], peak['operation_kind'], peak['accumulator_precision']),
                          ('structured', 'integer', 'unspecified'))
-        raw = (PROJECT / 'sources/hardware/nvidia-a800-active-page.html').read_text()
+        raw = (PROJECT / 'sources/hardware/nvidia-a800-active-page.txt').read_text()
         self.assertIn('Theoretical INT8 TOPS using sparsity', raw)
         self.assertIn('structural sparsity', raw)
         for precision, accumulator, sparsity in (('INT8','unspecified','structured'),

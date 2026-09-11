@@ -18,8 +18,8 @@ def cut(ax, p, q):
     ax.plot([p[0], q[0]], [p[1], q[1]], ls=(0, (5, 3)), lw=1.6, color=COL['ink'])
 
 
-def draw(here):
-    here = Path(here); out = Exporter(here)
+def draw(here, data=None):
+    here = Path(here); out = Exporter(here); data = {} if data is None else data
     with plt.rc_context(STYLE):
         # 5.1.2 Copy paths between host memory and device memory.
         f, a = canvas(3.6)
@@ -108,6 +108,68 @@ def draw(here):
             text(a, .33, y + .065, '×', 13, ha='center'); arrow(a, (.62, y + .065), (.70, y + .065))
         text(a, .50, .04, '输出分片按需收集；归约分片必须求和', 12, ha='center')
         out.save(f, 'figure-5-split-axes')
+        # 5.1.5 Two resident blocks against the SM's three resource limits (calculations/results/sm-occupancy-book-tile.json).
+        limits = dict(threads=2048, registers=65536, shared_bytes=233472, blocks=32)
+        block = dict(threads=256, registers_per_thread=128, shared_bytes=98304, reserved_shared_bytes=1024)
+        by = dict(threads=limits['threads'] // block['threads'],
+                  registers=limits['registers'] // (block['threads'] * block['registers_per_thread']),
+                  shared_memory=limits['shared_bytes'] // (block['shared_bytes'] + block['reserved_shared_bytes']),
+                  blocks=limits['blocks'])
+        resident = min(by.values())
+        f, a = canvas(3.6)
+        text(a, .0, .95, '两个驻留线程块（蓝：块 0，绿：块 1）', 12)
+        x0, w = .30, .62
+        rows = [('寄存器 64K 个', block['threads'] * block['registers_per_thread'] / limits['registers'], '两块填满，第三块放不下', True),
+                ('共享内存 228 KB', (block['shared_bytes'] + block['reserved_shared_bytes']) / limits['shared_bytes'], '剩 34 KiB，第三块放不下', True),
+                ('线程槽 2048 个', block['threads'] / limits['threads'], '用了 512 个，还能放 6 块', False)]
+        for i, (label, frac, note, binding) in enumerate(rows):
+            y = .73 - i * .27
+            text(a, .0, y + .06, label, 12)
+            a.add_patch(Rectangle((x0, y), w, .12, facecolor=COL['white'], edgecolor=COL['ink' if binding else 'line'], lw=1.8 if binding else .9))
+            for j in range(resident):
+                a.add_patch(Rectangle((x0 + j * w * frac, y), w * frac, .12, facecolor=COL['blue' if j == 0 else 'green'], edgecolor=COL['line'], lw=.9))
+                text(a, x0 + (j + .5) * w * frac, y + .06, str(j), 11, ha='center')
+            text(a, x0, y - .065, ('限制驻留：' if binding else '') + note, 11)
+        text(a, .0, .03, f'驻留 {resident} 块 = {resident * block["threads"] // 32} 个 warp，占用率 {resident * block["threads"] // 32}/64 = {resident * block["threads"] // 32 * 100 // 64}%', 12)
+        out.save(f, 'figure-5-sm-residency')
+        data['sm_residency'] = dict(kind='resource_residency', source='calculations/results/sm-occupancy-book-tile.json', limits=limits, block=block,
+                                    blocks_by_limit=by, resident_blocks=resident, resident_warps=resident * block['threads'] // 32,
+                                    occupancy=resident * block['threads'] / 32 / 64, binding_limits=[k for k, v in by.items() if v == resident],
+                                    shared_left_bytes=limits['shared_bytes'] - resident * (block['shared_bytes'] + block['reserved_shared_bytes']))
+
+        # 5.1.5 Producer warp copies, consumer warps compute; barriers hand over two slots (same timing as figure 5-16).
+        # One K tile (A and W, 32 KiB; 2,097,152 FLOPs) on one H100 SM: 3.35 TB/s and 989.4 TFLOP/s split over 132 SMs.
+        copy_us = 32768 * 132 / 3.35e12 * 1e6; compute_us = 2097152 * 132 / 989.4e12 * 1e6; tiles = 4
+        copies, computes = [], []
+        for t in range(tiles):
+            earliest = copies[-1]['start'] + copy_us if copies else 0
+            freed = computes[t - 2]['start'] + compute_us if t >= 2 else 0
+            copies.append(dict(tile=t, slot=t % 2, start=max(earliest, freed), duration=copy_us))
+            ready = copies[t]['start'] + copy_us
+            previous = computes[-1]['start'] + compute_us if computes else 0
+            computes.append(dict(tile=t, slot=t % 2, start=max(ready, previous), duration=compute_us))
+        f, a = plot(3.4, left=.25, bottom=.19); f.subplots_adjust(top=.80)
+        for e in copies + computes:
+            y = 1 if e in copies else 0
+            a.broken_barh([(e['start'], e['duration'])], (y - .19, .38), facecolors=COL['blue' if e['slot'] == 0 else 'green'], edgecolors=COL['line'], lw=.8)
+            a.text(e['start'] + e['duration'] / 2, y, str(e['tile']), ha='center', va='center', fontsize=11)
+        full = [(c['start'] + c['duration'], k['start']) for c, k in zip(copies, computes)]
+        empty = [(computes[t - 2]['start'] + compute_us, copies[t]['start']) for t in range(2, tiles)]
+        for done, begin in full:
+            a.annotate('', xy=(begin, .19), xytext=(done, .81), arrowprops=dict(arrowstyle='-|>', lw=1, color=COL['line'], shrinkA=0, shrinkB=0))
+        for done, begin in empty:
+            a.annotate('', xy=(begin, .81), xytext=(done, .19), arrowprops=dict(arrowstyle='-|>', lw=1, color=COL['line'], linestyle='--', shrinkA=0, shrinkB=0))
+        a.text(full[0][0] + .05, .5, '满', fontsize=11, va='center'); a.text(empty[0][1] + .05, .62, '空', fontsize=11, va='center')
+        a.text((computes[0]['start'] + compute_us + computes[1]['start']) / 2, -.42, '等数据', fontsize=11, ha='center', va='center')
+        a.set(yticks=[0, 1], yticklabels=['消费者 warp\n计算', '生产者 warp\n拷贝'], xlim=(0, 5.8), ylim=(-.6, 1.6),
+              xticks=[0] + [round(c['start'] + copy_us, 2) for c in copies], xlabel='时间（μs）')
+        a.set_xticklabels(['0'] + [f"{c['start'] + copy_us:.2f}" for c in copies])
+        f.legend(handles=[Patch(fc=COL[c], ec=COL['line'], label=l) for c, l in [('blue', '槽 A：块 0、2'), ('green', '槽 B：块 1、3')]],
+                 loc='upper center', ncol=2, frameon=False)
+        out.save(f, 'figure-5-warp-pipeline')
+        data['warp_pipeline'] = dict(kind='teaching_timeline', copy_us=copy_us, compute_us=compute_us, copies=copies, computes=computes,
+                                     full_barrier_us=[d for d, _ in full], empty_barrier_us=[d for d, _ in empty],
+                                     completion_us=computes[-1]['start'] + compute_us)
     (here / 'structure-layout-validation.json').write_text(json.dumps(out.checks, ensure_ascii=False, indent=2) + '\n')
     return out.outputs
 

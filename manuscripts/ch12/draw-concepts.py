@@ -59,20 +59,21 @@ f,a=canvas(5.6);box(a,.02,.40,.16,.22,'终端','30 MB 图片',size=14);box(a,.35
 arrow(a,(.185,.56),(.345,.76));arrow(a,(.185,.46),(.345,.27));arrow(a,(.575,.76),(.755,.56));arrow(a,(.575,.27),(.755,.46));a.text(.5,.96,'两路同时发送，所有字节仍须经过同一出口',ha='center',fontsize=16,weight='bold');a.text(.5,.04,'共同出口的容量限制速度；共同端点故障会中断两路',ha='center',fontsize=13)
 save(f,'figure-12-14-multipath');data['12-14']={'kind':'teaching_topology','split_MB':[20,10],'access_Mbps':[20,10],'shared_Mbps':24,'access_s':[8,8],'shared_min_s':10,'relationship':'两条接入仍共享下游资源'}
 # Show how the fastest compute loses its lead to communication.
-f,a=plot_canvas();f.set_size_inches(12,5.5);components=np.array([[0,6,58,0,0],[3,6,30,.4,1.6],[1,6,16,4,20]]);left=np.zeros(3)
+f,a=plot_canvas();f.set_size_inches(12,5.5);R=base['rounds'];components=np.array([[tiers[k]['prepare_seconds'],R*tiers[k]['terminal_seconds'],R*tiers[k]['model_seconds_per_round'],R*tiers[k]['rtt_seconds'],R*tiers[k]['upload_seconds_per_round']] for k in ('end','near','cloud')]);left=np.zeros(3)
 for j,(label,col) in enumerate([('准备','muted'),('终端工作','line'),('模型计算','teal'),('往返传播','orange'),('上传','blue')]):
  a.barh(np.arange(3),components[:,j],left=left,height=.48,color=C[col],label=label)
  for y,w,l in zip(range(3),components[:,j],left):
-  if w>=3:a.text(l+w/2,y,f'{w:g}',ha='center',va='center',color='white' if col!='line' else C['ink'],fontsize=11)
+  if w>=3:a.text(l+w/2,y,f'{w:.1f}',ha='center',va='center',color='white' if col!='line' else C['ink'],fontsize=11)
  left+=components[:,j]
-for y,v in enumerate(left):a.text(v+1,y,f'{v:g} s',va='center')
+for y,v in enumerate(left):a.text(v+1,y,f'{v:.1f} s',va='center')
 a.axvline(45,color=C['red'],ls='--');a.text(45,-.55,'期限 45 s',ha='center',color=C['red']);a.set(yticks=range(3),yticklabels=['端侧','附近工作站','云地域'],xlim=(0,71),ylim=(-.8,2.6),xlabel='剩余 20 轮累计时间 / s');a.invert_yaxis();a.legend(frameon=False,ncol=5,fontsize=10,loc='lower left',bbox_to_anchor=(-.12,1.02));a.set_xticks([0,10,20,30,40,50,60,70])
 save(f,'figure-12-15-budgets');data['12-15']={'kind':'teaching_stacked_time','components':['prepare','terminal','model','rtt','upload'],'seconds':components.tolist(),'totals_s':left.tolist(),'relationship':'较快模型被较长通信抵消'}
 # Progress retention determines how many rounds repeat.
+rc=tiers['cloud']['round_seconds'];keep=next(c for c in edge['cases'] if c['id']=='twenty-retain-nine');lost=next(c for c in edge['cases'] if c['id']=='twenty-lose-ten')
 f,a=canvas(6)
 a.text(.02,.93,'断连前已执行',fontsize=13)
 for i in range(10):box(a,.20+i*.071,.85,.060,.10,str(i+1),col='light' if i<9 else 'sand',size=11)
 a.text(.83,.78,'第 10 轮确认丢失',fontsize=11,ha='center',color=C['orange'])
-a.text(.02,.59,'保留进度',fontsize=13);box(a,.20,.49,.30,.14,'第 1–9 轮已提交','从第 10 轮继续',col='light',size=13);arrow(a,(.51,.56),(.58,.56));box(a,.59,.49,.13,.14,'重做 1 轮','1.9 s',col='sand',size=12);a.text(.76,.56,'恢复 1 s + 1.9 s\n额外 2.9 s',va='center',fontsize=13)
-a.text(.02,.27,'丢失进度',fontsize=13);box(a,.20,.17,.30,.14,'重做第 1–10 轮','10 × 1.9 s',col='sand',size=13);arrow(a,(.51,.24),(.58,.24));a.text(.60,.24,'恢复 1 s + 19 s\n额外 20 s',va='center',fontsize=13)
-save(f,'figure-12-16-recovery');data['12-16']={'kind':'teaching_progress','executed':10,'committed_retained':9,'round_s':1.9,'restore_s':1,'redo_rounds':[1,10],'extra_s':[2.9,20],'relationship':'提交记录决定恢复后的重复工作'}
+a.text(.02,.59,'保留进度',fontsize=13);box(a,.20,.49,.30,.14,'第 1–9 轮已提交','从第 10 轮继续',col='light',size=13);arrow(a,(.51,.56),(.58,.56));box(a,.59,.49,.13,.14,'重做 1 轮',f'{rc:.2f} s',col='sand',size=12);a.text(.76,.56,f'恢复 1 s + {rc:.2f} s\n额外 {1+rc:.2f} s',va='center',fontsize=13)
+a.text(.02,.27,'丢失进度',fontsize=13);box(a,.20,.17,.30,.14,'重做第 1–10 轮',f'10 × {rc:.2f} s',col='sand',size=13);arrow(a,(.51,.24),(.58,.24));a.text(.60,.24,f'恢复 1 s + {10*rc:.1f} s\n额外 {1+10*rc:.1f} s',va='center',fontsize=13)
+save(f,'figure-12-16-recovery');data['12-16']={'kind':'teaching_progress','executed':10,'committed_retained':9,'round_s':rc,'restore_s':1,'redo_rounds':[1,10],'extra_s':[1+rc,1+10*rc],'totals_s':[next(r for r in keep['rows'] if r['tier']=='cloud')['total_seconds'],next(r for r in lost['rows'] if r['tier']=='cloud')['total_seconds']],'relationship':'提交记录决定恢复后的重复工作'}

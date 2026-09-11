@@ -1000,7 +1000,7 @@ Qwen3.6-35B-A3B：`python3 calculations/calc.py qwen36-forward --format md` 输�
 
 实验6-10综合成本：`python3 calculations/calc.py supernode-cohort-cost --inputs calculations/scenarios/supernode-cohort-example.json --format md`，比较同8卡的TP8/TP4/TP2服务副本，连接真实模型容量、声明服务时长、故障重启、完整响应SLO与有效请求成本。54个固定场景使用Qwen3-8B/32B；费用和时长均为教学输入。先reproduce，再运行`plot-supernode-cost`生成图6-9及精确阶梯数据。
 
-真实梯度分层通信：`python3 calculations/calc.py hierarchical-gradient --inputs calculations/scenarios/hierarchical-gradient-example.json --format md`。固定Qwen3-8B首层gate梯度，FP32/BF16、平坦连续/交错与分层、单/双NIC共12场景。JSON保留逐轮贡献和物理条带区间；Markdown列阶段和每资源字节。所有速率/启动均为教学输入，预算通过只是必要下界未排除，不是训练期限保证。
+真实梯度分层通信：`python3 calculations/calc.py hierarchical-gradient --inputs calculations/scenarios/hierarchical-gradient-example.json --format md`。固定Qwen3-8B首层gate梯度。`--inputs`可指定gradient_dtype（FP32/BF16）、algorithm（flat_contiguous/flat_interleaved/hierarchical）、ranks_per_server（4/8）、nics_per_server（1到ranks_per_server）、nic_bytes_per_second、local_bytes_per_second、shared_egress_bytes_per_second（null为无共享出口）、startup_ns、budget_ns与bandwidth_overrides。NIC数等于rank数时每rank独占一张NIC，否则跨服务器消息按NIC条带化。书中配置为两台各8卡、每卡一张50 GB/s NIC、本地450 GB/s（`-nic8`，FP32/BF16三种组织及单NIC分层`-nic1`）；对照配置为每台4卡、两张25 GB/s NIC共用40 GB/s出口、本地200 GB/s（`-two-nic`，另有`-one-nic`、`-three-nic`连续环），共12场景。JSON保留逐轮贡献和物理条带区间；Markdown列阶段和每资源字节。所有速率/启动均为声明输入，预算通过只是必要下界未排除，不是训练期限保证。
 
 图片文件请求：`python3 calculations/calc.py image-request-budget --inputs calculations/scenarios/image-request-example.json --format md`，声明bytes、速率与阶段秒数（用整数/分数字符串），计算完整成片、压缩和本地交叉点。先reproduce，再`plot-image-request`生成图12-1。默认是教学预算，不是RAW/JPEG实际解码、VAE或网络测量；预览未知。
 
@@ -1081,3 +1081,24 @@ JSON分列端到端传输、同PN的MAC尝试、预约、DATA接收和MAC反馈�
 - [给定模型、容量与期限选择TP和实例](results/parallel-choice-book.md)
 - [专家分离的dispatch、计算与combine偏斜](results/ep-skew-book.md)
 - [1024卡训练：超节点、出口、并行候选与恢复](results/supernode-scaling-book.md)
+
+## 概念覆盖补齐（2026-09-11）：交换网络、核内执行、能耗、训练稳定性与广域丢包
+
+每个主题的声明输入都在 `scenarios/book.json` 对应行的 `input_sources` 中标明来源（归档文件路径或 `book`），结果写入 `results/`；`declared_*` 字段是场景选择，正文应把它们写成输入。
+
+```bash
+python3 calculations/calc.py clos-cut --inputs calculations/scenarios/clos-cut-example.json --format md   # 二/三层 Clos、半分带宽、割集；mode=rail/in_network
+python3 calculations/calc.py hash-collision --inputs calculations/scenarios/hash-collision-example.json  # 同一叶交换机 n 条跨脊流哈希到 m 条上行（k=64：无阻塞 32、3:1 超额订阅 16）的精确最大负载分布、逐包喷洒（复用 packet-reorder）
+python3 calculations/calc.py incast-feedback --inputs calculations/scenarios/incast-feedback-example.json # N-1 发送方：允许反馈时延、一跳暂停 vs 端到端所需缓冲
+python3 calculations/calc.py in-network-reduce                                                           # 交换机侧归约与 results/ 中 hierarchical-gradient 的对照
+python3 calculations/calc.py sm-occupancy --inputs calculations/scenarios/sm-occupancy-example.json      # CC 9.0 常驻 block/warp、绑定限制、延迟隐藏、MMA 指令数
+python3 calculations/calc.py energy-ledger --inputs calculations/scenarios/energy-ledger-example.json    # 各层次 pJ/B（sources-extract.json）× 一步 decode 字节；电压、功率密度、机柜、手机
+python3 calculations/calc.py critical-batch --inputs calculations/scenarios/critical-batch-example.json  # S(B)=S_min(1+B_noise/B) 用于第 10 章设计
+python3 calculations/calc.py straggler-max --inputs calculations/scenarios/straggler-max-example.json    # N 卡最大值步时间、检测信号、等待/重分配/驱逐、loss spike 回滚
+python3 calculations/calc.py moe-capacity --inputs calculations/scenarios/moe-capacity-example.json      # 容量因子：96/32 示例与 Qwen3-235B 的填充/丢弃
+python3 calculations/calc.py wan-loss-model --inputs calculations/scenarios/wan-loss-model-example.json  # Mathis、BBR 理想、可靠流尾部、FEC
+python3 calculations/calc.py edge-tiers --inputs calculations/scenarios/edge-tiers-example.json  # 第 12.5 节端侧／附近／云端三档设备、能耗与断连恢复
+python3 calculations/calc.py training-pipeline-schedule --inputs <json>   # policy=interleaved_1f1b | zero_bubble（ZB-H1，复现 zero-bubble 论文图 3 上）| dualpipe；规则见 declared_schedule_rule，summary 含 bubble_bound_*（1F1B/交错/ZB-H1/ZB-H2/DualPipe）与不含传输的空闲
+python3 calculations/calc.py pd-af-handoff --inputs <json>                # kv_layout=gqa|mla：GQA 144 KiB/token 与紧凑 MLA 68.6 KiB/token 的交接与交叉点
+python3 calculations/calc.py chapter2-models --format md                  # 第 2 章五模型统一比较（results/chapter2-model-comparison.json）
+```

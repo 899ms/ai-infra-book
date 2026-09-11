@@ -147,3 +147,7 @@ H01–H07已按当前151配置471峰值全部验收，见[H05正式证据](inven
 [Blackwell独立裁决](research/blackwell-bf16-independent/REVIEW.md)以固定CUTLASS dense/sparse明确支持组合消除BF16累加类型歧义；PTX描述符编码表不能做类型选项的任意组合。H100四条FP8/FP32附特定wgmma内部精度限制，产品名义类型与内部舍入分开。正文和可读表已同步这一解释。
 
 H01现绑定37个NVIDIA来源；H07现核97硬件归档/85目录来源。硬件来源子集独立哈希允许后续新增模型源，整目录变更仍需重验。官方资料验收不声称持续时钟、运行功率、所有内部数值路径或实测性能已知。
+
+## 2026-09-11 H20 SXM5 96GB 峰值补录
+
+NVIDIA 仍未公开 H20 数据表。[MegaScale-Infer](../references/outline-checks/2026-09-07/execution-feedback/megascale-infer.pdf)（arXiv:2504.02263v1）第 8 页表 3 列出 H20 96 GB、4096 GB/s、148 TFLOPS；同列 A800 的 312／2039 与 H800 的 989／3350 等于 NVIDIA 数据表的 BF16 稠密峰值与带宽，据此把 148 录为 BF16 dense（累加按 Hopper wgmma 的 FP32 约定），带宽录为 4096 GB/s。第三方汇编 [Flopper.io 规格表](../references/files/specs/nvidia-h20-spec-sheet.pdf)给出同样的 148 TFLOPS 与 4.0 TB/s，只作佐证；其 FP8、TF32、功率等字段没有论文或官方来源，未录入。h20-sxm5-141gb 仍无峰值与带宽，不从 96 GB 型号移用。

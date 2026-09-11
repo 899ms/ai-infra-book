@@ -1,246 +1,36 @@
 {
   "assumptions": [
-    "教学模型，固定 Qwen3-8B BF16；不代替真实引擎规划器。候选为 TP1/2/4/8 与剩余卡组成的独立实例；每实例一次处理一个会话，不做连续批处理或跨会话流水。",
-    "逐步时间复用第六章权重／KV 读取与 72 次 ring 归约模型；小批 decode 读取受限。跨机 TP 组保守地按组内每轮均受慢链路限制，不代表最优分层通信算法。",
-    "全部八卡从请求到达计费至所有请求完成，每卡每秒 1 成本单位；目标为满足最低按时比例后，最小化每个按时完成会话的成本。",
-    "每卡容量按均匀 TP 分片加复制的归一化权重、最大历史 KV 和固定工作区计。完整参数数值来自现有第六章算例。",
-    "候选最优只在上述模型和候选范围内成立。PP/CP/SP/EP、动态批处理、其他归约算法须先扩展工作与通信模型再比较。"
+    "Qwen3-32B BF16，一台 HGX H100（8 张 H100 SXM 80 GB）。候选为 TP1/2/4/8 与其余卡组成的独立实例；每个实例一次处理一个会话，排队会话的 KV 也常驻在实例内。",
+    "每步时间：各卡读取本卡权重分片与 KV 分片的时间（按 H100 峰值 HBM 带宽 3350 GB/s）与矩阵计算时间取较大者，再加 128 次 AllReduce。机内 AllReduce 为 NVLink 环形算法：每轮 0.822 μs，每方向 450 GB/s；两台服务器组成的 TP16 直接取 nccl-tests 在两台 HGX H100 上实测的 16 KiB AllReduce 时间。",
+    "八张卡（跨服务器情形为十六张）从会话到达计费至全部会话完成，费用按 H100 GPU·s 计；满足最低按时比例后，按每个按时完成会话的 GPU·s 排序。",
+    "每卡容量为 80 GB，另为激活与工作区预留 2 GiB；KV 头少于 TP 卡数时 KV 按头复制。"
+  ],
+  "sources": [
+    "calculations/configs/models/qwen3-32b/config.json",
+    "calculations/configs/hardware.json#h100-sxm",
+    "references/files/specs/nvidia-h100.pdf 第 47 页：18 条 NVLink 4，每条每方向 25 GB/s",
+    "references/proceedings/ASPLOS/2026/paper-034.pdf 表 1：H100 NVLink 延迟 822 ns（nvbandwidth）",
+    "experiments/ch07/07-03/raw/hgx2.txt 第 81 行：16 rank、两台 HGX H100、16 KiB AllReduce 32.74 μs"
   ],
   "results": [
     {
-      "name": "四会话，90 ms 期限",
+      "name": "四会话，128K 上下文，130 ms 期限",
       "candidates": [
         {
           "tp": 1,
           "instances": 8,
           "cross_host": false,
-          "memory_bytes": 19738093568.0,
-          "service_s": 0.13235854131199998,
+          "memory_bytes": 102031468544.0,
+          "service_s": 0.23480809319164178,
           "completion_s": [
-            0.13235854131199998,
-            0.13235854131199998,
-            0.13235854131199998,
-            0.13235854131199998
+            0.23480809319164178,
+            0.23480809319164178,
+            0.23480809319164178,
+            0.23480809319164178
           ],
           "ontime": 0,
-          "cost": 1.0588683304959998,
-          "cost_per_ontime": null,
-          "rejections": [
-            "按时完成比例不足"
-          ]
-        },
-        {
-          "tp": 2,
-          "instances": 4,
-          "cross_host": false,
-          "memory_bytes": 10943087616.0,
-          "service_s": 0.06937764249600001,
-          "completion_s": [
-            0.06937764249600001,
-            0.06937764249600001,
-            0.06937764249600001,
-            0.06937764249600001
-          ],
-          "ontime": 4,
-          "cost": 0.5550211399680001,
-          "cost_per_ontime": 0.13875528499200002,
-          "rejections": []
-        },
-        {
-          "tp": 4,
-          "instances": 2,
-          "cross_host": false,
-          "memory_bytes": 6545584640.0,
-          "service_s": 0.041343193087999996,
-          "completion_s": [
-            0.041343193087999996,
-            0.041343193087999996,
-            0.08268638617599999,
-            0.08268638617599999
-          ],
-          "ontime": 4,
-          "cost": 0.6614910894079999,
-          "cost_per_ontime": 0.16537277235199999,
-          "rejections": []
-        },
-        {
-          "tp": 8,
-          "instances": 1,
-          "cross_host": false,
-          "memory_bytes": 4346833152.0,
-          "service_s": 0.03423796838399999,
-          "completion_s": [
-            0.03423796838399999,
-            0.06847593676799998,
-            0.10271390515199998,
-            0.13695187353599997
-          ],
-          "ontime": 2,
-          "cost": 1.0956149882879997,
-          "cost_per_ontime": 0.5478074941439999,
-          "rejections": [
-            "按时完成比例不足"
-          ]
-        }
-      ],
-      "winner_tp": 2
-    },
-    {
-      "name": "单会话，40 ms 期限",
-      "candidates": [
-        {
-          "tp": 1,
-          "instances": 8,
-          "cross_host": false,
-          "memory_bytes": 19738093568.0,
-          "service_s": 0.13235854131199998,
-          "completion_s": [
-            0.13235854131199998
-          ],
-          "ontime": 0,
-          "cost": 1.0588683304959998,
-          "cost_per_ontime": null,
-          "rejections": [
-            "按时完成比例不足"
-          ]
-        },
-        {
-          "tp": 2,
-          "instances": 4,
-          "cross_host": false,
-          "memory_bytes": 10943087616.0,
-          "service_s": 0.06937764249600001,
-          "completion_s": [
-            0.06937764249600001
-          ],
-          "ontime": 0,
-          "cost": 0.5550211399680001,
-          "cost_per_ontime": null,
-          "rejections": [
-            "按时完成比例不足"
-          ]
-        },
-        {
-          "tp": 4,
-          "instances": 2,
-          "cross_host": false,
-          "memory_bytes": 6545584640.0,
-          "service_s": 0.041343193087999996,
-          "completion_s": [
-            0.041343193087999996
-          ],
-          "ontime": 0,
-          "cost": 0.33074554470399997,
-          "cost_per_ontime": null,
-          "rejections": [
-            "按时完成比例不足"
-          ]
-        },
-        {
-          "tp": 8,
-          "instances": 1,
-          "cross_host": false,
-          "memory_bytes": 4346833152.0,
-          "service_s": 0.03423796838399999,
-          "completion_s": [
-            0.03423796838399999
-          ],
-          "ontime": 1,
-          "cost": 0.27390374707199994,
-          "cost_per_ontime": 0.27390374707199994,
-          "rejections": []
-        }
-      ],
-      "winner_tp": 8
-    },
-    {
-      "name": "两台四卡，单会话 40 ms",
-      "candidates": [
-        {
-          "tp": 1,
-          "instances": 8,
-          "cross_host": false,
-          "memory_bytes": 19738093568.0,
-          "service_s": 0.13235854131199998,
-          "completion_s": [
-            0.13235854131199998
-          ],
-          "ontime": 0,
-          "cost": 1.0588683304959998,
-          "cost_per_ontime": null,
-          "rejections": [
-            "按时完成比例不足"
-          ]
-        },
-        {
-          "tp": 2,
-          "instances": 4,
-          "cross_host": false,
-          "memory_bytes": 10943087616.0,
-          "service_s": 0.06937764249600001,
-          "completion_s": [
-            0.06937764249600001
-          ],
-          "ontime": 0,
-          "cost": 0.5550211399680001,
-          "cost_per_ontime": null,
-          "rejections": [
-            "按时完成比例不足"
-          ]
-        },
-        {
-          "tp": 4,
-          "instances": 2,
-          "cross_host": false,
-          "memory_bytes": 6545584640.0,
-          "service_s": 0.041343193087999996,
-          "completion_s": [
-            0.041343193087999996
-          ],
-          "ontime": 0,
-          "cost": 0.33074554470399997,
-          "cost_per_ontime": null,
-          "rejections": [
-            "按时完成比例不足"
-          ]
-        },
-        {
-          "tp": 8,
-          "instances": 1,
-          "cross_host": true,
-          "memory_bytes": 4346833152.0,
-          "service_s": 0.050531119103999995,
-          "completion_s": [
-            0.050531119103999995
-          ],
-          "ontime": 0,
-          "cost": 0.40424895283199996,
-          "cost_per_ontime": null,
-          "rejections": [
-            "按时完成比例不足"
-          ]
-        }
-      ],
-      "winner_tp": null
-    },
-    {
-      "name": "每卡容量降为 10 GB",
-      "candidates": [
-        {
-          "tp": 1,
-          "instances": 8,
-          "cross_host": false,
-          "memory_bytes": 19738093568.0,
-          "service_s": 0.13235854131199998,
-          "completion_s": [
-            0.13235854131199998,
-            0.13235854131199998,
-            0.13235854131199998,
-            0.13235854131199998
-          ],
-          "ontime": 0,
-          "cost": 1.0588683304959998,
-          "cost_per_ontime": null,
+          "gpu_seconds": 1.8784647455331343,
+          "gpu_seconds_per_ontime": null,
           "rejections": [
             "每卡容量不足",
             "按时完成比例不足"
@@ -250,59 +40,285 @@
           "tp": 2,
           "instances": 4,
           "cross_host": false,
-          "memory_bytes": 10943087616.0,
-          "service_s": 0.06937764249600001,
+          "memory_bytes": 52090152960.0,
+          "service_s": 0.11911080428470978,
           "completion_s": [
-            0.06937764249600001,
-            0.06937764249600001,
-            0.06937764249600001,
-            0.06937764249600001
+            0.11911080428470978,
+            0.11911080428470978,
+            0.11911080428470978,
+            0.11911080428470978
           ],
           "ontime": 4,
-          "cost": 0.5550211399680001,
-          "cost_per_ontime": 0.13875528499200002,
-          "rejections": [
-            "每卡容量不足"
-          ]
+          "gpu_seconds": 0.9528864342776783,
+          "gpu_seconds_per_ontime": 0.23822160856941957,
+          "rejections": []
         },
         {
           "tp": 4,
           "instances": 2,
           "cross_host": false,
-          "memory_bytes": 6545584640.0,
-          "service_s": 0.041343193087999996,
+          "memory_bytes": 35709429760.0,
+          "service_s": 0.06378734383124378,
           "completion_s": [
-            0.041343193087999996,
-            0.041343193087999996,
-            0.08268638617599999,
-            0.08268638617599999
+            0.06378734383124378,
+            0.06378734383124378,
+            0.12757468766248756,
+            0.12757468766248756
           ],
           "ontime": 4,
-          "cost": 0.6614910894079999,
-          "cost_per_ontime": 0.16537277235199999,
+          "gpu_seconds": 1.0205975012999005,
+          "gpu_seconds_per_ontime": 0.2551493753249751,
           "rejections": []
         },
         {
           "tp": 8,
           "instances": 1,
           "cross_host": false,
-          "memory_bytes": 4346833152.0,
-          "service_s": 0.03423796838399999,
+          "memory_bytes": 27519068160.0,
+          "service_s": 0.04117598160451078,
           "completion_s": [
-            0.03423796838399999,
-            0.06847593676799998,
-            0.10271390515199998,
-            0.13695187353599997
+            0.04117598160451078,
+            0.08235196320902156,
+            0.12352794481353235,
+            0.16470392641804313
           ],
-          "ontime": 2,
-          "cost": 1.0956149882879997,
-          "cost_per_ontime": 0.5478074941439999,
+          "ontime": 3,
+          "gpu_seconds": 1.317631411344345,
+          "gpu_seconds_per_ontime": 0.439210470448115,
+          "rejections": []
+        }
+      ],
+      "winner_tp": 2
+    },
+    {
+      "name": "单会话，128K 上下文，50 ms 期限",
+      "candidates": [
+        {
+          "tp": 1,
+          "instances": 8,
+          "cross_host": false,
+          "memory_bytes": 102031468544.0,
+          "service_s": 0.23480809319164178,
+          "completion_s": [
+            0.23480809319164178
+          ],
+          "ontime": 0,
+          "gpu_seconds": 1.8784647455331343,
+          "gpu_seconds_per_ontime": null,
+          "rejections": [
+            "每卡容量不足",
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 2,
+          "instances": 4,
+          "cross_host": false,
+          "memory_bytes": 52090152960.0,
+          "service_s": 0.11911080428470978,
+          "completion_s": [
+            0.11911080428470978
+          ],
+          "ontime": 0,
+          "gpu_seconds": 0.9528864342776783,
+          "gpu_seconds_per_ontime": null,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 4,
+          "instances": 2,
+          "cross_host": false,
+          "memory_bytes": 27119495168.0,
+          "service_s": 0.06378734383124378,
+          "completion_s": [
+            0.06378734383124378
+          ],
+          "ontime": 0,
+          "gpu_seconds": 0.5102987506499502,
+          "gpu_seconds_per_ontime": null,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 8,
+          "instances": 1,
+          "cross_host": false,
+          "memory_bytes": 14634166272.0,
+          "service_s": 0.04117598160451078,
+          "completion_s": [
+            0.04117598160451078
+          ],
+          "ontime": 1,
+          "gpu_seconds": 0.32940785283608626,
+          "gpu_seconds_per_ontime": 0.32940785283608626,
+          "rejections": []
+        }
+      ],
+      "winner_tp": 8
+    },
+    {
+      "name": "两台 HGX H100 共 16 卡，单会话，50 ms 期限",
+      "candidates": [
+        {
+          "tp": 1,
+          "instances": 16,
+          "cross_host": false,
+          "memory_bytes": 102031468544.0,
+          "service_s": 0.23480809319164178,
+          "completion_s": [
+            0.23480809319164178
+          ],
+          "ontime": 0,
+          "gpu_seconds": 3.7569294910662685,
+          "gpu_seconds_per_ontime": null,
+          "rejections": [
+            "每卡容量不足",
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 2,
+          "instances": 8,
+          "cross_host": false,
+          "memory_bytes": 52090152960.0,
+          "service_s": 0.11911080428470978,
+          "completion_s": [
+            0.11911080428470978
+          ],
+          "ontime": 0,
+          "gpu_seconds": 1.9057728685553565,
+          "gpu_seconds_per_ontime": null,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 4,
+          "instances": 4,
+          "cross_host": false,
+          "memory_bytes": 27119495168.0,
+          "service_s": 0.06378734383124378,
+          "completion_s": [
+            0.06378734383124378
+          ],
+          "ontime": 0,
+          "gpu_seconds": 1.0205975012999005,
+          "gpu_seconds_per_ontime": null,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 8,
+          "instances": 2,
+          "cross_host": false,
+          "memory_bytes": 14634166272.0,
+          "service_s": 0.04117598160451078,
+          "completion_s": [
+            0.04117598160451078
+          ],
+          "ontime": 1,
+          "gpu_seconds": 0.6588157056721725,
+          "gpu_seconds_per_ontime": 0.6588157056721725,
+          "rejections": []
+        },
+        {
+          "tp": 16,
+          "instances": 1,
+          "cross_host": true,
+          "memory_bytes": 10538985472.0,
+          "service_s": 0.05332944804298508,
+          "completion_s": [
+            0.05332944804298508
+          ],
+          "ontime": 0,
+          "gpu_seconds": 0.8532711686877613,
+          "gpu_seconds_per_ontime": null,
           "rejections": [
             "按时完成比例不足"
           ]
         }
       ],
-      "winner_tp": 4
+      "winner_tp": 8
+    },
+    {
+      "name": "四会话，32K 上下文，130 ms 期限",
+      "candidates": [
+        {
+          "tp": 1,
+          "instances": 8,
+          "cross_host": false,
+          "memory_bytes": 76261664768.0,
+          "service_s": 0.17326826327880598,
+          "completion_s": [
+            0.17326826327880598,
+            0.17326826327880598,
+            0.17326826327880598,
+            0.17326826327880598
+          ],
+          "ontime": 0,
+          "gpu_seconds": 1.3861461062304479,
+          "gpu_seconds_per_ontime": null,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 2,
+          "instances": 4,
+          "cross_host": false,
+          "memory_bytes": 39205251072.0,
+          "service_s": 0.08834088932829187,
+          "completion_s": [
+            0.08834088932829187,
+            0.08834088932829187,
+            0.08834088932829187,
+            0.08834088932829187
+          ],
+          "ontime": 4,
+          "gpu_seconds": 0.706727114626335,
+          "gpu_seconds_per_ontime": 0.17668177865658374,
+          "rejections": []
+        },
+        {
+          "tp": 4,
+          "instances": 2,
+          "cross_host": false,
+          "memory_bytes": 22824527872.0,
+          "service_s": 0.04840238635303482,
+          "completion_s": [
+            0.04840238635303482,
+            0.04840238635303482,
+            0.09680477270606964,
+            0.09680477270606964
+          ],
+          "ontime": 4,
+          "gpu_seconds": 0.7744381816485572,
+          "gpu_seconds_per_ontime": 0.1936095454121393,
+          "rejections": []
+        },
+        {
+          "tp": 8,
+          "instances": 1,
+          "cross_host": false,
+          "memory_bytes": 14634166272.0,
+          "service_s": 0.0334835028654063,
+          "completion_s": [
+            0.0334835028654063,
+            0.0669670057308126,
+            0.1004505085962189,
+            0.1339340114616252
+          ],
+          "ontime": 3,
+          "gpu_seconds": 1.0714720916930016,
+          "gpu_seconds_per_ontime": 0.3571573638976672,
+          "rejections": []
+        }
+      ],
+      "winner_tp": 2
     }
   ]
 }

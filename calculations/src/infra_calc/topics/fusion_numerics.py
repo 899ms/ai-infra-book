@@ -47,7 +47,7 @@ def quantized_dot(values,weights,block_size,prefix_scale=False):
 def calculate(block_size: int = 128, larger_first: bool = False) -> dict:
     positive_int(block_size,'block_size')
     if not isinstance(larger_first,bool): raise ValueError('larger_first must be boolean')
-    read_source('sources/formats/onnx-float8.html')
+    read_source('sources/formats/onnx-float8.md')
     small=[1]+[0]*(block_size-1);large=[10]+[0]*(block_size-1)
     weight_small=[1]+[0]*(block_size-1);weight_large=[0]*block_size
     values=(large+small) if larger_first else (small+large)

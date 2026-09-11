@@ -16,7 +16,7 @@ with sync_playwright() as p:
         page.evaluate('document.fonts.ready')
         result=page.evaluate('''() => ({images:document.images.length,loadedImages:[...document.images].filter(x=>x.complete&&x.naturalWidth>0).length,formulas:document.querySelectorAll('.katex').length,mathErrors:document.querySelectorAll('.katex-error').length,viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,brokenAnchors:[...document.querySelectorAll('a[href^="#"]')].map(a=>a.getAttribute('href').slice(1)).filter(id=>!document.getElementById(decodeURIComponent(id)))})''')
         result['device']=label
-        result['passed']=result['images']==result['loadedImages']==17 and result['formulas']==json.loads((HERE/'math-validation.json').read_text())['expressions'] and result['mathErrors']==0 and result['documentWidth']<=width and not result['brokenAnchors']
+        result['passed']=result['images']==result['loadedImages']==len(json.loads((HERE/'figure-index.json').read_text())) and result['formulas']==json.loads((HERE/'math-validation.json').read_text())['expressions'] and result['mathErrors']==0 and result['documentWidth']<=width and not result['brokenAnchors']
         page.screenshot(path=str(HERE/f'preview-{label}.png'))
         page.locator('img').nth(15).scroll_into_view_if_needed()
         page.screenshot(path=str(HERE/f'preview-{label}-composition.png'))

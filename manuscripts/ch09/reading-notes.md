@@ -11,7 +11,7 @@
 | calculations/PLAN.md | C47–C52与相关缺口 | 区分已完成子账与完整系统尚未验证项 |
 | calculations/results/pd-pool-*.json、pd-pool-book.md | 基线、同构、网络、前缀、长输出场景及条件 | 9.2与9.7；图中直接读取冻结结果 |
 | calculations/results/pd-af-handoff-qwen8.md/.json | 状态字节、消息、缓冲、串行假设 | 9.2与9.3；一次PD不能直接与一步AF排名 |
-| calculations/results/expert-locality-{single,prefill,boundary78,boundary79}.json | 场景、资源时间与逐专家复用边界 | 9.3；采用2 TFLOP/s、200 GB/s等明确题设，区分早期案例笔记的100 GiB/s |
+| calculations/results/expert-locality-{single,prefill,avx512,avx512-128,amx,amx-128}.json | 场景、资源时间与逐专家复用边界 | 9.3；KTransformers论文平台：Xeon 8452Y的AVX-512 1.8 TFLOP/s与AMX 21.3 TFLOP/s、DRAM 220 GB/s，A100 40GB PCIe按峰值50%计 |
 | calculations/results/replica-payback-book.json/.md | 逐rank额外容量、复制、每批收益和严格回本 | 9.4；复制与KV竞争容量 |
 | calculations/results/cache-route-{book,fast-remote,stale}.json/.md | 路径依赖、均值和p99、链路需求 | 9.5；高命中率与更短完成时间分开 |
 | calculations/results/cache-restart-book.json | 页、读取、有效复用及输出核验 | 9.5；144 MiB读取与141.75 MiB有效复用 |

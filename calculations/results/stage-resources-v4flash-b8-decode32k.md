@@ -231,22 +231,22 @@ Conditional known-work service bounds; full runtime remains unknown.
 | sources[53].url | https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash/resolve/60d8d70770c6776ff598c94bb586a859a38244f1/model-00046-of-00046.safetensors?header=1 |
 | sources[53].revision | 60d8d70770c6776ff598c94bb586a859a38244f1 |
 | sources[53].sha256 | 10f90b036e608fabcf2c781dd5274a0fbc262f7aeaf959218ff1ccb829903981 |
-| sources[54].file | sources/hardware/nvidia-h100-page.html |
+| sources[54].file | sources/hardware/nvidia-h100-page.md |
 | sources[54].url | https://www.nvidia.com/en-us/data-center/h100/ |
 | sources[54].revision | snapshot-2026-09-08 |
-| sources[54].sha256 | 8fe697dfa96dceeeed6e7a16517294e15d9100cc0e9f1e6e5edbce78699b4681 |
+| sources[54].sha256 | 9ec9b79f149ced935b19b3a44d07ce385859e49fcb33dfdfeb35adc7b7d00fe0 |
 | sources[55].file | ../references/files/specs/nvidia-h100.pdf |
 | sources[55].url | https://dam-cdn.nvd.orangelogic.com/AssetLink/705n6ur546g0uk43w0117r17n8042d73.pdf |
 | sources[55].revision | book-official-archive-2026-09-06 |
 | sources[55].sha256 | 3641614979809a027a8aabdc2e77639efb8fcd0f8dc7873a22ba2125489f5a27 |
-| sources[56].file | sources/hardware/nvidia-ptx-isa-9-3.html |
+| sources[56].file | sources/hardware/nvidia-ptx-isa-9-3.md |
 | sources[56].url | https://docs.nvidia.com/cuda/parallel-thread-execution/index.html |
 | sources[56].revision | snapshot-2026-09-08 |
-| sources[56].sha256 | 940cc68f858cefdf82425b47ee3bac3afde447c8a85b95f43d7d6fb1f46b4413 |
-| sources[57].file | research/h05-next-review/cuda-programming-guide-12.8.1.html |
+| sources[56].sha256 | 0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7 |
+| sources[57].file | research/h05-next-review/cuda-programming-guide-12.8.1.md |
 | sources[57].url | https://docs.nvidia.com/cuda/archive/12.8.1/cuda-c-programming-guide/index.html |
 | sources[57].revision | CUDA12.8.1 archive |
-| sources[57].sha256 | cdc49d93372b4e03e94d56f24345373f82ad76b8663c745073463263009637ce |
+| sources[57].sha256 | f7f46a910869e1f1102ee7193b536dc6c9a356c224b51734f240168266ea5e25 |
 | device.id | h100-sxm |
 | device.vendor | NVIDIA |
 | device.memory.nominal_capacity | 80 |
@@ -23804,7 +23804,7 @@ Conditional known-work service bounds; full runtime remains unknown.
 | resource_bounds.global_resource_seconds.vector_fp32 | 0.0002994933510313901 |
 | resource_bounds.global_resource_seconds.matrix_bf16 | 6.886645288053365e-05 |
 | resource_bounds.known_global_max_seconds | 0.0002994933510313901 |
-| resource_bounds.known_serial_stage_max_sum_seconds | 0.00029949335103139017 |
+| resource_bounds.known_serial_stage_max_sum_seconds | 0.0002994933510313901 |
 | resource_bounds.accounted_global_max_seconds | unknown (null) |
 | resource_bounds.accounted_serial_stage_lower_bound_seconds | unknown (null) |
 | compute_only_bounds.stages[0].id | input |
@@ -25714,7 +25714,7 @@ Conditional known-work service bounds; full runtime remains unknown.
 | compute_only_bounds.global_resource_seconds.vector_fp32 | 0.0002994933510313901 |
 | compute_only_bounds.global_resource_seconds.matrix_bf16 | 6.886645288053365e-05 |
 | compute_only_bounds.known_global_max_seconds | 0.0002994933510313901 |
-| compute_only_bounds.known_serial_stage_max_sum_seconds | 0.00029949335103139017 |
+| compute_only_bounds.known_serial_stage_max_sum_seconds | 0.0002994933510313901 |
 | compute_only_bounds.accounted_global_max_seconds | unknown (null) |
 | compute_only_bounds.accounted_serial_stage_lower_bound_seconds | unknown (null) |
 | capacity.comparison_bytes | 157961986268 |

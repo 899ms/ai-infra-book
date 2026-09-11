@@ -143,7 +143,7 @@ def draw(ch, here):
             for i in range(3):
                 rs=records[i*4:(i+1)*4]
                 a.plot(range(4),[r['tokens_per_s']/1e4 for r in rs],marker='o',color=colors[i],label=labels[i])
-            a.set(xticks=range(4),xticklabels=['8','64','128','256'],xlabel='每超节点卡数',ylabel='吞吐（万 token/s）',ylim=(32,57))
+            a.set(xticks=range(4),xticklabels=['8','64','128','256'],xlabel='每超节点卡数',ylabel='吞吐（万 token/s）',ylim=(100,205))
             a.legend(frameon=False,fontsize=11,loc='upper left')
             a.grid(axis='y',alpha=.15)
             out.save(f,'figure-7-supernode-scaling')

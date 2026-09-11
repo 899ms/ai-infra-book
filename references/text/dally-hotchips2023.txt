@@ -1,0 +1,814 @@
+      Hardware for Deep Learning
+
+                     Hot Chips
+                   August 29, 2023
+
+
+
+
+                        Bill Dally
+Chief Scientist and SVP of Research, NVIDIA Corporation
+       Adjunct Professor of CS and EE, Stanford
+Q: What would Bill Dally say about directions in deep learning hardware
+
+Chat GPT: Bill Dally has discussed several directions in deep learning hardware that he believes are important for the future of
+the field. Some of these directions include:
+
+1. Specialized hardware for specific deep learning tasks: Dally has argued that as deep learning becomes more complex and
+   diverse, specialized hardware tailored to specific tasks, such as natural language processing or computer vision, will become
+   increasingly important.
+
+2. Energy efficiency: As deep learning systems grow in size and complexity, their energy requirements can become
+   prohibitively high. Dally has emphasized the need for energy-efficient hardware designs that can handle the demands of
+   deep learning workloads.
+
+3. Hardware-software co-design: Dally believes that hardware and software must be designed together to achieve optimal
+   performance. This includes optimizing the hardware architecture for specific deep learning algorithms and developing
+   software tools that can take advantage of the hardware's unique features.
+
+4. Low-precision arithmetic: Dally has proposed using low-precision arithmetic, such as 8-bit or 4-bit arithmetic, in deep
+   learning hardware to reduce energy consumption while still maintaining high accuracy.
+
+5. Memory hierarchy optimization: Dally has also stressed the importance of optimizing the memory hierarchy in deep learning
+   hardware to reduce energy consumption and improve performance.
+
+In summary, Bill Dally believes that deep learning hardware must be tailored to the specific needs of different tasks, be
+energy-efficient, use low-precision arithmetic, optimize the memory hierarchy, and be co-designed with software to achieve
+optimal performance.
+             10 Tokens
+               12                              Application
+             10 Images
+               9                               Dependent
+
+
+                         ©
+               Data                    1K-1M    Special            Coding
+                                                 Data           Medical Advice        Query
+                                                                 Education
+                                                                  Writing
+ 100M-2T                                                          Creative
+Parameters
+
+                             Trained              Fine            Specialized
+ Model        Training                                                              Inference
+                              Model              Tuning             Model
+
+
+             $10M-50M                                     $100K-1M                              <1s
+             GPU Time                                     GPU Time                            GPU Time
+
+                                                 Human
+                                                                                     Answer
+                                                Feedback
+
+                                        1K-1M Annotated Queries                  ~$3 x 10 per Word
+                                                                                         -4
+             10 Tokens
+               12             Data              Application                       End-Service
+             10 Images
+               9
+                             Vendors            dependent                          Providers
+
+                         ©
+               Data                     1K-1M    Special            Coding
+                                                  Data           Medical Advice        Query
+                                                                  Education
+                                                                   Writing
+ 100M-2T                                                           Creative
+Parameters
+
+                              Trained              Fine            Specialized
+ Model        Training                                                               Inference
+                               Model              Tuning             Model
+
+
+             $10M-50M                                      $100K-1M                              <1s
+             GPU Time                                      GPU Time                            GPU Time
+
+                                                  Human
+                                                                                      Answer
+ Hardware Vendors                                Feedback
+
+      CSPs                               1K-1M Annotated Queries                  ~$3 x 10 per Word
+                                                                                          -4
+Motivation
+Deep Learning was Enabled by Hardware
+                                                 Deep Learning is Gated by Hardware
+                                                                                                                 GPT-4
+                                                                                                                  est
+                             1.E+04                                                                 GPT-3
+
+                             1.E+03                                                 Megatron-BERT
+
+                                                                                Megatron-GPT2       Turing NLG
+Petaflop/s – Days Training
+
+
+
+
+                             1.E+02
+                                                                                   GPT-2
+                             1.E+01
+                                                                                BERT
+                             1.E+00
+                                                               ResNet
+                             1.E-01
+                                      AlexNet
+                             1.E-02
+
+                             1.E-03
+                                   2012         2013    2014     2016    2017          2018     2020
+Some History
+                                         Single-Chip Inference Performance - 1000X in 10 years
+             4500.00
+                                                                                                                            H100
+                                                                                                                            4000.00
+             4000.00
+
+
+             3500.00
+
+
+             3000.00
+                                                                                                   Sparsity
+             2500.00
+Int 8 TOPS
+
+
+
+
+             2000.00
+                            FP32                                           FP16
+                            FMA                    FP16                   HMMA
+             1500.00                                                                                    A100
+                                                   HDP4                                                 1248.00
+                                                                                                INT8
+             1000.00
+                                                                                               IMMA
+
+              500.00                                                                  Q8000
+                                                                          V100        261.00
+                            K20X                         M40 P100
+                                                                          125.00
+                            3.94                         6.84     21.20
+                0.00
+                   4/1/12          8/14/13    12/27/14          5/10/16     9/22/17            2/4/19         6/18/20   10/31/21      3/15/23
+Gains from                                                                   Single-Chip Inference Performance - 1000X in 10 years
+                                                 4500.00
+
+• Number Representation                                                                                                      H100
+                                                                                                                             FP8       4000.00
+  • FP32, FP16, Int8                             4000.00                                                               Transformer Eng
+  • (TF32, BF16)
+  • ~16x                                         3500.00
+
+
+
+                                                 3000.00
+• Complex Instructions
+  • DP4, HMMA, IMMA                              2500.00
+
+
+
+
+                                    Int 8 TOPS
+  • ~12.5x
+                                                 2000.00
+                                                                                                                      A100
+• Process                                                                                                           Structured
+                                                                                                                     Sparsity
+  • 28nm, 16nm, 7nm, 5nm                         1500.00
+                                                                                                                      1248.00
+  • ~2.5x                                                                                                       IMMA
+                                                 1000.00                                         HMMA        Int8 Tensor
+                                                                                                 Tensor         Cores
+                                                                                            FP16 Cores
+• Sparsity                                                                                  DP4A
+                                                           Scalar FP32                                      Q8000
+  • ~2x                                           500.00
+                                                            K20X                            P100
+                                                                                                 V100 261.00
+                                                                                    M40            125.00
+                                                                                     6.84    21.20
+                                                            3.94
+                                                    0.00
+• Model efficiency has also                            4/1/12      8/14/13    12/27/14   5/10/16    9/22/17     2/4/19     6/18/20   10/31/21    3/15/23
+  improved – overall gain > 1000x
+                                           Specialized Instructions Amortize Overhead
+
+
+
+
+                                    Operation                      Energy**   Overhead*
+
+                                    HFMA                            1.5pJ      2000%
+
+                                    HDP4A                           6.0pJ       500%
+
+                                    HMMA                            110pJ       22%
+
+                                    IMMA                            160pJ       16%
+
+
+
+
+*Overhead is instruction fetch, decode, and operand fetch – 30pJ
+**Energy numbers from 45nm process
+                                              Hopper H100
+
+
+
+
+1 PFLOPS (TF32)
+1 / 2 PLFLOPS (FP16 or BF16) (dense/sparse)
+2 / 4 PLFOPS (FP8 or Int8) (dense/sparse)
+
+3.4TB/s (HBM3) 94GB
+18 NVLINK ports
+400Gb/s each 900GB/s total
+700W
+
+Transformer Engine
+Dynamic Programming Instructions
+
+9 TOPS/W (Int8/FP8)
+
+
+
+
+4PF Sparse FP8, 900GB/s, 700W
+                       3D Parallelism
+
+
+
+
+                                        It takes 20 GPUs
+                                        to hold one copy
+                                        of GPT4 model
+                                        parameters
+Pipeline Parallel
+
+
+
+
+                    Tensor Parallel
+DGX H100 Server
+
+
+8-H100 4-NVSwitch Server
+• 32 PFLOPS of AI Performance
+• 640 GB aggregate GPU memory
+• 18 NVLink Network OSFPs
+• 3.6 TBps of full-duplex NVLink Network
+  bandwidth (72 NVLinks)
+• 8x 400 Gb/s ConnectX-7 InfiniBand/Ethernet
+  ports
+• 2 dual-port Bluefield-3 DPUs
+• Dual Sapphire Rapids CPUs
+• PCIe Gen5
+32PF Sparse FP8, 11.3kW, 900GB/s
+One Big GPU
+DGX H100 Superpod:
+NVLink Switch
+
+
+NVLink Switch
+• Standard 1RU 19-inch formfactor highly
+  leveraged from InfiniBand switch design
+• Dual NVLink4 NVSwitch chips
+• 128 NVLink4 ports
+• 32 OSFP cages
+• 6.4 TB/s full-duplex BW
+• Managed switch with out-of-band management
+  communication
+• Support for passive-copper, active-copper and
+  optical OSFP cables (custom FW)
+      Scale-up – NVLink and NVSwitch – to 256 GPUs
+            Scale-out – IB to 10,000s of GPUs
+Collectives Double Effective Network Bandwidth (AllReduce)
+Software
+                                                                  NVIDIA AI and H100 Deliver 6.7X in 2.5 Years
+                                                                               Full-stack innovation fuels continuous performance gains
+
+
+                                                                MLPerf™ Training v2.1 Performance
+                            7X                                                                                                                                                                                                           Up to
+
+
+                            6X
+
+
+                            5X
+                                                                                                                                                                                    6.7X
+
+                                                                                                                                                                                                                        6.7X
+        Speedup Normalized to First A100
+
+
+
+
+                                                                                                                                                                                                              Higher performance with new H100 GPUs
+                            4X
+
+
+                            3X
+                                                                                                                                                                                                                                         Up to
+
+
+
+
+                                                                                                                                                                                                                        2.5X
+                            2X
+        Submission
+
+
+
+
+                                                                                                                                                                  2.5X
+
+
+                            1X
+
+
+                            0X                                                                                                                                                                            Speedup on existing A100 GPUs with software
+                                           MiniGo   RNN-T    RetinaNet             3D U-Net             ResNet-50             DLRM                Mask R-              BERT
+                                                                                                           v1.5                                    CNN
+
+                                                                               A100              H100 (Preview)
+
+ResNet-50 v1.5: 8x NVIDIA 0.7-18, 8x NVIDIA 2.1-2060, 8x NVIDIA 2.1-2091 | BERT: 8x NVIDIA 0.7-19, 8x NVIDIA 2.1-2062, 8x NVIDIA 2.1-2091 | DLRM: 8x NVIDIA 0.7-17, 8x NVIDIA 2.1-2059, 8x NVIDIA 2.1-2091 | Mask R-CNN: 8x NVIDIA
+0.7-19, 8x NVIDIA 2.1-2062, 8x NVIDIA 2.1-2091 | RetinaNet: 8x NVIDIA 2.0-2091, 8x NVIDIA 2.1-2061, 8x NVIDIA 2.1-2091 | RNN-T: 8x NVIDIA 1.0-1060, 8x NVIDIA 2.1-2061, 8x NVIDIA 2.1-2091 | Mini Go: 8x NVIDIA 0.7-20, 8x NVIDIA 2.1-
+2063,
+8x NVIDIA 2.1-2091 | 3D U-Net: 8x NVIDIA 1.0-1059, 8x NVIDIA 2.1-2060, 8x NVIDIA 2.1-2091
+First NVIDIA A100 Tensor Core GPU results normalized for throughput due to higher accuracy requirements introduced in MLPerf™ Training
+2.0 where applicable. MLPerf™ name and logo are trademarks. See www.mlperf.org. for more information.
+Future Directions
+                                        Future Directions
+                                                                          Column1
+
+
+Number representation
+                                                                     6%             8%
+• Log numbers
+• Vector scaling (VS-Quant)
+• Optimal Clipping
+• Much cheaper math                                                                           16%
+• Smaller numbers
+
+Sparsity
+• Activations
+• Lower density (vs 2:4 in A100/H100)                47%
+                                                                                                15%
+Better tiling
+• Lower memory energy
+
+Circuits                                                                                 8%
+• Memory
+• Communication
+• 3D memory                                         Input Buffer                     Weight Buffer
+                                                    Accumulation Buffer              Accumulation Collector
+Process                                             Datapath + MAC                   Data Movement
+• Capacitance scaling
+Number Representation
+         1       7
+int8     S       M               • Attributes:
+                                     • Cost
+         1   5           10              • Operation energy
+fp16     S   E            M              • Movement energy
+                                     • Accuracy
+         1           7                   • Dynamic range
+log8     S       E                       • Precision (error)
+
+
+                 8
+sym8             X             Weight
+                               Buffer
+                                                          Multiply
+                                                         Accumulate
+spike
+                              Activation
+                               Buffer
+
+analog                        Storage      Transport       Operation
+         1        7
+int8     S        M
+                                                                       Dynamic Range
+         1   5             10
+fp16     S   E              M       1E+0    1E+1   1E+2         1E+3   1E+4   1E+5      1E+6    1E+7     1E+8       1E+9     1E+10
+
+
+                                spike
+                                                                                         Acc (Min)      Acc (Max)          Dyn
+         1   4        3
+                                sym6
+log8     S   EI       EF
+                                log8
+                  8
+sym8             X              fp16
+
+
+
+                                 int8
+
+
+spike                                   1                 0.1                 0.01                   0.001                  0.0001
+
+                                                                         Precision (Error)
+
+
+
+
+analog
+                                                  Symbol Representation (Codebook)
+
+
+
+
+                                                                                                                      clustering
+
+
+
+
+Han et al. Deep Compression: Compressing Deep Neural Networks with Pruning, Trained Quantization and Huffman Coding, arXiv 2015
+Log Representation
+                                    𝑠𝑠 𝑒𝑒𝑒𝑒.𝑒𝑒𝑒𝑒
+• Dynamic Range 10
+                       𝑣𝑣 = −1 2
+                   5
+
+• WC Accuracy 4%
+
+                                1     4     3
+• Vs Int8 – DR 10 2
+                       Log4.3   S    EI     EF
+• WC Accuracy 33%
+                                       4-bit Log Representation (L2.2)                                                      4-bit Integer Representation (Int4)
+
+                              15                                                                                   15
+
+
+
+                              13                                                                                   13
+Closest Represenatble Value
+
+
+
+
+                                                                                     Closest Represenatble Value
+                              11                                                                                   11
+
+
+
+                              9                                                                                    9
+
+
+                              7                                                                                    7
+
+
+                              5
+                                                                  Max Error                                        5
+                                                                                                                                                         Max Error
+                              3
+                                                                    9%                                             3
+                                                                                                                                                           33%
+
+                              1                                                                                    1
+                                   1   3     5     7          9       11   13   15                                      1    3     5      7          9       11   13   15
+                                                       Actual Value                                                                           Actual Value
+                                       4-bit Log Representation (L2.2)                                                              FP2.2
+
+                              15                                                                                   15
+
+
+                              13                                                                                   13
+Closest Represenatble Value
+
+
+
+
+                              11
+
+
+
+
+                                                                                     Closest Representable value
+                                                                                                                   11
+
+
+                              9                                                                                    9
+
+
+                              7                                                                                    7
+
+
+                              5
+                                                                  Max Error                                        5
+                                                                                                                                                   Max Error
+                              3
+                                                                    9%                                             3
+                                                                                                                                                     13%
+
+                              1                                                                                    1
+                                   1   3     5     7          9       11   13   15                                      1   3   5   7          9       11   13   15
+                                                       Actual Value                                                                     Actual Value
+• Log Numbers
+
+• Multiplies are cheap – just an add
+
+• Adds are hard – convert to integer, add, convert back       4    3
+                                                          1
+   • Fractional part of log is a lookup
+                                                          S   EI   EF
+   • Integer part of log is a shift
+
+• Can factor the lookup outside the summation
+   • Only convert back after summation (and NLF)
+                                      S   EI
+
+
+
+
+        EF
+
+                                               1   4    3
+                                               S   EI   EF
+
+
+
+
+Patent Application US2021/0056446A1
+Optimum Clipping
+Whatever number representation you use
+
+       Pick the range optimally
+         max-scaled quantization                     clipped quantization
+
+
+
+
+                                              clip                          clip
+
+
+
+large q. noise             low density data
+           −𝐵𝐵         𝑠𝑠                     ∞
+         4          2 � 𝑓𝑓                               2
+  𝐽𝐽 =           𝑠𝑠      |𝑋𝑋| 𝑥𝑥 𝑑𝑑𝑑𝑑 + �         𝑠𝑠 − 𝑥𝑥 𝑓𝑓|𝑋𝑋| 𝑥𝑥 𝑑𝑑𝑑𝑑
+          3            0                 𝑠𝑠
+
+
+
+
+                            𝑬𝑬 𝑋𝑋 ⋅ 𝟏𝟏 𝑋𝑋 >𝑠𝑠𝑛𝑛
+𝑠𝑠𝑛𝑛+1 =        −𝐵𝐵
+              4
+                        𝑬𝑬 𝟏𝟏 𝑋𝑋 <𝑠𝑠𝑛𝑛 + 𝑬𝑬 𝟏𝟏 𝑋𝑋 >𝑠𝑠𝑛𝑛
+                  3
+Vector Scaling
+                                                              VS-Quant
+                                         Per-vector scaled quantization for low-precision inference
+
+
+
+
+                      Fine-grained scale factors per vector                     Modified vector MAC unit for VS-Quant
+
+
+                           Works with either post-training quantization or quantization-aware retraining!
+
+[Dai et al., MLSYS 2021]
+Sparsity
+                                                                                 Pruning
+
+
+
+
+Han et al. Learning both Weights and Connections for Efficient Neural Networks, NIPS 2015
+                                                            Structured Sparsity
+
+
+
+
+Mishra, Asit, et al. "Accelerating sparse deep neural networks." arXiv preprint arXiv:2104.08378 (2021)
+NVIDIA A100 Tensor Core GPU Architecture whitepaper
+Accelerators
+EIE (2016)   Eyeriss (2016)   SCNN (2017)   Simba (2018)
+                                       Accelerators Employ:
+
+
+• Special Data Types and Operations
+   • Do in 1 cycle what normally takes 10s or 100s – 10-1000x efficiency gain
+
+
+• Massive Parallelism – >1,000x, not 16x – with Locality
+   • This gives performance, not efficiency
+
+• Optimized Memory
+   • High bandwidth (and low energy) for specific data structures and operations
+
+
+• Reduced or Amortized Overhead
+   • 10,000x efficiency gain for simple operations
+
+• Algorithm-Architecture Co-Design
+
+
+
+                                                                                   48
+                                    Fast Accelerators since 1985
+
+
+• Mossim Simulation Engine: Dally, W.J. and Bryant, R.E., 1985. A hardware architecture for switch-level
+  simulation. IEEE Trans. CAD, 4(3), pp.239-250.
+• MARS Accelerator: Agrawal, P. and Dally, W.J., 1990. A hardware logic simulation system. IEEE Trans. CAD, 9(1),
+  pp.19-29.
+• Reconfigurable Arithmetic Processor: Fiske, S. and Dally, W.J., 1988. The reconfigurable arithmetic processor .
+  ISCA 1988.
+• Imagine: Kapasi, U.J., Rixner, S., Dally, W.J., Khailany, B., Ahn, J.H., Mattson, P. and Owens, J.D., 2003.
+  Programmable stream processors. Computer, 36(8), pp.54-62.
+• ELM: Dally, W.J., Balfour, J., Black-Shaffer, D., Chen, J., Harting, R.C., Parikh, V., Park, J. and Sheffield, D., 2008.
+  Efficient embedded computing. Computer, 41(7).
+• EIE: Han, S., Liu, X., Mao, H., Pu, J., Pedram, A., Horowitz, M.A. and Dally, W.J., 2016, June. EIE: efficient inference
+  engine on compressed deep neural network, ISCA 2016
+• SCNN:Parashar, A., Rhu, M., Mukkara, A., Puglielli, A., Venkatesan, R., Khailany, B., Emer, J., Keckler, S.W. and Dally,
+  W.J., 2017, June. Scnn: An accelerator for compressed-sparse convolutional neural networks, ISCA 2017
+• Darwin: Turakhia, Bejerano, and Dally, “Darwin: A Genomics Co-processor provides up to 15,000× acceleration
+  on long read assembly”, ASPLOS 2018.
+• SATiN: Zhuo, Rucker, Wang, and Dally, “Hardware for Boolean Satisfiability Inference,”
+                                                        Eliminating Instruction Overhead
+
+
+                   Area is proportional to energy – all 28nm
+
+
+
+
+                                                                                                     16b Int Add, 32fJ
+
+
+
+
+                   OOO CPU Instruction – 250pJ (99.99% overhead, ARM A-15)
+Evangelos Vasilakis. 2015. An Instruction Level Energy Characterization of Arm Processors. Foundation of Research and Technology Hellas, Inst. of Computer Science,
+Tech. Rep. FORTH-ICS/TR-450 (2015)
+                                                                    Cost of Operations
+                                                                      Relative Energy Cost                                              Relative Area Cost
+     Operation:                         Energy (pJ)                                                                    Area (µm )
+                                                                                                                               2
+
+
+     8b Add                                  0.03                                                                             36
+     16b Add                                 0.05                                                                             67
+     32b Add                                  0.1                                                                             137
+     16b FP Add                               0.4                                                                         1360
+     32b FP Add                               0.9                                                                         4184
+     8b Mult                                  0.2                                                                             282
+     32b Mult                                 3.1                                                                         3495
+     16b FP Mult                              1.1                                                                         1640
+     32b FP Mult                              3.7                                                                         7700
+     32b SRAM Read (8KB)                       5                                                                              N/A
+     32b DRAM Read                            640                                                                             N/A
+
+                                                          1           10          100         1000        10000                     1      10     100    1000
+
+Energy numbers are from Mark Horowitz “Computing’s Energy Problem (and what we can do about it)”, ISSCC 2014
+Area numbers are from synthesized result using Design Compiler under TSMC 45nm tech node. FP units used DesignWare Library.
+The Importance of Staying Local
+
+
+          LPDDR DRAM
+              GB
+
+
+                  640pJ/word
+
+
+          On-Chip SRAM
+              MB
+
+
+                  50pJ/word
+
+
+           Local SRAM
+               KB
+
+
+                 5pJ/word
+                                                                               Magnet
+                                                  Configurable using synthesizable SystemC, HW generated using HLS tools
+
+
+
+
+                             PE       PE          PE
+                         R        R           R
+                                                                                                                       Weight
+     Global Controller
+
+
+
+
+                             PE       PE          PE                                                                  Collector
+                         R        R           R
+                                                                                                                              VectorSize
+                                                                                                                     Wb Ab Wb Ab           Wb Ab
+                             PE       PE          PE                                                                   X     X               X
+                         R        R           R
+                                                                                                                                  +
+                         Global Buffer
+
+
+                                       DRAM                                                                                    ++++   Accumulation
+                                                                                                                                        Collector
+
+                             MAGNet System
+                                                                                                                           Vector MAC unit
+
+
+                                                                          Processing Element (PE)
+
+
+[Venkatesan et al., ICCAD 2019]
+                                             Energy-efficient DL Inference accelerator
+                                                              Transformers, VS-Quant INT4, TSMC 5nm
+
+
+          • Efficient architecture
+               • Used MAGNet [Venkatesan et al., ICCAD 2019] to design a
+                 low-precision DL inference accelerator for Transformers
+               • Multi-level dataflow to improve data reuse and energy efficiency
+          • Low-precision data format: VS-Quant INT4
+               • Hardware-software techniques to tolerate quantization error
+               • Enable low cost multiply-accumulate (MAC) operations
+               • Reduce storage and data movement
+          • Special function units
+
+                                                                                                                                   •   TSMC 5nm
+                                                                                                                                   •   1024 4-bit MACs/cycle (512 8-bit)
+                                                                                                                                   •   0.153 mm2 chip
+                                                        • 95.6 TOPS/W with 50%-dense 4-bit input                                   •   Voltage range: 0.46V – 1.05V
+                                                          matrices with VSQ enabled at 0.46V                                       •   Frequency range: 152 MHz – 1760 MHz
+                                                        • 0.8% energy overhead from VSQ support
+                                                          with 50%-dense inputs at 0.67V
+
+
+
+
+[Keller, Venkatesan, et al., “A 95.6-TOPS/W Deep Learning Inference Accelerator with Per-Vector Scaled 4-bit Quantization in 5nm”, JSSC 2023]
+Conclusion
+                                                   Conclusion
+
+                                                                                                                                                                                    clipped quantization
+• Deep Learning was enabled by hardware and its progress
+                                                                                                  Single-Chip Inference Performance - 317X in 8 years
+                                                                                   1400.00
+                                                                                                                                                              1248.00
+
+
+  is limited by hardware                                                           1200.00
+
+
+
+                                                                                   1000.00
+
+
+
+• 1000x in last 10 years                                                            800.00
+                                                                                                                                                                                   clip              clip
+
+
+
+
+                                                                      Int 8 TOPS
+   • Number representation, complex ops, sparsity                                   600.00
+
+
+
+                                                                                    400.00
+                                                                                                                                                  261.00
+
+• Logarithmic numbers                                                               200.00                                             125.00
+
+                                                                                              3.94                        6.84 21.20
+
+
+   • Lowest worst-case error for a given number of bits
+                                                                                      0.00
+                                                                                         4/1/12      8/14/13   12/27/14     5/10/16     9/22/17      2/4/19   6/18/20   10/31/21
+
+
+
+
+   • Can ‘factor out’ hard parts of an add
+• Optimum clipping
+                                                                                                                                                      S                 EI         EF
+   • Minimize MSE by trading quantization noise for clipping noise
+• VS-Quant
+   • Separate scale factor for each small vector – 16 to 64 scalars
+• Accelerators – Testbeds for GPU ‘cores’
+   • Test chip validates concepts and measures efficiency
+   • 95.6 TOPS/W on BERT with negligible accuracy loss
+
+                                                                                                                                                                                    −𝛼𝛼        +𝛼𝛼
+

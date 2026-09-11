@@ -1,6 +1,6 @@
 # remote-state — 
 
-输入：`{"active_transactions": 128, "available_local_bytes": 268435456, "bulk_bandwidth": 25000000000, "bulk_startup_ns": 10000, "length": 1024, "local_bandwidth": 1000000000000, "local_startup_ns": 1000, "model": "qwen3-8b", "remote_bandwidth": 40000000000, "remote_latency_ns": 2000, "remote_startup_ns": 5000, "reuses": 1, "transaction_bytes": 256}`
+输入：`{"active_transactions": 128, "available_local_bytes": 268435456, "bulk_bandwidth": 50000000000, "bulk_startup_ns": 10000, "length": 1024, "local_bandwidth": 3350000000000, "local_startup_ns": 1000, "model": "qwen3-8b", "remote_bandwidth": 50000000000, "remote_latency_ns": 2000, "remote_startup_ns": 5000, "reuses": 1, "transaction_bytes": 256}`
 
 数值是分析计算；字节以 bytes 保存，FMA=2，不是硬件测量。
 
@@ -8,14 +8,14 @@
 | --- | ---: |
 | snapshot_payload_bytes | 150,994,944 |
 | remote_effective_upper_exact_bytes_per_second | `"16384000000"` |
-| remote_required_transactions | 313 |
+| remote_required_transactions | 391 |
 | remote_per_read_exact_ns | `"9221000"` |
-| local_per_read_exact_ns | `"18999368/125"` |
-| stage_network_exact_ns | `"150994944/25"` |
-| stage_local_write_exact_ns | `"18874368/125"` |
-| stage_setup_exact_ns | `"775099088/125"` |
+| local_per_read_exact_ns | `"77172472/1675"` |
+| stage_network_exact_ns | `"75497472/25"` |
+| stage_local_write_exact_ns | `"75497472/1675"` |
+| stage_setup_exact_ns | `"5150578096/1675"` |
 | direct_total_exact_ns | `"9221000"` |
-| staged_total_exact_ns | `"794098456/125"` |
+| staged_total_exact_ns | `"5227750568/1675"` |
 | direct_network_bytes | 150,994,944 |
 | staged_network_bytes | 150,994,944 |
 | staged_local_write_bytes | 150,994,944 |
@@ -23,7 +23,7 @@
 | staged_fits_local_capacity | `true` |
 | strict_reuses_to_amortize | 1 |
 | selected_policy | `"stage"` |
-| selected_total_exact_ns | `"794098456/125"` |
+| selected_total_exact_ns | `"5227750568/1675"` |
 
 计量条件：
 

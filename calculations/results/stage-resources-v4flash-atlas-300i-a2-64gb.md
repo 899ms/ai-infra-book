@@ -231,10 +231,10 @@ Conditional known-work service bounds; full runtime remains unknown.
 | sources[53].url | https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash/resolve/60d8d70770c6776ff598c94bb586a859a38244f1/model-00046-of-00046.safetensors?header=1 |
 | sources[53].revision | 60d8d70770c6776ff598c94bb586a859a38244f1 |
 | sources[53].sha256 | 10f90b036e608fabcf2c781dd5274a0fbc262f7aeaf959218ff1ccb829903981 |
-| sources[54].file | sources/hardware/ascend-atlas-300i-a2.html |
+| sources[54].file | sources/hardware/ascend-atlas-300i-a2.md |
 | sources[54].url | https://e.huawei.com/cn/products/computing/ascend/atlas-300i-a2 |
 | sources[54].revision | snapshot-2026-09-08 |
-| sources[54].sha256 | bcdcad38a10dc330523dfc465840903154a7096303a9b7ed1e825155d848d7de |
+| sources[54].sha256 | 31e5f158991403035756f43856377603197b416fd295f4a538fd6207a126f803 |
 | device.id | atlas-300i-a2-64gb |
 | device.vendor | Huawei |
 | device.memory.nominal_capacity | 64 |

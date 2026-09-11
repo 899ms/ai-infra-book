@@ -14,9 +14,9 @@
 | network_send_bytes_per_replica | 68,589,513,244 |
 | network_send_bytes_all_replicas | 68,589,513,244 |
 | operation_stage_accounted_bytes | `[68589513244]` |
-| serial_communication_path_seconds | 0.17353778327999997 |
-| startup_seconds | 0.0020640000000000007 |
-| bandwidth_seconds | 0.17147378327999993 |
+| serial_communication_path_seconds | 0.17353778328 |
+| startup_seconds | 0.002064 |
+| bandwidth_seconds | 0.17147378328000001 |
 | predicted_iteration_seconds | `null` |
 
 | 操作 | PP | 层 | 轮次 | 每副本网络发送 bytes | 模型 μs |

@@ -2,7 +2,7 @@
 
 对应草案 22 的十二章顺序：方法与需求、硬件与协作、推理训练、任务环境与端边云。收录原始论文、作者报告、芯片与系统规格、协议及官方软件文档，按具体论证选用。原件快照保留历史版本；本索引章号采用当前目录。
 
-当前清单 230 项：已保存正文 226 项，其中 PDF 136 份。其余项目的获取状态见文末。
+当前清单 269 项：已保存正文 262 项，其中 PDF 162 份。其余项目的获取状态见文末。
 
 [浏览本地索引](index.md) · [来源清单](sources.tsv) · [下载与校验记录](manifest.json) · [证据缺口](GAPS.md)
 
@@ -38,6 +38,9 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [计算机网络的新黄金时代（一）](https://01.me/2023/05/new-golden-age-for-network-1/) | [原件](files/documents/network-golden-1.md) · [文本](text/network-golden-1.txt) | 作者素材；数据中心 |
 | [基于可编程网卡的高性能数据中心系统](https://01.me/files/pubs/bojieli-phd-thesis.pdf) | [原件](files/papers/bojieli-phd-thesis.pdf) · [文本](text/bojieli-phd-thesis.txt)（user_provided） | 李博杰博士论文，2019-05-26；ClickNP 核数预算、KV-Direct PCIe 并发与数据通路；论文测量按原配置引用 |
 | [Huawei’s τ Chip Was Supposed to Melt?](files/papers/202609.00031v1.pdf) | [原件](files/papers/202609.00031v1.pdf) · [文本](text/logicfolding-energy.txt)（user_provided） | 何庭波，ChinaXiv:202609.00031v1，2026-09-04；片上连线、降压与功率密度；作者报告，AI 集群 80% 能耗说法待独立取证 |
+| [Hardware for Deep Learning (Hot Chips 2023 Keynote)](https://hc2023.hotchips.org/) | [原件](files/documents/dally-hotchips2023.pdf) · [文本](text/dally-hotchips2023.txt) | Bill Dally 2023-08-29 主题演讲幻灯片；含各级运算与访存的每操作能耗（pJ）表；Horowitz ISSCC 2014 论文为付费资源，公开幻灯片链接已失效，以此替代 |
+| [Energy Efficiency and AI Hardware (Stanford AHA Retreat 2023 Keynote)](https://aha.stanford.edu/) | [原件](files/documents/dally-aha2023.pdf) · [文本](text/dally-aha2023.txt) | Bill Dally 2023-08-31；运算、SRAM、DRAM 与互连能耗对比，与 Hot Chips 版互证 |
+| [Fine-Grained DRAM: Energy-Efficient DRAM for Extreme Bandwidth Systems](https://research.nvidia.com/publication/2017-10_fine-grained-dram-energy-efficient-dram-extreme-bandwidth-systems) | [原件](files/papers/fgdram-micro17.pdf) · [文本](text/fgdram-micro17.txt) | MICRO 2017；HBM2 每比特访存能耗分解（pJ/bit）；作者主页公开版 |
 
 ## 第 2 章 模型架构
 
@@ -194,6 +197,23 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [Efficiently Scaling Transformer Inference](https://arxiv.org/abs/2211.05102v1) | [原件](files/papers/scaling-inference.pdf) · [文本](text/scaling-inference.txt) | Google；推理计算／通信模型、TPU 分片与延迟—吞吐取舍；历史配置不直接套用 GPU |
 | [基于可编程网卡的高性能数据中心系统](https://01.me/files/pubs/bojieli-phd-thesis.pdf) | [原件](files/papers/bojieli-phd-thesis.pdf) · [文本](text/bojieli-phd-thesis.txt)（user_provided） | 李博杰博士论文，2019-05-26；ClickNP 核数预算、KV-Direct PCIe 并发与数据通路；论文测量按原配置引用 |
 | [Huawei’s τ Chip Was Supposed to Melt?](files/papers/202609.00031v1.pdf) | [原件](files/papers/202609.00031v1.pdf) · [文本](text/logicfolding-energy.txt)（user_provided） | 何庭波，ChinaXiv:202609.00031v1，2026-09-04；片上连线、降压与功率密度；作者报告，AI 集群 80% 能耗说法待独立取证 |
+| [Hardware for Deep Learning (Hot Chips 2023 Keynote)](https://hc2023.hotchips.org/) | [原件](files/documents/dally-hotchips2023.pdf) · [文本](text/dally-hotchips2023.txt) | Bill Dally 2023-08-29 主题演讲幻灯片；含各级运算与访存的每操作能耗（pJ）表；Horowitz ISSCC 2014 论文为付费资源，公开幻灯片链接已失效，以此替代 |
+| [Energy Efficiency and AI Hardware (Stanford AHA Retreat 2023 Keynote)](https://aha.stanford.edu/) | [原件](files/documents/dally-aha2023.pdf) · [文本](text/dally-aha2023.txt) | Bill Dally 2023-08-31；运算、SRAM、DRAM 与互连能耗对比，与 Hot Chips 版互证 |
+| [Fine-Grained DRAM: Energy-Efficient DRAM for Extreme Bandwidth Systems](https://research.nvidia.com/publication/2017-10_fine-grained-dram-energy-efficient-dram-extreme-bandwidth-systems) | [原件](files/papers/fgdram-micro17.pdf) · [文本](text/fgdram-micro17.txt) | MICRO 2017；HBM2 每比特访存能耗分解（pJ/bit）；作者主页公开版 |
+| [NVIDIA Grace Hopper Superchip Architecture In-Depth](https://developer.nvidia.com/blog/nvidia-grace-hopper-superchip-architecture-in-depth/) | [原件](files/documents/nvidia-grace-hopper-blog.md) · [文本](text/nvidia-grace-hopper-blog.txt) | 官方技术博客；NVLink-C2C 900 GB/s 与每比特能耗；白皮书阅读页需登录，第三方镜像 PDF 无文本层 |
+| [NVIDIA H100 Tensor Core GPU Datasheet](https://resources.nvidia.com/en-us-gpu-resources/h100-datasheet-24306) | [原件](files/specs/nvidia-h100-datasheet.pdf) · [文本](text/nvidia-h100-datasheet.txt) | SXM、PCIe 与 NVL 规格表及功耗；下载地址由 NVIDIA 官方阅读页直接提供；与架构白皮书区分 |
+| [NVIDIA H200 Tensor Core GPU Datasheet](https://resources.nvidia.com/en-us-hopper-architecture/hpc-datasheet-sc23) | [原件](files/specs/nvidia-h200-datasheet.pdf) · [文本](text/nvidia-h200-datasheet.txt) | 141 GB HBM3e、4.8 TB/s 与功耗；下载地址由 NVIDIA 官方阅读页直接提供 |
+| [NVIDIA HGX H100 and HGX H200 Datasheet](https://resources.nvidia.com/en-us-hopper-architecture/hpc-hgx-h100-hgx-h20) | [原件](files/specs/nvidia-hgx-h100-datasheet.pdf) · [文本](text/nvidia-hgx-h100-datasheet.txt) | 8 GPU 基板、每卡 NVLink 带宽与 NVSwitch；下载地址由 NVIDIA 官方阅读页直接提供 |
+| [Micron HBM3E Product Brief](https://www.micron.com/products/memory/hbm/hbm3e) | 未获取（failed） | 每堆栈容量、引脚速率、通道数与带宽；官网对非浏览器请求返回拒绝页时以产品页替代 |
+| [Micron HBM3E product page](https://www.micron.com/products/memory/hbm/hbm3e) | [原件](files/specs/micron-hbm3e-page.md) · [文本](text/micron-hbm3e-page.txt) | 24 GB／36 GB 堆栈、引脚速率与每堆栈带宽；固定网页快照 |
+| [SK hynix HBM product page](https://product.skhynix.com/products/dram/hbm.go) | [原件](files/specs/skhynix-hbm-page.md) · [文本](text/skhynix-hbm-page.txt) | HBM3E 与 HBM4 的密度、引脚速率与带宽；固定网页快照 |
+| [TSMC CoWoS Technology](https://3dfabric.tsmc.com/english/dedicatedFoundry/technology/cowos.htm) | 未获取（failed） | 官方技术页；中介层与光罩尺寸表述 |
+| [Snapdragon 8 Elite Mobile Platform Product Brief](https://www.qualcomm.com/products/mobile/snapdragon/smartphones/snapdragon-8-series-mobile-platforms/snapdragon-8-elite-mobile-platform) | [原件](files/specs/qualcomm-8elite-brief.pdf) · [文本](text/qualcomm-8elite-brief.txt) | 2024 年旗舰手机 SoC；LPDDR5X 速率与 NPU 规格 |
+| [Snapdragon 8 Elite Gen 5 Mobile Platform Product Brief](https://www.qualcomm.com/products/mobile/snapdragon/smartphones/snapdragon-8-series-mobile-platforms) | [原件](files/specs/qualcomm-8elite-gen5-brief.pdf) · [文本](text/qualcomm-8elite-gen5-brief.txt) | 2025 年代际；内存速率与 NPU |
+| [Micron LPDDR5X product page](https://www.micron.com/products/memory/lpddr-components/lpddr5x) | [原件](files/specs/micron-lpddr5x-page.md) · [文本](text/micron-lpddr5x-page.txt) | 每引脚数据速率与位宽；固定网页快照 |
+| [Samsung LPDDR5X product page](https://semiconductor.samsung.com/dram/lpddr/lpddr5x/) | [原件](files/specs/samsung-lpddr5x-page.md) · [文本](text/samsung-lpddr5x-page.txt) | 每引脚数据速率、密度与封装；固定网页快照 |
+| [FP8 Formats for Deep Learning](https://arxiv.org/abs/2209.05433) | [原件](files/papers/fp8-formats.pdf) · [文本](text/fp8-formats.txt) | E4M3 与 E5M2 定义 |
+| [CUDA Programming Guide 13.2.1: Compute Capabilities](https://docs.nvidia.com/cuda/archive/13.2.1/cuda-programming-guide/05-appendices/compute-capabilities.html) | [原件](files/documents/cuda-compute-capabilities.md) · [文本](text/cuda-compute-capabilities.txt) | 各计算能力的每 SM 寄存器、共享内存、线程与块上限 |
 
 ## 第 5 章 算子与运行时
 
@@ -249,6 +269,8 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339v2) | [原件](files/papers/llm-int8.pdf) · [文本](text/llm-int8.txt) | 大模型激活异常值与混合精度分解；低比特存储不等于端到端加速 |
 | [TensorRT LLM Architecture Overview](https://nvidia.github.io/TensorRT-LLM/developer-guide/overview.html) | [原件](files/documents/tensorrt-llm-architecture.md) · [文本](text/tensorrt-llm-architecture.txt) | 官方架构文档快照；作为开源项目实现资料，不标为学术论文 |
 | [基于可编程网卡的高性能数据中心系统](https://01.me/files/pubs/bojieli-phd-thesis.pdf) | [原件](files/papers/bojieli-phd-thesis.pdf) · [文本](text/bojieli-phd-thesis.txt)（user_provided） | 李博杰博士论文，2019-05-26；ClickNP 核数预算、KV-Direct PCIe 并发与数据通路；论文测量按原配置引用 |
+| [CUDA Programming Guide 13.2.1: Compute Capabilities](https://docs.nvidia.com/cuda/archive/13.2.1/cuda-programming-guide/05-appendices/compute-capabilities.html) | [原件](files/documents/cuda-compute-capabilities.md) · [文本](text/cuda-compute-capabilities.txt) | 各计算能力的每 SM 寄存器、共享内存、线程与块上限 |
+| [CUDA Programming Guide 13.2.1: Writing CUDA Kernels](https://docs.nvidia.com/cuda/archive/13.2.1/cuda-programming-guide/02-basics/writing-cuda-kernels.html) | [原件](files/documents/cuda-writing-kernels.md) · [文本](text/cuda-writing-kernels.txt) | 占用率、warp 调度与延迟隐藏 |
 
 ## 第 6 章 超节点
 
@@ -326,6 +348,18 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [昇腾 950 NPU 架构白皮书（官方下载原件）](https://public-download.obs.cn-east-2.myhuaweicloud.com/ascend/%E6%98%87%E8%85%BE950%20NPU%E6%9E%B6%E6%9E%84%E7%99%BD%E7%9A%AE%E4%B9%A6.pdf) | [原件](files/specs/ascend-950-official.pdf) · [文本](text/ascend-950-official.txt) | 作者提供官方 OBS 下载地址；与先前作者提供版本分别保留，差异核对见 UB-ASCEND-NOTES.md |
 | [Insights into DeepSeek-V3: Scaling Challenges and Reflections on Hardware for AI Architectures](https://arxiv.org/abs/2505.09343v2) | [原件](files/papers/deepseek-infra.pdf) · [文本](text/deepseek-infra.txt) | DeepSeek ISCA 2025 报告；MLA／MoE、跨节点通信及硬件协同设计建议 |
 | [Day 6: DeepSeek-V3/R1 Inference System Overview](https://github.com/deepseek-ai/open-infra-index/blob/56d86855fcf6e08fdfd45ce6280bd24322c93351/202502OpenSourceWeek/day_6_one_more_thing_deepseekV3R1_inference_system_overview.md) | [原件](files/documents/deepseek-serving-report.md) · [文本](text/deepseek-serving-report.txt) | 2025 公司工程报告；固定提交；PD、EP、通信与费用口径 |
+| [KV-Direct: High-Performance In-Memory Key-Value Store with Programmable NIC](https://doi.org/10.1145/3132747.3132756) | [原件](files/papers/kv-direct-sosp17.pdf) · [文本](text/kv-direct.txt)（user_provided） | 李博杰等，SOSP 2017；§2.4 PCIe DMA 的延迟、TLP 开销、信用与标签对并发读的限制，图 3 读写吞吐；按原平台（PCIe Gen3 x8 FPGA 网卡）引用 |
+| [Hardware for Deep Learning (Hot Chips 2023 Keynote)](https://hc2023.hotchips.org/) | [原件](files/documents/dally-hotchips2023.pdf) · [文本](text/dally-hotchips2023.txt) | Bill Dally 2023-08-29 主题演讲幻灯片；含各级运算与访存的每操作能耗（pJ）表；Horowitz ISSCC 2014 论文为付费资源，公开幻灯片链接已失效，以此替代 |
+| [Fine-Grained DRAM: Energy-Efficient DRAM for Extreme Bandwidth Systems](https://research.nvidia.com/publication/2017-10_fine-grained-dram-energy-efficient-dram-extreme-bandwidth-systems) | [原件](files/papers/fgdram-micro17.pdf) · [文本](text/fgdram-micro17.txt) | MICRO 2017；HBM2 每比特访存能耗分解（pJ/bit）；作者主页公开版 |
+| [NVIDIA Grace Hopper Superchip Architecture In-Depth](https://developer.nvidia.com/blog/nvidia-grace-hopper-superchip-architecture-in-depth/) | [原件](files/documents/nvidia-grace-hopper-blog.md) · [文本](text/nvidia-grace-hopper-blog.txt) | 官方技术博客；NVLink-C2C 900 GB/s 与每比特能耗；白皮书阅读页需登录，第三方镜像 PDF 无文本层 |
+| [NVIDIA H200 Tensor Core GPU Datasheet](https://resources.nvidia.com/en-us-hopper-architecture/hpc-datasheet-sc23) | [原件](files/specs/nvidia-h200-datasheet.pdf) · [文本](text/nvidia-h200-datasheet.txt) | 141 GB HBM3e、4.8 TB/s 与功耗；下载地址由 NVIDIA 官方阅读页直接提供 |
+| [NVIDIA HGX H100 and HGX H200 Datasheet](https://resources.nvidia.com/en-us-hopper-architecture/hpc-hgx-h100-hgx-h20) | [原件](files/specs/nvidia-hgx-h100-datasheet.pdf) · [文本](text/nvidia-hgx-h100-datasheet.txt) | 8 GPU 基板、每卡 NVLink 带宽与 NVSwitch；下载地址由 NVIDIA 官方阅读页直接提供 |
+| [NVIDIA DGX H200 Datasheet](https://resources.nvidia.com/en-us-dgx-systems/dgx-h200-datasheet) | [原件](files/specs/nvidia-dgx-h200-datasheet.pdf) · [文本](text/nvidia-dgx-h200-datasheet.txt) | 8 GPU 系统、ConnectX-7 网卡数与系统功耗；DGX H100 数据手册官方页无直链，同代 DGX H200 替代 |
+| [Micron HBM3E Product Brief](https://www.micron.com/products/memory/hbm/hbm3e) | 未获取（failed） | 每堆栈容量、引脚速率、通道数与带宽；官网对非浏览器请求返回拒绝页时以产品页替代 |
+| [Micron HBM3E product page](https://www.micron.com/products/memory/hbm/hbm3e) | [原件](files/specs/micron-hbm3e-page.md) · [文本](text/micron-hbm3e-page.txt) | 24 GB／36 GB 堆栈、引脚速率与每堆栈带宽；固定网页快照 |
+| [SK hynix HBM product page](https://product.skhynix.com/products/dram/hbm.go) | [原件](files/specs/skhynix-hbm-page.md) · [文本](text/skhynix-hbm-page.txt) | HBM3E 与 HBM4 的密度、引脚速率与带宽；固定网页快照 |
+| [TSMC CoWoS Technology](https://3dfabric.tsmc.com/english/dedicatedFoundry/technology/cowos.htm) | 未获取（failed） | 官方技术页；中介层与光罩尺寸表述 |
+| [Emergence and Expansion of Liquid Cooling in Mainstream Data Centers (ASHRAE TC 9.9 White Paper)](https://www.ashrae.org/technical-resources/bookstore/datacom-series) | [原件](files/documents/ashrae-liquid-cooling.pdf) · [文本](text/ashrae-liquid-cooling.txt) | 2021 年白皮书；风冷机柜功率上限与液冷转折条件 |
 
 ## 第 7 章 数据中心网络
 
@@ -358,6 +392,16 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [Hot Chips 2026: SN50 RDU Dataflow at Scale](https://sambanova.ai/blog/hot-chips-2026-dataflow-at-scale) | [原件](files/documents/sambanova-sn50.md) · [文本](text/sambanova-sn50.txt) | 2026-09-02 厂商技术说明；模型推演与测量结果分别标注 |
 | [昇腾 950 NPU 架构白皮书（官方下载原件）](https://public-download.obs.cn-east-2.myhuaweicloud.com/ascend/%E6%98%87%E8%85%BE950%20NPU%E6%9E%B6%E6%9E%84%E7%99%BD%E7%9A%AE%E4%B9%A6.pdf) | [原件](files/specs/ascend-950-official.pdf) · [文本](text/ascend-950-official.txt) | 作者提供官方 OBS 下载地址；与先前作者提供版本分别保留，差异核对见 UB-ASCEND-NOTES.md |
 | [基于可编程网卡的高性能数据中心系统](https://01.me/files/pubs/bojieli-phd-thesis.pdf) | [原件](files/papers/bojieli-phd-thesis.pdf) · [文本](text/bojieli-phd-thesis.txt)（user_provided） | 李博杰博士论文，2019-05-26；ClickNP 核数预算、KV-Direct PCIe 并发与数据通路；论文测量按原配置引用 |
+| [KV-Direct: High-Performance In-Memory Key-Value Store with Programmable NIC](https://doi.org/10.1145/3132747.3132756) | [原件](files/papers/kv-direct-sosp17.pdf) · [文本](text/kv-direct.txt)（user_provided） | 李博杰等，SOSP 2017；§2.4 PCIe DMA 的延迟、TLP 开销、信用与标签对并发读的限制，图 3 读写吞吐；按原平台（PCIe Gen3 x8 FPGA 网卡）引用 |
+| [NVIDIA HGX H100 and HGX H200 Datasheet](https://resources.nvidia.com/en-us-hopper-architecture/hpc-hgx-h100-hgx-h20) | [原件](files/specs/nvidia-hgx-h100-datasheet.pdf) · [文本](text/nvidia-hgx-h100-datasheet.txt) | 8 GPU 基板、每卡 NVLink 带宽与 NVSwitch；下载地址由 NVIDIA 官方阅读页直接提供 |
+| [NVIDIA DGX H200 Datasheet](https://resources.nvidia.com/en-us-dgx-systems/dgx-h200-datasheet) | [原件](files/specs/nvidia-dgx-h200-datasheet.pdf) · [文本](text/nvidia-dgx-h200-datasheet.txt) | 8 GPU 系统、ConnectX-7 网卡数与系统功耗；DGX H100 数据手册官方页无直链，同代 DGX H200 替代 |
+| [NVIDIA ConnectX-7 Datasheet](https://www.nvidia.com/en-us/networking/ethernet-adapters/) | [原件](files/specs/nvidia-connectx7-datasheet.pdf) · [文本](text/nvidia-connectx7-datasheet.txt) | 400 Gb/s 端口、PCIe Gen5 与功耗 |
+| [NVIDIA DGX SuperPOD: Next Generation Scalable Infrastructure for AI Leadership (Reference Architecture Featuring NVIDIA DGX H100)](https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-h100/latest/index.html) | [原件](files/documents/dgx-superpod-h100-ra.pdf) · [文本](text/dgx-superpod-h100-ra.txt) | RA-11333-001；SU 组织、rail-optimized InfiniBand 拓扑与 DGX H100 节点规格 |
+| [NVIDIA SHARP Rev 3.0.0: Introduction](https://docs.nvidia.com/networking/display/sharpv300) | [原件](files/documents/sharp-docs-intro.md) · [文本](text/sharp-docs-intro.txt) | 官方文档介绍页；在网聚合与多聚合树 |
+| [Scalable Hierarchical Aggregation Protocol (SHArP): A Hardware Architecture for Efficient Data Reduction](https://network.nvidia.com/pdf/solutions/hpc/paperieee_copyright.pdf) | [原件](files/papers/sharp-paper.pdf) · [文本](text/sharp-paper.txt) | COMHPC 2016；聚合树与在网归约的原始设计 |
+| [Ultra Ethernet Specification v1.0.1](https://ultraethernet.org/uec-1-0-spec/) | [原件](files/standards/uec-spec-10.pdf) · [文本](text/uec-spec-10.txt) | 官方入口直接返回 PDF；传输层、逐包多路径与拥塞控制 |
+| [Overview of and Motivation for the Forthcoming Ultra Ethernet Consortium Specification](https://ultraethernet.org/) | [原件](files/standards/uec-overview.pdf) · [文本](text/uec-overview.txt) | 2023 年白皮书；设计动机 |
+| [IEEE 802.1Qbb Priority-based Flow Control](https://1.ieee802.org/dcb/802-1qbb/) | [原件](files/standards/ieee-802-1qbb-entry.md) · [文本](text/ieee-802-1qbb-entry.txt)（landing_only） | 标准入口页；PFC 正文需 IEEE 访问，DCQCN 论文另有描述 |
 
 ## 第 8 章 单实例推理
 
@@ -452,6 +496,7 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [Day 6: DeepSeek-V3/R1 Inference System Overview](https://github.com/deepseek-ai/open-infra-index/blob/56d86855fcf6e08fdfd45ce6280bd24322c93351/202502OpenSourceWeek/day_6_one_more_thing_deepseekV3R1_inference_system_overview.md) | [原件](files/documents/deepseek-serving-report.md) · [文本](text/deepseek-serving-report.txt) | 2025 公司工程报告；固定提交；PD、EP、通信与费用口径 |
 | [How NVIDIA Dynamo 1.0 Powers Multi-Node Inference at Production Scale](https://developer.nvidia.com/blog/?p=113961) | [原件](files/documents/dynamo-production.md) · [文本](text/dynamo-production.txt) | 2026 官方技术文章；编排、KV 路由与恢复；厂商比较须保留原条件 |
 | [TensorRT LLM Architecture Overview](https://nvidia.github.io/TensorRT-LLM/developer-guide/overview.html) | [原件](files/documents/tensorrt-llm-architecture.md) · [文本](text/tensorrt-llm-architecture.txt) | 官方架构文档快照；作为开源项目实现资料，不标为学术论文 |
+| [GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding](https://arxiv.org/abs/2006.16668) | [原件](files/papers/gshard.pdf) · [文本](text/gshard.txt) | 专家容量与容量因子定义 |
 
 ## 第 10 章 训练系统
 
@@ -483,6 +528,14 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [Serving Large Language Models on Huawei CloudMatrix384, v3](https://arxiv.org/abs/2506.12708v3) | [原件](files/papers/cloudmatrix384-v3.pdf) · [文本](text/cloudmatrix384-v3.txt) | 2025-06-19 修订；核对型号称谓与 v2 差异 |
 | [CUDA Graph Best Practice for PyTorch: CUDA Graph](https://docs.nvidia.com/dl-cuda-graph/cuda-graph-basics/cuda-graph.html) | [原件](files/documents/cuda-graphs.md) · [文本](text/cuda-graphs.txt) | 定义、实例化与执行；区分主机提交和设备启动成本 |
 | [DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning](https://arxiv.org/abs/2501.12948v2) | [原件](files/papers/deepseek-r1.pdf) · [文本](text/deepseek-r1.txt) | 公司技术报告；RL 推理模型、长输出与采样负载；不视为 serving 性能报告 |
+| [PipeDream: Fast and Efficient Pipeline Parallel DNN Training](https://arxiv.org/abs/1806.03377) | [原件](files/papers/pipedream.pdf) · [文本](text/pipedream.txt) | 1F1B 调度的来源 |
+| [Zero Bubble Pipeline Parallelism](https://arxiv.org/abs/2401.10241) | [原件](files/papers/zero-bubble.pdf) · [文本](text/zero-bubble.txt) | 反向拆分为 B 与 W 以消除气泡 |
+| [An Empirical Model of Large-Batch Training](https://arxiv.org/abs/1812.06162) | [原件](files/papers/large-batch-empirical.pdf) · [文本](text/large-batch-empirical.txt) | 梯度噪声尺度与临界批量 |
+| [GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding](https://arxiv.org/abs/2006.16668) | [原件](files/papers/gshard.pdf) · [文本](text/gshard.txt) | 专家容量与容量因子定义 |
+| [MegaScale: Scaling Large Language Model Training to More Than 10,000 GPUs](https://arxiv.org/abs/2402.15627) | [原件](files/papers/megascale.pdf) · [文本](text/megascale.txt) | 万卡训练的系统与容错 |
+| [Revisiting Reliability in Large-Scale Machine Learning Research Clusters](https://arxiv.org/abs/2410.21680) | [原件](files/papers/meta-cluster-reliability.pdf) · [文本](text/meta-cluster-reliability.txt) | Meta 集群故障率与掉队者统计 |
+| [Mixed Precision Training](https://arxiv.org/abs/1710.03740) | [原件](files/papers/mixed-precision.pdf) · [文本](text/mixed-precision.txt) | FP16 主副本与 loss scaling |
+| [FP8 Formats for Deep Learning](https://arxiv.org/abs/2209.05433) | [原件](files/papers/fp8-formats.pdf) · [文本](text/fp8-formats.txt) | E4M3 与 E5M2 定义 |
 
 ## 第 11 章 资源调度与运行环境
 
@@ -515,6 +568,8 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [AlpaServe: Statistical Multiplexing with Model Parallelism for Deep Learning Serving](https://arxiv.org/abs/2302.11665v2) | [原件](files/papers/alpaserve.pdf) · [文本](text/alpaserve.txt) | 多模型服务的统计复用；模型并行、放置与 SLO 联合优化 |
 | [Fast Distributed Inference Serving for Large Language Models](https://arxiv.org/abs/2305.05920v3) | [原件](files/papers/fastserve.pdf) · [文本](text/fastserve.txt) | FastServe；输出长度未知下的抢占式调度与 KV 交换 |
 | [How NVIDIA Dynamo 1.0 Powers Multi-Node Inference at Production Scale](https://developer.nvidia.com/blog/?p=113961) | [原件](files/documents/dynamo-production.md) · [文本](text/dynamo-production.txt) | 2026 官方技术文章；编排、KV 路由与恢复；厂商比较须保留原条件 |
+| [Emergence and Expansion of Liquid Cooling in Mainstream Data Centers (ASHRAE TC 9.9 White Paper)](https://www.ashrae.org/technical-resources/bookstore/datacom-series) | [原件](files/documents/ashrae-liquid-cooling.pdf) · [文本](text/ashrae-liquid-cooling.txt) | 2021 年白皮书；风冷机柜功率上限与液冷转折条件 |
+| [Revisiting Reliability in Large-Scale Machine Learning Research Clusters](https://arxiv.org/abs/2410.21680) | [原件](files/papers/meta-cluster-reliability.pdf) · [文本](text/meta-cluster-reliability.txt) | Meta 集群故障率与掉队者统计 |
 
 ## 第 12 章 端边云协同
 
@@ -537,6 +592,14 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [Snapdragon X Elite Product Brief](https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/images/company/news-media/media-center/press-kits/snapdragon-summit-2023/documents/SnapdragonXEliteProductBrief.pdf) | [原件](files/specs/qualcomm-xelite.pdf) · [文本](text/qualcomm-xelite.txt) | 端侧 CPU、GPU、Hexagon 与共享内存；2023 年产品代际 |
 | [MacBook Pro (14-inch, M5) Technical Specifications](https://support.apple.com/en-mide/125405) | [原件](files/specs/apple-m5-macbook.md) · [文本](text/apple-m5-macbook.txt) | 2025 年具体端侧产品；CPU、GPU、Neural Engine 与统一内存，非完整微架构手册 |
 | [Apple M2 Pro and M2 Max launch specifications](https://www.apple.com/newsroom/2023/01/apple-unveils-m2-pro-and-m2-max-next-generation-chips-for-next-level-workflows/) | [原件](files/specs/apple-m2-pro-max.md) · [文本](text/apple-m2-pro-max.txt) | 2023-01-17；M2 Pro 200 GB/s，M2 Max 400 GB/s；本书实机为 M2 Max 38 核 GPU、96 GB |
+| [Snapdragon 8 Elite Mobile Platform Product Brief](https://www.qualcomm.com/products/mobile/snapdragon/smartphones/snapdragon-8-series-mobile-platforms/snapdragon-8-elite-mobile-platform) | [原件](files/specs/qualcomm-8elite-brief.pdf) · [文本](text/qualcomm-8elite-brief.txt) | 2024 年旗舰手机 SoC；LPDDR5X 速率与 NPU 规格 |
+| [Snapdragon 8 Elite Gen 5 Mobile Platform Product Brief](https://www.qualcomm.com/products/mobile/snapdragon/smartphones/snapdragon-8-series-mobile-platforms) | [原件](files/specs/qualcomm-8elite-gen5-brief.pdf) · [文本](text/qualcomm-8elite-gen5-brief.txt) | 2025 年代际；内存速率与 NPU |
+| [iPhone 16 Pro - Tech Specs](https://support.apple.com/en-us/121031) | [原件](files/specs/apple-iphone16-pro-specs.md) · [文本](text/apple-iphone16-pro-specs.txt) | A18 Pro 芯片、Neural Engine 与电池；官方规格页不含内存参数 |
+| [Micron LPDDR5X product page](https://www.micron.com/products/memory/lpddr-components/lpddr5x) | [原件](files/specs/micron-lpddr5x-page.md) · [文本](text/micron-lpddr5x-page.txt) | 每引脚数据速率与位宽；固定网页快照 |
+| [Samsung LPDDR5X product page](https://semiconductor.samsung.com/dram/lpddr/lpddr5x/) | [原件](files/specs/samsung-lpddr5x-page.md) · [文本](text/samsung-lpddr5x-page.txt) | 每引脚数据速率、密度与封装；固定网页快照 |
+| [MELTing point: Mobile Evaluation of Language Transformers](https://arxiv.org/abs/2403.12844) | [原件](files/papers/melting-point.pdf) · [文本](text/melting-point.txt) | 手机端 LLM 推理的每 token 能耗与吞吐实测 |
+| [BBR Congestion Control (draft-cardwell-iccrg-bbr-congestion-control-02)](https://datatracker.ietf.org/doc/draft-cardwell-iccrg-bbr-congestion-control/) | [原件](files/standards/bbr-ietf-draft.txt) · [文本](text/bbr-ietf-draft.txt) | BtlBw、RTprop 与增益定义；ACM Queue 2016 原文站点拒绝非浏览器访问 |
+| [The Macroscopic Behavior of the TCP Congestion Avoidance Algorithm](http://ccr.sigcomm.org/archive/1997/jul97/) | [原件](files/papers/mathis-tcp-model.pdf) · [文本](text/mathis-tcp-model.txt) | CCR 1997；丢包率与带宽的宏观公式 |
 
 ## 获取记录
 
@@ -546,5 +609,8 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 - **ub-spec-entry**：landing_only；入口不等于规范全文；2.0.1 另核。
 - **ualink-spec-entry**：landing_only；完整规范的获取状态单列。
 - **ub-base-201**：access_required；官网返回 HTTP 400，code=has_not_agreed，msg=has not agreed；正式版要求协议确认，未取得文件。
+- **micron-hbm3e-brief**：failed；ValueError: Expected a PDF; response has no PDF signature。
+- **tsmc-cowos**：failed；HTTPError: HTTP Error 403: Forbidden。
+- **ieee-802-1qbb-entry**：landing_only；标准入口页；PFC 正文需 IEEE 访问，DCQCN 论文另有描述。
 
 维护命令：`python3 references/fetch.py --only 资料ID` 下载指定条目；`--reindex` 只更新索引。直接运行会补齐失败或未获取的项目，保留已经下载的快照。需要 Python 3 和 Poppler 的 `pdftotext`、`pdfinfo`。

@@ -34,7 +34,7 @@ def draw(chapter, out):
             out.save(f,'figure-2-reverse-budget')
         if chapter == 4:
             f,a=canvas(4.8)
-            rows=[('已有设备','容量、带宽、互联','blue'),('模型与软件选择','压缩、分块、并行','green'),('持续的执行瓶颈','形成下一代硬件需求','orange'),('新设备与新候选','重新比较模型结构','purple')]
+            rows=[('已有加速器','容量、带宽、互联','blue'),('模型与软件选择','压缩、分块、并行','green'),('持续的执行瓶颈','形成下一代硬件需求','orange'),('新加速器与新候选','重新比较模型结构','purple')]
             for i,(title,desc,c) in enumerate(rows):
                 y=.76-i*.22
                 box(a,.06,y,.88,.16,title+'\n'+desc,c)
@@ -92,5 +92,5 @@ def draw(chapter, out):
                 a.barh(y,v,height=.55,color=COL['blue'],edgecolor=COL['line'],label='模型' if y==2 else None)
                 a.barh(y,2,left=v,height=.55,color=COL['orange'],edgecolor=COL['line'],label='其他串行阶段' if y==2 else None)
                 a.text(v+2+.12,y,f'{v+2:g} 秒',va='center',fontsize=12)
-            a.set(yticks=[2,1,0],yticklabels=['原任务','模型快 10 倍','理想下界'],xlim=(0,12),ylim=(-.7,3),xlabel='完整任务时间（秒）');a.legend(frameon=False,loc='upper right')
+            a.set(yticks=[2,1,0],yticklabels=['原任务','模型快 10 倍','理想下界'],xlim=(0,12),ylim=(-.7,3),xlabel='完整任务时间（秒）');f.subplots_adjust(top=.84);a.legend(frameon=False,ncol=2,loc='upper center',bbox_to_anchor=(.45,1.17),columnspacing=1.5,handlelength=1.4)
             out.save(f,'figure-12-task-counterfactual')

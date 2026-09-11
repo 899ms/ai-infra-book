@@ -26,7 +26,7 @@ def draw_encoder_paths(out):
                 text(a, .215, .45, '视觉计算在远端完成\n特征留在服务器内', 11, ha='center')
             box(a, x, .684, .34, .076, '解码与预处理\n缩放至 640 × 640', 'blue', 11)
             arrow(a, (cx, .80), (cx, .76))
-            box(a, x, .562, .34, .080, '视觉编码与图像块合并\n形成 400 个视觉位置', 'green', 11)
+            box(a, x, .562, .34, .080, '视觉编码与图像块合并\n形成 400 个视觉 token', 'green', 11)
             arrow(a, (cx, .684), (cx, .642))
             box(a, x, .430, .34, .090, '最终投影 + 3 组 DeepStack\n完整 BF16 特征  8.192 MB', 'green', 11)
             arrow(a, (cx, .562), (cx, .520))
@@ -85,7 +85,7 @@ def draw(here,data):
         draw_encoder_paths(out)
         f,a=plot(3.3,left=.23);a.barh([1,0],[1,10.24],height=.5,color=[COL['blue'],COL['green']],edgecolor=COL['line']);a.set(yticks=[1,0],yticklabels=['压缩图片','完整特征'],xlabel='6.4 Mbit/s 上行发送时间（s）',xlim=(0,11.5));save(f,'6-placement')
         f,a=canvas(5.4)
-        for row,(l,c) in enumerate([('图片：0.8 MB','blue'),('编码缓存 EC：7.8 MiB','green'),('视觉位置 KV：56.3 MiB','purple')]):
+        for row,(l,c) in enumerate([('图片：0.8 MB','blue'),('编码缓存 EC：7.8 MiB','green'),('视觉 token KV：56.3 MiB','purple')]):
             y=.73-row*.28;box(a,.04,y,.49,.17,l,c,11);text(a,.57,y+.085,['重做视觉编码\n再处理语言前缀','从语言前缀处理开始','从匹配前缀之后继续'][row],11)
         save(f,'cache-restart')
         f,a=plot(3.9);n=np.arange(0,41)

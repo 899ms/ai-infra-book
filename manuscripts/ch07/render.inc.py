@@ -28,6 +28,6 @@ hp=preview_path(md);hp.write_text(page)
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')
 from book_assets import sync_figure_index
 active_assets=sync_figure_index(HERE)
-artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',HERE/'teaching-data.json',hp,md]+active_assets
+artifacts=outputs+[HERE.parent/'ub_ep_figures.py',HERE/'ub-ep-layout-validation.json',ROOT/'calculations/results/supernode-scaling-book.json',HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',HERE/'teaching-data.json',hp,md]+active_assets
 (HERE/'manifest.json').write_text(json.dumps({'chapter':7,'generator':'manuscripts/ch07/build.py','figures':len(outputs)//3,'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(outputs)} image files, {len(maths)} formulas, offline HTML; {len(layout)} extent warnings.')

@@ -77,7 +77,7 @@ def draw(here,data):
         f,a=canvas(4.5)
         for i in range(64):
             x=.04+i%16*.059;y=.72-i//16*.14;box(a,x,y,.05,.10,str(i+1),'orange' if i==63 else 'green',11)
-        text(a,.5,.94,'读入 64 页，前 63 页可连续复用',14,ha='center');text(a,.5,.10,'绿色：1008 位置；橙色：16 位置仍需处理',11,ha='center');save(f,'12-cache')
+        text(a,.5,.94,'读入 64 页，前 63 页可连续复用',14,ha='center');text(a,.5,.10,'绿色：1008 token；橙色：16 token 仍需处理',11,ha='center');save(f,'12-cache')
         V=1207959552
         for i,(queue,band,compute) in enumerate([(250,None,10),(20,None,180),(20,5,10),(20,20,10)]):
             f,a=plot(3.0,left=.17);a.barh(0,queue,height=.45,color=COL['gray']);ready=0
@@ -87,10 +87,10 @@ def draw(here,data):
         f,a=plot(3.7);t=np.linspace(0,1,121);a.plot(t,1+.5*t,color='#a56c28',label='源端状态');a.plot(t,np.minimum(2*t,1+.5*t),color='#388768',label='已复制状态');a.set(xlabel='后台复制时间（s）',ylabel='累计状态（GiB）');a.legend(frameon=False);save(f,'14-migration')
         f,a=canvas(4.8)
         for row,title in enumerate(['已可靠记录的序列','故障前保存的 KV','恢复后继续生成']):
-            y=.68-row*.27;text(a,.04,y+.20,title,13);box(a,.04,y,.36,.13,'输入 8192 位置','blue',11)
+            y=.68-row*.27;text(a,.04,y+.20,title,13);box(a,.04,y,.36,.13,'输入 8192 token','blue',11)
             if row!=1:box(a,.43,y,.32,.13,'输出 1—128','green',11);box(a,.78,y,.19,.13,'输出 129','orange',11)
             else:text(a,.68,y+.065,'生成部分尚未保存',11,ha='center')
-        text(a,.5,.03,'补算 128 位置 → KV 到 8320 → 处理输出 129',11,ha='center');save(f,'15-recovery')
+        text(a,.5,.03,'补算 128 token → KV 到 8320 → 处理输出 129',11,ha='center');save(f,'15-recovery')
         for pooled,name in [(False,'16-composition'),(True,'composition-pool')]:
             f,a=canvas(3.6);nodes=['P','共享池','D'] if pooled else ['P','D'];xs=[.04,.40,.76] if pooled else [.04,.76]
             for x,n in zip(xs,nodes):box(a,x,.39,.20,.22,n,'orange' if n=='共享池' else 'blue')

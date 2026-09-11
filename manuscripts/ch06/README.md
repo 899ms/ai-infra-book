@@ -2,7 +2,9 @@
 
 [阅读版 HTML](../06-超节点.md) · [正文 Markdown](../06-超节点.md) · [写作大纲](../../archive/outlines/06-超节点.md)
 
-七节、25 个小节，十项练习。正文用同一 Qwen3-8B 续写任务，贯通逐卡容量、矩阵分工、集合通信、物理路径、会话调度与成本；MoE 和内存池解释专家分工与远端访问。十三个编号公式和逐步展开的例题连接各节。二十一幅原创插图提供 SVG、PNG、PDF；图号、完整图题与说明位于图片外。HTML 内嵌图片、公式与公式字体，可离线阅读；外部来源仍指向仓库。
+正文沿“算子分块—跨卡所有权—通信路径—方案选择”组织：6.1 给出贯穿算例和六种并行方式的切分维度一览，6.2 用六个小节逐一介绍 DP、TP、SP、CP、PP、EP，6.3 讨论组合、MoE 负载与模型规模，6.4 起为集合通信、物理组织、内存池与规模选择。当前正文共 51 幅图，提供 SVG、PNG、PDF；图号、完整图题与说明位于图片外。当前索引见文末；网站由正文 Markdown 构建。
+
+以下为早期版本的配图清单，当前编号以文末为准。
 
 | 图 | 内容 | SVG | PNG | PDF |
 |---|---|---|---|---|
@@ -47,7 +49,7 @@ python3 -m venv /tmp/ch06-book-venv
 
 生成器需要 Node.js 和中文字体，默认寻找 macOS Arial Unicode 或 Linux Noto CJK；可用 `--font /path/to/font` 指定。来源校验值变化会停止生成，需审阅来源后更新锁文件。KaTeX 0.16.11 与许可证在 vendor/katex 中。
 
-## 校验与预览
+## 旧版校验与预览
 
 [内容与数据校验](validation.json)覆盖七节与 25 个小节、十项递进练习、十三个公式编号、二十一幅图及外部图注、来源与输出校验值、链接，并独立复算单步执行、会话调度、成本和主要算式；[公式校验](math-validation.json)记录正文全部表达式。[浏览器检查](browser-validation.json)在 1440 px 与 390 px 宽度验证图片加载、公式、目录锚点与页面宽度。
 
@@ -59,45 +61,64 @@ python3 -m venv /tmp/ch06-book-venv
 
 路由热图单独作为配套，主图 6-7 集中比较同样 512 次分派下的专家权重复用。实际路由的正文讨论与来源链接保留。新增图 6-4 解释 PP 的时序，图 6-5 解释专家派发与返回，图 6-9 解释归约各轮数据的变化；容量、所有权、CPU 实测、端口与 NUMA 算例仍由相邻正文和表格展开。
 
-## 当前阅读版配图（2026-09-10）
+## 本次修订验证
 
-正文现引用 36 幅图，以下清单按当前阅读顺序列出；上文旧图号用于追溯构建记录。
+当前正文、来源快照、算例、图形与浏览器验证见[统一视角修订记录](../../research/ub-ep-integration-2026-09-10/README.md)。旧版 manifest、浏览器记录与图号反映当时版本，不作为本次验证结果。
+
+## 当前阅读版配图（2026-09-11）
+
+以下图号以当前正文顺序为准；前面的旧版图表记录仅用于历史对照。
 
 | 图号 | 内容 | SVG | PNG | PDF |
-| --- | --- | --- | --- | --- |
-| 6-1 | 相同八张卡上的三种实例分组。每个外框表示一个独立推理实例，内部连线表示完成请求所需的协作。各实例一次处理一个请求时，三种部署方式分别能同时处理八个、两个和一个请求。 | [SVG](figure-6-1-placement.svg) | [PNG](figure-6-1-placement.png) | [PDF](figure-6-1-placement.pdf) |
-| 6-2 | 单卡与八卡 TP 的每卡内存需求。权重和 KV 随 TP 分片，2 GiB 工作区则在每张卡分别预留。虚线表示 24 GB 的每卡容量；条形长度按十进制 GB 绘制。 | [SVG](figure-6-2-capacity.svg) | [PNG](figure-6-2-capacity.png) | [PDF](figure-6-2-capacity.pdf) |
-| 6-3 | 按列切分时，每张卡使用完整输入，计算不同的输出元素。格内的转置符号 T 表示把列写成竖向向量。 | [SVG](figure-6-tp-columns.svg) | [PNG](figure-6-tp-columns.png) | [PDF](figure-6-tp-columns.pdf) |
-| 6-4 | 按行切分时，两卡产生形状相同的输出部分和。对应位置相加，恢复完整乘法的结果。 | [SVG](figure-6-tp-rows.svg) | [PNG](figure-6-tp-rows.png) | [PDF](figure-6-tp-rows.pdf) |
-| 6-5 | SwiGLU 的两卡切分。上投影按输出列切分，逐元素运算留在本地，下投影按输入行切分。每卡中间激活为 $m\times(f/2)$，输出部分和仍为 $m\times h$，最后逐元素求和。 | [SVG](figure-6-3-tp.svg) | [PNG](figure-6-3-tp.png) | [PDF](figure-6-3-tp.pdf) |
-| 6-6 | 四个等时阶段处理四个独立微批次。每格为 1 ms，同色表示同一微批次。第一项结果在 4 ms 产生，最后一项在 7 ms 产生；左上到右下的空白来自流水填充与排空。 | [SVG](figure-6-4-pipeline.svg) | [PNG](figure-6-4-pipeline.png) | [PDF](figure-6-4-pipeline.pdf) |
-| 6-7 | 卡 0 持有 token A，选择本地专家 1 与卡 3 上的专家 6。输入沿上方路径派发，专家输出沿下方返回并加权合并。专家选择数决定计算次数，跨设备目的地决定输入派发路径。 | [SVG](figure-6-5-dispatch.svg) | [PNG](figure-6-5-dispatch.png) | [PDF](figure-6-5-dispatch.pdf) |
-| 6-8 | 八张卡排成四个专家分组，每组两卡沿专家中间维分工。同一列的注意力头与 KV 重复四份；每组因此都能在本地得到相同的专家输入。 | [SVG](figure-6-6-ep-layout.svg) | [PNG](figure-6-6-ep-layout.png) | [PDF](figure-6-6-ep-layout.pdf) |
-| 6-9 | 横向箭头表示组内 TP 求和，纵向箭头表示四组 EP 求和。格内数字是行内求和后的一个输出元素，两列各自得到相同的完整结果 10。 | [SVG](figure-6-ep-reduction.svg) | [PNG](figure-6-ep-reduction.png) | [PDF](figure-6-ep-reduction.pdf) |
-| 6-10 | 64 个 token、每 token 八个专家，共 512 次分派。均匀覆盖与集中选择的有效计算量相同，被选中专家的权重读取相差 16 倍。每个专家 BF16 权重为 36 MiB，批内读取一次。 | [SVG](figure-6-7-reuse.svg) | [PNG](figure-6-7-reuse.png) | [PDF](figure-6-7-reuse.pdf) |
-| 6-11 | 均匀使用 128 个专家时，四个 EP 组各处理 128 次 token—专家计算，合计读取 4.5 GiB 权重。 | [SVG](figure-6-8-expert-load.svg) | [PNG](figure-6-8-expert-load.png) | [PDF](figure-6-8-expert-load.pdf) |
-| 6-12 | 所选八个专家都在组 0：权重读取降到 288 MiB，512 次计算却全部压在同一组。 | [SVG](figure-6-expert-load-1.svg) | [PNG](figure-6-expert-load-1.png) | [PDF](figure-6-expert-load-1.pdf) |
-| 6-13 | 把同八个专家分散到四组，将读取量维持在 288 MiB，同时让四组各承担 128 次计算。三图纵轴范围相同。 | [SVG](figure-6-expert-load-2.svg) | [PNG](figure-6-expert-load-2.png) | [PDF](figure-6-expert-load-2.pdf) |
-| 6-14 | 仅跟踪块 0 的一个元素：每经过一张卡，就加入该卡的贡献。三轮后得到 1111，保存在卡 3。其他三个块同时沿环推进。 | [SVG](figure-6-9-ring-rounds.svg) | [PNG](figure-6-9-ring-rounds.png) | [PDF](figure-6-9-ring-rounds.pdf) |
-| 6-15 | ReduceScatter 结束时，卡 0、1、2、3 分别持有块 1、2、3、0。接下来每轮转发一块，三轮后每卡都拥有四块完整结果。 | [SVG](figure-6-ring-gather.svg) | [PNG](figure-6-ring-gather.png) | [PDF](figure-6-ring-gather.pdf) |
-| 6-16 | 根据式（6-5）和环形归约模型绘制单步时间。本地内存访问随卡数增加而减少，归约时间则增加；0.20 ms 的其他串行处理时间保持不变。条形总长度为单步执行时间。 | [SVG](figure-6-10-tp-time.svg) | [PNG](figure-6-10-tp-time.png) | [PDF](figure-6-10-tp-time.pdf) |
-| 6-17 | 八卡 ring 与未分段二项树的时间模型，固定每轮 2 μs、有效单向 50 GB/s。交点约为 184 KiB；8 KiB 的 decode 输入位于主要受启动开销影响的一侧，64 MiB 的 prefill 输入位于主要受数据传输时间影响的一侧。 | [SVG](figure-6-11-collectives.svg) | [PNG](figure-6-11-collectives.png) | [PDF](figure-6-11-collectives.pdf) |
-| 6-18 | 通信独立运行时，配置 B 用 0.18 ms 完成，快于 A 的 0.24 ms。 | [SVG](figure-6-12-resources.svg) | [PNG](figure-6-12-resources.png) | [PDF](figure-6-12-resources.pdf) |
-| 6-19 | 同一配置的两条色带从同一时刻开始。橙色为通信，蓝色为计算；后续工作等待两者完成。A 在 0.44 ms 完成，B 在 0.62 ms 完成。 | [SVG](figure-6-resources-concurrent.svg) | [PNG](figure-6-resources-concurrent.png) | [PDF](figure-6-resources-concurrent.pdf) |
-| 6-20 | 同一台 32 端口交换机的两种分配，每个端口单向带宽为 50 GB/s。上联链路是所有跨交换机流量的共同出口；16／16 分配提供 800 GB/s 上联带宽，24／8 分配只提供 400 GB/s。颜色条的格数与端口数一致。 | [SVG](figure-6-13-ports.svg) | [PNG](figure-6-13-ports.png) | [PDF](figure-6-13-ports.pdf) |
-| 6-21 | 递归算法第三轮从节点 0 发往节点 4。细线为 16 节点物理环，箭头标出经过的四条链路。 | [SVG](figure-6-14-topology.svg) | [PNG](figure-6-14-topology.png) | [PDF](figure-6-14-topology.pdf) |
-| 6-22 | 同一物理环上，Swing 第三轮从节点 0 发往节点 3，经过三条链路。每节点该轮发送量仍为 1 MiB。 | [SVG](figure-6-topology-swing.svg) | [PNG](figure-6-topology-swing.png) | [PDF](figure-6-topology-swing.pdf) |
-| 6-23 | 把所有发送者的消息累加到各条有向链路上，取每轮最大值。递归前三轮均为 4 MiB，Swing 为 4、2、2 MiB。 | [SVG](figure-6-topology-load.svg) | [PNG](figure-6-topology-load.png) | [PDF](figure-6-topology-load.pdf) |
-| 6-24 | 沿一个维度把三维环面网络分成两半，需要切断中间连接和首尾连接。每处包含 k² 条链路，合计 2k² 条。 | [SVG](figure-6-15-torus.svg) | [PNG](figure-6-15-torus.png) | [PDF](figure-6-15-torus.pdf) |
-| 6-25 | k 从 4 增到 8 时，设备数从 64 增到 512，二分链路从 32 增到 128。两种增长均以 k = 4 时为基准。 | [SVG](figure-6-torus-growth.svg) | [PNG](figure-6-torus-growth.png) | [PDF](figure-6-torus-growth.pdf) |
-| 6-26 | 三个公开系统的连接层次。NVLink 是 NVIDIA 的设备互联，TPU v4 的光电路交换机连接电互联单元，Unified Bus 将主机侧计算和内存资源接入统一互联。 | [SVG](figure-6-16-systems.svg) | [PNG](figure-6-16-systems.png) | [PDF](figure-6-16-systems.pdf) |
-| 6-27 | 借用前的物理占用。每节点容量为 64 GiB，任务 0 的需求为 80 GiB，其中 16 GiB 尚未找到存储位置。颜色表示数据所属任务。 | [SVG](figure-6-17-pool-placement.svg) | [PNG](figure-6-17-pool-placement.png) | [PDF](figure-6-17-pool-placement.pdf) |
-| 6-28 | 把任务 0 的额外 16 GiB 放在节点 1。节点 1 的绿色 48 GiB 属于任务 1，蓝色 16 GiB 属于任务 0；每个节点都没有超过 64 GiB。 | [SVG](figure-6-pool-after.svg) | [PNG](figure-6-pool-after.png) | [PDF](figure-6-pool-after.pdf) |
-| 6-29 | 一批读取请求发出后，要经过往返时间 L 才能收到结果。最多有 u 个请求在途、每个返回 q 字节时，在一个往返时间内最多返回 uq 字节。图中四个请求仅用于展示过程；正文算例采用 128 个请求，每个 256 字节，往返时间为 2 μs。 | [SVG](figure-6-18-read-window.svg) | [PNG](figure-6-18-read-window.png) | [PDF](figure-6-18-read-window.pdf) |
-| 6-30 | 完整读取 16 GiB 的频率与平均带宽需求。路径带宽为 40 GB/s；每事务返回 256 bytes、往返 2 μs 时，128 个在途事务将有效带宽限制到约 16.4 GB/s。 | [SVG](figure-6-19-memory-pool.svg) | [PNG](figure-6-19-memory-pool.png) | [PDF](figure-6-19-memory-pool.pdf) |
-| 6-31 | 八个单卡实例中的四个处理会话，另外四个空闲。每个会话执行八步，约 132.4 ms 完成；虚线表示 90 ms 期限。 | [SVG](figure-6-20-session-schedule.svg) | [PNG](figure-6-20-session-schedule.png) | [PDF](figure-6-20-session-schedule.pdf) |
-| 6-32 | 四会话同时推进，每个约 69.4 ms 完成。颜色与相邻配置图中的会话一致。 | [SVG](figure-6-session-tp2.svg) | [PNG](figure-6-session-tp2.png) | [PDF](figure-6-session-tp2.pdf) |
-| 6-33 | 每个实例顺序处理两个会话，分别在约 41.3 ms 和 82.7 ms 完成。 | [SVG](figure-6-session-tp4.svg) | [PNG](figure-6-session-tp4.png) | [PDF](figure-6-session-tp4.pdf) |
-| 6-34 | 单会话缩短到约 34.2 ms，四会话依次执行，最后一个约 137.0 ms 完成。四图横轴使用同一尺度。 | [SVG](figure-6-session-tp8.svg) | [PNG](figure-6-session-tp8.png) | [PDF](figure-6-session-tp8.pdf) |
-| 6-35 | 无故障时，按时完成会话的平均成本随期限变化。八卡计费至所有会话结束；曲线从至少三个会话按时完成处开始。 | [SVG](figure-6-21-scale-cost.svg) | [PNG](figure-6-21-scale-cost.png) | [PDF](figure-6-21-scale-cost.pdf) |
-| 6-36 | 20 ms 时卡 0 故障，受影响实例在 60 ms 从当前会话起点重新执行，增加恢复费 1。采用与无故障图相同的计费方法和纵轴范围。 | [SVG](figure-6-scale-cost-fault.svg) | [PNG](figure-6-scale-cost-fault.png) | [PDF](figure-6-scale-cost-fault.pdf) |
+|---|---|---|---|---|
+| 6-1 | 相同八张卡上的三种实例分组。每个外框表示一个独立推理实例，内部连线表示完成请求所需的协作。各实例一次处理一个请求时，三种 | [SVG](figure-6-1-placement.svg) | [PNG](figure-6-1-placement.png) | [PDF](figure-6-1-placement.pdf) |
+| 6-2 | 单卡实例与分到八张卡后的每卡内存需求。权重和 KV 各分成八份，2 GiB 工作区则在每张卡分别预留。虚线表示 24 G | [SVG](figure-6-2-capacity.svg) | [PNG](figure-6-2-capacity.png) | [PDF](figure-6-2-capacity.pdf) |
+| 6-3 | 左侧是一层的输入激活，三个维度分别对应数据并行、序列并行与上下文并行、张量并行的切分位置；右侧是模型结构，流水线并行切在 | [SVG](figure-6-parallel-map.svg) | [PNG](figure-6-parallel-map.png) | [PDF](figure-6-parallel-map.pdf) |
+| 6-4 | 两张卡各保存一份完整模型，分别处理不同样本。推理时两张卡互不等待；训练时两张卡的梯度要先汇合，再各自更新参数副本。 | [SVG](figure-6-dp.svg) | [PNG](figure-6-dp.png) | [PDF](figure-6-dp.pdf) |
+| 6-5 | 注意力按头分给两张卡，前馈网络按中间维分给两张卡；两处的最后一个投影都只得到部分和，各需要一次 AllReduce 把两 | [SVG](figure-6-tp-layer.svg) | [PNG](figure-6-tp-layer.png) | [PDF](figure-6-tp-layer.pdf) |
+| 6-6 | 按权重矩阵的列切分时，每张卡使用完整输入，计算不同的输出元素。格内的转置符号 T 表示将方括号中横排的数解释为列向量。 | [SVG](figure-6-tp-columns.svg) | [PNG](figure-6-tp-columns.png) | [PDF](figure-6-tp-columns.pdf) |
+| 6-7 | 按权重矩阵的行切分时，两卡产生形状相同的输出部分和。对应位置相加，恢复完整乘法的结果。 | [SVG](figure-6-tp-rows.svg) | [PNG](figure-6-tp-rows.png) | [PDF](figure-6-tp-rows.pdf) |
+| 6-8 | SwiGLU 的两卡切分。上投影按权重矩阵的列划分输出特征，逐元素运算留在本地；下投影按权重矩阵的行划分输入特征。两步均 | [SVG](figure-6-3-tp.svg) | [PNG](figure-6-3-tp.png) | [PDF](figure-6-3-tp.pdf) |
+| 6-9 | LayerNorm 和残差只用到本 token 的数据，两张卡各处理一半位置；进入列并行线性层前用 AllGather  | [SVG](figure-6-sp.svg) | [PNG](figure-6-sp.png) | [PDF](figure-6-sp.pdf) |
+| 6-10 | 每张卡保存自己那段位置的 Q、K、V。因果注意力下，卡 1 的查询还要用到卡 0 的 K、V，所以 K、V 必须跨卡传递 | [SVG](figure-6-cp.svg) | [PNG](figure-6-cp.png) | [PDF](figure-6-cp.pdf) |
+| 6-11 | 八个 token 的因果注意力，横轴为键的位置、纵轴为查询的位置。实色格是必须计算的查询—键配对；前四行归卡 0，后四行 | [SVG](figure-6-context-dependency.svg) | [PNG](figure-6-context-dependency.png) | [PDF](figure-6-context-dependency.pdf) |
+| 6-12 | 两个阶段各保存自己那些层的权重。相邻阶段之间只交接激活；训练时梯度沿同一边界反向传递。 | [SVG](figure-6-pp.svg) | [PNG](figure-6-pp.png) | [PDF](figure-6-pp.pdf) |
+| 6-13 | 四个等时阶段处理四个独立微批次。每格为 1 ms，同色表示同一微批次。第一项结果在 4 ms 产生，最后一项在 7 ms | [SVG](figure-6-4-pipeline.svg) | [PNG](figure-6-4-pipeline.png) | [PDF](figure-6-4-pipeline.pdf) |
+| 6-14 | 注意力和路由器在 token 所在的卡完成；输入按所选专家的所在卡发送，专家算完后结果送回原卡，按路由权重合并。两次交换 | [SVG](figure-6-ep.svg) | [PNG](figure-6-ep.png) | [PDF](figure-6-ep.pdf) |
+| 6-15 | 卡 0 持有 token A，选择本地专家 1 与卡 3 上的专家 6。输入沿上方路径派发，专家输出沿下方返回并加权合并 | [SVG](figure-6-5-dispatch.svg) | [PNG](figure-6-5-dispatch.png) | [PDF](figure-6-5-dispatch.pdf) |
+| 6-16 | 八张卡排成四个专家分组，每组两卡沿专家中间维分工。同一列的注意力头与 KV 重复四份；每组因此都能在本地得到相同的专家输 | [SVG](figure-6-6-ep-layout.svg) | [PNG](figure-6-6-ep-layout.png) | [PDF](figure-6-6-ep-layout.pdf) |
+| 6-17 | 横向箭头表示组内两卡求和，纵向箭头表示四个组求和。格内数字是某个输出元素经组内求和后的值，两列各自都得到相同的完整结果  | [SVG](figure-6-ep-reduction.svg) | [PNG](figure-6-ep-reduction.png) | [PDF](figure-6-ep-reduction.pdf) |
+| 6-18 | 64 个 token、每 token 八个专家，共 512 次分派。均匀覆盖与集中选择的有效计算量相同，被选中专家的权重 | [SVG](figure-6-7-reuse.svg) | [PNG](figure-6-7-reuse.png) | [PDF](figure-6-7-reuse.pdf) |
+| 6-19 | 均匀使用 128 个专家时，四个 EP 组各处理 128 次 token—专家计算，合计读取 4.5 GiB 权重。 | [SVG](figure-6-8-expert-load.svg) | [PNG](figure-6-8-expert-load.png) | [PDF](figure-6-8-expert-load.pdf) |
+| 6-20 | 所选八个专家都在组 0：权重读取降到 288 MiB，512 次计算却全部压在同一组。 | [SVG](figure-6-expert-load-1.svg) | [PNG](figure-6-expert-load-1.png) | [PDF](figure-6-expert-load-1.pdf) |
+| 6-21 | 把同样的八个专家分散到四组，将读取量维持在 288 MiB，同时让四组各承担 128 次计算。三图纵轴范围相同。 | [SVG](figure-6-expert-load-2.svg) | [PNG](figure-6-expert-load-2.png) | [PDF](figure-6-expert-load-2.pdf) |
+| 6-22 | 仅跟踪块 0 的一个元素：每经过一张卡，就加入该卡的贡献。三轮后得到 1111，保存在卡 3。其他三个块同时沿环推进。 | [SVG](figure-6-9-ring-rounds.svg) | [PNG](figure-6-9-ring-rounds.png) | [PDF](figure-6-9-ring-rounds.pdf) |
+| 6-23 | ReduceScatter 结束时，卡 0、1、2、3 分别持有块 1、2、3、0。接下来每轮转发一块，三轮后每卡都拥有 | [SVG](figure-6-ring-gather.svg) | [PNG](figure-6-ring-gather.png) | [PDF](figure-6-ring-gather.pdf) |
+| 6-24 | 根据式（6-5）和环形归约模型绘制单步时间。本地内存访问随卡数增加而减少，归约时间则增加；0.20 ms 的其他串行处理 | [SVG](figure-6-10-tp-time.svg) | [PNG](figure-6-10-tp-time.png) | [PDF](figure-6-10-tp-time.pdf) |
+| 6-25 | 八卡环形算法与未分段二项树的时间模型，固定每轮 2 μs、有效单向 50 GB/s。交点约为 184 KiB；8 KiB | [SVG](figure-6-11-collectives.svg) | [PNG](figure-6-11-collectives.png) | [PDF](figure-6-11-collectives.pdf) |
+| 6-26 | 通信独立运行时，配置 B 用 0.18 ms 完成，快于 A 的 0.24 ms。 | [SVG](figure-6-12-resources.svg) | [PNG](figure-6-12-resources.png) | [PDF](figure-6-12-resources.pdf) |
+| 6-27 | 同一配置的两条色带从同一时刻开始。橙色为通信，蓝色为计算；后续工作等待两者完成。A 在 0.44 ms 完成，B 在 0 | [SVG](figure-6-resources-concurrent.svg) | [PNG](figure-6-resources-concurrent.png) | [PDF](figure-6-resources-concurrent.pdf) |
+| 6-28 | 三种发起位置。橙色是构造请求项的部件；虚线是 PCIe 边界。CPU 代理线程的控制路径穿越 PCIe 三次，GPU 发 | [SVG](figure-6-initiator.svg) | [PNG](figure-6-initiator.png) | [PDF](figure-6-initiator.pdf) |
+| 6-29 | 同一台 32 端口交换机的两种分配，每个端口单向带宽为 50 GB/s。上联链路是所有跨交换机流量的共同出口；16／16 | [SVG](figure-6-13-ports.svg) | [PNG](figure-6-13-ports.png) | [PDF](figure-6-13-ports.pdf) |
+| 6-30 | 递归算法第三轮，卡 0 发往卡 4。细线为 16 张卡组成的物理环，箭头标出经过的四条链路。 | [SVG](figure-6-14-topology.svg) | [PNG](figure-6-14-topology.png) | [PDF](figure-6-14-topology.pdf) |
+| 6-31 | 同一物理环上，Swing 第三轮卡 0 发往卡 3，经过三条链路。每张卡这一轮的发送量仍为 1 MiB。 | [SVG](figure-6-topology-swing.svg) | [PNG](figure-6-topology-swing.png) | [PDF](figure-6-topology-swing.pdf) |
+| 6-32 | 把所有发送方的数据累加到各条有向链路上，取每轮的最大值。递归前三轮均为 4 MiB，Swing 为 4、2、2 MiB。 | [SVG](figure-6-topology-load.svg) | [PNG](figure-6-topology-load.png) | [PDF](figure-6-topology-load.pdf) |
+| 6-33 | 左侧是三维环面的一层，每张卡与四个邻居直连，虚线表示每一维首尾相连；从角上的卡到中心的卡要经过四跳，加上第三个维度最多六 | [SVG](figure-6-topology-hops.svg) | [PNG](figure-6-topology-hops.png) | [PDF](figure-6-topology-hops.pdf) |
+| 6-34 | 每张卡六个 50 GB/s 端口、每卡发送 32 MiB。沿维度归约时两种拓扑都用满端口带宽；均匀 All-to-All | [SVG](figure-6-topology-patterns.svg) | [PNG](figure-6-topology-patterns.png) | [PDF](figure-6-topology-patterns.pdf) |
+| 6-35 | 沿一个维度把三维环面网络分成两半，需要切断中间连接和首尾连接。每处包含 k² 条链路，合计 2k² 条。 | [SVG](figure-6-15-torus.svg) | [PNG](figure-6-15-torus.png) | [PDF](figure-6-15-torus.pdf) |
+| 6-36 | k 从 4 增到 8 时，加速器数从 64 增到 512，二分链路从 32 增到 128。两种增长均以 k = 4 时为 | [SVG](figure-6-torus-growth.svg) | [PNG](figure-6-torus-growth.png) | [PDF](figure-6-torus-growth.pdf) |
+| 6-37 | 两个本地应用保留各自的 Jetty，经共享传输通道访问远端端点。事务层区分操作及其完成归属，传输层处理报文的可靠交付；共 | [SVG](figure-6-ub-layers.svg) | [PNG](figure-6-ub-layers.png) | [PDF](figure-6-ub-layers.pdf) |
+| 6-38 | 左侧网卡位于 PCIe 之后，请求项、门铃、数据和完成项在处理器与网卡之间各穿越 PCIe 一次；右侧控制器位于片上总线 | [SVG](figure-6-ub-controller.svg) | [PNG](figure-6-ub-controller.png) | [PDF](figure-6-ub-controller.pdf) |
+| 6-39 | 每台主机 8 个端点时，三种组织的每网卡状态随互联内主机数的变化。虚线为 256 KiB 片上缓存。逐对连接在 8 台主 | [SVG](figure-6-ub-hosts.svg) | [PNG](figure-6-ub-hosts.png) | [PDF](figure-6-ub-hosts.pdf) |
+| 6-40 | N 个本地端点与 N 个远端端点之间建立全部通信关系所需的时间，32 个核并行。逐对连接随 N² 增长，端点加通道随 N | [SVG](figure-6-ub-setup.svg) | [PNG](figure-6-ub-setup.png) | [PDF](figure-6-ub-setup.pdf) |
+| 6-41 | 三个公开系统的连接层次。NVLink 是 NVIDIA 的设备互联，TPU v4 的光电路交换机连接电互联单元，Unif | [SVG](figure-6-16-systems.svg) | [PNG](figure-6-16-systems.png) | [PDF](figure-6-16-systems.pdf) |
+| 6-42 | 借用前的物理占用。每节点容量为 64 GiB，任务 0 的需求为 80 GiB，其中 16 GiB 尚未找到存储位置。颜 | [SVG](figure-6-17-pool-placement.svg) | [PNG](figure-6-17-pool-placement.png) | [PDF](figure-6-17-pool-placement.pdf) |
+| 6-43 | 把任务 0 的额外 16 GiB 放在节点 1。节点 1 的绿色 48 GiB 属于任务 1，蓝色 16 GiB 属于任 | [SVG](figure-6-pool-after.svg) | [PNG](figure-6-pool-after.png) | [PDF](figure-6-pool-after.pdf) |
+| 6-44 | 一批读取请求发出后，要经过往返时间 L 才能收到结果。最多有 u 个请求在途、每个返回 q 字节时，在一个往返时间内最多 | [SVG](figure-6-18-read-window.svg) | [PNG](figure-6-18-read-window.png) | [PDF](figure-6-18-read-window.pdf) |
+| 6-45 | 完整读取 16 GiB 的频率与平均带宽需求。路径带宽为 40 GB/s；每事务返回 256 bytes、往返 2 μs | [SVG](figure-6-19-memory-pool.svg) | [PNG](figure-6-19-memory-pool.png) | [PDF](figure-6-19-memory-pool.pdf) |
+| 6-46 | 八个单卡实例中的四个处理会话，另外四个空闲。每个会话执行八步，约 132.4 ms 完成；虚线表示 90 ms 期限。 | [SVG](figure-6-20-session-schedule.svg) | [PNG](figure-6-20-session-schedule.png) | [PDF](figure-6-20-session-schedule.pdf) |
+| 6-47 | 四会话同时推进，每个约 69.4 ms 完成。颜色与相邻配置图中的会话一致。本图使用四个 TP=2 实例，每实例两张卡， | [SVG](figure-6-session-tp2.svg) | [PNG](figure-6-session-tp2.png) | [PDF](figure-6-session-tp2.pdf) |
+| 6-48 | 每个实例顺序处理两个会话，分别在约 41.3 ms 和 82.7 ms 完成。本图使用两个 TP=4 实例，每实例四张卡 | [SVG](figure-6-session-tp4.svg) | [PNG](figure-6-session-tp4.png) | [PDF](figure-6-session-tp4.pdf) |
+| 6-49 | 单会话缩短到约 34.2 ms，四会话依次执行，最后一个约 137.0 ms 完成。四图横轴使用同一尺度。本图使用一个  | [SVG](figure-6-session-tp8.svg) | [PNG](figure-6-session-tp8.png) | [PDF](figure-6-session-tp8.pdf) |
+| 6-50 | 无故障时，按时完成会话的平均成本随期限变化。八卡计费至所有会话结束；曲线从至少三个会话按时完成处开始。TP 数值为每实例 | [SVG](figure-6-21-scale-cost.svg) | [PNG](figure-6-21-scale-cost.png) | [PDF](figure-6-21-scale-cost.pdf) |
+| 6-51 | 20 ms 时卡 0 故障，受影响实例在 60 ms 从当前会话起点重新执行，增加恢复费 1。采用与无故障图相同的计费方 | [SVG](figure-6-scale-cost-fault.svg) | [PNG](figure-6-scale-cost-fault.png) | [PDF](figure-6-scale-cost-fault.pdf) |

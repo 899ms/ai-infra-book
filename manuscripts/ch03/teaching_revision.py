@@ -13,10 +13,10 @@ def draw(here,data):
         for i,v in enumerate(values):a.text(v+max(values)*.02,i,f'{v:,.3f}',fontsize=11,va='center')
         save(f,name)
     with plt.rc_context(STYLE):
-        f,a=canvas(4.4);text(a,.04,.94,'恢复 6144 位置，处理 2048 个新输入',14)
+        f,a=canvas(4.4);text(a,.04,.94,'复用 6144 token，处理 2048 新 token',14)
         for i,n in enumerate(data['3-1']['slots_after_calls']):
             y=.71-i*.20;box(a,.04,y,.40,.13,'prefill' if i==0 else f'decode {i}','orange' if i==0 else 'blue')
-            box(a,.60,y,.36,.13,f'保留 {n} 个位置','green');arrow(a,(.44,y+.065),(.60,y+.065))
+            box(a,.60,y,.36,.13,f'KV 覆盖 {n} token','green');arrow(a,(.44,y+.065),(.60,y+.065))
             text(a,.04,y-.04,f'产生第 {i+1} 个输出',11)
         save(f,'1-stages')
 
@@ -34,8 +34,8 @@ def draw(here,data):
         A=np.array(d['A_fraction']);a.bar(range(3),A,color=COL['blue'],edgecolor=COL['line'],label='长输入类');a.bar(range(3),1-A,bottom=A,color=COL['orange'],edgecolor=COL['line'],label='长输出类')
         a.set(xticks=range(3),xticklabels=['均匀混合','变化前窗','变化后窗'],ylim=(0,1.3),ylabel='请求比例');a.legend(ncol=2,frameon=False,loc='upper center');save(f,'2-workload-budget')
         f,a=plot(3.5);x=np.arange(3)
-        for dx,key,label,col in [(-.18,'prefill_positions_per_second','输入位置','blue'),(.18,'decode_positions_per_second','后续 decode','orange')]:a.bar(x+dx,d[key],width=.34,label=label,color=COL[col],edgecolor=COL['line'])
-        a.set(xticks=x,xticklabels=['均匀混合','变化前窗','变化后窗'],ylabel='每秒阶段位置数',ylim=(0,37000));a.legend(frameon=False);save(f,'stage-demand')
+        for dx,key,label,col in [(-.18,'prefill_positions_per_second','输入 token','blue'),(.18,'decode_positions_per_second','后续 decode','orange')]:a.bar(x+dx,d[key],width=.34,label=label,color=COL[col],edgecolor=COL['line'])
+        a.set(xticks=x,xticklabels=['均匀混合','变化前窗','变化后窗'],ylabel='阶段工作量（token/s）',ylim=(0,37000));a.legend(frameon=False);save(f,'stage-demand')
         f,a=canvas(2.8);box(a,.03,.46,.24,.22,'新到工作','orange');box(a,.39,.46,.24,.22,'待处理队列','blue');box(a,.75,.46,.22,.22,'完成工作','green');arrow(a,(.27,.57),(.39,.57));arrow(a,(.63,.57),(.75,.57));text(a,.5,.23,'到来速度超过处理速度，队列就增长',12,ha='center');save(f,'queue-mechanism')
         q=d['fluid_queue'];f,a=plot(3.6)
         a.plot(q['seconds'],q['backlog_steps'],'o-',color='#a56c28');a.axvline(120,ls='--',lw=1,color='#555555')
@@ -62,12 +62,12 @@ def draw(here,data):
                 a.barh(y,dur,left=start,height=.5,color=COL[col],edgecolor=COL['line']);a.text(start+dur/2,y,str(dur)+' s',ha='center',va='center',fontsize=12)
             a.set(yticks=[0,1,2],yticklabels=['模型','工具 A','工具 B'],xlim=(0,22),ylim=(-.6,2.6),xlabel='任务时间（s）');a.invert_yaxis();save(f,name)
 
-        f,a=canvas(4.0);text(a,.04,.94,'图像先成为位置，再成为语言模型输入',14)
-        for y,label,c in [(.69,'640 × 640 像素图像','gray'),(.43,'16 × 16 像素一块 → 40 × 40 个块','blue'),(.17,'相邻 2 × 2 块合并 → 20 × 20 个位置','green')]:
+        f,a=canvas(4.0);text(a,.04,.94,'图像编码为视觉 token，再输入语言模型',14)
+        for y,label,c in [(.69,'640 × 640 像素图像','gray'),(.43,'16 × 16 像素一块 → 40 × 40 个块','blue'),(.17,'相邻 2 × 2 块合并 → 20 × 20 个 token','green')]:
             box(a,.07,y,.86,.15,label,c)
             if y>.2:arrow(a,(.5,y),(.5,y-.10))
         save(f,'vision-shapes')
-        f,a=canvas(3.9);text(a,.04,.94,'400 个位置，各自携带特征向量',14)
+        f,a=canvas(3.9);text(a,.04,.94,'400 个视觉 token，各对应一个特征向量',14)
         box(a,.04,.63,.92,.17,'四组视觉特征：每组宽 2560','blue')
         box(a,.04,.37,.92,.17,'编码结果：400 × 4 × 2560 × 2 bytes','green');arrow(a,(.5,.63),(.5,.54))
         box(a,.04,.08,.92,.17,'进入语言主干后，另产生各层 KV','orange');arrow(a,(.5,.37),(.5,.25));save(f,'vision-state')
@@ -93,7 +93,7 @@ def draw(here,data):
         for y,start,duration,label,c in [(0,0,1,'前向','blue'),(0,3,1,'反向','orange'),(1,1,3,'激活的生命周期','green')]:
             a.barh(y,duration,left=start,height=.5,color=COL[c],edgecolor=COL['line']);a.text(start+duration/2,y,label,fontsize=12,ha='center',va='center')
         a.set(yticks=[0,1],yticklabels=['该层计算','该层激活'],xlim=(-.1,4.3),ylim=(-.7,1.7),xticks=[0,1,3,4],xticklabels=['开始','前向完成','反向开始','反向完成'],xlabel='事件次序（间距仅作示意）');a.invert_yaxis();save(f,'activation-lifetime')
-        t=data['3-5'];bars('training-flops',['前向','反向','前向加反向','总参数 6ND'],[t['summary'][k]/1e12 for k in ['forward_matrix_flops','backward_matrix_flops','training_matrix_flops','six_nd_flops']],'矩阵运算量（TFLOPs）')
+        t=data['3-5'];bars('training-flops',['前向','反向','前向加反向','按总参数估算：6ND'],[t['summary'][k]/1e12 for k in ['forward_matrix_flops','backward_matrix_flops','training_matrix_flops','six_nd_flops']],'矩阵运算量（TFLOPs）')
         bars('training-states',['BF16 权重','FP32 梯度','FP32 主权重','Adam 一阶矩','Adam 二阶矩'],[v/1e9 for v in t['parameter_state_bytes'].values()],'参数相关状态（GB）',4.0)
 
         f,a=canvas(4.6);text(a,.04,.94,'生成、反馈和学习使用同一批轨迹',14)

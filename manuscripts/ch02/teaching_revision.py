@@ -17,7 +17,7 @@ def draw(here,data):
         for i,v in enumerate(values):a.text(v+max(values)*.025,i,f'{v:,.2f}',va='center',fontsize=11)
         save(f,name)
     with plt.rc_context(STYLE):
-        for mode,name,title in [('rnn','1-dependencies','同层先完成前一位置'),('causal','causal-dependencies','本层各位置读取上一层的因果前缀')]:
+        for mode,name,title in [('rnn','1-dependencies','同层先完成前一 token'),('causal','causal-dependencies','本层各 token 读取上一层的因果前缀')]:
             f,a=canvas(3.7);text(a,.04,.94,title,14)
             xs=[.23,.44,.65,.86];ys=[.18,.46,.74]
             for l,y in enumerate(ys):
@@ -28,28 +28,28 @@ def draw(here,data):
                             arrow(a,(xs[k],ys[l-1]+.04),(x,y-.04))
                         if mode=='rnn' and j:arrow(a,(xs[j-1]+.035,y),(x-.035,y))
                     a.scatter(x,y,s=450,facecolor=COL['blue'],edgecolor=COL['line'],zorder=5)
-            for j,x in enumerate(xs):text(a,x,.055,f'位置 {j+1}',11,ha='center')
+            for j,x in enumerate(xs):text(a,x,.055,f'token {j+1}',11,ha='center')
             save(f,name)
 
         f,a=canvas(4.3);text(a,.04,.94,'从同一输入产生三种表示',14)
-        box(a,.30,.74,.40,.12,'当前位置的隐藏向量','gray')
+        box(a,.30,.74,.40,.12,'当前 token 的隐藏向量','gray')
         for x,label,c in [(.04,'查询 Q','orange'),(.36,'键 K','blue'),(.68,'值 V','green')]:
             arrow(a,(.5,.74),(x+.14,.62));box(a,x,.46,.28,.16,label,c)
-        text(a,.50,.34,'查询与键匹配，得到各位置的系数',12,ha='center')
-        box(a,.09,.10,.82,.14,'按系数汇总各位置的值，形成输出','purple')
+        text(a,.50,.34,'查询与键匹配，得到各 token 的系数',12,ha='center')
+        box(a,.09,.10,.82,.14,'按系数汇总各 token 的值，形成输出','purple')
         arrow(a,(.5,.29),(.5,.25));save(f,'qkv-objects')
 
-        f,a=canvas(3.7);text(a,.04,.94,'已有 2 个位置，再输入 3 个位置',14)
+        f,a=canvas(3.7);text(a,.04,.94,'已有 2 个 token，再输入 3 个 token',14)
         for i in range(3):
-            y=.66-i*.19;text(a,.04,y+.065,f'新位置 {i+1}',11)
+            y=.66-i*.19;text(a,.04,y+.065,f'新 token {i+1}',11)
             for j in range(5):
                 a.add_patch(Rectangle((.29+j*.125,y),.12,.13,facecolor=COL['blue'] if j<2 else COL['green'] if j<3+i else COL['white'],edgecolor=COL['line'],lw=.8))
                 if j<3+i:text(a,.35+j*.125,y+.065,'✓',12,ha='center')
         text(a,.415,.84,'已有上下文',11,ha='center');text(a,.73,.84,'本次输入',11,ha='center')
-        text(a,.5,.065,'6 个旧上下文位置对 ＋ 6 个新位置对',12,ha='center');save(f,'causal-pairs')
+        text(a,.5,.065,'旧上下文配对 6 ＋ 块内因果配对 6',12,ha='center');save(f,'causal-pairs')
 
         f,a=canvas(4.8);text(a,.04,.95,'一层先交换信息，再变换特征',14)
-        stages=[('输入：每位置 4096 个数','gray'),('归一化 → 注意力 → 输出投影','blue'),('与子层输入逐元素相加','green'),('归一化 → 前馈网络','orange'),('与子层输入逐元素相加','green')]
+        stages=[('输入：每 token 4096 个数','gray'),('归一化 → 注意力 → 输出投影','blue'),('与子层输入逐元素相加','green'),('归一化 → 前馈网络','orange'),('与子层输入逐元素相加','green')]
         for i,(s,c) in enumerate(stages):
             y=.77-i*.16;box(a,.19,y,.76,.115,s,c)
             if i<4:arrow(a,(.57,y),(.57,y-.045))
@@ -65,14 +65,14 @@ def draw(here,data):
         box(a,.30,.26,.40,.13,'对应元素相乘','green');arrow(a,(.24,.43),(.4,.40));arrow(a,(.76,.43),(.6,.40))
         box(a,.20,.04,.60,.13,'down 投影：返回 4096 维','purple');arrow(a,(.5,.26),(.5,.17));save(f,'ffn-gates')
 
-        f,a=canvas(4.2);text(a,.04,.94,'每一步追加一个位置，重读已有上下文',14)
+        f,a=canvas(4.2);text(a,.04,.94,'每一步追加一 个 token，重读已有上下文',14)
         for i,n in enumerate([4,5,6,7]):
             y=.71-i*.18;text(a,.03,y+.05,f'第 {i+1} 步',11)
             cells(a,.22,y,n+1,w=.70,h=.12,colors=['blue']*n+['orange'])
         text(a,.5,.07,'蓝：本步读取的上下文；橙：本步追加',11,ha='center');save(f,'history')
         f,a=plot(3.4)
         B=np.arange(1,65);W=data['teaching_diagrams']['history']['shared_weight_bytes']/2**30
-        a.axhline(W,color='#267398',label='共享权重');a.plot(B,B*8192*147456/2**30,color='#a56c28',label='8K 上下文 × 请求数')
+        a.axhline(W,color='#267398',label='每批读取的权重');a.plot(B,B*8192*147456/2**30,color='#a56c28',label='8K token KV × 请求数')
         a.set(xlim=(0,64),ylim=(0,75),xlabel='批内请求数',ylabel='逻辑读取量（GiB）');a.legend(frameon=False)
         save(f,'history-batch')
 
@@ -89,7 +89,7 @@ def draw(here,data):
         bars('4-cache',['MHA：32 组','GQA：8 组','MQA：1 组'],data['figure_2_4']['qwen_variants_mib'],'8K 上下文状态容量（MiB）')
 
         f,a=canvas(4.8)
-        text(a,.04,.94,'路径一：先展开每个上下文位置',14)
+        text(a,.04,.94,'路径一：先展开每个上下文 token',14)
         box(a,.04,.69,.25,.13,'潜变量 c','blue');box(a,.38,.69,.25,.13,'展开键 K','green');box(a,.72,.69,.24,.13,'点积分数','purple')
         arrow(a,(.29,.755),(.38,.755));arrow(a,(.63,.755),(.72,.755))
         text(a,.32,.60,'上下文先计算 K = c Uₖ',12)
@@ -105,7 +105,7 @@ def draw(here,data):
         cells(a,.05,.72,8,w=.90,h=.11)
         for i in range(2):
             arrow(a,(.27+i*.45,.71),(.27+i*.45,.59));box(a,.10+i*.45,.45,.34,.13,f'压缩条目 {i+1}','green')
-        text(a,.5,.35,'示例：每 4 个位置合成 1 条',11,ha='center')
+        text(a,.5,.35,'示例：每 4 个 token 合成 1 条',11,ha='center')
         box(a,.04,.08,.25,.13,'当前查询','orange');box(a,.38,.08,.25,.13,'扫描索引','purple');box(a,.72,.08,.24,.13,'读取选中条目','green',11)
         arrow(a,(.29,.145),(.38,.145));arrow(a,(.63,.145),(.72,.145));save(f,'5-sparse')
         c=data['figure_2_5']['components'];bars('sparse-capacity',['窗口状态','压缩表示','索引条目','压缩缓冲'],[c['window_history_bytes']/2**20,c['compressed_history_bytes']/2**20,c['index_history_bytes']/2**20,data['figure_2_5']['compressor_buffer_bytes']/2**20],'DeepSeek V4-Flash 的 8K 上下文状态（MiB）')
@@ -125,7 +125,7 @@ def draw(here,data):
         box(a,.22,.09,.56,.13,'当前查询 × 新状态 → 输出','purple');save(f,'recurrence')
 
         f,a=canvas(4.1);text(a,.04,.94,'模型配置决定采用哪种注意力',14)
-        box(a,.05,.62,.40,.18,'30 层线性注意力\n固定递推状态','blue');box(a,.55,.62,.40,.18,'10 层完整注意力\n逐位置上下文','green')
+        box(a,.05,.62,.40,.18,'30 层线性注意力\n固定递推状态','blue');box(a,.55,.62,.40,.18,'10 层完整注意力\n逐 token 上下文','green')
         box(a,.20,.34,.60,.13,'层内归一化与残差连接','gray')
         arrow(a,(.25,.62),(.4,.47));arrow(a,(.75,.62),(.6,.47))
         box(a,.06,.07,.41,.16,'路由专家：256 选 8','orange',11);box(a,.57,.07,.37,.16,'共享专家','purple')
@@ -134,11 +134,11 @@ def draw(here,data):
         comparison=json.loads((here/'model-comparison.json').read_text())
         d=comparison['state_curves']
         names=dict(zip([x['model_id'] for x in comparison['models']],['V4.1 Flash','Qwen3-8B','Qwen3.6','V4-Flash','Kimi K3']))
-        for field,name,ylabel in [('resident_bytes','7-state-growth','状态容量（GiB）'),('accounted_access_bytes','state-access','已计访问量（GiB）')]:
+        for field,name,ylabel in [('resident_bytes','7-state-growth','单请求状态容量（GiB）'),('accounted_access_bytes','state-access','每步状态访问量（GiB）')]:
             f,a=plot(4.4,left=.19,bottom=.18)
             for key,col in zip(names,['#965466','#267398','#72558c','#388768','#a56c28']):
                 a.plot(np.array(d['lengths'])/1024,np.array(d[field][key])/2**30,'o-',label=names[key],color=col)
-            a.set(xscale='log',yscale='log',xlabel='上下文长度（千个位置，对数轴）',ylabel=ylabel+'，对数轴')
+            a.set(xscale='log',yscale='log',xlabel='上下文长度（千 token，对数轴）',ylabel=ylabel+'，对数轴')
             a.legend(frameon=False,fontsize=11,loc='upper left');save(f,name)
 
         f,a=canvas(4.0);text(a,.04,.94,'分派次数相同，访问到的专家可以不同',14)
@@ -167,7 +167,7 @@ def draw(here,data):
         f,a=plot(6.0,left=.32,bottom=.17)
         f.subplots_adjust(top=.84)
         labels=['DeepSeek\nV4.1 Flash','Qwen3-8B','Qwen3.6','DeepSeek\nV4-Flash','Kimi K3\n紧凑']
-        for start,offset,color,label in [(0,-.18,COL['blue'],'8K 上下文'),(10,.18,COL['orange'],'1M 可见位置')]:
+        for start,offset,color,label in [(0,-.18,COL['blue'],'8K 上下文'),(10,.18,COL['orange'],'1M 可见 token')]:
             vals=[r['matrix_flops']/1e9 for r in long_data['models'][start:start+5]]
             yy=np.arange(5)+offset
             a.barh(yy,np.array(vals)-1,left=1,height=.30,color=color,edgecolor=COL['line'],label=label)
@@ -181,20 +181,20 @@ def draw(here,data):
         save(f,'long-context-compute')
 
         rows=data['figure_2_9']['capacity_rows'];f,a=plot(3.8,left=.26,bottom=.25);left=np.zeros(3)
-        for key,label,col in [('weight_bytes','权重','blue'),('workspace_bytes','预留','orange'),('kv_bytes_per_request','一条 KV','green')]:
+        for key,label,col in [('weight_bytes','权重','blue'),('workspace_bytes','工作区预留','orange'),('kv_bytes_per_request','单请求 KV','green')]:
             vals=np.array([r[key]/1e9 for r in rows]);a.barh(range(3),vals,left=left,height=.5,label=label,color=COL[col],edgecolor=COL['line']);left+=vals
         for i,r in enumerate(rows):a.plot([r['capacity_bytes']/1e9]*2,[i-.35,i+.35],color=COL['ink'],lw=1.2)
         a.set(yticks=range(3),yticklabels=['Qwen BF16','70B 8-bit','70B 4-bit'],xlim=(0,85),xlabel='容量（GB）');a.invert_yaxis();a.legend(loc='upper center',bbox_to_anchor=(.5,-.22),ncol=3,frameon=False);save(f,'9-capacity')
         d=data['figure_2_9']['history_capacity'];bars('history-capacity',['8K 上下文','32K 上下文'],d['maximum_requests'],'容量允许的独立请求数')
 
-        f,a=canvas(4.8);text(a,.04,.94,'输入 128 个位置，返回 4 个 token',14)
+        f,a=canvas(4.8);text(a,.04,.94,'输入 128 个 token，返回 4 个 token',14)
         for i in range(4):
             y=.72-i*.21
             box(a,.03,y,.24,.14,'输入 128 个' if i==0 else f'输入 y{i}','blue',11)
             box(a,.36,y,.27,.14,'prefill' if i==0 else f'decode {i}','orange')
             box(a,.72,y,.25,.14,f'输出 y{i+1}','green')
             arrow(a,(.27,y+.07),(.36,y+.07));arrow(a,(.63,y+.07),(.72,y+.07))
-            text(a,.49,y-.045,f'已保留 {128+i} 个位置',11,ha='center')
+            text(a,.49,y-.045,f'已保留 {128+i} 个 token',11,ha='center')
         save(f,'10-request')
         bars('request-compute',['DeepSeek\nV4.1 Flash','Qwen3-8B','Qwen3.6','DeepSeek\nV4-Flash','Kimi K3\n紧凑'],[r['matrix_flops']/1e12 for r in comparison['requests']],'完整请求矩阵运算（TFLOPs）')
     from core_principles_figures import draw as draw_principles

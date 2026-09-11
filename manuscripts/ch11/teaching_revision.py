@@ -77,7 +77,7 @@ def draw(here,data):
             start=0
             for v,c,l in zip(row,['blue','orange','green'],['输入','思考','可见输出']):a.barh(i,v,left=start,height=.5,color=COL[c],edgecolor=COL['line'],label=l if i==0 else None);start+=v
         a.set(yticks=[0,1],yticklabels=['1000 思考','100 思考'],xlabel='单次调用成本',ylim=(-.5,2.0));a.legend(ncol=3,frameon=False,loc='upper left');save(f,'thinking')
-        f,a=canvas(4.1);box(a,.04,.40,.23,.23,'任务控制器','orange',11);box(a,.38,.40,.23,.23,'服务入口','gray');box(a,.74,.68,.22,.19,'外部 API','blue',11);box(a,.74,.15,.22,.19,'自建副本','green',11);arrow(a,(.27,.515),(.38,.515));arrow(a,(.61,.56),(.74,.775));arrow(a,(.61,.46),(.74,.245));text(a,.50,.86,'按调用用量计费',11,ha='center');text(a,.5,.13,'按设备与运行支出计费',11,ha='center');save(f,'6-service')
+        f,a=canvas(4.1);box(a,.04,.40,.23,.23,'任务控制器','orange',11);box(a,.38,.40,.23,.23,'服务入口','gray');box(a,.74,.68,.22,.19,'外部 API','blue',11);box(a,.74,.15,.22,.19,'自建副本','green',11);arrow(a,(.27,.515),(.38,.515));arrow(a,(.61,.56),(.74,.775));arrow(a,(.61,.46),(.74,.245));text(a,.50,.86,'按调用用量计费',11,ha='center');text(a,.5,.13,'按加速器与运行支出计费',11,ha='center');save(f,'6-service')
         for quality,name in [(False,'7-routing'),(True,'routing-deadline')]:
             d=data['11-7'];h=np.array(d['h']);f,a=plot(4.0)
             if quality:a.plot(h*100,.98*h*100,color='#267398');a.axhline(90,ls='--',color='#a56c28');a.axvline(d['joint_target_hit']*100,ls='--',color='#666');a.set(ylabel='按时成功的提交比例（%）',ylim=(0,105))

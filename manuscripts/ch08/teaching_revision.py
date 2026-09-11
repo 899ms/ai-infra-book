@@ -15,7 +15,7 @@ def draw(here,data):
         text(a,.5,.08,'B 已结束 → 空出的执行位置交给 C',12,ha='center');save(f,'request-iterations')
         f,a=plot(3.0,left=.12);start=0
         for dur,l,c in [(.1,'排队','gray'),(.3,'prefill','blue'),(2.55,'decode','green')]:a.barh(0,dur,left=start,height=.35,color=COL[c],edgecolor=COL['line'],label=l);start+=dur
-        a.scatter([.4,2.95],[0,0],color='#252525',zorder=5);a.axvline(3,ls='--',color='#a56c28');a.set(yticks=[],xlim=(0,3.15),xlabel='从到达起计时（s）');a.legend(ncol=3,frameon=False,loc='upper center');save(f,'1-lifecycle')
+        a.scatter([.4,2.95],[0,0],color='#252525',zorder=5);a.axvline(3,ls='--',color='#a56c28');a.set(yticks=[],xlim=(0,3.15),xlabel='从到达起计时（s）');f.subplots_adjust(top=.78);a.legend(ncol=3,frameon=False,loc='upper center',bbox_to_anchor=(.5,1.28),columnspacing=1.5,handlelength=1.4);save(f,'1-lifecycle')
         f,a=plot(3.7);b=np.array(data['batch']['batch']);w=data['batch']['shared_weight_bytes']/2**30/b
         for L,c in [(2048,'#267398'),(8192,'#388768')]:a.plot(b,w+L*144/2**20,color=c,label=f'上下文 {L} token：总读取量');a.axhline(L*144/2**20,color=c,ls=':')
         a.plot(b,w,ls='--',color='#777777',label='每个输出 token 分摊的权重读取量');a.set(xscale='log',yscale='log',xlabel='批内请求数',ylabel='每生成一个 token 的读取量（GiB）');a.legend(frameon=False,fontsize=11);save(f,'2-batch')
@@ -29,7 +29,7 @@ def draw(here,data):
             f,a=canvas(3.5);h=d['history'];step=.065;start=.15
             for row in range(4):
                 for col in range(h+4):box(a,start+col*step,.65-row*.13,step-.008,.105,'','blue' if col<h else ('green' if col-h<=row else 'white'))
-            text(a,.04,.91,f'旧上下文 {h} + 新位置 4',14);text(a,.5,.12,f'旧上下文配对 {4*h} + 块内配对 10 = {4*h+10}',12,ha='center');save(f,'4-attention' if i==0 else 'attention-history')
+            text(a,.04,.91,f'旧上下文 {h} token + 新输入 4 token',14);text(a,.5,.12,f'旧上下文配对 {4*h} + 块内配对 10 = {4*h+10}',12,ha='center');save(f,'4-attention' if i==0 else 'attention-history')
         f,a=canvas(4.5);text(a,.04,.94,'逻辑块按序排列，物理块分散存放',14)
         for i,target in enumerate([2,0,3]):
             x=.06+i*.31;box(a,x,.68,.24,.13,f'逻辑块 {i}','blue',11);text(a,x+.12,.54,f'块表：{i} → {target}',11,ha='center');arrow(a,(x+.12,.46),(.14+target*.235,.31))
@@ -41,19 +41,19 @@ def draw(here,data):
                 y=.70-row*.18;text(a,.03,y+.04,f'{"ABCD"[row]}：{L}',11)
                 slots=16 if mode=='reserved' else (L+3)//4*4
                 for j in range(slots):box(a,.19+j*.047,y,.039,.10,'','blue' if j<L else 'gray')
-            text(a,.5,.05,f'共分配 {64 if mode=="reserved" else 52} 个位置',13,ha='center');save(f,name)
+            text(a,.5,.05,f'KV 分配容量：{64 if mode=="reserved" else 52} token',13,ha='center');save(f,name)
         f,a=canvas(4.4);box(a,.04,.67,.27,.15,'A 的块表','blue');box(a,.69,.67,.27,.15,'B 的块表','green');box(a,.31,.34,.38,.16,'两个共同前缀块\n各有两个引用','purple',11)
         arrow(a,(.175,.67),(.40,.50));arrow(a,(.825,.67),(.60,.50));box(a,.03,.07,.28,.13,'A 私有后缀','blue',11);box(a,.69,.07,.28,.13,'B 私有后缀','green',11);arrow(a,(.175,.67),(.175,.20));arrow(a,(.825,.67),(.825,.20));save(f,'pages-shared')
         f,a=canvas(4.3);box(a,.25,.70,.50,.16,'共享尾块：[a, b, c, 空]','purple',12)
         for x,label,c in [(.03,'分支 A：[a, b, c, x]','blue'),(.54,'分支 B：[a, b, c, y]','green')]:box(a,x,.20,.43,.19,label,c,11);arrow(a,(.5,.70),(x+.215,.39))
         text(a,.5,.52,'写入分歧前，取得各自的尾块副本',12,ha='center');save(f,'copy-on-write')
         f,a=canvas(4.3)
-        for row,(label,count,col) in enumerate([('A、B 使用共同块',2,'purple'),('A 结束，B 继续使用',1,'green'),('B 结束，设备已用完',0,'gray')]):
+        for row,(label,count,col) in enumerate([('A、B 使用共同块',2,'purple'),('A 结束，B 继续使用',1,'green'),('B 结束，加速器已不再访问',0,'gray')]):
             y=.69-row*.27;box(a,.04,y,.61,.17,label,col,11);box(a,.75,y,.21,.17,f'引用 {count}',col,11)
             if row<2:arrow(a,(.86,y),(.86,y-.10))
         save(f,'reference-release')
         f,a=canvas(4.2)
-        for x,l,c in [(.03,'收到取消\n停止后续迭代','orange'),(.37,'等待已提交\n设备操作完成','blue'),(.71,'释放私有块\n更新共享引用','green')]:box(a,x,.41,.26,.27,l,c,11)
+        for x,l,c in [(.03,'收到取消\n停止后续迭代','orange'),(.37,'等待已提交\n加速器操作完成','blue'),(.71,'释放私有块\n更新共享引用','green')]:box(a,x,.41,.26,.27,l,c,11)
         arrow(a,(.29,.54),(.37,.54));arrow(a,(.63,.54),(.71,.54));text(a,.5,.18,'取消调用返回 1.6 ms；块释放约 31 ms',11,ha='center');save(f,'cancel-lifetime')
         # Exact common-prefix lengths; tree topology is drawn by logical depth.
         d=data['prefix'];f,a=canvas(4.5);positions={0:(.12,.50),1:(.38,.83),2:(.38,.40),3:(.63,.63),4:(.63,.24),5:(.86,.39),6:(.86,.10)}
@@ -66,7 +66,7 @@ def draw(here,data):
         f,a=plot(3.8);v=np.array(d['adjacent_lcp']);a.bar(range(1,13),v,color=COL['blue'],label='与上一轮共同前缀');a.bar(range(1,13),np.array(d['input_lengths'])-v,bottom=v,color=COL['orange'],label='其余输入');a.set(xlabel='输入轮次',ylabel='token 数',xticks=[1,3,6,9,12]);a.legend(frameon=False);save(f,'prefix-lengths')
         f,a=canvas(3.8);text(a,.04,.94,'文本匹配到 10752，状态从 8192 恢复',13);a.plot([.05,.95],[.48,.48],color='#777777')
         for x,label,c in [(.10,'4096\n快照','blue'),(.48,'8192\n最近快照','green'),(.85,'10752\n匹配末端','orange')]:box(a,x-.07,.39,.17,.22,label,c,11)
-        arrow(a,(.57,.49),(.77,.49));text(a,.68,.22,'重算 2560 个位置',12,ha='center');save(f,'prefix-restore')
+        arrow(a,(.57,.49),(.77,.49));text(a,.68,.22,'重算 2560 个 token',12,ha='center');save(f,'prefix-restore')
         f,a=canvas(4.1)
         for row in range(2):
             y=.63-row*.40

@@ -1,0 +1,16 @@
+{
+ "assumptions":[
+  "教学模型，固定 Qwen3-8B BF16；不代替真实引擎规划器。候选为 TP1/2/4/8 与剩余卡组成的独立实例；每实例一次处理一个会话，不做连续批处理或跨会话流水。",
+  "逐步时间复用第六章权重／KV 读取与 72 次 ring 归约模型；小批 decode 读取受限。跨机 TP 组保守地按组内每轮均受慢链路限制，不代表最优分层通信算法。",
+  "全部八卡从请求到达计费至所有请求完成，每卡每秒 1 成本单位；目标为满足最低按时比例后，最小化每个按时完成会话的成本。",
+  "每卡容量按均匀 TP 分片加复制的归一化权重、最大历史 KV 和固定工作区计。完整参数数值来自现有第六章算例。",
+  "候选最优只在上述模型和候选范围内成立。PP/CP/SP/EP、动态批处理、其他归约算法须先扩展工作与通信模型再比较。"
+ ],
+ "common":{"gpus":8,"gpus_per_host":8,"tp_candidates":[1,2,4,8],"memory_bytes":24000000000,"workspace_bytes":2147483648,"history":8192,"steps":8,"requests":4,"deadline_s":0.09,"required_fraction":0.75,"hbm_Bps":1000000000000,"serial_s":0.0002,"local_alpha_s":0.000002,"local_Bps":50000000000,"cross_alpha_s":0.000004,"cross_Bps":25000000000,"cost_per_gpu_second":1},
+ "cases":[
+  {"name":"四会话，90 ms 期限"},
+  {"name":"单会话，40 ms 期限","requests":1,"deadline_s":0.04,"required_fraction":1},
+  {"name":"两台四卡，单会话 40 ms","gpus_per_host":4,"requests":1,"deadline_s":0.04,"required_fraction":1},
+  {"name":"每卡容量降为 10 GB","memory_bytes":10000000000}
+ ]
+}

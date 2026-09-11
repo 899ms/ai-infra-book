@@ -91,13 +91,13 @@ data['new-migration']={'initial_GiB':1,'copy_GiBs':2,'growth_GiBs':.5,'catchup_s
 f,a=canvas(6)
 for y,title in [(.72,'已返回并记录的序列'),(.43,'故障前保存的 KV'),(.14,'重建后继续生成')]:
  a.text(.025,y+.15,title,fontsize=12,weight='bold')
- box(a,.04,y,.39,.10,'输入：8192 个位置',col='pale',fs=11)
+ box(a,.04,y,.39,.10,'输入：8192 个 token',col='pale',fs=11)
  if y!=.43:
   box(a,.45,y,.32,.10,'已返回输出 1—128',col='green',fs=11)
   box(a,.80,y,.16,.10,'输出 129',col='sand',fs=11)
  else:
   a.text(.47,y+.05,'缺少生成部分的 KV',va='center',fontsize=12,color=C['orange'])
 a.text(.46,.32,'将已记录的输出 1—128 重新送入模型',fontsize=11,color=C['teal'])
-a.text(.05,.015,'KV 先恢复到 8320 个位置，再处理输出 129，生成下一个 token。',fontsize=12)
+a.text(.05,.015,'KV 先恢复到 8320 个 token，再处理输出 129，生成下一个 token。',fontsize=12)
 save(f,'figure-9-15-recovery')
 data['new-recovery']={'input_positions':8192,'delivered_outputs':129,'replayed_outputs':128,'restored_KV_positions':8320}

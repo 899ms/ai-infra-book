@@ -1,0 +1,693 @@
+{
+  "schema_version": 1,
+  "calculation": "ub-fabric",
+  "scenario": {
+    "jetty_bytes": 20,
+    "segment_bytes": 32,
+    "channel_bytes": 56,
+    "qp_bytes": 512,
+    "endpoint_counts": [
+      1,
+      8,
+      64,
+      256,
+      1024
+    ],
+    "context_cache_bytes": 262144,
+    "apps_per_host": 64,
+    "host_counts": [
+      2,
+      8,
+      64,
+      192,
+      384,
+      1024
+    ],
+    "membus_ns": 30,
+    "pcie_mmio_ns": 150,
+    "pcie_dma_read_ns": 500,
+    "pcie_dma_write_ns": 250,
+    "verb_post_ns": 50,
+    "wqe_construct_ns": 30,
+    "cqe_poll_host_ns": 70,
+    "cqe_poll_onchip_ns": 5,
+    "verb_poll_ns": 30,
+    "psn_serialize_ns": 50,
+    "dram_row_ns": 30,
+    "local_dram_ns": 70,
+    "link_ns": 100,
+    "link_sweep_ns": [
+      50,
+      100,
+      200,
+      500
+    ],
+    "clock_hz": 322000000,
+    "ldst_pipeline_cycles": 8,
+    "urma_pipeline_cycles": 25,
+    "roce_pipeline_cycles": 9,
+    "ub_initiation_interval_cycles": 2,
+    "roce_cycles_per_request": 6,
+    "ioctl_ns": 5000,
+    "oob_rtt_ns": 500000,
+    "setup_cores": 32,
+    "directory_lines": 1048576,
+    "directory_tag_bytes": 8,
+    "gating_max_cycles": 50,
+    "isolation_release_cycles": 78,
+    "roce_cadence_cycles": 8,
+    "ub_luts": 122710,
+    "roce_luts": 46636,
+    "fpga_luts": 871680,
+    "ub_bram": 328,
+    "roce_bram": 67,
+    "ub_flipflops": 194266,
+    "roce_flipflops": 91900,
+    "ub_cold_cycles": 24,
+    "roce_cold_cycles": 9
+  },
+  "sources": [
+    {
+      "file": "../references/files/papers/openurma.pdf",
+      "url": "https://arxiv.org/abs/2605.28717",
+      "sha256": "793c1c62eeeb6fc7dcf4fa52d4ca44e78255d52a9d50a9bb453dc2e5c9ed7964",
+      "bytes": 1437125,
+      "scope": "author revision 2026-06-02 (git e6a2eb5); record sizes, phase latencies, cache entries, synthesis area"
+    }
+  ],
+  "state": [
+    {
+      "endpoints": 1,
+      "ub_bytes": 108,
+      "roce_bytes": 544,
+      "ratio": 5.0,
+      "ub_fits_cache": true,
+      "roce_fits_cache": true
+    },
+    {
+      "endpoints": 8,
+      "ub_bytes": 864,
+      "roce_bytes": 33024,
+      "ratio": 38.2,
+      "ub_fits_cache": true,
+      "roce_fits_cache": true
+    },
+    {
+      "endpoints": 64,
+      "ub_bytes": 6912,
+      "roce_bytes": 2099200,
+      "ratio": 303.7,
+      "ub_fits_cache": true,
+      "roce_fits_cache": false
+    },
+    {
+      "endpoints": 256,
+      "ub_bytes": 27648,
+      "roce_bytes": 33562624,
+      "ratio": 1213.9,
+      "ub_fits_cache": true,
+      "roce_fits_cache": false
+    },
+    {
+      "endpoints": 1024,
+      "ub_bytes": 110592,
+      "roce_bytes": 536903680,
+      "ratio": 4854.8,
+      "ub_fits_cache": true,
+      "roce_fits_cache": false
+    }
+  ],
+  "cache": {
+    "context_cache_bytes": 262144,
+    "roce_spill_endpoints": 23,
+    "ub_spill_endpoints": 2428,
+    "roce_refetch_ns": 1000,
+    "ub_refetch_ns": 200,
+    "paper_cache_entries": {
+      "roce_qp": 512,
+      "ub_channel": 2048
+    },
+    "sweep": [
+      {
+        "endpoints": 1,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 2221.8
+      },
+      {
+        "endpoints": 2,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 2221.8
+      },
+      {
+        "endpoints": 4,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 2221.8
+      },
+      {
+        "endpoints": 8,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 2221.8
+      },
+      {
+        "endpoints": 16,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 2221.8
+      },
+      {
+        "endpoints": 22,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 2221.8
+      },
+      {
+        "endpoints": 23,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 3221.8
+      },
+      {
+        "endpoints": 32,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 3221.8
+      },
+      {
+        "endpoints": 64,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 3221.8
+      },
+      {
+        "endpoints": 128,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 3221.8
+      },
+      {
+        "endpoints": 256,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 3221.8
+      },
+      {
+        "endpoints": 512,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 3221.8
+      },
+      {
+        "endpoints": 1024,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 3221.8
+      },
+      {
+        "endpoints": 2048,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 3221.8
+      },
+      {
+        "endpoints": 2427,
+        "ub_loadstore_ns": 419.4,
+        "roce_dma_ns": 3221.8
+      },
+      {
+        "endpoints": 2428,
+        "ub_loadstore_ns": 619.4,
+        "roce_dma_ns": 3221.8
+      },
+      {
+        "endpoints": 4096,
+        "ub_loadstore_ns": 619.4,
+        "roce_dma_ns": 3221.8
+      }
+    ]
+  },
+  "round_trip": {
+    "ub_loadstore": {
+      "phases": [
+        {
+          "phase": "片上总线提交",
+          "group": "片上总线",
+          "ns": 30.0
+        },
+        {
+          "phase": "NIC 发送流水线",
+          "group": "NIC 流水线",
+          "ns": 24.84
+        },
+        {
+          "phase": "线路去程",
+          "group": "线路",
+          "ns": 100.0
+        },
+        {
+          "phase": "NIC 接收流水线",
+          "group": "NIC 流水线",
+          "ns": 24.84
+        },
+        {
+          "phase": "目标片上总线到内存",
+          "group": "片上总线",
+          "ns": 30.0
+        },
+        {
+          "phase": "目标 DRAM 行命中",
+          "group": "内存与完成",
+          "ns": 30.0
+        },
+        {
+          "phase": "NIC 响应流水线",
+          "group": "NIC 流水线",
+          "ns": 24.84
+        },
+        {
+          "phase": "线路回程",
+          "group": "线路",
+          "ns": 100.0
+        },
+        {
+          "phase": "NIC 响应接收",
+          "group": "NIC 流水线",
+          "ns": 24.84
+        },
+        {
+          "phase": "片上总线完成",
+          "group": "片上总线",
+          "ns": 30.0
+        }
+      ],
+      "group_ns": {
+        "软件提交": 0.0,
+        "PCIe 穿越": 0.0,
+        "片上总线": 90.0,
+        "NIC 流水线": 99.38,
+        "线路": 200.0,
+        "内存与完成": 30.0
+      },
+      "total_ns": 419.4,
+      "fixed_ns": 219.4,
+      "paper_measured_ns": 500,
+      "link_sweep": [
+        {
+          "link_ns": 50,
+          "total_ns": 319.4
+        },
+        {
+          "link_ns": 100,
+          "total_ns": 419.4
+        },
+        {
+          "link_ns": 200,
+          "total_ns": 619.4
+        },
+        {
+          "link_ns": 500,
+          "total_ns": 1219.4
+        }
+      ]
+    },
+    "ub_urma": {
+      "phases": [
+        {
+          "phase": "接口库提交",
+          "group": "软件提交",
+          "ns": 50.0
+        },
+        {
+          "phase": "构造请求项",
+          "group": "软件提交",
+          "ns": 30.0
+        },
+        {
+          "phase": "片上总线提交",
+          "group": "片上总线",
+          "ns": 30.0
+        },
+        {
+          "phase": "NIC 发送流水线",
+          "group": "NIC 流水线",
+          "ns": 77.64
+        },
+        {
+          "phase": "线路去程",
+          "group": "线路",
+          "ns": 100.0
+        },
+        {
+          "phase": "NIC 接收流水线",
+          "group": "NIC 流水线",
+          "ns": 77.64
+        },
+        {
+          "phase": "目标片上总线到内存",
+          "group": "片上总线",
+          "ns": 30.0
+        },
+        {
+          "phase": "目标 DRAM 行命中",
+          "group": "内存与完成",
+          "ns": 30.0
+        },
+        {
+          "phase": "NIC 响应流水线",
+          "group": "NIC 流水线",
+          "ns": 77.64
+        },
+        {
+          "phase": "线路回程",
+          "group": "线路",
+          "ns": 100.0
+        },
+        {
+          "phase": "NIC 响应接收",
+          "group": "NIC 流水线",
+          "ns": 77.64
+        },
+        {
+          "phase": "片上总线完成",
+          "group": "片上总线",
+          "ns": 30.0
+        },
+        {
+          "phase": "片上完成队列轮询",
+          "group": "内存与完成",
+          "ns": 5.0
+        },
+        {
+          "phase": "接口库轮询",
+          "group": "内存与完成",
+          "ns": 30.0
+        }
+      ],
+      "group_ns": {
+        "软件提交": 80.0,
+        "PCIe 穿越": 0.0,
+        "片上总线": 90.0,
+        "NIC 流水线": 310.56,
+        "线路": 200.0,
+        "内存与完成": 65.0
+      },
+      "total_ns": 745.6,
+      "fixed_ns": 545.6,
+      "paper_measured_ns": 757,
+      "link_sweep": [
+        {
+          "link_ns": 50,
+          "total_ns": 645.6
+        },
+        {
+          "link_ns": 100,
+          "total_ns": 745.6
+        },
+        {
+          "link_ns": 200,
+          "total_ns": 945.6
+        },
+        {
+          "link_ns": 500,
+          "total_ns": 1545.6
+        }
+      ]
+    },
+    "roce_dma": {
+      "phases": [
+        {
+          "phase": "接口库提交",
+          "group": "软件提交",
+          "ns": 50.0
+        },
+        {
+          "phase": "构造请求项",
+          "group": "软件提交",
+          "ns": 30.0
+        },
+        {
+          "phase": "门铃 MMIO 写",
+          "group": "PCIe 穿越",
+          "ns": 150.0
+        },
+        {
+          "phase": "DMA 读取请求项",
+          "group": "PCIe 穿越",
+          "ns": 500.0
+        },
+        {
+          "phase": "NIC 发送流水线",
+          "group": "NIC 流水线",
+          "ns": 27.95
+        },
+        {
+          "phase": "线路去程",
+          "group": "线路",
+          "ns": 100.0
+        },
+        {
+          "phase": "NIC 接收流水线",
+          "group": "NIC 流水线",
+          "ns": 27.95
+        },
+        {
+          "phase": "目标 NIC DMA 读主机内存",
+          "group": "PCIe 穿越",
+          "ns": 500.0
+        },
+        {
+          "phase": "目标 DRAM 行命中",
+          "group": "内存与完成",
+          "ns": 30.0
+        },
+        {
+          "phase": "NIC 响应流水线",
+          "group": "NIC 流水线",
+          "ns": 27.95
+        },
+        {
+          "phase": "线路回程",
+          "group": "线路",
+          "ns": 100.0
+        },
+        {
+          "phase": "NIC 响应接收",
+          "group": "NIC 流水线",
+          "ns": 27.95
+        },
+        {
+          "phase": "响应载荷 DMA 写",
+          "group": "PCIe 穿越",
+          "ns": 250.0
+        },
+        {
+          "phase": "完成项 DMA 写",
+          "group": "PCIe 穿越",
+          "ns": 250.0
+        },
+        {
+          "phase": "主机完成队列轮询",
+          "group": "内存与完成",
+          "ns": 70.0
+        },
+        {
+          "phase": "接口库轮询",
+          "group": "内存与完成",
+          "ns": 30.0
+        },
+        {
+          "phase": "序号串行化",
+          "group": "内存与完成",
+          "ns": 50.0
+        }
+      ],
+      "group_ns": {
+        "软件提交": 80.0,
+        "PCIe 穿越": 1650.0,
+        "片上总线": 0.0,
+        "NIC 流水线": 111.8,
+        "线路": 200.0,
+        "内存与完成": 180.0
+      },
+      "total_ns": 2221.8,
+      "fixed_ns": 2021.8,
+      "paper_measured_ns": 2236,
+      "link_sweep": [
+        {
+          "link_ns": 50,
+          "total_ns": 2121.8
+        },
+        {
+          "link_ns": 100,
+          "total_ns": 2221.8
+        },
+        {
+          "link_ns": 200,
+          "total_ns": 2421.8
+        },
+        {
+          "link_ns": 500,
+          "total_ns": 3021.8
+        }
+      ]
+    }
+  },
+  "groups": [
+    "软件提交",
+    "PCIe 穿越",
+    "片上总线",
+    "NIC 流水线",
+    "线路",
+    "内存与完成"
+  ],
+  "hosts": [
+    {
+      "hosts": 2,
+      "ub_bytes": 3384,
+      "roce_bytes": 2099200,
+      "directory_bytes": 8519680.0,
+      "ub_cache_share": 0.0129,
+      "roce_cache_share": 8.01
+    },
+    {
+      "hosts": 8,
+      "ub_bytes": 3720,
+      "roce_bytes": 14682112,
+      "directory_bytes": 9306112.0,
+      "ub_cache_share": 0.0142,
+      "roce_cache_share": 56.01
+    },
+    {
+      "hosts": 64,
+      "ub_bytes": 6856,
+      "roce_bytes": 132122624,
+      "directory_bytes": 16646144.0,
+      "ub_cache_share": 0.0262,
+      "roce_cache_share": 504.01
+    },
+    {
+      "hosts": 192,
+      "ub_bytes": 14024,
+      "roce_bytes": 400558080,
+      "directory_bytes": 33423360.0,
+      "ub_cache_share": 0.0535,
+      "roce_cache_share": 1528.01
+    },
+    {
+      "hosts": 384,
+      "ub_bytes": 24776,
+      "roce_bytes": 803211264,
+      "directory_bytes": 58589184.0,
+      "ub_cache_share": 0.0945,
+      "roce_cache_share": 3064.01
+    },
+    {
+      "hosts": 1024,
+      "ub_bytes": 60616,
+      "roce_bytes": 2145388544,
+      "directory_bytes": 142475264.0,
+      "ub_cache_share": 0.2312,
+      "roce_cache_share": 8184.01
+    }
+  ],
+  "setup": [
+    {
+      "endpoints": 1,
+      "roce_objects": 1,
+      "ub_objects": 2,
+      "roce_serial_s": 0.00052,
+      "ub_serial_s": 0.00051,
+      "roce_parallel_s": 1.625e-05,
+      "ub_parallel_s": 1.59375e-05,
+      "ratio": 1.0
+    },
+    {
+      "endpoints": 8,
+      "roce_objects": 64,
+      "ub_objects": 16,
+      "roce_serial_s": 0.03328,
+      "ub_serial_s": 0.00408,
+      "roce_parallel_s": 0.00104,
+      "ub_parallel_s": 0.0001275,
+      "ratio": 8.2
+    },
+    {
+      "endpoints": 64,
+      "roce_objects": 4096,
+      "ub_objects": 128,
+      "roce_serial_s": 2.12992,
+      "ub_serial_s": 0.03264,
+      "roce_parallel_s": 0.06656,
+      "ub_parallel_s": 0.00102,
+      "ratio": 65.3
+    },
+    {
+      "endpoints": 256,
+      "roce_objects": 65536,
+      "ub_objects": 512,
+      "roce_serial_s": 34.07872,
+      "ub_serial_s": 0.13056,
+      "roce_parallel_s": 1.06496,
+      "ub_parallel_s": 0.00408,
+      "ratio": 261.0
+    },
+    {
+      "endpoints": 1024,
+      "roce_objects": 1048576,
+      "ub_objects": 2048,
+      "roce_serial_s": 545.25952,
+      "ub_serial_s": 0.52224,
+      "roce_parallel_s": 17.03936,
+      "ub_parallel_s": 0.01632,
+      "ratio": 1044.1
+    }
+  ],
+  "throughput": {
+    "ub_interval_ns": 6.21,
+    "roce_interval_ns": 18.63,
+    "ub_requests_per_us": 161.0,
+    "roce_requests_per_us": 53.67,
+    "ub_GBps_64B": 10.3,
+    "roce_GBps_64B": 3.43,
+    "ub_GBps_4KiB": 659.46,
+    "roce_GBps_4KiB": 219.82
+  },
+  "ordering": {
+    "gating_max_ns": 155.3,
+    "eight_requests_four_initiators_ns": 242.2,
+    "roce_eighth_in_order_ns": 201.9
+  },
+  "cost": {
+    "ub_lut_share": 0.1408,
+    "roce_lut_share": 0.0535,
+    "lut_ratio": 2.63,
+    "bram_ratio": 4.9,
+    "flipflop_ratio": 2.11,
+    "extra_cold_cycles": 15,
+    "extra_cold_ns": 46.6,
+    "extra_cold_share_of_one_dma_read": 0.093
+  },
+  "summary": {
+    "endpoints_max": 1024,
+    "ub_state_bytes_max": 110592,
+    "roce_state_bytes_max": 536903680,
+    "state_ratio_max": 4854.8,
+    "roce_spill_endpoints": 23,
+    "ub_spill_endpoints": 2428,
+    "roce_refetch_ns": 1000,
+    "ub_refetch_ns": 200,
+    "ub_loadstore_round_trip_ns": 419.4,
+    "ub_urma_round_trip_ns": 745.6,
+    "roce_dma_round_trip_ns": 2221.8,
+    "roce_pcie_ns": 1650.0,
+    "round_trip_ratio": 5.3,
+    "apps_per_host": 64,
+    "roce_max_hosts_in_cache": 1,
+    "ub_max_hosts_in_cache": 4622,
+    "roce_setup_parallel_s_max": 17.03936,
+    "ub_setup_parallel_s_max": 0.01632,
+    "setup_ratio_max": 1044.1,
+    "ub_requests_per_us": 161.0,
+    "roce_requests_per_us": 53.67,
+    "ub_lut_share": 0.1408,
+    "extra_cold_ns": 46.6
+  },
+  "assumptions": [
+    "每条记录的字节数取自 OpenURMA 实现的状态结构（Jetty 20 B、内存段 32 B、TP 通道 56 B）与其 RoCE RC 对照的 QP 上下文 512 B；同类字段的正式规范可能更大，比例的量级不变。",
+    "端点状态按 N 个本地端点访问 M=N 个远端端点的全连接计算：UB 为 N(Jetty+段)+M×通道，RoCE 为 N×M×QP+N×段。这是可共享的核心硬件状态，不含页表、未完成请求和软件映射。",
+    "上下文缓存按字节容量判断是否溢出；论文仿真器按条目数（RoCE 512 条 QP、UB 2048 条通道）判断，因此 UB 的溢出点在论文中为 1024 端点，这里为字节口径的结果。溢出后每次操作在两端各多一次上下文重取。",
+    "一次 64 B 远程读取的各阶段延迟为声明值：片上总线 30 ns、PCIe MMIO 150 ns、PCIe DMA 读 500 ns、写 250 ns、线路单程 100 ns，NIC 流水线按周期数乘 322 MHz 时钟。各阶段全部串行在关键路径上；论文仿真值作为对照记录，不参与推导。",
+    "主机数算例假设每台主机 A 个应用端点、主机之间全连接，每台主机的 NIC 只保存自己发起方向的状态；目录式一致互联按每缓存行为每个对端保留 1 bit 加固定标签计算。",
+    "连接建立按每个对象的控制操作计数：RoCE 每条 QP 需 4 次系统调用与 1 次带外往返，UB 每个 Jetty 1 次系统调用、每条通道 1 次系统调用与 1 次往返；并行核数只把串行总时间等分，不建模内核锁竞争。",
+    "请求速率由流水线最慢级的启动间隔决定，UB 取 II=2 周期；RoCE 取每请求 6 周期的序号分配依赖。面积与周期数为论文报告的综合结果，不是推导值，用来与推导出的每操作节省作比较。"
+  ]
+}

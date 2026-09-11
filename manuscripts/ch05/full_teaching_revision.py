@@ -55,17 +55,17 @@ def draw(here,data):
             # Host API collection is emitted by the fixed trace-analysis source.
             events=r.get('launches',r.get('apis',[]))
             for event in [e for e in events if 'Launch' in e['name']]:a.barh(0,(event['end_ns']-event['start_ns'])/1000,left=(event['start_ns']-r['start_ns'])/1000,height=.38,color=COL['blue'],edgecolor=COL['line'],lw=.5)
-            a.set(yticks=[0,1],yticklabels=['主机启动','设备内核'],xlim=(0,(r['end_ns']-r['start_ns'])/1000),ylim=(-.6,1.6),xlabel='从本段采集起点计时（μs）');a.invert_yaxis();save(f,'12-runtime' if i==0 else f'runtime-{i}')
+            a.set(yticks=[0,1],yticklabels=['主机启动','加速器内核'],xlim=(0,(r['end_ns']-r['start_ns'])/1000),ylim=(-.6,1.6),xlabel='从本段采集起点计时（μs）');a.invert_yaxis();save(f,'12-runtime' if i==0 else f'runtime-{i}')
         f,a=canvas(3.7);text(a,.04,.94,'图重放按已记录的地址读取输入',14)
         box(a,.04,.62,.34,.18,'本次新输入\n地址 X','blue');box(a,.62,.62,.34,.18,'固定图缓冲\n地址 G','orange');arrow(a,(.38,.71),(.62,.71))
         text(a,.5,.51,'X 与 G 不同时，复制到 G',11,ha='center')
-        box(a,.24,.13,.52,.16,'重放设备图，读取 G','green');arrow(a,(.79,.62),(.5,.29));save(f,'graph-address')
+        box(a,.24,.13,.52,.16,'重放 CUDA Graph，读取 G','green');arrow(a,(.79,.62),(.5,.29));save(f,'graph-address')
         d=data['5-13'];f,a=plot(3.5,left=.25)
         for y,(prep,copy) in enumerate(zip(d['prepare_us'],d['copy_us'])):
             for start,dur,c in [(0,prep,'orange'),(prep,copy,'blue'),(prep+copy,20,'green')]:a.barh(y,dur,left=start,height=.5,color=COL[c],edgecolor=COL['line'])
         a.set(yticks=range(3),yticklabels=['普通提交','图：2 MiB 输入','图：16 MiB 输入'],xlim=(0,46),xlabel='准备、复制与计算总时间（μs）');a.invert_yaxis()
-        for c,label in [('orange','准备'),('blue','复制'),('green','计算')]:a.barh([],[],color=COL[c],label=label)
-        a.legend(ncol=3,loc='upper center',bbox_to_anchor=(.5,1.02),frameon=False);save(f,'13-graph-copy')
+        from matplotlib.patches import Patch
+        f.subplots_adjust(top=.85);a.legend(handles=[Patch(facecolor=COL[c],edgecolor=COL['line'],label=label) for c,label in [('orange','准备'),('blue','复制'),('green','计算')]],ncol=3,loc='lower center',bbox_to_anchor=(.5,1.0),frameon=False,columnspacing=1.5,handlelength=1.4);save(f,'13-graph-copy')
         d=data['5-14'];f,a=plot(3.5);r=np.arange(1,141)
         for row,col,label in zip(d['policies'],['#267398','#388768','#a56c28'],['通用','分桶','特化']):a.plot(r,(row['prepare_ns']+r*row['cohort_execution_ns'])/1e6,color=col,label=label)
         a.set(xlabel='重复执行的组数',ylabel='准备加执行（ms）',xlim=(0,140));a.legend(frameon=False);save(f,'14-specialization')

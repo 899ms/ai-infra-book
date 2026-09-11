@@ -1,0 +1,308 @@
+{
+  "assumptions": [
+    "教学模型，固定 Qwen3-8B BF16；不代替真实引擎规划器。候选为 TP1/2/4/8 与剩余卡组成的独立实例；每实例一次处理一个会话，不做连续批处理或跨会话流水。",
+    "逐步时间复用第六章权重／KV 读取与 72 次 ring 归约模型；小批 decode 读取受限。跨机 TP 组保守地按组内每轮均受慢链路限制，不代表最优分层通信算法。",
+    "全部八卡从请求到达计费至所有请求完成，每卡每秒 1 成本单位；目标为满足最低按时比例后，最小化每个按时完成会话的成本。",
+    "每卡容量按均匀 TP 分片加复制的归一化权重、最大历史 KV 和固定工作区计。完整参数数值来自现有第六章算例。",
+    "候选最优只在上述模型和候选范围内成立。PP/CP/SP/EP、动态批处理、其他归约算法须先扩展工作与通信模型再比较。"
+  ],
+  "results": [
+    {
+      "name": "四会话，90 ms 期限",
+      "candidates": [
+        {
+          "tp": 1,
+          "instances": 8,
+          "cross_host": false,
+          "memory_bytes": 19738093568.0,
+          "service_s": 0.13235854131199998,
+          "completion_s": [
+            0.13235854131199998,
+            0.13235854131199998,
+            0.13235854131199998,
+            0.13235854131199998
+          ],
+          "ontime": 0,
+          "cost": 1.0588683304959998,
+          "cost_per_ontime": null,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 2,
+          "instances": 4,
+          "cross_host": false,
+          "memory_bytes": 10943087616.0,
+          "service_s": 0.06937764249600001,
+          "completion_s": [
+            0.06937764249600001,
+            0.06937764249600001,
+            0.06937764249600001,
+            0.06937764249600001
+          ],
+          "ontime": 4,
+          "cost": 0.5550211399680001,
+          "cost_per_ontime": 0.13875528499200002,
+          "rejections": []
+        },
+        {
+          "tp": 4,
+          "instances": 2,
+          "cross_host": false,
+          "memory_bytes": 6545584640.0,
+          "service_s": 0.041343193087999996,
+          "completion_s": [
+            0.041343193087999996,
+            0.041343193087999996,
+            0.08268638617599999,
+            0.08268638617599999
+          ],
+          "ontime": 4,
+          "cost": 0.6614910894079999,
+          "cost_per_ontime": 0.16537277235199999,
+          "rejections": []
+        },
+        {
+          "tp": 8,
+          "instances": 1,
+          "cross_host": false,
+          "memory_bytes": 4346833152.0,
+          "service_s": 0.03423796838399999,
+          "completion_s": [
+            0.03423796838399999,
+            0.06847593676799998,
+            0.10271390515199998,
+            0.13695187353599997
+          ],
+          "ontime": 2,
+          "cost": 1.0956149882879997,
+          "cost_per_ontime": 0.5478074941439999,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        }
+      ],
+      "winner_tp": 2
+    },
+    {
+      "name": "单会话，40 ms 期限",
+      "candidates": [
+        {
+          "tp": 1,
+          "instances": 8,
+          "cross_host": false,
+          "memory_bytes": 19738093568.0,
+          "service_s": 0.13235854131199998,
+          "completion_s": [
+            0.13235854131199998
+          ],
+          "ontime": 0,
+          "cost": 1.0588683304959998,
+          "cost_per_ontime": null,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 2,
+          "instances": 4,
+          "cross_host": false,
+          "memory_bytes": 10943087616.0,
+          "service_s": 0.06937764249600001,
+          "completion_s": [
+            0.06937764249600001
+          ],
+          "ontime": 0,
+          "cost": 0.5550211399680001,
+          "cost_per_ontime": null,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 4,
+          "instances": 2,
+          "cross_host": false,
+          "memory_bytes": 6545584640.0,
+          "service_s": 0.041343193087999996,
+          "completion_s": [
+            0.041343193087999996
+          ],
+          "ontime": 0,
+          "cost": 0.33074554470399997,
+          "cost_per_ontime": null,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 8,
+          "instances": 1,
+          "cross_host": false,
+          "memory_bytes": 4346833152.0,
+          "service_s": 0.03423796838399999,
+          "completion_s": [
+            0.03423796838399999
+          ],
+          "ontime": 1,
+          "cost": 0.27390374707199994,
+          "cost_per_ontime": 0.27390374707199994,
+          "rejections": []
+        }
+      ],
+      "winner_tp": 8
+    },
+    {
+      "name": "两台四卡，单会话 40 ms",
+      "candidates": [
+        {
+          "tp": 1,
+          "instances": 8,
+          "cross_host": false,
+          "memory_bytes": 19738093568.0,
+          "service_s": 0.13235854131199998,
+          "completion_s": [
+            0.13235854131199998
+          ],
+          "ontime": 0,
+          "cost": 1.0588683304959998,
+          "cost_per_ontime": null,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 2,
+          "instances": 4,
+          "cross_host": false,
+          "memory_bytes": 10943087616.0,
+          "service_s": 0.06937764249600001,
+          "completion_s": [
+            0.06937764249600001
+          ],
+          "ontime": 0,
+          "cost": 0.5550211399680001,
+          "cost_per_ontime": null,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 4,
+          "instances": 2,
+          "cross_host": false,
+          "memory_bytes": 6545584640.0,
+          "service_s": 0.041343193087999996,
+          "completion_s": [
+            0.041343193087999996
+          ],
+          "ontime": 0,
+          "cost": 0.33074554470399997,
+          "cost_per_ontime": null,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 8,
+          "instances": 1,
+          "cross_host": true,
+          "memory_bytes": 4346833152.0,
+          "service_s": 0.050531119103999995,
+          "completion_s": [
+            0.050531119103999995
+          ],
+          "ontime": 0,
+          "cost": 0.40424895283199996,
+          "cost_per_ontime": null,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        }
+      ],
+      "winner_tp": null
+    },
+    {
+      "name": "每卡容量降为 10 GB",
+      "candidates": [
+        {
+          "tp": 1,
+          "instances": 8,
+          "cross_host": false,
+          "memory_bytes": 19738093568.0,
+          "service_s": 0.13235854131199998,
+          "completion_s": [
+            0.13235854131199998,
+            0.13235854131199998,
+            0.13235854131199998,
+            0.13235854131199998
+          ],
+          "ontime": 0,
+          "cost": 1.0588683304959998,
+          "cost_per_ontime": null,
+          "rejections": [
+            "每卡容量不足",
+            "按时完成比例不足"
+          ]
+        },
+        {
+          "tp": 2,
+          "instances": 4,
+          "cross_host": false,
+          "memory_bytes": 10943087616.0,
+          "service_s": 0.06937764249600001,
+          "completion_s": [
+            0.06937764249600001,
+            0.06937764249600001,
+            0.06937764249600001,
+            0.06937764249600001
+          ],
+          "ontime": 4,
+          "cost": 0.5550211399680001,
+          "cost_per_ontime": 0.13875528499200002,
+          "rejections": [
+            "每卡容量不足"
+          ]
+        },
+        {
+          "tp": 4,
+          "instances": 2,
+          "cross_host": false,
+          "memory_bytes": 6545584640.0,
+          "service_s": 0.041343193087999996,
+          "completion_s": [
+            0.041343193087999996,
+            0.041343193087999996,
+            0.08268638617599999,
+            0.08268638617599999
+          ],
+          "ontime": 4,
+          "cost": 0.6614910894079999,
+          "cost_per_ontime": 0.16537277235199999,
+          "rejections": []
+        },
+        {
+          "tp": 8,
+          "instances": 1,
+          "cross_host": false,
+          "memory_bytes": 4346833152.0,
+          "service_s": 0.03423796838399999,
+          "completion_s": [
+            0.03423796838399999,
+            0.06847593676799998,
+            0.10271390515199998,
+            0.13695187353599997
+          ],
+          "ontime": 2,
+          "cost": 1.0956149882879997,
+          "cost_per_ontime": 0.5478074941439999,
+          "rejections": [
+            "按时完成比例不足"
+          ]
+        }
+      ],
+      "winner_tp": 4
+    }
+  ]
+}

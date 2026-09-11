@@ -137,6 +137,8 @@ import sys
 sys.path.insert(0,str(HERE.parent))
 from teaching_revision import draw as draw_revision
 outputs.extend(draw_revision(HERE,data,teaching))
+from architecture_evolution import draw as draw_evolution
+outputs.extend(draw_evolution(HERE))
 outputs=list(dict.fromkeys(outputs))
 md=HERE.parent/'04-加速器架构.md';raw=md.read_text()
 maths=[]

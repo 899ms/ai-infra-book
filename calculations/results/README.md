@@ -1853,3 +1853,10 @@ V4共享专家FP8复制坐标：
 - [调研与复算说明](../research/deepseek-v41-flash/README.md)：保留两代的理由、官方 3,514→890 的复算、覆盖范围和验证方法。
 
 本组 9 场景/18 产物由专题脚本刷新，并已登记公共 reproduce；未因此重跑其他全书实验或更新旧全局 manifest。
+
+
+## 切分、通信与集群规模的综合算例
+
+- [给定模型、容量与期限选择TP和实例](parallel-choice-book.md)
+- [专家分离的dispatch、计算与combine偏斜](ep-skew-book.md)
+- [1024卡训练：超节点、出口、并行候选与恢复](supernode-scaling-book.md)

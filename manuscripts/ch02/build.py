@@ -53,7 +53,7 @@ def arrow(ax,a,b,col='teal',alpha=1,rad=0):
  ax.add_patch(FancyArrowPatch(a,b,arrowstyle='-|>',mutation_scale=12,color=C[col],alpha=alpha,lw=1.5,connectionstyle=f'arc3,rad={rad}'))
 # Figure 1: dependency graphs, separate known sequence and next unknown token.
 f,a=canvas('图 2-1  序列模型的计算依赖','同一坐标：横轴为序列位置，纵轴为网络深度；颜色区分已完成状态与新增工作。',8.2)
-for panel,x0,title in [(0,.065,'RNN：同层时间递推'),(1,.39,'因果 Transformer：跨层访问'),(2,.715,'缓存生成：仅追加新位置')]:
+for panel,x0,title in [(0,.065,'RNN：同层时间递推'),(1,.39,'因果 Transformer：跨层访问'),(2,.715,'缓存生成：仅追加新 token')]:
  a.text(x0+.11,.81,title,ha='center',fontsize=13,weight='bold')
  xs=[x0+i*.065 for i in range(4)];ys=[.30+i*.125 for i in range(4)]
  for l in range(1,4):
@@ -167,7 +167,7 @@ f,a=canvas('图 2-8  请求输入与计算状态映射','统一资源请求：S=
 for i,(title,body) in enumerate([('Prefill','输入 128 → 输出 $y_1$\n保留 128 位置'),('Decode 1','输入 $y_1$ → 输出 $y_2$\n保留 129 位置'),('Decode 2','输入 $y_2$ → 输出 $y_3$\n保留 130 位置'),('Decode 3','输入 $y_3$ → 输出 $y_4$\n保留 131 位置')]):
  x=.055+i*.235;box(a,x,.66,.195,.15,title,body,color='light' if i==0 else 'pale',size=13)
  if i<3:arrow(a,(x+.203,.735),(x+.225,.735))
-a.text(.055,.60,'$y_4$ 已返回但尚未再次进入模型；最终状态不是 132 个位置。',fontsize=12,color=C['orange'])
+a.text(.055,.60,'$y_4$ 已返回但尚未再次进入模型；最终状态不是 132 个 token。',fontsize=12,color=C['orange'])
 vals=[z['summary']['matrix_flops']/1e12 for z in r['comparisons']]
 ax=f.add_axes([.095,.22,.44,.29]);ax.barh(range(4),vals,color=[C['blue'],C['teal'],C['teal'],C['orange']]);ax.set_yticks(range(4),['Qwen3-8B','V4-Flash','V4-Pro','K3 expanded']);ax.invert_yaxis();ax.set_xlim(0,34);ax.set_xlabel('完整请求矩阵 TFLOPs')
 for i,z in enumerate(vals):ax.text(z+.5,i,f'{z:.3f}',va='center',fontsize=10)

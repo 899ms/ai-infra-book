@@ -1,0 +1,1583 @@
+{
+  "schema_version": 1,
+  "profiles": [
+    {
+      "id": "rtx3090",
+      "name": "RTX 3090 FE",
+      "capacity_gb": 24,
+      "bandwidth_gbs": 936.0,
+      "bf16_fp32_dense_tflops": 71
+    },
+    {
+      "id": "rtx4090",
+      "name": "GeForce RTX 4090",
+      "capacity_gb": 24,
+      "bandwidth_gbs": 1008.0,
+      "bf16_fp32_dense_tflops": 165.2
+    },
+    {
+      "id": "rtx5090",
+      "name": "GeForce RTX 5090",
+      "capacity_gb": 32,
+      "bandwidth_gbs": 1792.0,
+      "bf16_fp32_dense_tflops": 209.5
+    },
+    {
+      "id": "rtx-pro6000-blackwell-ws",
+      "name": "RTX PRO 6000 Blackwell Workstation Edition",
+      "capacity_gb": 96,
+      "bandwidth_gbs": 1792.0,
+      "bf16_fp32_dense_tflops": 503.8
+    },
+    {
+      "id": "a100-80gb-sxm",
+      "name": "A100 80GB SXM",
+      "capacity_gb": 80,
+      "bandwidth_gbs": 2039.0,
+      "bf16_fp32_dense_tflops": 312
+    },
+    {
+      "id": "h100-sxm",
+      "name": "H100 SXM 80GB",
+      "capacity_gb": 80,
+      "bandwidth_gbs": 3350.0,
+      "bf16_fp32_dense_tflops": 989.4
+    },
+    {
+      "id": "h200-sxm",
+      "name": "H200 SXM",
+      "capacity_gb": 141,
+      "bandwidth_gbs": 4800.0,
+      "bf16_fp32_dense_tflops": 989.5
+    },
+    {
+      "id": "ascend-950pr-max-spec",
+      "name": "昇腾 950PR 规格上限",
+      "capacity_gb": 128,
+      "bandwidth_gbs": 1600.0,
+      "bf16_fp32_dense_tflops": null
+    },
+    {
+      "id": "ascend-950dt-max-spec",
+      "name": "昇腾 950DT 规格上限",
+      "capacity_gb": 144,
+      "bandwidth_gbs": 4000.0,
+      "bf16_fp32_dense_tflops": null
+    },
+    {
+      "id": "m1-ultra-64gpu-128gb",
+      "name": "Apple M1 Ultra 64-core GPU / 128GB",
+      "capacity_gb": 128,
+      "bandwidth_gbs": 800.0,
+      "bf16_fp32_dense_tflops": null
+    },
+    {
+      "id": "m2-ultra-76gpu-192gb",
+      "name": "Apple M2 Ultra 76-core GPU / 192GB",
+      "capacity_gb": 192,
+      "bandwidth_gbs": 800.0,
+      "bf16_fp32_dense_tflops": null
+    },
+    {
+      "id": "m3-ultra-80gpu-256gb",
+      "name": "Apple M3 Ultra 80-core GPU / 256GB",
+      "capacity_gb": 256,
+      "bandwidth_gbs": 819.0,
+      "bf16_fp32_dense_tflops": null
+    },
+    {
+      "id": "m3-ultra-80gpu-512gb",
+      "name": "Apple M3 ULTRA 80-core GPU / 512GB",
+      "capacity_gb": 512,
+      "bandwidth_gbs": 819.0,
+      "bf16_fp32_dense_tflops": null
+    },
+    {
+      "id": "m4-max-40gpu-128gb",
+      "name": "Apple M4 Max 40-core GPU / 128GB",
+      "capacity_gb": 128,
+      "bandwidth_gbs": 546.0,
+      "bf16_fp32_dense_tflops": null
+    },
+    {
+      "id": "m5-ultra-80gpu-512gb",
+      "name": "Apple M5 Ultra 80-core GPU / 512GB",
+      "capacity_gb": 512,
+      "bandwidth_gbs": 1200.0,
+      "bf16_fp32_dense_tflops": null
+    }
+  ],
+  "projection": [
+    {
+      "device": "rtx3090",
+      "rows": 1,
+      "flops": 33554432,
+      "bytes": 33570816,
+      "compute_us": 0.4725976338028169,
+      "memory_us": 35.86625641025641,
+      "resource_floor_us": 35.86625641025641
+    },
+    {
+      "device": "rtx3090",
+      "rows": 256,
+      "flops": 8589934592,
+      "bytes": 37748736,
+      "compute_us": 120.98499425352112,
+      "memory_us": 40.329846153846155,
+      "resource_floor_us": 120.98499425352112
+    },
+    {
+      "device": "rtx3090",
+      "rows": 4096,
+      "flops": 137438953472,
+      "bytes": 100663296,
+      "compute_us": 1935.759908056338,
+      "memory_us": 107.5462564102564,
+      "resource_floor_us": 1935.759908056338
+    },
+    {
+      "device": "rtx4090",
+      "rows": 1,
+      "flops": 33554432,
+      "bytes": 33570816,
+      "compute_us": 0.20311399515738499,
+      "memory_us": 33.30438095238095,
+      "resource_floor_us": 33.30438095238095
+    },
+    {
+      "device": "rtx4090",
+      "rows": 256,
+      "flops": 8589934592,
+      "bytes": 37748736,
+      "compute_us": 51.997182760290556,
+      "memory_us": 37.44914285714286,
+      "resource_floor_us": 51.997182760290556
+    },
+    {
+      "device": "rtx4090",
+      "rows": 4096,
+      "flops": 137438953472,
+      "bytes": 100663296,
+      "compute_us": 831.9549241646489,
+      "memory_us": 99.86438095238094,
+      "resource_floor_us": 831.9549241646489
+    },
+    {
+      "device": "rtx5090",
+      "rows": 1,
+      "flops": 33554432,
+      "bytes": 33570816,
+      "compute_us": 0.16016435322195702,
+      "memory_us": 18.733714285714285,
+      "resource_floor_us": 18.733714285714285
+    },
+    {
+      "device": "rtx5090",
+      "rows": 256,
+      "flops": 8589934592,
+      "bytes": 37748736,
+      "compute_us": 41.002074424821,
+      "memory_us": 21.065142857142856,
+      "resource_floor_us": 41.002074424821
+    },
+    {
+      "device": "rtx5090",
+      "rows": 4096,
+      "flops": 137438953472,
+      "bytes": 100663296,
+      "compute_us": 656.033190797136,
+      "memory_us": 56.17371428571429,
+      "resource_floor_us": 656.033190797136
+    },
+    {
+      "device": "rtx-pro6000-blackwell-ws",
+      "rows": 1,
+      "flops": 33554432,
+      "bytes": 33570816,
+      "compute_us": 0.066602683604605,
+      "memory_us": 18.733714285714285,
+      "resource_floor_us": 18.733714285714285
+    },
+    {
+      "device": "rtx-pro6000-blackwell-ws",
+      "rows": 256,
+      "flops": 8589934592,
+      "bytes": 37748736,
+      "compute_us": 17.05028700277888,
+      "memory_us": 21.065142857142856,
+      "resource_floor_us": 21.065142857142856
+    },
+    {
+      "device": "rtx-pro6000-blackwell-ws",
+      "rows": 4096,
+      "flops": 137438953472,
+      "bytes": 100663296,
+      "compute_us": 272.8045920444621,
+      "memory_us": 56.17371428571429,
+      "resource_floor_us": 272.8045920444621
+    },
+    {
+      "device": "a100-80gb-sxm",
+      "rows": 1,
+      "flops": 33554432,
+      "bytes": 33570816,
+      "compute_us": 0.10754625641025642,
+      "memory_us": 16.464353114271702,
+      "resource_floor_us": 16.464353114271702
+    },
+    {
+      "device": "a100-80gb-sxm",
+      "rows": 256,
+      "flops": 8589934592,
+      "bytes": 37748736,
+      "compute_us": 27.531841641025643,
+      "memory_us": 18.513357528200096,
+      "resource_floor_us": 27.531841641025643
+    },
+    {
+      "device": "a100-80gb-sxm",
+      "rows": 4096,
+      "flops": 137438953472,
+      "bytes": 100663296,
+      "compute_us": 440.5094662564103,
+      "memory_us": 49.36895340853359,
+      "resource_floor_us": 440.5094662564103
+    },
+    {
+      "device": "h100-sxm",
+      "rows": 1,
+      "flops": 33554432,
+      "bytes": 33570816,
+      "compute_us": 0.03391391954720032,
+      "memory_us": 10.021139104477612,
+      "resource_floor_us": 10.021139104477612
+    },
+    {
+      "device": "h100-sxm",
+      "rows": 256,
+      "flops": 8589934592,
+      "bytes": 37748736,
+      "compute_us": 8.681963404083282,
+      "memory_us": 11.268279402985076,
+      "resource_floor_us": 11.268279402985076
+    },
+    {
+      "device": "h100-sxm",
+      "rows": 4096,
+      "flops": 137438953472,
+      "bytes": 100663296,
+      "compute_us": 138.9114144653325,
+      "memory_us": 30.048745074626865,
+      "resource_floor_us": 138.9114144653325
+    },
+    {
+      "device": "h200-sxm",
+      "rows": 1,
+      "flops": 33554432,
+      "bytes": 33570816,
+      "compute_us": 0.03391049216776149,
+      "memory_us": 6.99392,
+      "resource_floor_us": 6.99392
+    },
+    {
+      "device": "h200-sxm",
+      "rows": 256,
+      "flops": 8589934592,
+      "bytes": 37748736,
+      "compute_us": 8.681085994946942,
+      "memory_us": 7.86432,
+      "resource_floor_us": 8.681085994946942
+    },
+    {
+      "device": "h200-sxm",
+      "rows": 4096,
+      "flops": 137438953472,
+      "bytes": 100663296,
+      "compute_us": 138.89737591915107,
+      "memory_us": 20.971519999999998,
+      "resource_floor_us": 138.89737591915107
+    }
+  ],
+  "volta": [
+    {
+      "rows": 1,
+      "path": "FP32 FMA",
+      "compute_ms": 0.002137224968152866,
+      "memory_ms": 0.03730090666666667,
+      "resource_floor_ms": 0.03730090666666667
+    },
+    {
+      "rows": 1,
+      "path": "Tensor Core",
+      "compute_ms": 0.000268435456,
+      "memory_ms": 0.03730090666666667,
+      "resource_floor_ms": 0.03730090666666667
+    },
+    {
+      "rows": 4096,
+      "path": "FP32 FMA",
+      "compute_ms": 8.75407346955414,
+      "memory_ms": 0.11184810666666666,
+      "resource_floor_ms": 8.75407346955414
+    },
+    {
+      "rows": 4096,
+      "path": "Tensor Core",
+      "compute_ms": 1.099511627776,
+      "memory_ms": 0.11184810666666666,
+      "resource_floor_ms": 1.099511627776
+    }
+  ],
+  "qwen_work": {
+    "linear_flops_per_token": 13891534848,
+    "decode_8k_matrix_flops": 19968032768,
+    "prefill_4k_causal_matrix_flops": 61849981681664,
+    "lm_head_policy": "last position only for prefill; one output token for decode"
+  },
+  "qwen_compute": [
+    {
+      "device": "rtx3090",
+      "decode_matrix_ms": 0.2812398981408451,
+      "prefill_matrix_ms": 871.1265025586479
+    },
+    {
+      "device": "rtx4090",
+      "decode_matrix_ms": 0.12087186905569007,
+      "prefill_matrix_ms": 374.39456223767553
+    },
+    {
+      "device": "rtx5090",
+      "decode_matrix_ms": 0.095312805575179,
+      "prefill_matrix_ms": 295.2266428719045
+    },
+    {
+      "device": "rtx-pro6000-blackwell-ws",
+      "decode_matrix_ms": 0.039634840746327914,
+      "prefill_matrix_ms": 122.76693465991266
+    },
+    {
+      "device": "a100-80gb-sxm",
+      "decode_matrix_ms": 0.06400010502564103,
+      "prefill_matrix_ms": 198.2371207745641
+    },
+    {
+      "device": "h100-sxm",
+      "decode_matrix_ms": 0.020181961560541743,
+      "prefill_matrix_ms": 62.512615404956534
+    },
+    {
+      "device": "h200-sxm",
+      "decode_matrix_ms": 0.02017992194845882,
+      "prefill_matrix_ms": 62.50629780865488
+    },
+    {
+      "device": "ascend-950pr-max-spec",
+      "decode_matrix_ms": null,
+      "prefill_matrix_ms": null
+    },
+    {
+      "device": "ascend-950dt-max-spec",
+      "decode_matrix_ms": null,
+      "prefill_matrix_ms": null
+    },
+    {
+      "device": "m1-ultra-64gpu-128gb",
+      "decode_matrix_ms": null,
+      "prefill_matrix_ms": null
+    },
+    {
+      "device": "m2-ultra-76gpu-192gb",
+      "decode_matrix_ms": null,
+      "prefill_matrix_ms": null
+    },
+    {
+      "device": "m3-ultra-80gpu-256gb",
+      "decode_matrix_ms": null,
+      "prefill_matrix_ms": null
+    },
+    {
+      "device": "m3-ultra-80gpu-512gb",
+      "decode_matrix_ms": null,
+      "prefill_matrix_ms": null
+    },
+    {
+      "device": "m4-max-40gpu-128gb",
+      "decode_matrix_ms": null,
+      "prefill_matrix_ms": null
+    },
+    {
+      "device": "m5-ultra-80gpu-512gb",
+      "decode_matrix_ms": null,
+      "prefill_matrix_ms": null
+    }
+  ],
+  "workloads": [
+    {
+      "id": "qwen3-8b-b1-h8191-w16-balanced",
+      "model": "qwen3-8b",
+      "batch": 1,
+      "history": 8191,
+      "matrix_storage_bits": 16,
+      "routing": "balanced",
+      "resident_weight_bytes": 16381470720,
+      "kv_bytes_per_request": 1207959552,
+      "kv_resident_bytes": 1207959552,
+      "declared_workspace_bytes": 2147483648,
+      "resident_budget_bytes": 19736913920,
+      "payload_components_bytes": {
+        "weight_payload": 15136819200,
+        "weight_scales": 0,
+        "prior_kv_read": 1207812096,
+        "current_kv_operand_read": 147456,
+        "kv_append_write": 147456
+      },
+      "accounted_payload_bytes": 16344926208
+    },
+    {
+      "id": "qwen3-8b-b1-h32767-w4-balanced",
+      "model": "qwen3-8b",
+      "batch": 1,
+      "history": 32767,
+      "matrix_storage_bits": 4,
+      "routing": "balanced",
+      "resident_weight_bytes": 6071347200,
+      "kv_bytes_per_request": 4831838208,
+      "kv_resident_bytes": 4831838208,
+      "declared_workspace_bytes": 2147483648,
+      "resident_budget_bytes": 13050669056,
+      "payload_components_bytes": {
+        "weight_payload": 4718168064,
+        "weight_scales": 108527616,
+        "prior_kv_read": 4831690752,
+        "current_kv_operand_read": 147456,
+        "kv_append_write": 147456
+      },
+      "accounted_payload_bytes": 9658681344
+    },
+    {
+      "id": "qwen3-8b-b8-h8191-w16-balanced",
+      "model": "qwen3-8b",
+      "batch": 8,
+      "history": 8191,
+      "matrix_storage_bits": 16,
+      "routing": "balanced",
+      "resident_weight_bytes": 16381470720,
+      "kv_bytes_per_request": 1207959552,
+      "kv_resident_bytes": 9663676416,
+      "declared_workspace_bytes": 2147483648,
+      "resident_budget_bytes": 28192630784,
+      "payload_components_bytes": {
+        "weight_payload": 15136876544,
+        "weight_scales": 0,
+        "prior_kv_read": 9662496768,
+        "current_kv_operand_read": 1179648,
+        "kv_append_write": 1179648
+      },
+      "accounted_payload_bytes": 24801732608
+    },
+    {
+      "id": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "model": "qwen3-235b-a22b",
+      "batch": 1,
+      "history": 8191,
+      "matrix_storage_bits": 4,
+      "routing": "balanced",
+      "resident_weight_bytes": 123142036480,
+      "kv_bytes_per_request": 1577058304,
+      "kv_resident_bytes": 1577058304,
+      "declared_workspace_bytes": 2147483648,
+      "resident_budget_bytes": 126866578432,
+      "payload_components_bytes": {
+        "weight_payload": 11792841728,
+        "weight_scales": 326500352,
+        "prior_kv_read": 1576865792,
+        "current_kv_operand_read": 192512,
+        "kv_append_write": 192512
+      },
+      "accounted_payload_bytes": 13696592896
+    },
+    {
+      "id": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "model": "qwen3-235b-a22b",
+      "batch": 8,
+      "history": 8191,
+      "matrix_storage_bits": 4,
+      "routing": "balanced",
+      "resident_weight_bytes": 123142036480,
+      "kv_bytes_per_request": 1577058304,
+      "kv_resident_bytes": 12616466432,
+      "declared_workspace_bytes": 2147483648,
+      "resident_budget_bytes": 137905986560,
+      "payload_components_bytes": {
+        "weight_payload": 61470235648,
+        "weight_scales": 1878917120,
+        "prior_kv_read": 12614926336,
+        "current_kv_operand_read": 1540096,
+        "kv_append_write": 1540096
+      },
+      "accounted_payload_bytes": 75967159296
+    },
+    {
+      "id": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "model": "qwen3-235b-a22b",
+      "batch": 8,
+      "history": 8191,
+      "matrix_storage_bits": 4,
+      "routing": "concentrated",
+      "resident_weight_bytes": 123142036480,
+      "kv_bytes_per_request": 1577058304,
+      "kv_resident_bytes": 12616466432,
+      "declared_workspace_bytes": 2147483648,
+      "resident_budget_bytes": 137905986560,
+      "payload_components_bytes": {
+        "weight_payload": 11792899072,
+        "weight_scales": 326500352,
+        "prior_kv_read": 12614926336,
+        "current_kv_operand_read": 1540096,
+        "kv_append_write": 1540096
+      },
+      "accounted_payload_bytes": 24737405952
+    }
+  ],
+  "decode": [
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "rtx3090",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 17.462528000000002,
+      "io_token_ceiling": 57.265477255068674,
+      "headroom_gb": 4.263086080000001
+    },
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "rtx4090",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 16.215204571428572,
+      "io_token_ceiling": 61.67051396699704,
+      "headroom_gb": 4.263086080000001
+    },
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "rtx5090",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 9.121052571428573,
+      "io_token_ceiling": 109.6364692746614,
+      "headroom_gb": 12.26308608
+    },
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "rtx-pro6000-blackwell-ws",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 9.121052571428573,
+      "io_token_ceiling": 109.6364692746614,
+      "headroom_gb": 76.26308608
+    },
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "a100-80gb-sxm",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 8.016148213830308,
+      "io_token_ceiling": 124.74819243919343,
+      "headroom_gb": 60.26308608
+    },
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "h100-sxm",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 4.879082450149253,
+      "io_token_ceiling": 204.95656923555566,
+      "headroom_gb": 60.26308608
+    },
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "h200-sxm",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 3.40519296,
+      "io_token_ceiling": 293.66911412855734,
+      "headroom_gb": 121.26308608
+    },
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "ascend-950pr-max-spec",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 10.215578879999999,
+      "io_token_ceiling": 97.88970470951912,
+      "headroom_gb": 108.26308608
+    },
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "ascend-950dt-max-spec",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 4.086231551999999,
+      "io_token_ceiling": 244.72426177379782,
+      "headroom_gb": 124.26308608
+    },
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "m1-ultra-64gpu-128gb",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 20.431157759999998,
+      "io_token_ceiling": 48.94485235475956,
+      "headroom_gb": 108.26308608
+    },
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "m2-ultra-76gpu-192gb",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 20.431157759999998,
+      "io_token_ceiling": 48.94485235475956,
+      "headroom_gb": 172.26308608
+    },
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "m3-ultra-80gpu-256gb",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 19.957174857142856,
+      "io_token_ceiling": 50.1072925981851,
+      "headroom_gb": 236.26308608
+    },
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "m3-ultra-80gpu-512gb",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 19.957174857142856,
+      "io_token_ceiling": 50.1072925981851,
+      "headroom_gb": 492.26308608
+    },
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "m4-max-40gpu-128gb",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 29.935762285714286,
+      "io_token_ceiling": 33.40486173212339,
+      "headroom_gb": 108.26308608
+    },
+    {
+      "workload": "qwen3-8b-b1-h8191-w16-balanced",
+      "device": "m5-ultra-80gpu-512gb",
+      "resident_gb": 19.73691392,
+      "payload_gb": 16.344926208,
+      "fits_nominal": true,
+      "read_ms": 13.62077184,
+      "io_token_ceiling": 73.41727853213933,
+      "headroom_gb": 492.26308608
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "rtx3090",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 10.319104000000001,
+      "io_token_ceiling": 96.90763849264431,
+      "headroom_gb": 10.949330944
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "rtx4090",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 9.582025142857143,
+      "io_token_ceiling": 104.36207222284774,
+      "headroom_gb": 10.949330944
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "rtx5090",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 5.389889142857143,
+      "io_token_ceiling": 185.5325728406182,
+      "headroom_gb": 18.949330944
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "rtx-pro6000-blackwell-ws",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 5.389889142857143,
+      "io_token_ceiling": 185.5325728406182,
+      "headroom_gb": 82.949330944
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "a100-80gb-sxm",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 4.736969761647867,
+      "io_token_ceiling": 211.1054218872882,
+      "headroom_gb": 66.949330944
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "h100-sxm",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 2.8831884608955223,
+      "io_token_ceiling": 346.8382360580753,
+      "headroom_gb": 66.949330944
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "h200-sxm",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 2.01222528,
+      "io_token_ceiling": 496.9622486802273,
+      "headroom_gb": 127.949330944
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "ascend-950pr-max-spec",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 6.03667584,
+      "io_token_ceiling": 165.65408289340908,
+      "headroom_gb": 114.949330944
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "ascend-950dt-max-spec",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 2.414670336,
+      "io_token_ceiling": 414.1352072335228,
+      "headroom_gb": 130.949330944
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "m1-ultra-64gpu-128gb",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 12.07335168,
+      "io_token_ceiling": 82.82704144670454,
+      "headroom_gb": 114.949330944
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "m2-ultra-76gpu-192gb",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 12.07335168,
+      "io_token_ceiling": 82.82704144670454,
+      "headroom_gb": 178.949330944
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "m3-ultra-80gpu-256gb",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 11.793261714285714,
+      "io_token_ceiling": 84.79418368106377,
+      "headroom_gb": 242.949330944
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "m3-ultra-80gpu-512gb",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 11.793261714285714,
+      "io_token_ceiling": 84.79418368106377,
+      "headroom_gb": 498.949330944
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "m4-max-40gpu-128gb",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 17.68989257142857,
+      "io_token_ceiling": 56.52945578737586,
+      "headroom_gb": 114.949330944
+    },
+    {
+      "workload": "qwen3-8b-b1-h32767-w4-balanced",
+      "device": "m5-ultra-80gpu-512gb",
+      "resident_gb": 13.050669056,
+      "payload_gb": 9.658681344,
+      "fits_nominal": true,
+      "read_ms": 8.04890112,
+      "io_token_ceiling": 124.24056217005682,
+      "headroom_gb": 498.949330944
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "rtx3090",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": false,
+      "read_ms": 26.497577572649572,
+      "io_token_ceiling": 301.91439115768407,
+      "headroom_gb": -4.192630783999999
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "rtx4090",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": false,
+      "read_ms": 24.60489346031746,
+      "io_token_ceiling": 325.13857509289056,
+      "headroom_gb": -4.192630783999999
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "rtx5090",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": true,
+      "read_ms": 13.840252571428572,
+      "io_token_ceiling": 578.0241334984721,
+      "headroom_gb": 3.8073692160000014
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "rtx-pro6000-blackwell-ws",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": true,
+      "read_ms": 13.840252571428572,
+      "io_token_ceiling": 578.0241334984721,
+      "headroom_gb": 67.807369216
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "a100-80gb-sxm",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": true,
+      "read_ms": 12.163674648357038,
+      "io_token_ceiling": 657.6959867206388,
+      "headroom_gb": 51.807369216
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "h100-sxm",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": true,
+      "read_ms": 7.403502271044776,
+      "io_token_ceiling": 1080.569669207523,
+      "headroom_gb": 51.807369216
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "h200-sxm",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": true,
+      "read_ms": 5.167027626666667,
+      "io_token_ceiling": 1548.2789290137646,
+      "headroom_gb": 112.807369216
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "ascend-950pr-max-spec",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": true,
+      "read_ms": 15.501082879999998,
+      "io_token_ceiling": 516.0929763379215,
+      "headroom_gb": 99.807369216
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "ascend-950dt-max-spec",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": true,
+      "read_ms": 6.2004331520000004,
+      "io_token_ceiling": 1290.2324408448037,
+      "headroom_gb": 115.807369216
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "m1-ultra-64gpu-128gb",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": true,
+      "read_ms": 31.002165759999997,
+      "io_token_ceiling": 258.04648816896076,
+      "headroom_gb": 99.807369216
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "m2-ultra-76gpu-192gb",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": true,
+      "read_ms": 31.002165759999997,
+      "io_token_ceiling": 258.04648816896076,
+      "headroom_gb": 163.807369216
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "m3-ultra-80gpu-256gb",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": true,
+      "read_ms": 30.282945797313797,
+      "io_token_ceiling": 264.1750922629736,
+      "headroom_gb": 227.807369216
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "m3-ultra-80gpu-512gb",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": true,
+      "read_ms": 30.282945797313797,
+      "io_token_ceiling": 264.1750922629736,
+      "headroom_gb": 483.807369216
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "m4-max-40gpu-128gb",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": true,
+      "read_ms": 45.4244186959707,
+      "io_token_ceiling": 176.1167281753157,
+      "headroom_gb": 99.807369216
+    },
+    {
+      "workload": "qwen3-8b-b8-h8191-w16-balanced",
+      "device": "m5-ultra-80gpu-512gb",
+      "resident_gb": 28.192630784,
+      "payload_gb": 24.801732608,
+      "fits_nominal": true,
+      "read_ms": 20.668110506666668,
+      "io_token_ceiling": 387.06973225344115,
+      "headroom_gb": 483.807369216
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "rtx3090",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": false,
+      "read_ms": 14.633112068376068,
+      "io_token_ceiling": 68.33816315540433,
+      "headroom_gb": -102.866578432
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "rtx4090",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": false,
+      "read_ms": 13.587889777777779,
+      "io_token_ceiling": 73.59494493658929,
+      "headroom_gb": -102.866578432
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "rtx5090",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": false,
+      "read_ms": 7.643188,
+      "io_token_ceiling": 130.8354576650476,
+      "headroom_gb": -94.866578432
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "rtx-pro6000-blackwell-ws",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": false,
+      "read_ms": 7.643188,
+      "io_token_ceiling": 130.8354576650476,
+      "headroom_gb": -30.866578431999997
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "a100-80gb-sxm",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": false,
+      "read_ms": 6.717308923982345,
+      "io_token_ceiling": 148.86913960883487,
+      "headroom_gb": -46.866578432
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "h100-sxm",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": false,
+      "read_ms": 4.088535192835821,
+      "io_token_ceiling": 244.58637454124414,
+      "headroom_gb": -46.866578432
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "h200-sxm",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": true,
+      "read_ms": 2.8534568533333333,
+      "io_token_ceiling": 350.4521187456633,
+      "headroom_gb": 14.133421568000003
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "ascend-950pr-max-spec",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": true,
+      "read_ms": 8.56037056,
+      "io_token_ceiling": 116.81737291522109,
+      "headroom_gb": 1.1334215680000028
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "ascend-950dt-max-spec",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": true,
+      "read_ms": 3.424148224,
+      "io_token_ceiling": 292.0434322880527,
+      "headroom_gb": 17.133421568000003
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "m1-ultra-64gpu-128gb",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": true,
+      "read_ms": 17.12074112,
+      "io_token_ceiling": 58.40868645761054,
+      "headroom_gb": 1.1334215680000028
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "m2-ultra-76gpu-192gb",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": true,
+      "read_ms": 17.12074112,
+      "io_token_ceiling": 58.40868645761054,
+      "headroom_gb": 65.133421568
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "m3-ultra-80gpu-256gb",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": true,
+      "read_ms": 16.72355664957265,
+      "io_token_ceiling": 59.795892760978795,
+      "headroom_gb": 129.13342156800002
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "m3-ultra-80gpu-512gb",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": true,
+      "read_ms": 16.72355664957265,
+      "io_token_ceiling": 59.795892760978795,
+      "headroom_gb": 385.133421568
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "m4-max-40gpu-128gb",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": true,
+      "read_ms": 25.08533497435897,
+      "io_token_ceiling": 39.8639285073192,
+      "headroom_gb": 1.1334215680000028
+    },
+    {
+      "workload": "qwen3-235b-a22b-b1-h8191-w4-balanced",
+      "device": "m5-ultra-80gpu-512gb",
+      "resident_gb": 126.866578432,
+      "payload_gb": 13.696592896,
+      "fits_nominal": true,
+      "read_ms": 11.413827413333333,
+      "io_token_ceiling": 87.61302968641583,
+      "headroom_gb": 385.133421568
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "rtx3090",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": false,
+      "read_ms": 81.16149497435897,
+      "io_token_ceiling": 98.5689088468295,
+      "headroom_gb": -113.90598656
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "rtx4090",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": false,
+      "read_ms": 75.36424533333333,
+      "io_token_ceiling": 106.15113260427792,
+      "headroom_gb": -113.90598656
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "rtx5090",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": false,
+      "read_ms": 42.392388000000004,
+      "io_token_ceiling": 188.7131246298274,
+      "headroom_gb": -105.90598656
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "rtx-pro6000-blackwell-ws",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": false,
+      "read_ms": 42.392388000000004,
+      "io_token_ceiling": 188.7131246298274,
+      "headroom_gb": -41.90598656
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "a100-80gb-sxm",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": false,
+      "read_ms": 37.25706684453163,
+      "io_token_ceiling": 214.72436446440744,
+      "headroom_gb": -57.90598656
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "h100-sxm",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": false,
+      "read_ms": 22.676763968955225,
+      "io_token_ceiling": 352.7840220479474,
+      "headroom_gb": -57.90598656
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "h200-sxm",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": true,
+      "read_ms": 15.82649152,
+      "io_token_ceiling": 505.4815838298949,
+      "headroom_gb": 3.0940134399999977
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "ascend-950pr-max-spec",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": false,
+      "read_ms": 47.47947456,
+      "io_token_ceiling": 168.49386127663163,
+      "headroom_gb": -9.905986560000002
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "ascend-950dt-max-spec",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": true,
+      "read_ms": 18.991789823999998,
+      "io_token_ceiling": 421.23465319157907,
+      "headroom_gb": 6.094013439999998
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "m1-ultra-64gpu-128gb",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": false,
+      "read_ms": 94.95894912,
+      "io_token_ceiling": 84.24693063831582,
+      "headroom_gb": -9.905986560000002
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "m2-ultra-76gpu-192gb",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": true,
+      "read_ms": 94.95894912,
+      "io_token_ceiling": 84.24693063831582,
+      "headroom_gb": 54.09401344
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "m3-ultra-80gpu-256gb",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": true,
+      "read_ms": 92.75599425641026,
+      "io_token_ceiling": 86.2477952409758,
+      "headroom_gb": 118.09401344
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "m3-ultra-80gpu-512gb",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": true,
+      "read_ms": 92.75599425641026,
+      "io_token_ceiling": 86.2477952409758,
+      "headroom_gb": 374.09401344
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "m4-max-40gpu-128gb",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": false,
+      "read_ms": 139.13399138461537,
+      "io_token_ceiling": 57.49853016065054,
+      "headroom_gb": -9.905986560000002
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-balanced",
+      "device": "m5-ultra-80gpu-512gb",
+      "resident_gb": 137.90598656,
+      "payload_gb": 75.967159296,
+      "fits_nominal": true,
+      "read_ms": 63.30596608,
+      "io_token_ceiling": 126.37039595747372,
+      "headroom_gb": 374.09401344
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "rtx3090",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": false,
+      "read_ms": 26.428852512820516,
+      "io_token_ceiling": 302.6994833059527,
+      "headroom_gb": -113.90598656
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "rtx4090",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": false,
+      "read_ms": 24.541077333333334,
+      "io_token_ceiling": 325.9840589448722,
+      "headroom_gb": -113.90598656
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "rtx5090",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": false,
+      "read_ms": 13.804356,
+      "io_token_ceiling": 579.527215901995,
+      "headroom_gb": -105.90598656
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "rtx-pro6000-blackwell-ws",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": false,
+      "read_ms": 13.804356,
+      "io_token_ceiling": 579.527215901995,
+      "headroom_gb": -41.90598656
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "a100-80gb-sxm",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": false,
+      "read_ms": 12.132126509073075,
+      "io_token_ceiling": 659.4062462188436,
+      "headroom_gb": -57.90598656
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "h100-sxm",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": false,
+      "read_ms": 7.384300284179105,
+      "io_token_ceiling": 1083.3795609775018,
+      "headroom_gb": -57.90598656
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "h200-sxm",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": true,
+      "read_ms": 5.1536262399999995,
+      "io_token_ceiling": 1552.3050425946296,
+      "headroom_gb": 3.0940134399999977
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "ascend-950pr-max-spec",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": false,
+      "read_ms": 15.46087872,
+      "io_token_ceiling": 517.4350141982098,
+      "headroom_gb": -9.905986560000002
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "ascend-950dt-max-spec",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": true,
+      "read_ms": 6.184351488,
+      "io_token_ceiling": 1293.5875354955244,
+      "headroom_gb": 6.094013439999998
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "m1-ultra-64gpu-128gb",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": false,
+      "read_ms": 30.92175744,
+      "io_token_ceiling": 258.7175070991049,
+      "headroom_gb": -9.905986560000002
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "m2-ultra-76gpu-192gb",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": true,
+      "read_ms": 30.92175744,
+      "io_token_ceiling": 258.7175070991049,
+      "headroom_gb": 54.09401344
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "m3-ultra-80gpu-256gb",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": true,
+      "read_ms": 30.20440287179487,
+      "io_token_ceiling": 264.86204789270863,
+      "headroom_gb": 118.09401344
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "m3-ultra-80gpu-512gb",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": true,
+      "read_ms": 30.20440287179487,
+      "io_token_ceiling": 264.86204789270863,
+      "headroom_gb": 374.09401344
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "m4-max-40gpu-128gb",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": false,
+      "read_ms": 45.30660430769231,
+      "io_token_ceiling": 176.5746985951391,
+      "headroom_gb": -9.905986560000002
+    },
+    {
+      "workload": "qwen3-235b-a22b-b8-h8191-w4-concentrated",
+      "device": "m5-ultra-80gpu-512gb",
+      "resident_gb": 137.90598656,
+      "payload_gb": 24.737405952,
+      "fits_nominal": true,
+      "read_ms": 20.614504959999998,
+      "io_token_ceiling": 388.0762606486574,
+      "headroom_gb": 374.09401344
+    }
+  ],
+  "conv": {
+    "input_bytes": 401408,
+    "expanded_bytes": 3612672,
+    "explicit_expansion_roundtrip_bytes": 7225344,
+    "flops": 231211008,
+    "cube_cycles_at_8192": 28224.0,
+    "relu_elements": 200704,
+    "fp16_vector_issues_at_128_lanes": 1568,
+    "saved_hbm_service_us_at_1_2TBs": 6.021120000000001
+  },
+  "ascend_attention": {
+    "score_elements": 16384,
+    "matrix_flops": 8388608,
+    "cube_cycles_at_8192": 1024.0,
+    "fp32_vector_lanes": 64,
+    "exp_vector_groups": 256,
+    "fp32_one_tensor_bytes": 65536,
+    "two_handoffs_external_roundtrip_bytes": 262144,
+    "external_service_us_at_94GBs": 2.7887659574468087,
+    "fp16_one_handoff_bytes": 32768,
+    "required_cv_GBs_for_two_handoffs_in_1_024us": 127.99999999999999,
+    "required_external_GBs_in_1_024us": 255.99999999999997,
+    "required_exp_values_per_cycle": 16.0,
+    "required_exp_vector_issues_per_cycle": 0.25
+  },
+  "resource_sensitivity": [
+    {
+      "label": "基线",
+      "matrix_cycles": 1024,
+      "exp_cycles": 1024,
+      "memory_cycles": 768,
+      "interval_cycles": 1024
+    },
+    {
+      "label": "仅矩阵 ×2",
+      "matrix_cycles": 512,
+      "exp_cycles": 1024,
+      "memory_cycles": 768,
+      "interval_cycles": 1024
+    },
+    {
+      "label": "再增加指数 ×2",
+      "matrix_cycles": 512,
+      "exp_cycles": 512,
+      "memory_cycles": 768,
+      "interval_cycles": 768
+    },
+    {
+      "label": "三项 ×2",
+      "matrix_cycles": 512,
+      "exp_cycles": 512,
+      "memory_cycles": 384,
+      "interval_cycles": 512
+    }
+  ],
+  "formats": [
+    {
+      "format": "BF16",
+      "bytes": 33554432,
+      "MiB": 32.0,
+      "read_us_4090": 33.28812698412699,
+      "read_us_5090": 18.72457142857143
+    },
+    {
+      "format": "MXFP8",
+      "bytes": 17301504,
+      "MiB": 16.5,
+      "read_us_4090": 17.164190476190473,
+      "read_us_5090": 9.654857142857143
+    },
+    {
+      "format": "MXFP4",
+      "bytes": 8912896,
+      "MiB": 8.5,
+      "read_us_4090": 8.84215873015873,
+      "read_us_5090": 4.973714285714285
+    }
+  ],
+  "numerics": {
+    "FP16": {
+      "min_normal": 6.103515625e-05,
+      "min_subnormal": 5.960464477539063e-08,
+      "spacing_at_one": 0.0009765625
+    },
+    "BF16": {
+      "min_normal": 1.1754943508222875e-38,
+      "min_subnormal": 9.183549615799121e-41,
+      "spacing_at_one": 0.0078125
+    }
+  },
+  "interconnect": {
+    "payload_bytes": 67108864,
+    "a100_one_way_GBs": 300,
+    "h100_one_way_GBs": 450,
+    "a100_us": 223.69621333333333,
+    "h100_us": 149.1308088888889
+  },
+  "sources": [
+    {
+      "path": "calculations/configs/hardware.json",
+      "sha256": "387a75e06e8ce5d39f0ef6cb4bff9d4703ef305f379619e05e21d24a5ebfe23c"
+    },
+    {
+      "path": "calculations/configs/models/qwen3-8b/config.json",
+      "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+    },
+    {
+      "path": "calculations/results/storage-generation-qwen8-235.json",
+      "sha256": "eca6ec1029374fb895c021c6e32214f23fccd44cba5575a8d96cf6f83cde8978"
+    },
+    {
+      "path": "references/text/ascend-davinci.txt",
+      "sha256": "e728412c133648190f235403f1dc8a3a638ac66750ce2830edef040e0aba726e"
+    },
+    {
+      "path": "references/text/ascend-950-official.txt",
+      "sha256": "b04f71e09bfe88c48fe6afc5d5f9029eaf2675dc22e42d5d78ab84dd1e82c721"
+    },
+    {
+      "path": "references/text/nvidia-v100.txt",
+      "sha256": "448a03d9048e28acede247d8f76612de2b37bfc5cd7f70b83c940f812766683d"
+    },
+    {
+      "path": "references/author-materials/2026-09-09/network-intelligence.md",
+      "sha256": "991756ed66f822bcada94692ba1df06ea9bb383441da6f99a7e252246ef57c57"
+    },
+    {
+      "path": "calculations/research/architecture-evolution-quantitative/sources/nvidia-ampere-ga102.pdf",
+      "sha256": "28887b489ecd250911b912fead603ce8aa25e8fc3128c9ba0933cf452334868a"
+    }
+  ],
+  "contracts": [
+    "BF16 input FP32 accumulator dense matrix rates only; unknown Apple/Ascend comparable rates remain null.",
+    "All expert weights reside; active-expert reads depend on routing. Existing storage-generation model supplies exact payload and workspace.",
+    "Time=bytes/bandwidth and FLOPs/peak are service floors, not measured end-to-end latency. Capacity uses nominal decimal GB; headroom is separately visible.",
+    "Ascend vector width is not an instruction throughput. Compute issue requirements, never infer exp cycles from width.",
+    "94GB/s is the early paper per-core LLC allocation. CV calculation is an interface substitution exercise, not a measured 910A-to-950 speedup.",
+    "M5 Ultra profiles are announced specifications as of 2026-09-10, not measured retail devices."
+  ]
+}

@@ -30,7 +30,7 @@ def draw(here,data,teaching):
                 arrow(a,(.18 if j==0 else x-.06,y+.07),(x,y+.07))
                 if i==0:text(a,x+.08,.84,f'W{j}',12,ha='center')
                 arrow(a,(x+.08,.79 if i==0 else y+.18),(x+.08,y+.14))
-        text(a,.5,.08,'每个位置保留部分和，继续累加下一对输入',11,ha='center');save(f,'matrix-array')
+        text(a,.5,.08,'每个乘加单元保留部分和，继续累加下一对输入',11,ha='center');save(f,'matrix-array')
         f,a=canvas(4.0);text(a,.04,.94,'每块固定 16 行，灰色行也参与执行',14)
         for x,count,label in [(.08,2,'每专家 2 行'),(.57,16,'每专家 64 行\n由四块组成')]:
             for i in range(16):a.add_patch(Rectangle((x,.74-i*.034),.30,.029,facecolor=COL['green'] if i<count else COL['gray'],edgecolor=COL['line'],lw=.3))
@@ -42,7 +42,7 @@ def draw(here,data,teaching):
         vals=np.array(data['4-4']['service_cycles'])
         f,a=plot(4.0,left=.27)
         for i,(label,c) in enumerate([('矩阵','orange'),('共享存储','blue'),('指数','green')]):a.barh(np.arange(4)+(i-1)*.22,vals[:,i],height=.20,color=COL[c],edgecolor=COL['line'],label=label)
-        a.set(yticks=range(4),yticklabels=['原配置','矩阵 ×2','矩阵指数 ×2','三项 ×2'],xlabel='单计算组服务周期',xlim=(0,1150),ylim=(-1.1,3.6));a.invert_yaxis();a.legend(ncol=3,loc='upper center',frameon=False,fontsize=11);save(f,'4-attention')
+        a.set(yticks=range(4),yticklabels=['原配置','矩阵 ×2','矩阵、指数均 ×2','三项 ×2'],xlabel='单计算组耗时（周期）',xlim=(0,1150),ylim=(-1.1,3.6));a.invert_yaxis();a.legend(ncol=3,loc='upper center',frameon=False,fontsize=11);save(f,'4-attention')
         f,a=canvas(4.3)
         for y,title,stages in [(.58,'先展开为高精度',[('压缩 8.5 MiB','blue'),('展开 32 MiB','orange'),('BF16 计算','green')]),(.12,'在低精度路径中计算',[('压缩 8.5 MiB','blue'),('低精度计算','orange'),('缩放与合并','green')])]:
             text(a,.04,y+.29,title,14)
@@ -55,7 +55,7 @@ def draw(here,data,teaching):
             left=0
             for n,c,label in [(d['weight_bytes'],'blue','权重'),(d['workspace_bytes'],'orange','工作区'),(row['requests']*row['context_multiplier']*d['kv_bytes_per_request'],'green','KV')]:
                 a.barh(y,n/1e9,left=left,height=.5,color=COL[c],edgecolor=COL['line'],label=label if y==0 else None);left+=n/1e9
-        a.axvline(24,ls='--',color='#555555');a.set(yticks=range(3),yticklabels=['8K × 4 请求','8K × 5 请求','16K × 2 请求'],xlim=(0,27),xlabel='显存占用（GB）');a.invert_yaxis();a.legend(ncol=3,loc='upper center',bbox_to_anchor=(.5,-.22),frameon=False);save(f,'6-capacity')
+        a.axvline(24,ls='--',color='#555555');a.set(yticks=range(3),yticklabels=['8K token × 4 请求','8K token × 5 请求','16K token × 2 请求'],xlim=(0,27),xlabel='显存占用（GB）');a.invert_yaxis();a.legend(ncol=3,loc='upper center',bbox_to_anchor=(.5,-.22),frameon=False);save(f,'6-capacity')
         f,a=canvas(3.3);text(a,.04,.92,'同时等待返回的访问占用请求槽',14)
         for i in range(4):box(a,.05+i*.235,.49,.20,.18,f'请求 {i+1}','blue',11)
         text(a,.5,.31,'每请求 128 bytes，发出后 500 ns 返回',12,ha='center')

@@ -35,14 +35,14 @@ function Pandoc(doc)
         raw(tex)
         raw('\\end{infratable}\\end{minipage}\\par\\addvspace{6pt}')
       else
-        raw('\\FloatBarrier\\begin{infratable}')
+        raw('\\begin{infratable}')
         out:insert(block)
         raw('\\end{infratable}')
       end
-    elseif block.t == 'Figure' and pandoc.write(pandoc.Pandoc({block}), 'latex'):find('figure-1-4-numbers', 1, true) then
-      -- Keep the historical latency plot before the following Amdahl example.
+    elseif block.t == 'Figure' then
+      -- Figures float freely ([!htbp]); no barrier anywhere, so prose keeps
+      -- filling each page and LaTeX places the figure at the next opportunity.
       out:insert(block)
-      raw('\\FloatBarrier')
     else out:insert(block) end
   end
   doc.blocks=out
@@ -54,9 +54,6 @@ function Math(el)
   return el
 end
 function Header(el)
-  -- Keep the area/power example and its first equation off the preceding
-  -- figure page, whose footnotes otherwise overflow the text height.
-  local area_power_section = pandoc.utils.stringify(el):match('^4%.1%.3%s')
   if el.level > 1 and not pandoc.utils.stringify(el):match('^%d') then
     el.classes:insert('unnumbered')
   end
@@ -69,9 +66,6 @@ function Header(el)
   if inlines[1] and inlines[1].t == 'Str' and inlines[1].text:match('^%d+%.') then
     inlines:remove(1)
     if inlines[1] and inlines[1].t == 'Space' then inlines:remove(1) end
-  end
-  if area_power_section then
-    return {pandoc.RawBlock('latex', '\\clearpage'), el}
   end
   return el
 end

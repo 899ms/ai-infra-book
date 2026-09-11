@@ -63,9 +63,9 @@ def box(a,x,y,w,h,title,body='',color='pale',size=12):
 def arrow(a,start,end,col='teal',rad=0):a.add_patch(FancyArrowPatch(start,end,arrowstyle='-|>',mutation_scale=13,color=C[col],lw=1.6,connectionstyle=f'arc3,rad={rad}'))
 def footer(a,t):a.text(.045,.04,t,fontsize=10.5,color=C['muted'],va='bottom')
 # 3-1: calls and logical state, not wall-clock performance.
-f,a=canvas('图 3-1  同一模型的 Prefill 与 Decode','Qwen3-8B · S=6144、P=2048、G=4 · BF16 逻辑 KV，每位置 144 KiB。',8)
-box(a,.06,.70,.20,.105,'已恢复前缀','6144 个位置',color='light')
-box(a,.32,.70,.23,.105,'Prefill：处理新输入','2048 个位置 → 首输出 $y_1$',color='sand');arrow(a,(.265,.75),(.31,.75))
+f,a=canvas('图 3-1  同一模型的 Prefill 与 Decode','Qwen3-8B · S=6144、P=2048、G=4 · BF16 逻辑 KV，每 token 144 KiB。',8)
+box(a,.06,.70,.20,.105,'已恢复前缀','6144 个 token',color='light')
+box(a,.32,.70,.23,.105,'Prefill：处理新输入','2048 个 token → 首输出 $y_1$',color='sand');arrow(a,(.265,.75),(.31,.75))
 a.text(.60,.75,'时间顺序 →',fontsize=12,color=C['muted']);a.text(.60,.70,'宽度不表示真实耗时',fontsize=10)
 for i in range(3):
  x=.32+i*.215;box(a,x,.46,.175,.12,f'Decode {i+1}',f'输入 $y_{i+1}$ → 输出 $y_{i+2}$',color='pale')

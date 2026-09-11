@@ -1,0 +1,378 @@
+\contentsline {chapter}{前言}{I}{chapter*.1}%
+\contentsline {section}{编程抽象上移：从操作系统到模型上下文}{I}{chapter*.1}%
+\contentsline {section}{从数量级估算到系统设计}{I}{chapter*.1}%
+\contentsline {section}{从算子加速到万卡互联}{II}{chapter*.1}%
+\contentsline {section}{我希望这本书讲清楚什么}{III}{chapter*.1}%
+\contentsline {section}{全书结构}{IV}{chapter*.1}%
+\contentsline {section}{如何阅读本书}{VI}{figure.caption.2}%
+\contentsline {section}{前置知识}{VI}{figure.caption.2}%
+\contentsline {section}{致谢}{VII}{figure.caption.2}%
+\contentsline {chapter}{\numberline {第 1{} 章}初识 AI Infra}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}AI Infra 为什么重要}{1}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1.1}编程抽象上移：从操作系统到模型上下文}{1}{subsection.1.1.1}%
+\contentsline {subsection}{\numberline {1.1.2}从任务到硬件的六层分工}{2}{subsection.1.1.2}%
+\contentsline {subsection}{\numberline {1.1.3}一次生成请求的处理过程}{4}{subsection.1.1.3}%
+\contentsline {section}{\numberline {1.2}系统设计的关键数字}{7}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}用数量级判断方案}{7}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}分析 AI 系统需要哪些关键数字}{9}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.2.3}参数存储量与链路带宽的换算}{10}{subsection.1.2.3}%
+\contentsline {section}{\numberline {1.3}用几个数字估算一次模型执行}{12}{section.1.3}%
+\contentsline {subsection}{\numberline {1.3.1}生成一个 token，先检查什么}{12}{subsection.1.3.1}%
+\contentsline {subsection}{\numberline {1.3.2}计算与读取分别需要多久}{13}{subsection.1.3.2}%
+\contentsline {subsection}{\numberline {1.3.3}用实测检验估算}{16}{subsection.1.3.3}%
+\contentsline {section}{\numberline {1.4}需求如何推动架构设计}{17}{section.1.4}%
+\contentsline {subsection}{\numberline {1.4.1}TPU}{17}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {1.4.2}SmartNIC}{18}{subsection.1.4.2}%
+\contentsline {subsection}{\numberline {1.4.3}Unified Bus}{19}{subsection.1.4.3}%
+\contentsline {section}{谬误与陷阱}{20}{figure.caption.20}%
+\contentsline {section}{本章数字速查}{20}{figure.caption.20}%
+\contentsline {section}{本章小结}{21}{figure.caption.20}%
+\contentsline {chapter}{\numberline {第 2{} 章}模型架构}{22}{chapter.2}%
+\contentsline {section}{\numberline {2.1}计算图与前向执行}{22}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}序列依赖与因果计算图}{22}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}模型配置与张量结构}{24}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}注意力计算与位置编码}{26}{subsection.2.1.3}%
+\contentsline {subsection}{\numberline {2.1.4}前馈网络与前向计算量}{27}{subsection.2.1.4}%
+\contentsline {section}{\numberline {2.2}自回归生成的资源消耗计算}{30}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Prefill、Decode 与状态复用}{31}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}内存占用与数据访问量}{31}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}生成完整回答的计算量与状态读写量}{32}{subsection.2.2.3}%
+\contentsline {section}{\numberline {2.3}上下文状态表示与访问机制}{34}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}多头注意力与 KV 共享}{34}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}潜变量压缩与 MLA 执行路径}{36}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}局部窗口、上下文压缩与稀疏索引}{37}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}线性注意力与有限状态递推}{39}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.5}混合注意力的状态构成}{41}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.6}每个 token 存多少，每次 decode 读多少}{43}{subsection.2.3.6}%
+\contentsline {section}{\numberline {2.4}条件计算与专家权重复用}{47}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}稠密前馈网络与专家路由}{47}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}实际运算量与批内权重读取量}{47}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}共享专家与潜空间计算}{48}{subsection.2.4.3}%
+\contentsline {section}{\numberline {2.5}网络形状与计算组织}{49}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}深度、宽度与专家粒度}{49}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}残差连接与跨层状态}{50}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}多 token 预测与辅助计算}{51}{subsection.2.5.3}%
+\contentsline {section}{\numberline {2.6}整个模型的资源需求与比较}{52}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}各组件的资源需求与全模型汇总}{52}{subsection.2.6.1}%
+\contentsline {subsection}{\numberline {2.6.2}参数规模、数值精度与容量约束}{60}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.3}不同请求条件下的模型比较}{62}{subsection.2.6.3}%
+\contentsline {section}{谬误与陷阱}{65}{figure.caption.56}%
+\contentsline {section}{本章练习与复现}{65}{figure.caption.56}%
+\contentsline {section}{模型矩阵查阅表}{66}{figure.caption.56}%
+\contentsline {section}{本章小结}{73}{table.2.1}%
+\contentsline {chapter}{\numberline {第 3{} 章}推理与训练负载}{74}{chapter.3}%
+\contentsline {section}{\numberline {3.1}从单次请求到持续到达的负载}{74}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Prefill 与 Decode}{74}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}任务目标与评价指标}{75}{subsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.1.3}请求分布}{77}{subsection.3.1.3}%
+\contentsline {section}{\numberline {3.2}多轮交互与 Agent 任务}{80}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}多轮对话与前缀增长}{80}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}推理与验证：完成一个任务需要多少成本}{81}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}智能体工作负载}{82}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}分支、工具等待与状态驻留}{82}{subsection.3.2.4}%
+\contentsline {section}{\numberline {3.3}多模态与实时交互}{86}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}视觉编码、语言生成与状态}{86}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}音频与图像生成的计算过程}{88}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}连续感知、首段响应与打断}{89}{subsection.3.3.3}%
+\contentsline {section}{\numberline {3.4}训练的计算与状态需求}{91}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}前向计算、反向传播与参数更新}{91}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}预训练、中期训练与 SFT}{93}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.4.3}从 \(6ND\) 估算到逐项计算训练开销}{94}{subsection.3.4.3}%
+\contentsline {section}{\numberline {3.5}强化学习（RL）}{96}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Rollout、奖励与环境验证}{96}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}有效样本、策略更新与权重同步}{96}{subsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.5.3}有效样本数固定时，各阶段需要多少计算}{97}{subsection.3.5.3}%
+\contentsline {section}{\numberline {3.6}从负载需求到训练与服务预算}{99}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Scaling Law：模型规模与数据量的关系}{99}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}从 Llama 到 Qwen 的训练投入}{101}{subsection.3.6.2}%
+\contentsline {subsection}{\numberline {3.6.3}满足质量要求的全生命周期成本}{105}{subsection.3.6.3}%
+\contentsline {section}{谬误与陷阱}{106}{subsection.3.6.3}%
+\contentsline {section}{代码任务轨迹}{106}{subsection.3.6.3}%
+\contentsline {section}{本章小结}{107}{subsection.3.6.3}%
+\contentsline {chapter}{\numberline {第 4{} 章}加速器架构}{108}{chapter.4}%
+\contentsline {section}{\numberline {4.1}从模型计算认识加速器}{108}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}矩阵乘法的计算与数据需求}{108}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}加速器的组成与分工}{110}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}芯片面积、功耗与封装的限制}{112}{subsection.4.1.3}%
+\contentsline {section}{\numberline {4.2}计算单元}{112}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}矩阵单元为什么适合神经网络}{112}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}向量与控制单元负责哪些工作}{114}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}NVIDIA、昇腾和 Apple 如何执行注意力计算}{115}{subsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.2.4}低精度如何改变计算量、数据量与转换开销}{117}{subsection.4.2.4}%
+\contentsline {section}{\numberline {4.3}存储层次}{118}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}显存与统一内存}{119}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}缓存、片上缓冲与寄存器}{120}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}容量、带宽与延迟分别限制什么}{121}{subsection.4.3.3}%
+\contentsline {section}{\numberline {4.4}数据搬运}{123}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}数据布局与寻址}{123}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}异步搬运与双缓冲}{124}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}单元间的数据传递}{128}{subsection.4.4.3}%
+\contentsline {section}{\numberline {4.5}多芯片封装与互联}{129}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}封装内的计算芯片、内存与连接}{129}{subsection.4.5.1}%
+\contentsline {subsection}{\numberline {4.5.2}CPU 与加速器之间的数据访问}{130}{subsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.5.3}加速器之间的数据交换}{131}{subsection.4.5.3}%
+\contentsline {section}{\numberline {4.6}模型需求如何推动架构演进}{133}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}NVIDIA：矩阵、精度与数据路径分别带来多少收益}{133}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}昇腾：从 CNN 的卷积展开，到 Transformer 的矩阵与向量交接}{137}{subsection.4.6.2}%
+\contentsline {subsection}{\numberline {4.6.3}Apple：大容量统一内存，怎样换算为模型运行能力}{139}{subsection.4.6.3}%
+\contentsline {section}{\numberline {4.7}专用架构}{141}{section.4.7}%
+\contentsline {subsection}{\numberline {4.7.1}TPU}{141}{subsection.4.7.1}%
+\contentsline {subsection}{\numberline {4.7.2}Groq、Graphcore 与 Cerebras}{141}{subsection.4.7.2}%
+\contentsline {subsection}{\numberline {4.7.3}固定数据流与固定权重}{142}{subsection.4.7.3}%
+\contentsline {section}{\numberline {4.8}根据架构分析性能、选择加速器}{144}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}从资源预算建立执行时间模型}{144}{subsection.4.8.1}%
+\contentsline {subsection}{\numberline {4.8.2}用同一模型比较候选加速器}{146}{subsection.4.8.2}%
+\contentsline {subsection}{\numberline {4.8.3}预测与实测为什么有差距}{148}{subsection.4.8.3}%
+\contentsline {subsection}{\numberline {4.8.4}在容量、速度、功耗与成本之间做选择}{150}{subsection.4.8.4}%
+\contentsline {section}{本章小结}{151}{subsection.4.8.4}%
+\contentsline {chapter}{\numberline {第 5{} 章}算子与运行时}{153}{chapter.5}%
+\contentsline {section}{\numberline {5.1}加速器执行过程中的提交、搬运与同步}{153}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}从框架调用到 kernel launch}{153}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}主机与加速器之间的数据复制}{154}{subsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.1.3}stream、event 与完成顺序}{155}{subsection.5.1.3}%
+\contentsline {subsection}{\numberline {5.1.4}从提交时间到结果可用时间}{155}{subsection.5.1.4}%
+\contentsline {section}{\numberline {5.2}单个算子的分块、布局与实际访存}{156}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}矩阵形状与重复读取}{156}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}容量约束下的分块复用}{158}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}数据布局与归约方式对并行执行的影响}{160}{subsection.5.2.3}%
+\contentsline {section}{\numberline {5.3}相邻算子的融合、缓冲与流水执行}{163}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}中间张量与融合边界}{163}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}布局转换、缓冲复用与双缓冲}{164}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}FlashAttention：分块与在线 Softmax}{166}{subsection.5.3.3}%
+\contentsline {section}{\numberline {5.4}编译器：表达、变换与选择}{170}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}为什么要比较多种实现}{170}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}用循环变换表达分块与融合}{170}{subsection.5.4.2}%
+\contentsline {subsection}{\numberline {5.4.3}依赖与舍入怎样限制变换}{172}{subsection.5.4.3}%
+\contentsline {subsection}{\numberline {5.4.4}AKG：用多面体编译组织循环与存储}{174}{subsection.5.4.4}%
+\contentsline {subsection}{\numberline {5.4.5}成本估计与实测选择}{175}{subsection.5.4.5}%
+\contentsline {section}{\numberline {5.5}运行时：提交、重放与动态形状}{177}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}主机准备与加速器计算的重叠}{177}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}CUDA Graph：提交收益与输入复制开销}{178}{subsection.5.5.2}%
+\contentsline {subsection}{\numberline {5.5.3}动态形状与编译开销}{181}{subsection.5.5.3}%
+\contentsline {subsection}{\numberline {5.5.4}Persistent Kernel：按数据块调度任务}{182}{subsection.5.5.4}%
+\contentsline {section}{\numberline {5.6}从局部优化到完整请求}{183}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}热点占比决定加速空间}{184}{subsection.5.6.1}%
+\contentsline {subsection}{\numberline {5.6.2}并行分支与关键路径切换}{184}{subsection.5.6.2}%
+\contentsline {subsection}{\numberline {5.6.3}综合案例：一次 Qwen3 请求的优化选择}{185}{subsection.5.6.3}%
+\contentsline {section}{常见误区}{187}{figure.caption.154}%
+\contentsline {section}{习题与配套实验}{187}{figure.caption.154}%
+\contentsline {section}{历史与进一步阅读}{188}{figure.caption.154}%
+\contentsline {section}{本章小结}{189}{figure.caption.154}%
+\contentsline {chapter}{\numberline {第 6{} 章}超节点}{190}{chapter.6}%
+\contentsline {section}{\numberline {6.1}从单卡到多卡}{190}{section.6.1}%
+\contentsline {subsection}{\numberline {6.1.1}八张卡的独立部署与协作}{190}{subsection.6.1.1}%
+\contentsline {subsection}{\numberline {6.1.2}每卡内存需求与单步执行时间}{192}{subsection.6.1.2}%
+\contentsline {subsection}{\numberline {6.1.3}Prefill、Decode 与训练对资源的不同要求}{194}{subsection.6.1.3}%
+\contentsline {section}{\numberline {6.2}稠密模型的多卡执行}{194}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Qwen3-8B 的多实例推理与训练数据并行}{194}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}张量并行与层内数据交换}{195}{subsection.6.2.2}%
+\contentsline {subsection}{\numberline {6.2.3}序列与上下文切分：从 SP 到 CP}{198}{subsection.6.2.3}%
+\contentsline {subsection}{\numberline {6.2.4}流水线并行与组合方案}{200}{subsection.6.2.4}%
+\contentsline {section}{\numberline {6.3}MoE 的多卡执行}{201}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}专家权重与注意力状态的多卡分布}{201}{subsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.3.2}Token 怎样到达专家：EP 与 dispatch／combine}{201}{subsection.6.3.2}%
+\contentsline {subsection}{\numberline {6.3.3}批内复用与负载不均}{204}{subsection.6.3.3}%
+\contentsline {subsection}{\numberline {6.3.4}从数千亿到万亿参数：并行组合怎样变化}{206}{subsection.6.3.4}%
+\contentsline {section}{\numberline {6.4}集合通信的实现与执行代价}{207}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}根据模型切分方式确定通信需求}{207}{subsection.6.4.1}%
+\contentsline {subsection}{\numberline {6.4.2}环、树与通信轮次}{207}{subsection.6.4.2}%
+\contentsline {subsection}{\numberline {6.4.3}通信库与计算的资源竞争}{210}{subsection.6.4.3}%
+\contentsline {subsection}{\numberline {6.4.4}通信融合、加速器发起与专用卸载}{212}{subsection.6.4.4}%
+\contentsline {section}{\numberline {6.5}超节点的物理组织}{213}{section.6.5}%
+\contentsline {subsection}{\numberline {6.5.1}直连、交换与分层拓扑}{213}{subsection.6.5.1}%
+\contentsline {subsection}{\numberline {6.5.2}互联介质、供电与物理规模}{216}{subsection.6.5.2}%
+\contentsline {subsection}{\numberline {6.5.3}NVIDIA：从八卡服务器到机柜}{217}{subsection.6.5.3}%
+\contentsline {subsection}{\numberline {6.5.4}TPU：拓扑与负载协同}{218}{subsection.6.5.4}%
+\contentsline {subsection}{\numberline {6.5.5}Unified Bus 与 CloudMatrix}{219}{subsection.6.5.5}%
+\contentsline {section}{\numberline {6.6}内存池}{221}{section.6.6}%
+\contentsline {subsection}{\numberline {6.6.1}局部容量不足与全局空闲}{221}{subsection.6.6.1}%
+\contentsline {subsection}{\numberline {6.6.2}内存借用与访问边界}{222}{subsection.6.6.2}%
+\contentsline {subsection}{\numberline {6.6.3}共享容量与 KV 缓存}{224}{subsection.6.6.3}%
+\contentsline {section}{\numberline {6.7}从并行方案到超节点规模}{225}{section.6.7}%
+\contentsline {subsection}{\numberline {6.7.1}更大的协作组与更多推理实例}{225}{subsection.6.7.1}%
+\contentsline {subsection}{\numberline {6.7.2}功率、成本与故障范围怎样改变选择}{228}{subsection.6.7.2}%
+\contentsline {subsection}{\numberline {6.7.3}给定模型与硬件，怎样选择切分策略}{229}{subsection.6.7.3}%
+\contentsline {section}{本章小结}{231}{subsection.6.7.3}%
+\contentsline {chapter}{\numberline {第 7{} 章}数据中心网络}{232}{chapter.7}%
+\contentsline {section}{\numberline {7.1}从超节点走向集群}{232}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}存储需求如何引出跨服务器协作}{232}{subsection.7.1.1}%
+\contentsline {subsection}{\numberline {7.1.2}流量与资源模型}{234}{subsection.7.1.2}%
+\contentsline {subsection}{\numberline {7.1.3}统一互联}{235}{subsection.7.1.3}%
+\contentsline {section}{\numberline {7.2}跨节点流量与物理路径}{236}{section.7.2}%
+\contentsline {subsection}{\numberline {7.2.1}数据并行的跨服务器流量}{236}{subsection.7.2.1}%
+\contentsline {subsection}{\numberline {7.2.2}TP 与 PP 的通信需求}{239}{subsection.7.2.2}%
+\contentsline {subsection}{\numberline {7.2.3}专家并行的通信负载}{240}{subsection.7.2.3}%
+\contentsline {subsection}{\numberline {7.2.4}多网卡}{242}{subsection.7.2.4}%
+\contentsline {section}{\numberline {7.3}远程访问的路径与并发}{243}{section.7.3}%
+\contentsline {subsection}{\numberline {7.3.1}数据传输与完成通知}{243}{subsection.7.3.1}%
+\contentsline {subsection}{\numberline {7.3.2}由产生数据的加速器直接发起通信}{244}{subsection.7.3.2}%
+\contentsline {subsection}{\numberline {7.3.3}内存语义：Load／Store 与 Read／Write}{247}{subsection.7.3.3}%
+\contentsline {subsection}{\numberline {7.3.4}并发与吞吐模型}{249}{subsection.7.3.4}%
+\contentsline {section}{\numberline {7.4}数据交接、顺序与状态管理}{251}{section.7.4}%
+\contentsline {subsection}{\numberline {7.4.1}数据分片的生成、使用与缓冲区复用}{251}{subsection.7.4.1}%
+\contentsline {subsection}{\numberline {7.4.2}事务层与传输层分离：Jetty 与共享状态}{252}{subsection.7.4.2}%
+\contentsline {subsection}{\numberline {7.4.3}操作依赖与故障隔离}{254}{subsection.7.4.3}%
+\contentsline {subsection}{\numberline {7.4.4}请求槽位的释放与背压}{256}{subsection.7.4.4}%
+\contentsline {section}{\numberline {7.5}共享网络中的拥塞与可靠性}{258}{section.7.5}%
+\contentsline {subsection}{\numberline {7.5.1}从固定流量到随时间变化的需求}{258}{subsection.7.5.1}%
+\contentsline {subsection}{\numberline {7.5.2}反馈延迟与缓冲容量}{260}{subsection.7.5.2}%
+\contentsline {subsection}{\numberline {7.5.3}多路径与重传}{261}{subsection.7.5.3}%
+\contentsline {subsection}{\numberline {7.5.4}死锁}{263}{subsection.7.5.4}%
+\contentsline {section}{\numberline {7.6}从通信改进到任务完成}{265}{section.7.6}%
+\contentsline {subsection}{\numberline {7.6.1}关键路径从数据就绪开始}{265}{subsection.7.6.1}%
+\contentsline {subsection}{\numberline {7.6.2}分层网络的通信耗时计算}{266}{subsection.7.6.2}%
+\contentsline {subsection}{\numberline {7.6.3}训练与推理的通信瓶颈}{269}{subsection.7.6.3}%
+\contentsline {subsection}{\numberline {7.6.4}固定 1024 卡，超节点变大后怎样重新选择}{270}{subsection.7.6.4}%
+\contentsline {subsection}{\numberline {7.6.5}部署与常见误区}{273}{subsection.7.6.5}%
+\contentsline {section}{本章小结}{274}{subsection.7.6.5}%
+\contentsline {chapter}{\numberline {第 8{} 章}推理优化}{275}{chapter.8}%
+\contentsline {section}{\numberline {8.1}推理请求的执行过程与资源需求}{275}{section.8.1}%
+\contentsline {subsection}{\numberline {8.1.1}执行资源与请求生命周期}{275}{subsection.8.1.1}%
+\contentsline {subsection}{\numberline {8.1.2}权重、KV 与运行时缓冲的存储容量需求}{277}{subsection.8.1.2}%
+\contentsline {subsection}{\numberline {8.1.3}从单请求时间到服务目标}{278}{subsection.8.1.3}%
+\contentsline {section}{\numberline {8.2}批处理与请求调度}{278}{section.8.2}%
+\contentsline {subsection}{\numberline {8.2.1}权重复用如何提高批处理效率}{278}{subsection.8.2.1}%
+\contentsline {subsection}{\numberline {8.2.2}从固定批次到连续批处理}{281}{subsection.8.2.2}%
+\contentsline {subsection}{\numberline {8.2.3}长 Prefill 对生成的干扰与分块执行}{283}{subsection.8.2.3}%
+\contentsline {subsection}{\numberline {8.2.4}Token 预算、动态形状与执行时间}{285}{subsection.8.2.4}%
+\contentsline {section}{\numberline {8.3}KV 缓存的分配、复用与释放}{285}{section.8.3}%
+\contentsline {subsection}{\numberline {8.3.1}预留、碎片与分页分配}{285}{subsection.8.3.1}%
+\contentsline {subsection}{\numberline {8.3.2}分支共享、写时复制与内存释放}{288}{subsection.8.3.2}%
+\contentsline {subsection}{\numberline {8.3.3}对话与智能体的前缀复用}{290}{subsection.8.3.3}%
+\contentsline {subsection}{\numberline {8.3.4}缓存准入、淘汰、换出与重计算}{294}{subsection.8.3.4}%
+\contentsline {section}{\numberline {8.4}压缩与卸载}{295}{section.8.4}%
+\contentsline {subsection}{\numberline {8.4.1}权重量化后的内存占用}{295}{subsection.8.4.1}%
+\contentsline {subsection}{\numberline {8.4.2}KV 压缩与读取成本}{296}{subsection.8.4.2}%
+\contentsline {subsection}{\numberline {8.4.3}权重卸载、预取与每步搬运}{297}{subsection.8.4.3}%
+\contentsline {subsection}{\numberline {8.4.4}质量约束下的容量与速度选择}{299}{subsection.8.4.4}%
+\contentsline {section}{\numberline {8.5}推测解码}{301}{section.8.5}%
+\contentsline {subsection}{\numberline {8.5.1}草稿、验证、回退与正确性}{301}{subsection.8.5.1}%
+\contentsline {subsection}{\numberline {8.5.2}每轮耗时与输出数量}{303}{subsection.8.5.2}%
+\contentsline {subsection}{\numberline {8.5.3}草稿来源与串行、并行生成方式}{304}{subsection.8.5.3}%
+\contentsline {subsection}{\numberline {8.5.4}草稿长度的动态选择与并发竞争}{305}{subsection.8.5.4}%
+\contentsline {section}{\numberline {8.6}请求负载下的性能与配置选择}{306}{section.8.6}%
+\contentsline {subsection}{\numberline {8.6.1}到达率、排队、准入与取消}{306}{subsection.8.6.1}%
+\contentsline {subsection}{\numberline {8.6.2}质量与 SLO 约束下的有效吞吐}{306}{subsection.8.6.2}%
+\contentsline {subsection}{\numberline {8.6.3}配置、加速器与完整任务成本}{308}{subsection.8.6.3}%
+\contentsline {section}{历史与延伸阅读}{310}{figure.caption.292}%
+\contentsline {section}{本章小结}{311}{figure.caption.292}%
+\contentsline {chapter}{\numberline {第 9{} 章}分布式推理}{312}{chapter.9}%
+\contentsline {section}{\numberline {9.1}计算与状态的分布方式}{312}{section.9.1}%
+\contentsline {subsection}{\numberline {9.1.1}计算资源、推理实例与服务副本}{312}{subsection.9.1.1}%
+\contentsline {subsection}{\numberline {9.1.2}计算分工与状态共享}{315}{subsection.9.1.2}%
+\contentsline {subsection}{\numberline {9.1.3}同一请求的执行路径与状态驻留时间}{315}{subsection.9.1.3}%
+\contentsline {section}{\numberline {9.2}Prefill--Decode 分离与资源配比}{316}{section.9.2}%
+\contentsline {subsection}{\numberline {9.2.1}Prefill 与 Decode 为什么需要分离}{316}{subsection.9.2.1}%
+\contentsline {subsection}{\numberline {9.2.2}KV 传输与两端内存占用}{317}{subsection.9.2.2}%
+\contentsline {subsection}{\numberline {9.2.3}阶段处理能力与实例数量配比}{319}{subsection.9.2.3}%
+\contentsline {subsection}{\numberline {9.2.4}不同请求与负载下的收益边界}{321}{subsection.9.2.4}%
+\contentsline {section}{\numberline {9.3}Attention--FFN 分离与异构执行}{322}{section.9.3}%
+\contentsline {subsection}{\numberline {9.3.1}Attention、FFN 与专家的执行边界}{322}{subsection.9.3.1}%
+\contentsline {subsection}{\numberline {9.3.2}CPU／GPU 协作}{322}{subsection.9.3.2}%
+\contentsline {subsection}{\numberline {9.3.3}容量、并发与专家复用对服务能力的影响}{325}{subsection.9.3.3}%
+\contentsline {subsection}{\numberline {9.3.4}跨机 AF、专家分离与微批次流水}{327}{subsection.9.3.4}%
+\contentsline {section}{\numberline {9.4}专家放置、复制与负载均衡}{328}{section.9.4}%
+\contentsline {subsection}{\numberline {9.4.1}大 EP 中的计算与通信偏斜}{328}{subsection.9.4.1}%
+\contentsline {subsection}{\numberline {9.4.2}专家副本、放置与动态调整}{331}{subsection.9.4.2}%
+\contentsline {subsection}{\numberline {9.4.3}输入分发、计算与结果合并的重叠}{333}{subsection.9.4.3}%
+\contentsline {section}{\numberline {9.5}KV 的分布、共享与请求路由}{335}{section.9.5}%
+\contentsline {subsection}{\numberline {9.5.1}缓存标识、共享范围与可用状态}{335}{subsection.9.5.1}%
+\contentsline {subsection}{\numberline {9.5.2}多级存储}{336}{subsection.9.5.2}%
+\contentsline {subsection}{\numberline {9.5.3}持久化、检查点与部分重算}{337}{subsection.9.5.3}%
+\contentsline {subsection}{\numberline {9.5.4}缓存亲和性与请求路由}{338}{subsection.9.5.4}%
+\contentsline {section}{\numberline {9.6}服务启动、扩缩容与故障恢复}{341}{section.9.6}%
+\contentsline {subsection}{\numberline {9.6.1}启动与预热开销}{341}{subsection.9.6.1}%
+\contentsline {subsection}{\numberline {9.6.2}运行中重配置与状态交接}{342}{subsection.9.6.2}%
+\contentsline {subsection}{\numberline {9.6.3}部分故障与流式生成恢复}{343}{subsection.9.6.3}%
+\contentsline {section}{\numberline {9.7}部署方案的综合比较}{344}{section.9.7}%
+\contentsline {subsection}{\numberline {9.7.1}组合副本、PD、AF 与共享 KV}{344}{subsection.9.7.1}%
+\contentsline {subsection}{\numberline {9.7.2}同质量、同资源约束下的方案比较}{346}{subsection.9.7.2}%
+\contentsline {subsection}{\numberline {9.7.3}负载变化后的部署调整}{347}{subsection.9.7.3}%
+\contentsline {section}{练习}{348}{subsection.9.7.3}%
+\contentsline {section}{本章小结}{349}{subsection.9.7.3}%
+\contentsline {chapter}{\numberline {第 10{} 章}训练系统}{350}{chapter.10}%
+\contentsline {section}{\numberline {10.1}根据训练任务估算容量与时间需求}{350}{section.10.1}%
+\contentsline {subsection}{\numberline {10.1.1}训练任务、可训练参数与完成目标}{350}{subsection.10.1.1}%
+\contentsline {subsection}{\numberline {10.1.2}参数、梯度、优化器与激活}{351}{subsection.10.1.2}%
+\contentsline {subsection}{\numberline {10.1.3}计算需求、MFU 与资源下界}{353}{subsection.10.1.3}%
+\contentsline {section}{\numberline {10.2}训练状态的分片、重计算与卸载}{355}{section.10.2}%
+\contentsline {subsection}{\numberline {10.2.1}数据并行与 ZeRO／FSDP 状态分片}{355}{subsection.10.2.1}%
+\contentsline {subsection}{\numberline {10.2.2}激活的保留与选择性重计算}{358}{subsection.10.2.2}%
+\contentsline {subsection}{\numberline {10.2.3}CPU／GPU 卸载与缓冲区的使用时间}{360}{subsection.10.2.3}%
+\contentsline {subsection}{\numberline {10.2.4}组合并行方案中的每卡状态分配与互联拓扑}{362}{subsection.10.2.4}%
+\contentsline {section}{\numberline {10.3}训练步的流水调度与通信重叠}{364}{section.10.3}%
+\contentsline {subsection}{\numberline {10.3.1}微批次、梯度累积与参数更新}{364}{subsection.10.3.1}%
+\contentsline {subsection}{\numberline {10.3.2}流水线调度、气泡与激活的生命周期}{364}{subsection.10.3.2}%
+\contentsline {subsection}{\numberline {10.3.3}反向依赖、梯度分桶与通信重叠}{367}{subsection.10.3.3}%
+\contentsline {subsection}{\numberline {10.3.4}MoE 与长上下文的调度变化}{368}{subsection.10.3.4}%
+\contentsline {section}{\numberline {10.4}数据输入、检查点与故障恢复}{370}{section.10.4}%
+\contentsline {subsection}{\numberline {10.4.1}数据读取、打包与预取}{370}{subsection.10.4.1}%
+\contentsline {subsection}{\numberline {10.4.2}可恢复状态与布局变换}{371}{subsection.10.4.2}%
+\contentsline {subsection}{\numberline {10.4.3}同步、异步保存与带宽竞争}{372}{subsection.10.4.3}%
+\contentsline {subsection}{\numberline {10.4.4}故障规模、保存周期与有效训练进度}{374}{subsection.10.4.4}%
+\contentsline {section}{\numberline {10.5}强化学习训练}{375}{section.10.5}%
+\contentsline {subsection}{\numberline {10.5.1}一轮回答生成、验证与参数更新}{376}{subsection.10.5.1}%
+\contentsline {subsection}{\numberline {10.5.2}各阶段的资源分配与权重同步}{377}{subsection.10.5.2}%
+\contentsline {subsection}{\numberline {10.5.3}异步训练、策略版本与长轨迹恢复}{379}{subsection.10.5.3}%
+\contentsline {subsection}{\numberline {10.5.4}专家路由重放与训推一致性}{382}{subsection.10.5.4}%
+\contentsline {section}{\numberline {10.6}从系统方案到完成期限与硬件选择}{383}{section.10.6}%
+\contentsline {subsection}{\numberline {10.6.1}汇总容量、每步耗时、停顿与恢复}{383}{subsection.10.6.1}%
+\contentsline {subsection}{\numberline {10.6.2}4090 集群的可行范围}{384}{subsection.10.6.2}%
+\contentsline {subsection}{\numberline {10.6.3}替换硬件后的瓶颈与选择}{385}{subsection.10.6.3}%
+\contentsline {subsection}{\numberline {10.6.4}模型规模、数据量与期限的敏感性}{386}{subsection.10.6.4}%
+\contentsline {section}{常见误区}{387}{figure.caption.369}%
+\contentsline {section}{习题与实验}{387}{figure.caption.369}%
+\contentsline {section}{本章小结}{388}{figure.caption.369}%
+\contentsline {chapter}{\numberline {第 11{} 章}资源调度与运行环境}{390}{chapter.11}%
+\contentsline {section}{\numberline {11.1}根据任务执行过程计算资源需求}{390}{section.11.1}%
+\contentsline {subsection}{\numberline {11.1.1}一项代码任务的执行与等待}{390}{subsection.11.1.1}%
+\contentsline {subsection}{\numberline {11.1.2}CPU 工作量、环境驻留与并发容量}{392}{subsection.11.1.2}%
+\contentsline {subsection}{\numberline {11.1.3}任务完成条件与必须保留的状态}{393}{subsection.11.1.3}%
+\contentsline {section}{\numberline {11.2}运行环境的创建、保留与释放}{394}{section.11.2}%
+\contentsline {subsection}{\numberline {11.2.1}工具执行路径与隔离边界}{394}{subsection.11.2.1}%
+\contentsline {subsection}{\numberline {11.2.2}资源分配与环境创建}{397}{subsection.11.2.2}%
+\contentsline {subsection}{\numberline {11.2.3}暂停、恢复与环境重建}{398}{subsection.11.2.3}%
+\contentsline {subsection}{\numberline {11.2.4}始终驻留、按需创建与提前准备}{400}{subsection.11.2.4}%
+\contentsline {section}{\numberline {11.3}共享资源池的分配与调度}{403}{section.11.3}%
+\contentsline {subsection}{\numberline {11.3.1}异构资源、成组分配与放置约束}{403}{subsection.11.3.1}%
+\contentsline {subsection}{\numberline {11.3.2}队列、优先级与抢占代价}{405}{subsection.11.3.2}%
+\contentsline {subsection}{\numberline {11.3.3}RL 生成与训练的动态资源配比}{407}{subsection.11.3.3}%
+\contentsline {subsection}{\numberline {11.3.4}验证批次、长尾与资源释放}{409}{subsection.11.3.4}%
+\contentsline {section}{\numberline {11.4}模型服务的选择与调用成本}{411}{section.11.4}%
+\contentsline {subsection}{\numberline {11.4.1}任务质量与思考预算}{411}{subsection.11.4.1}%
+\contentsline {subsection}{\numberline {11.4.2}服务路径、前缀缓存与实际用量}{413}{subsection.11.4.2}%
+\contentsline {subsection}{\numberline {11.4.3}排队、限流与模型路由}{414}{subsection.11.4.3}%
+\contentsline {subsection}{\numberline {11.4.4}自建服务、按量 API 与订阅的成本比较}{415}{subsection.11.4.4}%
+\contentsline {section}{\numberline {11.5}完整任务的恢复、成本计算与扩容}{417}{section.11.5}%
+\contentsline {subsection}{\numberline {11.5.1}工具失败后的恢复与模型选择}{417}{subsection.11.5.1}%
+\contentsline {subsection}{\numberline {11.5.2}成功任务的完整成本}{417}{subsection.11.5.2}%
+\contentsline {subsection}{\numberline {11.5.3}CPU、GPU、内存与服务额度的扩容选择}{421}{subsection.11.5.3}%
+\contentsline {section}{练习与实验}{423}{figure.caption.408}%
+\contentsline {section}{本章小结}{424}{Item.10}%
+\contentsline {chapter}{\numberline {第 12{} 章}端边云协同}{426}{chapter.12}%
+\contentsline {section}{\numberline {12.1}从模型运行时间到完整交互时间}{426}{section.12.1}%
+\contentsline {subsection}{\numberline {12.1.1}图片精修}{426}{subsection.12.1.1}%
+\contentsline {subsection}{\numberline {12.1.2}实时语音}{429}{subsection.12.1.2}%
+\contentsline {subsection}{\numberline {12.1.3}Computer Use：通过界面操作完成任务}{432}{subsection.12.1.3}%
+\contentsline {subsection}{\numberline {12.1.4}本地、附近设备与云端的初步比较}{433}{subsection.12.1.4}%
+\contentsline {section}{\numberline {12.2}跨设备分工}{434}{section.12.2}%
+\contentsline {subsection}{\numberline {12.2.1}完整模型调用与分阶段执行}{434}{subsection.12.2.1}%
+\contentsline {subsection}{\numberline {12.2.2}端侧编码的传输量与计算开销}{434}{subsection.12.2.2}%
+\contentsline {subsection}{\numberline {12.2.3}会话迁移的准备、复用与恢复}{437}{subsection.12.2.3}%
+\contentsline {subsection}{\numberline {12.2.4}模型内部切分的通信边界}{438}{subsection.12.2.4}%
+\contentsline {section}{\numberline {12.3}广域网传输中的额外开销与等待}{440}{section.12.3}%
+\contentsline {subsection}{\numberline {12.3.1}连接建立与复用}{440}{subsection.12.3.1}%
+\contentsline {subsection}{\numberline {12.3.2}窗口、反馈与有效吞吐}{440}{subsection.12.3.2}%
+\contentsline {subsection}{\numberline {12.3.3}多流传输与优先级}{442}{subsection.12.3.3}%
+\contentsline {subsection}{\numberline {12.3.4}案例：鹊桥如何加速跨地域语音服务}{443}{subsection.12.3.4}%
+\contentsline {section}{\numberline {12.4}无线变化下的交互与恢复}{446}{section.12.4}%
+\contentsline {subsection}{\numberline {12.4.1}共享空口与上下行争用}{446}{subsection.12.4.1}%
+\contentsline {subsection}{\numberline {12.4.2}业务时限、过期数据与取消}{447}{subsection.12.4.2}%
+\contentsline {subsection}{\numberline {12.4.3}双路径选择、分流与故障切换}{448}{subsection.12.4.3}%
+\contentsline {section}{\numberline {12.5}从端边云分工到完整部署}{450}{section.12.5}%
+\contentsline {subsection}{\numberline {12.5.1}地域、数据与服务位置}{450}{subsection.12.5.1}%
+\contentsline {subsection}{\numberline {12.5.2}时限、成本与恢复的联合比较}{451}{subsection.12.5.2}%
+\contentsline {subsection}{\numberline {12.5.3}何时需要更换部署方案}{454}{subsection.12.5.3}%
+\contentsline {subsection}{\numberline {12.5.4}资源条件变化后的系统调整}{455}{subsection.12.5.4}%
+\contentsline {section}{练习}{456}{figure.caption.440}%
+\contentsline {section}{本章小结}{458}{Item.40}%

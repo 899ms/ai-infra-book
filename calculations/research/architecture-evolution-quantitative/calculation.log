@@ -1,0 +1,102 @@
+{
+  "qwen_work": {
+    "linear_flops_per_token": 13891534848,
+    "decode_8k_matrix_flops": 19968032768,
+    "prefill_4k_causal_matrix_flops": 61849981681664,
+    "lm_head_policy": "last position only for prefill; one output token for decode"
+  },
+  "conv": {
+    "input_bytes": 401408,
+    "expanded_bytes": 3612672,
+    "explicit_expansion_roundtrip_bytes": 7225344,
+    "flops": 231211008,
+    "cube_cycles_at_8192": 28224.0,
+    "relu_elements": 200704,
+    "fp16_vector_issues_at_128_lanes": 1568,
+    "saved_hbm_service_us_at_1_2TBs": 6.021120000000001
+  },
+  "ascend_attention": {
+    "score_elements": 16384,
+    "matrix_flops": 8388608,
+    "cube_cycles_at_8192": 1024.0,
+    "fp32_vector_lanes": 64,
+    "exp_vector_groups": 256,
+    "fp32_one_tensor_bytes": 65536,
+    "two_handoffs_external_roundtrip_bytes": 262144,
+    "external_service_us_at_94GBs": 2.7887659574468087,
+    "fp16_one_handoff_bytes": 32768,
+    "required_cv_GBs_for_two_handoffs_in_1_024us": 127.99999999999999,
+    "required_external_GBs_in_1_024us": 255.99999999999997,
+    "required_exp_values_per_cycle": 16.0,
+    "required_exp_vector_issues_per_cycle": 0.25
+  },
+  "volta": [
+    {
+      "rows": 1,
+      "path": "FP32 FMA",
+      "compute_ms": 0.002137224968152866,
+      "memory_ms": 0.03730090666666667,
+      "resource_floor_ms": 0.03730090666666667
+    },
+    {
+      "rows": 1,
+      "path": "Tensor Core",
+      "compute_ms": 0.000268435456,
+      "memory_ms": 0.03730090666666667,
+      "resource_floor_ms": 0.03730090666666667
+    },
+    {
+      "rows": 4096,
+      "path": "FP32 FMA",
+      "compute_ms": 8.75407346955414,
+      "memory_ms": 0.11184810666666666,
+      "resource_floor_ms": 8.75407346955414
+    },
+    {
+      "rows": 4096,
+      "path": "Tensor Core",
+      "compute_ms": 1.099511627776,
+      "memory_ms": 0.11184810666666666,
+      "resource_floor_ms": 1.099511627776
+    }
+  ],
+  "formats": [
+    {
+      "format": "BF16",
+      "bytes": 33554432,
+      "MiB": 32.0,
+      "read_us_4090": 33.28812698412699,
+      "read_us_5090": 18.72457142857143
+    },
+    {
+      "format": "MXFP8",
+      "bytes": 17301504,
+      "MiB": 16.5,
+      "read_us_4090": 17.164190476190473,
+      "read_us_5090": 9.654857142857143
+    },
+    {
+      "format": "MXFP4",
+      "bytes": 8912896,
+      "MiB": 8.5,
+      "read_us_4090": 8.84215873015873,
+      "read_us_5090": 4.973714285714285
+    }
+  ]
+}
+device / decode read ms / prefill matrix ms
+rtx3090 17.463 871.13
+rtx4090 16.215 374.39
+rtx5090 9.121 295.23
+rtx-pro6000-blackwell-ws 9.121 122.77
+a100-80gb-sxm 8.016 198.24
+h100-sxm 4.879 62.51
+h200-sxm 3.405 62.51
+ascend-950pr-max-spec 10.216 None
+ascend-950dt-max-spec 4.086 None
+m1-ultra-64gpu-128gb 20.431 None
+m2-ultra-76gpu-192gb 20.431 None
+m3-ultra-80gpu-256gb 19.957 None
+m3-ultra-80gpu-512gb 19.957 None
+m4-max-40gpu-128gb 29.936 None
+m5-ultra-80gpu-512gb 13.621 None

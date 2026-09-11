@@ -31,6 +31,15 @@ python3 -m unittest discover -s calculations/tests -p 'test_v41*.py' -v
 
 [统一比较结果](results/chapter2-model-comparison.json)包含五个模型的参数组成、8K 调用、8K／200K／1M decode、状态增长与 P128/G4 请求。V4.1 Flash 的参考全层和 CED 分别保存逐层计算记录。各模型上下文上限、外推行和 CED 近似重放的解释见[写作与复核记录](../research/ch02-five-models-2026-09-10/README.md)。
 
+## UB 互联：从记录尺寸到延迟与规模
+
+`ub-fabric` 用声明的记录尺寸（Jetty 20 B、内存段 32 B、传输通道 56 B、RoCE 连接上下文 512 B）、阶段延迟与控制操作计数推导：端点状态按 N+M 与 N×M 增长，256 KiB 片上缓存的溢出端点数，一次 64 B 远程读取的阶段和，互联内能容纳的主机数，N×N 关系的建立时间，以及请求速率。OpenURMA 论文的仿真值只作对照。第 6.5.5 节与第 7.3–7.4 节使用同一结果。
+
+```bash
+python3 calculations/calc.py ub-fabric --format md
+python3 -m unittest discover -s calculations/tests -p 'test_ub_fabric.py' -v
+```
+
 ## 模型支持范围
 
 | 模型 | 官方配置 | 当前可计算 | 仍待完成 |
@@ -1065,3 +1074,10 @@ JSON分列端到端传输、同PN的MAC尝试、预约、DATA接收和MAC反馈�
 `python3 calculations/calc.py kv-comparison --length 8192 --batch 1 --format md` 将 12 个模型、15 种缓存路径的全局 B/token、给定长度容量、decode 主历史读、index 扫描、递推状态读写及追加写入分列；精度、参考/生产路径、上下文上限都保留。默认[8K 表](results/kv-comparison-n8192-b1.md)，另有[128K](results/kv-comparison-n131072-b1.md)、[1M](results/kv-comparison-n1048576-b1.md)及边界/batch 场景。
 
 `python3 calculations/calc.py v41-flash --format md` 核对[新版权重与结构](results/v41-flash-n8192-b1.md)。官方全局 KV 3,514.25→890 B/token 的复算、参考代码与论文服务路径差别、能力对照和保留旧例子的理由见[调研说明](research/deepseek-v41-flash/README.md)。完整权重值未下载；已下载全部分片头及索引以完成静态存储和形状核对。两组新场景已接入统一 reproduce，也可运行 `python3 calculations/research/deepseek-v41-flash/reproduce.py` 仅生成本次结果。
+
+
+## 切分、通信与集群规模的综合算例
+
+- [给定模型、容量与期限选择TP和实例](results/parallel-choice-book.md)
+- [专家分离的dispatch、计算与combine偏斜](results/ep-skew-book.md)
+- [1024卡训练：超节点、出口、并行候选与恢复](results/supernode-scaling-book.md)

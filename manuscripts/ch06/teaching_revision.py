@@ -17,7 +17,7 @@ def draw(here,data):
         f,a=plot(3.6,left=.24);left=np.zeros(2)
         for i,label,col in [(0,'权重','blue'),(1,'KV','green'),(2,'工作区','orange')]:
             v=np.array(data['capacity_plot']['segments_GB'])[:,i];a.barh([0,1],v,left=left,height=.45,label=label,color=COL[col],edgecolor=COL['line']);left+=v
-        a.axvline(24,ls='--',color='#777777');a.set(yticks=[0,1],yticklabels=['单卡实例','八卡中的每卡'],xlim=(0,25),xlabel='每卡内存占用（GB）');a.invert_yaxis();a.legend(frameon=False,ncol=3,loc='upper center',bbox_to_anchor=(.5,1.02));save(f,'2-capacity')
+        a.axvline(24,ls='--',color='#777777');a.set(yticks=[0,1],yticklabels=['单卡实例','八卡中的每卡'],xlim=(0,25),xlabel='每卡内存占用（GB）');a.invert_yaxis();f.subplots_adjust(top=.84);a.legend(frameon=False,ncol=3,loc='lower center',bbox_to_anchor=(.5,1.0));save(f,'2-capacity')
         for rows,name in [(False,'tp-columns'),(True,'tp-rows')]:
             f,a=canvas(4.4);text(a,.04,.94,'同一乘法：[2, 3] × [[1, 4], [2, 5]]',12)
             for i in range(2):
@@ -97,10 +97,10 @@ def draw(here,data):
             text(a,.5,.96,('递归' if i==0 else 'Swing')+f'：第三轮 0 → {route["receiver"]}',14,ha='center');save(f,'14-topology' if i==0 else 'topology-swing')
         f,a=plot(3.5)
         for i,p in enumerate(patterns):a.bar(np.arange(3)+(i-.5)*.32,[r['peak_link_bytes']/2**20 for r in p['rounds'][:3]],width=.32,color=COL['blue' if i==0 else 'orange'],edgecolor=COL['line'],label='递归' if i==0 else 'Swing')
-        a.set(xticks=range(3),xticklabels=['第 1 轮','第 2 轮','第 3 轮'],ylim=(0,5),ylabel='最忙单向链路传输量（MiB）');a.legend(frameon=False);save(f,'topology-load')
+        a.set(xticks=range(3),xticklabels=['第 1 轮','第 2 轮','第 3 轮'],ylim=(0,5),ylabel='最忙单向链路传输量（MiB）');f.subplots_adjust(top=.84);a.legend(frameon=False,ncol=2,loc='upper center',bbox_to_anchor=(.45,1.17),columnspacing=1.5,handlelength=1.4);save(f,'topology-load')
         f,a=canvas(4.2);box(a,.04,.36,.32,.33,'左半部','blue');box(a,.64,.36,.32,.33,'右半部','green');arrow(a,(.36,.52),(.64,.52));text(a,.5,.76,'中间切面：k² 条链路',12,ha='center');a.plot([.20,.20,.80,.80],[.36,.18,.18,.36],color='#454545');text(a,.5,.07,'首尾连接再切一次：另有 k² 条',12,ha='center');save(f,'15-torus')
         f,a=plot(3.4)
-        for shift,vals,label,col in [(-.17,[1,8],'设备数','blue'),(.17,[1,4],'二分链路数','orange')]:a.bar(np.arange(2)+shift,vals,width=.32,label=label,color=COL[col],edgecolor=COL['line'])
+        for shift,vals,label,col in [(-.17,[1,8],'加速器数','blue'),(.17,[1,4],'二分链路数','orange')]:a.bar(np.arange(2)+shift,vals,width=.32,label=label,color=COL[col],edgecolor=COL['line'])
         a.set(xticks=[0,1],xticklabels=['k = 4','k = 8'],ylim=(0,10),ylabel='相对 k = 4 的倍数');a.legend(frameon=False);save(f,'torus-growth')
         f,a=canvas(5.4)
         for row,(title,left,middle,right) in enumerate([('GB200 NVL72','计算托盘','NVLink\n交换','计算托盘'),('TPU v4','64 芯片\n电互联单元','光电路\n交换机','64 芯片\n电互联单元'),('Unified Bus','主机与\n计算资源','UB\n互联','主机与\n内存资源')]):
@@ -118,7 +118,7 @@ def draw(here,data):
         for i in range(4):
             y=.70-i*.15;box(a,.04,y,.21,.10,f'请求 {i}','blue',11);arrow(a,(.25,y+.05),(.72,y+.05));box(a,.73,y,.23,.10,'256 字节','green',11)
         text(a,.5,.09,'往返 2 μs；允许 128 个请求同时在途',12,ha='center');save(f,'18-read-window')
-        d=data['remote_memory'];f,a=plot(3.7);a.loglog(d['frequency_per_second'],d['mean_payload_GBs'],color='#267398',label='16 GiB × 读取频率');a.axhline(40,color='#a56c28',label='路径：40 GB/s');a.axhline(d['window_bound_GBs'],ls='--',color='#388768',label='窗口：16.4 GB/s');a.set(xlabel='每秒完整读取次数',ylabel='平均带宽需求（GB/s）');a.legend(frameon=False,loc='upper left');save(f,'19-memory-pool')
+        d=data['remote_memory'];f,a=plot(3.7);a.loglog(d['frequency_per_second'],d['mean_payload_GBs'],color='#267398',label='16 GiB × 读取频率');a.axhline(40,color='#a56c28',label='路径：40 GB/s');a.axhline(d['window_bound_GBs'],ls='--',color='#388768',label='在途窗口：16.4 GB/s');a.set(xlabel='每秒完整读取次数',ylabel='平均带宽需求（GB/s）');a.legend(frameon=False,loc='upper left');save(f,'19-memory-pool')
         for i,c in enumerate(data['continuous_execution']['candidates']):
             f,a=plot(3.6,left=.20);instances=c['instances'];service=c['service_ms'];shown=min(instances,4)
             for req in range(4):

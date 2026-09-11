@@ -1232,18 +1232,18 @@
     "title": "OpenURMA: A Clean-Room Open Implementation of the Unified Bus Protocol",
     "url": "https://arxiv.org/pdf/2605.28717",
     "source_page": "https://arxiv.org/abs/2605.28717",
-    "note": "实现范围、模拟与综合证据",
-    "retrieved_at": "2026-09-05T13:29:13.277667+00:00",
+    "note": "实现范围、模拟与综合证据；作者 2026-06-02 修订版，替换 arXiv v1",
+    "retrieved_at": "2026-09-11T01:48:34.041039+00:00",
     "resolved_url": "https://arxiv.org/pdf/2605.28717",
     "content_type": "application/pdf",
     "pages": 33,
-    "version_in_text": "2605.28717v1",
+    "version_in_text": "revision 2026-06-02 (git e6a2eb5)",
     "first_page_excerpt": "                                                  OpenURMA: A Clean-Room Open Implementation of\n                                                            the Unified Bus Protocol\n                                                                                                     Bojie Li\n\n                                                                                                     Pine AI\n\n\n\n                                              Modern datacenter RDMA is bottlenecked at the network interface, not the wire. A NIC running RoCE or InfiniBand holds\n                                              per-connection state for every (application, remote-endpoint) pair — hundreds of megabytes at 1024-application fanout —\n                                              and pays a four-traversal PCIe round trip on a 64-byte operation, inflating latency an order of magnitude beyond the wire.\narXiv:2605.28717v1 [cs.AI] 27 May 2026\n\n\n\n\n                                              Both follow from the Queue-Pair-over-PCIe abstraction RDMA inherits from InfiniBand.\n                                                 Huawei’s Unified Bus (UB), a public 2025 specification, changes the abstraction: it decouples per-application endpoint\n                                              state from per-host transport state so connection context grows additively, exposes ordering as opt-in, and reaches remote\n                                              memory through native CPU load/store to an on-chip-bus controller. UB ships in Huawei’s closed Ascend 950 silicon.\n                                                 OpenURMA is the first clean-room open implementation of UB’s transport and transaction layers, realised at three\n                                              tiers — synthesis",
     "file": "files/papers/openurma.pdf",
     "text": "text/openurma.txt",
-    "sha256": "714b7d3ddbbdca227654386c06540afb27e75bc18516e8bf6025aa64227950a5",
-    "bytes": 1654033,
-    "text_chars": 298104,
+    "sha256": "793c1c62eeeb6fc7dcf4fa52d4ca44e78255d52a9d50a9bb453dc2e5c9ed7964",
+    "bytes": 1437125,
+    "text_chars": 295192,
     "status": "downloaded"
   },
   {
@@ -5879,5 +5879,22 @@
     "bytes": 5826187,
     "text_chars": 36800,
     "status": "user_provided"
+  },
+  {
+    "id": "kv-direct",
+    "chapters": [
+      6,
+      7
+    ],
+    "category": "papers",
+    "title": "KV-Direct: High-Performance In-Memory Key-Value Store with Programmable NIC",
+    "url": "local:files/papers/kv-direct-sosp17.pdf",
+    "source_page": "https://doi.org/10.1145/3132747.3132756",
+    "note": "李博杰等，SOSP 2017；§2.4 PCIe DMA 的延迟、TLP 开销、信用与标签对并发读的限制，图 3 读写吞吐；按原平台引用",
+    "retrieved_at": "2026-09-11T02:50:03.468004+00:00",
+    "resolved_url": "local:files/papers/kv-direct-sosp17.pdf",
+    "content_type": "application/pdf",
+    "pages": 16,
+    "sha256": "391543fc2958ae8f8891f24d493964a4d0bbeb0618f0ea1f35ad25e356899b83"
   }
 ]

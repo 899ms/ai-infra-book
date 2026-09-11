@@ -198,6 +198,8 @@ from full_teaching_revision import draw as draw_full_revision
 full_outputs,full_checks=draw_full_revision(HERE,data)
 revision_outputs.extend(full_outputs)
 revision_checks.extend(full_checks)
+from structure_figures import draw as draw_structure
+revision_outputs.extend(draw_structure(HERE))
 (HERE/'teaching-layout-check.json').write_text(json.dumps(revision_checks,ensure_ascii=False,indent=2)+'\n')
 outputs.extend(revision_outputs)
 outputs=list(dict.fromkeys(outputs))

@@ -9,7 +9,7 @@ def draw(here,data):
         f,a=canvas(5.2)
         layers=[('应用与任务','要完成什么，何时完成','orange'),
                 ('模型与负载','需要哪些计算和数据','blue'),
-                ('训练与推理系统','安排请求、批次和设备','green'),
+                ('训练与推理系统','安排请求、批次和加速器','green'),
                 ('算子与编译运行时','把运算变成可执行程序','purple'),
                 ('处理器与存储','计算并保存数据','blue'),
                 ('互联与数据中心','连接设备，提供电力与散热','gray')]
@@ -83,7 +83,7 @@ def draw(here,data):
 
         f,a=plot(3.7,left=.25)
         comp=data['teaching']['compute_ms'];mem=data['teaching']['weight_read_ms']
-        labels=['原设备','算力翻倍','带宽翻倍'];y=np.arange(3)
+        labels=['原加速器','算力翻倍','带宽翻倍'];y=np.arange(3)
         a.barh(y+.16,[mem,mem,mem/2],height=.29,color=COL['blue'],edgecolor=COL['line'],label='读取权重')
         a.barh(y-.16,[comp,comp/2,comp],height=.29,color=COL['orange'],edgecolor=COL['line'],label='矩阵计算')
         for i,v in enumerate([mem,mem,mem/2]):a.text(v+.4,i+.16,f'{v:.2f}',fontsize=12,va='center')
@@ -96,7 +96,7 @@ def draw(here,data):
         for i in range(8):
             x=.04+i*.117;box(a,x,.24,.105,.18,str(i+1),'green');arrow(a,(x+.052,.63),(x+.052,.43))
         text(a,.5,.52,'八条输入各自完成运算',12,ha='center')
-        text(a,.5,.10,'整批约 20.90 ms；每输出分摊约 2.61 ms',12,ha='center')
+        text(a,.5,.10,'整批约 20.90 ms；每输出 token 分摊约 2.61 ms',12,ha='center')
         out.save(f,'figure-1-batch-reuse')
 
         d=data['teaching_diagrams']['batch_transition'];b=np.array(d['batch'])

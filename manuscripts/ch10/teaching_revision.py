@@ -16,9 +16,9 @@ def draw(here,data):
         for j,(l,c) in enumerate([('BF16 权重','blue'),('BF16 梯度','green'),('FP32 主权重','orange'),('一阶矩','purple'),('二阶矩','gray')]):a.barh([1,0],vals[:,j],left=left,height=.45,color=COL[c],edgecolor=COL['line'],label=l);left+=vals[:,j]
         a.set(yticks=[1,0],yticklabels=['推理权重','训练状态'],xlabel='容量（GB）',xlim=(0,145),ylim=(-.5,2.8));a.legend(frameon=False,ncol=2,loc='upper left');save(f,'1-state')
         for j,key in enumerate(['3/10','2/5','1/2']):
-            f,a=plot(3.7);v=data['10-2']['compute'][key];a.bar(range(4),v,color=COL['blue'],edgecolor=COL['line']);a.scatter(range(4),data['10-2']['capacity'],marker='D',facecolors=COL['orange'],edgecolors=COL['line'],label='状态容量下限',zorder=3)
+            f,a=plot(3.7);v=data['10-2']['compute'][key];a.bar(range(4),v,color=COL['blue'],edgecolor=COL['line']);a.scatter(range(4),data['10-2']['capacity'],marker='D',facecolors=COL['orange'],edgecolors=COL['line'],label='显存约束卡数下限',zorder=3)
             for x,y in enumerate(v):a.text(x,y+.8,str(y),fontsize=12,ha='center')
-            a.set(xticks=range(4),xticklabels=['4090','A100','H100','B200'],ylabel='必要设备数',ylim=(0,50));a.legend(frameon=False);save(f,'2-budget' if j==0 else f'budget-{j}')
+            a.set(xticks=range(4),xticklabels=['4090','A100','H100','B200'],ylabel='所需加速器数（张）',ylim=(0,50));a.legend(frameon=False);save(f,'2-budget' if j==0 else f'budget-{j}')
         for stage in range(4):
             f,a=canvas(4.6);text(a,.04,.94,['普通数据并行','ZeRO-1：优化器相关状态分片','ZeRO-2：再将梯度分片','ZeRO-3：再将模型权重分片'][stage],13)
             for row,(l,c,split) in enumerate([('权重','blue',stage>=3),('梯度','green',stage>=2),('主权重＋矩','purple',stage>=1)]):
@@ -49,7 +49,7 @@ def draw(here,data):
             text(a,.5,.08,'GPU 转换时同时占用 288 MiB' if gpu else '格式转换在 CPU 完成',12,ha='center');save(f,name)
         d=data['10-6'];f,a=plot(4.2)
         for k,l,c in [('total_gib','分片＋10 GiB 临时缓冲','#267398'),('persistent_gib','训练状态分片','#388768')]:a.plot(d['participants'],d[k],label=l,color=c)
-        a.axhline(24,ls='--',color='#a56c28',label='可用 24 GiB');a.set(xlabel='分片参与者数',ylabel='每卡容量（GiB）',ylim=(0,47));a.legend(frameon=False);save(f,'6-candidates')
+        a.axhline(24,ls='--',color='#a56c28',label='可用 24 GiB');a.set(xlabel='分片参与者数',ylabel='每卡显存需求（GiB）',ylim=(0,47));a.legend(frameon=False);save(f,'6-candidates')
         for i,(label,d) in enumerate(data['10-7'].items()):
             f,a=plot(4.1,left=.18)
             for e in d['events']:
@@ -70,7 +70,7 @@ def draw(here,data):
         for i,lengths in enumerate(data['10-9']['lengths']):
             f,a=plot(4.8,left=.20);offset=0
             for n,c in zip(lengths,['blue','green']):a.add_patch(Polygon([(offset,offset),(offset,offset+n),(offset+n,offset+n)],facecolor=COL[c],edgecolor=COL['line']));offset+=n
-            a.set(xlim=(0,8192),ylim=(8192,0),xticks=[0,lengths[0],8192],yticks=[0,lengths[0],8192],xlabel='被读取的位置',ylabel='查询位置');a.set_aspect('equal');save(f,'9-attention-area' if i==0 else 'attention-unequal')
+            a.set(xlim=(0,8192),ylim=(8192,0),xticks=[0,lengths[0],8192],yticks=[0,lengths[0],8192],xlabel='键的 token 索引',ylabel='查询 token 索引');a.set_aspect('equal');save(f,'9-attention-area' if i==0 else 'attention-unequal')
         f,a=canvas(4.1);box(a,.04,.65,.92,.17,'已训练：到批次 100','green')
         for i in range(8):box(a,.04+(i%4)*.235,.37-(i//4)*.20,.21,.14,str(101+i),'blue' if i<4 else 'gray',12)
         text(a,.5,.05,'101—108：已安排准备，仍等待训练',12,ha='center');save(f,'10-input-queue')
@@ -92,7 +92,7 @@ def draw(here,data):
                 a.plot(t['durable'],j,'o',mfc=COL['green'] if t['durable']<=50 else 'white',mec=COL['line']);a.text(t['durable'],j+.4,str(t['durable'])+' s',fontsize=11,ha='center')
             a.axvline(50,ls='--',color='#a56c28');a.set(xlim=(18,59),ylim=(-.5,1.8),yticks=[0,1],yticklabels=['快照 1','快照 2'],xlabel='时间（s）');a.invert_yaxis();a.set_title(l+'：故障发生在 50 s',loc='left');save(f,'12-recovery' if i==0 else 'recovery-fast')
         d=data['10-13'];t=np.array(d['interval_seconds']);c=d['checkpoint_seconds'];lam=d['job_failure_rate_per_second'];r=d['restore_seconds'];f,a=plot(4.1)
-        for y,l,color in [(c/t,'保存','#267398'),(lam*t/2,'重做','#a56c28'),(c/t+lam*t/2+lam*r,'总附加成本','#388768')]:a.plot(t/60,y*100,label=l,color=color)
+        for y,l,color in [(c/t,'保存','#267398'),(lam*t/2,'重做','#a56c28'),(c/t+lam*t/2+lam*r,'总附加时间','#388768')]:a.plot(t/60,y*100,label=l,color=color)
         a.set(xlabel='保存间隔（分钟）',ylabel='每单位有用训练的附加时间（%）');a.legend(frameon=False);save(f,'13-save-interval')
         f,a=canvas(4.2)
         for i,(l,c) in enumerate([('生成\n12 条/s','blue'),('验证\n6 条/s','orange'),('学习\n8 条/s','green')]):box(a,.04+i*.34,.48,.24,.24,l,c)
@@ -109,7 +109,7 @@ def draw(here,data):
             f,a=plot(3.5,left=.20);items=[(2,0,40,'blue'),(1,0 if async_ else 40,16,'green'),(0,40 if async_ else 56,4,'orange')]
             for row,s,d,c in items:a.barh(row,d,left=s,height=.5,color=COL[c],edgecolor=COL['line'])
             a.set(yticks=[2,1,0],yticklabels=['生成','学习','权重同步'],xlim=(0,62),xlabel='稳态周期内时间（s）');save(f,name)
-        f,a=canvas(4.9);box(a,.04,.69,.40,.20,'生成时记录\n样本 A／位置 17／层 3','blue',11);box(a,.60,.69,.36,.20,'专家 ID：[2, 7]','orange',11);arrow(a,(.44,.79),(.60,.79))
+        f,a=canvas(4.9);box(a,.04,.69,.40,.20,'生成时记录\n样本 A／token 17／层 3','blue',11);box(a,.60,.69,.36,.20,'专家 ID：[2, 7]','orange',11);arrow(a,(.44,.79),(.60,.79))
         box(a,.60,.28,.36,.20,'训练时仍选 2、7','orange',11);arrow(a,(.78,.69),(.78,.48),'control');box(a,.04,.28,.40,.20,'用当前权重计算\n分数、输出与梯度','green',11);arrow(a,(.60,.38),(.44,.38));text(a,.5,.08,'记录固定离散选择；当前权重参与数值计算',11,ha='center');save(f,'17-replay')
         f,a=plot(3.8,left=.18);rows=data['10-18']['rows']
         for i,r in enumerate(rows):
@@ -122,7 +122,7 @@ def draw(here,data):
         a.set(xlabel='新带宽／原带宽',ylabel='新耗时／原耗时');a.legend(frameon=False);save(f,'19-hardware')
         f,a=plot(4.2)
         for (key,d),l,c in zip(data['10-20'].items(),['A100','H100','B200'],['#267398','#388768','#a56c28']):a.plot(np.array(d['parameters'])/1e12,np.array(d['continuous_required_devices'])/1e4,color=c,label=l)
-        a.axhline(1.6384,ls='--',color='#666');a.set(yscale='log',xlabel='稠密模型参数量（万亿）',ylabel='90 天所需设备（万张）');a.legend(frameon=False);save(f,'20-scale')
+        a.axhline(1.6384,ls='--',color='#666');a.set(yscale='log',xlabel='稠密模型参数量（万亿）',ylabel='90 天所需加速器（万张）');a.legend(frameon=False);save(f,'20-scale')
     from core_principles_figures import draw as draw_principles
     draw_principles(10, out)
     out.finish();return out.outputs,out.checks

@@ -186,6 +186,8 @@ from models import compute
 (HERE/'figure-layout-check.json').write_text(json.dumps({'text_extent_warnings':layout},ensure_ascii=False,indent=2)+'\n')
 import sys
 sys.path.insert(0,str(HERE.parent))
+from ub_ep_figures import draw as draw_ub_ep
+outputs += draw_ub_ep(7, HERE)
 from teaching_revision import draw as draw_teaching
 teaching_outputs,teaching_checks=draw_teaching(HERE,data)
 outputs=list(dict.fromkeys(outputs+teaching_outputs))

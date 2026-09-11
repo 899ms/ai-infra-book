@@ -15,7 +15,7 @@ def draw(here,data):
             for i in range(4):box(a,.08+i*.13,y+.07,.10,.10,str(row*4+i),'blue',11)
             box(a,.66,y+.055,.26,.14,'两张网卡\n共享 40 GB/s','orange',11);arrow(a,(.58,y+.12),(.66,y+.12))
         arrow(a,(.79,.635),(.79,.315));text(a,.44,.48,'交换网络：双向传输',12,ha='center');save(f,'1-boundaries')
-        d=data['7-2'];f,a=plot(3.6);n=np.array(d['device_multipliers']);c=np.array(d['compute_ms']);t=d['cut_ms'];a.plot(n,c+t,label='串行',color='#267398');a.plot(n,np.maximum(c,t),label='完全重叠',color='#388768');a.plot(n,c,ls=':',label='计算',color='#a56c28');a.set(xlabel='设备数相对倍数',ylabel='每步时间（ms）',xticks=n,ylim=(0,32));a.legend(frameon=False);save(f,'2-cut')
+        d=data['7-2'];f,a=plot(3.6);n=np.array(d['device_multipliers']);c=np.array(d['compute_ms']);t=d['cut_ms'];a.plot(n,c+t,label='串行',color='#267398');a.plot(n,np.maximum(c,t),label='完全重叠',color='#388768');a.plot(n,c,ls=':',label='计算',color='#a56c28');a.set(xlabel='加速器数量／基准数量',ylabel='每步时间（ms）',xticks=n,ylim=(0,32));a.legend(frameon=False);save(f,'2-cut')
         for idx,order in enumerate(data['7-3']['ring_orders']):
             f,a=canvas(4.1);text(a,.04,.93,'连续环：两条边跨服务器' if idx==0 else '交错环：八条边都跨服务器',14)
             for i,rank in enumerate(order):
@@ -28,7 +28,7 @@ def draw(here,data):
         arrow(a,(.45,.46),(.55,.46));arrow(a,(.55,.39),(.45,.39));save(f,'hierarchy-stages')
         f,a=plot(3.6,left=.22);left=np.zeros(3)
         for k,l,c in [('local_MiB','本地','blue'),('remote_MiB','跨服务器','orange')]:v=data['7-3'][k];a.barh(range(3),v,left=left,color=COL[c],edgecolor=COL['line'],label=l);left+=v
-        a.set(yticks=range(3),yticklabels=['连续环','交错环','分层归约'],xlabel='逻辑发送量，两方向合计（MiB）');a.invert_yaxis();a.legend(frameon=False);save(f,'hierarchy-bytes')
+        a.set(yticks=range(3),yticklabels=['连续环','交错环','分层归约'],xlabel='逻辑发送量，两方向合计（MiB）');a.invert_yaxis();f.subplots_adjust(top=.84);a.legend(frameon=False,ncol=2,loc='upper center',bbox_to_anchor=(.45,1.17),columnspacing=1.5,handlelength=1.4);save(f,'hierarchy-bytes')
         f,a=plot(3.6,left=.18)
         for stage in range(4):
             for batch in range(8):a.barh(stage,1,left=stage+batch,height=.7,color=COL[['blue','green','orange','purple'][batch%4]],edgecolor=COL['line']);a.text(stage+batch+.5,stage,str(batch),ha='center',va='center',fontsize=11)

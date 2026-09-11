@@ -1,6 +1,6 @@
 # cache-route — 
 
-输入：`{"full_compute_ns": 180000000, "hit_probability": "9/10", "host_gpu_bytes_per_second": 25000000000, "lookup_ns": 10000000, "model": "qwen3-8b", "prefix_tokens": 8192, "queue_a_ns": 250000000, "queue_b_ns": 20000000, "remote_bytes_per_second": 5000000000, "requests_per_second": 16, "retrieval_after_queue": false, "slo_ns": 220000000, "suffix_tokens": 256, "warm_compute_ns": 10000000}`
+输入：`{"compute_efficiency": null, "device": null, "full_compute_ns": 180000000, "hit_probability": "9/10", "host_gpu_bytes_per_second": 25000000000, "lookup_ns": 10000000, "model": "qwen3-8b", "prefix_tokens": 8192, "queue_a_ns": 250000000, "queue_b_ns": 20000000, "remote_bytes_per_second": 5000000000, "requests_per_second": 16, "retrieval_after_queue": false, "slo_ns": 220000000, "suffix_tokens": 256, "warm_compute_ns": 10000000}`
 
 数值是分析计算；字节以 bytes 保存，FMA=2，不是硬件测量。
 
@@ -13,6 +13,9 @@
 | remote_transfer_ns_exact | `"1207959552/5"` |
 | host_gpu_transfer_ns_exact | `"1207959552/25"` |
 | remote_equal_recompute_bytes_per_second_exact | `"13107200000000000/1428837"` |
+| remote_equal_a_hit_bytes_per_second_exact | `"9830400000000000/1559909"` |
+| full_compute_ns_exact | `"180000000"` |
+| warm_compute_ns_exact | `"10000000"` |
 | remote_payload_demand_bytes_per_second | 19,327,352,832 |
 | remote_payload_demand_strictly_below_bandwidth | `false` |
 | a_valid_hit_ns_exact | `"260000000"` |

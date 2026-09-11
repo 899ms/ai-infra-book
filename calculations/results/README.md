@@ -23,6 +23,10 @@
 | [llama70-decode-8192](llama70-decode-8192.md) | 0.160480887 | 131.416519165 | 2.500305176 | 0.000305176 |
 | [llama70-decode-batch8-32768](llama70-decode-batch8-32768.md) | 1.799243170 | 131.416519165 | 80.002441406 | 0.002441406 |
 | [llama70-prefill-all-head-512](llama70-prefill-all-head-512.md) | 71.514024051 | 131.416519165 | 0.156250000 | 0.156250000 |
+| [qwen3-32b-decode-b1-s32768](qwen3-32b-decode-b1-s32768.md) | 0.132688642 | 61.024209976 | 8.000244141 | 0.000244141 |
+| [qwen3-32b-decode-b64-s32768](qwen3-32b-decode-b64-s32768.md) | 8.492073091 | 61.024209976 | 512.015625000 | 0.015625000 |
+| [qwen3-30b-a3b-decode-b1-s32768](qwen3-30b-a3b-decode-b1-s32768.md) | 0.031853904 | 56.870510101 | 3.000091553 | 0.000091553 |
+| [qwen3-30b-a3b-decode-b64-s32768-balanced](qwen3-30b-a3b-decode-b64-s32768-balanced.md) | 2.038649848 | 56.870510101 | 192.005859375 | 0.005859375 |
 
 MoE 路由是显式场景输入；专家权重载荷按每层访问的专家并集计，不能当作实测 HBM。每专家矩阵见各场景明细。
 
@@ -36,6 +40,8 @@ MoE 路由是显式场景输入；专家权重载荷按每层访问的专家并�
 | [qwen3-235b-a22b-decode-b1-s8192](qwen3-235b-a22b-decode-b1-s8192.md) | 8 | 8 | 0.028387049 | 26.437500000 |
 | [qwen3-235b-a22b-decode-b64-s8192-balanced](qwen3-235b-a22b-decode-b64-s8192-balanced.md) | 512 | 128 | 1.816771166 | 423.000000000 |
 | [qwen3-235b-a22b-decode-b64-s8192-concentrated](qwen3-235b-a22b-decode-b64-s8192-concentrated.md) | 512 | 8 | 1.816771166 | 26.437500000 |
+| [qwen3-30b-a3b-decode-b1-s32768](qwen3-30b-a3b-decode-b1-s32768.md) | 8 | 8 | 0.003623879 | 3.375000000 |
+| [qwen3-30b-a3b-decode-b64-s32768-balanced](qwen3-30b-a3b-decode-b64-s32768-balanced.md) | 512 | 128 | 0.231928234 | 54.000000000 |
 
 V4／K3 的 FFN 矩阵台账单列，尚非完整前向。统一 2-byte 对照载荷不代表实际混合量化格式。
 
@@ -146,11 +152,15 @@ KDA chunk 的已确认存活子集：不含所有输入／工作区，不是完�
 | [window-qwen3-8b-n4096](window-qwen3-8b-n4096.md) | 3907 | 1000.000000 | 1.207960 |
 | [window-qwen3-8b-double-bandwidth](window-qwen3-8b-double-bandwidth.md) | 7813 | 1048.576000 | 1.152000 |
 | [window-qwen3-8b-longer-latency](window-qwen3-8b-longer-latency.md) | 6250 | 655.360000 | 1.843200 |
-| [remote-window-book](remote-window-book.md) | 313 | 16.384000 | 73.728000 |
-| [remote-window-serial](remote-window-serial.md) | 313 | 2.560000 | 471.859200 |
-| [remote-window-source-wait](remote-window-source-wait.md) | 313 | 0.128000 | 9437.184000 |
-| [remote-window-enlarged](remote-window-enlarged.md) | 313 | 2.560000 | 471.859200 |
-| [remote-window-fast-service](remote-window-fast-service.md) | 313 | 40.000000 | 30.198989 |
+| [window-qwen3-8b-rtx4090-n128](window-qwen3-8b-rtx4090-n128.md) | 3938 | 32.768000 | 36.864000 |
+| [window-qwen3-8b-rtx4090-n4096](window-qwen3-8b-rtx4090-n4096.md) | 3938 | 1008.000000 | 1.198373 |
+| [window-qwen3-8b-rtx5090-n4096](window-qwen3-8b-rtx5090-n4096.md) | 7000 | 1048.576000 | 1.152000 |
+| [window-qwen3-8b-rtx5090-l800](window-qwen3-8b-rtx5090-l800.md) | 11200 | 655.360000 | 1.843200 |
+| [remote-window-book](remote-window-book.md) | 391 | 16.384000 | 73.728000 |
+| [remote-window-serial](remote-window-serial.md) | 391 | 2.560000 | 471.859200 |
+| [remote-window-source-wait](remote-window-source-wait.md) | 391 | 0.128000 | 9437.184000 |
+| [remote-window-enlarged](remote-window-enlarged.md) | 391 | 2.560000 | 471.859200 |
+| [remote-window-fast-service](remote-window-fast-service.md) | 391 | 42.666667 | 28.311552 |
 
 70B 初步解码预算：声明存储位宽与 BF16 计算分开，容量失败不输出可运行下界。
 
@@ -175,6 +185,10 @@ Qwen Dense ring：独立有向边、串行 2L 次归约的教学预算。
 | [ring-qwen3-8b-t16-p8](ring-qwen3-8b-t16-p8.md) | 131072 | 229376 | 32.587520 | 2.346301 |
 | [ring-qwen3-8b-t8192-p8](ring-qwen3-8b-t8192-p8.md) | 67108864 | 117440512 | 2376.810240 | 171.130337 |
 | [ring-qwen3-8b-t1-p8-double-bandwidth](ring-qwen3-8b-t1-p8-double-bandwidth.md) | 8192 | 14336 | 28.143360 | 2.026322 |
+| [ring-qwen3-32b-t1-p2-h100](ring-qwen3-32b-t1-p2-h100.md) | 10240 | 10240 | 1.666756 | 0.213345 |
+| [ring-qwen3-32b-t1-p4-h100](ring-qwen3-32b-t1-p4-h100.md) | 10240 | 15360 | 4.966133 | 0.635665 |
+| [ring-qwen3-32b-t1-p8-h100](ring-qwen3-32b-t1-p8-h100.md) | 10240 | 17920 | 11.547822 | 1.478121 |
+| [ring-qwen3-32b-t8192-p8-h100](ring-qwen3-32b-t8192-p8-h100.md) | 83886080 | 146800640 | 337.731644 | 43.229650 |
 
 未分段 binomial tree：与 ring 同输入，独立比较轮次、最忙 rank 与关键路径。
 
@@ -185,6 +199,8 @@ Qwen Dense ring：独立有向边、串行 2L 次归约的教学预算。
 | [tree-qwen3-8b-t16-p8](tree-qwen3-8b-t16-p8.md) | 6 | 1835008 | 393216 | 27.728640 |
 | [tree-qwen3-8b-t8192-p8](tree-qwen3-8b-t8192-p8.md) | 6 | 939524096 | 201326592 | 8065.063680 |
 | [tree-qwen3-8b-t1-p5](tree-qwen3-8b-t1-p5.md) | 6 | 65536 | 24576 | 12.983040 |
+| [tree-qwen3-32b-t1-p8-h100](tree-qwen3-32b-t1-p8-h100.md) | 6 | 143360 | 30720 | 5.068533 |
+| [tree-qwen3-32b-t8192-p8-h100](tree-qwen3-32b-t8192-p8-h100.md) | 6 | 1174405120 | 251658240 | 1123.413067 |
 
 MoE assignment all-to-all：无目的端去重，源—目的计数明确。
 
@@ -409,6 +425,7 @@ RMSNorm 分片归约：额外输入重读、partial／inverse 与组数，非加
 | [attention-tiles-causal](attention-tiles-causal.md) | 17181966336 | 3 | 112503808 |
 | [attention-tiles-two-slots](attention-tiles-two-slots.md) | 34359738368 | 3 | 213909504 |
 | [attention-tiles-tail](attention-tiles-tail.md) | 4293120 | 1 | 347136 |
+| [attention-tiles-rtxpro6000](attention-tiles-rtxpro6000.md) | 34359738368 | 3 | 272629760 |
 
 VL请求阶段连接：视觉编码、语言prefill、增长历史decode。
 
@@ -603,8 +620,8 @@ Routing Replay元数据：官方专家几何、ID编码与显式身份字段预�
 
 | 场景 | 保存c秒 | 作业MTBF秒 | 一阶最优tau秒 | Poisson最优tau秒 |
 | --- | --- | --- | --- | --- |
-| [checkpoint-interval-book](checkpoint-interval-book.md) | 11198271/781250 | 246375/8 | 939.6125188821188 | 930.0810557494722 |
-| [checkpoint-interval-common-shock](checkpoint-interval-common-shock.md) | 11198271/781250 | 10512000/463 | 806.7661164571341 | 797.2386893318453 |
+| [checkpoint-interval-book](checkpoint-interval-book.md) | 6399012/390625 | 28440 | 965.2865142296354 | 954.3965630587674 |
+| [checkpoint-interval-common-shock](checkpoint-interval-common-shock.md) | 6399012/390625 | 6825600/319 | 837.2719042643316 | 826.3867220685526 |
 | [checkpoint-interval-high-failure](checkpoint-interval-high-failure.md) | 11198271/781250 | 675/8 | 49.18156703481498 | 40.12701873240485 |
 | [checkpoint-interval-no-failure](checkpoint-interval-no-failure.md) | 11198271/781250 | None | None | None |
 | [checkpoint-interval-long-recovery](checkpoint-interval-long-recovery.md) | 11198271/781250 | 246375/8 | 939.6125188821188 | 930.0810557494722 |
@@ -614,8 +631,8 @@ Routing Replay元数据：官方专家几何、ID编码与显式身份字段预�
 | 场景 | 载荷 bytes | upload s | 活跃缓冲峰值 bytes | 故障可恢复capture s |
 | --- | ---: | --- | ---: | --- |
 | [checkpoint-async-book](checkpoint-async-book.md) | 114670295040 | 11198271/781250 | 229340590080 | 30 |
-| [checkpoint-async-rounded](checkpoint-async-rounded.md) | 112000000000 | 14 | 112000000000 | 20 |
-| [checkpoint-async-fast](checkpoint-async-fast.md) | 112000000000 | 7 | 112000000000 | 40 |
+| [checkpoint-async-rounded](checkpoint-async-rounded.md) | 112000000000 | 16 | 112000000000 | 20 |
+| [checkpoint-async-fast](checkpoint-async-fast.md) | 112000000000 | 28/5 | 112000000000 | 40 |
 | [checkpoint-async-one-slot](checkpoint-async-one-slot.md) | 112000000000 | 14 | 112000000000 | 69/2 |
 | [checkpoint-async-delayed-commit](checkpoint-async-delayed-commit.md) | 112000000000 | 14 | 112000000000 | None |
 
@@ -633,8 +650,8 @@ Routing Replay元数据：官方专家几何、ID编码与显式身份字段预�
 
 | 场景 | BF16 bytes | FP32 bytes | 等时链路 bytes/s | 容量内最快 |
 | --- | ---: | ---: | ---: | --- |
-| [gradient-cast-book](gradient-cast-book.md) | 100663296 | 201326592 | 250000000000/7 | ['cpu'] |
-| [gradient-cast-fast-link](gradient-cast-fast-link.md) | 100663296 | 201326592 | 250000000000/7 | ['gpu'] |
+| [gradient-cast-book](gradient-cast-book.md) | 100663296 | 201326592 | 10752000000000/73 | ['cpu'] |
+| [gradient-cast-fast-link](gradient-cast-fast-link.md) | 100663296 | 201326592 | 10752000000000/73 | ['gpu'] |
 | [gradient-cast-tight-gpu](gradient-cast-tight-gpu.md) | 100663296 | 201326592 | 250000000000/7 | ['cpu'] |
 | [gradient-cast-equality](gradient-cast-equality.md) | 100663296 | 201326592 | 4000000000 | ['cpu', 'gpu'] |
 | [gradient-cast-qwen235](gradient-cast-qwen235.md) | 12582912 | 25165824 | 250000000000/7 | ['cpu'] |
@@ -937,10 +954,10 @@ KV分页与分支：逻辑、唯一有效和分配字节分别计量。
 
 | 场景 | 快照 bytes | 远程总 ns | 搬回总 ns | 可放入 | 选择 |
 | --- | ---: | ---: | ---: | --- | --- |
-| [remote-state-once](remote-state-once.md) | 150994944 | 18899368/5 | 794098456/125 | True | direct |
-| [remote-state-reused](remote-state-reused.md) | 150994944 | 75597472/5 | 170219312/25 | True | stage |
-| [remote-state-window-limited](remote-state-window-limited.md) | 150994944 | 9221000 | 794098456/125 | True | stage |
-| [remote-state-capacity](remote-state-capacity.md) | 150994944 | 75597472/5 | 170219312/25 | False | direct |
+| [remote-state-once](remote-state-once.md) | 150994944 | 75622472/25 | 5227750568/1675 | True | direct |
+| [remote-state-reused](remote-state-reused.md) | 150994944 | 302489888/25 | 5459267984/1675 | True | stage |
+| [remote-state-window-limited](remote-state-window-limited.md) | 150994944 | 9221000 | 5227750568/1675 | True | stage |
+| [remote-state-capacity](remote-state-capacity.md) | 150994944 | 302489888/25 | 5459267984/1675 | False | direct |
 
 封存RPC实测：客户端CPU、应用字节及同轮配对差。
 
@@ -990,10 +1007,10 @@ KV分页与分支：逻辑、唯一有效和分配字节分别计量。
 
 | 场景 | 完成 ns | 乱序保留峰值 bytes | 重传 bytes |
 | --- | ---: | ---: | ---: |
-| [packet-reorder-balanced](packet-reorder-balanced.md) | 5096 | 0 | 0 |
-| [packet-reorder-skewed](packet-reorder-skewed.md) | 13096 | 3072 | 0 |
-| [packet-reorder-loss](packet-reorder-loss.md) | 23048 | 7168 | 1024 |
-| [packet-reorder-late](packet-reorder-late.md) | 43048 | 7168 | 1024 |
+| [packet-reorder-balanced](packet-reorder-balanced.md) | 33192/25 | 0 | 0 |
+| [packet-reorder-skewed](packet-reorder-skewed.md) | 233192/25 | 12288 | 0 |
+| [packet-reorder-loss](packet-reorder-loss.md) | 529096/25 | 28672 | 4096 |
+| [packet-reorder-late](packet-reorder-late.md) | 1029096/25 | 28672 | 4096 |
 
 反馈期间有限缓冲：到达、服务、丢弃及残留守恒。
 
@@ -1057,6 +1074,7 @@ KV分页与分支：逻辑、唯一有效和分配字节分别计量。
 | [persistent-tiles-slow-dispatch](persistent-tiles-slow-dispatch.md) | 16 | 582.270838 | 803.585055 | 4718592 |
 | [persistent-tiles-tail](persistent-tiles-tail.md) | 18 | 583.388554 | 359.399455 | 6291456 |
 | [persistent-one-tile](persistent-one-tile.md) | 2 | 582.270838 | 578.670838 | 12582912 |
+| [persistent-tiles-rtxpro6000](persistent-tiles-rtxpro6000.md) | 16 | 126.345151 | 115.357151 | 3145728 |
 
 原始FFN运行记录：无分析器计时与Nsight事件分别核算。
 
@@ -1093,6 +1111,8 @@ KV分页与分支：逻辑、唯一有效和分配字节分别计量。
 | [graph-large-input](graph-large-input.md) | 33554432 | 154618822656 | indirect | eager |
 | [graph-long-lived](graph-long-lived.md) | 33554432 | 154618822656 | indirect | indirect |
 | [graph-no-padding](graph-no-padding.md) | 4194304 | 0 | copy | copy |
+| [graph-small-input-rtxpro6000](graph-small-input-rtxpro6000.md) | 4194304 | 154618822656 | copy | copy |
+| [graph-large-input-rtxpro6000](graph-large-input-rtxpro6000.md) | 33554432 | 154618822656 | indirect | eager |
 
 FIFO与独立重排槽：原进度容量及背压后的最后取走时刻。
 
@@ -1569,6 +1589,8 @@ MoE 容量因子：填充与丢弃：
 - [qwen36-decode-b64-concentrated](qwen36-decode-b64-concentrated.md)：qwen36-base-text-ledger，固定官方输入和明确作用域。
 - [qwen36-prefill-tail65](qwen36-prefill-tail65.md)：qwen36-base-text-ledger，固定官方输入和明确作用域。
 - [qwen36-prefill-last-head](qwen36-prefill-last-head.md)：qwen36-base-text-ledger，固定官方输入和明确作用域。
+- [qwen36-decode-b1-s32768](qwen36-decode-b1-s32768.md)：qwen36-base-text-ledger，固定官方输入和明确作用域。
+- [qwen36-decode-b64-s32768](qwen36-decode-b64-s32768.md)：qwen36-base-text-ledger，固定官方输入和明确作用域。
 - [qwen36-capacity-b1-n8192](qwen36-capacity-b1-n8192.md)：qwen36-capacity，固定官方输入和明确作用域。
 - [qwen36-capacity-b1-n32768](qwen36-capacity-b1-n32768.md)：qwen36-capacity，固定官方输入和明确作用域。
 - [qwen36-capacity-b8-n8192](qwen36-capacity-b8-n8192.md)：qwen36-capacity，固定官方输入和明确作用域。
@@ -1576,6 +1598,8 @@ MoE 容量因子：填充与丢弃：
 - [qwen36-capacity-b32-n8192](qwen36-capacity-b32-n8192.md)：qwen36-capacity，固定官方输入和明确作用域。
 - [qwen36-capacity-b32-n32768](qwen36-capacity-b32-n32768.md)：qwen36-capacity，固定官方输入和明确作用域。
 - [qwen36-capacity-all-weights](qwen36-capacity-all-weights.md)：qwen36-capacity，固定官方输入和明确作用域。
+- [qwen36-capacity-b1-n131072](qwen36-capacity-b1-n131072.md)：qwen36-capacity，固定官方输入和明确作用域。
+- [qwen36-capacity-b1-n262144](qwen36-capacity-b1-n262144.md)：qwen36-capacity，固定官方输入和明确作用域。
 - [qwen35-cold-single-token](qwen35-cold-single-token.md)：矩阵工作 59868938432；路径 reference_chunk_nonexport；算子边界与补充接口不可相加为HBM。
 - [qwen35-cold-single-record-past](qwen35-cold-single-record-past.md)：矩阵工作 59855667392；路径 reference_chunk_nonexport；算子边界与补充接口不可相加为HBM。
 - [qwen35-prefill-8192](qwen35-prefill-8192.md)：矩阵工作 304038065373184；路径 reference_chunk_nonexport；算子边界与补充接口不可相加为HBM。

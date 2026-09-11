@@ -15,7 +15,9 @@
     "hit_probability": "99/100",
     "slo_ns": 220000000,
     "retrieval_after_queue": false,
-    "requests_per_second": 16
+    "requests_per_second": 16,
+    "device": null,
+    "compute_efficiency": null
   },
   "sources": [
     {
@@ -51,6 +53,9 @@
     "remote_transfer_ns_exact": "1207959552/5",
     "host_gpu_transfer_ns_exact": "1207959552/25",
     "remote_equal_recompute_bytes_per_second_exact": "13107200000000000/1428837",
+    "remote_equal_a_hit_bytes_per_second_exact": "235929600000000000/4234691",
+    "full_compute_ns_exact": "180000000",
+    "warm_compute_ns_exact": "10000000",
     "remote_payload_demand_bytes_per_second": 19327352832,
     "remote_payload_demand_strictly_below_bandwidth": false,
     "a_valid_hit_ns_exact": "90000000",
@@ -89,6 +94,7 @@
       "finish_ns_exact": "90000000"
     }
   ],
+  "derived_compute": null,
   "assumptions": [
     "同一官方Qwen前缀和新suffix的矩阵工作独立复算；full/warm计算时间是教学输入，不由FLOPs比例外推。只预测首token，不是完整生成或任务质量。",
     "远端整份状态先到host，再经H2D到GPU，lookup和两段复制串行；默认可与GPU队列等待重叠，完成为max(queue,ready)+warm。retrieval_after_queue则等待queue后才开始取回，不能混用两种依赖。",

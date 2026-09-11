@@ -116,13 +116,25 @@ def draw(here,data):
         for r,col in zip(d['lifecycle']['rows'],['#a56c28','#388768','#267398','#777777']):a.plot(calls/1e8,(r['upfront_cost']+calls*r['cost_per_call'])/3600,color=col,ls='--' if r['outside_fit_box'] else '-',label=f"{r['N']/1e9:g}B"+(' 外推' if r['outside_fit_box'] else ''))
         a.axvline(d['crossing_calls']/1e8,color='#777777',lw=.8);a.set(xlim=(0,4),ylim=(0,1200),xlabel='累计调用（亿次）',ylabel='累计成本（H100 SXM GPU 小时）');a.legend(frameon=False);save(f,'lifecycle-cost')
         d=data['3-8'];bars('8-history',['Llama 1 6.7B','Llama 2 7B','Llama 3.1 8B','Qwen2.5 7B','Qwen3 8B'],d['ratios'],'报告训练 token 数／参数数',4.0)
-        f,a=plot(3.7,left=.26);ctx=[r['parameter_context'] for r in d['moe_rows']];y=np.arange(3)
-        for dy,key,col,label in [(-.16,'total_reported','blue','总参数'),(.16,'active_reported','orange','激活参数')]:a.barh(y+dy,[r[key]/1e9 for r in ctx],height=.29,color=COL[col],edgecolor=COL['line'],label=label)
-        a.set(yticks=y,yticklabels=['DeepSeek-V3','DeepSeek\nV4-Flash','DeepSeek\nV4-Pro'],xlabel='参数数（十亿）',xlim=(0,1900));a.invert_yaxis();a.legend(frameon=False);save(f,'moe-history')
         hist={r['input']['id']:r for r in data['3-9']['history_rows']}
-        for ids,name in [(['llama1-7b','llama1-65b','llama2-7b','llama2-70b'],'9-gpu-hours'),(['llama31-8b','llama31-70b','llama31-405b'],'h100-hours')]:
-            bars(name,[k.replace('llama31','Llama 3.1').replace('llama1','Llama 1').replace('llama2','Llama 2').replace('-',' ') for k in ids],[hist[k]['input']['gpu_hours']/1e6 for k in ids],'公开训练用量（百万 GPU 小时）')
-        parts=data['3-9']['stage_reports'][0]['input']['parts'];bars('v3-stage-hours',['DeepSeek-V3\n预训练','上下文扩展','后训练'],[parts[k]/1e6 for k in ['pretraining','context_extension','posttraining']],'H800 用量（百万 GPU 小时）')
+        hopper=989.4/312  # BF16 dense peak ratio vs A100 80GB; H800 matches H100 compute.
+        rows=[('llama1-7b','Llama 1 6.7B（A100）',1),('llama1-65b','Llama 1 65B（A100）',1),
+              ('llama2-7b','Llama 2 7B（A100）',1),('llama2-70b','Llama 2 70B（A100）',1),
+              ('llama31-8b','Llama 3.1 8B（H100）',hopper),('llama31-70b','Llama 3.1 70B（H100）',hopper),
+              ('llama31-405b','Llama 3.1 405B（H100）',hopper),
+              ('deepseek-v3-pretraining','DeepSeek-V3 预训练（H800）',hopper)]
+        vals=[hist[k]['input']['gpu_hours']*ratio/1e6 for k,_,ratio in rows]
+        cols=[COL['blue']]*4+[COL['green']]*3+[COL['orange']]
+        f,a=plot(5.0,left=.40,bottom=.26)
+        a.barh(range(len(vals)),vals,color=cols,edgecolor=COL['line'],height=.55)
+        a.set(yticks=range(len(vals)),yticklabels=[label for _,label,_ in rows],xscale='log',xlim=(.05,300),
+              xticks=[.1,1,10,100],xlabel='A100 等效训练用量（百万 GPU 小时）\n横轴为对数尺度')
+        a.xaxis.set_minor_formatter(plt.NullFormatter())
+        a.xaxis.set_major_formatter(plt.FuncFormatter(lambda v,_:f'{v:g}'));a.invert_yaxis();a.set_ylim(11,-.6)
+        for i,v in enumerate(vals):a.text(v*1.10,i,f'{v:,.2f}',fontsize=11,va='center')
+        handles=[plt.Rectangle((0,0),1,1,facecolor=COL[c],edgecolor=COL['line']) for c in ['blue','green','orange']]
+        a.legend(handles,['原设备 A100（实测）','原设备 H100（×3.17）','原设备 H800（×3.17）'],frameon=False,loc='lower right')
+        save(f,'9-gpu-hours')
     from v41_case_figures import draw as draw_v41
     draw_v41(3, out)
     return out.finish()

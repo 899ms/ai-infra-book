@@ -79,7 +79,7 @@ python manuscripts/ch03/build.py
 
 ## V4／V4.1 会话修订后的当前图表
 
-当前正文共 33 幅图；下表是当前图号，前文旧图号保留作历史记录。
+当前正文共 30 幅图；下表是当前图号，前文旧图号保留作历史记录。
 
 | 图号 | 内容 | 文件 |
 | --- | --- | --- |
@@ -112,7 +112,4 @@ python manuscripts/ch03/build.py
 | 3-27 | 同一组预测误差的放大视图。F1—F6 为拟合点，H1—H2 为留出点；纵轴是预测减观测，保留正负号。 | [SVG](figure-3-scaling-residual.svg) |
 | 3-28 | 训练与服务累计成本的题设比较。截距是训练投入，斜率是单次调用成本；虚线标出超出拟合参数或数据范围的方案，竖线为约 2.048 亿次的成本交点。 | [SVG](figure-3-lifecycle-cost.svg) |
 | 3-29 | 相近参数规模的模型投入不同数量的训练 token。柱值为报告训练数据量除以参数数，Qwen 采用模型家族披露的数据预算。 | [SVG](figure-3-8-history.svg) |
-| 3-30 | MoE 的总参数与每 token 激活参数分别对应容量和部分计算需求。图中采用公开报告的总量与激活量，二者都使用十亿参数为单位。 | [SVG](figure-3-moe-history.svg) |
-| 3-31 | 采用 A100 80GB 的 Llama 训练用量。各柱是公开 GPU 小时，同一张图使用相同设备类别与线性尺度。 | [SVG](figure-3-9-gpu-hours.svg) |
-| 3-32 | 采用 H100 80GB 的 Llama 3.1 训练用量。纵轴分模型规模，横轴为百万 GPU 小时；设备类别与前图分开呈现。 | [SVG](figure-3-h100-hours.svg) |
-| 3-33 | DeepSeek-V3 采用 H800 的三个训练阶段。分别累计预训练、上下文扩展与后训练用量，沿用各阶段的公开统计范围。 | [SVG](figure-3-v3-stage-hours.svg) |
+| 3-30 | Llama 与 DeepSeek-V3 的公开训练用量统一折算为 A100 80GB 等效 GPU 小时。Llama 1／Llama 2 为 A100 实测小时；H100 与 H800 小时按 BF16 稠密峰值之比 989.4/312≈3.17 折算，DeepSeek-V3 只计预训练阶段。横轴为对数尺度；折算假定各设备实际利用率相近，不表示效率或成本差异。 | [SVG](figure-3-9-gpu-hours.svg) |

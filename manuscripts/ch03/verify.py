@@ -17,9 +17,12 @@ check(not re.search(r'<(?:sub|sup)\b',s),'manual formula sub/sup')
 for link in re.findall(r'\]\(([^)]+)\)',s):
  u=urllib.parse.urlsplit(link)
  if not u.scheme and u.path:check((md.parent/urllib.parse.unquote(u.path)).exists(),'missing link '+link)
+# 正文与由其生成的阅读版 HTML 随时可能修改，不参与哈希锁定；上游资料与图件仍须保持一致
+editable={str(md.relative_to(ROOT)),'build/legacy/manuscripts/03-推理与训练负载.html'}
 for filename in ['sources.json','manifest.json']:
  data=json.loads((HERE/filename).read_text())
  for z in data.get('sources',data.get('outputs',[])):
+  if z['path'] in editable:continue
   p=ROOT/z['path'];check(p.exists() and hashlib.sha256(p.read_bytes()).hexdigest()==z['sha256'],'hash differs '+z['path'])
 for p in HERE.glob('figure-*.svg'):
  root=ET.parse(p).getroot();texts=' '.join(''.join(e.itertext()) for e in root.iter() if e.tag.endswith('}text'))

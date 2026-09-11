@@ -123,6 +123,26 @@ def draw(here,data):
         f,a=plot(4.2)
         for (key,d),l,c in zip(data['10-20'].items(),['A100','H100','B200'],['#267398','#388768','#a56c28']):a.plot(np.array(d['parameters'])/1e12,np.array(d['continuous_required_devices'])/1e4,color=c,label=l)
         a.axhline(1.6384,ls='--',color='#666');a.set(yscale='log',xlabel='稠密模型参数量（万亿）',ylabel='90 天所需加速器（万张）');a.legend(frameon=False);save(f,'20-scale')
+        # 21: smaller pipeline bubbles trade against transfers, activation peaks and parameters.
+        d=data['10-21'];names=list(d);x=np.arange(4)
+        f,(a1,a2)=plt.subplots(1,2,figsize=(420/72,3.9));f.subplots_adjust(left=.125,right=.94,bottom=.24,top=.80,wspace=.42)
+        a1.bar(x-.17,[d[k]['makespan_m8_ms'] for k in names],.32,color=COL['blue'],edgecolor=COL['line'],label='8 个微批次')
+        a1.bar(x+.17,[d[k]['makespan_m16_ms'] for k in names],.32,color=COL['orange'],edgecolor=COL['line'],label='16 个微批次')
+        for xx,k in zip(x,names):a1.text(xx-.17,d[k]['makespan_m8_ms']+8,f"{d[k]['makespan_m8_ms']:.0f}",ha='center',fontsize=11);a1.text(xx+.17,d[k]['makespan_m16_ms']+8,f"{d[k]['makespan_m16_ms']:.0f}",ha='center',fontsize=11)
+        a1.set(xticks=x,ylabel='完成时间（ms）',ylim=(0,700));a1.set_xticklabels(['1F1B','交错 v=2','零气泡','DualPipe'],rotation=22,ha='right');a1.legend(frameon=False,ncol=2,loc='lower center',bbox_to_anchor=(.5,1.01),fontsize=11)
+        peaks=[max(d[k]['stage_peaks_m8_mib']) for k in names]
+        a2.bar(x,peaks,.55,color=COL['green'],edgecolor=COL['line'])
+        for xx,p in zip(x,peaks):a2.text(xx,p+30,f'{p:,.0f}',ha='center',fontsize=11)
+        a2.set(xticks=x,ylabel='最大单阶段峰值（MiB）',ylim=(0,1900));a2.set_xticklabels(['1F1B','交错 v=2','零气泡','DualPipe'],rotation=22,ha='right')
+        out.save(f,'figure-10-pipeline-schedules')
+        # 26: capacity factor trades dropped assignments against padded rows.
+        d=data['10-26'];f,a=plot(3.9)
+        a.bar(x-.17,[v*100 for v in d['model_dropped_fraction']],.32,color=COL['orange'],edgecolor=COL['line'],label='丢弃分派占总分派')
+        a.bar(x+.17,[v*100 for v in d['model_padded_fraction']],.32,color=COL['blue'],edgecolor=COL['line'],label='补零行占执行量')
+        for xx,dr,pa in zip(x,d['model_dropped_fraction'],d['model_padded_fraction']):
+            a.text(xx-.17,dr*100+1.2,f'{dr*100:.1f}',ha='center',fontsize=11);a.text(xx+.17,pa*100+1.2,f'{pa*100:.0f}',ha='center',fontsize=11)
+        a.set(xticks=x,xticklabels=['1.0','1.25','1.5','2.0'],xlabel='容量因子 c',ylabel='占比（%）',ylim=(0,58));a.legend(frameon=False,loc='upper left')
+        out.save(f,'figure-10-moe-capacity')
     from core_principles_figures import draw as draw_principles
     draw_principles(10, out)
     out.finish();return out.outputs,out.checks

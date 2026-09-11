@@ -164,12 +164,20 @@ ax.text(5.6,112,'各曲线上方满足对应计算需求',fontsize=11,color=C['b
 ax.set(yscale='log',xlabel='Dense 参数量 / T',ylabel='90 天所需设备 / 万张（对数刻度）',xticks=[.1,1,5,10],xlim=(.1,10.6),ylim=(.1,150))
 ax.set_yticks([.1,1,10,100],labels=['0.1','1','10','100']);ax.legend(frameon=False,fontsize=11,loc='upper left');ax.grid(axis='y',alpha=.15)
 save(f,'figure-10-9-scale');data['10-9']=scaledata
+# Gap-filling: schedule variants beyond 1F1B, and MoE capacity-factor rows.
+sched={}
+for key,stem in [('1F1B','training-pipeline-1f1b'),('交错式 v=2','training-pipeline-interleaved'),('零气泡','training-pipeline-zero-bubble'),('DualPipe','training-pipeline-dualpipe')]:
+ d8=calc(stem+'-m8');d16=calc(stem+'-m16');s8=d8['summary'];updates=sum(d8['scenario']['optimizer_seconds'])
+ sched[key]={'makespan_m8_ms':s8['step_makespan_seconds']*1000,'makespan_m16_ms':d16['summary']['step_makespan_seconds']*1000,'idle_per_gpu_m8_ms':(4*s8['step_makespan_seconds']-s8['useful_forward_backward_device_seconds']-updates)*250,'stage_peaks_m8_mib':[b/2**20 for b in s8['reserved_activation_scope_peak_bytes']],'forward_messages_m8':d8['transfers']['forward_messages'],'boundary_crossings_per_microbatch':d8['transfers'].get('boundary_crossings_per_microbatch',3)}
+data['pipeline_schedules']=sched
+mc=calc('moe-capacity-book')
+data['moe_capacity']={'capacity_factors':[1,1.25,1.5,2],'model_experts':mc['model_example']['experts'],'model_top_k':mc['model_example']['top_k'],'model_tokens':mc['model_example']['tokens'],'model_assignments':mc['model_example']['assignments'],'model_capacity':[r['capacity_per_expert'] for r in mc['model_example']['rows']],'model_dropped_fraction':[float(Fraction(r['dropped_fraction_exact'])) for r in mc['model_example']['rows']],'model_padded_fraction':[float(Fraction(r['padded_fraction_of_executed_exact'])) for r in mc['model_example']['rows']],'chapter_capacity':[r['capacity_per_expert'] for r in mc['chapter_example']['rows']],'chapter_dropped':[r['dropped_total'] for r in mc['chapter_example']['rows']],'chapter_padded':[r['padded_total'] for r in mc['chapter_example']['rows']]}
 runpy.run_path(str(HERE/'mechanism-figures.py'),init_globals=globals())
 # Public figure-data keys follow the same order as the printed chapter.
 old_numbers={1:1,2:2,3:6,4:7,5:12,6:15,7:17,8:19,9:20}
 previous={f'10-{n}':data.pop(f'10-{n}') for n in old_numbers}
 for old,new in old_numbers.items():data[f'10-{new}']=previous[f'10-{old}']
-new_numbers={3:'sharding_lifetime',4:'recompute_lifetime',5:'cast_paths',8:'communication_window',9:'attention_area',10:'input_queue',11:'checkpoint_resharding',13:'checkpoint_tradeoff',14:'rl_supply_flow',16:'rl_async_cycle',18:'task_deadline_breakdown'}
+new_numbers={3:'sharding_lifetime',4:'recompute_lifetime',5:'cast_paths',8:'communication_window',9:'attention_area',10:'input_queue',11:'checkpoint_resharding',13:'checkpoint_tradeoff',14:'rl_supply_flow',16:'rl_async_cycle',18:'task_deadline_breakdown',21:'pipeline_schedules',26:'moe_capacity'}
 for number,key in new_numbers.items():data[f'10-{number}']=data[key]
 
 import sys

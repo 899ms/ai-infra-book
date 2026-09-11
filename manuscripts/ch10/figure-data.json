@@ -3,6 +3,108 @@
     "state_parameters": 8190735360,
     "deadline_matrix_flops": 5265722561667444768768
   },
+  "pipeline_schedules": {
+    "1F1B": {
+      "makespan_m8_ms": 347.0000000000001,
+      "makespan_m16_ms": 599.0000000000003,
+      "idle_per_gpu_m8_ms": 106.0000000000001,
+      "stage_peaks_m8_mib": [
+        921.01953125,
+        692.2646484375,
+        462.509765625,
+        307.94287109375
+      ],
+      "forward_messages_m8": 24,
+      "boundary_crossings_per_microbatch": 3
+    },
+    "交错式 v=2": {
+      "makespan_m8_ms": 297.6666666666667,
+      "makespan_m16_ms": 537.6666666666664,
+      "idle_per_gpu_m8_ms": 56.6666666666667,
+      "stage_peaks_m8_mib": [
+        1329.47265625,
+        1126.24609375,
+        897.4912109375,
+        691.86767578125
+      ],
+      "forward_messages_m8": 56,
+      "boundary_crossings_per_microbatch": 7
+    },
+    "零气泡": {
+      "makespan_m8_ms": 337.0000000000001,
+      "makespan_m16_ms": 577.0000000000003,
+      "idle_per_gpu_m8_ms": 96.00000000000014,
+      "stage_peaks_m8_mib": [
+        1610.2841796875,
+        1151.7744140625,
+        692.2646484375,
+        308.94287109375
+      ],
+      "forward_messages_m8": 24,
+      "boundary_crossings_per_microbatch": 3
+    },
+    "DualPipe": {
+      "makespan_m8_ms": 306.0000000000001,
+      "makespan_m16_ms": 558.0000000000002,
+      "idle_per_gpu_m8_ms": 65.00000000000011,
+      "stage_peaks_m8_mib": [
+        1227.96240234375,
+        1612.2841796875,
+        1612.2841796875,
+        1227.96240234375
+      ],
+      "forward_messages_m8": 24,
+      "boundary_crossings_per_microbatch": 3
+    }
+  },
+  "moe_capacity": {
+    "capacity_factors": [
+      1,
+      1.25,
+      1.5,
+      2
+    ],
+    "model_experts": 128,
+    "model_top_k": 8,
+    "model_tokens": 8192,
+    "model_assignments": 65536,
+    "model_capacity": [
+      512,
+      640,
+      768,
+      1024
+    ],
+    "model_dropped_fraction": [
+      0.25,
+      0.125,
+      0.0,
+      0.0
+    ],
+    "model_padded_fraction": [
+      0.25,
+      0.3,
+      0.3333333333333333,
+      0.5
+    ],
+    "chapter_capacity": [
+      64,
+      80,
+      96,
+      128
+    ],
+    "chapter_dropped": [
+      32,
+      16,
+      0,
+      0
+    ],
+    "chapter_padded": [
+      32,
+      48,
+      64,
+      128
+    ]
+  },
   "sharding_lifetime": {
     "shards": 4,
     "illustrated_rank": 0,
@@ -8148,5 +8250,107 @@
       }
     ],
     "deadline_days": 30
+  },
+  "10-21": {
+    "1F1B": {
+      "makespan_m8_ms": 347.0000000000001,
+      "makespan_m16_ms": 599.0000000000003,
+      "idle_per_gpu_m8_ms": 106.0000000000001,
+      "stage_peaks_m8_mib": [
+        921.01953125,
+        692.2646484375,
+        462.509765625,
+        307.94287109375
+      ],
+      "forward_messages_m8": 24,
+      "boundary_crossings_per_microbatch": 3
+    },
+    "交错式 v=2": {
+      "makespan_m8_ms": 297.6666666666667,
+      "makespan_m16_ms": 537.6666666666664,
+      "idle_per_gpu_m8_ms": 56.6666666666667,
+      "stage_peaks_m8_mib": [
+        1329.47265625,
+        1126.24609375,
+        897.4912109375,
+        691.86767578125
+      ],
+      "forward_messages_m8": 56,
+      "boundary_crossings_per_microbatch": 7
+    },
+    "零气泡": {
+      "makespan_m8_ms": 337.0000000000001,
+      "makespan_m16_ms": 577.0000000000003,
+      "idle_per_gpu_m8_ms": 96.00000000000014,
+      "stage_peaks_m8_mib": [
+        1610.2841796875,
+        1151.7744140625,
+        692.2646484375,
+        308.94287109375
+      ],
+      "forward_messages_m8": 24,
+      "boundary_crossings_per_microbatch": 3
+    },
+    "DualPipe": {
+      "makespan_m8_ms": 306.0000000000001,
+      "makespan_m16_ms": 558.0000000000002,
+      "idle_per_gpu_m8_ms": 65.00000000000011,
+      "stage_peaks_m8_mib": [
+        1227.96240234375,
+        1612.2841796875,
+        1612.2841796875,
+        1227.96240234375
+      ],
+      "forward_messages_m8": 24,
+      "boundary_crossings_per_microbatch": 3
+    }
+  },
+  "10-26": {
+    "capacity_factors": [
+      1,
+      1.25,
+      1.5,
+      2
+    ],
+    "model_experts": 128,
+    "model_top_k": 8,
+    "model_tokens": 8192,
+    "model_assignments": 65536,
+    "model_capacity": [
+      512,
+      640,
+      768,
+      1024
+    ],
+    "model_dropped_fraction": [
+      0.25,
+      0.125,
+      0.0,
+      0.0
+    ],
+    "model_padded_fraction": [
+      0.25,
+      0.3,
+      0.3333333333333333,
+      0.5
+    ],
+    "chapter_capacity": [
+      64,
+      80,
+      96,
+      128
+    ],
+    "chapter_dropped": [
+      32,
+      16,
+      0,
+      0
+    ],
+    "chapter_padded": [
+      32,
+      48,
+      64,
+      128
+    ]
   }
 }

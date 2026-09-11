@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "calculation": "straggler-max",
+  "scenario": {
+    "mean_compute_seconds": "52.2",
+    "declared_sigma_seconds": "1.044",
+    "overhead_seconds": "4.5",
+    "ranks": [
+      8,
+      48,
+      1024
+    ],
+    "straggler_k_sigma": "3",
+    "model": "qwen3-8b",
+    "checkpoint_devices": 48,
+    "device_mtbf_seconds": 31536000,
+    "declared_spike_mtbf_seconds": 604800,
+    "save_bandwidth_bytes_per_second": 8000000000,
+    "recovery_ns": 120000000000,
+    "intervals_seconds": [
+      300,
+      600,
+      900,
+      1800,
+      3600
+    ]
+  },
+  "declared_input_sources": {
+    "mean_compute_seconds": "book (chapter 10.6: 52.2 s)",
+    "declared_sigma_seconds": "book (declared)",
+    "overhead_seconds": "book (chapter 10.6: 4 s + 0.5 s)",
+    "ranks": "book (declared 8 / 48 / 1024)",
+    "straggler_k_sigma": "book (declared)",
+    "model": "configs/models/qwen3-8b/config.json",
+    "checkpoint_devices": "book (chapter 10: 48 cards)",
+    "device_mtbf_seconds": "book (checkpoint-interval scenario)",
+    "declared_spike_mtbf_seconds": "book (declared)",
+    "save_bandwidth_bytes_per_second": "book (checkpoint-interval scenario)",
+    "recovery_ns": "book (checkpoint-interval scenario)",
+    "intervals_seconds": "book (checkpoint-interval scenario)"
+  },
+  "sources": [
+    {
+      "file": "configs/models/qwen3-8b/config.json",
+      "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+    },
+    {
+      "file": "sources/qwen3-8b/model.safetensors.index.json",
+      "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+    },
+    {
+      "file": "sources/qwen3/modeling_qwen3.py",
+      "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+      "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+      "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+    },
+    {
+      "file": "sources/qwen3/modeling_qwen3_moe.py",
+      "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+      "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+      "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+    }
+  ],
+  "rows": [
+    {
+      "ranks": 8,
+      "expected_standard_max": 1.4236003060452715,
+      "expected_max_seconds": 53.686238719511266,
+      "expected_step_seconds": 58.186238719511266,
+      "expected_step_over_mean_step": 1.0262123230954368,
+      "expected_wait_for_mean_rank_seconds": 1.4862387195112632,
+      "wait_fraction_of_compute": 0.028472006120905422,
+      "probability_some_rank_beyond_k_sigma": 0.010748299479155787,
+      "detection": {
+        "signal": "per-rank bucket AllReduce wait = step_end - own compute end",
+        "straggler_seconds": 55.332,
+        "wait_of_others_if_one_rank_at_k_sigma": 1.7203257758663995,
+        "wait_of_straggler": 0.0
+      },
+      "responses": {
+        "wait": {
+          "step_seconds": 59.832
+        },
+        "redistribute": {
+          "remaining_ranks": 7,
+          "mean_seconds_exact": "2088/35",
+          "step_seconds": 65.56881708127645,
+          "note": "straggler removed, its work spread evenly; no migration cost modeled"
+        },
+        "evict": {
+          "note": "restart from last checkpoint; cost from checkpoint model below"
+        }
+      }
+    },
+    {
+      "ranks": 48,
+      "expected_standard_max": 2.2331208808457803,
+      "expected_max_seconds": 54.531378199603,
+      "expected_step_seconds": 59.031378199603,
+      "expected_step_over_mean_step": 1.0411177812981127,
+      "expected_wait_for_mean_rank_seconds": 2.3313781996029945,
+      "wait_fraction_of_compute": 0.044662417616915605,
+      "probability_some_rank_beyond_k_sigma": 0.06278154256341573,
+      "detection": {
+        "signal": "per-rank bucket AllReduce wait = step_end - own compute end",
+        "straggler_seconds": 55.332,
+        "wait_of_others_if_one_rank_at_k_sigma": 0.8092471334992268,
+        "wait_of_straggler": 0.0
+      },
+      "responses": {
+        "wait": {
+          "step_seconds": 59.832
+        },
+        "redistribute": {
+          "remaining_ranks": 47,
+          "mean_seconds_exact": "12528/235",
+          "step_seconds": 60.13339116437311,
+          "note": "straggler removed, its work spread evenly; no migration cost modeled"
+        },
+        "evict": {
+          "note": "restart from last checkpoint; cost from checkpoint model below"
+        }
+      }
+    },
+    {
+      "ranks": 1024,
+      "expected_standard_max": 3.2482396013754027,
+      "expected_max_seconds": 55.59116214383592,
+      "expected_step_seconds": 60.09116214383592,
+      "expected_step_over_mean_step": 1.059808856152309,
+      "expected_wait_for_mean_rank_seconds": 3.3911621438359205,
+      "wait_fraction_of_compute": 0.06496479202750806,
+      "probability_some_rank_beyond_k_sigma": 0.7492325852496335,
+      "detection": {
+        "signal": "per-rank bucket AllReduce wait = step_end - own compute end",
+        "straggler_seconds": 55.332,
+        "wait_of_others_if_one_rank_at_k_sigma": 0.0,
+        "wait_of_straggler": 0.0
+      },
+      "responses": {
+        "wait": {
+          "step_seconds": 60.0908697760749
+        },
+        "redistribute": {
+          "remaining_ranks": 1023,
+          "mean_seconds_exact": "89088/1705",
+          "step_seconds": 60.14189616903678,
+          "note": "straggler removed, its work spread evenly; no migration cost modeled"
+        },
+        "evict": {
+          "note": "restart from last checkpoint; cost from checkpoint model below"
+        }
+      }
+    }
+  ],
+  "evict_response": {
+    "checkpoint_payload_bytes": 114670295040,
+    "blocking_save_cost_exact_seconds": "11198271/781250",
+    "rows": [
+      {
+        "useful_interval_seconds": 300,
+        "expected_lost_work_seconds": 150.0,
+        "recovery_seconds": 120.0,
+        "save_cost_seconds": 14.33378688,
+        "evict_cost_seconds": 270.0,
+        "hardware_first_order_loss": 0.04819024850410959
+      },
+      {
+        "useful_interval_seconds": 600,
+        "expected_lost_work_seconds": 300.0,
+        "recovery_seconds": 120.0,
+        "save_cost_seconds": 14.33378688,
+        "evict_cost_seconds": 420.0,
+        "hardware_first_order_loss": 0.024528914206392693
+      },
+      {
+        "useful_interval_seconds": 900,
+        "expected_lost_work_seconds": 450.0,
+        "recovery_seconds": 120.0,
+        "save_cost_seconds": 14.33378688,
+        "evict_cost_seconds": 570.0,
+        "hardware_first_order_loss": 0.016794009775342466
+      },
+      {
+        "useful_interval_seconds": 1800,
+        "expected_lost_work_seconds": 900.0,
+        "recovery_seconds": 120.0,
+        "save_cost_seconds": 14.33378688,
+        "evict_cost_seconds": 1020.0,
+        "hardware_first_order_loss": 0.009515726348858448
+      },
+      {
+        "useful_interval_seconds": 3600,
+        "expected_lost_work_seconds": 1800.0,
+        "recovery_seconds": 120.0,
+        "save_cost_seconds": 14.33378688,
+        "evict_cost_seconds": 1920.0,
+        "hardware_first_order_loss": 0.006903981895890411
+      }
+    ]
+  },
+  "checkpoint_loss": {
+    "hardware_rate_exact_per_second": "1/657000",
+    "spike_rate_exact_per_second": "1/604800",
+    "combined_rate_exact_per_second": "701/220752000",
+    "first_order_optimal_interval_hardware_only": 4339.884325684268,
+    "first_order_optimal_interval_with_spike": 3004.6146730212427,
+    "rows": [
+      {
+        "useful_interval_seconds": 300,
+        "hardware_only_loss_exact": "274835011/5703125000",
+        "hardware_only_loss": 0.04819024850410959,
+        "with_spike_rollback_loss_exact": "15533338741/319375000000",
+        "with_spike_rollback_loss": 0.04863667707553816,
+        "poisson_retained_hardware_only": 0.9539969329561598,
+        "poisson_retained_with_spike": 0.9535598595660955
+      },
+      {
+        "useful_interval_seconds": 600,
+        "hardware_only_loss_exact": "839348783/34218750000",
+        "hardware_only_loss": 0.024528914206392693,
+        "with_spike_rollback_loss_exact": "5178670823/205312500000",
+        "with_spike_rollback_loss": 0.02522335865083714,
+        "poisson_retained_hardware_only": 0.9760329335642955,
+        "poisson_retained_with_spike": 0.9753437456943272
+      },
+      {
+        "useful_interval_seconds": 900,
+        "hardware_only_loss_exact": "95778337/5703125000",
+        "hardware_only_loss": 0.016794009775342466,
+        "with_spike_rollback_loss_exact": "50981266223/2874375000000",
+        "with_spike_rollback_loss": 0.017736470092802784,
+        "poisson_retained_hardware_only": 0.9834588450487983,
+        "poisson_retained_with_spike": 0.9825205568849085
+      },
+      {
+        "useful_interval_seconds": 1800,
+        "hardware_only_loss_exact": "325616261/34218750000",
+        "hardware_only_loss": 0.009515726348858448,
+        "with_spike_rollback_loss_exact": "16099711087/1437187500000",
+        "with_spike_rollback_loss": 0.011202234285366383,
+        "poisson_retained_hardware_only": 0.9905495420631771,
+        "poisson_retained_with_spike": 0.9888676639479063
+      },
+      {
+        "useful_interval_seconds": 3600,
+        "hardware_only_loss_exact": "157497087/22812500000",
+        "hardware_only_loss": 0.006903981895890411,
+        "with_spike_rollback_loss_exact": "14484816481/1437187500000",
+        "with_spike_rollback_loss": 0.010078585070493586,
+        "poisson_retained_hardware_only": 0.9931155778536939,
+        "poisson_retained_with_spike": 0.9899519680758576
+      }
+    ]
+  },
+  "summary": {
+    "expected_step_seconds": {
+      "8": 58.186238719511266,
+      "48": 59.031378199603,
+      "1024": 60.09116214383592
+    },
+    "expected_standard_max": {
+      "8": 1.4236003060452715,
+      "48": 2.2331208808457803,
+      "1024": 3.2482396013754027
+    },
+    "mean_step_seconds": 56.7
+  },
+  "assumptions": [
+    "每 rank 计算时间为独立同分布正态（均值取第 10.6 节 48 卡方案的 52.2 s 单卡计算，标准差为声明输入）；同步步时间 = 最大值 + 4.5 s 通信与输入等待。正态尾部允许负值，但在所用 σ 下概率可忽略。",
+    "E[max] 用阶次统计积分的复合 Simpson 数值求积（标准库），不是精确有理数；未模拟相关性、周期性抖动或持续性慢卡。",
+    "检测信号是每 rank 在桶 AllReduce 上的等待：均值 rank 的期望等待 = E[max] - μ；一张卡慢到 μ+kσ 时，其余卡等待 ≈ 该卡时间减其余 N-1 卡的最大值。",
+    "三种响应：等待（步时间取慢卡时间）、重分配（去掉慢卡后均匀摊派，均值乘 N/(N-1)，不计迁移成本）、驱逐（从检查点重启，成本 = 期望丢失工作 τ/2 + 恢复时间，复用 checkpoint-interval 的保存成本）。",
+    "loss spike 回滚率作为作业级共同冲击率加入 checkpoint-interval 的一阶损失与 Poisson 模型：L(τ)=c/τ+(λ_hw+λ_spike)(τ/2+r)。spike 的 MTBF 为声明值，未归档实测。"
+  ]
+}

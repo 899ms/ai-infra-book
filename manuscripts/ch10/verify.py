@@ -8,15 +8,18 @@ from fractions import Fraction
 from urllib.parse import unquote,urlsplit
 import hashlib,json,re,math,xml.etree.ElementTree as ET
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1]
-s=(HERE.parent/'10-训练系统.md').read_text();page=(HERE.parent/'10-训练系统.html').read_text();errors=[]
+from preview_output import preview_path
+md=HERE.parent/'10-训练系统.md';s=md.read_text();page=preview_path(md).read_text();errors=[]
 def check(ok,msg):
  if not ok:errors.append(msg)
 def calc(n):return json.loads((ROOT/'calculations/results'/f'{n}.json').read_text())
 figure_count=len(json.loads((HERE/'figure-index.json').read_text()))
-heads=re.findall(r'^### (10\.\d+\.\d+)',s,re.M);expected=re.findall(r'^### (10\.\d+\.\d+)',(ROOT/'outlines/10-训练系统.md').read_text(),re.M)
-check(heads==expected,'outline subsection alignment')
+heads=re.findall(r'^### (10\.\d+\.\d+)',s,re.M)
+outline_path=next(p for p in [ROOT/'outlines'/md.name,ROOT/'archive/outlines'/md.name] if p.exists())
+expected=re.findall(r'^### (10\.\d+\.\d+)',outline_path.read_text(),re.M)
+check([h for h in heads if h in set(expected)]==expected,'outline subsection alignment')
 check('训练一致性' not in s and '训练一致性' not in page, 'obsolete RL consistency terminology')
-for marker in ['专家路由重放与训推一致性', '前缀分布偏移', 'on-policy distillation', '温度缩放', '冻结同一份权重']:
+for marker in ['专家路由重放与训推一致性', '前缀分布偏移', 'on-policy distillation', '温度缩放', '权重长期不变']:
  check(marker in s and marker in page, 'RL consistency coverage: '+marker)
 check(re.findall(r'^> \*\*习题 (10-\d+)',s,re.M)==[f'10-{i}' for i in range(1,11)],'exercise sequence')
 check(re.findall(r'^> \*\*习题 (10-\d+) · 综合设计',s,re.M)==['10-3','10-7','10-10'],'integrative design exercises')
@@ -99,6 +102,60 @@ check(calc('pipeline-gemm-save-1f1b')['reservation']['added_persistent_bytes_per
 check(recompute['additional_product_workspace_bytes_per_stage'][0]==6*2**20,'recompute workspace derivation')
 ev=calc('training-pipeline-1f1b-m8')['events'];lookup={e['id']:e for e in ev}
 check(math.isclose(lookup['F:3:2']['start']-lookup['B:3:1']['end'],.002),'annotated pipeline dependency gap')
+# Pipeline schedule variants: makespans, peaks, message counts and bubble formulas.
+sched={k:calc(f'training-pipeline-{k}-m8') for k in ['interleaved','zero-bubble','dualpipe']}
+one8=calc('training-pipeline-1f1b-m8')
+check(round(one8['summary']['step_makespan_seconds']*1000)==347,'1F1B m8 makespan')
+check([round(sched[k]['summary']['step_makespan_seconds']*1000) for k in ['interleaved','zero-bubble','dualpipe']]==[298,337,306],'schedule variant m8 makespans')
+check([round(calc(f'training-pipeline-{k}-m16')['summary']['step_makespan_seconds']*1000) for k in ['1f1b','interleaved','zero-bubble','dualpipe']]==[599,538,577,558],'schedule variant m16 makespans')
+check([round(sched[k]['summary']['reserved_activation_scope_peak_bytes'][0]/2**20) for k in ['interleaved','zero-bubble','dualpipe']]==[1329,1610,1228],'schedule stage-0 peaks')
+check(round(one8['summary']['reserved_activation_scope_peak_bytes'][0]/2**20)==921,'1F1B stage-0 peak')
+check(sched['interleaved']['transfers']['forward_messages']==56 and one8['transfers']['forward_messages']==24,'interleaved message count')
+check(Fraction(1,2)*(4-1)/8==Fraction(3,16) and Fraction(4-1,8)==Fraction(3,8),'interleaved bubble fraction')
+check(3*(10+20-10)==60 and 3*(10+20-20)==30,'ZB-H1/H2 bubble ms')
+check((4//2-1)*(30+20-3*10)==20,'DualPipe bubble ms')
+for k in ['interleaved','zero-bubble','dualpipe']:
+ summ=sched[k]['summary'];updates=sum(sched[k]['scenario']['optimizer_seconds'])
+ check(math.isclose(summ.get('idle_device_seconds',4*summ['step_makespan_seconds']-summ['useful_forward_backward_device_seconds']-updates),4*summ['step_makespan_seconds']-summ['useful_forward_backward_device_seconds']-updates),'schedule idle accounting '+k)
+check(round((4*one8['summary']['step_makespan_seconds']-one8['summary']['useful_forward_backward_device_seconds']-sum(one8['scenario']['optimizer_seconds']))*250)==106,'1F1B per-GPU idle ms')
+gp8=calc('training-pipeline-gpipe-m8')
+check(round(gp8['summary']['step_makespan_seconds']*1000)==337,'fill-drain m8 makespan')
+check(round((4*gp8['summary']['step_makespan_seconds']-gp8['summary']['useful_forward_backward_device_seconds']-sum(gp8['scenario']['optimizer_seconds']))*250)==96,'fill-drain per-GPU idle ms')
+check([round(b/2**20) for b in gp8['summary']['reserved_activation_scope_peak_bytes']]==[1840,1840,1840,2448],'fill-drain stage peaks')
+# Critical batch size: noise-scale relation, scaling days and ceilings.
+cb=calc('critical-batch-book');rows={r['cards']:r for r in cb['rows']}
+check(round(cb['reference']['s_min'])==19434 and cb['reference']['steps']==31790,'critical batch reference')
+check(abs(cb['summary']['weak_scaling_speedup_ceiling']-31790/19434.119549264942)<1e-9 and round(cb['summary']['weak_scaling_speedup_ceiling'],2)==1.64,'weak scaling ceiling')
+check([round(rows[n]['weak_wall_days'],1) for n in [48,96,192,384,1536]]==[20.9,16.8,14.8,13.8,13.0],'weak scaling days')
+check([round(rows[n]['strong_wall_days'],1) for n in [96,192,384,1536]]==[11.3,6.5,4.1,2.3],'strong scaling days')
+check(384*8192==3145728 and abs(3145728/2e6-1.57)<0.005,'batch over noise scale')
+check(round(calc('critical-batch-noise-20m')['summary']['weak_scaling_speedup_ceiling'],2)==7.36,'noise 20m ceiling')
+# Stragglers: order statistics, responses and the spike-corrected checkpoint model.
+st=calc('straggler-max-sigma-2pct');st5=calc('straggler-max-sigma-5pct')
+check([round(st['rows'][i]['expected_standard_max'],2) for i in range(3)]==[1.42,2.23,3.25],'expected standard max')
+check([round(st['rows'][i]['expected_step_seconds'],1) for i in range(3)]==[58.2,59.0,60.1],'straggler steps sigma 2pct')
+check([round(st5['rows'][i]['expected_step_seconds'],1) for i in range(3)]==[60.4,62.5,65.2],'straggler steps sigma 5pct')
+check(st['evict_response']['rows'][1]['evict_cost_seconds']==600/2+120==420,'evict cost at 600 s interval')
+check(round(st['checkpoint_loss']['rows'][1]['hardware_only_loss'],4)==0.0245 and round(st['checkpoint_loss']['rows'][1]['with_spike_rollback_loss'],4)==0.0252,'spike-corrected loss at 600 s')
+check(round(st['checkpoint_loss']['first_order_optimal_interval_hardware_only'])==4340 and round(st['checkpoint_loss']['first_order_optimal_interval_with_spike'])==3005,'spike-corrected optimal interval')
+c48=14*N/8e9;lam48=48/(365*86400);spike=1/604800
+check(abs(c48/1800+lam48*(1800/2+120)-0.009516)<1e-5,'design-case hardware loss at 1800 s')
+check(abs(c48/1800+(lam48+spike)*(1800/2+120)-0.011202)<1e-5,'design-case loss with spike at 1800 s')
+check(math.isclose(st['rows'][1]['expected_wait_for_mean_rank_seconds'],st['rows'][1]['expected_max_seconds']-52.2),'mean-rank wait is max minus mean')
+# MoE capacity factor: chapter histogram and Qwen3-235B shape.
+mcj=calc('moe-capacity-book');ch=mcj['chapter_example'];mo=mcj['model_example']
+check([r['capacity_per_expert'] for r in ch['rows']]==[64,80,96,128] and [r['dropped_total'] for r in ch['rows']]==[32,16,0,0],'chapter capacity rows')
+check([r['padded_total'] for r in ch['rows']]==[32,48,64,128],'chapter padding rows')
+check(mo['experts']==128 and mo['top_k']==8 and mo['assignments']==8192*8,'model dispatch count')
+check([r['capacity_per_expert'] for r in mo['rows']]==[512,640,768,1024],'model capacity rows')
+check([float(Fraction(r['dropped_fraction_exact'])) for r in mo['rows']]==[.25,.125,0,0],'model dropped fractions')
+check([float(Fraction(r['padded_fraction_of_executed_exact'])) for r in mo['rows']]==[.25,.3,1/3,.5],'model padded fractions')
+check(8190735360*(1+4/16384)/1e9>8.1 and round(8190735360*(1+4/16384)/1e9,1)==8.2,'FP8 weight bytes')
+d=json.loads((HERE/'figure-data.json').read_text())
+ps=d['10-21']
+check([round(ps[k]['makespan_m8_ms']) for k in ps]==[347,298,337,306],'schedule figure m8 order')
+check(ps['交错式 v=2']['boundary_crossings_per_microbatch']==7,'interleaved boundary crossings')
+check(d['10-26']['model_dropped_fraction']==[.25,.125,0,0],'capacity figure data')
 main=s.split('## 参考资料与进一步阅读')[0]
 check(not re.search(r'不代表|不能只|尚需核验|不用于.*外推|上式只描述',main),'no defensive prose endings')
 check(main.index('> **习题')>main.index('## 习题与实验'),'exercises collected after main exposition')

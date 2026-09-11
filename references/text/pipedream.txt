@@ -1,0 +1,967 @@
+                                        PipeDream: Fast and Efficient Pipeline Parallel DNN Training
+                                                                              Aaron Harlap† ∗                  Deepak Narayanan‡ ∗
+                                         Amar Phanishayee?                   Vivek Seshadri?                 Nikhil Devanur? Greg Ganger†                   Phil Gibbons†
+
+                                                           ?Microsoft Research † Carnegie Mellon University ‡ Stanford University
+arXiv:1806.03377v1 [cs.DC] 8 Jun 2018
+
+
+
+
+                                        Abstract                                                                   reflects updates across all inputs. The amount of data
+                                                                                                                   communicated per aggregation is proportional to the size
+                                           PipeDream is a Deep Neural Network (DNN) training                       of the model. Although data-parallel training works well
+                                        system for GPUs that parallelizes computation by pipelin-                  with some popular models that have high computation-
+                                        ing execution across multiple machines. Its pipeline                       to-communication ratios, two important trends threaten
+                                        parallel computing model avoids the slowdowns faced                        its efficacy. First, growing model sizes increase per-
+                                        by data-parallel training when large models and/or lim-                    aggregation communication. Indeed, some widely-used
+                                        ited network bandwidth induce high communication-to-                       models are large enough that the communication over-
+                                        computation ratios. PipeDream reduces communication                        heads already eclipse computation time, limiting scaling
+                                        by up to 95% for large DNNs relative to data-parallel                      and dominating total training time (e.g., up to 85% of
+                                        training, and allows perfect overlap of communication                      training time for VGG-16 [36]). Second, rapid increases
+                                        and computation. PipeDream keeps all available GPUs                        in GPU compute capacity further shift the bottleneck
+                                        productive by systematically partitioning DNN layers                       of training towards communication across models. Our
+                                        among them to balance work and minimize communi-                           results show these effects quantitatively (Figure 1) for
+                                        cation, versions model parameters for backward pass cor-                   three generations of NVIDIA GPUs (Kepler, Pascal, and
+                                        rectness, and schedules the forward and backward passes                    Volta), across five different DNN models.
+                                        of different inputs in round-robin fashion to optimize
+                                        “time to target accuracy”. Experiments with five differ-                      Another approach to distributed training, model paral-
+                                        ent DNNs on two different clusters show that PipeDream                     lelism, is used traditionally for models that are too large
+                                        is up to 5x faster in time-to-accuracy compared to data-                   to keep in a worker’s memory or cache during train-
+                                        parallel training.                                                         ing [10, 25, 7]. Model-parallel training involves parti-
+                                                                                                                   tioning the model among workers such that each worker
+                                        1     Introduction                                                         evaluates and performs updates for only a subset of the
+                                                                                                                   model’s parameters. However, even though model paral-
+                                           The last five years has seen a rapid increase in the use                lelism enables training of very large models, traditional
+                                        of Deep Neural Networks (DNNs), with researchers and                       model parallelism can lead to severe underutilization of
+                                        practitioners applying these models to great effect across                 compute resources since it either actively uses only one
+                                        a wide range of applications, including image and video                    worker at a time (if each layer is assigned to a worker) or
+                                        classification, speech recognition, and language transla-                  cannot overlap computation and communication (if each
+                                        tion [16, 17, 21, 22, 44]. As DNNs have become more                        layer is partitioned). In addition, determining how best
+                                        widely developed and used, model sizes have grown to in-                   to partition a DNN model among workers is a challeng-
+                                        crease effectiveness—models today have tens to hundreds                    ing task even for the most experienced machine learning
+                                        of layers totaling 10–20 million parameters. Such growth                   practitioners [30], often leading to additional inefficiency.
+                                        not only stresses the already time- and resource-intensive
+                                        DNN training processes, but also causes the commonly                          This paper describes PipeDream, a new distributed
+                                        used parallelization approaches to break down.                             training system specialized for DNNs. Like model paral-
+                                           The most common approach is data parallelism, where                     lelism, it partitions the DNN and assigns subsets of layers
+                                        the DNN model is replicated on multiple worker ma-                         to each worker machine. But, unlike traditional model
+                                        chines, with each worker processing a subset of the train-                 parallelism, PipeDream aggressively pipelines minibatch
+                                        ing data. Weight updates computed on individual work-                      processing, with different workers processing different
+                                        ers are aggregated to obtain a final weight update that                    inputs at any instant of time. This is accomplished by
+                                                                                                                   injecting multiple inputs into the worker with the first
+                                            ∗ Work started as part of an internship at Microsoft Research.         DNN layer, thereby keeping the pipeline full and ensur-
+
+
+                                                                                                               1
+ing concurrent processing on all workers. It also uses            parallel BSP. When training the S2VT [43] model on the
+data parallelism for selected subsets of layers to balance        MSVD [3] dataset, PipeDream speeds up training by 3x
+computation load among workers. We refer to this com-             compared to data-parallel BSP.
+bination of pipelining, model parallelism, and data paral-           To summarize, this paper makes four primary contribu-
+lelism as pipeline-parallel training.                             tions. First, it introduces a parallelization approach spe-
+   Pipeline-parallel training has the potential to provide        cialized to DNN training to address communication bot-
+high DNN training performance when data parallelism               tlenecks by combining model parallelism with aggressive
+struggles. In particular, inter-worker communication can          pipelining and data parallelism where appropriate. Sec-
+be limited to activations (on the forward pass) and gra-          ond, it identifies the key challenges in realizing the perfor-
+dients (backward) between adjacent layers assigned to             mance potential of this idea and details solutions for each.
+different workers. We observe such communication to be            Third, it describes a system (PipeDream) that efficiently
+up to 95% less than that for data-parallel training.              implements pipeline-parallel DNN training. Fourth, it
+   PipeDream is the first system to combine pipelining,           experimentally demonstrates that PipeDream allows par-
+model parallelism, and data parallelism in a general and          allel DNN training in circumstances where communi-
+automated way. It realizes the potential of pipeline par-         cation overheads limit data-parallel training, including
+allelism with a design that addresses several challenges.         cases where data-parallel is slower than single-machine
+First, like pipelining in processors, achieving high effi-        training.
+ciency requires the right partitioning of the DNN into
+“stages” (layer sub-sequences) that are each executed             2     Background & Related Work
+on a different worker; this depends on both the model                This section discusses distributed DNN training, in-
+architecture and the hardware deployment. Bad parti-              cluding terminology, common approaches and their lim-
+tionings, where stages have widely skewed amounts of              itations, and related work, using training of image classi-
+work, can lead to workers spending significant time idle.         fication models as a concrete example.
+PipeDream automatically determines how to partition the
+layers of the DNN based on a short profiling run, using           2.1    DNN Training
+an algorithm that balances computation load among the                A DNN model consists of a sequence of layers of dif-
+different stages while minimizing communication. Sec-             ferent types (e.g., convolutional, fully connected, pool-
+ond, since DNNs will not always divide evenly among               ing). DNN models are typically trained using a dataset
+available workers, PipeDream can use data parallelism             of labeled images. Training consists of multiple epochs,
+for some stages—multiple workers can be assigned to               where an epoch is one iteration through all images in the
+a given stage, processing different minibatches in par-           dataset. In each epoch, the model trains over all images in
+allel. Third, unlike traditional uni-directional pipelines,       the dataset in steps. In each step, the current model first
+DNN training is bi-directional—the forward pass is fol-           makes a prediction for a small set of training samples,
+lowed by a backward pass through the same layers in               also known as a minibatch. This process is referred to as
+reverse order. PipeDream interleaves forward and back-            a forward pass. To make a prediction, input data from
+ward minibatch processing on each worker, while making            the minibatch is fed to the first layer of the model. Each
+sure to route minibatches through the same workers on             layer then computes a function over its inputs, often using
+the backward pass. This helps to keep all workers busy            learned parameters (or weights), to produce an output for
+without pipeline stalls, while preventing excessive in-           the next layer. The output of the last layer is the class
+progress minibatches and ensuring model convergence.              prediction. Based on the model’s predicted label and the
+Fourth, weight versions need to be managed carefully to           actual label of each image, the output layer computes a
+obtain a high-quality model at the end of training. We            loss (or error). In the ensuing backward pass, each layer
+find that allowing the backward pass for a given minibatch        computes 1) the error for the previous layer, and 2) the
+to use more up-to-date parameters than those used in the          weight update (gradient of the loss) for all relevant layers,
+corresponding forward pass can be a significant problem.          which move the model’s predictions toward the desired
+PipeDream maintains parameter value versions for each             output.
+in-flight minibatch to combat this problem.                          The goal of DNN training is to obtain a high-accuracy
+   Experiments with PipeDream confirm its effectiveness           model in as little time as possible. This goal can be
+for each of the five models we evaluated and that cover           captured with two metrics: 1) statistical efficiency, the
+two important DNN classes – CNNs and RNNs (seq-                   number of epochs needed to reach a desired level of ac-
+to-seq). When training Inception-v3 [19], VGG16 [36],             curacy, and 2) hardware efficiency, the time required to
+Resnet-50 [16], and AlexNet [26] on the ILSVRC12 [32]             complete a single epoch. The total training time to reach
+dataset, PipeDream speeds up training by up to 1.45x,             a desired accuracy level is simply the product of these
+5.12x, 1.21x and 6.76x respectively compared to data-             two metrics [15]. To train large models in a reasonable
+
+
+                                                              2
+   Communication overhead   100                                        K80           Titan X     V100
+                             90
+                             80
+      (% of total time)
+
+                             70
+                             60
+                             50
+                             40
+                             30
+                             20
+                             10
+                              0
+                                  4     8     16   4      8       16         4          8       16       4          8            16            4           8          16
+                                      VGG16            ResNet50                  Inception v3                    AlexNet                                  S2VT
+
+Figure 1: Communication overhead as a percentage of total training time for different hardware configurations. Many models
+(AlexNet, VGG16, S2VT) have a high communication overhead, even on the relatively slow K80. Two factors contribute to an
+increase in the communication overhead across all models: (i) an increase in the number of data-parallel workers, and (ii) an increase
+in GPU compute capacity.
+
+amount of time, training is distributed across multiple                                              Machine 1                               Machine 2
+GPUs1, usually using one of two approaches: data or
+model parallelism.
+
+Data Parallelism. With data parallelism, the input
+dataset is partitioned across multiple GPUs. Each GPU
+maintains a full copy of the model and trains on its own
+partition of data while periodically synchronizing weights
+with other GPUs, using either collective communication
+primitives [14] or Parameter Servers [28, 9]. The fre-
+quency of parameter synchronization affects both statis-                                             Machine 3                               Machine 4
+
+tical and hardware efficiency.                                                                                                                                 Cn+1
+                                                                                                        Fn         Bn       Cn        Fn+1         Bn+1     Cn+1
+   On one end, synchronizing at the end of every
+minibatch (referred to as bulk synchronous parallel or
+                                                                                                                            Time
+BSP [42]) reduces the staleness of weights used to com-                                                      Forward Work                      Backward Work
+pute gradients, ensuring good statistical efficiency. How-                                                   Communication Stall (Model Parameters)
+ever, as shown in Figure 2, BSP requires each GPU to wait
+or stall for gradients from other GPUs, thus significantly                            Figure 2: Example data-parallel setup with 4 machines. Time-
+lowering hardware efficiency. Despite optimizations such                              line at one of the machines shows communication stalls during
+as Wait-free Backpropagation [47], where weight gradi-                                model parameter exchanges.
+ents are sent as soon as they are available, (common in
+modern parameter servers), communication stalls are in-
+evitable in data-parallel training due to the structure of                            (S2VT) spend significant time communicating. Networks
+the DNN computation, and the fact that communication                                  such as ResNet50 and Inception-v3 have comparatively
+can often dominate total execution time. Furthermore,                                 low communication overhead. Second, as the number
+rapid increases in computation speeds further shift the                               of data parallel workers increases, communication over-
+training bottleneck towards communication.                                            heads increase for all models. Third, as GPU compute
+   Figure 1 quantitatively shows the fraction of train-                               speeds increase (K80s to V100s), communication stalls
+ing time spent in communication stalls for five different                             also increase for all five models.
+DNN models run on “commodity” public cloud servers                                       Prior work has proposed more relaxed synchronization
+using three different generations of NVIDIA GPUs—                                     models, where each GPU proceeds with the computation
+Kepler (K80), Pascal (Titan X), and Volta (V100)—                                     for the next minibatch without stalling for the gradients
+linked by a 10Gbps network. We focus on three take-                                   from the other GPUs. This approach, which we refer to
+aways. First, starting with slower GPUs such as the K80s,                             as asynchronous parallel or ASP, reduces GPU idle time,
+we note that some CNNs (VGG16 and AlexNet) and                                        and as a result, improves hardware efficiency compared
+the sequence-to-sequence model for video transcription                                to BSP. However, this process can lead to gradients being
+   1For the rest of this paper, we use the terms “GPU”, “worker”,
+                                                                                      computed on stale weights, thereby lowering statistical
+and “machine” interchangeably, although a machine may have multiple                   efficiency. Our experimental results corroborate recent
+GPUs each running a worker thread.                                                    findings that show that ASP does not reduce end-to-end
+
+
+                                                                                 3
+DNN training time [9, 1, 4].                                                               1   1                              1     2                               2
+
+
+
+
+                                                                                Machines
+                                                                                           2       1                      1              2                   2
+Model Parallelism. With model parallelism, the model
+                                                                                           3           1              1                      2           2
+is partitioned across multiple GPUs, with each GPU re-
+sponsible for only a portion of the model. For ma-                                         4               1   1                                 2   2
+
+chine learning (ML) problems such as matrix factor-                                                                               Time
+ization, topic modeling, and linear regression, prior                                                  Forward Work                Backward Work                 Idle
+work [29, 27, 45, 23] has shown that model parallelism
+can often achieve faster training times than data paral-                   Figure 3: Model parallel training with 4 machines. Numbers
+lelism because of the improved statistical efficiency that                 indicate minibatch ID. For simplicity, here we assume that for-
+arises from not using extremely large minibatch sizes; the                 ward and backward work in every stage takes one time unit, and
+STRADS framework [23] shows that pipelining multiple                       communicating activations across machines has no overhead.
+minibatches can further improve training times for these
+ML problems. Model parallelism has also been used for                      server SKUs and one can expect such offerings to be
+DNNs, but traditionally only as a last resort when the                     prohibitively expensive when they are offered. In con-
+working set of model training is too large to fit in a sin-                trast, in our work we investigate the use of commodity
+gle worker’s memory or cache [25, 7, 10] (making data                      SKUs available in public cloud offerings; this is training
+parallelism not an option). This is because traditional                    infrastructure readily accessible to the masses.
+model-parallel DNN training suffers from two major lim-                       CNTK’s [33] 1-bit quantization technique tackles the
+itations.                                                                  problem of communication bottlenecks in data paral-
+   First, model-parallel DNN training results in severe                    lelism training [35]. This approximation strategy lacks
+under-utilization of GPU resources, as illustrated in Fig-                 generality and is effective for limited scenarios; it does
+ure 3. The figure shows a partitioning of the DNN layers                   not hurt convergence for some speech models [34], but
+across four machines, such that each machine is respon-                    hurts statistical performance due to noisy gradients in
+sible for a group of consecutive layers; in this regime,                   many others [9, 1].
+the inter-layer values (activations and gradients) between                    Goyal et al. [14] uses more efficient implementations
+these groups are the only parameters that need to be com-                  of all_reduce, like the recursive halving-and-doubling
+municated across machines. 2 For each minibatch, only                      algorithm and the bucket algorithm to reduce the amount
+a single stage is active at any instant of time. Pipelining                of data being sent over the network [39]. Others have
+multiple minibatches back-to-back would improve uti-                       explored techniques from the HPC literature to reduce
+lization, but is traditionally not done because, 1) the bi-                the overhead of communication [2, 41]. But all these
+directionality of DNNs (the forward pass is followed by                    reduction approaches still involve synchronous commu-
+a backward pass through the same layers in reverse or-                     nication patterns, resulting in smaller network stalls that
+der) makes pipelining challenging, and more importantly                    only slightly alleviate the communication bottleneck in-
+2) a naive pipelining mechanism introduces weight up-                      troduced due to ever growing model sizes and faster com-
+date computations on stale weights, leading to the final                   pute capabilities.
+model achieving a lower accuracy than in the data-parallel
+                                                                              Chen et al. [6] briefly explore the potential benefits of
+training.
+                                                                           pipelining minibatches in model parallel training, but do
+   Second, the burden of partitioning a model across mul-
+                                                                           not address the conditions for good statistical efficiency,
+tiple GPUs is left to the programmer [25], resulting in
+                                                                           scale, and generality as applicable to large real-world
+point solutions. Recent work explores the use of re-
+                                                                           models. In fact, our work shows that pipelining compu-
+inforcement learning to automatically determine device
+                                                                           tation naively is not enough for real-world models. In
+placement for model parallelism [30]. Unfortunately,
+                                                                           our proposed solution (Section 3), we address key issues
+such online decision making techniques are time- and
+                                                                           ignored in prior work, and offer a general and automated
+resource-intensive; they also don’t seamlessly combine
+                                                                           solution.
+pipelining, data-, and model- parallelism.
+
+Other Related Work. Recent work on fast training                           3     Parallel Training in PipeDream
+of Convolutional Neural Networks (CNNs) make use of                          PipeDream combines traditional data parallelism with
+highly optimized and expensive clusters with high-speed                    model parallelism enhanced with pipelining. We call this
+intra- and inter-machine interconnects [14, 12]. Many                      scheme pipeline parallelism (PP). In this section, we first
+public cloud providers do not yet offer such optimized                     describe PP, and then describe PipeDream’s design that
+   2While other partitioning schemes are possible, this is the most        addresses the challenges associated with making pipeline-
+common, and the one we will use for model parallelism in this paper.       parallel training work effectively.
+
+
+                                                                       4
+                                                                                                  150
+
+
+
+
+                                                                           (millions of floats)
+           Mach. 1 Mach. 2 Mach. 3                  Mach. 4
+                                                                                                                          Size of parameters
+
+
+
+
+                                                                              Output size
+                                                                                                  100
+
+
+                                                                                                   50
+
+
+                                                                                                    0
+                                                                                                                  Layer
+                                                                           Figure 5: Sizes of layer output data for VGG16 with a minibatch
+                                                                           size of 32 on ImageNet1K data. The black dotted line indicates
+             Input                                                         the size of the model parameters.
+             stage                               Output stage
+
+                                                                           ing the backward pass for a minibatch, each stage asyn-
+                                                                           chronously sends the gradient to the previous stage, while
+                                                                Cn+1
+              Fn            Bn-x             Fn+1         Bn-x+1Cn+1       starting computation for another minibatch. Pipelining
+                                                                           has two main advantages over data-parallel training:
+          Cn-x-1       Cn                 Cn-x         Cn+1                Pipelining communicates less. PP requires far less com-
+                                                                           munication compared to BSP. Figure 5 compares the size
+                                   Time
+                                                                           of each layer’s output to the overall size of model pa-
+                     Forward Work                     Backward Work
+                     Background Communication
+                                                                           rameters for VGG16. Instead of having to communicate
+                     (Activations & Gradients)                             all the parameters, as is done in BSP, each machine in a
+                                                                           PP execution only has to communicate the output data of
+Figure 4: An example pipeline-parallel assignment with four                one of the layers. This often results in large reductions in
+machines and an example timeline at one of the machines, high-             communication (e.g., >90% reduction for VGG16).
+lighting the temporal overlap of computation and activation /              Pipelining overlaps computation and communication.
+gradient communication.                                                    Asynchronous communication of forward output activa-
+                                                                           tions and backward gradients across stages results in a
+3.1    Pipeline Parallelism                                                significant overlap of communication with computation
+   Pipeline-parallel training partitions the layers of the                 of a subsequent minibatch, thus achieving better hardware
+model being trained into multiple stages – each stage                      efficiency compared to BSP (Figure 4).
+contains a consecutive set of layers in the model. Each                       While pipelining by itself reduces training time com-
+stage is mapped to a separate GPU that performs both the                   pared to data parallelism, we observe model parallelism
+forward and backward pass for all the layers in that stage.                and data parallelism work best for different types of
+We refer to the stage that contains the input layer as the                 layers [25]. As a result, PipeDream aims to combine
+input stage, and the one that contains the output layer as                 pipelined model parallelism and data parallelism in a
+the output stage. Figure 4 shows a simple example of                       manner that minimizes overall training time. Figure 6
+a pipeline-parallel assignment, where the DNN is split                     shows how pipeline parallelism might partition layers of
+across four machines.                                                      a hypothetical model across stages on 8 machines. How-
+   In the simplest case, only one minibatch is active in the               ever, there are three challenges that need to be addressed
+system, as in traditional model-parallel training. Figure 3                to make this approach effective for large real-world DNN
+shows the computation timeline of an example configu-                      models:
+ration with four machines and one active minibatch in the                        1. Automatic partitioning of work across available
+pipeline. In the forward phase, each stage performs the                             compute resources.
+forward pass for the minibatch for the layers in that stage                      2. Scheduling of computation to maximize throughput
+and sends the results to the next stage. The output stage,                          while ensuring forward progress in the learning task.
+after completing its forward pass, computes the loss for                         3. Ensuring that learning is effective in the face of asyn-
+the minibatch. In the backward phase, each stage per-                               chrony introduced by pipelining.
+forms the backward pass and propagates the loss to the
+previous stage. With only one active minibatch, at most                    The remainder of this section describes these challenges
+one GPU is active at any given point in time.                              and PipeDream’s approach to address them.
+   To ensure that no GPU is idle at any point in time,
+we inject multiple minibatches into the pipeline one af-                   3.2                      Partitioning Layers Across Machines
+ter the other, thus enhancing model-parallel training with                    Given a model and a set of machines, PipeDream’s
+pipelining. On completing the forward pass for a mini-                     first challenge is to automatically partition layers of the
+batch, each stage asynchronously sends the output acti-                    model across available machines so as to minimize over-
+vations to the next stage, while simultaneously starting                   all training time. Figure 7 shows the workflow adopted
+to process another minibatch. Similarly, after complet-                    by PipeDream to partition the layers of the DNN among
+
+
+                                                                       5
+                         Pipelined model parallelism                               the output activations of the layer (also the size of input
+                                                                                   gradients in the backward pass), and 3) wl , the size of
+                                                                                   parameters for layer l.
+                                                                                      To determine Tl for all layers, PipeDream profiles a
+                                                                                   short run of the DNN model using 1000 minibatches on
+                                                                                   one of the machines.3 Using this profile, PipeDream
+                                                                                   computes Tl as the sum of the forward and backward
+                   Data                                                            computation times for the layer l.
+                parallelism                                                           All communication happens in three steps: 1) move
+       Stage 1                Stage 2        Stage 3       Stage 4                 data from the GPU to the CPU of the sender, 2) send data
+                                                                                   from sender to receiver over the network, and 3) move
+Figure 6: Pipeline Parallel training in PipeDream combines                         data from the CPU to the GPU of the receiver. PipeDream
+pipelining, model- and data-parallel training.                                     estimates the time taken for communication as the amount
+                                                                                   of data that needs to be transferred divided by the network
+                                                                                   bandwidth on the communication link. Cl , the time taken
+                                                         CDF
+
+
+
+                                                                                   to communicate the activations from layer l to l + 1 in
+             profiled
+ Input DNN      by
+                        PipeDream Profiler                     layer id            a pipeline, is estimated using al . The amount of data
+                                                       CDF Profiles of Layer
+                                                       Compute Times &             communicated per worker in data-parallel configurations
+                                                       Output Sizes                with m machines is 4 × (m − 1) × |wl |/m; this is used to
+  PipeDream’s distributed runtime                                                  estimate Wlm , the time for weight synchronization for the
+  executes generated plan                                                          layer when using a distributed parameter server.
+                                          # of
+                                                       PipeDream Optimizer
+                                        machines                                      PipeDream’s Partitioning Algorithm. Our partition-
+                                                                                   ing algorithm takes the output of the profiling step, and
+                                                                                   computes: 1) a partitioning of layers into stages, 2) the
+                                                         CDF
+
+
+
+
+                                                                                   replication factor for each stage, and 3) optimal number
+                                                               layer id            of minibatches to keep the training pipeline busy.
+                                                                                      The partitioning algorithm tries to minimize the overall
+Figure 7: PipeDream’s automated mechanism to partition                             training time of the model. For a pipelined system, this
+DNN layers into stages. PipeDream first profiles the input                         problem is equivalent to minimizing the time taken by
+DNN, to get estimates for each layer’s compute time and output                     the slowest stage of the pipeline. This problem has the
+size. Using these estimates, PipeDream’s optimizer partitions                      optimal sub-problem property; a pipeline that maximizes
+layers across available machines.                                                  throughput given a machine count is composed of sub-
+                                                                                   pipelines that maximize throughput for smaller machine
+the available machines. When partitioning layers into dif-                         counts. Consequently, we can find the optimal solution
+ferent stages across machines, PipeDream’s partitioning                            to this problem using Dynamic Programming.
+algorithm must ensure that each stage roughly performs                                Let A( j, m) denote the time taken by the slowest stage
+the same amount of total work. At the same time, the par-                          in the optimal pipeline between layers 1 and j using m
+titioning algorithm must also ensure that the amount of                            machines. The goal of our algorithm is to find A(N, M),
+data communicated across stages is as small as possible,                           and the corresponding partitioning. Let T(i → j, m)
+to avoid communication stalls. Load imbalance across                               denote the time taken by a single stage spanning layers i
+machines or excessive communication between machines                               through j, replicated over m machines.
+can lower hardware efficiency (throughput).
+                                                                                                                 j       j
+    Taking these factors into account, given a DNN with N
+                                                                                                               Õ              
+                                                                                                          1             Õ
+layers and M available machines, PipeDream first profiles                                    T(i → j, m) = max      Tl,      m
+                                                                                                                            Wl
+                                                                                                          m     l=i     l=i
+the model on a single machine, and then runs a partition-
+ing algorithm that groups layers into stages, while also                           where the left term inside the max is the total computation
+determining the replication factor for each stage that min-                        time for all the layers in the stage, and the right term is the
+imizes the overall training time for the model.                                    total communication time for all the layers in the stage.
+    Profiling the DNN Model. Our profiling mechanism
+                                                                                      The optimal pipeline consisting of layers from 1
+exploits the fact that DNN training shows little variance
+                                                                                   through j using m machines could either be a single stage
+in the computation and communication time across mini-
+                                                                                   replicated m times, or be composed of multiple stages.
+batches. PipeDream records three quantities for each
+layer l: 1) Tl , the total computation time across the for-                            3All the GPUs used in individual experiments are identical. As a
+ward and backward pass for the layer, 2) al , the size of                          result, it is sufficient to profile performance on a single GPU.
+
+
+
+                                                                               6
+Case 1: The optimal pipeline contains only one stage,                    Machine 1   1   2   3   4                   1     5    2   6   3   7   4      8      5
+
+replicated m times. In this case,                                        Machine 2       1   2   3   4           1         2    5   3   6   4   7      5      8
+
+                                                                         Machine 3           1   2   3      1   4    2          3   5   4   6   5      7      6
+                   A( j, m) = T(1 → j, m)                                                        1   1      2    2   3     3    4   4   5   5   6      6      7
+                                                                         Machine 4
+
+Case 2: The optimal pipeline contains more than one                                              Startup State                          Steady State
+stage. In this case, it can be broken into an optimal sub-                                                               Time
+pipeline consisting of layers from 1 through i with m − m 0                                  Forward Work                 Backward Work                    Idle
+
+machines followed by a single stage with layers i + 1
+through j replicated over m 0 machines. Then, using the             Figure 8: An example pipeline with 4 machines, showing
+optimal sub-problem property, we have                               startup and steady states.
+
+                                   
+                                   
+                                    A(i, m − m 0)                  work. We propose a scheduling mechanism that avoids
+      A( j, m) = min min
+                                   
+                                   
+                                max 2 · Ci                          these problems.
+                 1≤i< j 1≤m0 <m
+                                   T(i + 1 → j, m 0)
+                                   
+                                                                       In the startup phase, the input stage admits NOAM
+                                   
+                                   
+                                                                    minibatches to keep the pipeline full in steady state. Once
+where the first term inside the max is the time taken by the
+                                                                    in steady state, each stage alternates between performing
+slowest stage of the optimal sub-pipeline between layers
+                                                                    the forward and backward pass for a minibatch. We call
+1 and i with m − m 0 machines, the second term is the
+                                                                    this mechanism one-forward-one-backward (1F1B). In a
+time taken to communicate the activations and gradients
+                                                                    balanced pipeline, 1F1B ensures that no GPU is idle in
+between layers i and i + 1, and the third term is the time
+                                                                    steady state and that we make forward progress in learning
+taken by the single stage containing the remaining layers
+                                                                    from each minibatch.
+in a data-parallel configuration of m 0 machines.
+Initialization. A(1, m) := T(1 → 1, m), where T(.) is as               Figure 8 shows the corresponding compute timeline
+defined above, and m is varied from 1 through M (the                for a pipeline with 4 stages each running on one machine.
+total number of machines). A(i, 1) := T(1 → i, 1), where            The NOAM for this configuration is 4. In the startup
+i is varied from 1 through N (the total number of layers            phase, the input stage admits exactly four minibatches
+in the model).                                                      that propagate their way to the output stage. As soon as
+Runtime Analysis. The total number of sub-problems                  the output stage completes the forward pass for the first
+is O(N M). Time complexity per sub-problem is also                  minibatch, it performs the backward pass for the same
+O(N M), leading to a total time complexity of O(N 2 M 2 ).          minibatch, and then starts alternating between performing
+   Based on the partitioning generated by our algorithm,            forward and backward passes for subsequent minibatches.
+the optimal number of minibatches admitted per input                As the backward pass starts propagating to earlier stages
+stage to keep the pipeline full in steady state is given by         in the pipeline, every stage starts alternating between
+     d (# machines) / (# machines in the input stage) e.            forward and backward pass for different minibatches. As
+We        refer    to     this     quantity       as     the        shown in the figure, in the steady state, every machine is
+NUM_OPT_ACTIVE_MINIBATCHES (NOAM).                                  busy either doing the forward pass or backward pass for
+                                                                    a minibatch. For 1F1B to be effective, it is not necessary
+3.3     Work Scheduling                                             for the forward pass to take as long as the backward pass.
+   Unlike traditional uni-directional pipelines, pipelined          In fact, we observe that in practice, the backward pass is
+DNN training involves a bi-directional pipeline. The for-           always larger than the forward pass, and 1F1B remains
+ward pass for a minibatch starts at the input layer and the         an effective scheduling mechanism.
+backward pass ends at the input layer. Consequently, each              When stages run in a data-parallel configuration,
+active minibatch in the pipeline may be in a different layer,       replicated across multiple GPUs, we use determinis-
+either in the forward pass or backward pass. As a result,           tic round-robin load balancing (minibatchID mod
+each machine in the system has to make a choice between             stageReplicaID) to spread work from the previous
+two options: i) perform the forward pass for a minibatch,           stages across the replicas. Such deterministic load-
+thus pushing the minibatch to downstream machines, and              balancing ensures that the backward pass for a minibatch
+ii) perform the backward pass for a different minibatch,            is performed on the machine responsible for the mini-
+thus ensuring forward progress in learning.                         batch’s forward pass.
+   A simple scheduling mechanism that always priori-                   Both the 1F1B scheduling policy for stages in a pipeline
+tizes forward work hinders overall forward progress as              and the round-robin scheduling policy for load balancing
+weight updates can be applied only once backward passes             across replicated stages are static policies. Thus, they
+complete. Similarly, always prioritizing backward work              can be executed by each machine independently without
+may periodically result in idle machines with no available          requiring expensive distributed coordination.
+
+
+                                                                7
+3.4    Effective Learning                                             w (i−x) . This coordination across stages is asynchronous.
+   In a naively pipelined system, the forward pass for each              Staleness. We can now formalize the degree of stale-
+minibatch is performed using one version of parameters                ness of weight updates for each of these techniques. For
+and the backward pass using a different version of pa-                this discussion, we assume a straight pipeline with the
+rameters. Figure 8 illustrates this using a partitioning              model split into n stages; the weights in each stage are
+with no data parallelism. If we observe stage 1 (machine              represented as w1 , w2 , and so on. In addition, we denote
+1), the forward pass for minibatch 5 is performed after               w1(t) as the weights w1 after t minibatches.
+the updates from minibatch 1 are applied, whereas the                    Now, after every minibatch, we compute the gradi-
+backward pass for minibatch 5 is performed after updates              ent O f (w1, w2, . . . , wn ) averaged over all samples in the
+from minibatches 2, 3, and 4 are applied. As a result, in             minibatch. Vanilla minibatch SGD ( f is the loss function
+the backward pass for minibatch 5 on stage 1, the gradi-              we’re trying to optimize and ν is the learning rate) has
+ent is computed using a different set of weights than the             the following gradient update,
+ones used in the corresponding forward pass; this dis-                         w (t+1) = w (t) − ν · O f (w1(t), w2(t), . . . , wn(t) )
+crepancy in weight versions can prevent the model from
+                                                                         With weight stashing, gradients in stage 1 are computed
+converging.
+                                                                      with weights that are n steps delayed, gradients for stage
+   Furthermore, different stages in the DNN model suf-
+                                                                      2 are computed with weights that are n − 1 steps delayed,
+fer from different degrees of staleness. For example, in
+                                                                      and so on. Mathematically, this means our weight update
+the third stage, each minibatch has only one interleaved
+                                                                      looks like,
+update between its forward and backward pass, while the
+output stage has no interleaved updates. This asymmetry
+                                                                          w (t+1) = w (t) − ν · O f (w1(t−n+1), w2(t−n+2), . . . , wn(t) )
+across layers can further impact model convergence. Our
+experimental results show that naive pipelining does not                Without weight stashing, the weight update is not a
+achieve the same accuracy as data-parallel training. To               valid gradient of the loss function f for any weight vector
+address this problem, PipeDream uses two techniques.                  w1, w2, . . . , wn .
+Weight Stashing. Weight Stashing maintains multiple                     Adding vertical sync alters the weight update to,
+versions of the weights, one for each active minibatch.
+When performing the forward pass, each stage processes                 w (t+1) = w (t) − ν · O f (w1(t−n+1), w2(t−n+1), . . . , wn(t−n+1) )
+a minibatch using the latest version of weights available.
+After completing the forward pass, PipeDream stores the                  This is semantically the same as data parallelism with
+weights used as part of the intermediate state for that               BSP synchronization on n machines (with the same orig-
+minibatch. When performing the minibatch’s backward                   inal minibatch size on each machine).
+pass, the same version of the weights is used to compute                 Weight stashing is critical for meaningful learning.4
+the weight gradient.                                                  PipeDream’s default semantics (weight stashing but no
+   Weight stashing ensures that within a stage, the same              vertical sync) are between regular minibatched SGD on a
+version of model parameters are used for the forward                  single machine, and data parallelism with BSP synchro-
+and backward pass of a given minibatch. For example,                  nization [8, 18]. Our evaluation demonstrates its effec-
+in Figure 8, minibatch 5 uses parameters updates from                 tiveness across several models, datasets, and hardware
+batch 1 on machine 1 and from 2 on machine 2. Weight                  configurations.
+stashing says nothing about the consistency of parameter
+versions used for a given minibatch across stages.
+                                                                      3.5     GPU Memory Management
+Vertical Sync. Vertical Sync eliminates the potential in-                As minibatches enter and leave the pipeline, the system
+consistency across stages. For example, in Figure 8, us-              has to ensure that the inputs, weights, and other interme-
+ing vertical sync, minibatch 5 uses parameters updated by             diate state required by the GPU for its computation are
+minibatch 1 on all machines for both its forward and back-            present in GPU memory. If not managed carefully, the
+ward passes. Each minibatch (mi ) that enters the pipeline            overhead of dynamic memory allocation in the GPU, and
+is associated with the latest weight version (w (i−x) ) seen at       data transfer between GPU and CPU memory can greatly
+the input stage. This information is propagated along with            reduce hardware efficiency.
+the activations and gradients as the minibatch mi flows                  PipeDream extracts the layer parameters from the DNN
+through the pipeline in the forward direction. Across all             model and computes the size of activations, parameters,
+stages, the forward pass for mi uses the stashed weights              and intermediate state that needs to be stored at each stage,
+w (i−x) , as opposed to the latest weight update. After per-          across the active minibatches present in the pipeline. The
+forming the backward pass for mi (using stashed weights                  4In our experiments, we find that the impact of vertical sync is
+w (i−x) ), each stage independently applies weight updates            negligible. PipeDream’s default semantics exclude vertical sync as it
+to create the latest weights (w (i) ), and can then delete            requires more metadata to be stored at every stage in the pipeline.
+
+
+
+                                                                  8
+        F/w Network Receive                       F/w Network Send         cating memory in the GPU for the activations, weights,
+                                                                           gradients, and the intermediate state (which includes the
+          F/w Copy to GPU                            F/w Copy to CPU
+                                Intermediate                               input activations and stashed weights for each active mini-
+          B/w Copy to GPU       Data Manager      B/w Copy to CPU          batch). Once a machine is initialized, the ML worker pulls
+        B/w Network Receive                       B/w Network Send
+                                                                           its next work assignment from PipeDream; PipeDream’s
+                                                                           runtime provides the ML worker with pointers to input
+              Read Intermediate data     Get GPU memory for output
+                                                                           data. The input stage kick starts the pipeline by creating a
+                              Caffe Compute Thread                         minibatch of forward work for its ML worker. From then
+        Read Model Parameters                     Update Model             on, each machine follows the 1F1B scheduling algorithm,
+                Client Side Cache & Parameter Versioning
+                                                                           while limiting the total number of active minibatches to
+                                                                           NOAM.
+                                                                              For the assigned minibatch (forward or backward), the
+                        Sharded Parameter Server                           ML worker iterates through each layer in the stage and
+                                                                           performs the relevant work for the minibatch. The ML
+Figure 9: Architecture of the stage runtime and integration                worker uses appropriate PipeDream API calls to get point-
+with Caffe. PipeDream provides the ML worker thread (Caffe)                ers to the inputs, parameters, outputs, gradients, and in-
+pointers to GPU memory containing layer input data, parame-                termediate state for each layer. Once the minibatch is
+ters, and buffers for recording layer outputs and parameter up-            processed, the ML worker indicates the completion of
+dates. PipeDream manages buffer pools, and handles all intra-              work to PipeDream, and pulls its next work item.
+and inter-machine communication.
+                                                                              Parameter State. For each stage, PipeDream main-
+                                                                           tains all parameters associated with the layers assigned
+number of minibatches for which each stage has to main-
+                                                                           to the stage directly in GPU memory. The parameters
+tain intermediate state varies from stage to stage. While
+                                                                           for each layer are stored separately, and each assigned
+the output stage has to maintain intermediate state for
+                                                                           a unique ID. If the stage is not replicated, PipeDream
+only one active minibatch, the input stage needs to do
+                                                                           applies the updates to the most recent version of the pa-
+so for NOAM minibatches. PipeDream allocates all re-
+                                                                           rameter data stored in GPU memory when the weight
+quired GPU memory at the beginning of training, and
+                                                                           update is available in the provided GPU buffer. If the
+reuses the allocated memory as appropriate. This sig-
+                                                                           stage is replicated, the weight update is copied to host
+nificantly reduces the overhead of dynamically managing
+                                                                           memory and then sent to the parameter server. When a
+GPU memory.
+                                                                           newer version of the parameters becomes available, the
+                                                                           prior version is not immediately discarded, as part of the
+4     Implementation                                                       weight stashing scheme. Parameter data is only discarded
+   Figure 7 shows PipeDream’s high-level workflow. The                     once a backward pass that uses fresher parameters is per-
+input to our system is a model architecture, the training                  formed.
+dataset, and the number of GPUs that will be used for                         Intermediate State. Each layer’s intermediate data is
+training. PipeDream first profiles the model on a single                   also assigned a unique blob ID. Upon receiving interme-
+machine with a subset of minibatches from the training                     diate data from the prior stage (or from disk in the case of
+dataset. It then runs the optimization algorithm described                 the input stage), PipeDream copies the intermediate data
+in Section 3.2 to partition the DNN model into k stages,                   to GPU memory and places a pointer to the associated
+with some stages replicated. The PipeDream runtime                         buffer in a work queue. Intermediate data from the for-
+then assigns each stage to a single GPU.                                   ward pass is not discarded until the associated minibatch
+   Figure 9 shows the high-level architecture of the stage                 completes that stage’s backward pass. Intermediate data
+runtime in PipeDream. The interface to PipeDream is im-                    from the backward pass is released as soon as the ML
+plemented as a C++ library that manages the parameter                      worker finishes using it, and if necessary, after it is sent
+and intermediate data for the ML worker that runs on the                   to the next stage. Due to the differing requirements for in-
+GPU. In our current implementation, we use Caffe [20]                      termediate data in the forward and backward pass, stages
+as the ML worker. However, PipeDream is extensible                         in PipeDream commonly manage multiple versions of
+and can work with other ML frameworks such as Tensor-                      intermediate data from forward passes, and just a single
+flow [1], MXNet [5], and CNTK [33] as well.                                version of intermediate data from the currently running
+   As an initialization step, the PipeDream library in each                backward pass.
+machine initializes the GPU data structures correspond-                       Data Parallelism. PipeDream uses a distributed pa-
+ing to the stage that is assigned to the machine. This                     rameter server, similar to GeePS [9], to synchronize pa-
+involves 1) initializing the ML worker with the layers that                rameters for layers of data-parallel stages. Using wait-free
+it must execute as part of the stage, and 2) statically allo-              back propagation, weight gradients are communicated to
+
+
+                                                                       9
+servers as soon as they are as computed, rather than wait-          The machines are connected via a 25 Gbps Ethernet inter-
+ing for computation to finish for all layers. Each worker           face. Cluster-B is public cloud cluster (AWS p3.2xlarge
+contains an instance of a parameter server shard that stores        instances) of NVIDIA V100 GPUs, with 16 GB of GPU
+a unique subset of the parameters. The server shards push           device memory. Each machine has a E5-2690 Xeon CPU,
+the newest version of their parameters to the other shards          64 GB of RAM with a 10 Gbps Ethernet interface. Ma-
+as soon as updates from all stage replicas are aggregated.          chines on both clusters run 64-bit Ubuntu 16.04 with
+   Since we support replication of individual stages, data-         CUDA toolkit 8.0 and cuDNN v6.
+parallel training can be thought of as a special case in               In comparison to Cluster-A, Cluster-B has faster GPUs,
+our framework – we represent this as a single stage that            but a slower network. As a result, as we show later in
+contains all the layers of the DNN model, and replicate             this section, the performance benefits of PipeDream are
+the stage across all available machines.                            higher in Cluster-B than in Cluster-A.
+   All     inter-machine      communication        between             Models and Training Methodology We used
+PipeDream’s stages, both in data-parallel and pipeline-             three different DNN models in our experiments:
+parallel settings, uses ZeroMQ [46] and an efficient                1) VGG16 [36] with a model size of 550 MB,
+communication stack with fast custom serialization.                 2) Inception-v3 [19] with a model size of 157 MB, and
+   Checkpointing. PipeDream supports periodic check-                3) S2VT [43], a sequence-to-sequence model for video
+pointing of model parameters for fault-tolerance, with              transcription, with a model size of 349MB. We use the
+default checkpointing across stages at the end of every             ILSVRC12 dataset to train VGG16 and Inception-v3, and
+epoch. Checkpoints don’t require expensive global co-               the MSVD dataset to train S2VT model. In our exper-
+ordination; each stage locally decides to dump its model            iments, we trained the VGG16 and S2VT models using
+parameters when it performs the backward pass for the               SGD with a momentum of 0.9 and an initial learning rate
+last minibatch in an epoch. Restarting a failed training            of 0.01. For Inception-v3, we used RMSProp [40] with
+run due to a stage failure entails starting from the last           an initial learning rate of 0.045, decayed every two epochs
+epoch successfully checkpointed by all the stages.                  using an exponential rate of 0.94. We used a mini-batch
+                                                                    size of 32 per machine for VGG16 and Inception-v3 and
+5     Evaluation                                                    a mini-batch size of 80 per machine for S2VT. For all
+                                                                    the experiments, we measure the time taken to train the
+   This section compares the effectiveness of PipeDream             models until they reach their advertised validation accu-
+with data-parallel training and model-parallel training             racy: top-1 accuracy of 68% for VGG16, top-1 accuracy
+across models on two clusters. The results of our exper-            of 67% for Inception-v3, and METEOR [11] score of
+iments support a number of important findings: 1) com-              0.294 for S2VT. Guided by prior work, we adjust the
+bining pipelining, model parallelism, and data parallelism          learning rate during training to converge to the desired
+performs significantly better than using model paral-               result faster [31, 37, 38, 13, 24].
+lelism or data parallelism alone, 2) PipeDream greatly re-             PipeDream’s Data-Parallel Implementation. To
+duces the overhead of communication compared to data-               measure the performance improvements introduced from
+parallel training, and 3) PipeDream’s improvements are              using PipeDream, we compare to PipeDream in data-
+higher for configurations that have a lower computation-            parallel and single machine configurations. This allows
+to-communication ratio.                                             us to perform a fair comparison of the different schemes.
+                                                                    To confirm its efficiency, we compared PipeDream’s data-
+5.1    Experimental Setup                                           parallel implementation to the open source version of
+   Datasets. We used two datasets in our experiments.               GeePS, an efficient data-parallel DNN training system
+The first is the dataset for the Large Scale Visual Recog-          that also uses Caffe at individual workers and performs
+nition Challenge 2012 (ILSVRC12) [32], also called the              favorably, if not better than, other state-of-the-art DNN
+ImageNet 1K dataset. This dataset has ∼1.3 million train-           frameworks [9]. In our experiments, PipeDream’s data-
+ing images categorized into 1000 classes, and 50,000                parallel configuration ran at least as fast as GeePS for all
+validation images. The second is the Microsoft Video                models and datasets tested.
+description corpus (MSVD) [3], which is a collection of
+YouTube clips depicting different activities, collected on          5.2    PipeDream vs. Data Parallelism
+Mechanical Turk. The dataset contains 1,970 videos and                 Table 1 summarizes results comparing PipeDream with
+a vocabulary of 12,594 words to describe them.                      data-parallel training (BSP). For the three models, the ta-
+   Clusters. We used two different clusters in our exper-           ble shows PipeDream’s auto-generated configuration and
+iments. Cluster-A is a private cluster of NVIDIA Titan              the corresponding speedup in training time over single
+X GPUs with 12 GB of GPU device memory. Each ma-                    machine and data-parallel training (BSP). It also shows
+chine has a E5-2698Bv3 Xeon CPU with 64 GB of RAM.                  the communication reduction achieved by PipeDream
+
+
+                                                               10
+  DNN                             # Machines       BSP speedup            PipeDream        PipeDream speedup                      PipeDream speedup             PipeDream communication
+  Model                             (Cluster)    over 1 machine               Config           over 1 machine                              over BSP                    reduction over BSP
+                                       4 (A)                  1.47×             2-1-1                                     3.14×                    2.13×                              90%
+                                       8 (A)                  2.35×               7-1                                     7.04×                    2.99×                              95%
+  VGG16
+                                      16 (A)                  3.28×           9-5-1-1                                     9.86×                    3.00×                              91%
+                                       8 (B)                  1.36×               7-1                                     6.98×                    5.12×                              95%
+                                       8 (A)                  7.66×                    8                                  7.66×                    1.00×                               0%
+  Inception-v3
+                                       8 (B)                  4.74×                  7-1                                  6.88×                    1.45×                              47%
+  S2VT                                 4 (A)                  1.10×             2-1-1                                     3.34×                    3.01×                              95%
+
+Table 1: Summary of results comparing PipeDream with data-parallel configurations (BSP) when training models to their advertised
+final accuracy. “PipeDream config” represents the configuration generated by our partinioning algorithm—e.g., “2-1-1” is a
+configuration in which the model is split into three stages with the first stage replicated across 2 machines.
+
+                         1                                                                                       1
+                                            1 Worker       8 BSP       8 PipeDream                                                     1 Worker    8 BSP   8 PipeDream
+       Top-1 Accuracy
+
+
+
+
+                                                                                               Top-1 Accuracy
+                        0.8                                                                                     0.8
+                        0.6                                                                                     0.6
+                        0.4                                                                                     0.4
+                        0.2                                                                                     0.2
+                         0                                                                                       0
+                              0       40        80          120         160          200                              0           10          20           30            40      50
+                                                     Time (in hours)                                                                          Time (in hours)
+
+                                                (a) VGG16                                                                              (b) Inception-v3
+                                    Figure 10: Accuracy vs. time for VGG16 and Inception-v3 with 8 machines on Cluster-A
+
+compared to data-parallel training.                                                                     machine. PipeDream’s partitioning algorithm (Section
+   PipeDream Configurations. As described in Sec-                                                       3.2) selects a data-parallel configuration (no pipelining
+tion 3.2, given a DNN model and a set of machines,                                                      or model parallelism) to train Incpetion-v3 on Cluster-A,
+PipeDream’s optimizer selects the best configuration that                                               thus matching the data-parallel BSP performance (Fig-
+partitions the layers of the model into multiple stages and                                             ure 10b).
+assigns one or more machines to each stage. While most                                                     Effect of using faster compute (V100s). Figure 11
+prior research has focused on improving data-parallel                                                   shows accuracy vs. training time for VGG16 and
+training, our results indicate that the best configurations                                             Inception-v3, using 8 machines in Cluster-B, for both
+are neither fully data-parallel nor fully model-parallel. In                                            BSP and PipeDream. Compared to Cluster-A, Cluster-
+all but one of our experiments, the best PipeDream config-                                              B employs faster V100 GPUs with 10Gbps intercon-
+uration combines model parallelism, pipelining, and data                                                nect between the machines (as granted by the cloud
+parallelism; each of these configurations significantly                                                 provider). Thus, models running on Cluster-B have lower
+outperform data-parallel training, thus highlighting the                                                computation-to-communication ratios. We note that the
+importance of pipeline parallelism. PipeDream’s opti-                                                   faster GPUs result in faster end-to-end training time —
+mizer recommends data-parallel as the best configuration                                                e.g., training time for VGG16 reduces from 220 hours on
+for Inception-v3 with 8 machines in Cluster-A.                                                          Cluster-A to little less than 100 hours on Cluster-B (Fig-
+   Base Results: 8 Machines in Cluster-A. Figure 10                                                     ures 10 and 11). We also observe that the higher com-
+shows accuracy vs. training time for VGG16 and                                                          munication overhead causes both BSP and PipeDream
+Inception-v3, using 8 machines in Cluster-A, for both                                                   to scale less effectively to 8 machines. However, this
+BSP and PipeDream 5. The first conclusion we draw                                                       increased communication overhead affects BSP signifi-
+is that for VGG16, BSP with 8 machines reduces train-                                                   cantly more than PipeDream. Moving from Cluster-A to
+ing time by only 2.35× compared to training with a sin-                                                 Cluster-B, the speedup of PipeDream over BSP increases
+gle machine since with 8 machines, the communication                                                    from 2.99× to 5.12× for VGG16. Even for Inception-v3,
+overhead for VGG16 in Cluster-A is 72%. PipeDream                                                       PipeDream improves training time by 45% compared to
+eliminates 95% of this communication overhead thereby                                                   BSP on Cluster-B.
+improving performance by 7.04× compared to training
+with single machine (2.99× compared to BSP). Second,                                                       Due to space constraints we do not present end-to-end
+for Inception-v3, the communication overhead with 8 ma-                                                 training results for AlexNet [26] and ResNet-50 [16] mod-
+chines on Cluster-A is just 5%. As a result, BSP achieves                                               els. Experiments with these models on Cluster-B showed
+near perfect scaling with a 7.66× speedup over a single                                                 that PipeDream provides a 1.21x and 6.78x throughput
+                                                                                                        improvement for ResNet-50 and AlexNet respectively,
+   5For Figure 10– 12 each displayed point represents 5 epochs                                          compared to 8 machine data-parallel BSP.
+
+
+                                                                                             11
+                                      1                                                                                                                         1
+                                                               1 Worker      8 BSP   8 PipeDream                                                                                    1 Worker     8 BSP    8 PipeDream
+                    Top-1 Accuracy
+
+
+
+
+                                                                                                                      Top-1 Accuracy
+                                     0.8                                                                                                             0.8
+                                     0.6                                                                                                             0.6
+                                     0.4                                                                                                             0.4
+                                     0.2                                                                                                             0.2
+                                      0                                                                                                                         0
+                                           0             20            40            60            80          100                                                  0              10              20             30              40
+                                                                        Time (in hours)                                                                                                      Time (in hours)
+
+                                                                    (a) VGG16                                                                                                           (b) Inception-v3
+                                                      Figure 11: Accuracy vs. time for VGG16 and Inception-v3 with 8 machines on Cluster-B
+                   1
+                                     1 Worker        4 ASP    4 BSP    4 PipeDream    16 BSP    16 PipeDream                   because with 4 machines, the communication overhead
+ Top-1 Accuracy
+
+
+
+
+                  0.8
+                  0.6                                                                                                          for S2VT on Cluster-A is 70%. PipeDream reduces the
+                  0.4                                                                                                          communication overhead by 95% compared to BSP, in
+                  0.2
+                                                                                                                               turn slashing training time by 3.34× compared to single
+                   0
+                             0                  40            80            120           160       200                        machine training (3.01× compared to BSP).
+                                                                   Time (in hours)
+                                                                                                                               5.3                                      Value of Data Parallelism in stages
+Figure 12: Accuracy vs. time for different configurations for                                                                     Figure 13 plots the reduction in training time com-
+VGG16 on Cluster-A with 4 and 16 workers.                                                                                      pared to single machine training for three parallelization
+                                                                                                                               approaches: 1) simple model parallelism (no pipelin-
+   Effect of varying number of machines. With an in-                                                                           ing or data parallelism), 2) pipeline parallelism without
+crease in the number of machines, the communication                                                                            data parallelism (no stage replication), and 3) PipeDream
+overhead also increases for all models (as shown in Fig-                                                                       (combined model parallelism, pipelining and data par-
+ure 1). Figure 12 compares the accuracy vs. training                                                                           allelism). The figure shows these results for training
+time for VGG16, using 4 and 16 machines in Cluster-A,                                                                          VGG16 using 4 and 8 machines on Cluster-A.
+for BSP and PipeDream. As expected, BSP scales poorly
+with increasing number of machines. With 4, 8, and 16
+                                                                                                                                       Speedup over 1 machine
+
+
+
+
+                                                                                                                                                                    8
+machines, BSP offers speedups of only 1.47×, 2.35×, and                                                                                                             6
+3.28×, respectively, compared to single machine training.                                                                                                           4
+In contrast, PipeDream offers speedups of 3.14×, 7.04×,                                                                                                             2
+and 9.86× with 4, 8, and 16 machines compared to train-                                                                                                             0
+ing on a single machine. Notably, PipeDream with 4                                                                                                                      4 Model    4 Straight 4 PipeDream 8 Model       8 Straight 8 PipeDream
+                                                                                                                                                                        Parallel    Pipeline              Parallel       Pipeline
+machines is almost as good as BSP with 16 machines.
+   Comparison to asynchronous parallel (ASP). To re-                                                                           Figure 13: Model Parallelism vs. Pipeline Parallelism vs.
+duce communication overhead in data-parallel training,                                                                         PipeDream for VGG16 on Cluster-A
+we experimented with running four machine data-parallel
+with ASP synchronization. Unlike BSP, which synchro-                                                                              Model Parallelism. Simple model parallelism uses
+nizes the parameter data after every mini-batch, ASP has                                                                       only one machine at any point in time, and hence is slower
+no synchronization, and the workers use the most re-                                                                           than the single machine configurations. We also im-
+cent parameter data available. Figure 12 also shows                                                                            plement model-parallel configurations in Tensorflow [1],
+the accuracy vs. time curve for ASP with 4 machines                                                                            which does not support pipelining but implements model
+in Cluster-A. Due to ASP’s poor statistical efficiency,                                                                        parallelism as described in this paper; we observe similar
+PipeDream reaches a 48% accuracy 7.4x faster than ASP                                                                          performance drop-offs.
+data-parallel, even though ASP has no communication                                                                               Straight Pipelines. Combining model parallelism
+overhead.                                                                                                                      with pipelining results in straight pipeline configurations
+   Training a Recurrent Neural Network. VGG16                                                                                  (no data parallelism compared to PipeDream). Straight
+and Inception-v3 are Convolutional Neural Networks                                                                             pipeline configurations greatly reduce training time com-
+(CNNs), used for tasks such as image classification. We                                                                        pared to single machine training—2.56× and 3.49× with
+also evaluate PipeDream’s performance on the S2VT                                                                              4 and 8 machines, respectively. In fact, these im-
+model, which is a sequence-to-sequence recurrent neural                                                                        provements are better than data parallel training, which
+network that generates descriptive captions for videos.                                                                        achieves corresponding speedups of 1.47× and 2.35×
+For many recurrent neural networks consisting of LSTM                                                                          compared to single machine training.
+layers, BSP data-parallel training scales poorly. For                                                                             Pipeline Parallelism. PipeDream’s pipeline paral-
+S2VT, BSP with 4 machines reduces training time by                                                                             lelism provides the biggest reductions in training time—
+only 1.1x compared to single machine training. This is                                                                         3.14× and 7.04× with 4 and 8 machines compared to
+
+
+                                                                                                                     12
+single machine training. These results demonstrate that                 [9] H. Cui, H. Zhang, G. R. Ganger, P. B. Gibbons, and E. P.
+a combination of pipelining, model parallelism and data                     Xing. Geeps: Scalable deep learning on distributed gpus
+parallelism achieve faster training than either model par-                  with a gpu-specialized parameter server. In Proceedings of
+allelism, model parallelism with pipelining, or data par-                   the Eleventh European Conference on Computer Systems,
+allelism.                                                                   page 4. ACM, 2016.
+                                                                       [10] J. Dean, G. Corrado, R. Monga, K. Chen, M. Devin,
+6    Conclusion                                                             M. Mao, A. Senior, P. Tucker, K. Yang, Q. V. Le, et al.
+                                                                            Large scale distributed deep networks. In Advances in
+   Pipeline-parallel DNN training addresses the commu-                      neural information processing systems, pages 1223–1231,
+nication overheads that bottleneck data-parallel training                   2012.
+of very large DNNs. PipeDream automatically partitions                 [11] M. Denkowski and A. Lavie. Meteor universal: Language
+and aggressively pipelines DNN training across worker                       specific translation evaluation for any target language. In
+machines. Compared to state-of-the-art approaches,                          Proceedings of the ninth workshop on statistical machine
+PipeDream is up to 5× faster in “time to target accu-                       translation, pages 376–380, 2014.
+racy” for experiments with five different DNNs on two                  [12] DGX-1. NVIDIA DGX-1. https://www.nvidia.com/
+different clusters.                                                         en-us/data-center/dgx-1/.
+                                                                       [13] J. Duchi, E. Hazan, and Y. Singer. Adaptive subgradi-
+References                                                                  ent methods for online learning and stochastic optimiza-
+ [1] M. Abadi, P. Barham, J. Chen, Z. Chen, A. Davis,                       tion. Journal of Machine Learning Research, 12(Jul):
+     J. Dean, M. Devin, S. Ghemawat, G. Irving, M. Isard,                   2121–2159, 2011.
+     M. Kudlur, J. Levenberg, R. Monga, S. Moore, D. G.                [14] P. Goyal, P. Dollár, R. Girshick, P. Noordhuis,
+     Murray, B. Steiner, P. Tucker, V. Vasudevan, P. Warden,                L. Wesolowski, A. Kyrola, A. Tulloch, Y. Jia, and K. He.
+     M. Wicke, Y. Yu, and X. Zheng. Tensorflow: A sys-                      Accurate, Large Minibatch SGD: Training ImageNet in 1
+     tem for large-scale machine learning. In 12th USENIX                   Hour. arXiv preprint arXiv:1706.02677, 2017.
+     Symposium on Operating Systems Design and Imple-
+                                                                       [15] S. Hadjis, C. Zhang, I. Mitliagkas, D. Iter, and C. Ré.
+     mentation (OSDI 16), pages 265–283, GA, 2016. URL
+                                                                            Omnivore: An optimizer for multi-device deep learning
+     https://www.tensorflow.org/.
+                                                                            on cpus and gpus. arXiv preprint arXiv:1606.04487, 2016.
+ [2] Baidu Inc.       Bringing HPC Techniques to Deep
+     Learning, 2017. URL http://research.baidu.com/                    [16] K. He, X. Zhang, S. Ren, and J. Sun. Deep residual
+     bringing-hpc-techniques-deep-learning/.                                learning for image recognition. CoRR, abs/1512.03385,
+                                                                            2015. URL http://arxiv.org/abs/1512.03385.
+ [3] D. L. Chen and W. B. Dolan. Collecting highly paral-
+     lel data for paraphrase evaluation. In Proceedings of the         [17] G. Hinton, L. Deng, D. Yu, G. E. Dahl, A. r. Mo-
+     49th Annual Meeting of the Association for Computational               hamed, N. Jaitly, A. Senior, V. Vanhoucke, P. Nguyen,
+     Linguistics: Human Language Technologies-Volume 1,                     T. N. Sainath, and B. Kingsbury. Deep neural networks
+     pages 190–200. Association for Computational Linguis-                  for acoustic modeling in speech recognition: The shared
+     tics, 2011.                                                            views of four research groups. IEEE Signal Processing
+                                                                            Magazine, 29(6):82–97, Nov 2012.
+ [4] J. Chen, R. Monga, S. Bengio, and R. Jozefowicz. Revisit-
+     ing distributed synchronous sgd. In International Confer-         [18] Q. Ho, J. Cipar, H. Cui, S. Lee, J. K. Kim, P. B. Gibbons,
+     ence on Learning Representations Workshop Track, 2016.                 G. A. Gibson, G. Ganger, and E. P. Xing. More effective
+     URL https://arxiv.org/abs/1604.00981.                                  distributed ml via a stale synchronous parallel parame-
+                                                                            ter server. In Advances in neural information processing
+ [5] T. Chen, M. Li, Y. Li, M. Lin, N. Wang, M. Wang, T. Xiao,
+                                                                            systems, pages 1223–1231, 2013.
+     B. Xu, C. Zhang, and Z. Zhang. Mxnet: A flexible and
+     efficient machine learning library for heterogeneous dis-         [19] S. Ioffe and C. Szegedy. Batch normalization: Accelerat-
+     tributed systems. CoRR, abs/1512.01274, 2015. URL                      ing deep network training by reducing internal covariate
+     http://arxiv.org/abs/1512.01274.                                       shift. In International Conference on Machine Learning,
+ [6] X. Chen, A. Eversole, G. Li, D. Yu, and F. Seide.                      pages 448–456, 2015.
+     Pipelined Back-propagation for Context-dependent Deep             [20] Y. Jia, E. Shelhamer, J. Donahue, S. Karayev, J. Long,
+     Neural Networks. In Interspeech, 2012.                                 R. Girshick, S. Guadarrama, and T. Darrell. Caffe: Con-
+ [7] T. M. Chilimbi, Y. Suzue, J. Apacible, and K. Kalyanara-               volutional architecture for fast feature embedding. arXiv
+     man. Project adam: Building an efficient and scalable                  preprint arXiv:1408.5093, 2014.
+     deep learning training system. In OSDI, volume 14, pages          [21] N. Kalchbrenner, E. Grefenstette, and P. Blunsom. A
+     571–582, 2014.                                                         convolutional neural network for modelling sentences.
+ [8] H. Cui, J. Cipar, Q. Ho, J. K. Kim, S. Lee, A. Kumar,                  CoRR, abs/1404.2188, 2014. URL http://arxiv.org/
+     J. Wei, W. Dai, G. R. Ganger, P. B. Gibbons, et al. Ex-                abs/1404.2188.
+     ploiting bounded staleness to speed up big data analytics.        [22] A. Karpathy, G. Toderici, S. Shetty, T. Leung, R. Suk-
+     In USENIX Annual Technical Conference, pages 37–48,                    thankar, and L. Fei-Fei. Large-scale video classification
+     2014.                                                                  with convolutional neural networks. In 2014 IEEE Confer-
+
+
+
+                                                                  13
+     ence on Computer Vision and Pattern Recognition, pages                   networks for large-scale image recognition. arXiv preprint
+     1725–1732, June 2014.                                                    arXiv:1409.1556, 2014.
+[23] J. K. Kim, Q. Ho, S. Lee, X. Zheng, W. Dai, G. A. Gibson,           [37] J. Snoek, H. Larochelle, and R. P. Adams. Practical
+     and E. P. Xing. STRADS: a distributed framework for                      bayesian optimization of machine learning algorithms. In
+     scheduled model parallel machine learning. In EuroSys,                   Advances in neural information processing systems, pages
+     pages 5:1–5:16, 2016.                                                    2951–2959, 2012.
+[24] D. Kingma and J. Ba. Adam: A method for stochastic                  [38] E. R. Sparks, A. Talwalkar, D. Haas, M. J. Franklin, M. I.
+     optimization. arXiv preprint arXiv:1412.6980, 2014.                      Jordan, and T. Kraska. Automating model search for large
+                                                                              scale machine learning. In Proceedings of the Sixth ACM
+[25] A. Krizhevsky. One weird trick for parallelizing convolu-
+                                                                              Symposium on Cloud Computing, pages 368–380. ACM,
+     tional neural networks. arXiv preprint arXiv:1404.5997,
+                                                                              2015.
+     2014.
+                                                                         [39] R. Thakur, R. Rabenseifner, and W. Gropp. Optimization
+[26] A. Krizhevsky, I. Sutskever, and G. E. Hinton. Imagenet                  of collective communication operations in mpich. The
+     classification with deep convolutional neural networks. In               International Journal of High Performance Computing
+     Advances in neural information processing systems, pages                 Applications, 19(1):49–66, 2005.
+     1097–1105, 2012.
+                                                                         [40] T. Tieleman and G. Hinton. Lecture 6.5-rmsprop: Divide
+[27] S. Lee, J. K. Kim, X. Zheng, Q. Ho, G. A. Gibson, and E. P.              the gradient by a running average of its recent magnitude.
+     Xing. On model parallelization and scheduling strategies                 COURSERA: Neural networks for machine learning, 4(2):
+     for distributed machine learning. In NIPS, pages 2834–                   26–31, 2012.
+     2842, 2014.                                                         [41] Uber Technologies Inc. Meet Horovod: Uber’s Open
+[28] M. Li, D. G. Andersen, J. W. Park, A. J. Smola, A. Ahmed,                Source Distributed Deep Learning Framework for Tensor-
+     V. Josifovski, J. Long, E. J. Shekita, and B.-Y. Su. Scaling             Flow, 2017. URL https://eng.uber.com/horovod/.
+     distributed machine learning with the parameter server. In          [42] L. G. Valiant. A bridging model for parallel computation.
+     OSDI, volume 1, page 3, 2014.                                            Commun. ACM, 33(8), Aug. 1990.
+[29] Y. Low, J. Gonzalez, A. Kyrola, D. Bickson, C. Guestrin,            [43] S. Venugopalan, M. Rohrbach, J. Donahue, R. Mooney,
+     and J. M. Hellerstein. Distributed graphlab: A framework                 T. Darrell, and K. Saenko. Sequence to sequence-video to
+     for machine learning in the cloud. PVLDB, 5(8):716–727,                  text. In Proceedings of the IEEE international conference
+     2012.                                                                    on computer vision, pages 4534–4542, 2015.
+[30] A. Mirhoseini, H. Pham, Q. Le, M. Norouzi, S. Bengio,               [44] O. Vinyals, A. Toshev, S. Bengio, and D. Erhan. Show
+     B. Steiner, Y. Zhou, N. Kumar, R. Larsen, and J. Dean. De-               and tell: A neural image caption generator. CoRR,
+     vice placement optimization with reinforcement learning.                 abs/1411.4555, 2014. URL http://arxiv.org/abs/
+     2017. URL https://arxiv.org/abs/1706.04972.                              1411.4555.
+[31] J. Močkus. On bayesian methods for seeking the ex-                  [45] J. Yuan, F. Gao, Q. Ho, W. Dai, J. Wei, X. Zheng, E. P.
+     tremum. In Optimization Techniques IFIP Technical Con-                   Xing, T. Liu, and W. Ma. Lightlda: Big topic models on
+     ference, pages 400–404. Springer, 1975.                                  modest computer clusters. In WWW, pages 1351–1361.
+[32] O. Russakovsky, J. Deng, H. Su, J. Krause, S. Satheesh,                  ACM, 2015.
+     S. Ma, Z. Huang, A. Karpathy, A. Khosla, M. Bernstein,              [46] ZeroMQ. Distributed Messaging. http://zeromq.org/.
+     et al. Imagenet large scale visual recognition challenge.           [47] H. Zhang, Z. Zheng, S. Xu, W. Dai, Q. Ho, X. Liang,
+     International Journal of Computer Vision, 115(3):211–                    Z. Hu, J. Wei, P. Xie, and E. P. Xing. Poseidon: An ef-
+     252, 2015.                                                               ficient communication architecture for distributed deep
+[33] F. Seide and A. Agarwal. CNTK: Microsoft’s open-source                   learning on GPU clusters. In 2017 USENIX Annual
+     deep-learning toolkit. In Proceedings of the 22Nd ACM                    Technical Conference (USENIX ATC 17), pages 181–193,
+     SIGKDD International Conference on Knowledge Dis-                        Santa Clara, CA, 2017. USENIX Association. ISBN 978-
+     covery and Data Mining, KDD ’16, pages 2135–2135,                        1-931971-38-6.
+     New York, NY, USA, 2016. URL https://github.com/
+     Microsoft/CNTK.
+[34] F. Seide, H. Fu, J. Droppo, G. Li, and D. Yu. On paralleliz-
+     ability of stochastic gradient descent for speech dnns. In
+     International Conference on Acoustics, Speech and Signal
+     Processing (ICASSP). IEEE SPS, May 2014.
+[35] F. Seide, H. Fu, J. Droppo, G. Li, and D. Yu. 1-bit stochas-
+     tic gradient descent and its application to data-parallel
+     distributed training of speech dnns. In Fifteenth Annual
+     Conference of the International Speech Communication
+     Association, 2014.
+[36] K. Simonyan and A. Zisserman. Very deep convolutional
+
+
+
+                                                                    14
+

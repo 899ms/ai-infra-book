@@ -115,7 +115,16 @@ bash book/build_pdf.sh
 
 ## 参与贡献
 
-欢迎通过 [Issues](https://github.com/bojieli/ai-infra-book/issues) 反馈勘误、提出问题，或提交 Pull Request 改进正文、配图和实验。
+书稿仍是初稿，非常欢迎读者参与改进。以下几个方向都有价值，欢迎认领：
+
+- **指出并修正错误**：数字算错、单位或量级不对、引用与原文不符、公式或图表有误。发现一处就值得提一处，[勘误 Issue](https://github.com/bojieli/ai-infra-book/issues/new?template=erratum.yml) 或直接提 PR 都可以。
+- **改写讲得不清楚的地方**：推导跳步、概念没有在首次出现时交代、例子不好懂。读不顺的地方多半是书写得不好，欢迎[提出来](https://github.com/bojieli/ai-infra-book/issues/new?template=question.yml)，也欢迎直接给出更好的写法。
+- **补充遗漏的重要内容**：某个该讲的机制、架构或权衡没有写进来。
+- **修复配套代码的 bug**：`experiments/` 的实验代码与 `calculations/` 的计算 CLI，欢迎修正错误、补充测试或改进可用性。
+- **改进网页版**：[在线阅读版](https://bojieli.github.io/ai-infra-book/)的排版、导航、搜索和移动端体验都还有提升空间。
+- **翻译**：欢迎将本书翻译为英文或其他语言，翻译前请先开 Issue 说明计划，便于协调进度、避免重复劳动。
+
+提交时请注明依据，便于核对：
 
 - **文字与公式**：注明章节、原文位置、问题及建议修改。
 - **数据与结论**：提供可查阅来源、版本、单位、假设与计算过程。

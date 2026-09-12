@@ -7,13 +7,13 @@ import hashlib,html,json,re,sys,xml.etree.ElementTree as ET
 from PIL import Image
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1];sys.path.insert(0,str(HERE.parent))
 from preview_output import preview_path
-md=HERE.parent/'08-单实例推理.md';raw=md.read_text();page=preview_path(md).read_text();errors=[];checks=0
+md=HERE.parent/'08-推理优化.md';raw=md.read_text();page=preview_path(md).read_text();errors=[];checks=0
 def check(ok,msg):
  global checks
  checks+=1
  if not ok:errors.append(msg)
 def load(p):return json.loads(p.read_text())
-outline=next(p for p in [ROOT/'outlines'/md.name,ROOT/'archive/outlines'/md.name] if p.exists()).read_text()
+outline=next(p for p in [ROOT/'outlines'/md.name,ROOT/'archive/outlines'/md.name,ROOT/'archive/outlines/08-单实例推理.md'] if p.exists()).read_text()
 check(re.findall(r'^#{2,3} (8\.\d+(?:\.\d+)?) ',raw,re.M)==re.findall(r'^#{2,3} (8\.\d+(?:\.\d+)?) ',outline,re.M),'Outline section numbering/order differs')
 check(re.findall(r'^> \*\*练习 (8-\d+)',raw,re.M)==[f'8-{i}' for i in range(1,10)],'Exercise sequence')
 check(re.findall(r'^> \*\*练习 (8-\d+) · 核心',raw,re.M)==['8-2','8-4','8-9'],'Core selection')

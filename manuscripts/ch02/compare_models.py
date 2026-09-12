@@ -7,14 +7,14 @@ p=R/'calculations/results/chapter2-model-comparison.json'
 d=json.loads(p.read_text());rows=d['models'];order=d['parameter_group_order']
 assert len(rows)==5 and rows[0]['model_id']=='deepseek-v4.1-flash'
 name=lambda x: x['model'].replace('V4.1 Flash','DeepSeek V4.1 Flash').replace('V4-Flash','DeepSeek V4-Flash')
-header='| 模型 | 嵌入与输出头 | 注意力投影 | 稠密／共享 FFN | 路由专家 | Engram | 其他 | 合计 |'
-b=[header,'| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |']
+header='| 模型 | 嵌入与输出头 | 注意力投影 | 稠密／共享 FFN | 路由专家 | Engram | 其他 |'
+b=[header,'| --- | ---: | ---: | ---: | ---: | ---: | ---: |']
 for x in rows:
- values=[x['parameter_groups'][k] for k in order]+[x['total_parameters']]
+ values=[x['parameter_groups'][k] for k in order]
  b.append('| '+name(x)+' | '+' | '.join('$<0.001$' if 0<v<500000 else f'{v/1e9:.3f}' for v in values)+' |')
-c=['| 模型 | 统一 BF16 权重（GB） | 8K prefill（TFLOPs） | 8K 上下文单步 decode（GFLOPs） | 8K 状态（MiB） | 单 token 选中路由专家的 BF16 权重（GiB） |','| --- | ---: | ---: | ---: | ---: | ---: |']
+c=['| 模型 | 8K prefill（TFLOPs） | 单 token 选中路由专家的 BF16 权重（GiB） |','| --- | ---: | ---: |']
 for x in rows:
- c.append(f"| {name(x)} | {x['uniform_bf16_bytes']/1e9:.2f} | {x['prefill_matrix_flops']/1e12:.2f} | {x['decode_matrix_flops']/1e9:.2f} | {x['state_8192_bytes']/2**20:.2f} | "+(f"{x['selected_routed_expert_bf16_bytes']/2**30:.3f}" if x['selected_routed_expert_bf16_bytes'] else '—')+' |')
+ c.append(f"| {name(x)} | {x['prefill_matrix_flops']/1e12:.2f} | "+(f"{x['selected_routed_expert_bf16_bytes']/2**30:.3f}" if x['selected_routed_expert_bf16_bytes'] else '—')+' |')
 md=H.parent/'02-模型架构.md';s=md.read_text()
 for marker,table in [('**表 2-B',b),('**表 2-C',c)]:
  start=s.index(marker);match=re.search(r'^\|.*(?:\n\|.*)*',s[start:],re.M);a=start+match.start();z=start+match.end();s=s[:a]+'\n'.join(table)+s[z:]

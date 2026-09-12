@@ -280,5 +280,5 @@ excerpt.write_text('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><met
 from book_assets import sync_figure_index
 active_assets=sync_figure_index(HERE)
 artifacts=outputs+[HERE/'figure-data.json',HERE/'figure-index.json',HERE/'teaching-layout-check.json',html_path,excerpt,md]+active_assets
-(HERE/'manifest.json').write_text(json.dumps({'chapter':5,'generator':'manuscripts/ch05/build.py','figures':len(figure_refs),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
+(HERE/'manifest.json').write_text(json.dumps({'chapter':5,'generator':'manuscripts/ch05/build.py','figures':len(figure_refs),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts if not (p.parent==ROOT/'manuscripts' and re.match(r'^[01][0-9]-',p.name))]},ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(outputs)} figure files, {len(maths)} equations and offline HTML; {len(warnings)} layout warnings.')

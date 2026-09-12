@@ -599,95 +599,95 @@ def sync() -> dict:
            '[只读一次](../calculations/results/remote-state-once.md)直接远程较快，严格获益从两次复用开始；[仅128个活跃请求](../calculations/results/remote-state-window-limited.md)时窗口限制改变选择。'
            '[本地仅余128MiB](../calculations/results/remote-state-capacity.md)放不下快照，不能选择搬回，即使时间估计更短。运行 `python3 calculations/calc.py remote-state --format md` 复算。场景只读不变历史快照，不冒充动态decode；网络与目的端写入按指定串行组织计时，实际DMA重叠、发布同步、取消与回收仍需路径校准。',
            '> **图 7-4')
-    insert('08-单实例推理.md', 'C43-kv-pages',
+    insert('08-推理优化.md', 'C43-kv-pages',
            '[KV分页与引用计数](../calculations/results/kv-pages-branches.md)按官方Qwen3-8B每token 144KiB、16-token页2.25MiB计算。17-token前缀共享给三请求，a追加1、b追加16，再取消c：最终a/b长18/33，预留64-token/请求需18MiB，独占分页11.25MiB，共享分页9MiB；唯一有效35-token为5160960 bytes，空位29-token为4276224 bytes。'
            '两次共享未满尾页写前分别复制1-token，共288KiB有效内容；[16-token对齐前缀](../calculations/results/kv-pages-aligned.md)追加时新建页，无需复制已满页。[Qwen235变体](../calculations/results/kv-pages-qwen235.md)用188KiB/token重算；[全部取消](../calculations/results/kv-pages-release.md)归还所有页。'
            '运行 `python3 calculations/calc.py kv-pages --format md` 查事件和字节，JSON保留页表及引用。逻辑请求总和、物理唯一有效和完整页分配分别计算，碎片不能用分配减逻辑请求总和。cancel发生于无在途访问的安全点，不代表真实异步取消API返回就可回收；真实引擎COW也可能复制整页。',
            '> **实验 8-3')
-    insert('08-单实例推理.md', 'C43-kv-page-capacity',
+    insert('08-推理优化.md', 'C43-kv-page-capacity',
            '[有限页池准入](../calculations/results/kv-pages-capacity-two.md)给Qwen8B两个16-token页共4.5MiB：17-token前缀可以共享给三请求，但后续a+1需额外1页、b+16需额外2页，均完整拒绝，原页表／长度／引用不变。'
            '[三个页预算](../calculations/results/kv-pages-capacity-three.md)允许第一项追加，第二项仍拒绝。[取消后重试](../calculations/results/kv-pages-capacity-retry.md)先拒绝共享尾页写入，取消另一引用后虽然未释放物理页，尾页变成独占，重试可原地追加且复制为零。'
            '[同4.5MiB预算换Qwen235](../calculations/results/kv-pages-capacity-qwen235.md)只能容纳一个2.9375MiB页，17-token创建被拒绝。JSON输入加capacity_bytes复算，不能把共享当下省页等同未来增长保证；本例不自动抢占、重算或排队重试。',
            '> **实验 8-3')
-    insert('08-单实例推理.md', 'C43-kv-trace',
+    insert('08-推理优化.md', 'C43-kv-trace',
            '[真实KV块复算](../calculations/results/kv-trace-small.md)读取实验8-3封存21文件，官方Qwen每16-token块2.25MiB。small池455块、保留1块、请求峰值454；[large](../calculations/results/kv-trace-large.md)池910块、请求峰值512。逐快照核对空闲＋请求拥有＋保留＝总块数及无重复／引用为1。'
            'small一次抢占时保留270个输出、computed清零、块归还；累计调度9993位置，相对large的8188多1805，最终输出完全一致。该重复位置不是额外输出，也未直接折算成等成本FLOPs。'
            '[取消记录](../calculations/results/kv-trace-cancel.md)实际释放104块，即234MiB容量；finish_after观察比API返回晚约29.858ms，不能据返回时刻提前复用。运行 `python3 calculations/calc.py kv-trace --run cancel --format md` 复算。每条件仅一次、带同步trace且共享GPU；APC关闭，未测共享前缀COW或无观测取消时延。',
            '> **实验 8-3')
-    insert('08-单实例推理.md', 'C43-kv-restore',
+    insert('08-推理优化.md', 'C43-kv-restore',
            '[保留、换出与重算](../calculations/results/kv-restore-book.md)用官方Qwen1024-token 144MiB KV，标准backbone无lm_head重放14534471319552矩阵FLOPs，另列标量／特殊运算；原始int32 token ID为4096 bytes。教学双向25GB/s各加10us启动，单向6.049798ms；20ms后使用时可预取赶上，释放本地容量约7.900404ms，双向搬运288MiB。'
            '若独立给定重算50ms，则20ms期限需额外等待30ms，重算从0开始预留KV，不能把这50ms当空闲容量。[100ms窗口](../calculations/results/kv-restore-long-window.md)可推迟到50ms才重算，无恢复等待；[5ms窗口](../calculations/results/kv-restore-short-window.md)连换出取回也赶不上。'
            '[主机仅128MiB](../calculations/results/kv-restore-host-capacity.md)不能容纳完整快照。运行 `python3 calculations/calc.py kv-restore --format md` 查三策略。时间为显式服务输入，FLOPs不直接除峰值预测；保留KV占用其它请求容量的机会成本、未知复用时刻及完整淘汰策略仍需另算。',
            '> **实验 8-3')
-    insert('08-单实例推理.md', 'C43-prefix-value',
+    insert('08-推理优化.md', 'C43-prefix-value',
            '[前缀容量价值](../calculations/results/prefix-value-book.md)用三个独立Qwen前缀512/768/1024token、各预期复用一次、各请求另有1-token suffix，官方full前向减命中后suffix前向计矩阵节省。180MiB预算下密度贪心只选1024token，占144MiB、省14534471319552 FLOPs；精确选择512+768占180MiB、省18032797679616 FLOPs，多省3498326360064。'
            '[复用次数变化](../calculations/results/prefix-value-reuse.md)将1024前缀预期复用改为3次会改变选择；[容量充足](../calculations/results/prefix-value-roomy.md)和[零容量](../calculations/results/prefix-value-no-capacity.md)另列。'
            '运行 `python3 calculations/calc.py prefix-value --format md` 复算，支持有理数预期次数和页尾取整。命中历史仍参加suffix注意力；本例候选不相互包含、不共享物理页，最优仅针对静态矩阵工作目标，不代表前缀树、取回延迟或在线淘汰最优。',
            '> **实验 8-4')
-    insert('08-单实例推理.md', 'C43-apc-trace',
+    insert('08-推理优化.md', 'C43-apc-trace',
            '[真实Agent APC复算](../calculations/results/apc-trace-cache6.md)从实验8-4封存17文件核对五条件60次请求：固定12轮输入19556token，6GiB命中16304，按请求为11/12、按token为4076/4889。官方矩阵工作284309306474496→48184267112448 FLOPs，节省236125039362048；suffix仍对历史做注意力。'
            '[相同干扰下1GiB](../calculations/results/apc-trace-pressure1.md)命中零，[6GiB](../calculations/results/apc-trace-pressure6.md)保留16304命中；[0.2秒间隔](../calculations/results/apc-trace-gap6.md)命中不变，[关闭APC](../calculations/results/apc-trace-nocache6.md)为零。'
            '运行 `python3 calculations/calc.py apc-trace --run pressure6 --format md` 查逐轮工作与实测TTFT。每轮仅生成1token、没有重跑工具；累计复用KV逻辑字节2404122624不是物理驻留峰值。Agent、干扰和整段时间分列，单次共享GPU串行回放不证明在线TTL或混合排队收益。',
            '> **实验 8-4')
-    insert('08-单实例推理.md', 'C45-kv-quality',
+    insert('08-推理优化.md', 'C45-kv-quality',
            '[真实BF16 KV](../calculations/results/kv-quality-bf16.md)、[原FP8路径](../calculations/results/kv-quality-fp8.md)、[FP8 KV＋BF16 Q控制](../calculations/results/kv-quality-fp8_qbf16.md)导入实验8-8的25封存文件，核对三组各97调用／64正式请求、文档答案、独立校准与scale冻结，控制组实际36层Q为BF16且KV scale匹配。自然精确答案28/32、26/32、28/32，只有八个不同任务，不能按32独立样本解释。'
            '全部正式自然输出46token并stop，无长度截断；固定64输出另计时。长文档四并发自然正确6/8、4/8、6/8，但同总分仍有失败身份变化；JSON保留逐请求判定与跨格式差异。'
            '实际BF16／FP8池5461／10922块、87376／174752token槽，三组唯一storage均12884115456bytes；固定12GiB预算下FP8扩槽，不是实际分配减半。运行 `python3 calculations/calc.py kv-quality --run fp8_qbf16 --format md` 查分条件质量与时间；原FP8还改变Q量化，不能把差异全部归于KV位宽。共享GPU、两轮与Q回调开销限制时间排名，未含修正失败答案成本。',
            '> **实验 8-8')
-    insert('08-单实例推理.md', 'C45-weight-offload',
+    insert('08-推理优化.md', 'C45-weight-offload',
            '[九层FFN卸载](../calculations/results/weight-offload-book.md)用官方Qwen8每层150994944参数／288MiB，卸载层3/7/…/35共2.53125GiB，一组缓冲扣后净省2.25GiB、等于两条8K KV。[两组缓冲](../calculations/results/weight-offload-two-slots.md)净省1.96875GiB、只够一条并余0.84375GiB。'
            '教学24GiB/s单向链路每forward复制105468750ns，各层计算1ms时安全预取一／两槽完整完成114468750／106468750ns，对照纯计算36ms；更多槽不减少复制字节。'
            '[384GiB/s](../calculations/results/weight-offload-fast-link.md)、[双pass环回](../calculations/results/weight-offload-wrap.md)、[batch4](../calculations/results/weight-offload-batch4.md)、[2048-token prefill](../calculations/results/weight-offload-prefill.md)分别改变供给／生命周期／摊销。运行 `python3 calculations/calc.py weight-offload --format md` 查逐层复制和消费时刻；同槽下次复制等待前次消费层结束，首轮填充与末层消费都计入。时间为教学独立资源调度，不证明真实prefetch／UVA重叠，重复pass不是历史增长请求。',
            '> **实验 8-7')
-    insert('08-单实例推理.md', 'C45-kv-codec',
+    insert('08-推理优化.md', 'C45-kv-codec',
            '[KV实际块格式](../calculations/results/kv-codec-book.md)按官方GQA与GGML每32值Q8_0=34bytes、Q4_0=18bytes，Qwen8 8K BF16/Q8_0/Q4_0分别1152/612/324MiB，scale元数据不可省略。教学有效带宽1TB/s、解码固定100us＋每值0.001ns、新增编码20us，Q4融合省144347.136ns，Q8反而多157679.616ns。'
            'Q4长历史持续获益从3717位置开始，[1K历史](../calculations/results/kv-codec-short.md)不够；[更低转换成本](../calculations/results/kv-codec-cheap-conversion.md)及[Qwen235几何](../calculations/results/kv-codec-qwen235.md)另列。物化解码另加完整BF16历史一次写／一次读及buffer，不能套融合流量。'
            '运行 `python3 calculations/calc.py kv-codec --format md` 查看码值／scale、追加、路径成本和精确盈亏区间。时长输入为教学假设，量化存储不等于Attention执行精度；未验证质量、真实后端或GPU转换速度。',
            '> **实验 8-8')
-    insert('08-单实例推理.md', 'C45-gguf-layout',
+    insert('08-推理优化.md', 'C45-gguf-layout',
            '[实际Q2_K文件头](../calculations/results/gguf-layout-q2k.md)与[Q4_K_M文件头](../calculations/results/gguf-layout-q4km.md)读取五分片，逐一匹配官方Qwen235的1131张量、235093634560参数。Q2_K实际混用F32/Q2_K/Q3_K/Q4_K/Q6_K，Q4_K_M混用F32/Q4_K/Q6_K；名称不等于全模型位宽。'
            '按固定GGML官方块结构：每256值Q2_K84bytes（64码值+20尺度／最小值）、Q3_K110、Q4_K144、Q6_K210。Q2_K张量载荷85684996096bytes，其中尺度元数据16506720256，文件头／padding另6006016；Q4_K_M载荷142148069376，其中尺度元数据14985244672，头／padding另6006112。'
            '运行 `python3 calculations/calc.py gguf-layout --variant Q4_K_M --format md` 查实际类型和逐片字节守恒，JSON保留每张量形状／类型／offset。只保存头部、未核验完整量化载荷或运行解包；参数完整不证明质量，文件布局不代表运行时重打包驻留。',
            '> **实验 8-7')
-    insert('08-单实例推理.md', 'C45-gguf-inventory',
+    insert('08-推理优化.md', 'C45-gguf-inventory',
            '[Qwen235实际GGUF清单](../calculations/results/gguf-inventory-8k.md)锁定量化发布者unsloth revision09e11417的19变体72分片，逐片核对序号集合及API／LFS大小。Q2_K两片合85691002112bytes，UD-Q2_K_XL为88014818560，Q4_K_M三片合142154075488；不能用变体名称位宽乘参数量代替这些总文件字节。'
            '教学96×10^9总预算扣8GiB预留后87410065408bytes；官方Qwen235 BF16每KV token192512bytes，8K单请求1577058304bytes，整文件各占一份预算的情景下Q2_K仅余1请求，UD-Q2_K_XL文件本身已超预算。'
            '[32K](../calculations/results/gguf-inventory-32k.md)、[不扣预留](../calculations/results/gguf-inventory-no-reserve.md)、[192GB预算](../calculations/results/gguf-inventory-192gb.md)另列；运行 `python3 calculations/calc.py gguf-inventory --format md` 查逐片大小与发布LFS哈希。这里只下载目录元数据，未核验完整载荷；文件字节不等于mmap实际驻留／重打包副本，预留不是实测；Q2_K／Q4_K_M张量类型与文件头开销另见GGUF布局复算。',
            '> **实验 8-7')
-    insert('08-单实例推理.md', 'C46-service-replay',
+    insert('08-推理优化.md', 'C46-service-replay',
            '[真实交付SLO复算](../calculations/results/service-replay-chunk512.md)从实验8-2四组72请求锁定13文件，逐项核对输入、运行源码、配置差异与完整输出token一致。新增教学阈值TTFT≤300ms、E2E≤2000ms、客户端平均TPOT≤20ms，同一请求联合判断；每组18请求、2016输出。'
            '[chunk8192](../calculations/results/service-replay-chunk8192.md)、[nochunk8192](../calculations/results/service-replay-nochunk8192.md)、[graph512](../calculations/results/service-replay-graph512.md)与chunk512的达标数分别13／13／8／9；各组计时达标吞吐分别1.917974／1.876872／1.070820／1.193452请求/秒。'
            '分母为各轮最早实际提交到最后输出的窗口之和，排除轮间休息和启动，不能等权平均每轮速率。运行 `python3 calculations/calc.py service-replay --format md` 查逐请求／逐轮；平均TPOT不是逐token尾延迟，交付事件可能合并，客户端与引擎时钟各自相减。这里只评估计时条件，未证明任务质量或生产SLO，共享GPU固定执行顺序也不支持微小差异的稳定胜负。',
            '> **实验 8-9')
-    insert('08-单实例推理.md', 'C42-iteration-batching',
+    insert('08-推理优化.md', 'C42-iteration-batching',
            '[固定批次](../calculations/results/iteration-batching-fixed.md)、[连续补位](../calculations/results/iteration-batching-continuous.md)、[decode优先分块](../calculations/results/iteration-batching-chunked.md)复放相同4请求，官方Qwen8工作2636833882112矩阵FLOPs、188已计算输入位置和16输出保持一致。固定／连续／分块分别12／8／12迭代，教学完成317004／277004／317004ns，最大ITL12146／147274／28945ns；连续补位让长prefill更早进入，同时扩大短decode间隔。'
            '教学步成本为10000ns＋新token数×1000ns＋有效因果配对数×1ns，不是GPU校准。分块预算32、单prefill块最多16、活跃最多2；只在迭代边界接纳，固定批次整组结束再补位。'
            '[20MiB KV准入](../calculations/results/iteration-batching-capacity.md)按prompt+output-1预留、FIFO不绕过队首；实际KV每步分配新行、结束请求释放，最新输出仍pending。运行 `python3 calculations/calc.py iteration-batching --format md` 查逐步计划及请求TTFT／ITL；不把教学时间或输出数量一致当作真实吞吐／质量证据。',
            '> **实验 8-2')
-    insert('08-单实例推理.md', 'C42-batch-reuse',
+    insert('08-推理优化.md', 'C42-batch-reuse',
            '[H100／2K batch账](../calculations/results/batch-reuse-h100-2k.md)按官方Qwen8 BF16完整权重16381470720bytes、理想每批共享读取15136811008bytes（embedding逐请求查行）、KV每token147456bytes。扫描1/4/16/64，2K旧KV读达到共享权重需batch51，8K需13；这不同于计算／带宽交叉点。'
            '[H100／8K](../calculations/results/batch-reuse-h100-8k.md)、[4090／2K](../calculations/results/batch-reuse-4090-2k.md)、[4090／8K](../calculations/results/batch-reuse-4090-8k.md)严格选BF16输入／FP32累加／dense Tensor峰值，四场景均无有限计算主导交叉点。标称80／24GB、workspace=0时2K容量上限210／25，8K为52／6；不可行行不给可运行吞吐。'
            '[无历史对照](../calculations/results/batch-reuse-no-history.md)另算交叉点；运行 `python3 calculations/calc.py batch-reuse --format md` 查逐batch矩阵、KV和节省权重读取。理想权重读一次／旧KV读一次，未计中间激活及tile重读，容量不代表实际引擎可用，资源下界不代表TTFT或SLO。',
            '> **实验 8-1')
-    insert('08-单实例推理.md', 'C42-chunk-history',
+    insert('08-推理优化.md', 'C42-chunk-history',
            '[固定块长的实测与工作复算](../calculations/results/chunk-history-book.md)核对实验8-2补测15个封存文件，11次8K请求共176个512-token块、另排除11次空execute。首／末块有效因果配对131328／4063488（5291/171倍），官方backbone矩阵7189926248448／9509208588288 FLOPs（62977/47617倍），实测区间中位25.300640／35.070015ms。'
            '配对末／首比例中位1.388425，与两个中位数之比1.386132分列；16块矩阵和133593078693888等于整段8K工作。运行 `python3 calculations/calc.py chunk-history --format md` 查逐历史位置，JSON保留176个样本。CUDA event覆盖execute_model而非纯attention；外部logits／采样不计，采用head=none矩阵账。共享GPU单引擎重复，历史／内容／末块处理并未独立控制，不把配对比例当作访存或时间比例。',
            '> **实验 8-2')
-    insert('08-单实例推理.md', 'C44-dflash-work',
+    insert('08-推理优化.md', 'C44-dflash-work',
            '[官方DFlash草稿账](../calculations/results/dflash-work-book.md)固定z-lab/Qwen3-8B-DFlash-b16 revision9b41424b，配置与58张量头逐项匹配：独立草稿1048626432参数、BF16权重2097252864bytes；目标embedding与输出头共享，不能重复算独立参数。5层目标特征先经20480→4096融合，5个草稿层使用非因果块注意力。'
            '已有1020行草稿KV、新目标特征4行、块长16（15个候选）时，新增特征163840bytes，草稿矩阵51909754880 FLOPs含共享输出头，目标验证251923005440 FLOPs。草稿KV每context token20480bytes，峰值21299200，丢弃16行噪声KV327680后保留20971520bytes。'
            '[首轮1024特征](../calculations/results/dflash-work-first.md)、[块长4](../calculations/results/dflash-work-block4.md)、[32K上下文](../calculations/results/dflash-work-long.md)另列。运行 `python3 calculations/calc.py dflash-work --format md` 查M/K/N和逻辑operand尺寸。只下载配置、实现与权重头，未下载完整权重或执行GPU；非矩阵算术、实际HBM、采样质量和时长仍待核。',
            '> **实验 8-5')
-    insert('08-单实例推理.md', 'C44-speculative-budget',
+    insert('08-推理优化.md', 'C44-speculative-budget',
            '[有限输出预算](../calculations/results/speculative-budget-book.md)固定16输出、普通decode1ms/token，草稿1/2/4的教学轮成本1.1/1.25/1.5ms，显式连续接受直方图对应条件接受3/4，首次准备2ms。逐状态选择的期望完成10.202356ms，固定4草稿10.580953ms，普通decode16ms；已准备且剩余1/2/3/至少4输出时分别选择普通decode／1／2／4草稿。'
            '[单输出](../calculations/results/speculative-budget-short.md)不启动草稿，[准备2秒](../calculations/results/speculative-budget-expensive-setup.md)选择普通decode，[零准备成本](../calculations/results/speculative-budget-prepared.md)另列。'
            '运行 `python3 calculations/calc.py speculative-budget --format md` 查看逐剩余长度的动作、期望时长与固定策略。状态包含是否已准备，只在首次起草计setup；末轮截断不撤销已执行工作。小规模全部策略枚举独立核对Bellman结果。最优仅针对给定平稳成本／分布和固定输出上限，不代表真实模型在线学习、随机EOS或完整Agent任务速度。',
            '> **实验 8-5')
-    insert('08-单实例推理.md', 'C44-speculative-sampling',
+    insert('08-推理优化.md', 'C44-speculative-sampling',
            '[拒绝采样精确枚举](../calculations/results/speculative-sampling-book.md)使用教学目标p=(1/2,1/3,1/6)、草稿q=(1/6,1/3,1/2)，接受质量之和2/3；拒绝后从归一化正残差(1,0,0)采样，输出逐项等于p。若拒绝后直接从原p重采样，输出为(1/3,4/9,2/9)，总变差1/6。'
            '[全接受](../calculations/results/speculative-sampling-equal.md)、[不相交支持](../calculations/results/speculative-sampling-disjoint.md)、[零提议概率](../calculations/results/speculative-sampling-zero-proposal.md)单列不可达分支。运行 `python3 calculations/calc.py speculative-sampling --format md`；225组有理数分布对穷举通过。这里只验证固定前缀单步概率质量，真实多token采样器、浮点实现和固定草稿检查点仍待验证。',
            '> **实验 8-5')
-    insert('08-单实例推理.md', 'C44-speculative-round',
+    insert('08-推理优化.md', 'C44-speculative-round',
            '[投机单轮收支](../calculations/results/speculative-round-book.md)用官方Qwen目标、history1024、每轮4草稿，连续接受0/1/2/3/4的次数2/1/1/2/4：十轮起草40、接受25，草稿接受率5/8，平均接受2.5，包含补偿／额外token后平均交付3.5。教学起草40us＋验证100us＋提交10us，对照50us/token，整体42.857143us/token、速度比7/6；逐轮time/token等权平均62us不能替代总时间/总产出。'
            '目标验证5行含待处理token，单轮78709719040矩阵FLOPs；十轮验证787097190400，对照同35输出串行550959775744。保留最新输出仍待处理的状态约定，新增5条KV按实际交付数保留，其余回滚。'
            '[剩余输出上限1](../calculations/results/speculative-round-output-limit.md)每轮只交付1，验证工作不减，速度比1/3；[昂贵草稿](../calculations/results/speculative-round-expensive-draft.md)和[零接受](../calculations/results/speculative-round-no-accept.md)另列。运行 `python3 calculations/calc.py speculative-round --format md` 复算。直方图和时长是教学输入，未实现拒绝采样或固定DFlash/EAGLE草稿模型。',

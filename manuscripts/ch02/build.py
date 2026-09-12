@@ -253,6 +253,6 @@ html_path=preview_path(HERE.parent/'02-模型架构.html');html_path.write_text(
 from book_assets import sync_figure_index
 active_assets=sync_figure_index(HERE)
 artifacts=out+[HERE/'figure-data.json',HERE/'model-comparison.json',HERE/'model-comparison.md',HERE/'comparison-v4-decode.json',HERE/'long-context-comparison.json',HERE/'compare_long_context.py',html_path,md]+active_assets
-manifest={'chapter':2,'generator':'manuscripts/ch02/build.py','font_family':family,'figures':len(re.findall(r'!\[',raw)),'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]}
+manifest={'chapter':2,'generator':'manuscripts/ch02/build.py','font_family':family,'figures':len(re.findall(r'!\[',raw)),'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts if not (p.parent==ROOT/'manuscripts' and p.suffix=='.md' and p.name[:2].isdigit())]}
 (HERE/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(out)} figure files and reading HTML.')

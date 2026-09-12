@@ -159,5 +159,5 @@ hp=preview_path(md);hp.write_text(page)
 from book_assets import sync_figure_index
 active_assets=sync_figure_index(HERE)
 artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',HERE/'figure-catalog.json',hp,md]+active_assets
-(HERE/'manifest.json').write_text(json.dumps({'chapter':12,'generator':'manuscripts/ch12/build.py','figures':len(teaching_checks),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
+(HERE/'manifest.json').write_text(json.dumps({'chapter':12,'generator':'manuscripts/ch12/build.py','figures':len(teaching_checks),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts if not (p.parent==ROOT/'manuscripts' and re.match(r'^[01][0-9]-',p.name))]},ensure_ascii=False,indent=2)+'\n')
 print(json.dumps({'figures':len(teaching_checks),'maths':len(maths),'layout_warnings':len(layout),'html':str(hp)},ensure_ascii=False))

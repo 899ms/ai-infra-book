@@ -222,6 +222,9 @@ def markdown(result: dict) -> str:
     if result.get("calculation") == "scaling-law":
         from .topics.scaling_law import markdown as scaling_markdown
         return scaling_markdown(result)
+    if result.get("calculation") == "split-reduction-order":
+        from .topics.reduction_order import markdown as render
+        return render(result)
     if result.get("calculation") == "ub-scope":
         return ub_scope_markdown(result)
     scenario = dict(result['scenario'])

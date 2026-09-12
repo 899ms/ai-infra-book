@@ -102,10 +102,20 @@ dag=figdata['5-16'];computed=[dag['prepare_us']+max(h,dag['branch_B_us'])+dag['f
 check(computed==dag['completion_us']==[80,60],'critical path diagram')
 check(10+max(15,90)+10==110,'contention scenario')
 # Check the new mechanism diagrams against the equations used in the text.
-check(set(figdata)=={f'5-{i}' for i in range(1,18)}|{'reuse_steps','tile_working_set','tile_residency','fusion_path','buffer_slots','attention_storage','sm_residency','warp_pipeline'},'complete stable figure data identifiers')
+check(set(figdata)=={f'5-{i}' for i in range(1,18)}|{'reuse_steps','tile_working_set','tile_residency','fusion_path','buffer_slots','attention_storage','sm_residency','warp_pipeline','reduction_order'},'complete stable figure data identifiers')
 bank=figdata['5-3']
 check([len(set(x)) for x in bank['column_banks']]==[1,32],'bank conflict versus distributed requests')
+place={'stride32':lambda r,c:r*32+c,'stride33':lambda r,c:r*33+c,'swizzle':lambda r,c:r*32+(c^r)}
+columns={k:{len({f(r,c)%32 for r in range(32)}) for c in range(32)} for k,f in place.items()}
+check(columns=={'stride32':{1},'stride33':{32},'swizzle':{32}},'swizzle spreads a column like padding does')
+check((32*33*4,32*32*4)==(4224,4096),'padding costs the bytes quoted in the text')
 check(figdata['5-4']['segments']*figdata['5-4']['partial_elements']==4096,'split reduction covers one row')
+order=figdata['reduction_order'];reduction=json.loads((ROOT/'calculations/results/reduction-order.json').read_text())
+check(order['splits']==[1,2,4,8,16,32] and order['width']==4096,'reduction order ladder covers one row')
+check([round(v,1) for v in order['offset_ulp'][:4]]==[-175.2,-109.2,-55.2,-9.2],'reduction order distances quoted in the text')
+check(order['total_ulp_gap']==166 and order['scale_ulp_gap']==-59 and order['first_output_ulp_gap']==-50,'partition shift propagates to scale and output')
+check((order['merge_orders'],order['distinct_merge_results'])==(math.factorial(8),3),'every merge order of eight partial sums')
+check(reduction['associativity']['left']==1.0 and reduction['associativity']['right']==1.0+2.0**-23,'associativity counterexample separates the groupings')
 check(np.allclose(figdata['5-4']['traffic_MiB'],[fused_bytes/2**20,split_bytes/2**20]),'reduction diagram traffic')
 for b,a,traffic,updates in zip(*[figdata['5-8'][k] for k in ['kv_rows','q_rows','traffic_MiB','updates']]):
  check(updates==math.ceil(8192/a)*math.ceil(8192/b),'attention diagram update counts')

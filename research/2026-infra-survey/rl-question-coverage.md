@@ -11,13 +11,13 @@
 | 3 精度取舍 | 4.2、8.4、10.1 | 已有入口。存储、计算和累加格式分开，不能只按位宽推荐训练精度。 |
 | 4 rollout 长尾 | 10.5；[选择与迁移](../../case-studies/rollout-tail-and-sampling.md) | 已有入口。时间、槽位占用、保留样本分布分别比较。 |
 | 5 连续批处理的 RL 影响 | 8.1→10.5；[数值与概率身份](../../case-studies/rl-state-and-reproducibility.md) | 已有入口。不能用固定 seed 代替跨形状、跨引擎验证。 |
-| 6 利用率与 KV 使用 | 8.2、10.6、13.1；[有效进展](../../case-studies/kernel-and-fleet-efficiency.md) | 已有入口。池预留、有效页、前缀命中、设备活动和学习进展不是一个比值。 |
+| 6 利用率与 KV 使用 | 8.2、10.6；[有效进展](../../case-studies/kernel-and-fleet-efficiency.md) | 已有入口。池预留、有效页、前缀命中、设备活动和学习进展不是一个比值。 |
 | 7 多机反向 | 10.2–10.3 | 有基础入口；本轮没有完整核对一个 RL 配方的全部训练通信与梯度归约。 |
 | 8 异步训练的同步限制 | 10.5、11.3；[阶段调度](../../case-studies/rl-scheduling-and-recovery.md) | 已有入口。比较阶段能力和必要依赖，不增加异步框架名称清单。 |
 | 9 旧策略 KV | 10.5；[状态版本](../../case-studies/rl-state-and-reproducibility.md) | 已有入口。保留轨迹、重建 KV、保留旧策略三者分别计量。 |
 | 10 EP 吞吐 | 6.3→9.4；[专家工作](../../case-studies/moe-and-startup.md) | 已有入口。活跃专家并集、热点、padding 与复制一起计量。 |
 | 11 长上下文的并行与重叠 | 10.2–10.3；[长度与通信](../../case-studies/training-compute.md) | 已有入口。Megatron SP、CP 与 Ulysses 的词义按实现区分。 |
-| 12 确定性 | 5.1→8.1→10.5；[数值案例](../../case-studies/rl-state-and-reproducibility.md) | 已有入口。atomic add 不是唯一来源，确定性条件不能外推全部版本。 |
+| 12 确定性 | 5.2.4 归约次序→8.1→10.5.3；[数值案例](../../case-studies/rl-state-and-reproducibility.md) | 2026-09-12 补：5.2.4 用一行 4096 元素给出切分档位相差 166 ULP、8 个局部和的 40,320 种合并次序只有 3 个结果，并说明档位随 batch 变化。atomic add 不是唯一来源，确定性条件不能外推全部版本。 |
 | 13 AReaL 与 slime 的瓶颈判断 | 10.5；[slime 补读](../../references/framework-history/2026-09-09/slime-dataflow/NOTES.md) | 已有同任务阶段预算对照，见状态案例；不把框架名称当执行模式。尚未测量两套真实配置，不代表 slime 的所有异步模式。 |
 | 14 样本滞后 | 10.5；[状态与准入](../../case-studies/rl-state-and-reproducibility.md) | 原理已有入口；没有足够依据给统一“典型值”。实际阈值应绑定算法、版本和质量目标。 |
 | 15 slime 数据流与 loss | 10.2、10.5；[固定源码](../../references/framework-history/2026-09-09/slime-dataflow/NOTES.md) | 部分闭合。已读同步入口、局部 reducer 和训练交接；默认 Megatron 的 CP1 普通 DP 缩放已用源码与标量算式核对；实际数据分派和特殊配置尚未完整核对。 |

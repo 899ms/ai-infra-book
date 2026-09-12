@@ -79,6 +79,6 @@ def calculate(declared_noise_scale_tokens=2 * 10**6, reference_sequences_per_ste
                 assumptions=[
                     '关系式取自归档 scaling-laws 文本对 McCandlish 等人结果的转述：(S/S_min-1)(E/E_min-1)=1；B_noise 为声明输入，未对本章模型实测。',
                     '参考运行（每步 384×8192 token、共 100B token）视为恰好达到目标：由 S_ref 与 B_ref 反推 S_min 与 E_min，其他批量的步数与样本数按关系式换算。',
-                    '弱扩展：每卡固定微批数，批量随卡数增长，每步时间不变（取本章 48 卡的 56.7 s）；强扩展：批量固定，计算时间按卡数反比缩放，通信与输入等待 4.5 s 不变。两者都不含并行效率变化。',
+                    f'弱扩展：每卡固定微批数，批量随卡数增长，每步时间不变（取参考运行的 {float(step):.2f} s）；强扩展：批量固定，计算时间按卡数反比缩放，通信与输入等待 {float(overhead):.2f} s 不变。两者都不含并行效率变化。',
                     '弱扩展加速上限 = S_ref/S_min，是数据并行扩大批量的天花板；不代表学习率调度、warmup 或质量变化。',
                 ])

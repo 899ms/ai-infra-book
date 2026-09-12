@@ -228,5 +228,5 @@ html_path=preview_path(HERE.parent/'03-推理与训练负载.html');html_path.wr
 from book_assets import sync_figure_index
 active_assets=sync_figure_index(HERE)
 artifacts=outputs+[HERE/'figure-data.json',html_path,md]+active_assets
-(HERE/'manifest.json').write_text(json.dumps({'chapter':3,'generator':'manuscripts/ch03/build.py','figures':len(re.findall(r'!\[',raw)),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
+(HERE/'manifest.json').write_text(json.dumps({'chapter':3,'generator':'manuscripts/ch03/build.py','figures':len(re.findall(r'!\[',raw)),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts if not (p.parent==ROOT/'manuscripts' and re.match(r'^[01][0-9]-',p.name))]},ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(outputs)} figure files and reading HTML; {len(extent_issues)} text extent warnings.')

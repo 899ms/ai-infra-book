@@ -230,35 +230,6 @@ for a,vals,title,ylabel,col in [(axs[1,0],measure_tp,'C  实测：整批吞吐�
  for i,v in enumerate(vals):a.annotate(f'{v:.2f}',(i,v),xytext=(0,10),textcoords='offset points',ha='center',fontsize=10)
 save(fig,'figure-1-5-budget')
 
-# 1-4: three bounded design motifs, not vendor microarchitectures.
-fig,ax=canvas(8.6)
-cols=[(.05,'TPU','新增模型工作增长','重新配置专用资源','blue'),(.37,'SmartNIC','网络处理占用 CPU','改变处理位置','teal'),(.69,'Unified Bus','模型与状态需要多设备','扩大协作范围','orange')]
-for x,title,motive,action,color in cols:
- box(ax,x,.175,.26,.655,'',color='pale')
- ax.text(x+.13,.785,title,ha='center',fontsize=18,weight='bold',color=C[color]);ax.text(x+.13,.728,motive,ha='center',fontsize=11)
- ax.text(x+.13,.663,action,ha='center',fontsize=12,weight='bold')
-# TPU schematic: model work to accelerator, onchip compute/storage relation.
-x=.05
-box(ax,x+.045,.535,.17,.064,'模型工作',size=11)
-arrow(ax,(x+.13,.526),(x+.13,.49),'blue')
-box(ax,x+.025,.35,.21,.132,'专用加速器','计算阵列 ↔ 数据缓冲',color='light',size=12)
-# NIC change paths.
-x=.37
-ax.text(x+.025,.595,'原路径',fontsize=10,color=C['muted'])
-box(ax,x+.025,.52,.072,.055,'网卡',size=10);box(ax,x+.153,.52,.082,.055,'CPU',size=10)
-arrow(ax,(x+.10,.547),(x+.147,.547));ax.text(x+.194,.493,'网络处理',ha='center',fontsize=9)
-ax.text(x+.025,.45,'新路径',fontsize=10,color=C['muted'])
-box(ax,x+.025,.36,.102,.07,'SmartNIC','部分处理',size=10)
-box(ax,x+.176,.36,.06,.07,'CPU',size=10);arrow(ax,(x+.13,.395),(x+.171,.395))
-# UB conceptual resources via interconnect.
-x=.69
-for dx,title in [(.028,'设备 A'),(.158,'设备 B')]:box(ax,x+dx,.53,.076,.06,title,size=10)
-box(ax,x+.025,.405,.21,.065,'统一互联',color='sand',size=12)
-arrow(ax,(x+.066,.523),(x+.066,.476),'orange',both=True);arrow(ax,(x+.196,.523),(x+.196,.476),'orange',both=True)
-ax.text(x+.13,.35,'连接分布的计算与存储',ha='center',fontsize=10)
-for x,t in [(.05,'仍需检查：\n供数、延迟与开发投入'),(.37,'仍需检查：\nPCIe、状态访问与并发'),(.69,'仍需检查：\n交接、同步与故障范围')]:
- ax.text(x+.13,.245,t,ha='center',va='center',fontsize=11,linespacing=1.7,color=C['muted'])
-save(fig,'figure-1-6-designs')
 
 # Additional mechanism diagrams share this chapter's font and output handling.
 import sys

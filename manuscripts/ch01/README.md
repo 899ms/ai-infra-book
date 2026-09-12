@@ -19,7 +19,6 @@
 | 图 1-5 每卡容量与执行时的权重读取 | [SVG](figure-1-capacity-path.svg) | [PNG](figure-1-capacity-path.png) |
 | 教学模型的算力、带宽和批复用变化，以及独立 Qwen3-8B 实测中的吞吐和每请求时间。 | [SVG](figure-1-5-budget.svg) | [PNG](figure-1-5-budget.png) |
 | 图 1-7 batch 增长时的计算、读取与吞吐转折 | [SVG](figure-1-batch-transition.svg) | [PNG](figure-1-batch-transition.png) |
-| TPU、SmartNIC 与 Unified Bus 分别改变专用资源配置、处理位置和协作范围。 | [SVG](figure-1-6-designs.svg) | [PNG](figure-1-6-designs.png) |
 
 ## 构建与数据
 

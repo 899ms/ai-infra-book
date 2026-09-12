@@ -19,7 +19,7 @@ outline_path=next(p for p in [ROOT/'outlines'/md.name,ROOT/'archive/outlines'/md
 expected=re.findall(r'^### (10\.\d+\.\d+)',outline_path.read_text(),re.M)
 check([h for h in heads if h in set(expected)]==expected,'outline subsection alignment')
 check('训练一致性' not in s and '训练一致性' not in page, 'obsolete RL consistency terminology')
-for marker in ['专家路由重放与训推一致性', '前缀分布偏移', 'on-policy distillation', '温度缩放', '权重长期不变']:
+for marker in ['专家路由重放与训推一致性', '前缀分布偏移', 'OPD', '温度缩放', '权重长期不变']:
  check(marker in s and marker in page, 'RL consistency coverage: '+marker)
 check(re.findall(r'^> \*\*习题 (10-\d+)',s,re.M)==[f'10-{i}' for i in range(1,11)],'exercise sequence')
 check(re.findall(r'^> \*\*习题 (10-\d+) · 综合设计',s,re.M)==['10-3','10-7','10-10'],'integrative design exercises')

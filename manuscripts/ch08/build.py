@@ -200,7 +200,7 @@ from teaching_revision import draw as draw_teaching
 teaching_outputs,teaching_checks=draw_teaching(HERE,data)
 outputs=list(dict.fromkeys(outputs+teaching_outputs))
 # Offline HTML: render KaTeX locally and embed all image/font bytes.
-md=HERE.parent/'08-单实例推理.md';raw=md.read_text();maths=[]
+md=HERE.parent/'08-推理优化.md';raw=md.read_text();maths=[]
 def protect(m):
  t=m[0];display=t.startswith('$$');token=f'MATHPLACEHOLDER{len(maths)}END';maths.append({'latex':(t[2:-2] if display else t[1:-1]).strip(),'display':display,'token':token});return '\n\n'+token+'\n\n' if display else token
 body=markdown.markdown(re.sub(r'\$\$[\s\S]*?\$\$|\$[^$\n]+\$',protect,raw),extensions=['tables','footnotes','fenced_code','toc'])
@@ -231,5 +231,5 @@ hp.write_text(page)
 from book_assets import sync_figure_index
 active_assets=sync_figure_index(HERE)
 artifacts=outputs+[HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',md,hp]+active_assets
-(HERE/'manifest.json').write_text(json.dumps({'chapter':8,'generator':'manuscripts/ch08/build.py','figures':len(outputs)//3,'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
+(HERE/'manifest.json').write_text(json.dumps({'chapter':8,'generator':'manuscripts/ch08/build.py','figures':len(outputs)//3,'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts if not (p.parent==ROOT/'manuscripts' and re.match(r'^[01][0-9]-',p.name))]},ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(outputs)} images; {len(maths)} formulas; {len(warnings)} extent warnings.')

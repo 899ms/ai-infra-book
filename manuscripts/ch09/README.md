@@ -2,7 +2,7 @@
 
 [阅读版 HTML](../09-分布式推理.md) · [正文 Markdown](../09-分布式推理.md) · [写作前阅读记录](reading-notes.md)
 
-正文沿现有章节组织计算与状态的分工，当前共 36 幅插图。专家部分补充大 EP、专家分离、两阶段通信与计算偏斜，并引用论文测量。采用提出问题、推导、代入例题、改变条件的教材体例，实测与条件计算分别呈现。
+正文沿现有章节组织计算与状态的分工，当前共 46 幅插图。专家部分补充大 EP、专家分离、两阶段通信与计算偏斜，并引用论文测量。采用提出问题、推导、代入例题、改变条件的教材体例，实测与条件计算分别呈现。
 
 ## 插图
 
@@ -91,7 +91,7 @@ CPU 专家先用低复用、高复用数值解释选择翻转，再给出路径�
 
 | 图号 | 内容 | SVG | PNG | PDF |
 |---|---|---|---|---|
-| 9-1 | 八张卡共同执行一个完整模型实例，接收同一批请求。卡号表示协作组成员。 | [SVG](figure-9-1-organization.svg) | [PNG](figure-9-1-organization.png) | [PDF](figure-9-1-organization.pdf) |
+| 9-1 | 八张卡共同执行一个完整推理实例，接收同一批请求。卡号表示协作组成员。 | [SVG](figure-9-1-organization.svg) | [PNG](figure-9-1-organization.png) | [PDF](figure-9-1-organization.pdf) |
 | 9-2 | 每个副本都能完成整次推理，可以分别接收独立请求。副本自身也可以由多张卡组成。 | [SVG](figure-9-organization-1.svg) | [PNG](figure-9-organization-1.png) | [PDF](figure-9-organization-1.pdf) |
 | 9-3 | P 处理输入，D 继续生成。两个服务池分别调度，上下文 KV 从 P 交给 D。 | [SVG](figure-9-organization-2.svg) | [PNG](figure-9-organization-2.png) | [PDF](figure-9-organization-2.pdf) |
 | 9-4 | 注意力与 FFN／专家分别执行，隐状态作为激活在两侧往返。每层都需要这次交接。 | [SVG](figure-9-organization-3.svg) | [PNG](figure-9-organization-3.png) | [PDF](figure-9-organization-3.pdf) |
@@ -106,36 +106,34 @@ CPU 专家先用低复用、高复用数值解释选择翻转，再给出路径�
 | 9-13 | 输入从 GPU 交给 CPU，CPU 使用主存权重执行专家，结果回到 GPU。每次 token 到专家的分派，传入和传出的特征向量合计 16 KiB；并行的 GPU 常驻专家分支完成后再汇合。 | [SVG](figure-9-local-cpu.svg) | [PNG](figure-9-local-cpu.png) | [PDF](figure-9-local-cpu.pdf) |
 | 9-14 | 专家复用改变执行位置的选择。八个专家各有 36 MiB BF16 权重。CPU 为单颗 Xeon Platinum 8452Y，AVX-512 与 AMX kernel 分别按论文实测的 1.8 与 21.3 TFLOP/s、同插槽内存 220 GB/s 计；GPU 为 A100 40GB PCIe，按峰值的 50% 计为 156 TFLOP/s、778 GB/s；PCIe 交接 25 GB/s，每次启动 5 μs。横轴为对数刻度，曲线按例 9.3 计算单层专家路径，未含格式转换。 | [SVG](figure-9-6-reuse.svg) | [PNG](figure-9-6-reuse.png) | [PDF](figure-9-6-reuse.pdf) |
 | 9-15 | 八个 Qwen3-235B-A22B 专家各处理 128 个 token 时，单颗 Xeon Platinum 8452Y 上的两项时间：读取八份 BF16 权重共 288 MiB，矩阵计算共 38.7 GFLOPs。粗框标出较长的一项，即这条路径的耗时下界。左右两图横轴刻度不同；AVX-512 与 AMX kernel 的算力、同插槽与跨插槽带宽均为论文实测值。 | [SVG](figure-9-cpu-bottleneck.svg) | [PNG](figure-9-cpu-bottleneck.png) | [PDF](figure-9-cpu-bottleneck.pdf) |
-| 9-16 | 512 次分派覆盖 128 个专家，每专家四行。矩形宽为专家数，高为每专家行数，面积为分派次数。 | [SVG](figure-9-7-footprint.svg) | [PNG](figure-9-7-footprint.png) | [PDF](figure-9-7-footprint.pdf) |
-| 9-17 | 八个专家各处理 64 行，总面积仍为 512。两图横纵轴相同，权重读取却从 4608 MiB 降至 288 MiB。 | [SVG](figure-9-footprint-reuse.svg) | [PNG](figure-9-footprint-reuse.png) | [PDF](figure-9-footprint-reuse.pdf) |
-| 9-18 | 一层 MoE 在两台服务器间的执行顺序，时间从上到下。A0–A3 执行注意力与路由，B0–B3 执行专家。小方块表示一张 A 卡发往一张 B 卡的一组输入，颜色标出它去往哪张 B 卡；dispatch 把各色方块送到同色的 B 卡，combine 再把结果送回原来的 A 卡。两次交换都是 4×4 的 All-to-All。 | [SVG](figure-9-ep-layer.svg) | [PNG](figure-9-ep-layer.png) | [PDF](figure-9-ep-layer.pdf) |
-| 9-19 | 四个 micro-batch 在注意力节点与专家节点间执行，每个 micro-batch 注意力 2 ms、专家 3 ms，忽略交接。上图依次执行，两个节点轮流空闲；下图交错执行，micro-batch 1 做专家计算时 micro-batch 2 做注意力。流水稳定后，专家节点连续工作，每 3 ms 完成一个 micro-batch。 | [SVG](figure-9-af-pingpong.svg) | [PNG](figure-9-af-pingpong.png) | [PDF](figure-9-af-pingpong.pdf) |
-| 9-20 | 一次 PD 交接与一步 AF 交接的串行时间随每次启动开销的变化，25 GB/s 链路。PD 只启动一次，斜率为 1；AF 一步 72 次启动，斜率为 72。两条 PD 线分别对应 GQA 状态 1.125 GiB 与紧凑 MLA 状态 549 MiB，与 AF 线的交点即临界启动时间 680 与 324 μs；50 GB/s 链路下交点移到 340 与 162 μs。 | [SVG](figure-9-mla-handoff.svg) | [PNG](figure-9-mla-handoff.png) | [PDF](figure-9-mla-handoff.pdf) |
-| 9-21 | 总计 512 次专家分派均分到八张卡，每卡 64 次；虚线表示全部计算结束、可以汇合的时刻。 | [SVG](figure-9-9-balance.svg) | [PNG](figure-9-9-balance.png) | [PDF](figure-9-9-balance.pdf) |
-| 9-22 | 512 次全部落在卡 0，其他卡空闲。相同总计算量，需要等待卡 0 完成；两图使用相同时间尺度。 | [SVG](figure-9-balance-hotspot.svg) | [PNG](figure-9-balance-hotspot.png) | [PDF](figure-9-balance-hotspot.pdf) |
-| 9-23 | 同一个热点专家在三种 EP 规模下造成的卡间 skew。256 个专家，1024 个 token 各选 8 个，专家 0 收到平均值 4 倍的 128 行。每根柱是一张卡，柱内每一段是这张卡上的一个专家，橙色为热点专家；纵轴为该卡行数除以每卡平均行数。每幅图只画卡 0、1、2 和最后一张卡，其余各卡与卡 1 相同。 | [SVG](figure-9-ep-scale-cards.svg) | [PNG](figure-9-ep-scale-cards.png) | [PDF](figure-9-ep-scale-cards.pdf) |
-| 9-24 | 最忙卡行数与每卡平均行数之比随 EP 组卡数的变化。橙线为一个 4 倍热点专家，不含随机波动，可以直接手算；蓝线为均匀随机路由，是固定种子模拟 1000 批的平均值。256 个专家按编号均分，不设副本；横轴为对数刻度。 | [SVG](figure-9-ep-scale-sweep.svg) | [PNG](figure-9-ep-scale-sweep.png) | [PDF](figure-9-ep-scale-sweep.pdf) |
-| 9-25 | 四个专家组在 dispatch 阶段接收、combine 阶段发送的载荷。均衡与热点分布总计均为每方向 64 MiB；热点组在两个阶段都承担 40 MiB。柱高表示字节需求，不表示测得的瞬时带宽。 | [SVG](figure-9-ep-skew.svg) | [PNG](figure-9-ep-skew.png) | [PDF](figure-9-ep-skew.pdf) |
-| 9-26 | 热点持续多久，专家复制才值得。每批节省约 0.240 ms；同一台 HGX H100 内经 NVLink 复制一次约 0.622 ms，第 3 批开始净获益；跨服务器经 ConnectX-7 网卡复制约 5.32 ms，第 23 批开始净获益。曲线使用例 9.6 中未经四舍五入的时间计算；七张接收卡各需额外 36 MiB，假设热点不变。 | [SVG](figure-9-10-experts.svg) | [PNG](figure-9-10-experts.png) | [PDF](figure-9-10-experts.pdf) |
-| 9-27 | 整批依次分派 0.336 ms、计算 0.156 ms、合并 0.336 ms，总时间 0.827 ms；数值取自第 9.4.1 节表中跨服务器的均衡分布。 | [SVG](figure-9-11-overlap.svg) | [PNG](figure-9-11-overlap.png) | [PDF](figure-9-11-overlap.pdf) |
-| 9-28 | 每个 micro-batch 的各阶段时间减半，三条轨道使用独立资源。第一个 micro-batch 计算时可以 dispatch 第二个 micro-batch，总时间降到 0.581 ms。 | [SVG](figure-9-overlap-pipeline.svg) | [PNG](figure-9-overlap-pipeline.png) | [PDF](figure-9-overlap-pipeline.pdf) |
-| 9-29 | 一个 token 选中的两条专家分支，教学时长分别为 0.5 ms 与 1.4 ms。每条都依次经过 dispatch、计算与 combine；同一个 token 要等两份结果，图中忽略本地加权合并的时间。灰色表示快分支的结果到达之后等待的时间。 | [SVG](figure-9-ep-tail.svg) | [PNG](figure-9-ep-tail.png) | [PDF](figure-9-ep-tail.pdf) |
-| 9-30 | 虚线表示按标识查找对象位置。目录用于定位，实际 KV 对象用于恢复计算；路由前还需确认对象版本与可用性。 | [SVG](figure-9-cache-directory.svg) | [PNG](figure-9-cache-directory.png) | [PDF](figure-9-cache-directory.pdf) |
-| 9-31 | DGX A100 中每张 A100 分到的四级存储。方框宽度只表示容量次序；右侧是这一级到 GPU 的路径，以及取回 1.125 GiB 前缀所需的时间。远端取回先经网卡到主机内存，再经 PCIe 到 GPU，两段串行。 | [SVG](figure-9-kv-tiers.svg) | [PNG](figure-9-kv-tiers.png) | [PDF](figure-9-kv-tiers.pdf) |
-| 9-32 | 所需容量随复用间隔线性增长。斜线为 $C=rT$，其中 $r\approx1.41$ GB/s 是一张 A100 连续执行无命中 8K prefill 时产生 KV 的速率；三条虚线是每张 GPU 在三级存储中的容量；两条竖线标出两类负载 80% 复用所在的时间范围。两轴均为对数刻度。 | [SVG](figure-9-kv-capacity.svg) | [PNG](figure-9-kv-capacity.png) | [PDF](figure-9-kv-capacity.pdf) |
-| 9-33 | 命中率随容量增加而趋于饱和。数据为 Mooncake 一小时采样 trace 在 LRU 淘汰下的命中率，每块 512 个 token；横轴按 Qwen3-8B 每 token 144 KiB 换算为字节。这只是采样得到的一段流量，真实服务所需的容量按流量同比例放大。 | [SVG](figure-9-kv-hit.svg) | [PNG](figure-9-kv-hit.png) | [PDF](figure-9-kv-hit.pdf) |
-| 9-34 | 先把 1.125 GiB 历史 KV 整份从主机内存读入，再计算 256 个新 token，共 79.2 ms。橙色为 PCIe 读取，绿色为 GPU 计算，每一小段对应一层。 | [SVG](figure-9-kv-load-serial.svg) | [PNG](figure-9-kv-load-serial.png) | [PDF](figure-9-kv-load-serial.pdf) |
-| 9-35 | 逐层预加载。GPU 计算某一层时，PCIe 读取后面的层；每层读取 1.34 ms、计算 0.857 ms，计算每层都要等待读取，总时间 49.2 ms 由读取决定。 | [SVG](figure-9-kv-load-layerwise.svg) | [PNG](figure-9-kv-load-layerwise.png) | [PDF](figure-9-kv-load-layerwise.pdf) |
-| 9-36 | 轮到这个请求之前，趁上一个 batch 执行时先读入前 14 层（448 MiB）；其余 22 层的读取被计算完全掩盖，总时间等于计算本身的 30.9 ms。三幅图的横轴相同。 | [SVG](figure-9-kv-load-preload.svg) | [PNG](figure-9-kv-load-preload.png) | [PDF](figure-9-kv-load-preload.pdf) |
-| 9-37 | 主机内存有四个位置，其中一个空出来接收读入的数据，其余三个留给队列中接下来的 J2—J4。J3 的状态还在 SSD 上，趁它排队时读入空位；J6 排在这三个请求之后，下次使用最晚，先换出到 SSD。 | [SVG](figure-9-kv-prefetch.svg) | [PNG](figure-9-kv-prefetch.png) | [PDF](figure-9-kv-prefetch.pdf) |
-| 9-38 | 读入的页不一定全部成为可复用前缀。正常重启后的这一请求读入 64 个各含 16 个 token 的页，只复用前 63 页；末页仍需处理。每页 2.25 MiB，该请求的匹配边界为 1008 个 token。 | [SVG](figure-9-12-cache.svg) | [PNG](figure-9-12-cache.png) | [PDF](figure-9-12-cache.pdf) |
-| 9-39 | A 本地缓存已命中，GPU 排队 250 ms 后再计算 30.9 ms，首 token 在 281 ms 返回。灰为排队，绿为计算。 | [SVG](figure-9-13-route.svg) | [PNG](figure-9-13-route.png) | [PDF](figure-9-13-route.pdf) |
-| 9-40 | B 在 20 ms 空闲，随后在 A100 上重算 887 ms，首 token 在 907 ms 返回。 | [SVG](figure-9-route-1.svg) | [PNG](figure-9-route-1.png) | [PDF](figure-9-route-1.pdf) |
-| 9-41 | 取回先查找 10 ms，再经 50 GbE 以 6.25 GB/s 读取 1.125 GiB 至主存，最后经 PCIe 以 25 GB/s 搬到 GPU。计算要等数据和 GPU 都就绪，首 token 约 282 ms 返回，比 A 慢约 1.6 ms。 | [SVG](figure-9-route-2.svg) | [PNG](figure-9-route-2.png) | [PDF](figure-9-route-2.pdf) |
-| 9-42 | 远端链路换成 200 GbE（25 GB/s）后，首 token 约 137 ms 返回。橙为远端读取，蓝为主存到 GPU；四图均从请求到达起计时，横轴相同。 | [SVG](figure-9-route-3.svg) | [PNG](figure-9-route-3.png) | [PDF](figure-9-route-3.pdf) |
-| 9-43 | 缓存亲和性与空闲执行位置的比较。A 保留全局 KV 与编码器 SWA；B 需要 4.666 ms 全局传输和假设的 8 ms 编码器恢复。两端共同的解码器重放等后续工作略去，只比较不同的串行准备时间；A 的排队时间从 10 ms 增到 20 ms 时，更快的方案由 A 变为 B。灰色为等待队列，其他色块分别为全局状态传输与编码器局部状态恢复。 | [SVG](figure-9-v41-routing.svg) | [PNG](figure-9-v41-routing.png) | [PDF](figure-9-v41-routing.pdf) |
-| 9-44 | 服务余量决定启动积压的消退速度。连续流量模型，每秒到达 3.5 个请求，启动 10 秒后积压 35 个。就绪后服务率分别为直接 PD 的 4.55、理想分块共置的 4.17 和不分块共置的 3.02 请求/s；前两者从开始启动算起在第 43 与第 63 秒排空，后者持续积压。例 9.8 的排空期限为第 60 秒。 | [SVG](figure-9-17-service.svg) | [PNG](figure-9-17-service.png) | [PDF](figure-9-17-service.pdf) |
-| 9-45 | 后台复制需要赶上仍在增长的状态。开始时待复制状态为 41.1 GB，源端每秒增长约 0.172 GB；目标经 25 GB/s 的网卡约 1.65 秒赶上，经 6.25 GB/s 的 50 GbE 约 6.76 秒赶上。曲线相交前，垂直距离就是尚未复制的数据量；相交后，目标只需跟随源端的新增状态。 | [SVG](figure-9-14-migration.svg) | [PNG](figure-9-14-migration.png) | [PDF](figure-9-14-migration.pdf) |
-| 9-46 | 输出记录决定继续哪条序列，KV checkpoint 决定从哪里补算。假定 1025 个输出均已可靠记录，但 KV 只保存了原输入。下方按输入、前 1024 个输出和第 1025 个输出分段示意，宽度不按 token 数量比例绘制。 | [SVG](figure-9-15-recovery.svg) | [PNG](figure-9-15-recovery.png) | [PDF](figure-9-15-recovery.pdf) |
-| 9-47 | P 直接向 D 交接 1.125 GiB 上下文 KV 缓存，只经过一次直接传输。P 为 prefill，D 为后续逐 token 的 decode。 | [SVG](figure-9-16-composition.svg) | [PNG](figure-9-16-composition.png) | [PDF](figure-9-16-composition.pdf) |
-| 9-48 | P 先向池写入完整 1.125 GiB 并发布，D 再取回同一对象，共经过写入和取回两次传输。后续实例还可以复用池中对象。P 为 prefill，D 为后续逐 token 的 decode。 | [SVG](figure-9-composition-pool.svg) | [PNG](figure-9-composition-pool.png) | [PDF](figure-9-composition-pool.pdf) |
+| 9-16 | 一层 MoE 在两台服务器间的执行顺序，时间从上到下。A0–A3 执行注意力与路由，B0–B3 执行专家。小方块表示一张 A 卡发往一张 B 卡的一组输入，颜色标出它去往哪张 B 卡；dispatch 把各色方块送到同色的 B 卡，combine 再把结果送回原来的 A 卡。两次交换都是 4×4 的 All-to-All。 | [SVG](figure-9-ep-layer.svg) | [PNG](figure-9-ep-layer.png) | [PDF](figure-9-ep-layer.pdf) |
+| 9-17 | 四个 micro-batch 在注意力节点与专家节点间执行，每个 micro-batch 注意力 2 ms、专家 3 ms，忽略交接。上图依次执行，两个节点轮流空闲；下图交错执行，micro-batch 1 做专家计算时 micro-batch 2 做注意力。流水稳定后，专家节点连续工作，每 3 ms 完成一个 micro-batch。 | [SVG](figure-9-af-pingpong.svg) | [PNG](figure-9-af-pingpong.png) | [PDF](figure-9-af-pingpong.pdf) |
+| 9-18 | 一次 PD 交接与一步 AF 交接的串行时间随每次启动开销的变化，25 GB/s 链路。PD 只启动一次，斜率为 1；AF 一步 72 次启动，斜率为 72。两条 PD 线分别对应 GQA 状态 1.125 GiB 与紧凑 MLA 状态 549 MiB，与 AF 线的交点即临界启动时间 680 与 324 μs；50 GB/s 链路下交点移到 340 与 162 μs。 | [SVG](figure-9-mla-handoff.svg) | [PNG](figure-9-mla-handoff.png) | [PDF](figure-9-mla-handoff.pdf) |
+| 9-19 | 总计 512 次专家分派均分到八张卡，每卡 64 次；虚线表示全部计算结束、可以汇合的时刻。 | [SVG](figure-9-9-balance.svg) | [PNG](figure-9-9-balance.png) | [PDF](figure-9-9-balance.pdf) |
+| 9-20 | 512 次全部落在卡 0，其他卡空闲。相同总计算量，需要等待卡 0 完成；两图使用相同时间尺度。 | [SVG](figure-9-balance-hotspot.svg) | [PNG](figure-9-balance-hotspot.png) | [PDF](figure-9-balance-hotspot.pdf) |
+| 9-21 | 同一个热点专家在三种 EP 规模下造成的卡间 skew。256 个专家，1024 个 token 各选 8 个，专家 0 收到平均值 4 倍的 128 行。每根柱是一张卡，柱内每一段是这张卡上的一个专家，橙色为热点专家；纵轴为该卡行数除以每卡平均行数。每幅图只画卡 0、1、2 和最后一张卡，其余各卡与卡 1 相同。 | [SVG](figure-9-ep-scale-cards.svg) | [PNG](figure-9-ep-scale-cards.png) | [PDF](figure-9-ep-scale-cards.pdf) |
+| 9-22 | 最忙卡行数与每卡平均行数之比随 EP 组卡数的变化。橙线为一个 4 倍热点专家，不含随机波动，可以直接手算；蓝线为均匀随机路由，是固定种子模拟 1000 批的平均值。256 个专家按编号均分，不设副本；横轴为对数刻度。 | [SVG](figure-9-ep-scale-sweep.svg) | [PNG](figure-9-ep-scale-sweep.png) | [PDF](figure-9-ep-scale-sweep.pdf) |
+| 9-23 | 四个专家组在 dispatch 阶段接收、combine 阶段发送的载荷。均衡与热点分布总计均为每方向 64 MiB；热点组在两个阶段都承担 40 MiB。柱高表示字节需求，不表示测得的瞬时带宽。 | [SVG](figure-9-ep-skew.svg) | [PNG](figure-9-ep-skew.png) | [PDF](figure-9-ep-skew.pdf) |
+| 9-24 | 热点持续多久，专家复制才值得。每批节省约 0.240 ms；同一台 HGX H100 内经 NVLink 复制一次约 0.622 ms，第 3 批开始净获益；跨服务器经 ConnectX-7 网卡复制约 5.32 ms，第 23 批开始净获益。曲线使用例 9.6 中未经四舍五入的时间计算；七张接收卡各需额外 36 MiB，假设热点不变。 | [SVG](figure-9-10-experts.svg) | [PNG](figure-9-10-experts.png) | [PDF](figure-9-10-experts.pdf) |
+| 9-25 | 整批依次分派 0.336 ms、计算 0.156 ms、合并 0.336 ms，总时间 0.827 ms；数值取自第 9.4.1 节表中跨服务器的均衡分布。 | [SVG](figure-9-11-overlap.svg) | [PNG](figure-9-11-overlap.png) | [PDF](figure-9-11-overlap.pdf) |
+| 9-26 | 每个 micro-batch 的各阶段时间减半，三条轨道使用独立资源。第一个 micro-batch 计算时可以 dispatch 第二个 micro-batch，总时间降到 0.581 ms。 | [SVG](figure-9-overlap-pipeline.svg) | [PNG](figure-9-overlap-pipeline.png) | [PDF](figure-9-overlap-pipeline.pdf) |
+| 9-27 | 一个 token 选中的两条专家分支，教学时长分别为 0.5 ms 与 1.4 ms。每条都依次经过 dispatch、计算与 combine；同一个 token 要等两份结果，图中忽略本地加权合并的时间。灰色表示快分支的结果到达之后等待的时间。 | [SVG](figure-9-ep-tail.svg) | [PNG](figure-9-ep-tail.png) | [PDF](figure-9-ep-tail.pdf) |
+| 9-28 | 虚线表示按标识查找对象位置。目录用于定位，实际 KV 对象用于恢复计算；路由前还需确认对象版本与可用性。 | [SVG](figure-9-cache-directory.svg) | [PNG](figure-9-cache-directory.png) | [PDF](figure-9-cache-directory.pdf) |
+| 9-29 | DGX A100 中每张 A100 分到的四级存储。方框宽度只表示容量次序；右侧是这一级到 GPU 的路径，以及取回 1.125 GiB 前缀所需的时间。远端取回先经网卡到主机内存，再经 PCIe 到 GPU，两段串行。 | [SVG](figure-9-kv-tiers.svg) | [PNG](figure-9-kv-tiers.png) | [PDF](figure-9-kv-tiers.pdf) |
+| 9-30 | 所需容量随复用间隔线性增长。斜线为 $C=rT$，其中 $r\approx1.41$ GB/s 是一张 A100 连续执行无命中 8K prefill 时产生 KV 的速率；三条虚线是每张 GPU 在三级存储中的容量；两条竖线标出两类负载 80% 复用所在的时间范围。两轴均为对数刻度。 | [SVG](figure-9-kv-capacity.svg) | [PNG](figure-9-kv-capacity.png) | [PDF](figure-9-kv-capacity.pdf) |
+| 9-31 | 命中率随容量增加而趋于饱和。数据为 Mooncake 一小时采样 trace 在 LRU 淘汰下的命中率，每块 512 个 token；横轴按 Qwen3-8B 每 token 144 KiB 换算为字节。这只是采样得到的一段流量，真实服务所需的容量按流量同比例放大。 | [SVG](figure-9-kv-hit.svg) | [PNG](figure-9-kv-hit.png) | [PDF](figure-9-kv-hit.pdf) |
+| 9-32 | 先把 1.125 GiB 历史 KV 整份从主机内存读入，再计算 256 个新 token，共 79.2 ms。橙色为 PCIe 读取，绿色为 GPU 计算，每一小段对应一层。 | [SVG](figure-9-kv-load-serial.svg) | [PNG](figure-9-kv-load-serial.png) | [PDF](figure-9-kv-load-serial.pdf) |
+| 9-33 | 逐层预加载。GPU 计算某一层时，PCIe 读取后面的层；每层读取 1.34 ms、计算 0.857 ms，计算每层都要等待读取，总时间 49.2 ms 由读取决定。 | [SVG](figure-9-kv-load-layerwise.svg) | [PNG](figure-9-kv-load-layerwise.png) | [PDF](figure-9-kv-load-layerwise.pdf) |
+| 9-34 | 轮到这个请求之前，趁上一个 batch 执行时先读入前 14 层（448 MiB）；其余 22 层的读取被计算完全掩盖，总时间等于计算本身的 30.9 ms。三幅图的横轴相同。 | [SVG](figure-9-kv-load-preload.svg) | [PNG](figure-9-kv-load-preload.png) | [PDF](figure-9-kv-load-preload.pdf) |
+| 9-35 | 主机内存有四个位置，其中一个空出来接收读入的数据，其余三个留给队列中接下来的 J2—J4。J3 的状态还在 SSD 上，趁它排队时读入空位；J6 排在这三个请求之后，下次使用最晚，先换出到 SSD。 | [SVG](figure-9-kv-prefetch.svg) | [PNG](figure-9-kv-prefetch.png) | [PDF](figure-9-kv-prefetch.pdf) |
+| 9-36 | 读入的页不一定全部成为可复用前缀。正常重启后的这一请求读入 64 个各含 16 个 token 的页，只复用前 63 页；末页仍需处理。每页 2.25 MiB，该请求的匹配边界为 1008 个 token。 | [SVG](figure-9-12-cache.svg) | [PNG](figure-9-12-cache.png) | [PDF](figure-9-12-cache.pdf) |
+| 9-37 | A 本地缓存已命中，GPU 排队 250 ms 后再计算 30.9 ms，首 token 在 281 ms 返回。灰为排队，绿为计算。 | [SVG](figure-9-13-route.svg) | [PNG](figure-9-13-route.png) | [PDF](figure-9-13-route.pdf) |
+| 9-38 | B 在 20 ms 空闲，随后在 A100 上重算 887 ms，首 token 在 907 ms 返回。 | [SVG](figure-9-route-1.svg) | [PNG](figure-9-route-1.png) | [PDF](figure-9-route-1.pdf) |
+| 9-39 | 取回先查找 10 ms，再经 50 GbE 以 6.25 GB/s 读取 1.125 GiB 至主存，最后经 PCIe 以 25 GB/s 搬到 GPU。计算要等数据和 GPU 都就绪，首 token 约 282 ms 返回，比 A 慢约 1.6 ms。 | [SVG](figure-9-route-2.svg) | [PNG](figure-9-route-2.png) | [PDF](figure-9-route-2.pdf) |
+| 9-40 | 远端链路换成 200 GbE（25 GB/s）后，首 token 约 137 ms 返回。橙为远端读取，蓝为主存到 GPU；四图均从请求到达起计时，横轴相同。 | [SVG](figure-9-route-3.svg) | [PNG](figure-9-route-3.png) | [PDF](figure-9-route-3.pdf) |
+| 9-41 | 缓存亲和性与空闲执行位置的比较。A 保留全局 KV 与编码器 SWA；B 需要 4.666 ms 全局传输和假设的 8 ms 编码器恢复。两端共同的解码器重放等后续工作略去，只比较不同的串行准备时间；A 的排队时间从 10 ms 增到 20 ms 时，更快的方案由 A 变为 B。灰色为等待队列，其他色块分别为全局状态传输与编码器局部状态恢复。 | [SVG](figure-9-v41-routing.svg) | [PNG](figure-9-v41-routing.png) | [PDF](figure-9-v41-routing.pdf) |
+| 9-42 | 服务余量决定启动积压的消退速度。连续流量模型，每秒到达 3.5 个请求，启动 10 秒后积压 35 个。就绪后服务率分别为直接 PD 的 4.55、理想分块共置的 4.17 和不分块共置的 3.02 请求/s；前两者从开始启动算起在第 43 与第 63 秒排空，后者持续积压。例 9.8 的排空期限为第 60 秒。 | [SVG](figure-9-17-service.svg) | [PNG](figure-9-17-service.png) | [PDF](figure-9-17-service.pdf) |
+| 9-43 | 后台复制需要赶上仍在增长的状态。开始时待复制状态为 41.1 GB，源端每秒增长约 0.172 GB；目标经 25 GB/s 的网卡约 1.65 秒赶上，经 6.25 GB/s 的 50 GbE 约 6.76 秒赶上。曲线相交前，垂直距离就是尚未复制的数据量；相交后，目标只需跟随源端的新增状态。 | [SVG](figure-9-14-migration.svg) | [PNG](figure-9-14-migration.png) | [PDF](figure-9-14-migration.pdf) |
+| 9-44 | 输出记录决定继续哪条序列，KV checkpoint 决定从哪里补算。假定 1025 个输出均已可靠记录，但 KV 只保存了原输入。下方按输入、前 1024 个输出和第 1025 个输出分段示意，宽度不按 token 数量比例绘制。 | [SVG](figure-9-15-recovery.svg) | [PNG](figure-9-15-recovery.png) | [PDF](figure-9-15-recovery.pdf) |
+| 9-45 | P 直接向 D 交接 1.125 GiB 上下文 KV 缓存，只经过一次直接传输。P 为 prefill，D 为后续逐 token 的 decode。 | [SVG](figure-9-16-composition.svg) | [PNG](figure-9-16-composition.png) | [PDF](figure-9-16-composition.pdf) |
+| 9-46 | P 先向池写入完整 1.125 GiB 并发布，D 再取回同一对象，共经过写入和取回两次传输。后续实例还可以复用池中对象。P 为 prefill，D 为后续逐 token 的 decode。 | [SVG](figure-9-composition-pool.svg) | [PNG](figure-9-composition-pool.png) | [PDF](figure-9-composition-pool.pdf) |

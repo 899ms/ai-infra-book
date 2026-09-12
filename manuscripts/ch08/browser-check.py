@@ -13,7 +13,7 @@ with sync_playwright() as p:
     browser=p.chromium.launch(executable_path=args.executable,headless=True)
     for label,width,height in [('desktop',1440,1000),('mobile',390,844)]:
         page=browser.new_page(viewport={'width':width,'height':height},device_scale_factor=1)
-        page.goto((HERE.parent/'08-单实例推理.html').as_uri(),wait_until='load')
+        page.goto((HERE.parent/'08-推理优化.html').as_uri(),wait_until='load')
         page.evaluate('document.fonts.ready')
         result=page.evaluate('''() => ({images:document.images.length,loadedImages:[...document.images].filter(x=>x.complete&&x.naturalWidth>0).length,formulas:document.querySelectorAll('.katex').length,mathErrors:document.querySelectorAll('.katex-error').length,viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,brokenAnchors:[...document.querySelectorAll('a[href^="#"]')].map(a=>a.getAttribute('href').slice(1)).filter(id=>!document.getElementById(decodeURIComponent(id)))})''')
         result['device']=label

@@ -20,7 +20,8 @@ for n in range(1,13):
  index=json.loads((M/f'ch{n:02}/figure-index.json').read_text())
  got=[r.get('asset') or f'ch{n:02}/'+(r.get('file') or r['name']+'.svg') for r in index]
  check(got==assets,f'{n}: active figure index')
- before=(R/'before'/p.relative_to(ROOT)).read_text()
+ bp=R/'before'/p.relative_to(ROOT)
+ before=(bp if bp.exists() else next((R/'before'/'manuscripts').glob(f'{n:02}-*.md'))).read_text()
  # Removing references must not remove exercises or alter their identifiers.
  exercise=lambda x:re.findall(r'^> \*\*(?:练习|实验) (\d+-\d+)',x,re.M)
  check(exercise(s)==exercise(before),f'{n}: preserved exercise identifiers')

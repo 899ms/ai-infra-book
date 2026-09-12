@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "calculation": "split-reduction-order",
+  "model": "qwen3-8b",
+  "scenario": {
+    "splits": 8,
+    "width_multiplier": 1,
+    "row": "bf16(sin(i+1)) for i in range(width)"
+  },
+  "sources": [
+    {
+      "file": "configs/models/qwen3-8b/config.json",
+      "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+    },
+    {
+      "file": "sources/qwen3-8b/model.safetensors.index.json",
+      "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+    },
+    {
+      "file": "sources/qwen3/modeling_qwen3.py",
+      "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+      "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+      "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+    },
+    {
+      "file": "sources/qwen3/modeling_qwen3_moe.py",
+      "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+      "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+      "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+    }
+  ],
+  "associativity": {
+    "inputs": [
+      "1",
+      "2**-24",
+      "2**-24"
+    ],
+    "left": 1.0,
+    "right": 1.0000001192092896,
+    "spacing_at_one": 1.1920928955078125e-07
+  },
+  "variants": [
+    {
+      "splits": 1,
+      "partition_width": 4096,
+      "total": 2038.107421875,
+      "offset_ulp": -175.20318020507693,
+      "scale": 1.4176400899887085,
+      "first_output": 1.1905962228775024
+    },
+    {
+      "splits": 2,
+      "partition_width": 2048,
+      "total": 2038.115478515625,
+      "offset_ulp": -109.20318020507693,
+      "scale": 1.4176373481750488,
+      "first_output": 1.1905938386917114
+    },
+    {
+      "splits": 4,
+      "partition_width": 1024,
+      "total": 2038.1220703125,
+      "offset_ulp": -55.20318020507693,
+      "scale": 1.4176350831985474,
+      "first_output": 1.1905919313430786
+    },
+    {
+      "splits": 8,
+      "partition_width": 512,
+      "total": 2038.127685546875,
+      "offset_ulp": -9.203180205076933,
+      "scale": 1.417633056640625,
+      "first_output": 1.190590262413025
+    },
+    {
+      "splits": 16,
+      "partition_width": 256,
+      "total": 2038.1280517578125,
+      "offset_ulp": -6.203180205076933,
+      "scale": 1.4176329374313354,
+      "first_output": 1.1905901432037354
+    },
+    {
+      "splits": 32,
+      "partition_width": 128,
+      "total": 2038.1287841796875,
+      "offset_ulp": -0.2031802050769329,
+      "scale": 1.4176326990127563,
+      "first_output": 1.1905899047851562
+    }
+  ],
+  "merge_order": {
+    "splits": 8,
+    "orders": 40320,
+    "distinct_results": 3,
+    "values": [
+      2038.1275634765625,
+      2038.127685546875,
+      2038.1278076171875
+    ],
+    "spread_ulp": 2
+  },
+  "summary": {
+    "width": 4096,
+    "epsilon": 1e-06,
+    "exact_sum": 2038.1288089819586,
+    "ulp": 0.0001220703125,
+    "fused_total": 2038.107421875,
+    "split_total": 2038.127685546875,
+    "total_ulp_gap": 166,
+    "relative_gap": 9.942396390646576e-06,
+    "scale_ulp_gap": -59,
+    "first_output_ulp_gap": -50,
+    "merge_orders": 40320,
+    "distinct_merge_results": 3,
+    "merge_spread_ulp": 2
+  },
+  "assumptions": [
+    "教学行由给定公式生成并舍入到 BF16，不是采集到的激活。平方在 FP32 中精确，因此各路径的差异只来自加法次序。",
+    "每段内部按顺序累加，段间再合并；exact_sum 用有理数求得，只作比较基准，不是任何 kernel 的输出。",
+    "ULP 取 FP32 在该和所在区间上的间距；offset_ulp 是与精确值的距离，不是误差上界，拆得更细也不保证更准。",
+    "枚举全部合并次序覆盖原子加可能出现的次序，不代表某个后端的实际分布；并发调度还可能改变段内划分。",
+    "缩放因子与输出按官方 rms_norm_eps 计算，只取一行，不乘层数，也不换算为端到端的质量差异。"
+  ]
+}

@@ -113,7 +113,7 @@ def draw(here):
             if mode == 'preload':
                 a.text(-k * ld / 2, 1.62, f'提前读入 {k} 层', fontsize=11, ha='center')
             a.set(xlim=(-22, 90), ylim=(-.6, 1.9), yticks=[0, .95], yticklabels=['GPU 计算', 'PCIe 读取'],
-                  xlabel='从轮到这个请求起计时（ms）')
+                  xlabel='从这个请求开始执行起计时（ms）')
             a.spines['left'].set_visible(False); a.tick_params(axis='y', length=0)
             out.save(f, f'figure-9-kv-load-{name}')
 

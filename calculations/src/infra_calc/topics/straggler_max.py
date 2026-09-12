@@ -123,7 +123,7 @@ def calculate(mean_compute_seconds='52.2', declared_sigma_seconds='1.044', overh
                              expected_standard_max={str(r['ranks']): r['expected_standard_max'] for r in rows},
                              mean_step_seconds=float(mean + overhead)),
                 assumptions=[
-                    '每 rank 计算时间为独立同分布正态（均值取第 10.6 节 48 卡方案的 52.2 s 单卡计算，标准差为声明输入）；同步步时间 = 最大值 + 4.5 s 通信与输入等待。正态尾部允许负值，但在所用 σ 下概率可忽略。',
+                    f'每 rank 计算时间为独立同分布正态（均值取第 10.6 节 48 卡方案的 52.2 s 单卡计算，标准差为声明输入）；同步步时间 = 最大值 + 声明的通信与输入等待（本次为 {float(overhead):.2f} s）。正态尾部允许负值，但在所用 σ 下概率可忽略。',
                     'E[max] 用阶次统计积分的复合 Simpson 数值求积（标准库），不是精确有理数；未模拟相关性、周期性抖动或持续性慢卡。',
                     '检测信号是每 rank 在桶 AllReduce 上的等待：均值 rank 的期望等待 = E[max] - μ；一张卡慢到 μ+kσ 时，其余卡等待 ≈ 该卡时间减其余 N-1 卡的最大值。',
                     '三种响应：等待（步时间取慢卡时间）、重分配（去掉慢卡后均匀摊派，均值乘 N/(N-1)，不计迁移成本）、驱逐（从检查点重启，成本 = 期望丢失工作 τ/2 + 恢复时间，复用 checkpoint-interval 的保存成本）。',

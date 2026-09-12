@@ -16,18 +16,8 @@ a.text(.05,.02,'蓝色：prefill     绿色：decode',fontsize=11)
 save(f,'figure-9-4-allocation')
 data['new-allocation']={'prefill_A100':[sm['best_prefill_workers']['A100'] for sm,_ in alloc],'prefill_H20':[sm['best_prefill_workers']['H20'] for sm,_ in alloc],'rates':[num(sm['best_pd_bound_requests_per_second_exact']) for sm,_ in alloc]}
 
-# Same task count: each rectangle's area equals rows times active experts.
-f,axes=plt.subplots(2,1,figsize=(11,7),sharex=True);f.subplots_adjust(left=.12,right=.97,bottom=.12,top=.92,hspace=.58)
-for ax,experts,rows,col,title in [(axes[0],128,4,'blue','均匀覆盖：128 个专家，每个处理 4 行'),(axes[1],8,64,'teal','集中复用：8 个专家，每个处理 64 行')]:
- ax.add_patch(Rectangle((0,0),experts,rows,fc=C[col],alpha=.75))
- ax.set(xlim=(0,128),ylim=(0,70),ylabel='每专家输入行数',yticks=[0,4,32,64])
- ax.set_title(title,loc='left',fontsize=13)
- ax.text(45,43,'矩形面积均为 512 次分派\n矩阵计算均约 19.3 GFLOPs',fontsize=12)
- ax.grid(axis='y',alpha=.15)
-axes[0].text(64,12,'读取权重 4.5 GiB',ha='center',fontsize=12,color=C['blue'])
-axes[1].text(12,14,'读取权重 288 MiB',fontsize=12,color=C['teal'])
-axes[1].set(xlabel='本批访问的专家数',xticks=[0,8,32,64,96,128])
-save(f,'figure-9-7-footprint')
+# Same task count: each rectangle's area equals rows times active experts. Section 9.3.3 now recalls this
+# from section 6.3.2 in prose, so the two rectangle figures were dropped; the numbers stay under validation.
 data['new-footprint']={'active_experts':[128,8],'rows_per_expert':[4,64],'weight_MiB':[4608,288],'assignments':512}
 
 # Synchronization waits for the busiest card, with identical total work. HGX H100 at 50% of the 989.4 TFLOP/s BF16 dense peak.

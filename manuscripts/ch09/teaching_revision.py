@@ -68,8 +68,7 @@ def draw(here,data):
         d=data['9-6'];f,a=plot(3.9)
         for key,label,c,ls in [('cpu_avx512_ms','CPU，AVX-512','#267398','-'),('cpu_amx_ms','CPU，AMX','#267398','--'),('weight_copy_gpu_ms','搬权重到 GPU','#a56c28','-')]:a.plot(d['tokens_per_expert'],d[key],label=label,color=c,ls=ls)
         a.set_xscale('log',base=2);a.set(xlabel='每个专家收到的 token 数（对数刻度）',ylabel='八个专家的路径时间（ms）',xlim=(1,1024),ylim=(0,30),xticks=[1,4,16,64,256,1024],xticklabels=['1','4','16','64','256','1024']);a.minorticks_off();a.legend(frameon=False);save(f,'6-reuse')
-        for i,(experts,rows) in enumerate(zip(data['new-footprint']['active_experts'],data['new-footprint']['rows_per_expert'])):
-            f,a=plot(3.5);a.bar(0,rows,width=experts,align='edge',color=COL['blue'],edgecolor=COL['line']);a.set(xlim=(0,136),ylim=(0,70),xlabel='不同专家数',ylabel='每专家 token 数');a.text(.5,.9,f'{experts} × {rows} = 512 次分派',transform=a.transAxes,ha='center',fontsize=12);save(f,'7-footprint' if i==0 else 'footprint-reuse')
+        # The two expert-footprint rectangles repeated figure 6-19, so section 9.3.3 keeps only the prose recall.
         d=data['9-mla-handoff'];f,a=plot(3.8)
         for k,l,c in [('pd_gqa_ms','PD 一次交接：GQA 1.125 GiB','#267398'),('pd_mla_ms','PD 一次交接：紧凑 MLA 549 MiB','#388768'),('af_step_ms','AF 一步交接：72 次','#a56c28')]:a.plot(d['startup_us'],d[k],label=l,color=c)
         for key,c in [('gqa25','#267398'),('mla25','#388768')]:

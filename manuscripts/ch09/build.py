@@ -227,5 +227,5 @@ hp=preview_path(md);hp.write_text(page)
 from book_assets import sync_figure_index
 active_assets=sync_figure_index(HERE)
 artifacts=outputs+[HERE.parent/'ub_ep_figures.py',HERE/'ub-ep-layout-validation.json',ROOT/'calculations/results/ep-skew-book.json',HERE/'teaching_revision.py',HERE/'figure-index.json',HERE/'teaching-layout-validation.json',HERE/'figure-data.json',hp,md]+active_assets
-(HERE/'manifest.json').write_text(json.dumps({'chapter':9,'generator':'manuscripts/ch09/build.py','figures':len(teaching_checks),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts]},ensure_ascii=False,indent=2)+'\n')
+(HERE/'manifest.json').write_text(json.dumps({'chapter':9,'generator':'manuscripts/ch09/build.py','figures':len(teaching_checks),'font_family':family,'outputs':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in artifacts if not (p.parent==ROOT/'manuscripts' and p.suffix=='.md' and p.name[:2].isdigit())]},ensure_ascii=False,indent=2)+'\n')
 print(f'Built {len(outputs)} image files, {len(maths)} formulas, offline HTML; {len(layout)} extent warnings.')

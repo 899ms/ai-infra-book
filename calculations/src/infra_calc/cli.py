@@ -8,7 +8,7 @@ from .models import qwen3, forward as model_forward
 from .report import markdown, operator_csv
 from .schema import Scenario
 from .sources import fetch_sources, records, verify_sources, model_config
-from .topics import state, projection, experts, hyper_connections, v4_attention, v4_forward, k3_mla, k3_kda, attn_res, kda_chunk, k3_forward, cache_sequence, resource_basics, memory_concurrency, decode_budget, ring_collective, tree_collective, all_to_all, numa_staging, moe_dedup, capacity_scan, dense_placement, dense_communication, pipeline_schedule, training_matrix, rl_cycle, rl_supply, request_trace, agent_trace, audio_timing, gemm_tiles, row_reduction, bank_mapping, loop_access, fusion_lifetime, quantized_gemm, fusion_numerics, online_softmax, attention_tiles, host_transfer, stream_buffer, graph_execution, optimization_deployment, shape_specialization, runtime_trace, persistent_tasks, request_dag, microbatch_overlap, topology_allocation, collective_paths, periodic_queue, feedback_queue, packet_reorder, collective_tail, connection_states, operation_ordering, completion_reclaim, rpc_trace, remote_state, kv_pages, kv_trace, kv_restore, prefix_value, apc_trace, speculative_round, speculative_sampling, speculative_budget, dflash_work, chunk_history, batch_reuse, iteration_batching, service_replay, gguf_inventory, gguf_layout, kv_codec, weight_offload, kv_quality, pd_af_handoff, pd_pool, expert_locality, grouped_experts, replica_payback, cache_route, router_trace, router_pressure, cache_restart, cache_missing, cache_fault, cache_residency, training_state, gradient_cast, checkpoint_reshard, checkpoint_async, checkpoint_interval, checkpoint_baseline, checkpoint_fault, checkpoint_resume, training_deadline, dense_training_scale, routing_metadata, teacher_cache, weight_handoff, routing_cost, v4_fp8_linear, multimodal_cache, v3_forward, environment_resources, omni_audio, image_generation, video_generation, vision_encoding, retry_paths, vl_request, omni_audio_encoder, nic_budget, omni_vision_encoding, tpu_demand, sequence_dependencies, omni_understanding, environment_lifecycle, ub_scope, training_history, scaling_law, reconfiguration, kv_tiers
+from .topics import state, projection, experts, hyper_connections, v4_attention, v4_forward, k3_mla, k3_kda, attn_res, kda_chunk, k3_forward, cache_sequence, resource_basics, memory_concurrency, decode_budget, ring_collective, tree_collective, all_to_all, numa_staging, moe_dedup, capacity_scan, dense_placement, dense_communication, pipeline_schedule, training_matrix, rl_cycle, rl_supply, request_trace, agent_trace, audio_timing, gemm_tiles, row_reduction, reduction_order, bank_mapping, loop_access, fusion_lifetime, quantized_gemm, fusion_numerics, online_softmax, attention_tiles, host_transfer, stream_buffer, graph_execution, optimization_deployment, shape_specialization, runtime_trace, persistent_tasks, request_dag, microbatch_overlap, topology_allocation, collective_paths, periodic_queue, feedback_queue, packet_reorder, collective_tail, connection_states, operation_ordering, completion_reclaim, rpc_trace, remote_state, kv_pages, kv_trace, kv_restore, prefix_value, apc_trace, speculative_round, speculative_sampling, speculative_budget, dflash_work, chunk_history, batch_reuse, iteration_batching, service_replay, gguf_inventory, gguf_layout, kv_codec, weight_offload, kv_quality, pd_af_handoff, pd_pool, expert_locality, grouped_experts, replica_payback, cache_route, router_trace, router_pressure, cache_restart, cache_missing, cache_fault, cache_residency, training_state, gradient_cast, checkpoint_reshard, checkpoint_async, checkpoint_interval, checkpoint_baseline, checkpoint_fault, checkpoint_resume, training_deadline, dense_training_scale, routing_metadata, teacher_cache, weight_handoff, routing_cost, v4_fp8_linear, multimodal_cache, v3_forward, environment_resources, omni_audio, image_generation, video_generation, vision_encoding, retry_paths, vl_request, omni_audio_encoder, nic_budget, omni_vision_encoding, tpu_demand, sequence_dependencies, omni_understanding, environment_lifecycle, ub_scope, training_history, scaling_law, reconfiguration, kv_tiers
 from .topics import ub_fabric
 from .topics import qwen235_placement
 from .topics import dense_quantized_placement
@@ -784,6 +784,12 @@ def parser() -> argparse.ArgumentParser:
         reduction.add_argument('--'+name,type=int,default=default)
     reduction.add_argument('--format',choices=('json','md'),default='json')
     reduction.add_argument('--output',type=Path)
+    order = sub.add_parser('reduction-order', help='Qwen RMSNorm partition count and merge order in FP32')
+    order.add_argument('--model', default='qwen3-8b')
+    for name, default in (('splits',8),('width-multiplier',1)):
+        order.add_argument('--'+name,type=int,default=default)
+    order.add_argument('--format',choices=('json','md'),default='json')
+    order.add_argument('--output',type=Path)
     tiles = sub.add_parser('gemm-tiles', help='Qwen up-projection working capacity and next-level traffic')
     tiles.add_argument('--model', default='qwen3-8b')
     tiles.add_argument('--tokens', type=int, default=1024)
@@ -1546,6 +1552,8 @@ def main(argv: list[str] | None = None) -> None:
             result = bank_mapping.calculate(**{key:value for key,value in vars(args).items() if key not in ('command','format','output')})
         elif args.command == 'row-reduction':
             result = row_reduction.calculate(**{key:value for key,value in vars(args).items() if key not in ('command','format','output')})
+        elif args.command == 'reduction-order':
+            result = reduction_order.calculate(**{key:value for key,value in vars(args).items() if key not in ('command','format','output')})
         elif args.command == 'gemm-tiles':
             result = gemm_tiles.calculate(**{key: value for key,value in vars(args).items() if key not in ('command','format','output')})
         elif args.command == 'audio-timing':

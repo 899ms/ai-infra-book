@@ -61,7 +61,7 @@ def draw(ch,out):
                 ax.spines[['top','right']].set_visible(False)
                 ax.barh([1,0],vals,color=[COL['blue'],COL['green']],height=.48,edgecolor=COL['line'])
                 for y,v in zip([1,0],vals):ax.text(v+.4,y,f'{v:.3f}',va='center',fontsize=11)
-                ax.set(yticks=[1,0],yticklabels=['V4 Flash','V4.1 Flash'],xlim=(0,34),ylim=(-.65,1.7),xticks=[0,10,20,30],xlabel='MiB');ax.set_title(title,fontsize=13)
+                ax.set(yticks=[1,0],yticklabels=['V4-Flash','V4.1 Flash'],xlim=(0,34),ylim=(-.65,1.7),xticks=[0,10,20,30],xlabel='MiB');ax.set_title(title,fontsize=13)
             out.save(f,'figure-5-v41-traffic')
         elif ch==8:
             f,a=canvas(5.9)

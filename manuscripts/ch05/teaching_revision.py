@@ -205,6 +205,39 @@ def draw(here, data):
         text(a,.50,.06,'全部块处理完：u′ / ℓ′ = 7/3',12,ha='center')
         save(f,'figure-5-7-online-softmax')
 
+        order=json.loads((here.parents[1]/'calculations/results/reduction-order.json').read_text())
+        exact,ulp=order['summary']['exact_sum'],order['summary']['ulp']
+        f,axs=plt.subplots(2,1,figsize=(420/72,4.8),gridspec_kw={'height_ratios':[3,1.5]});f.subplots_adjust(left=.155,right=.965,top=.90,bottom=.115,hspace=1.0)
+        offsets=[v['offset_ulp'] for v in order['variants']]
+        rows=list(range(len(offsets)))[::-1]
+        axs[0].hlines(rows,offsets,[0]*len(offsets),color=COL['line'],lw=1)
+        axs[0].scatter(offsets,rows,s=46,c='#267398',zorder=3)
+        axs[0].axvline(0,color=COL['ink'],lw=1.1)
+        axs[0].set_yticks(rows,[f"{v['splits']} 段" for v in order['variants']])
+        axs[0].set(xlim=(-196,30),ylim=(-1.35,len(offsets)-.25))
+        axs[0].set_xticks([-175,-150,-100,-50,0])
+        axs[0].text(4,len(offsets)-.62,'精确值',fontsize=11,color=COL['ink'],va='center')
+        axs[0].annotate('',(offsets[0],-.95),xytext=(offsets[3],-.95),arrowprops={'arrowstyle':'<|-|>','color':'#a56b30','lw':1.1})
+        axs[0].text((offsets[0]+offsets[3])/2,-.68,f"相差 {order['summary']['total_ulp_gap']} ULP",fontsize=11,ha='center')
+        axs[0].set_title('段数如何改变平方和',loc='left',fontsize=13)
+        merge=[(v-exact)/ulp for v in order['merge_order']['values']]
+        axs[1].scatter(merge,[0]*len(merge),s=46,c='#a56b30',zorder=3)
+        for x in merge:
+            axs[1].annotate(f'{x:.1f}',(x,0),xytext=(0,13),textcoords='offset points',fontsize=11,ha='center')
+        axs[1].set(xlim=(-11.4,-7.0),ylim=(-.75,.95),yticks=[])
+        axs[1].set_xticks([-11,-10,-9,-8])
+        axs[1].set_title(f"同样分成 {order['merge_order']['splits']} 段：{order['merge_order']['orders']:,} 种合并次序，只有 {order['merge_order']['distinct_results']} 个结果",loc='left',fontsize=13)
+        for a_ in axs:
+            a_.set_xlabel('平方和与精确值的距离（ULP）',fontsize=11)
+            a_.spines['left'].set_visible(False);a_.spines['top'].set_visible(False);a_.spines['right'].set_visible(False)
+            a_.tick_params(axis='both',labelsize=11,length=0 if a_ is axs[0] else 3)
+        save(f,'figure-5-reduction-order')
+        data['reduction_order']={'kind':'floating_point_order','source':'calculations/results/reduction-order.json',
+            'width':order['summary']['width'],'splits':[v['splits'] for v in order['variants']],
+            'offset_ulp':offsets,'total_ulp_gap':order['summary']['total_ulp_gap'],'scale_ulp_gap':order['summary']['scale_ulp_gap'],
+            'first_output_ulp_gap':order['summary']['first_output_ulp_gap'],
+            'merge_orders':order['merge_order']['orders'],'distinct_merge_results':order['merge_order']['distinct_results']}
+
         f,a=plt.subplots(figsize=(420/72,3.8));f.subplots_adjust(left=.17,right=.94,top=.91,bottom=.20)
         d=data['5-8'];a.scatter(d['traffic_MiB'],d['updates'],s=55,c=['#a56b30','#318262','#267398'])
         for x,y,label,off in zip(d['traffic_MiB'],d['updates'],['b = 1','b = 64','b = 128'],[(9,0),(10,10),(-64,14)]):

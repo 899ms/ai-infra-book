@@ -51,7 +51,7 @@ rs=read(ROOT/'calculations/results/retry-paths-book.json')['summary'];total=sum(
 check('retry tree independent enumeration',sum(prob)==1 and total==F(rs['expected_resources_per_submission']['cost']) and pq==F(rs['success_probability_exact']) and pd==F(rs['quality_and_deadline_probability_exact']))
 check('retry figure includes failures and late success',close(sum(d['11-8']['contributions'].values()),float(total)) and close(d['11-8']['contributions']['失败路径'],float(prob[3]*cost[3]+prob[5]*cost[5])))
 check('resource moments match teaching table',F(rs['expected_resources_per_submission']['cpu_seconds'])==F('3.376') and F(rs['expected_resources_per_submission']['resident_byte_seconds'])/2**30==F('23.008'))
-check('purchase assumptions and audit source retained','OPTIMIZATION-AUDIT.md' in s and '逐层固定开销和周期全量重建设为教学输入' in s)
+check('purchase assumptions and audit source retained','OPTIMIZATION-AUDIT.md' in s and '逐层固定开销和周期全量重建为给定输入' in s)
 check('residency comparison',2*9==18 and 2*(1+1)==4 and 18-4==14)
 check('placement completion comparison',[12+20,4+20,1+32]==[32,24,33])
 check('serial RL speedup',close(85/65,17/13) and close(85/45,17/9))

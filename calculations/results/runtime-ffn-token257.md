@@ -39,9 +39,9 @@
 - [sources/qwen3-8b/model.safetensors.index.json](https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json)，SHA256 `f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc`。
 - [sources/qwen3/modeling_qwen3.py](https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py)，SHA256 `704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2`。
 - [sources/qwen3/modeling_qwen3_moe.py](https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py)，SHA256 `3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8`。
-- [sources/runtime-traces/results.json](../experiments/ch05/05-08/results/results.json)，SHA256 `24764c130e19ab0f232f44296da0dba1b3049e98ba5c425b639585f0367dcc28`。
-- [sources/runtime-traces/trace-analysis.json](../experiments/ch05/05-08/results/trace-analysis.json)，SHA256 `16447fc693cfe411dc65663188044067d2e49259dfaac1294aa8564ba68e9573`。
-- [sources/runtime-traces/paper-case.json](../experiments/ch05/05-08/sources/paper-case.json)，SHA256 `63e2c14ee1f24ba1fb8c1a75a2ea6e0610fc230b62f262abe4b2e82bd7b5cee6`。
-- [sources/runtime-traces/mpk-v2.txt](../experiments/ch05/05-08/sources/mpk-v2.txt)，SHA256 `76630ab4bf33add0eb95bfaf5b9ca5ae590ca787eeafc4bb1f7856137e5668c4`。
-- [sources/runtime-traces/run.py](../experiments/ch05/05-08/run.py)，SHA256 `33c506f40abb880318b685511de144079ac893b55d58405e809b4ee621717251`。
-- [sources/runtime-traces/analyze.py](../experiments/ch05/05-08/analyze.py)，SHA256 `56c822bf2865934b2d8281395309595496f6bc55008004a1994eb2e8686ebd9d`。
+- [sources/runtime-traces/results.json](../../experiments/ch05/05-08/results/results.json)，SHA256 `24764c130e19ab0f232f44296da0dba1b3049e98ba5c425b639585f0367dcc28`。
+- [sources/runtime-traces/trace-analysis.json](../../experiments/ch05/05-08/results/trace-analysis.json)，SHA256 `16447fc693cfe411dc65663188044067d2e49259dfaac1294aa8564ba68e9573`。
+- [sources/runtime-traces/paper-case.json](../../experiments/ch05/05-08/sources/paper-case.json)，SHA256 `63e2c14ee1f24ba1fb8c1a75a2ea6e0610fc230b62f262abe4b2e82bd7b5cee6`。
+- [sources/runtime-traces/mpk-v2.txt](../../experiments/ch05/05-08/sources/mpk-v2.txt)，SHA256 `76630ab4bf33add0eb95bfaf5b9ca5ae590ca787eeafc4bb1f7856137e5668c4`。
+- [sources/runtime-traces/run.py](../../experiments/ch05/05-08/run.py)，SHA256 `33c506f40abb880318b685511de144079ac893b55d58405e809b4ee621717251`。
+- [sources/runtime-traces/analyze.py](../../experiments/ch05/05-08/analyze.py)，SHA256 `56c822bf2865934b2d8281395309595496f6bc55008004a1994eb2e8686ebd9d`。

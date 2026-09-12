@@ -18,7 +18,7 @@ def read_records():
         if hashlib.sha256(path.read_bytes()).hexdigest()!=entry['sha256']:
             raise ValueError('Runtime trace hash mismatch: '+entry['file'])
         if path.suffix=='.json':records[path.name]=json.loads(path.read_text())
-        sources.append(dict(file=entry['file'],url='../'+entry['origin'],sha256=entry['sha256']))
+        sources.append(dict(file=entry['file'],url='../../'+entry['origin'],sha256=entry['sha256']))
     return records,sources
 
 

@@ -1,10 +1,15 @@
 .md-grid { max-width: 1500px; }
-.md-typeset { font-size: .75rem; line-height: 1.65; }
+.md-typeset { font-size: .7rem; line-height: 1.65; }
 .md-typeset h1, .md-typeset h2, .md-typeset h3 { font-weight: 650; }
 .md-typeset img { display: block; margin: 1.2rem auto; max-width: 78%; max-height: 60vh; }
 .md-typeset .arithmatex { overflow-x: auto; overflow-y: hidden; }
-/* Tables sit centred in the text column; header cells centred, body cells stay readable. */
-.md-typeset table:not([class]) { font-size: .68rem; margin-left: auto; margin-right: auto; }
+/* Material renders tables as inline-block, which pins them to the left because
+   auto margins do nothing on inline boxes. Force a block box, then centre it. */
+.md-typeset table:not([class]) {
+  display: table;
+  margin-inline: auto;
+  font-size: .62rem;
+}
 .md-typeset table:not([class]) th { text-align: center; }
 .md-typeset a { overflow-wrap: anywhere; }
 /* Keep wide equations scrollable within the text column on small screens. */

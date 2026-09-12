@@ -18,8 +18,8 @@ jobs:
   website:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
           cache: pip
@@ -34,12 +34,12 @@ jobs:
         run: |
           python scripts/build_site.py
           python scripts/check_site.py
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: build/site
       - name: Package website
         run: tar -czf build/ai-infra-book-site.tar.gz -C build/site .
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: book-site-download
           path: build/ai-infra-book-site.tar.gz
@@ -50,8 +50,8 @@ jobs:
     runs-on: macos-15
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Fetch PDF figures and fonts
@@ -78,7 +78,7 @@ jobs:
       - name: Validate PDF and render representative pages
         run: python book/check_ci_pdf.py build/pdf
       - name: Upload PDF release files
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: book-pdf-download
           if-no-files-found: error
@@ -90,7 +90,7 @@ jobs:
             build/pdf/pdf-validation.json
       - name: Save logs and visual checks
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pdf-build-diagnostics
           path: |
@@ -105,7 +105,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: book-pdf-download
           path: dist
@@ -166,7 +166,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
       - name: Deploy book
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

@@ -1,0 +1,1260 @@
+    Cost-Efficient Large Language Model Serving
+for Multi-turn Conversations with CachedAttention
+Bin Gao, National University of Singapore; Zhuomin He, Shanghai Jiaotong University;
+Puru Sharma, Qingxuan Kang, and Djordje Jevdjic, National University of Singapore;
+       Junbo Deng, Xingkun Yang, Zhou Yu, and Pengfei Zuo, Huawei Cloud
+            https://www.usenix.org/conference/atc24/presentation/gao-bin-cost
+
+
+
+
+          This paper is included in the Proceedings of the
+            2024 USENIX Annual Technical Conference.
+                      July 10–12, 2024 • Santa Clara, CA, USA
+                                   978-1-939133-41-0
+
+
+
+
+                                          Open access to the Proceedings of the
+                                        2024 USENIX Annual Technical Conference
+                                                    is sponsored by
+ Cost-Efficient Large Language Model Serving for Multi-turn Conversations with
+                               CachedAttention
+
+        Bin Gao1,* , Zhuomin He2,* , Puru Sharma1 , Qingxuan Kang1 , Djordje Jevdjic1 , Junbo Deng3 ,
+                             Xingkun Yang3 , Zhou Yu3 , and Pengfei Zuo3,†
+          1 National University of Singapore                   2 Shanghai Jiaotong University             3 Huawei Cloud
+
+
+
+Abstract                                                               LLM inference employing a large number of GPUs. Given
+                                                                       the high demand for generative applications, reducing the cost
+Interacting with humans through multi-turn conversations               of inference becomes crucial.
+is a fundamental feature of large language models (LLMs).
+However, existing LLM serving engines executing multi-turn                Engaging in multi-turn conversations with humans is an
+conversations are inefficient due to the need to repeatedly            essential capability of LLMs [49, 53]. These multi-turn con-
+compute the key-value (KV) caches of historical tokens, in-            versations help LLMs comprehend context, user intent, and
+curring high serving costs. To address the problem, this paper         emotional nuances, enhancing their ability to respond appro-
+proposes CachedAttention, a new attention mechanism that               priately. Based on the ShareGPT data [33], a widely-used
+enables reuse of KV caches across multi-turn conversations,            real dataset collected from ChatGPT, 73% of conversations
+significantly reducing the repetitive computation overheads.           involve multiple turns, as analyzed in Section 2.3.
+CachedAttention maintains a hierarchical KV caching sys-                  However, executing multi-turn conversations in current
+tem that leverages cost-effective memory/storage mediums to            LLM serving engines is highly inefficient, as it requires a large
+save KV caches for all requests. To reduce KV cache access             number of repetitive computations, incurring high serving
+overheads from slow mediums, CachedAttention employs                   costs. During a single turn of conversation, the LLM engine
+layer-wise pre-loading and asynchronous saving schemes to              stores intermediate data, key-value (KV) pairs [3, 21, 34], in
+overlap the KV cache access with the GPU computation. To               the limited high-bandwidth memory (HBM) on GPUs. When
+ensure that the KV caches to be accessed are placed in the             that conversation ends and the conversation session becomes
+fastest hierarchy, CachedAttention employs scheduler-aware             inactive, the LLM engine generally discards the KV cache
+fetching and eviction schemes to consciously place the KV              associated with that session, to free up space in the HBM for
+caches in different layers based on the hints from the infer-          other active sessions. When the session becomes active again,
+ence job scheduler. To avoid the invalidation of the saved KV          i.e., the user sends the next message in the conversation, the
+caches incurred by context window overflow, CachedAtten-               LLM engine computes the whole KV cache again. This leads
+tion enables the saved KV caches to remain valid via decou-            to repetitive computation of the same KV cache, wasting valu-
+pling the positional encoding and effectively truncating the           able GPU computation resources. With the number of con-
+KV caches. Extensive experimental results demonstrate that             versation turns increases, the repetitive computation overhead
+CachedAttention significantly decreases the time to the first          linearly increases. Our analysis based on ShareGPT shows
+token (TTFT) by up to 87%, improves the prompt prefilling              that up to 99% of the prefilling cost comes from repetitive
+throughput by up to 7.8× for multi-turn conversations, and             computation for the KV cache, as presented in Section 2.3.
+reduces the end-to-end inference cost by up to 70%.                       To reduce the serving cost and improve the inference per-
+                                                                       formance, this paper proposes CachedAttention, a new atten-
+                                                                       tion mechanism that enables the reuse of KV caches across
+1    Introduction                                                      multi-turn conversations rather than discarding them. When
+                                                                       a conversation session becomes inactive, CachedAttention
+With impressive performance on a wide variety of tasks, large
+                                                                       saves the corresponding KV cache in a KV caching system,
+language models (LLMs) have ushered in a new era of gen-
+                                                                       named AttentionStore. Upon the resumption of the same ses-
+erative applications [29, 43, 44]. However, serving these gen-
+                                                                       sion, CachedAttention loads and reuses the saved KV cache
+erative applications with LLMs is very expensive due to the
+                                                                       from AttentionStore, thereby eliminating the overhead of the
+    *Work done during their internship at Huawei Cloud.                repetitive computation. However, building such an efficient
+    †Corresponding author: Pengfei Zuo (pengfei.zuo@huawei.com).       KV caching system for multi-turn conversations presents sig-
+
+
+
+USENIX Association                                                               2024 USENIX Annual Technical Conference           111
+nificant challenges.                                             truncation can be directly applied to the KV caches, thereby
+   Firstly, AttentionStore serves as the external storage for    ensuring the reusability of the saved KV caches.
+GPUs and is attached to the GPUs via low-speed links. The           We implement the CachedAttention and evaluate it us-
+use of AttentionStore brings about significant access overhead   ing the real ShareGPT dataset [33]. Extensive experimental
+due to the need to transfer KV caches between HBMs and           results demonstrate that CachedAttention significantly de-
+AttentionStore. The access overhead of KV caches is in the       creases the time to the first token (TTFT) by up to 87% and
+critical path of inference execution. This is because GPUs       improves the prompt prefilling throughput by up to 7.8× for
+can only perform the computation of an inference job after       multi-turn conversations. It also reduces the end-to-end infer-
+successfully loading its corresponding KV cache into HBMs.       ence cost by up to 70%. To summarize, this paper makes the
+Likewise, the subsequent inference jobs need to wait until the   following contributions:
+KV caches from the previous jobs are moved out of the HBMs
+if the HBM space is not enough. To reduce the KV cache               • We investigate the recomputation overheads of KV
+loading overheads, CachedAttention uses a layer-wise pre-              caches in LLMs across conversation turns and iden-
+loading scheme to overlap the time of loading the KV cache             tify the challenges associated with retaining KV caches
+with the inference computation layer by layer. To reduce the           across multi-turn conversations.
+KV cache saving overheads, CachedAttention develops an
+asynchronous saving scheme that overlaps the time of saving          • We propose CachedAttention, a new attention that allows
+KV caches with the inference computation.                              the reuse of the KV caches for any ensuing conversa-
+                                                                       tion turns of the same session, achieving a significant
+   Secondly, the KV caches occupy a large amount of storage
+                                                                       reduction in the recomputation overhead of KV caches
+space that continuously expands during conversations. Prior
+                                                                       in LLMs.
+works have attempted to reduce the inefficiency of repetitive
+KV computation by retaining the KV caches across multi-              • To improve the efficiency of CachedAttention, we de-
+turn conversations in HBMs [18, 63]. However, this quickly             sign overlapped KV cache access, hierarchical KV cache
+exhausts the limited HBM capacity. We present an example of            placement, and positional encoding decoupled KV cache
+LLaMA-65B in Section 2.3, which shows the KV caches fully              truncation schemes.
+occupy the free space within the HBMs in 14 seconds. To
+address this challenge, CachedAttention explores and exploits        • We thoroughly evaluate CachedAttention with real
+slower but larger-capacity storage hierarchies than HBMs,              datasets to demonstrate its efficacy and efficiency.
+including host memory and disks, to provide adequate storage
+space for caching KV caches.
+   Thirdly, since disks have a much larger capacity than the     2     Background and Motivation
+host memory (tens of TBs v.s. several hundreds of GBs), most
+KV caches are retained in disks for CachedAttention. As con-     This section first introduces the fundamentals of generative
+versation requests arrive randomly, their corresponding KV       LLM inference and then explores the inefficiencies in LLMs
+caches are more likely to be located in disks, resulting in      during multi-turn conversations. The section finally discusses
+poor access performance. To address this problem, CachedAt-      the design opportunities for dealing with these inefficiencies
+tention uses a scheduler-aware KV cache fetching scheme.         and the challenges faced in designing such a system.
+This scheme pre-fetches the KV caches that are likely to be
+accessed from disks to the host memory, by utilizing the hints
+                                                                 2.1    Generative LLM Inference Basics
+received from the inference job scheduler. When the free
+space of the host memory is not enough, CachedAttention          Transformer Architecture. The transformer has emerged as
+also adopts a scheduler-aware eviction scheme to efficiently     the widely accepted standard in generative LLM inference.
+identify the most suitable KV caches in memory and evict         The widely used LLMs like GPTs [29] and LLaMAs [44, 45]
+them to disks or out of the system.                              are built upon the autoregressive transformer architecture [16,
+   Finally, when a conversation session surpasses the limit      47]. During inference, these models process the prompt of the
+of the context window of LLMs, e.g., 4K in LLaMA-2 [45],         users and generate a response. The prompt is processed as a
+LLMs generally truncate the oldest tokens and limit the con-     sequence of input tokens, and the response is generated by the
+text to the most recent tokens [30]. This truncation makes all   model predicting the probability of subsequent tokens using
+saved KV caches of that conversation in CachedAttention in-      the context of all the prior tokens. The transformer model
+valid since the positional information of all tokens embedded    consists of a chain of l transformer layers, each consisting of
+in the KV cache is changed. To overcome this issue, Cache-       two phases: self-attention and feed-forward network (FFN).
+dAttention decouples the positional encoding from the KV            For the input token list X = [x1 , x2 , ...xs ], each layer applies
+caches when saving them. It re-embeds the positional encod-      a series of projections on each token in X using the weights
+ing into KV caches when loading them. After decoupling,          WQ ,WK ,WV . This generates the elements in the set of queries,
+
+
+
+112   2024 USENIX Annual Technical Conference                                                                 USENIX Association
+                                                         prefilling        decoding/token           1.00                                       1.00
+   Prefilling        Decoding
+  KV Cache[1:s]                                                                                     0.75                                       0.75
+   token [s+1]
+                        STOP
+
+
+
+
+                                                                                              CDF
+
+
+
+
+                                                                                                                                         CDF
+                                                    10                                              0.50                                       0.50
+
+
+
+
+                                      Latency (s)
+    Layers           KV Cache[s+1]
+                      t [s+2] = EOF                                                                 0.25                                       0.25
+                                                    5
+                                                                                                    0.00                                       0.00
+      X [1:s]          Layers                                                                              2 5   10 15 20 25 30 35 40                 024    8     16    24       32
+                                                    0                                                      Conversation turn number                         Token number (K)
+                     KV Cache[1:s]                            1K      2K          4K
+      START             t [s+1]                                                                     (a) CDF for conversation turn number              (b) CDF for session length
+                                                                Input length
+
+ (a) Two-phase illustration.                             (b) Execution latency.             Figure 2: (a) Distribution for conversation turn number
+                                                                                            in ShareGPT [33]. (b) The session length distribution of
+Figure 1: Prefilling and decoding phases. Latency measured                                  ShareGPT. For better display effect, the statistics exclude
+for LLaMA-70B of batch size 8 on 4 A100 GPUs.                                               conversations with over 40 turns or sessions that exceed a
+                                                                                            length of 32K.
+keys, and values, referred to as Q, K, and V respectively:
+
+                   Q = WQ X, K = WK X,V = WV X                                                      Turn 1 q1 a1                                 Turn 1 q1 a1
+
+
+
+
+                                                                                            time
+
+
+
+
+                                                                                                                                         time
+Subsequently, attention scores are computed via Q, K, and V :                                       Turn 2 q1 a1 q2 a2                           Turn 2 q1 a1 q2 a2           decoding
+
+                                                                                                    Turn 3 q1 a1 q2 a2 q3 a3                     Turn 3 q1 a1 q2 a2 q3 a3
+                                                QK T                                                             Turn 3 prefill   decoding                   loading KV prefill
+                Attention(Q, K,V ) = so f tmax( √ )V
+                                                 dK                                                          (a) Recomputation                         (b) CachedAttention
+        √
+where dK is the dimension of the key vector K. Finally,                                     Figure 3: Comparison of recomputation and CachedAttention.
+the projection operation applies a linear transformation on
+attention scores. This projected result is handed to the FFN                                generation number. The decoding phase happens sequentially
+layer. The result from FFN is passed on to the next transformer                             due to the heavy data dependency on the previous iteration.
+layer as input. Finally, after the input has been processed                                     The two phases present distinct execution time characteris-
+through all l transformer layers, the output is a probability                               tics. The prefilling phase, computing the KV cache in parallel,
+vector that marks out the most probable output tokens.                                      has a duration closely tied to the number of input prompt
+   KV Cache: The above process produces intermediate K                                      tokens. As shown in Figure 1b, the execution time of the pre-
+and V tensors for each token. When generating subsequent                                    filling phase increases with more input tokens. In contrast,
+tokens, all KV tensors of preceding tokens are necessary for                                the decoding phase computes for a single token per iteration,
+computing the self-attention. These K and V tensors are gen-                                resulting in relatively constant computation time per iteration.
+erally cached in GPUs, referred to as the KV cache. The
+KV cache typically has a large footprint. For example, GPT-
+                                                                                            2.3            Multi-turn Conversation Inference
+3 [10, 29] generates a 4.5MB KV cache for each token. The
+size of KV cache linearly increases with the number of prompt                               Engaging humans in multi-turn conversations is a fundamen-
+tokens. A conversation session containing thousands of tokens                               tal feature of modern LLMs. A multi-turn conversation ses-
+will produce several GBs of KV cache.                                                       sion consists of a series of continuous conversations, denoted
+                                                                                            as D = [d1 , d2 , ...dN ]. In each conversation d j , a user inputs
+2.2      Autoregressive Generation                                                          a new question or command q j and then awaits the response
+                                                                                            a j from the LLM. To maintain a coherent context and un-
+As illustrated in Figure 1a, transformer-based generation can                               derstanding of the conversation session, the LLM generates
+logically be identified as two distinctive phases [1].                                      aN+1 based on both the historical tokens from all previous
+   The prefilling phase. Given a request prompt, the gener-                                 conversation turns d[1:N] and the input tokens of the current
+ation takes the prompt token list X = [x1 , x2 , ...xs ] as input                           turn, denoted as q1 a1 q2 a2 ...qN aN qN+1 .
+and then proceeds to compute the token xs+1 . This process                                     Based on the analysis of ShareGPT [33, 38], a real dataset
+generates a series of KVs, specifically forming the KV cache                                collected from ChatGPT that includes more than 90K conver-
+ranging from 1 to s, which are used for the decoding phase.                                 sations, we observe that 73% of conversations are multi-turn,
+   The decoding phase. The decoding phase iteratively gen-                                  as shown in Figure 2a. Moreover, 30% of conversations have
+erates output tokens. The decoding phase takes token s+1                                    more than 4K tokens as shown in Figure 2b.
+and the KV cache [1:s] from the prefilling phase as input to                                   However, executing multi-turn conversations in current
+compute the KV cache s+1 and the token s+2. The genera-                                     LLM serving engines is inefficient due to the repetitive com-
+tion process iteratively continues until the generated token is                             putation of KV caches across multiple conversation turns. As
+<eos> or the iteration number reaches the maximum allowed                                   shown in Figure 3a, in conversation turn 1, the LLM serving
+
+
+
+USENIX Association                                                                                           2024 USENIX Annual Technical Conference                              113
+               hist tokens         new tokens                                               prefill all          prefill new
+                         Recomp ratio
+                                                                                                                               consumes about 360 ms. This process generates 5 GB of KV
+         14K                              100
+                                                                                                                               cache, indicating the generation speed of the KV cache is
+
+
+
+
+                                                Recomp ratio (%)
+
+                                                                   GPU time (s)
+         12K                                                                                                                   about 13.9 GB/s. As 130 GB of HBM space is allocated to
+         10K                                                                      1.0
+Tokens
+
+
+
+
+          8K
+                                          50                                                                gap: 99%           store the model, the remaining 190 GB of free HBM space
+          6K
+          4K
+                                                                                  0.5                                          will be fully occupied by the KV cache within 14 seconds.
+          2K
+                                          0
+                                                                                                                               If spilling the KV cache to the host memory (e.g., 512 GB
+           0                                                                      0.0
+               0      5   10    15   20                                                 0        5        10    15     20      space), the host memory will be filled in less than 1 minute.
+                   Conversation Turns                                                       Conversation Turns                 Using disks to save the KV cache can extend the storage space
+                          (a)                                                                             (b)                  but incur worse access performance, as presented below.
+Figure 4: Recomputation inefficiencies. (a) Average num-                                                                          3) Suitable placement of KV caches in different hierar-
+bers of historical tokens and new tokens in different turns of                                                                 chies. Disks provide much larger capacity than the host mem-
+ShareGPT [33]. (b) GPU time for prefilling all tokens and                                                                      ory (tens of TBs v.s. several hundreds of GBs). Thus most
+only new input tokens in ShareGPT with Mistral-7B [19] on                                                                      KV caches are retained in disks. However, the disks have
+1 A100 GPU.                                                                                                                    an access bandwidth of less than 5 GB/s. As conversation
+engine generates the KV cache of q1 and a1 . After finishing                                                                   requests arrive randomly, their corresponding KV caches are
+turn 1, the LLM serving engine discards the KV cache to                                                                        more likely to be located in disks when being accessed, re-
+reclaim the HBM space. In turn 2, the LLM serving engine re-                                                                   sulting in poor inference performance. It is essential to ensure
+generates the KV cache of q1 and a1 . In turn 3, the KV cache                                                                  that the KV cache to be accessed in the immediate future is
+of q1 , a1 , q2 , and a2 is re-generated. As the session expands,                                                              always placed in the host memory instead of disks.
+the historical tokens keep accumulating and the amount of                                                                         4) Unexpected invalidation of the saved KV caches. With
+repetitive computation significantly increases. As shown in                                                                    the number of conversation turns increasing, the historical to-
+Figure 4a, with the increase of the conversation turns, the                                                                    kens can exceed the context window limitation. LLM serving
+percentage of historical tokens will be more than 99% in a                                                                     engines generally perform token truncation [15, 30] to reduce
+new conversation. The repetitive computation time occupies                                                                     the input prompt. The truncation has no impact on previous
+99% of the prefilling time (a.k.a., time to the first token) in                                                                LLM serving engines since they always recompute the KV
+the new conversation, as shown in Figure 4b.                                                                                   cache from the truncated input prompt. However, the trunca-
+                                                                                                                               tion makes the KV caches saved in AttentionStore invalid,
+                                                                                                                               since the position of each token is changed after truncation.
+2.4            Opportunities and Challenges                                                                                    Thus it cannot match the old embedded positional encoding
+Based on the analysis above, we observe that if the KV                                                                         in the saved KV cache. Such context window overflow can oc-
+caches can be reused across multiple turns of conversations,                                                                   cur with a high probability. As shown in Figure 2b, 47% and
+up to 99% of prefilling cost can be reduced. Specifically,                                                                     30% of conversation sessions have a context longer than 2K
+the KV caches of historical conversations can be saved in a                                                                    and 4K, respectively. It means that when using the LLaMA-2
+KV caching system out of GPUs. Upon the reactivation of a                                                                      family with 4K context window [45], the context window
+conversation session, GPUs load the associated KV caches                                                                       overflow occurs in 30% of conversation sessions. When using
+from the KV caching system and reuse them for the new-turn                                                                     the OPT family with 2K context window [59], the context
+conversation. Nevertheless, to build an efficient KV caching                                                                   window overflow occurs in 47% of conversation sessions.
+system, there exist many significant challenges.
+   1) High KV cache access overheads. During the inference,                                                                    3     The CachedAttention Design
+the computation of GPUs can be blocked due to waiting for
+the KV caches to be loaded from the KV caching system.
+                                                                                                                               3.1    Overview
+The block time is non-negligible compared to the repetitive
+computation time of the KV cache, making the KV caching                                                                        In this paper, we propose a new attention mechanism, called
+solution lose efficacy. For example, we evaluate the inference                                                                 CachedAttention, which enables the reuse of KV caches
+time of the LLaMA-65B model using 4 NVIDIA A100 GPUs                                                                           across multi-turn conversations. Unlike the conventional at-
+and observe that prefilling 2K tokens of a prompt consumes                                                                     tention mechanism that uses all prompt tokens for prefilling,
+about 360 ms. In contrast, loading the KV cache of the 2K                                                                      CachedAttention uses the new tokens input in the new con-
+tokens (5 GB) from host memory to GPUs consumes about                                                                          versation turn and the KV caches of historical tokens for
+192 ms (the GPU system with 16 lanes of PCIe Gen4 has                                                                          prefilling, as shown in Figure 3. Specifically, when the associ-
+about 26 GB/s of effective data transmission bandwidth).                                                                       ated conversation session is inactive, CachedAttention saves
+   2) High storage capacity requirement of KV caches. Stor-                                                                    the KV cache in a KV caching system, named AttentionStore,
+ing KV cache for each request consumes a substantial amount                                                                    instead of discarding them as in the conventional attention
+of storage space. For instance, when using 4 A100 GPUs each                                                                    mechanism. If the same conversation session is activated in
+with 80GB HBM to run LLaMA-65B, prefilling 2K tokens                                                                           the future, its KV cache is fetched from AttentionStore and
+
+
+
+114            2024 USENIX Annual Technical Conference                                                                                                                  USENIX Association
+     CachedAttention                    GPU Cluster                   Execution
+        Controller
+                                                                       Stream
+                                                                                     Last job                     Gap               Layer 1 Layer 2 Layer 3
+     Job Scheduler              GPU 0                 GPU 1             Read
+                                                                                                          Layer 1 Layer 2 Layer 3
+                                HBM 0                 HBM 1            Stream
+     Job
+    Queue                     Load (§3.2.1)         Save (§3.2.2)
+                                                                       (a) Baseline: KV cache loading without concurrent operations.
+      AttentionStore                                                  Execution
+                                        Host memory                    Stream        Last job                      Layer 1 Layer 2 Layer 3
+         Manager
+       KV Access                                    Evict (§3.3.2)      Read                              Layer 1 Layer 2 Layer 3
+                              Fetch (§3.3.1)
+                                                                       Stream
+         (§3.2)
+
+      KV Placement                         Disks                                    (b) Layer-wise pre-loading without buffer.
+         (§3.3)
+                                        AttentionStore
+                                                                      Execution                           Layer 1 Layer 2 Layer 3
+                                                                                    Last job
+                                                                       Stream
+                                                                        Read                  Layer 1 Layer 2 Layer 3
+                                                                       Stream
+   Figure 5: The system architecture of CachedAttention.
+                                                                                      (c) Layer-wise pre-loading with buffer.
+reused for inference. By doing so, CachedAttention only ex-          Figure 6: Layer-wise KV cache pre-loading. Blue blocks
+ecutes the prefilling of partial prompt tokens, i.e., the new        indicate the execution of each transformer layer. Red blocks
+tokens input in the new turn of conversation, rather than pre-       indicate the KV cache loading of each transformer layer.
+filling all prompt tokens. As shown in Figure 3b, when execut-
+                                                                      Execution
+ing the inference of Turn 3, the KV cache of q1 , a1 , q2 , and a2     Stream           Last job               Layer 1         Layer 2     Layer 3
+is reused and only q3 needs to be prefilled. CachedAttention            Read                    Layer 1         Layer 2          Layer 3
+                                                                       Stream
+effectively eliminates the repetitive computation overhead of
+the historical tokens, thereby reducing the prefilling cost.                 (a) Layer-wise pre-loading with imperfect overlapping.
+                                                                      Execution
+   Figure 5 shows the architectural overview of CachedAt-              Stream            Last job              Layer 1 Layer 2 Layer 3
+tention. It maintains a hierarchical KV caching system, i.e.,           Read        Layer 1          Layer 2         Layer 3
+                                                                       Stream
+AttentionStore, with efficient KV cache access, placement,
+and truncation techniques to address the challenges mentioned                (b) Perfect pre-loading with a customized larger buffer.
+in Section 2.4.
+                                                                                  Figure 7: Layer-wise KV cache pre-loading.
+   For Challenge 1, to reduce the overhead of KV cache load-
+ing from AttentionStore into HBMs, CachedAttention lever-            3.2        Overlapped KV Cache Access
+ages a layer-wise pre-loading scheme to overlap the KV cache
+loading with the inference computation. To reduce the KV             The use of slower memory/storage hierarchies results in sig-
+cache saving overhead from HBMs to host memory, Cache-               nificant access overhead because KV caches need to be trans-
+dAttention leverages an asynchronous saving scheme to over-          ferred between HBMs and the slower mediums, blocking the
+lap the saving with the inference computation. (§3.2).               inference and causing a waste of computational resources.
+                                                                     To reduce the KV cache loading overheads from host mem-
+   For Challenges 2 and 3, to enlarge the available storage
+                                                                     ory to HBMs, CachedAttention uses a layer-wise pre-loading
+space for caching KV caches, CachedAttention employs
+                                                                     scheme to overlap the loading of the KV cache with the in-
+multi-tier cost-effective storage mediums in AttentionStore,
+                                                                     ference computation layer by layer (§3.2.1). To reduce the
+i.e., host memory and disks. To reduce the impact of access-
+                                                                     KV cache saving overheads, CachedAttention develops an
+ing slow disks on the inference performance, we present a
+                                                                     asynchronous saving scheme that overlaps the saving of KV
+scheduler-aware fetching scheme that leverages the hints from
+                                                                     caches with the inference computation (§3.2.2).
+the job scheduler to prefetch KV caches to be accessed from
+disks to host memory. Meanwhile, to efficiently leverage the
+limited host memory space, we present a scheduler-aware              3.2.1        Layer-wise Pre-loading from Memory to HBMs
+eviction scheme that identifies the least valuable KV caches
+                                                                     CachedAttention loads KV caches from the host memory to
+and evicts them to disks or out of the caching system (§3.3).
+                                                                     HBMs, resulting in high data access overhead. The access pro-
+   For Challenge 4, to deal with the invalidation of KV caches       cess is in the critical path of the inference execution as shown
+saved in CachedAttention due to context window overflow,             in Figure 6a, since GPUs must rely on the KV cache to exe-
+we utilize a positional encoding decoupled truncation scheme         cute the inference computation. This overhead becomes more
+to save the KV caches without positional encoding embedded,          significant as the size of the KV cache increases, as discussed
+and hence support the truncation directly on KV caches. When         in Section 2.4. To eliminate this overhead, CachedAttention
+loading the KV cache, CachedAttention re-embeds the new              employs a layer-wise pre-loading scheme to mitigate the im-
+positional encoding into the KV caches (§3.4).                       pact. The main idea is to overlap the loading of the KV cache
+
+
+
+USENIX Association                                                                 2024 USENIX Annual Technical Conference                              115
+                                                                                         prefill             decode
+with the prefilling computation of new input tokens for the
+                                                                     Execution
+conversation. In particular, the LLM model is chained by mul-         Stream
+                                                                                 Layer 1 Layer 2 Layer 3 L1 L2 L3 L1 L2 L3   Gap
+                                                                       Write
+tiple transformer layers, each with its own KV cache. As the          Stream
+                                                                                                                             write
+
+GPU executes a layer, the KV cache needed by the subsequent
+layers can be loaded from the host memory concurrently. By            (a) Baseline: KV cache saving without concurrent operations.
+                                                                                         prefill              decode
+doing so, when the GPU starts computing the self-attention
+                                                                     Execution
+for a layer, the corresponding KV cache of the layer is already       Stream     Layer 1 Layer 2 Layer 3 L1 L2 L3 L1 L2 L3
+                                                                       Write
+in the HBM execution buffer.                                          Stream
+   Figure 6b shows how the layer-wise pre-loading scheme
+overlaps the KV cache fetching time with the computation                    (b) Asynchronous KV cache saving with overlapping.
+time, using a 3-layer model for simplicity. Before initiating the                Figure 8: Asynchronous KV cache saving.
+computation of Layer 1, the KV cache for this layer must first
+be prepared in the HBM. The read stream first issues a KV           baseline method to save the KV caches is to write all produced
+cache loading operation to read the KV cache for Layer 1 into       KV caches together after the round of conversation ends. This
+the HBM execution buffer. The execution stream then starts          method however potentially delays the execution of the next
+computing Layer 1. While the execution stream is computing          scheduled jobs since the KV saving time is on the critical path
+one layer, the read stream concurrently loads the KV cache for      of inference, as shown in Figure 8a. To reduce this overhead,
+the next layers, thereby overlapping loading with computation.      CachedAttention incorporates an asynchronous KV cache
+However, a gap still exists between the last job and the first      saving scheme to overlap the KV cache write-back with the
+layer of the current job, since the loading can only commence       computation, which also considers the different characteris-
+once the HBM execution buffer is available, i.e., the last job is   tics of prefilling and decoding phases to perform different
+finished. To further mitigate the gap between the last job and      overlapping mechanisms.
+the first layer of the current job, CachedAttention reserves an        Specifically, the generation speeds of KV caches at the
+HBM read buffer to eliminate the gap. Specifically, as shown        prefilling and decoding phases are different. The prefilling
+in Figure 6c, with the read buffer, the read stream doesn’t         phase processes tokens concurrently, thus generating substan-
+have to wait for the release of the execution buffer from the       tial volumes of KV cache within a restricted timeframe. In
+last job. The read stream can start the pre-loading while the       contrast, the decoding phase generates the KV cache of one
+last job is running.                                                token at a time. As shown in Figure 8b, for the prefilling
+   However, pre-loading may fail to fully overlap with the          phase, as each self-attention operation can produce a signif-
+computation if the KV cache loading time is longer than the         icant amount of KV cache, the write stream retains the KV
+prefilling computation time. As shown in Figure 7a, multi-          cache layer by layer. The KV cache produced by the prefilling
+ple gaps exist between the computation of layers because            phase can be overlapped with the decoding phase. For the
+the KV cache fetching time for each layer exceeds the com-          decoding phase, as the KV cache is iteratively produced, the
+putation time for each layer, resulting in imperfect overlap-       write stream writes back the KV cache layer by layer while
+ping. The overhead can be further minimized by employing a          decoding. To avoid getting stuck if the KV cached is not fully
+customized larger pre-loading buffer. With the larger buffer,       written back when the decoding is already finished, we also
+pre-loading can be issued with an earlier start. For instance,      reserve an HBM write buffer to cover such cases similar to the
+as shown in Figure 7b, with the larger buffer, pre-loading is       read buffer used in the KV cache prefetching. The unfinished
+allowed to pre-load KV cache for more layers and thus the           KV caches are temporarily moved to the write buffer to avoid
+gaps between layers can be overlapped. Let Tload , Tpre f , Lhist   blocking the execution of the next job.
+and Lnew denote the access time of the KV cache for a token,
+the prefilling time for a token, the length of historical tokens
+in a session, and the length of new input tokens in the con-        3.3        Hierarchical KV Cache Placement
+versation, respectively. Imperfect overlapping happens when         CachedAttention leverages both host memory and disks to
+Tload Lhist > Tpre f Lnew , which indicates that the transmission   expand the available space for KV cache storage. The access
+time is larger than the partial prefilling time. The buffer is      speed of host memory, i.e., DRAM, is much higher than disks,
+used to fill up the time gap Tload Lhist − Tpre f Lnew . Combined   i.e., SSDs, (tens of GB/s v.s. several GB/s). If the KV caches
+with the PCIe bandwidth B, the buffer size can be set by the        to be accessed are always found in the host memory instead of
+following formula: Sbu f = B(Tload Lhist − Tpre f Lnew ).           disks, the access performance of KV caches will be optimal.
+                                                                    To achieve this, CachedAttention applies a scheduler-aware
+3.2.2    Asynchronous Saving from HBMs to Memory                    fetching scheme to pre-fetch the KV caches from disks to
+                                                                    host memory, ensuring KV cache access at the optimal speed
+CachedAttention needs to save KV caches to host memory              (§3.3.1), and a scheduler-aware eviction scheme to evict suit-
+to enable the reuse of the KV caches across conversations. A        able KV caches from host memory to disks (§3.3.2).
+
+
+
+116     2024 USENIX Annual Technical Conference                                                                   USENIX Association
+                                       eviction window, size: 6                  3.3.2   Scheduler-aware Eviction from Memory to Disks
+   Job                                                                           When the free space in the host memory is exhausted, we
+                    Job 9 Job 8 Job 7 Job 6 Job 5 Job 4 Job 3 Job 2 head
+  Queue
+                                                                                 need to evict some KV caches from the host memory to disks.
+              cache use               sys use      prefetching window, size: 2   Meanwhile, if the disks are full, we also need to evict some
+  DRAM       KV 4      KV 2     KV 1         buf       execution      Job 1      KV caches stored in the disks out of the system. Therefore,
+                                                      disks -> dram    KV 3
+                                                                                 it is important to carefully choose the suitable KV cache
+                                                                                 candidates to be evicted for achieving a high cache hit rate.
+   disks     KV 9      KV 8     KV 7        KV 3      dram -> disks    KV 4
+                                                                                    Different from the existing cache eviction strategies,
+                          cache use                       Timeline               such as the least-recently-used (LRU) [46], first-in-first-out
+                                                                                 (FIFO) [8], and their variants, which solely rely on the histor-
+Figure 9: Scheduler-aware KV cache fetching and eviction.                        ical access information of the KV caches, CachedAttention
+                                                                                 presents a scheduler-aware eviction scheme which can lever-
+                                                                                 age the future access information of KV caches to achieve
+3.3.1      Scheduler-aware Fetching from Disks to Memory                         a higher cache hit rate. The job queue in the job scheduler
+                                                                                 gives us the opportunity to achieve this. Specifically, Cache-
+Since disks have a much larger capacity than the host memory                     dAttention maintains a look-ahead eviction window in the job
+(tens of TBs v.s. several hundreds of GBs), most KV caches                       queue. The maximum length of the look-ahead eviction win-
+are retained in disks for CachedAttention. As conversation                       dow is determined by the total storage capacity of Attention-
+requests arrive randomly, their corresponding KV caches are                      Store. Assume the total available capacity in the disks is Cdisk .
+more likely to be located in disks, resulting in poor access                     The look-ahead eviction window length is (Cmem +Cdisk )/Skv .
+performance.                                                                     When CachedAttention attempts to evict one item out of At-
+                                                                                 tentionStore, if finding the item to be evicted in the look-ahead
+   To address the problem, we leverage a scheduler-aware                         eviction window, the item is exempted. When CachedAtten-
+KV cache fetching scheme to pre-fetch the KV caches to be                        tion evicts one item from the host memory to disks, the item
+accessed from disks to the host memory. This is done by uti-                     located at the tail of the look-ahead eviction window has a
+lizing the hints from the inference job scheduler. Specifically,                 higher priority to be evicted. Note that one item corresponds to
+the job scheduler maintains a job queue, thus having the full                    all KV caches associated with a conversation session, which is
+knowledge of waiting jobs. CachedAttention applies a look-                       the minimal eviction and fetching granularity in CachedAtten-
+ahead prefetching window to watch for the waiting jobs to                        tion. This is because the KV cache in the same conversation
+be executed. If the KV cache of the waiting jobs is hit in the                   session is either all used or none of it is used.
+disks, CachedAttention will pre-fetch the KV cache of wait-                         A scheduler-aware eviction example is shown in Figure 9.
+ing jobs from the disks to host memory before these waiting                      When the KV cache of Job 3 is chosen to be migrated to
+jobs are executed. The length of the look-ahead prefetching                      the host memory, the buffer will be utilized. To maintain a
+window is determined by the available capacity in the host                       buffer in the host memory, CachedAttention needs to evict KV
+memory. Given the available memory capacity for prefetching                      caches from the host memory to the disks. CachedAttention
+Cmem and the average KV size of a session Skv , the prefetching                  employs a look-ahead eviction window of size 6 to monitor
+window length is L pw = Cmem /Skv .                                              the KV cache status of the jobs. First, it finds that the KV
+   A scheduler-aware fetching example is shown in Figure 9.                      caches in the host memory all have an associated job in the
+As Job 1 is executing, the KV cache manager applies a look-                      job queue. It then proceeds to scan the look-ahead eviction
+ahead window size of 2 (the host memory has 2 KV cache                           window from tail to head, prioritizing the eviction of jobs
+slots for the KV cache fetching) to check the KV cache hit                       near the tail. Therefore, the KV cache for Job 4 is selected
+status of the waiting Jobs 2-3. The KV cache for Job 2 is hit in                 to be evicted from the host memory to the disks. Since the
+the host memory but the KV cache for Job 3 is not in the host                    disks are also full, the scanning process identifies that the last
+memory. Then the KV cache fetching threads start fetching                        arrived Job 9 in the job queue is the most suitable candidate
+the KV cache for Job 3 from disks to the host memory.                            to be evicted. Finally, the KV cache for Job 4 is moved to the
+                                                                                 location previously occupied by Job 9.
+   Note that CachedAttention includes a host memory buffer
+that allows for seamless fetching of KV caches from disks
+                                                                                 3.4     Decoupled KV Cache Truncation
+to memory, preventing any delays when the host memory is
+full. When the capacity of the free memory reaches a defined                     When the historical tokens exceed the limitation of the con-
+threshold, CachedAttention triggers a KV eviction from host                      text window, LLM serving engines generally perform token
+memory to disks to ensure the constant availability of the host                  truncation [30]. As shown in Figure 10a, the context window
+memory buffer. The eviction process from host memory to                          size is 4K. Once the context window overflows, the LLM
+disks is presented in the next subsection.                                       serving engines cut off the first 2K tokens of the prompt. The
+
+
+
+USENIX Association                                                                         2024 USENIX Annual Technical Conference            117
+                      4K                                   4K
+
+  Prompt
+                                                                                          KC           VC                    KC            VC
+ Truncated truncation              New Tokens                              New Tokens
+  Prompt                                                                                           k         v           q                                         KC          VC
+ KV cache             new KV cache New KV cache   truncation    KV cache   New KV cache
+                                                                                              wk        wv          wq                 k         v           q             k             v    q
+                            2K                                    2K                                                              wk        wv          wq              wk          wv       wq
+                  (a) baseline                      (b) CachedAttention
+                                                                                                            Input                               Input                               Input
+Figure 10: Illustration of managing context window overflow.
+                                                                                                            (a)                                  (b)                                  (c)
+Context window size: 4K, truncation ratio: 2K. (a) Baseline.                                                                                                      positional
+                                                                                                                     KC K cache            VC V cache
+Token truncation [30]. (b) KV cache truncation.                                                                                                                   encoding
+
+                                                                                          Figure 11: (a) Absolute positional encoding. (b) Relative
+truncation has no impact on previous LLM serving engines                                  positional encoding. (c) KV cache with decoupled positional
+since they always recompute the KV cache based on the in-                                 encoding.
+put prompt, regardless of truncation. However, the truncation
+                                                                                                                                                                       to infer
+makes the KV caches stored in CachedAttention invalid, sig-                                                  pos [0:2048]                               pos [0:1536]              Position
+nificantly reducing the efficiency of CachedAttention. This is                                                     +                                          +                   (on key)
+                                                                                                                                                                                     KV
+due to the positional encoding embedded in the KV caches.                                                         Storing                       Fetching
+On performing token truncation on the prompt, the position                                                                                                                     DRAM
+of each token is changed. The positional encoding embedded
+                                                                                                                                       KV cache truncation
+in the KV caches cannot be modified to match the positions
+of tokens in the prompt, making the KV caches invalid.                                    Figure 12: Illustration of KV cache truncation with Cache-
+    To address this problem, CachedAttention enables the                                  dAttention.
+KV caches after truncation to be still valid via decoupling
+                                                                                          within the AttentionStore. After discarding the selected KV
+the positional encoding. CachedAttention needs to work
+                                                                                          caches, AttentionStore delivers the pruned KV cache to the
+with the relative position encoding (RPE) [42, 44, 54]. Un-
+                                                                                          inference engine upon an inference execution.
+like the absolute positional encoding (APE) in which posi-
+tional encodings are added to the input, RPE directly embeds
+the positional encodings in the query (Q) and key (K) vec-                                4     Performance Evaluation
+tors, as shown in Figure 11b. Extensive research shows that
+RPE allows LLMs to learn from longer data sequences than                                  4.1          Experimental Setup
+APE [11, 47, 60]. Therefore, RPE is widely used in modern
+LLMs, e.g., LLaMA [44], T5 [55], Falcon [32], Mistral [19],                               Testbeds. All our experiments are performed on 4 NVIDIA
+Mixtral [20] and Transformer-XL [7]. By simply moving the                                 A100 GPUs, each with 80GB HBM. The system is equipped
+time of caching KVs before embedding positional encodings                                 with 128GB DRAM and 10TB SSDs. GPUs are connected to
+in RPE as shown in Figure 11c, CachedAttention can store                                  the host via PCIe Gen 4.
+the KVs without embedded positional encodings in Attention-                                  We implement CachedAttention in Pytorch and Python.
+Store. When reusing the KVs in CachedAttention, the KVs                                   The host memory and disks are managed in the form of
+are embedded with the new positional encodings and further                                blocks to improve storage utilization, similar to [21]. Our
+used for the following inference.                                                         internal storage allocator allocates and deallocates storage
+    Figure 12 provides an example of how CachedAttention                                  blocks on demand. For the model executor, CachedAtten-
+supports KV cache truncation. CachedAttention stores the KV                               tion integrates the implementation of popular LLMs such as
+cache without the positional encodings. In the cases where                                LLaMA [44] and Falcon [32] based on Transformers [51].
+KV cache truncation becomes necessary, the LLM engine                                     Dedicated CUDA streams are used for moving data between
+retrieves the truncated KV cache (i.e., KV [0:1536]) and loads                            the GPUs and the host memory, overlapping the computa-
+it to the HBM. The new positional encodings are subsequently                              tion with proactive swapping. Separate IO threads migrate
+applied to the KV cache.                                                                  data between the host memory and the disks, overlapping the
+    Note that CachedAttention also allows for selective preser-                           execution with the KV cache migrations. Continuous batch-
+vation of certain KV cache for compression, e.g., the ini-                                ing [57] is enabled through experiments.
+tial tokens with important scores [54] or important tokens                                   Models. The experiments evaluate the open-sourced
+[12,24,61], to further improve the generation quality of LLMs.                            LLaMA-1 model with 65B [44], LLaMA-2 models [45] with
+Specifically, a given KV cache compression technique essen-                               13B, 70B, and Falcon 40B [32]. The intermediate activation
+tially provides a methodology for creating a token discarding                             uses FP16, aligned with prior systems [48, 57]. We also im-
+list (TDL), in the prompt, e.g., discarding the least impor-                              plement Mistral-7B [19] with a 32K context window. Unless
+tant tokens. CachedAttention straightforwardly complies with                              specified otherwise, LLaMA-13B operates on two GPUs with
+the TDL, discarding the KV cache associated with the TDL                                  24 batches, while LLaMA-65B, LLaMA-70B, and Falcon-
+
+
+
+118     2024 USENIX Annual Technical Conference                                                                                                                  USENIX Association
+                                                                                                                                                                                                                                                       RE Prefill       RE Overflow    CA Decode
+                                                                                                RE            CA                                                                     RE            CA
+
+
+
+
+                                                                                                                             Prefill Throughput (t/s)
+                                                                                                                                                                                                                                                       RE Decode        CA Prefill
+                100                                                                                                                                     1000
+                                                                                                                                                                                                                                                       4.02X        1.93X     3.28X   3.42X
+                                                                                                                                                                                                                                       40
+ Hit Rate (%)
+
+
+
+
+                 75                                                         1.0                                                                          750
+
+
+
+
+                                                                                                                                                                                                                  Time (H)
+                                                                 TTFT (s)
+                                                                                                                                                                                                                                       30
+                 50                                                                                                                                      500
+                                                                                                                                                                                                                                       20
+                                                                            0.5
+                 25                                                                                                                                      250                                                                           10
+
+                  0                                                         0.0                                                                                    0                                                                             0
+                      Llama-13B Llama-65B Llama-70B Falcon-40B                    Llama-13B Llama-65B Llama-70B Falcon-40B                                             Llama-13B Llama-65B Llama-70B Falcon-40B                                      Llama-13B Llama-65B Llama-70B Falcon-40B
+                                     Model                                                       Model                                                                                Model                                                                           Model
+         Figure 13: Cache hit rate.                              Figure 14: Time to first token. Figure 15: Prefill throughput.                                                                                                                  Figure 16: GPU time.
+
+40B run on four GPUs, handling 24 batches each.
+                                                                                                                                                                                   RE-GPU          CA-Storage                                             RE                          CA-Prefill
+
+
+
+
+                                                                                                                                                                                                                     Total Prefilling Time (s)
+   Workloads. The workload is integrated from the ShareGPT                                                                                                                         CA-GPU
+                                                                                                                                                                                                                                                 3
+                                                                                                                                                                                                                                                          CA-Load KV Cache            CA
+                                                                                                                                                                   800
+dataset [33, 62]. As there is no public request arrival times-
+                                                                                                                                                                   600
+tamp available in the dataset, we generate request arrival times
+
+
+
+
+                                                                                                                                                        Cost ($)
+                                                                                                                                                                                                                                                 2
+
+                                                                                                                                                                   400
+based on the Poisson distribution with various arrival rates,                                                                                                                                                                                    1
+following prior works [21, 52]. We set the number of different                                                                                                     200
+
+sessions arriving per second according to a Poisson distribu-                                                                                                          0
+                                                                                                                                                                           LLaMA     LLaMA     LLaMA     Falcon
+                                                                                                                                                                                                                                                 0
+                                                                                                                                                                                                                                                      500/500 600/400 700/300 800/200 900/100
+
+tion (with λ = 1.0). 9K conversation sessions are used in the                                                                                                               -13B      -65B      -70B      -40B                                       His Length / Prompt Length
+
+experiments.                                                                                                                                               Figure 17: Inference cost.
+                                                                                                                                                                             Figure 18: Recomputation v.s.
+   Baseline. We compare CachedAttention (CA) with re-                                                                                                                        CachedAttention.
+computation (RE). RE only keeps historical tokens of conver-                                                                                  space per token due to using the group query attention with a
+sation sessions. It discards KV caches after serving a conver-                                                                                GQA factor of 8 and 16.
+sation and does not keep the KV cache while the conversation                                                                                     Time to first token (TTFT). TTFT is an important metric
+session is inactive. When a conversation associated with a                                                                                    for quality of service in LLM serving [2, 31]. It indicates
+particular session becomes active again, RE leverages the his-                                                                                how quickly users start seeing the output of LLMs after
+torical tokens from that session to recompute their KV caches.                                                                                entering their prompt. As shown in Figure 14, CA signifi-
+When the historical tokens exceed the context window limita-                                                                                  cantly reduces the TTFT by 85%, 61%, 87%, and 86% for
+tion, RE applies token truncation, same as the general LLM                                                                                    LLaMA-13B, LLaMA-65B, LLaMA-70B, and Falcon-40B
+services [30]. For simplicity, the token truncation ratio is set                                                                              respectively, in comparison to RE. This is because CA elimi-
+to 0.5, implying that when an overflow occurs, the system                                                                                     nates a large amount of repetitive computation for generating
+will discard the earliest half of the tokens.                                                                                                 the KV caches of historical tokens in the prefilling phase.
+                                                                                                                                              Upon cache hits, the TTFT of CA only relies on the number
+4.2                    End-to-end Performance                                                                                                 of newly input tokens in the new conversation turn.
+                                                                                                                                                 Prefilling throughput. Prefilling throughput is the met-
+In the end-to-end experiments, we use 9K conversations from                                                                                   ric to evaluate the speed of processing the prompt. Fig-
+ShareGPT [33] and the average number of turns in these                                                                                        ure 15 shows the measured prefilling throughput. We observe
+conversations is 5.75. Thus the total number of conversation                                                                                  that CA delivers remarkable speedups of 6.8×, 2.6×, 7.8×
+turns is about 52K. We warm up AttentionStore using the first                                                                                 and 7.2× for LLaMA-13B, LLaMA-65B, LLaMA-70B, and
+10K conversation turns and then evaluate the performance on                                                                                   Falcon-40B respectively, when compared to RE. The improve-
+the following 42K turns.                                                                                                                      ment of CA on prefilling throughput comes from the reduced
+   Cache hit rate. We first present the cache hit rate of Atten-                                                                              prefilling time. CA only prefills the new input of the new
+tionStore in CA since other performance metrics are closely                                                                                   conversation. Moreover, CA can load and reuse the historical
+related to it. Figure 13 shows the total KV cache hit rates,                                                                                  KV caches from AttentionStore with layer-wise pre-loading
+including both DRAM and disk hit rates across various LLMs.                                                                                   optimization. The historical KV cache loading simultaneously
+CA exhibits high hit rates around 86%, 71% 89%, and 90% for                                                                                   occurs with the prefilling on the new input tokens.
+LLaMa-13B, LLaMA-65B, LLaMA-70B, and Falcon-40B,                                                                                                 GPU time. Figure 16 shows the end-to-end GPU time to
+respectively. In contrast, we observe a relatively low hit rate of                                                                            finish all inference jobs in the workload. We observe that
+LLaMA-65B. This discrepancy arises due to the larger storage                                                                                  CA achieves speedups of 4.0×, 1.9×, 3.3×, and 3.4× for
+space required by LLaMA-65B for saving KV caches. Given                                                                                       LLaMA-13B, LLaMA-65B, LLaMA-70B, and Falcon-40B re-
+the same available storage space, CA accommodates fewer                                                                                       spectively, compared to RE. The performance improvements
+sessions for LLaMA-65B, thereby limiting the hit rate. Specif-                                                                                of CA are from two aspects, which are the mitigation of recom-
+ically, LLaMA-65B necessitates 2.5MB of space for each to-                                                                                    puting KV caches of the historical tokens, and the mitigation
+ken in the KV cache. LLaMA-13B requires 0.78MB. LLaMA-                                                                                        of recomputing KV caches after context overflow. Regard-
+70B and Falcon-40B require only 0.31MB and 0.12MB of                                                                                          ing the mitigation of re-prefilling, CA efficiently saves the
+
+
+
+USENIX Association                                                                                                                                                              2024 USENIX Annual Technical Conference                                                                       119
+KV cache in AttentionStore and loads it when necessary for
+                                                                                                       Computation       Load KV Cache                                     Computation       CA
+
+
+
+
+                                                                  Total Prefilling Time (s)
+historical tokens. On the other hand, RE discards the KV                                                                                                                   Save KV Cache
+
+
+
+
+                                                                                                                                         Execution Time (s)
+                                                                                              1.00                                                            7.5
+cache once a job is finished, requiring the redoing of pre-
+                                                                                              0.75
+filling for every job to reproduce the KV cache. In terms of                                                                                                  5.0
+                                                                                              0.50
+mitigating the recomputation of KV caches after context flow,
+                                                                                                                                                              2.5
+                                                                                              0.25
+RE applies token truncation which invalidates the KV cache
+for each truncation due to the embedded position encoding                                     0.00
+                                                                                                     NO-PL PL-B0 PL-B5 PL-B10PL-B15
+                                                                                                                                                              0.0
+                                                                                                                                                                    1000     1200     1400   1600
+in the KV caches. This prompts RE to recompute the KV                                                                x                                                     Prompt Length
+
+cache based on the truncated historical tokens. In contrast,     Figure 19: CA with no pre- Figure 20: Performance im-
+CA decouples the position information from the KV caches,        loading v.s. CA pre-loading pact of using write overlap.
+allowing direct truncation of the KV cache. This approach        with various buffer sizes.
+avoids the recomputation of KV caches that RE requires. Note
+that CachedAttention also not only aids in minimizing the        becomes more pronounced as the percentage of newly input
+prefilling time but also helps reduce the decoding time [57].    tokens decreases (from 500 to 100), as depicted by the middle
+Specifically, under continuous batching, each newly arrived      bar of each bar group. Although the KV cache loading time
+job must complete prefilling before it can join other decod-     for CA gradually increases with the percentage of historical
+ing jobs. This process blocks the execution of decoding jobs,    tokens (from 500 to 900), the layer-wise pre-loading scheme
+resulting in prolonged decoding time. However, CachedAt-         effectively eliminates this loading time, as demonstrated by
+tention mitigates this issue by minimizing prefilling time for   the third bar of each bar group. Note that when the KV cache
+newly arrived jobs. The reduction in prefilling time reflects    loading time exceeds the prefilling time (e.g., the second bar
+the decoding time improvement observed in RE, as depicted        of setting 900/100), CA can conceal the KV cache loading
+in Figure 16.                                                    time by enabling a read buffer. The impact of the read buffer
+                                                                 is evaluated in the next subsection.
+    Inference cost. We evaluate the resource cost based on
+the on-demand price of AWS EC2 instances [4, 5], i.e.,
+$5/hour per A100 GPU, $0.0088/hour/GB for DRAM and               4.3.2                                Overlapped KV cache Access
+$0.000082/hour/GB for SSD. Figure 17 shows the total costs       This subsection evaluates the effectiveness of the proposed
+of different methods for completing the workload. Compared       overlapping access techniques for loading and saving KV
+to RE, CA achieves significant cost savings for LLaMA-13B,       caches. The model used is LLaMA-13B with a single GPU
+LLaMA-65B, LLaMA-70B, and Falcon-40B, amounting to               and the batch size is set to 16.
+70%, 43%, 66%, and 68%, respectively. These cost savings            Layer-wise KV cache pre-loading. We set the length of
+primarily stem from the reduced GPU time, as CA effec-           historical tokens to 1K and the length of newly input tokens
+tively reduces redundant prefilling for historical tokens and    to 100 for investigating the effectiveness of the lay-wise pre-
+recomputation costs during context overflow, as depicted in      loading scheme. The first bar in Figure 19, i.e., NO-PL, shows
+Figure 16. CA employs cost-effective storage mediums in-         the time of prefilling without the pre-loading scheme that
+cluding host memory and disks to cache the KV caches dur-        includes two parts: the KV cache loading time and the com-
+ing inactive conversation sessions. The storage cost from the    putation time of the newly input tokens. The following bars
+host memory and disks constitutes 16.4%, 9.0%, 9.0%, and         in Figure 19 show the prefilling time when the layer-wise
+9.0% of the total cost in CA for LLaMA-13B, LLaMA-65B,           pre-loading scheme has different sizes of read buffers. For
+LLaMA-70B, and Falcon-40B, respectively.                         clarity, we use the number of layers to represent the buffer
+                                                                 size, e.g., PL-B0 indicates no read buffer and PF-B5 indicates
+                                                                 a read buffer size of 5 layers of KV cache. We observe al-
+4.3     Ablation Studies
+                                                                 though there is no read buffer, i.e., PL-B0, the pre-loading
+4.3.1    Recomputation v.s. CachedAttention                      scheme reduces the prefilling time by 35% compared to NO-
+                                                                 PL. PF-B15 perfectly overlaps the KV cache loading time
+We investigate the prefilling performance of different meth-     and reduces the prefilling time by 61% compared to NO-PL.
+ods under varying historic and new token ratios. Different          Asynchronous KV cache saving. We set different prompt
+methods prefill the same 1K tokens under the batch size of       lengths ranging from 1K to 1.6K and the number of decoding
+16 on an A100 GPU for LLaMA-13B. RE computes the KV              steps to 20 for investigating the effectiveness of the asyn-
+cache for all tokens, while CA loads the KV cache of his-        chronous saving scheme. As Figure 20 shows, the saving time
+torical tokens from AttentionStore and partially prefills the    increases as the prompt length grows, as the size of the KV
+new input tokens. For example, the setting 600/400 means         cache to be saved increases. To reduce the saving overhead,
+CA loads the KV cache of 600 tokens and computes the KV          CachedAttention employs the asynchronous saving scheme al-
+cache for 400 tokens. As shown in Figure 18, CA consis-          lowing KV cache saving to overlap with inference execution,
+tently outperforms RE in all tested settings. This advantage     reducing the overall execution time by 13% to 15%.
+
+
+
+120     2024 USENIX Annual Technical Conference                                                                                                                        USENIX Association
+                      CA-DRAM      LRU-DRAM       FIFO-DRAM                      CA          LRU         FIFO                                   OF        CA                                      OF        CA
+                      CA-SSD       LRU-SSD        FIFO-SSD
+                100                                                      30                                                     100
+                                                                                                                                                                                   15
+ Hit Rate (%)
+
+
+
+
+                                                                                                                 Hit Rate (%)
+                 75                                                                                                              75
+
+
+
+
+                                                              Time (H)
+
+
+
+
+                                                                                                                                                                        Time (H)
+                                                                         20
+                                                                                                                                                                                   10
+                 50                                                                                                              50
+                                                                         10
+                 25                                                                                                                                                                 5
+                                                                                                                                 25
+
+                  0                                                       0                                                       0                                                 0
+                      128G/2T     128G/5T     128G/10T                        128G/2T     128G/5T   128G/10T                          LLaMA   LLaMA   LLaMA    Falcon                   LLaMA   LLaMA   LLaMA    Falcon
+                                DRAM / SSD                                              DRAM / SSD                                     -13B    -65B    -70B     -40B                     -13B    -65B    -70B     -40B
+
+                  (a) Impact on hit rate.                                (b) Impact on GPU time.                                  (a) Impact on hit rate.                          (b) Impact on GPU time.
+
+Figure 21: Comparison of the eviction algorithms under vari-                                                                                  Figure 22: Context overflow impact.
+ous storage settings.
+                                                                                                                rates decrease by 17.6%, 41.5%, 18.1%, 18.4% for LLaMA-
+4.3.3                  Scheduler-aware Fetching and Eviction                                                    13B, LLaMA-65B, LLaMA-70B, and Falcon-40B, respec-
+                                                                                                                tively. This decline is attributed to the fact that if applying OF,
+We evaluate the effectiveness of the scheduler-aware fetching
+                                                                                                                every instance of context overflow necessitates context trun-
+and eviction in CachedAttention upon improving the cache hit
+                                                                                                                cation, thereby invalidating the KV caches in AttentionStore.
+rate. We compare overall cache hit rates, DRAM hit rates, and
+                                                                                                                This decrease in hit rate subsequently translates to the longer
+disk hit rates of CA and existing eviction policies (including
+                                                                                                                GPU time as shown in Figure 22b.
+LRU and FIFO) across various storage configurations.
+                                                                                                                   CachedAttention ensures the validity of the saved KV
+   As shown in Figure 21a, for the configuration of 128G/2T
+                                                                                                                caches in the system when context overflow happens and
+that indicates 128GB DRAM and 2TB SSD, CA outperforms
+                                                                                                                promises a higher hit rate and reduced GPU time. OF of
+LRU and FIFO in the overall cache hit rate by 27% and 31%,
+                                                                                                                LLaMA-65B experiences a low hit rate due to its limited
+respectively. With the increased SSD capacity (128G/10T),
+                                                                                                                2K context window. After serving a conversation of the first
+CA achieves a remarkable hit rate of 86%, surpassing LRU
+                                                                                                                turn, the session easily reaches the context window limit,
+(58%) and FIFO (48%). CA achieves high overall hit rates be-
+                                                                                                                consequently making the associated KV cache invalid. Subse-
+cause CA is aware of the future KV cache access information
+                                                                                                                quently, the following conversations in the same session face
+to avoid evicting the KV caches that will be used in the future.
+                                                                                                                KV cache miss.
+The higher hit rates are translated to the reduced GPU time as
+shown in Figure 21b, where CA achieves speedup up to 2.7×.
+Analyzing the breakdown of hit rate, for the configuration of                                                   4.3.5                 Accuracy of Decoupled Positional Encoding
+128G/2T, LRU and FIFO only achieve 0.5% and 0.5% (too
+tiny to display) DRAM hit rates, with the remaining 12.4%                                                       To maintain the validity of the stored KV caches, CachedAt-
+and 9.0% being disk hit rates. Even with the overall hit rate                                                   tention decouples positional encoding from the KV caches
+increasing to 58% and 48% respectively for the larger capac-                                                    and embeds the new positional encodings when reusing the
+ity of 128G/10T, LRU and FIFO still exhibit limited DRAM                                                        stored KV caches as presented in Section 3.4. We evaluate
+hit rates of approximately 0.6% and 0.5% respectively. This                                                     the impact of the different schemes including CA, token trun-
+is because LRU and FIFO lack awareness of future KV cache                                                       cation (TT), and naive KV cache truncation (NKVT) on the
+information and cannot pre-fetch KV caches from disks to                                                        perplexity (PPL) and the accuracy of LLMs leveraging widely
+host memory, thereby limiting their ability to improve DRAM                                                     used benchmarks. In situations where the number of histor-
+hit rates. In contrast, CA achieves a cache hit rate of up to                                                   ical tokens exceeds the context window limit, TT removes
+86%, with over 99.6% of the hits occurring in DRAM due to                                                       the historical tokens and recomputes the KV caches for the
+its scheduler-aware policy.                                                                                     remaining tokens, and NKVT directly discards the KV caches
+                                                                                                                associated with the positional encoding and utilizes the trun-
+                                                                                                                cated KV caches instead.
+4.3.4                  Performance of Decoupled KV Cache Truncation
+                                                                                                                   PPL. PPL is a metric used to evaluate the quality of a model
+When the context window exceeds its limit, CachedAtten-                                                         in generating tokens [13, 54]. Lower PPL values indicate that
+tion truncates the KV cache directly, thus avoiding the need                                                    the model is better at predicting the text and demonstrates a
+for re-computation and reducing overhead. We evaluate the                                                       greater understanding of the language. Table 1 shows the PPL
+effectiveness of the way to manage the context overflow in                                                      comparison of LLaMA-7B and LLaMA-13B in CA, TT, and
+CA. Specifically, we compare a baseline approach overflow                                                       NKVT settings using datasets WikiText-2 [14], C4 [35], and
+(OF) that embeds positional encoding within the KV caches,                                                      PTB [26]. TT consistently achieves a low PPL by recomputing
+leading to the invalidation of KV caches in AttentionStore.                                                     KV caches after context window overflow. CA also maintains
+OF relegates context overflow to be managed by recomputa-                                                       a low PPL, comparable to TT (with a difference of < 0.02), by
+tion. This experiment uses 128GB DRAM and 10TB SSD.                                                             incorporating new positional encodings into the KV caches
+As evident from Figure 22a, comparing OF with CA, the hit                                                       after truncation. In contrast, NKVT exhibits a high PPL (>
+
+
+
+USENIX Association                                                                                                                       2024 USENIX Annual Technical Conference                                    121
+        Table 1: PPL comparison of different methods.
+
+
+
+
+                                                                                                                                 Throughput (t/s)
+                                                                                      100                                                           2.0K
+
+
+
+
+                                                                       Hit Rate (%)
+                                                                                       75                                                           1.5K
+             Dataset         Model      CA     TT     NKVT
+                                                                                       50                                                           1.0K
+                          LLaMA-7B     5.47   5.48    2198.7
+             WikiText-2                                                                25                                                           0.5K
+                          LLaMA-13B    4.91   4.90    1647.7
+                          LLaMA-7B     8.48   8.49    2543.5                           0                                                            0.0K
+             PTB                                                                       0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35                         0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35
+                          LLaMA-13B    7.61   7.60    1865.8                                 Storage Capacity / DSpUT                                        Storage Capacity / DSpUT
+
+
+             C4
+                          LLaMA-7B     6.96   6.98    2343.5                            (a) Impact on hit rate.                                     (b) Impact on throughput.
+                          LLaMA-13B    6.44   6.45    1745.6
+                                                                      Figure 23: Impact of storage capacity and the number of
+           Table 2: Accuracy of different methods.                    distinct sessions.
+             Benchmark      Model      CA      TT     NKVT                                   HBM         HBM+DRAM           CA                             HBM         HBM+DRAM              CA
+                          LLaMA-7B    43.7%   43.4%   21.8%                           100
+             MMLU
+                          LLaMA-13B   52.3%   53.2%   29.6%                                                                                         40
+
+
+
+
+                                                                       Hit Rate (%)
+                                                                                       75
+
+
+
+
+                                                                                                                                 Time (H)
+                          LLaMA-7B    66.0%   65.9%   12.0%                                                                                         30
+             LongEval
+                          LLaMA-13B   68.0%   68.0%   14.0%
+                                                                                       50                                                           20
+                          LLaMA-7B    77.1%   77.2%   48.9%
+             PIQA
+                          LLaMA-13B   80.5%   80.4%   50.2%                            25                                                           10
+
+                                                                                            0.1    0.1     0.1      0.2
+                                                                                        0                                                            0
+                                                                                            LLaMA LLaMA LLaMA Falcon                                       LLaMA   LLaMA   LLaMA    Falcon
+                                                                                             -13B  -65B  -70B  -40B                                         -13B    -65B    -70B     -40B
+
+103 ) due to the coupling of positional encoding within its KV        (a) Impact of caching storage (b) Impact of caching storage
+caches. Directly truncating the KV caches would scramble              mediums on hit rates.         mediums on GPU time.
+the coupled positional information, resulting in the models’
+failure to maintain a low PPL.                                        Figure 24: Performance under various caching configurations.
+   Accuracy. To analyze the accuracy of the models in answer-
+                                                                      above. By configuring the cache capacity of CachedAttention
+ing questions after truncation, we conduct experiments using
+                                                                      as CCpUT, we can achieve a cache hit rate of 100% if not
+the MMLU [17], LongEval [22, 54], and PIQA [6] bench-
+                                                                      considering the newly arrived conversations. Nevertheless, to
+marks. Specifically, we first input a long text to simulate the
+                                                                      achieve a high cache hit rate in real scenarios, we do not need
+overflow of historical inputs to trigger the truncation opera-
+                                                                      to configure such a large capacity since the hotness of cached
+tion, and then append the questions from the benchmarks as
+                                                                      items is different.
+new inputs afterward. As shown in Table 2, both CA and TT
+                                                                         To figure out the relationship between the required cache
+provide high comparable accuracy. TT achieves high accuracy
+                                                                      capacity (RCC) and CCpUT , we evaluate the cache hit rate
+by paying the recomputation cost for context window over-
+                                                                      and the decoding throughput under different ratios of RCC
+flow, while our CA avoids this cost and still maintains high
+                                                                      to CCpUT . In the experiment, we set the TTL to one hour.
+accuracy. In contrast, the NKVT has a much lower accuracy
+                                                                      As shown in Figure 23a, when the ratio RCC/CCpUT is
+than CA and TT because the coupled positional encoding
+                                                                      0.1, we achieve the cache hit rate of 51%. When the ratio
+after KV cache truncation is miscoded, which results in more
+                                                                      RCC/CCpUT is 0.25, we achieve the cache hit rate of 98%.
+disruption to new inputs.
+                                                                      As the hit rate reaches the peak, the throughput also meets its
+                                                                      peak, as shown in Figure 23b.
+4.3.6    The Cache Capacity Requirement
+In this subsection, we investigate how much cache capacity            4.3.7                  Impact of Caching Storage Mediums
+CachedAttention needs to achieve a remarkable cache hit
+rate. The cache capacity required is related to the maximum           Some existing works [18,28,63] employ only the HBM space
+number of distinct conversation sessions served by an LLM             for caching the KV caches of multi-turn conversations. We
+serving system per unit time (denoted as DSpUT). The larger           here compare the performance of mechanism caching KVs on
+the DSpUT value is, the more distinct sessions the system             HBMs with that of CachedAttention caching KVs on DRAM
+handles per unit time, and the more KV cache storage space            and SSDs. In the experiments, we configure the size of the
+is required. Moreover, due to the limitation of the maximum           HBM cache as 10GB, the size of DRAM as 128GB, and the
+context window, the maximum KV cache capacity required by             size of SSDs as 10TB. Figure 24a shows cache hit rates and
+one conservation session is fixed, i.e., equal to the length of the   inference performance of different mechanisms. The hit rate
+maximum context window multiplied by the KV size of each              of the HBM-only caching method is nearly 0% for all mod-
+token, which is denoted as CCpS. Thus the required maximum            els due to the limited capacity of HBM. Using HBM with
+cache capacity per unit time is CCpUT = DSpUT ∗ CCpS. In              DRAM improves the cache hit rate to 3.4%, 1.7%, 7.7%, and
+CachedAttention, the KV cache of each session has a TTL               19.1% for models LLaMA-13B, LLaMA-65B, LLaMA-70B
+(time to live) that indicates its maximum saving time since           and Falcon-40B, respectively. In contrast, by further extend-
+the last access. The TTL is set as the unit time mentioned            ing the cache capacity with SSDs, CachedAttention improves
+
+
+
+122     2024 USENIX Annual Technical Conference                                                                                                              USENIX Association
+                                                                     Throughput (k/s)
+               100                              0.2                                       1                                  8                   virtual memory to allow the KV cache to use fine-granularity
+Hit Rate (%)
+
+
+
+
+                                                                                                              GPU Time (H)
+                80                                                                      0.8                                  6
+
+
+
+
+                                     TTFT (s)
+                60
+                                                0.1
+                                                                                        0.6
+                                                                                                                             4
+                                                                                                                                                 non-continuous memory. These techniques are orthogonal to
+                40                                                                      0.4
+                20                                                                      0.2                                  2                   CachedAttention, which focuses on multi-turn conversations.
+                 0 0.5 1 1.5 2 2.5               0 0.5 1 1.5 2 2.5                        0 0.5 1 1.5 2 2.5                  0 0.5 1 1.5 2 2.5      LMDeploy [18] is an LLM inference framework that
+                   Sessions/S                      Sessions/S                               Sessions/S                          Sessions/S       caches the KV caches of multi-turn conversations on HBMs.
+        (a) Hit rates.                          (b) TTFT.                    (c) Prefill TP.                     (d) GPU time.                   RadixAttention [63], ChunkAttention [56], and Pensieve [58]
+                                                                                                                                                 are inference techniques that were developed concurrently
+                          Figure 25: Impact of session arrival rates.                                                                            with CachedAttention. RadixAttention and ChunkAttention
+the cache hit rate to 86%, 71%, 89%, and 90% for models                                                                                          optimize the inference tasks that share prompt prefixes. Tasks
+LLaMA-13B, LLaMA-65B, LLaMA-70B, and Falcon-40B,                                                                                                 with the same prompt prefixes share the same KV caches
+respectively. With higher hit rates, CachedAttention signifi-                                                                                    to reduce the KV computation. Pensieve utilizes both GPU
+cantly improves the inference performance compared to the                                                                                        and CPU memory to store KV caches for multi-turn con-
+HBM-only/HBM+DRAM policies as shown in Figure 24b.                                                                                               versations. Different from all these works, CachedAttention
+                                                                                                                                                 exploits slower but larger storage hierarchies to save the KV
+4.3.8                  Impact of Session Arrival Rates                                                                                           caches to achieve high cache hit rates as presented in Sec-
+                                                                                                                                                 tion 4.3.7, and focuses on designing systemic techniques to
+We evaluate how the session arrival rates affect the perfor-                                                                                     address the challenges of offloading to slower mediums.
+mance of the CachedAttention in terms of hit rates, TTFT,                                                                                           Inference Parameter Offloading. FlexGen [39] offloads
+prefilling throughput, and GPU time. In the experiments, we                                                                                      both model weights and KV cache to DRAM and disks to
+configure the session arrival rates varying from 0.5/s to 2.0/s.                                                                                 support offline inference of LLMs. DeepSpeed Inference
+We test LLaMA-13B with 128GB/10TB storage following                                                                                              [3,36,37] offloads model weights to the DRAM and disks and
+warmup as before. As shown in Figure 25a, the cache hit                                                                                          fetches them on demand. Lina [23] offloads infrequently used
+rate has a slight drop down, from 82% to 77%, as the session                                                                                     expert weights of LLMs to the host memory to improve mem-
+arrival rates increase from 0.5 to 2. If the session arrival rates                                                                               ory efficiency. PowerInfer [40] and LLM in a flash [2] utilize
+are low, a specific time window will contain fewer sessions,                                                                                     sparsity [25, 27] in FFN computation to offload most of the
+indicating a smaller DSpUT discussed in Section 4.3.6. The                                                                                       inactive weights to the host memory or disks to reduce both
+DSpUT at low session arrival rates is less than that at high                                                                                     memory usage and the computation. FastServe [52] sched-
+session arrival rates. For equivalent hit rates, a lower DSpUT                                                                                   ules the KV caches to the host memory for optimizing the
+necessitates less cache storage space. In other words, given                                                                                     job completion time. In contrast, CachedAttention exploits
+the same cache storage, a lower DSpUT results in higher hit                                                                                      KV cache offloading to reduce the recomputation overhead
+rates, as the results observed in Figure 25a. Consequently,                                                                                      in multi-turn conversations.
+due to the KV cache being less hit, more sessions need to
+recompute the KV cache, leading to an increase in the TTFT
+from 0.122s to 0.154s, as shown in Figure 25b. The pre-                                                                                          6   Conclusion
+filling throughput shown in Figure 25c also experiences a
+decline, dropping from 858K/s to 681K/s, as an outcome of                                                                                        This paper proposes CachedAttention, a new attention that
+the slightly decreased KV cache hits. The GPU time shown                                                                                         reuses the KV caches for any ensuing turns of the same conver-
+in Figure 25d escalates from 6.25H to 7.01H. Overall, the                                                                                        sation, achieving a significant reduction in the recomputation
+impact of varying session arrival rates has a minimal impact                                                                                     overhead of KV caches in LLMs. To improve the efficiency
+on the effectiveness. Note that even with an increase in ses-                                                                                    of CachedAttention, we design overlapped KV cache access,
+sion arrival rates, the KV cache hit rates remain significant,                                                                                   hierarchical KV cache placement, and positional encoding
+implying that CachedAttention can still effectively leverage                                                                                     decoupled KV cache truncation schemes. Extensive experi-
+the KV cache, consistently offering substantial performance                                                                                      mental results demonstrate that CachedAttention significantly
+improvement over recomputation.                                                                                                                  decreases the TTFT by up to 87% and improves the prompt
+                                                                                                                                                 prefilling throughput by 7.8× for multi-turn conversations. It
+                                                                                                                                                 reduces the end-to-end inference cost by up to 70%.
+5                 Related Work
+KV Cache Management. Within a single-turn conversa-                                                                                              Acknowledgments
+tion, the KV cache is widely used for improving the per-
+formance of the decoding phase [9, 41, 48, 50, 57, 63]. To                                                                                       This work was partly supported by Huawei Cloud, the Ad-
+reduce the storage overhead of the KV cache on HBMs, exist-                                                                                      vanced Research and Technology Innovation Centre (ARTIC)
+ing work employs quantization and compression techniques                                                                                         at the National University of Singapore under grant FCT-RP1
+on KV caches [12, 24, 54, 61]. To reduce the memory waste                                                                                        A-0008129-00-00, and the Ministry of Education in Singa-
+incurred by fragmentation, vLLM [21] takes inspiration from                                                                                      pore grants A-0008143-00-00 and A-0008024-00-00.
+
+
+
+USENIX Association                                                                                                                                        2024 USENIX Annual Technical Conference         123
+References                                                       [11] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and
+                                                                      Kristina Toutanova. Bert: Pre-training of deep bidirec-
+ [1] Amey Agrawal, Ashish Panwar, Jayashree Mohan,                    tional transformers for language understanding. arXiv
+     Nipun Kwatra, Bhargav S Gulavani, and Ramachan-                  preprint arXiv:1810.04805, 2018.
+     dran Ramjee. Sarathi: Efficient llm inference by piggy-
+     backing decodes with chunked prefills. arXiv preprint       [12] Suyu Ge, Yunan Zhang, Liyuan Liu, Minjia Zhang, Ji-
+     arXiv:2308.16369, 2023.                                          awei Han, and Jianfeng Gao. Model tells you what to
+                                                                      discard: Adaptive kv cache compression for llms. arXiv
+ [2] Keivan Alizadeh, Iman Mirzadeh, Dmitry Belenko,                  preprint arXiv:2310.01801, 2023.
+     Karen Khatamifard, Minsik Cho, Carlo C Del Mundo,
+     Mohammad Rastegari, and Mehrdad Farajtabar. Llm in a        [13] Hila Gonen, Srini Iyer, Terra Blevins, Noah A Smith,
+     flash: Efficient large language model inference with lim-        and Luke Zettlemoyer. Demystifying prompts in lan-
+     ited memory. arXiv preprint arXiv:2312.11514, 2023.              guage models via perplexity estimation. arXiv preprint
+                                                                      arXiv:2212.04037, 2022.
+ [3] Reza Yazdani Aminabadi, Samyam Rajbhandari, Am-
+     mar Ahmad Awan, Cheng Li, Du Li, Elton Zheng,               [14] Chengyue Gong, Di He, Xu Tan, Tao Qin, Liwei Wang,
+     Olatunji Ruwase, Shaden Smith, Minjia Zhang, Jeff                and Tie-Yan Liu. Frage: Frequency-agnostic word rep-
+     Rasley, et al. Deepspeed-inference: enabling effi-               resentation. In Proceedings of Advances in Neural
+     cient inference of transformer models at unprecedented           Information Processing Systems, NeuIPS, 2022.
+     scale. In Proceedings of the International Conference
+     on High Performance Computing, Networking, Storage          [15] Chi Han, Qifan Wang, Wenhan Xiong, Yu Chen, Heng
+     and Analysis, SC, 2022.                                          Ji, and Sinong Wang. Lm-infinite: Simple on-the-fly
+                                                                      length generalization for large language models. arXiv
+ [4] AWS. Amazon ec2 p4d pricing. https://aws.amaz                    preprint arXiv:2308.16137, 2023.
+     on.com/ec2/instance-types/p4/.
+                                                                 [16] Kai Han, An Xiao, Enhua Wu, Jianyuan Guo, Chun-
+ [5] AWS. Amazon ec2 pricing. https://aws.amazon.c                    jing Xu, and Yunhe Wang. Transformer in transformer.
+     om/ec2/pricing/.                                                 In Proceedings of Advances in Neural Information
+                                                                      Processing Systems, NeuIPS, 2021.
+ [6] Yonatan Bisk, Rowan Zellers, Ronan Le Bras, Jianfeng
+     Gao, and Yejin Choi. Piqa: Reasoning about physical         [17] Dan Hendrycks, Collin Burns, Steven Basart, Andy Zou,
+     commonsense in natural language. In Proceedings of               Mantas Mazeika, Dawn Song, and Jacob Steinhardt.
+     the AAAI Conference on Artificial Intelligence, AAAI,            Measuring massive multitask language understanding.
+     2020.                                                            arXiv preprint arXiv:2009.03300, 2020.
+
+ [7] Zihang Dai, Zhilin Yang, Yiming Yang, Jaime Carbonell,      [18] InternLM. Lmdeploy. https://github.com/Inter
+     Quoc V Le, and Ruslan Salakhutdinov. Transformer-                nLM/lmdeploy.
+     xl: Attentive language models beyond a fixed-length
+     context. arXiv preprint arXiv:1901.02860, 2019.             [19] Albert Q Jiang, Alexandre Sablayrolles, Arthur Mensch,
+                                                                      Chris Bamford, Devendra Singh Chaplot, Diego de las
+ [8] Asit Dan and Don Towsley. An approximate anal-                   Casas, Florian Bressand, Gianna Lengyel, Guillaume
+     ysis of the lru and fifo buffer replacement schemes.             Lample, Lucile Saulnier, et al. Mistral 7b. arXiv preprint
+     In Proceedings of the 1990 ACM SIGMETRICS                        arXiv:2310.06825, 2023.
+     conference on Measurement and modeling of computer
+     systems, pages 143–152, 1990.                               [20] Albert Q Jiang, Alexandre Sablayrolles, Antoine Roux,
+                                                                      Arthur Mensch, Blanche Savary, Chris Bamford, De-
+ [9] Luciano Del Corro, Allie Del Giorno, Sahaj Agarwal,              vendra Singh Chaplot, Diego de las Casas, Emma Bou
+     Bin Yu, Ahmed Awadallah, and Subhabrata Mukher-                  Hanna, Florian Bressand, et al. Mixtral of experts. arXiv
+     jee. Skipdecode: Autoregressive skip decoding with               preprint arXiv:2401.04088, 2024.
+     batching and caching for efficient llm inference. arXiv
+     preprint arXiv:2307.02628, 2023.                            [21] Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying
+                                                                      Sheng, Lianmin Zheng, Cody Hao Yu, Joseph E Gon-
+[10] Tim Dettmers, Mike Lewis, Younes Belkada, and Luke               zalez, Hao Zhang, and Ion Stoica. Efficient memory
+     Zettlemoyer. Gpt3. int8 (): 8-bit matrix multiplication          management for large language model serving with
+     for transformers at scale. In Proceedings of Advances in         pagedattention. In Proceedings of ACM Symposium
+     Neural Information Processing Systems, NeuIPS, 2022.             on Operating Systems Principles, SOSP, 2023.
+
+
+
+124   2024 USENIX Annual Technical Conference                                                             USENIX Association
+[22] Dacheng Li, Rulin Shao, Anze Xie, Ying Sheng, Lian-          [33] philschmid. Sharegpt raw. https://huggingface.co
+     min Zheng, Joseph Gonzalez, Ion Stoica, Xuezhe Ma,                /datasets/philschmid/sharegpt-raw/tree/main
+     and Hao Zhang. How long can context length of open-               /sharegpt_90k_raw_dataset.
+     source llms truly promise? In Workshop in Proceedings
+     of Advances in Neural Information Processing Systems,        [34] Reiner Pope, Sholto Douglas, Aakanksha Chowdhery,
+     NeuIPS Workshop, 2023.                                            Jacob Devlin, James Bradbury, Jonathan Heek, Kefan
+                                                                       Xiao, Shivani Agrawal, and Jeff Dean. Efficiently scal-
+[23] Jiamin Li, Yimin Jiang, Yibo Zhu, Cong Wang, and                  ing transformer inference. In Proceedings of Machine
+     Hong Xu. Accelerating distributed moe training and                Learning and Systems, MLSys, 2023.
+     inference with lina. In Proceedings of USENIX Annual
+     Technical Conference, ATC, 2023.                             [35] Colin Raffel, Noam Shazeer, Adam Roberts, Katherine
+                                                                       Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei
+[24] Zichang Liu, Aditya Desai, Fangshuo Liao, Weitao                  Li, and Peter J Liu. Exploring the limits of transfer
+     Wang, Victor Xie, Zhaozhuo Xu, Anastasios Kyrillidis,             learning with a unified text-to-text transformer. Journal
+     and Anshumali Shrivastava. Scissorhands: Exploit-                 of machine learning research, 2020.
+     ing the persistence of importance hypothesis for llm
+     kv cache compression at test time. arXiv preprint            [36] Samyam Rajbhandari, Conglong Li, Zhewei Yao, Min-
+     arXiv:2305.17118, 2023.                                           jia Zhang, Reza Yazdani Aminabadi, Ammar Ahmad
+                                                                       Awan, Jeff Rasley, and Yuxiong He. Deepspeed-moe:
+[25] Zichang Liu, Jue Wang, Tri Dao, Tianyi Zhou, Binhang              Advancing mixture-of-experts inference and training
+     Yuan, Zhao Song, Anshumali Shrivastava, Ce Zhang,                 to power next-generation ai scale. In Proceedings of
+     Yuandong Tian, Christopher Re, et al. Deja vu: Con-               International Conference on Machine Learning, ICML,
+     textual sparsity for efficient llms at inference time. In         2022.
+     Proceedings of International Conference on Machine
+     Learning, ICML, 2023.                                        [37] Samyam Rajbhandari, Olatunji Ruwase, Jeff Rasley,
+                                                                       Shaden Smith, and Yuxiong He. Zero-infinity: Break-
+[26] Mitch Marcus, Beatrice Santorini, and Mary Ann                    ing the gpu memory wall for extreme scale deep learn-
+     Marcinkiewicz. Building a large annotated corpus of               ing. In Proceedings of the International Conference for
+     english: The penn treebank. Computational linguistics,            High Performance Computing, Networking, Storage
+     19(2):313–330, 1993.                                              and Analysis, SC, 2021.
+[27] Iman Mirzadeh, Keivan Alizadeh, Sachin Mehta,                [38] ShareGPT. Sharegpt. https://sharegpt.com/.
+     Carlo C Del Mundo, Oncel Tuzel, Golnoosh Samei,
+     Mohammad Rastegari, and Mehrdad Farajtabar. Relu             [39] Ying Sheng, Lianmin Zheng, Binhang Yuan, Zhuohan
+     strikes back: Exploiting activation sparsity in large lan-        Li, Max Ryabinin, Daniel Y Fu, Zhiqiang Xie, Beidi
+     guage models. arXiv preprint arXiv:2310.04564, 2023.              Chen, Clark Barrett, Joseph E Gonzalez, et al. Flex-
+                                                                       gen: High-throughput generative inference of large lan-
+[28] NVIDIA. Fastertransformer. https://github.com/N                   guage models with a single gpu. In Proceedings of
+     VIDIA/FasterTransformer.                                          International Conference on Machine Learning, ICML,
+                                                                       2023.
+[29] OpenAI. https://openai.com/blog/chatgpt,
+     2024.                                                        [40] Yixin Song, Zeyu Mi, Haotong Xie, and Haibo Chen.
+                                                                       Powerinfer: Fast large language model serving with a
+[30] OpenAI. https://platform.openai.com/docs/a                        consumer-grade gpu. arXiv preprint arXiv:2312.12456,
+     ssistants/how-it-works/managing-threads-a                         2023.
+     nd-messages, 2024.
+                                                                  [41] Benjamin Spector and Chris Re. Accelerating llm infer-
+[31] Pratyush Patel, Esha Choukse, Chaojie Zhang, Íñigo                ence with staged speculative decoding. arXiv preprint
+     Goiri, Aashaka Shah, Saeed Maleki, and Ricardo Bian-              arXiv:2308.04623, 2023.
+     chini. Splitwise: Efficient generative llm inference using
+     phase splitting. arXiv preprint arXiv:2311.18677, 2023.      [42] Jianlin Su, Murtadha Ahmed, Yu Lu, Shengfeng
+                                                                       Pan, Wen Bo, and Yunfeng Liu.        Roformer: En-
+[32] Guilherme Penedo, Quentin Malartic, Daniel Hess-                  hanced transformer with rotary position embedding.
+     low, Ruxandra Cojocaru, Alessandro Cappelli, Hamza                Neurocomputing, 568:127063, 2024.
+     Alobeidli, Baptiste Pannier, Ebtesam Almazrouei, and
+     Julien Launay. The RefinedWeb dataset for Falcon LLM:        [43] Gemini Team, Rohan Anil, Sebastian Borgeaud,
+     outperforming curated corpora with web data, and web              Yonghui Wu, Jean-Baptiste Alayrac, Jiahui Yu, Radu
+     data only. arXiv preprint arXiv:2306.01116, 2023.                 Soricut, Johan Schalkwyk, Andrew M Dai, Anja Hauth,
+
+
+
+USENIX Association                                                         2024 USENIX Annual Technical Conference          125
+      et al. Gemini: a family of highly capable multimodal       [54] Guangxuan Xiao, Yuandong Tian, Beidi Chen, Song
+      models. arXiv preprint arXiv:2312.11805, 2023.                  Han, and Mike Lewis.      Efficient streaming lan-
+                                                                      guage models with attention sinks. arXiv preprint
+[44] Hugo Touvron, Thibaut Lavril, Gautier Izacard, Xavier            arXiv:2309.17453, 2023.
+     Martinet, Marie-Anne Lachaux, Timothée Lacroix, Bap-
+     tiste Rozière, Naman Goyal, Eric Hambro, Faisal Azhar,      [55] Linting Xue, Noah Constant, Adam Roberts, Mihir
+     et al. Llama: Open and efficient foundation language             Kale, Rami Al-Rfou, Aditya Siddhant, Aditya Barua,
+     models. arXiv preprint arXiv:2302.13971, 2023.                   and Colin Raffel. mt5: A massively multilingual
+                                                                      pre-trained text-to-text transformer. arXiv preprint
+[45] Hugo Touvron, Louis Martin, Kevin Stone, Peter Albert,           arXiv:2010.11934, 2020.
+     Amjad Almahairi, Yasmine Babaei, Nikolay Bashlykov,
+     Soumya Batra, Prajjwal Bhargava, Shruti Bhosale, et al.     [56] Lu Ye, Ze Tao, Yong Huang, and Yang Li. Chunkat-
+     Llama 2: Open foundation and fine-tuned chat models.             tention: Efficient self-attention with prefix-aware kv
+     arXiv preprint arXiv:2307.09288, 2023.                           cache and two-phase partition.          arXiv preprint
+                                                                      arXiv:2402.15220, 2024.
+[46] Valentin Touzeau, Claire Maïza, David Monniaux, and
+     Jan Reineke. Fast and exact analysis for lru caches.        [57] Gyeong-In Yu, Joo Seong Jeong, Geon-Woo Kim, Soo-
+     Proceedings of the ACM on Programming Languages,                 jeong Kim, and Byung-Gon Chun. Orca: A distributed
+     3(POPL):1–29, 2019.                                              serving system for transformer-based generative models.
+                                                                      In Proceedings of USENIX Symposium on Operating
+[47] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob                 Systems Design and Implementation, OSDI, 2022.
+     Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser,
+     and Illia Polosukhin.      Attention is all you need.       [58] Lingfan Yu and Jinyang Li.     Stateful large lan-
+     In Proceedings of Advances in Neural Information                 guage model serving with pensieve. arXiv preprint
+     Processing Systems, NeuIPS, 2017.                                arXiv:2312.05516, 2023.
+
+[48] vLLM Project. vllm: Easy, fast, and cheap llm serving       [59] Susan Zhang, Stephen Roller, Naman Goyal, Mikel
+     with pagedattention. https://github.com/vllm-p                   Artetxe, Moya Chen, Shuohui Chen, Christopher De-
+     roject/vllm/.                                                    wan, Mona Diab, Xian Li, Xi Victoria Lin, et al. Opt:
+                                                                      Open pre-trained transformer language models. arXiv
+[49] Xingyao Wang, Zihan Wang, Jiateng Liu, Yangyi Chen,              preprint arXiv:2205.01068, 2022.
+     Lifan Yuan, Hao Peng, and Heng Ji. Mint: Evaluating
+                                                                 [60] Zhengyan Zhang, Xu Han, Zhiyuan Liu, Xin Jiang,
+     llms in multi-turn interaction with tools and language
+                                                                      Maosong Sun, and Qun Liu. Ernie: Enhanced language
+     feedback. arXiv preprint arXiv:2309.10691, 2023.
+                                                                      representation with informative entities. arXiv preprint
+[50] Yiding Wang, Kai Chen, Haisheng Tan, and Kun Guo.                arXiv:1905.07129, 2019.
+     Tabi: An efficient multi-level inference system for large
+                                                                 [61] Zhenyu Zhang, Ying Sheng, Tianyi Zhou, Tianlong
+     language models. In Proceedings of the European
+                                                                      Chen, Lianmin Zheng, Ruisi Cai, Zhao Song, Yuandong
+     Conference on Computer Systems, EuroSys, 2023.
+                                                                      Tian, Christopher Ré, Clark Barrett, et al. H _2 o: Heavy-
+[51] Thomas Wolf, Lysandre Debut, Victor Sanh, Julien                 hitter oracle for efficient generative inference of large
+     Chaumond, Clement Delangue, Anthony Moi, Pierric                 language models. arXiv preprint arXiv:2306.14048,
+     Cistac, Tim Rault, Rémi Louf, Morgan Funtowicz, et al.           2023.
+     Huggingface’s transformers: State-of-the-art natural lan-
+                                                                 [62] Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan
+     guage processing. arXiv preprint arXiv:1910.03771,
+                                                                      Zhuang, Zhanghao Wu, Yonghao Zhuang, Zi Lin, Zhuo-
+     2019.
+                                                                      han Li, Dacheng Li, Eric Xing, et al. Judging llm-as-a-
+[52] Bingyang Wu, Yinmin Zhong, Zili Zhang, Gang Huang,               judge with mt-bench and chatbot arena. arXiv preprint
+     Xuanzhe Liu, and Xin Jin. Fast distributed inference             arXiv:2306.05685, 2023.
+     serving for large language models. arXiv preprint           [63] Lianmin Zheng, Liangsheng Yin, Zhiqiang Xie, Jeff
+     arXiv:2305.05920, 2023.                                          Huang, Chuyue Sun, Cody Hao Yu, Shiyi Cao, Chris-
+[53] Qingyun Wu, Gagan Bansal, Jieyu Zhang, Yiran Wu,                 tos Kozyrakis, Ion Stoica, Joseph E Gonzalez, et al.
+     Shaokun Zhang, Erkang Zhu, Beibin Li, Li Jiang, Xi-              Efficiently programming large language models using
+     aoyun Zhang, and Chi Wang. Autogen: Enabling next-               sglang. arXiv preprint arXiv:2312.07104, 2023.
+     gen llm applications via multi-agent conversation frame-
+     work. arXiv preprint arXiv:2308.08155, 2023.
+
+
+
+126   2024 USENIX Annual Technical Conference                                                             USENIX Association
+

@@ -1,0 +1,1135 @@
+                                             KVCache Cache in the Wild: Characterizing and Optimizing KVCache Cache
+                                                                   at a Large Cloud Provider
+
+                                         Jiahao Wang† 1 , Jinbo Han† 1 , Xingda Wei                 1
+                                                                                                        , Sijie Shen2 , Dingyan Zhang1 , Chenguang Fang2 , Rong Chen1 ,
+                                                                                               Wenyuan Yu2 , and Haibo Chen1
+                                                1                                                                                                            2
+                                                    Institute of Parallel and Distributed Systems, Shanghai Jiao Tong University                                 Alibaba Group
+
+                                         Abstract                                                                                             Time    Type       UID   Turn   Content
+                                         Serving large language models (LLMs) is important for cloud                  ShareGPT [2]               ✗       ✗         ✗     ✓           ✓
+arXiv:2506.02634v5 [cs.DC] 14 Feb 2026
+
+
+
+
+                                         providers, and caching intermediate results (KV$) after pro-                 Mooncake [1]               ✓       ✗         ✗     ✗           ✓
+                                         cessing each request substantially improves serving through-                 Traces in this work        ✓       ✓         ✓     ✓           ✓
+                                         put and latency. However, there is limited understanding of                Table 1: A comparison of currently available LLM serving traces.
+                                         how LLM serving benefits from KV$ caching, where sys-                      Time is the invocation time of each request. Type is the request type,
+                                         tem design decisions like cache eviction policies are highly               e.g., whether it is an API call. UID is the user ID that invokes the
+                                         workload-dependent.                                                        request. Turn is the multi-turn information of the request. Content
+                                            In this paper, we present the first systematic characteriza-            is the (anonymous) input and output tokens of each request.
+                                         tion of the KV$ workload patterns from one of the leading
+                                         LLM service providers. We draw observations that were not                  tiveness of KV$ cache system components like cache eviction
+                                         covered by previous studies focusing on synthetic workloads,               policy should be tailored to the KV$ reuse features of work-
+                                         including: KV$ reuses are skewed across requests, where                    loads. However, LLM serving workloads are complex due to
+                                         reuses between single-turn requests are equally important as               their diverse request types as well as the unique features of
+                                         multi-turn requests; the reuse time and probability are diverse            each request type. For example, a production LLM service
+                                         considering all requests, but for a specific request category,             handles both to-C workloads (like chatting) and to-B work-
+                                         the pattern tends to be predictable; and the overall cache size            loads (like task automation with API calling). These requests
+                                         required for an ideal cache hit ratio is moderate. Based on the            can further be processed either as single-turn or multi-turn in-
+                                         characterization, we further propose a workload-aware cache                teractions (§2). Since the KV$ can be reused across different
+                                         eviction policy that improves the serving performance under                single-turn requests and multi-turn requests, both the single-
+                                         real-world traces, especially with limited cache capacity.                 turn request types and the multi-turn patterns can possibly
+                                                                                                                    affect the design choices of KV$ cache.
+                                         1    Introduction                                                             There remains a significant gap in the understanding of
+                                                                                                                    common LLM serving workloads for KV$ cache due to the
+                                         Large language models (LLMs) have become an important                      lack of in-depth analysis of real-world traces. First, it is un-
+                                         cloud service thanks to their emerging capabilities in various             clear whether production workloads have many reuses and
+                                         tasks. Both customer-facing services (to-C) like conversation-             which request type contributes most to the reuses. Second, the
+                                         based chatbots [42] and business services (to-B) through LLM               distributions of the reuse time or reuse probability of KV$
+                                         API calls have been widely deployed on the cloud [41, 20, 4].              remain unknown, which is critical to cache policy designs.
+                                         As online services, serving LLMs with low latency and high                 Finally, there is a lack of characterization of the lifespan of
+                                         throughput is critical, but achieving this in a cost-efficient way         KV$, which is essential in helping us estimate the required
+                                         is challenging due to the huge computational requirements to               cache capacity for serving LLMs in the wild.
+                                         serve each LLM request.
+                                            Caching intermediate results of served requests (KV$) has               Characterizing production traces. To bridge this gap, we
+                                         become a common methodology to improve serving perfor-                     collected and characterized two representative production
+                                         mance [44, 5]: when two requests share the same input prefix,              serving workloads from one of the world’s largest cloud
+                                         their KV$ are identical; so if we cache the KV$ of the first               providers (A LIYUN): a to-C workload where users submit
+                                         (KV$ cache), we don’t need to compute the KV$ for the next.                requests to the cloud-hosted LLM service via browser-based
+                                         Hence, the serving latency is reduced with the throughput                  chatbots or mobile applications, and a to-B workload where
+                                         improved thanks to the reduced computation under hits.                     developers send OpenAI-compatible requests to the LLM
+                                            Like traditional data caching systems [59, 7, 39], the effec-           service through API calls in their programs. We collected as
+                                                                                                                    much detailed information as possible within the company’s
+                                         † The two authors contributed equally to this work.                        strict privacy policy, including request submission times, re-
+                                          Xingda Wei is the corresponding author (wxdwfc@sjtu.edu.cn).              quest types (single-turn, multi-turn, API requests, or others),
+
+
+                                                                                                                1
+and anonymized content to analyze caching effectiveness. To                  Prompt                        Generation      1
+our knowledge, no other available LLM serving traces match                        …                                     Prefill
+the information depth and scale of our traces (summarized                                     LLM
+in Table 1). For example, ShareGPT [2] only provides the                  A paper on systems                  is
+input and output of each request, not the submission time of                                                              2
+each request, which is critical for analyzing the real KV$ hit                    …
+                                                                                                                    Decode iter1
+ratio and usage over time. We believe our collected workloads             A paper on systems is             good
+represent typical LLM serving workloads and can provide a
+foundation for future KV$ cache system design.
+   From the perspective of designing an efficient KV$ cache                       …                                 Decode iter2
+system—both in performance and resource usage, our key                                                                    …
+takeaways are as follows:                                             Figure 1: An illustration showing how an LLM processes requests.
+1. KV$ reuses are common, but the reuse ratio is smaller than
+                                                                      Improved KV$ cache eviction policy. Based on our find-
+   previously reported numbers on synthetic datasets [18, 64].
+                                                                      ings, we propose a workload-aware KV$ eviction policy
+   The reuses follow a skewed distribution: 10 % of KV$
+                                                                      (§4.2) that leverages the profiled reuse probability distribu-
+   blocks contribute to 77 % of the reuses. The contribution
+                                                                      tions of each workload to enhance cache hit ratios on real-
+   of KV$ reuses also varies across traces: contrary to a
+                                                                      world workloads. Specifically, we leverage the empirically
+   straightforward observation that multi-turn requests may
+                                                                      sampled probability distributions of the reuse probability of
+   dominate most reuses, single-turn requests dominate 97 %
+                                                                      each workload to decide the priority of each KV$ block,
+   KV$ reuses in to-B workloads (§3.2).
+                                                                      with considerations of both the characterized spatial locality
+2. Key workload features related to KV$ designs, like reuse           and the lifespan of KV$. To demonstrate the effectiveness
+   time and reuse probability distributions—vary across               of our improved design, we have integrated our policy into
+   different LLM request types (API vs. chat) and the number          vLLM [29]—a popular LLM serving system on the cloud,
+   of turns in multi-turn requests. Despite this diversity, for       and our extensive evaluations on production traces show that
+   each specific request category (type plus turn number),            the improved design can improve 3.9 % cache hits as well as
+   the reuse time is predictable based on the historical              up to 41.4 % mean response time improvements compared to
+   information (§3.4). Since the request categories are known         workload-agnostic policies like LRU and LFU.
+   by the serving system, we can systematically use the
+                                                                                                  YY.Ycm
+   estimated probability for improving cache policies.                Discussion. Before moving on, we note two limitations of
+                                                                      our work. First, our results are based on one week produc-
+3. The lifespan of KV$ is ephemeral: the P99 lifespan of              tion traces of large-scale LLM serving workloads. While we
+   KV$ in to-B workloads is 97 seconds, so a small cache              believe such workloads (chatbot and API) are representative
+   is typically sufficient for the KV$ cache. For example, in         nowadays, LLM serving workloads are evolving, with new
+   the to-B workload, a KV$ with capacity 2 × of the GPU
+   HBM per-GPU is sufficient to approach an ideal hit rate
+                                                                      workloads like reasoning [43] emerging. We leave trim       = 0.25cm
+                                                                                                                           the charac-
+                                                                      terization of these newer workloads to future work. Second,
+   under infinite capacity on common GQA models [3] using             our primary focus is on the KV$ cache policy design, yet
+   standard cache eviction policies like LRU (§3.5).                  we believe the design of other system components for LLM
+   Our characterizations above reveal several important de-           serving like the policy of global scheduling could also ben-
+sign decisions that current KV$ cache systems may have                efit from our findings, and we leave other explorations as
+overlooked. First, optimizing caching for single-turn requests        future work. Nevertheless, we believe our methodology—first
+is equally important as optimizing for multi-turn requests.           characterizing real-world serving features and then optimiz-
+Second, we could improve cache hits by adopting a workload-           ing a specific serving component—generalizes to other LLM
+aware caching policy instead of only adopting a workload-             serving workloads and systems.
+agnostic policy like LRU. Finally, the ephemeral lifespan of             A sample of our analyzed trace is available at
+KV$ suggests that a least-frequently-used (LFU) policy is not         https://github.com/alibaba-edu/qwen-
+suitable because a short-lived KV$ may have high frequency            bailian-usagetraces-anon, and the reference im-
+in the past. Meanwhile, a small (on-GPU) cache is sufficient          plementation of the eviction policy is available at https://
+for API-dominated to-B workloads, eliminating the cost and            github.com/vllm-project/vllm/pull/22236.
+complexity of deploying and managing a CPU-RDMA-SSD
+storage hierarchy for KV$ cache. Besides the main takeaways           2   Background: LLM serving, KVCache, KV-
+described above, we also discovered several interesting find-
+                                                                          Cache cache and Multi-turn Serving
+ings, such as the KV$ hits across users being extremely low
+(§3.2), despite the possibility of shared prompts via prompt          LLM serving. Large language models (LLMs) process re-
+libraries [6].                                                        quests in an auto-regressive way, as shown in Figure 1. Given
+
+
+                                                                  2
+              Transformer                 Transformer                      Transformer                 { "timestamp":         "202x-xx-yy 17:41:33.945",
+                layer #0                    layer #1                         layer #2                    "chat_id":          ”1234567890abcdef1234567890abcdef",
+     LLM
+                                  Input    m   K                                                         "parent_chat_id": ”aabbccddeeff00112233445566778899",
+                                                                                            m
+ Req #0            …                           q           a       m
+                                                                              … Matrix
+                                                                                Multiplication           “user_id”:           ”1000001234567890",
+ Prefill A paper on systems is                     V               Output
+                                           m
+                                                                                                         ”req_type":         ”text",
+                                                                                   Calculate a
+                                                                                   Attention
+ 1                                 Input m K           q       a       m
+                                                                                                         "num_input_tokens":          11026,
+ Req #0          …                                                            … Calculate q              "num_output_tokens": 312,
+                                                   V               Output
+ Decode A paper good
+                on systems is
+                                           m                                       query matrix
+                                                                                                                     Prompt
+                                                                                                         ”tokens_hashes_input":             Generation   1
+                                                                                                                                [1001,2002,3003,4004,5005,...],
+ 2                                 Input       K       q       a       m
+                                                                                         KVCache                         …
+                                                                                                         ”tokens_hashes_output":                      Prefill
+                                                                                                                                 [1234,2341,3412,4123,10000,...], }
+                                                                                                                                                                           Types
+ Req #1             …                      m
+
+                                                   V               Output
+                                                                              … K V (KV$)                                           LLM
+                                                                                                                       A paper on systems           is
+ Prefill     A paper on AI is              m                                                                 Figure 3: An example of the collected trace record.           Chat
+                                                                                                                                                          2
+Figure 2: An illustration of: ❶ how KV$ from a prefill request                                                               …                                             Code
+                                                                                                                                                           Decode iter1
+(Req#0) can be reused by the decoding of Req#0, and ❷ how KV$                                                         A paper on systems is       good                     File unde
+can be reused for the prefill of a future request (Req#1).              level, the cache granularity of existing KV$ system is block,            Multimod
+                                          Req #0       …                where   each block contains the KV of a configurable
+                                                                                                                       Decode    number
+                                                                                                                              iter2              Agent
+                                                                                           …                      Req #0          …
+a request (or a batch of requests), where Decode
+                                          each request contains
+                                                  A paper on systems is
+                                                                        of tokens. For example, vLLM [29] by         default groups 16
+                                                                                                                  Decode … A paper on systems is
+multiple tokens (prompt), the model first executes a prefill            tokens as a block.
+phase to generate the first token (❶) with a forward pass. The
+                                                                        Multi-turn serving. Interacting with LLMs through multi-
+model then enters a decoding phase (❷) that iteratively gener-
+                                                                        turn conversations is a common pattern to improve serving
+ating the remaining tokens with multiple forward passes. The
+                                                                        quality [57, 55]. Specifically, after receiving the generation
+iteration ends after the module outputs an end-of-sequence
+                                                                        from the LLM, the user may issue a next-turn request with a
+(EOS) token. During each iteration, the input consists of both
+                                                                        new prompt. Since the LLM needs the previous conversation
+the original prompt and all previously generated tokens.
+                         YY.Ycm
+
+
+
+
+                                                                        context for processing, the serving system will concatenate
+
+
+
+                                                                                                                             YY.Ycm
+KVCache (KV$). LLM performs three steps for a forward                   the input and output of requests from the previous turns to the
+pass [54] as shown in Figure 2: (1) calculating the Q, K, and           new request’s input, and feed the new input to the LLM for
+V matrices using matrix multiplication, (2) using Q and K to            serving. To help manage the history of multi-turn requests,
+                                     trimthe=attention
+derive attention scores, and (3) combining       0.25cm   scoresYY.Ycm       XX.Xcm
+                                                                        requests          0.25cm,
+                                                                                  in a ulti-turn        clip
+                                                                                                 conversation  are typically grouped in          kvca
+with the V matrix to produce the attention result. These steps                                                trimreuses
+                                                                        a session. A multi-turn request naturally      = 0.25cm
+                                                                                                                            KV$ fromYY.Ycm XX
+are computation-intensive. Since inputs with the same tokens            previous turns since current LLM systems deliberately append
+share the same K and V matrices (see ❶), all LLM serving                the history of inputs and outputs as a prefix to each new
+systems cache the K and V matrices generated during the                 request.
+prefill phase on the GPUs to save computation time. These
+cached K and V matrices are then reused during the decode               3 Characterize KV$ Workload in the Wild
+phase for the same request to avoid recomputation, so they
+are termed as KV$.                                                      3.1 Trace data collection
+KV$ cache and KV$ blocks. Besides KV$ reuse across                                                     We collected and analyzed two weeks (February 2025 and
+prefill and decode phases when processing a single request,                                            December 2024) of LLM serving request traces from one of
+the KV$ can also be reused across different requests if they                                           A LIYUN T ONGYI’s serving clusters. For brevity, we present
+share the same token prefix. As shown in Figure 2 (❷), the K                                           results from one representative day per trace. The results
+and V values of “A paper on” are identical for both #Req0 and                                          remain consistent throughout the workdays in each week (see
+#Req1. Thus, even when #Req0 finishes decoding, we can still                                           §A.1). Note that we cannot collect the raw input and output
+cache its KV$ for #Req1, which dramatically improves the                                               for each request due to A LIYUN’s strict privacy policy. For a
+reaction time (also termed time to first token, TTFT) of #Req1:                                        specific trace, all its collected requests are served by the same
+it only needs to compute the K and V of “AI is” during the                                             model.
+prefill. KV$ caching further increases the serving throughput                                             Below, we first describe the detailed anonymized trace
+thanks to the saved computation. Due to the above reasons,                                             record provided by the operational team of the serving cluster,
+existing serving systems all cache the KV$ of completed                                                then we move on to highlight the differences between two
+requests. We term this approach KV$ cache [29, 18, 19, 68,                                             traces, both representing typical serving workloads nowadays.
+25, 36, 64], though other names like prefix cache or prompt                                            Figure 3 presents the layout of a collected request:
+cache also exist. The KV$ can be cached in GPU memory,
+on the host memory (or remote machine’s memory), or even                                               1. Timestamp: The time when the serving cluster receives
+SSD [29, 18, 64].                                                                                      the request.
+   Since checking prefix-match may be costly at a per-token                                            2. Chat ID: The unique ID of the request.
+
+
+                                                                                                   3
+3. Parent Chat ID (under multi-turn serving): For requests
+in a multi-turn session, the serving system assigns a parent
+ID to each request, linking it to the previous request in the
+session. By traversing the parent IDs, we can identify all
+requests belonging to the same session. If the parent ID is
+empty, then the request is the first-turn of a session and we
+call them single-turn request. Otherwise, we call requests
+with a non-empty parent ID multi-turn request.
+4. User ID: The unique ID of the user submitting the request.
+These IDs are mapped to a randomly selected domain for                 Figure 4: An analysis of the ideal cache hit ratio of the KV$ cache
+anonymity.                                                             under real-world LLM serving workloads within a day. The reported
+                                                                       accessed and hit block numbers are normalized (norm.).
+5. Request type: The serving gateway categorizes LLM re-
+quests into five types: Text: Plain text input via interfaces
+like ChatBot. File: file analysis (e.g., summarizing docu-               Types (Trace A)               Workload ratio (%)     Multi-turn Ratio (%)
+ment content using LLM). Multimodal: Image understanding                 Text                                           78                     47
+through OCR-enhanced processing. Search: Frontend with                   File understanding                              4                     51
+web-search integrated for knowledge augmentation. API: Pro-              Multimodal understanding                        3                     10
+grammatic access via OpenAI-compatible interfaces [41].                  Search                                         15                     49
+6. Number of Input/Output Tokens: The number of input
+                                                                         Types (Trace B)                    Ratio (%)         Multi-turn Ratio (%)
+tokens provided to the LLM and the number of output tokens
+generated by it.                                                         API                                            100                  0.08
+
+7. The hashed values of In/Output tokens: Due to the strict            Figure 5: Workload types and multi-turn ratio of requests in our
+privacy policy, the runtime system generate the traces through         collected traces.
+salted hashing and domain remapping. Specifically, the collec-
+tor employs SipHash [8] to generate unique hashes for every            total of N KV$ blocks that needed to be computed by LLM
+four consecutive tokens with random salts per trace, then              in a trace, if the hit rate is 62%, this implies that 62% of the
+remapping the hash IDs to consecutive natural numbers. This            N blocks can reuse a KV$ computed and       Reqcached
+                                                                                                                       #0       in a…prior
+fine-grained hashing enables more fine-grained cache analysis          request. While the ideal hit ratio is high, Decode
+                                                                                                                      it is smaller   than
+                                                                                                                             A paper on systems is
+while enhancing privacy protection compared to single-token            the reported hit ratio (e.g., more than 80% [64, 68, 18]) on
+hashing.                                                               synthetic workloads.
+Trace A vs. Trace B. We collected two traces (A and B) rep-            Single-turn and multi-turn requests are equally important
+resenting two representative LLM serving workloads. Trace A            for KV$ reuse. While it is a common belief that multi-turn
+represents a common to-C (customer) scenario where users in-           requests are key contributors to the cache hits [64, 18], this
+teract with the model through services built by the cloud, i.e.,       is not the case on the to-B workloads (Trace B). Figure 5
+                                                                                              YY.Ycm
+
+
+
+
+ChatBot (Text) or File/Multimodal/Search services. A key fea-          shows the contribution of each request type as well as their
+ture of to-C workloads is that they are typically human-in-the-        multi-turn ratio. For Trace A, it is dominated by the requests
+loop. Trace B represents a to-B (business) workload where              sent by the chatbot (78 %), and all request types except for
+business users interact with the LLM by calling OpenAI-                the multimodal have a similar multi-turn ratio (47–51 %). For
+compatible APIs hosted by the cloud through computer pro-              Trace B, it only has API requests withtrim       = 0.25cm
+                                                                                                                 a negligible multi-turnYY.Ycm XX
+grams [41]. API calling is critical for business users because         ratio (less than 0.1 %). Nevertheless, the single-turn requests
+they can systematically leverage LLM to automate tasks like            contribute 97 % of the total cache hits for Trace B.
+document translation or user request classification. Trace B              Single-turn API requests dominate the hits in to-B work-
+has no request type information because, similar to the LLM            loads for two reasons. First, LLM API requests share KV$
+interface calls currently offered by other vendors [41, 20, 4],        through common system prompts. Specifically, each request
+this information is concatenated on the client side.                   comprises: (1) a system prompt providing task instructions
+                                                                       (e.g., document translation guidelines) and (2) a user prompt
+3.2   KV$ reuses analysis in the wild
+                                                                       containing request-specific data (e.g., target document). When
+How many KV$ can be reused? Figure 4 shows the ideal                   programs make API calls [34], they typically hardcode iden-
+cache hit rates on two traces, i.e., assuming a cache having           tical system prompts in the program, thus enabling KV$
+infinite capacity. We can see that LLM workloads can benefit           sharing across requests, even for single-turn requests. Sec-
+from caching—it has 62% and 54% hit rates on Trace A and               ond, API requests often exhibit rapid submission rates (e.g.,
+B, respectively. The hit rate is calculated as follows: for a          > 10 QPS), enabling frequent reuse of the same shared KV$
+
+
+                                                                   4
+Figure 6: An analysis of whether a user may hit the KV$ cached
+by another user. The darker the color, the higher the normalized hit                                               Figure 9: Distribution of turn number of multi-turn requests on
+count. Note that we have amplified the diagonal line in case it is too                                             Trace A.
+thin, since the trace provider serves numerous users.
+
+                       Trace A                                         Trace B
+                                         Cumulative Fraction
+
+
+
+
+                                                                                         Cumulative Fraction
+                                   1.0                                             1.0
+               120                                             180
+#hit (norm.)
+
+
+
+
+                                            #hit (norm.)
+
+
+
+
+                80                 0.5                         120                 0.5
+                40      Per-user                                60      Per-user
+                        Cumulation                                      Cumulation
+                 0                 0.0                           0                 0.0
+                     User (Sorted)                                   User (Sorted)
+Figure 7: An analysis of the normalized (norm.) hits contributed by
+different users in an ideal setup with infinite cache size.
+
+                                                                                                                   Figure 10: An analysis of the mean (upper) and standard deviation
+                                                                                                                   (lower) of the number of turns of requests sent by each user. The
+                                                                                                                   users are sorted across to their mean number of turn (upper) and
+                                                                                                                   standard deviation (lower).
+
+
+                                                                                                                   is expected to lead to a similar skewness in KV$ hits. Second,
+Figure 8: An analysis of the normalized (norm.) request count for                                                  even when requests are sent relatively evenly by different
+different users.                                                                                                   users, individual users vary significantly in their KV$ hits.
+                                                                                                                   As also shown in Figure 8, Trace A exhibits a moderately
+from system prompts.                                                                                               skewed request distribution: 19 % of users generate 50 % of
+                                                                                                                   the requests, and 72 % generate 90 % of the requests. Never-
+Cross-user KV$ hits are rare. Figure 6 shows the heatmap                                                           theless, the KV$ hits are still skewed. We suspect that this is
+of the cache hits between users, assuming an infinite-size                                                         due to their tendency to engage in multi-turn requests.
+KV$ cache. Darker colors indicate higher normalized hit
+counts. We can see that for each user, most hits come from                                                         3.3   Analyses of multi-turn requests features
+requests submitted by themselves (the diagonal line). While
+                                                                                                                   We first examine the features of multi-turn requests, as they
+users naturally reuse KV$ from their own requests—either
+                                                                                                                   still dominate the KV$ reuse in to-C workloads. We omit the
+via multi-turn conversations or through programs calling API
+                                                                                                                   results on Trace B because multi-turn requests are rare in it.
+with the same system prompt for the same task, the low inter-
+user hit rate suggests that users tend to customize their own                                                      Multi-turn requests have high variability. We observed
+system prompts rather than using template prompts provided                                                         two kinds of variability. First, the number of turns varies
+by third-party libraries [6]. As a result, we suggest paying                                                       significantly across different sessions. Figure 9 shows the
+more attention to intra-user KV$ reuses rather than inter-                                                         distributions of turn numbers on Trace A: 54 % of requests
+user [19, 68, 25, 36] when designing KV$ systems.                                                                  are single-turn requests, while the 50th and 90th percentile
+                                                                                                                   turn numbers are 1 and 5, respectively. The distribution has
+The KV$ reuses are skewed. Figure 7 shows the KV$
+                                                                                                                   a long tail—the longest session has 232 turns, two orders of
+cache hits contributed by different users, along with the cu-
+                                                                                                                   magnitude larger than the median (232 ×).
+mulative hits. The KV$ hit pattern is highly skewed: 19 %
+                                                                                                                      Second, multi-turn request distributions exhibit significant
+of the user requests in trace A and 4 % in trace B account
+                                                                                                                   user-level variation. Figure 10 shows that most users have
+for more than 90 % of the KV$ block hits. This skewness
+                                                                                                                   similar mean turn counts, except for a few head users—the top
+stems from two factors. First, the requests are unevenly dis-
+                                                                                                                   10% exhibit 8.9 × more turns than the average. Additionally,
+tributed across users, especially in Trace B. Figure 8 shows
+                                                                                                                   turn count deviations vary substantially, ranging from 1 to 44.
+the normalized number of requests sent by different users:
+                                                                                                                   This suggests diverse interaction patterns: some users show
+15 % of the users (head users) contribute 90 % of the requests
+                                                                                                                   high variability, while others remain stable.
+in Trace B. Since KV$ hits primarily occur for requests from
+the same user (see Figure 6), the skewness in request counts                                                       The probability of issuing the next turn request is pre-
+
+
+                                                                                                               5
+                                                                                                                                               X
+
+
+
+
+                                                                            Figure 13: The distribution of KV$ reuse time of single-turn
+                                                                            requests in Trace A and B. B has one category of request (API).
+Figure 11: An illustration of how the frequencies of issuing the next
+turn request change over time for different request types. The x-axis
+is the timeline. The workload categories are sorted according to
+their popularity.
+                   YY.Ycm
+
+
+
+
+                                  trim = 0.25cm YY.Ycm XX.Xcm 0.25cm, clip                                                 probability-next-turn
+
+Figure 12: The distribution of KV$ reuse time of all requests in
+Trace A and B.
+
+
+dictable given a workload category and time interval, and                   Figure 14: The distribution of KV$ reuse time of multi-turn re-
+the probability differs across request categories. A request                quests in Trace A and B. B has one category of request (API).
+category includes both the original request type (e.g., Text and
+Search) as well as the turn number of the request, i.e., a 1-turn           of KV$ reuse time on both traces. We can see that the reuse
+text (single-turn text request) is different from the 2-turn text           time for both workloads is typically small: In Trace A, 80%
+request. Figure 11 shows a heatmap of how the probability                   of the reuse time falls within less than 10 minutes, while in
+of issuing the next-turn request changes over the long time                 Trace B it falls within 10 seconds. The differences lie in the
+interval (24 hours) as well as a zoomed-in view of a short                  human-in-the-loop versus computer-in-the-loop interactions
+time interval (3 hours). The intensity of the color indicates the           that generated the requests in two traces.
+profiled frequencies within a time window (10 minutes). We
+can see that though different request categories have different             Different workload types have different temporal locality.
+frequencies (shown by vertical lines), for a specific category,             First, single-turn requests have much lower locality in the to-C
+the frequency of issuing the next-turn request remains consis-              workloads, while to-B workloads are the opposite. Figure 13
+tent over a one-hour time interval (shown by horizontal lines).             reports whether a single request can be reused by another
+We attribute this to the fact that the probability distribution             single-turn request on both traces in the middle sub-figures.
+of KV$ reuse is quite fixed given a specific time interval and              As we can see, less than 30 % of the single-turn requests are
+request category. §3.4 further elaborates on that. Interestingly,           reusable in Trace A, but more than 50 % of requests can be
+the frequency of issuing the next-turn request differs across               reused in Trace B.
+request categories. For example, single-turn requests demon-                   Second, different request types show different temporal
+strate significantly lower rates of issuing next-turn requests              locality. Figure 14 shows the reuse time distribution of multi-
+(mean=0.5) compared to multi-turn requests (mean=0.8).                      turn requests categorized by their request types. We can see
+                                                                            that chat requests (Text) shows longer reuse time than image
+3.4   Analyses of temporal and spatial locality                             understanding (Multimodal), but shorter than file understand-
+                                                                            ing (File). This stems from workload characteristics: users
+Temporal locality can be characterized by profiling the distri-
+                                                                            typically spend more time processing complex LLM outputs
+bution of reuse time, i.e., the interval between when a KV$
+                                                                            based on file content than casual outputs from conversational
+block is reused by another request.
+                                                                            chats. Conversely, visual information processing occurs faster
+KV$ reuse time is short. Figure 12 shows the distributions                  than textual processing [47], leading to shorter reuse times
+
+
+                                                                        6
+Figure 15: An empirical analysis of the reuse time probability distribution of KV$ blocks. The columns present data from different request
+categories. The first row: distributions under heavy traffic (daytime). The second row: distributions under low traffic (nighttime). The third row:
+a comparison of distributions under different days but with similar traffic patterns.
+
+
+
+
+        Figure 16: Overall spatial locality of two traces.
+                                                                             Figure 17: The spatial locality of multi-turn requests on Trace A.
+
+for image tasks. Finally, Search workloads exhibit the second-              Spatial locality. Figure 16 shows the overall spatial locality
+longest reuse time, as users often require substantial time to              of KV$ across both traces. We characterize the spatial locality
+analyze the searched results.                                               by measuring the ideal cache hit ratio with various cache
+Given a time period and request category, the probabil-                     strides, i.e., the percentage of tokens cached per request, as
+ity distribution of KV$ reuse time follows an exponential                   well as different starting token offsets for caching. This gives
+distribution. Figure 15 presents the reuse time probability                 a two-dimensional heatmap, for example, offset (10 %, 10 %)
+distribution of KV$ blocks across different request categories.             means that for each request, we only cache 10 % of the tokens
+For each category, we measure the likelihood of its KV$ reuse               starting from the 10 % token position.
+at specific time intervals after caching. We plot these distri-                First, KV$ shows better spatial locality when caching from
+butions by counting reuse event frequencies at each second                  the beginning, which is expected since only requests with
+following request execution.                                                identical prefixes can share the KV$ (§2). We emphasize
+   From the results, we draw three key observations. First,                 this seemingly trivial point because some KV$ optimiza-
+exponential distributions fit well with the reuse probability               tions [26] cache the tail tokens of requests to hide KV$ load
+given a request category. Second, the probability is workload-              time through concurrent computation and loading. However,
+aware, i.e., the distributions of different request categories,             this approach may reduce spatial locality, as Figure 17 par-
+including the same request type but different turns, are dif-               ticularly demonstrates that reusing intermediate parts in the
+ferent (e.g., text-1 vs. text-2). This implies a workload-aware             cache yields minimal benefits for multi-turn conversations.
+design that distinguishes different request categories. Finally,               Second, the spatial locality, like temporal locality, is also
+the distributions of requests with similar traffic patterns are             workload-aware. In Figure 18, we observed workloads like
+similar. Take text-1 as an example: as shown in the first row,              text and multimodal exhibit obvious spatial locality, while file
+the distribution drawn from 9:00–10:00 a.m. is similar to that              and search exhibit almost no spatial locality. Due to the lack
+drawn from 10:00–11:00 a.m., but is significantly different                 of user input content, we suspect the cause as follows: the ap-
+from that drawn from the nighttime—3:00–4:00 a.m. (sec-                     plications add a fixed system prompt for text and multimodal
+ond row). The distributions are also similar across different               workloads, whereas the system prompt for file and search is
+days (first row vs. third row). The first and third observation             dependent on user inputs.
+in combine imply that we can acquire the distribution of a                     Finally, we found that increasing the stride size implies a
+request category using recent historical data.                              higher cache hit ratio in Trace A (Figure 17), but it is not the
+
+
+                                                                        7
+                                         Figure 18: The spatial locality of single-turn requests.
+
+
+
+
+Figure 19: The distribution of the lifespan of KV$ blocks on both
+traces.
+
+
+case in Trace B (the last column in Figure 18). In Trace A,
+multi-turn requests contribute to the cache hits, so caching
+more tokens for a request will lead to more cache hits. In
+Trace B, only the system prompt contributes to the cache hits.          Figure 20: An illustration of how the mean lifespan of KV$ blocks
+Thus, caching a stride of 50 % of the request already achieved          changes over time for different request categories. Note that the
+a peak hit ratio of 50 %. This implies that most system prompt          x-axis represents the timeline. The request categories are sorted
+lengths are below 50% of the total request length in Trace              according to their usage.
+B, though we don’t have the detailed request to support this
+suspicion.                                                              pan, with darker colors indicating longer-lived KV$ blocks.
+                                                                                            YY.Ycm
+
+                                                                        We can see that although the average lifespan at the 24-hour
+3.5   Analyses of KV$ cache capacity requirement                        scale is changing over time, when we zoom in to a smaller
+Determining the right cache capacity is critical for a caching          timescale (9:00 a.m. to 11:00 a.m.), the pattern is quite stable.
+system. Unlike traditional storage systems, the cached KV$                                             trim
+                                                                        This implies that we can predict       = 0.25cm
+                                                                                                          the lifespan      YY.Ycm
+                                                                                                                       of a KV$   blockXX.Xcm 0.25
+is ephemeral, so identifying the right size requirement can             using historical data to reduce the KV$ cache size for saving
+save platform costs. This section analyzes the KV$ capacity             costs, as storing KV$ at fast storage medium (e.g., CPU’s
+using a bottom-up approach: First, we characterize the fea-             DRAM) is expensive.
+tures of the lifespan of requests’ KV$. Then we analyze the
+                                                                        Per-request KV$ cache usage is moderate. A key factor
+storage usage of each request. In combination, this gives us
+                                                                        when considering caching is the size of KV$ to be cached,
+an estimation of the total KV$ capacity required.
+                                                                        which is proportional to the input length of each request and
+KV$ lifespan is ephemeral and predictable. Figure 19                    the corresponding model output length. Figure 21 shows the
+analyzes the lifespan of KV$ blocks. A KV$ block “dies” if              size distribution of requests on different traces. Note that we
+it has not been reused anymore. We can see that most KV$                report the relative size when normalized to the HBM available
+blocks “live” shortly. In Trace A, 90 % of the KV$ blocks               for serving the request on a serving instance[1] . This is because
+are not reused after 612 seconds, and the number for Trace B            a relative value gives more intuitive results on the capacity
+is 0.3 seconds. This aligns with our analysis in the previous           required to cache the KV$ of each request. The available
+sections, e.g., many multi-turn requests will have a short              HBM for KV$ is calculated by subtracting the total HBM of
+reuse time (Figure 12), and most requests have a few turns              the GPU(s) in a serving instance from the model parameter
+(Figure 9). As a multi-turn request ends, its KV$ will not be           and activation sizes. Since the KV$ size of each request
+reused anymore. Blocks in Trace B have a shorter lifespan               depends on the detailed attention mechanism of the model,
+despite some outliers. Unlike Trace A, most of its cached               we report the results on three representative models with
+KV$ blocks are reused for system prompts, so they can be                two widely used attention methods: group query attention
+reused after a long time. For example, in Trace B, the longest          (GQA [3]) and multi-head attention (MHA [54]). GQA uses
+lifespan is 1,200 minutes while it is 800 minutes in Trace A.           less memory for the KV$.
+   Figure 20 further shows how the mean lifespan of KV$                 [1] A serving instance is the minimal number of GPUs required to serve a
+blocks changes over time for different request categories. In             model. For example, the serving instance of an 8 B model only needs one
+the graph, the color intensity represents the normalized lifes-           GPU, while serving a 72 B model requires 4 in the common case.
+
+
+                                                                    8
+Figure 21: The distribution of KV$ size of requests on different traces for Single and Multi-turn requests. The size is normalized to the GPU
+memory (HBM) available for serving. The number in the tuple inside each graph represents the length of input and output.
+
+
+    We can see that the overall size of the KV$ is moderate
+compared to the HBM. Take Trace A as an example. On GQA
+models like Qwen2-7B, the 50th , 90th , and 99th HBM us-
+age of the request in Text—the dominant request type are
+0.09 %, 0.15 %, and 0.37 % and 0.36 %, 1.31 %, and 2.21 %
+for single-turn and multi-turn requests, respectively. The av-
+erage usage is 0.09 % and 0.56 % for single- and multi-turn
+requests, respectively. This small usage is due to the fact that
+each token consumes few megabytes and requests in pro-
+duction traces tend to be small: in Qwen2-7B, it consumes
+                                                                         Figure 22: An analysis of the KV$ cache size required to achieve
+0.875 MB KV$ for 16 tokens, while the mean total token
+                                                                         an ideal cache hit ratio on different models and traces. The data is
+lengths (input+output) for single-turn and multi-turn is 973
+                                                                         collected from 10:00 a.m. to 11:00 a.m.
+and 5,953, respectively. For other models, though Llama3-
+70B also adopts GQA, it has a slightly higher HBM usage due
+to the reduced number of GPUs per instance: the parameter                KV$ of this request if it will be reused, and subtracting the
+size increases 10 × while the number of GPUs we measured                 size of all cached KV$ that will never be reused. One tricky
+only increases 4 ×. Finally, MHA models have the highest                 thing is that the size required is dependent on the number of
+usage due to the increased KV$ per token. Note that recent               serving instances deployed for a workload: if the instances
+open-source models tend to use GQA (or other attention with              are over-provisioned, then the estimated requirement would
+even fewer KV$ per token like MLA [35]).                                 be small. To obtain the maximal requirement, we use a setup
+    Considering that each serving instance typically processes           that uses the minimal number of serving instances, i.e., each
+a few requests per second, our characterization implies that             instance serves with the maximum QPS, so there is no over-
+an instance can cache a request for a modest time—e.g., for              provisioning.
+Qwen2-7B, suppose a GPU can process 5 requests per second,                  Figure 22 shows the results normalized to the total HBM
+it takes at least 1 minute to saturate the HBM assuming an               of a serving instance. We can see that GQA models require
+average 0.32 % HBM per request (derived with a 47 % multi-               a relatively small cache capacity to reach an ideal cache hit
+turn ratio of Text request type). This time is within the reuse          rate: in Trace A, Llama3-70B only needs 4 × of the available
+distance of KV$ in many scenarios (e.g., API). Note that                 HBM for KV$. This is typically achievable in modern serving
+in practical setups, we may not achieve such a long reuse                clusters without the need for more storage hierarchies like
+time due to tail requests (e.g., we do observe long context              remote memory or SSD [18]. For example, in a typical setup
+requests with more than 12,000 tokens), and LLM serving                  featuring 8 A100 GPUs and 1 TB of CPU memory, each GPU
+systems typically serve requests in large batches to improve             has access to an average of 128 GB of CPU memory, which
+computation utilization.                                                 is nearly 4 × the amount of HBM space reserved for storing
+Overall memory required for KV$ cache is moderate. We                    the KV$. Moreover, for Trace B, the KV$ capacity is even
+analyze the KV$ cache capacity required by measuring how                 smaller than the reserved HBM, so caching on GPU may be
+large a cache can ensure an ideal cache hit ratio assuming               sufficient.
+an ideal eviction policy, i.e., never evict a KV$ that will be              Though GQA needs small cache, we should note that MHA
+reused. The measurement is as follows: at a given time, upon             models do require a huge amount of KV$ cache, This is
+processing a request, we update the KV$ size by adding the               due to their huge per-token KV pairs (see Figure 21). Thus,
+
+
+                                                                     9
+optimizing cache eviction policies is still important under              Observations                     Techniques
+limited cache capacity.
+                                                                         The probability of KV$ reuse     ➀ Workload-aware reuse-
+                                                                         follows exponential distribu-    probability-distribution-based
+4     Improved KV$ cache system                                          tions given a workload (Fig-     priority estimation.
+                                                                         ure 11 and Figure 15).
+4.1   An overview of the design space
+                                                                         Spatial locality (Figure 16–     ➁ Assign a higher priority to
+Existing KV$ cache systems [18, 29, 68, 64] follow similar               18).                             the head KV$ blocks.
+caching mechanisms and policies. Below we give a brief                   Ephemeral KV$ lifespan (Fig-     ➂ Remove frequency when
+overview of their designs before moving on to our improved               ure 19).                         calculating the priority, as well
+policy.                                                                                                   as limiting the time span of
+                                                                                                          probability calculation.
+Current KV$ cache mechanism and policies. Regarding
+the mechanism: existing systems cache KV$ primarily on                  Table 2: A summary of the main techniques in our workload-aware
+GPU and CPU in a hierarchical manner. The KV$ is managed                cache eviction policy based on the findings in §3
+at block granularity (see §2): when a KV$ block is generated,
+it is first cached on the GPU HBM. If the GPU is unable                 request category (workload). The priority further holistically
+to cache newly generated blocks due to out of memory, the               considers the spatial locality as well as the short lifespan of
+caching system adopts an eviction policy (described below)              KV$ blocks. The blocks with the lowest priority are evicted
+to evict some blocks from the GPU to the CPU. The evicted               first. Table 2 summarizes our techniques as well as their
+blocks are asynchronously swapped to CPU in a layer-by-                 corresponding observations from §3.
+layer manner so the swap cost is negligible. If the CPU is also            Our caching mechanisms follow existing systems [18, 29,
+out of memory, the blocks are removed. Before executing a               68, 64]—including asynchronous swapping and pipelined
+new request, if the request hits cached blocks, the serving sys-        loading, as these techniques have converged to a standard
+tem directly reuses the cached blocks to avoid recomputation.           design.
+Note that if the hit is on CPU, the block is swapped to the
+GPU also in a layer-by-layer manner.                                    4.2   Workload-aware KV$ cache eviction policy
+   Regarding the policies: a KV$ cache system mainly needs
+                                                                        Existing workload-aware policy. Workload-aware cache
+two policies: how to determine cache hits and how to evict
+                                                                        eviction policy has been extensively studied in the litera-
+cached blocks. For the first policy, the design choices differ
+                                                                        ture [14, 40, 28, 24, 37, 11, 48]. A representative policy is
+in their granularity of checking which blocks may contribute
+                                                                        the Greedy-Dual-Frequency-Size (GDFS) policy [14], which
+to the hits: some systems check for matches across all re-
+                                                                        evaluates the priority of each cached object (e.g., KV$) using
+quests [68, 25] while others only check for matches within
+                                                                        the following workload-dependent features:
+requests from individual users [64, 18]. For the second pol-
+icy, current systems mainly adopt standard eviction policies                                   Frequency × Cost
+like LRU or FIFO. Though they adopt some extensions like                  Priority = Clock +                    (Existing GDFS)
+                                                                                                     Size
+checking whether the evicted blocks are in the scheduling
+queue [18], the overall rationale does not change.                      The Clock captures the last access time of an object (similar
+                                                                        to LRU), the Frequency is the total access count of an
+The drawback. Existing workload-agnostic policies like                  object (similar to LFU), the Size is the size of the cached
+LRU may miss the workload features we analyzed in §3,                   object, and Cost is the cost to bring the cached content back
+and we argue that they are suboptimal. Take Trace A as an               to the cache. Objects with the lowest priority are evicted first.
+example: given the same amount of time since the last access
+                                                                           While the above GDFS formulation can be retrofitted for
+(e.g., greater than 10 seconds), 10-turn text requests are more
+                                                                        calculating the priority of KV$ blocks, we found it does not
+likely to have a subsequent turn than 1-turn text requests (see
+                                                                        fully consider the KV$ usage in LLM serving as well as
+Figure 11). However, if many 1-turn requests are flooding into
+                                                                        the known probability distributions of requests in different
+the system, 10-turn requests can be evicted by LRU because
+                                                                        categories. For example, a frequently accessed block may
+the reuse time is longer.
+                                                                        not be reused in the future due to the short lifespan of KV$
+Our solution: workload-aware reuse-probability-                         blocks, causing a frequently accessed then died block wasting
+distribution-based KV$ eviction policy. To this end,                    the KV$ space. Besides, a block with higher cost to bring to
+we propose a workload-aware cache eviction policy that                  the cache does not necessarily mean it is more likely to be
+considers the reuse probability distributions of each request           reused in the future. Instead, we need to bring the more likely
+category based on the characterizations presented in §3.4. At           to be reused blocks to the cache first. While such workload
+a high level, at the eviction time, for each block, we calculate        information is not available in the setup of GDFS, it is readily
+a priority—the likelihood of a KV$ being reused in the future           available in serving LLMs based on our characterization in
+based on the profiled reuse probability distribution of its             the previous section.
+
+
+                                                                   10
+            ReuseProb(t,life) = F(t + life) – F(t)                          Input:  Bs: cached KV$ blocks;
+                             F(t + life)                                            Life: expected lifespan of the KV$ blocks;
+                F(t)                                                                H(w): hyper parameters for the workload (w)’s fitted probability.
+                                                                                    distribution that are periodically updated in the background.       XX.Xcm
+                                                                            Output: B: the evicted KV$ block.
+
+                                                                            1   CurT = time.time()
+                             life                                           2   MinPriority = +∞
+                     t              t + life                                3   ChosenBlock = PlaceHolder
+                                                                            4   For b in Bs:
+Figure 23: An illustration of how to calculate the reuse probability        5      Priority = ReuseProb H(b.w)(CurT - b.cached_t, Life)
+of a KV$ block given its workload (request category).                       6        ⏵Priority is the reuse probability in
+                                                                                       [CurT – b.cached_t, CurT – b.cached_t+ Life)
+                                                                            7        If Priority < MinPriority or (Priority == MinPriority and
+Our policy. We follow GDFS to calculate the priority of                                                 b.offset > ChosenBlock.offset):
+each KV$ block and use the priority to determine the eviction               8           MinPriority = Priority
+order, but our priority is retrofitted with our characterized               9           ChosenBlock = b
+KV$ reuse features:                                                         10 𝐫𝐞𝐭𝐮𝐫𝐧 ChosenBlock
+
+                                                                            Figure 24: A simplified pseudocode of our workload-aware cache
+Priority = (ReuseProbw (t, life), −Offset) (Workload-aware)                 eviction algorithm.
+
+Specifically, the priority is represented with a tuple
+                    YY.Ycm
+
+
+
+
+containing two metrics and we compare the tuple with
+                                                                    The detailed eviction algorithm. Algorithm 24 presents
+lexicographical order. The rationale behind the two metrics is:
+                                                                    a simplified pseudocode of our workload-aware cache evic-
+                                 trim = 0.25cm YY.Ycm XX.Xcm tion   0.25cm,                                   Calculate-prob.pdf
+                                                                                 clipUpon eviction, we first iterate
+                                                                          algorithm.                                 through all the
+ • ReuseProbw (➀) calculates the reuse probability of a KV$
+                                                                    cached blocks (line 4–6) and calculate the reuse probability
+   block at a given time t, where t means the time since
+                                                                    for each block using the workload (b.w). The priority is then
+   its last access. For each workload (request category), the
+                                                                    compared with the offset of the block to update the block to
+   reuse probability is calculated using a two-step process.
+                                                                    be evicted (line 7–9).
+   First, we sample a period of the recently accessed data
+   in the background. Second, based on the observations in          Performance optimization. One drawback of the above
+   Figure 15, we fit an exponential distribution to the sampled     naive algorithm is that it requires computing the reuse proba-
+   data, and look up the fitted curve to get the reuse probability. bilities of all KV$ blocks to identify the least reusable candi-
+   Figure 23 shows an example of how to calculate the reuse         date. To avoid excessive computation overhead, we observe
+   probability. We first use the background sampled data from       that all KV$ blocks within each workload are naturally or-
+   9:00 a.m. to 10:00 a.m. to fit the cumulative distribution       dered by their last accessed timestamps according to the ex-
+   function (CDF) of the reuse probability of a given workload      ponential distribution, so we can avoid computing the reuse
+   (blue line).                                                     probability when comparing blocks within the same work-
+                                                                    load. Specifically, for each workload, we maintain a priority
+   Note that the fitted curve is close to the real data (red
+                                                                    queue of its KV$ blocks ordered by last accessed time. Dur-
+   line). Afterward, we can look up the curve to get the reuse
+                                                                    ing eviction, instead of scanning all blocks, we first treat the
+   probability of a KV$ block in the future. Note that the
+                                                                    least-recently-used block of each workload as the candidate
+   function further considers the expected lifespan (life) of
+                                                                    for eviction. Afterward, we run the algorithm described in
+   the block, which is critical considering the short lifespan
+                                                                    Algorithm 24 to obtain the final evicted block. This reduces
+   of KV$ and we describe below.
+                                                                    the complexity from O(N ) to O(W ), where W is the num-
+                                                                    ber of workloads (typically in the range of tens). As a result,
+ • Offset (➁) considers the spatial locality described in §3.4:
+                                                                    the performance overhead of workload-aware policy is neg-
+   the priority is reversely proportional to the prefix length of
+                                                                    ligible to serving, e.g., we observed a 79 µs policy delay for
+   the KV$ block in the entire request.
+                                                                    each eviction, with the aggregated overhead only 1.2 % of the
+                                                                    scheduling overhead of a typical serving engine (vLLM [29]).
+   We don’t consider frequency explicitly (➂) because we
+found it can not provide useful information for cache policy
+                                                                    4.3 Performance evaluation
+due to the short lifespan of KV$ blocks (see Figure 19) even
+for frequently reused ones. More importantly, we also need to       Testbed. We conducted our evaluations on a server with 8
+regulate the calculated reuse probability with the lifespan. If     NVIDIA A800-80GB GPUs. The GPUs are connected via
+not, the fitted reuse probability will return a large probability   400 GBps bidirectional NVLink, allowing us to use multiple
+for a request with long-tailed reuse time distribution for a long   GPUs (e.g., 4) to serve a single large model with tensor par-
+time. This contradicts the short KV$ lifespan observation and       allelism [38]. The GPUs are connected to the host via PCIe
+leads to the inefficient utilization of limited cache space.        Gen4, offering a bidirectional bandwidth of up to 32 GBps
+
+
+                                                                       11
+between GPU HBM and the host memory.
+Implementations and baselines. Since the state-of-the-art
+KV$ cache systems that incorporate both CPU and GPU
+KV$ like CachedAttention [18] and Pensieve [64] are not
+open-sourced, we implement a CPU-GPU KV$ cache on
+vLLM [29], the state-of-the-art LLM serving system that
+adopts GPU KV$ cache by default. We have further inte-
+grated the policies and mechanisms from state-of-the-art (see
+§4.1) to it. We have calibrated that our implementation has a
+similar performance to state-of-the-art like CachedAttention             Figure 25: An analysis of the cache hit ratio and QTTFT with
+on the same synthetic workload with a similar testbed.                   respect to the CPU cache provisioned on Qwen2-7B.
+   Besides integrating a CPU KV$ cache on vLLM, we have
+also implemented the KV$-centric global scheduler described
+in Mooncake [1], because serving LLMs on multiple instances
+is common. Specifically, the global scheduler will record
+the global KV$ cache usage and schedule the request to
+the instance with cached KV$ whenever possible. Note that
+our workload-aware caching policy only applies to a single
+serving instance, extending it to a global layer is left as our
+future work.
+Evaluated models and workloads. We use three represen-
+tative open-source models for the performance evaluations:
+                                                                         Figure 26: An analysis of the cache hit ratio and QTTFT with
+Qwen2-7B [9], Llama2-13B [53] and Llama3-70B [15]. The
+                                                                         respect to the CPU cache provisioned on Llama2-13B.
+rationale for choosing these models and the differences be-
+tween them have been discussed in the per-request KV$ size
+analysis in §3.5. For Qwen2-7B and Llama2-13B models, we
+use one GPU per serving instance. For Llama3-70B, we use
+4 GPUs. We use the Trace A and B described in §3.1 as our
+evaluated workloads. Since we don’t have sufficient GPUs
+to support the real workload, we scale the traces to fit the
+processing capability of our testbed using the scaling method
+that preserves the temporal pattern of the trace [50].
+Evaluation methodology on anonymous traces. Even
+though the traces are anonymous, we can evaluate the system              Figure 27: An analysis of the cache hit ratio and QTTFT with
+serving performance by constructing inputs that accurately               respect to the CPU cache provisioned on Llama3-70B.
+reproduce the original trace’s cache hit patterns. Specifically,
+for each anonymous block without assigned tokens, we ran-                to the GPU HBM size for KV$, i.e., the #CPU Cache / HBM
+domly generate a token list, ensuring each generated list’s              in the figures means the CPU memory used to store the KV$
+hash differs from all other token lists. Moreover, to match              normalized to the GPU HBM. For example, a #CPU Cache
+the original input’s iteration count, we constrain the model             / HBM of 1 means the CPU memory used to store the KV$
+using the trace’s output length. Finally, we replace the model-          is equal to the GPU HBM size. We draw three observations
+generated output with the constructed tokens to preserve the             from the results.
+cache patterns of multi-turn requests.
+                                                                            First, our policy WA achieves 8.1–23.9 % higher hit rate
+Improved cache hit. Figure 25–27 show the cache hit ratio                compared to other baselines, and it has a 1.5–3.9 % higher
+and serving performance for standard cache policies and our              hit rate compared to the best of other baselines. Our policy is
+workload-aware policy (WA). We compare our policy with the               more effective thanks to its knowledge of the workload reuse
+standard policies like least-recently-used (LRU), first-in-first-        patterns. Second, the effectiveness of WA decreases when the
+out (FIFO), least-frequently-used (LFU) and recent optimized             cache capacity increases, this is as expected because a larger
+FIFO method (S3-FIFO) [60]. We compare with the vanilla                  cache can tolerate a less effective policy. Finally, WA is more
+GDFS in Figure 28.                                                       effective on Trace A than Trace B, this is due to two reasons.
+   Since the performance depends on cache capacity, we re-               (1) Trace B has little workload information (> 99 % of its
+port the hit rates (as well as performance) by varying the               requests are 1-turn requests). Thus, our fitted exponential
+provisioned KV$ cache capacity. The capacity is normalized               distribution-based policy essentially falls back to a normal
+
+
+                                                                    12
+           LFU       LRU   GDFS                   +Distribution   WA (+Life)        most to the attention score for inference. InfiniGen [32] spec-
+                                                                                    ulatively selects tokens critical for attention scores and drops
+                                               6000                                 others. KVQuant [21] enables 3-bit KV cache quantization
+
+
+
+
+                                  QTTFT (ms)
+               0.2
+    Hit Rate
+
+
+
+                                               4000                                 with minimal perplexity degradation for large language mod-
+               0.1
+                                               2000
+                                                                                    els, achieving fast million-length context inference. These
+                                                                                    methods require fewer KV$ per-request, albeit with accuracy
+               0.0                                0
+                                                                                    degradation. Our study is compatible with these works: if an
+Figure 28: An ablation study on Qwen2-7B with #CPU Cache /                          uncompressed/full KV$ is reusable, a compressed or deleted
+HBM is 1.
+                                                                                    version would also be reusable.
+                                                                                    Optimizing caching policies. Optimizing caching has long
+LRU. (2) Trace B requires a relatively small KV$ capacity,
+                                                                                    been studied in the literature, in general-purpose caching
+so GPU HBM is already close to optimal except for LFU.
+                                                                                    policies [40, 28, 27, 52, 31, 24, 37, 70, 10, 23, 16, 11, 48,
+The poor hit rate of LFU comes from the fact that the most
+                                                                                    66, 14] or specific domains [59, 12, 49, 17]. We continue this
+frequently accessed blocks may die early thus polluting the
+                                                                                    line of research, and leverage our characterized KV$ reuse
+KV$ cache, as we have extensively discussed before.
+                                                                                    properties for optimizing KV$ cache policies.
+Improved performance. The improved cache hit ratio leads                            Optimizing LLM serving. We continue the line of re-
+to a significant performance improvement in the serving per-                        search in optimizing the performance of LLM serving sys-
+formance. Figure 25–27 also reports the queued TTFT (QT-                            tems [69, 56, 30, 33, 63, 45, 18, 65], with a particular focus
+TFT) when serving different traces, i.e., the TTFT plus the                         on characterizing serving workloads for KV$ cache. Our
+time when waiting for GPU to process the request. We can                            work is orthogonal to optimizations other than KV$ cache.
+see that WA achieves 28.3–41.9% QTTFT reduction thanks
+to the improved KV$ cache hit rate.
+                                                                                    6   Conclusion
+Ablation study. Figure 28 conducts an ablation study on the
+                                                                                    We present the first systematic and in-depth characterization
+Qwen2-7B model on Trace A with different policies. Other
+                                                                                    of production serving workloads for KV$ cache systems.
+models share a similar trend. First, we can see that using
+                                                                                    Our study reveals several important findings that were not
+a distribution-based approach improves the hit rate by 1 %
+                                                                                    captured by synthetic workloads used in previous studies.
+(with technique ➀ in Table 2). Considering the short lifes-
+                                                                                    Based on these findings, we further propose a workload-aware
+pan of KV$ with the life regulator further increases the hit
+                                                                                    cache eviction policy that improves upon existing workload-
+rate by 2.4 % (➂). Note that we omit describing the locality
+                                                                                    agnostic policies like LRU and LFU. We believe our work,
+optimization ➁ as it is applied to all the policies.
+                                                                                    as a starting point, can benefit both the research and industry
+Discussion: fairness issue. Like all existing systems (and                          fields in improving current and future LLM serving systems
+their policies), a malicious client can monopolize prefix cache                     with a workload-driven approach.
+by sending a large volume of requests with long identical
+prefixes, thus causing fairness issues. Ensuring fairness is an                     Acknowledgment
+orthogonal topic to cache policy and can be addressed via a
+co-design of LLM serving strategies like FairRide [46, 51].                         We would like to thank ATC reviewers and our shepherd
+                                                                                    Lei Zhang for their insightful feedback. We sincerely thank
+                                                                                    Guanhu Wang for helping us with the collection of the trace
+5         Related Work                                                              data. We also thank Xiating Xie for proofreading our paper.
+Reuse KV$ across requests via KV$ cache. Reusing KV$                                We thank Xiangfan Wu for helping us correct the presentation
+for accelerating LLM serving has been widely studied [29, 62,                       about hashing the token IDs. Furthermore, we thank Zhijun
+18, 19, 68, 61] and used in commercial LLM serving [41, 20,                         Yang for refining the presentation of this paper. This work was
+4, 1]. Currently, production systems only treat cache hits by                       supported in part by the National Natural Science Foundation
+prefix matches [62, 68, 18, 41, 20, 4, 1], because it preserves                     of China (No. 62202291, 62272291, 62132014) and the Fun-
+the original algorithm of model inference with no accuracy                          damental Research Funds for the Central Universities. This
+loss. A number of studies [19, 61, 22] have studied methods                         work was also supported by a research grant from Alibaba
+for non-prefix KV$ cache. We can revisit our characterization                       Group through the Alibaba Innovative Research Program.
+once they have matured and been deployed in production.
+Other KV$-related optimizations. Emerging works[58, 67,                             References
+32, 13] propose runtime KV$ compression and deletion meth-                           [1] Mooncake trace. https://github.com/kvcache-
+ods to reduce KV$ size. StreamingLLM [58] keeps only a                                   ai/Mooncake/blob/main/mooncake_trace.
+finite attention window for recent tokens combined with a few                            jsonl, 2025.
+initial tokens. H2O [67] only involves tokens that contribute                        [2] Sharegpt. https://sharegpt.com, 2025.
+
+
+                                                                               13
+ [3] A INSLIE , J., L EE -T HORP, J., DE J ONG , M., Z EMLYANSKIY,                    [13] C AI , Z., Z HANG , Y., G AO , B., L IU , Y., L IU , T., L U , K.,
+     Y., L EBRÓN , F., AND S ANGHAI , S. GQA: training general-                            X IONG , W., D ONG , Y., C HANG , B., H U , J., AND X IAO , W.
+     ized multi-query transformer models from multi-head check-                            Pyramidkv: Dynamic KV cache compression based on pyra-
+     points. In Proceedings of the 2023 Conference on Empirical                            midal information funneling. CoRR abs/2406.02069 (2024).
+     Methods in Natural Language Processing, EMNLP 2023, Sin-                         [14] C HERKASOVA , L. Improving WWW proxies performance with
+     gapore, December 6-10, 2023 (2023), H. Bouamor, J. Pino,                              greedy-dual-size-frequency caching policy. Hewlett-Packard
+     and K. Bali, Eds., Association for Computational Linguistics,                         Laboratories Palo Alto, CA, USA, 1998.
+     pp. 4895–4901.
+                                                                                      [15] D UBEY, A., JAUHRI , A., PANDEY, A., K ADIAN , A.,
+ [4] A NTHROPIC. Claude api. https://www.anthropic.                                        A L -DAHLE , A., L ETMAN , A., M ATHUR , A., S CHELTEN ,
+     com/api, 2025.                                                                        A., YANG , A., FAN , A., G OYAL , A., H ARTSHORN , A.,
+ [5] ANTHROPIC.      Prompt caching.  https://                                             YANG , A., M ITRA , A., S RAVANKUMAR , A., KORENEV, A.,
+     docs.anthropic.com/en/docs/build-with-                                                H INSVARK , A., R AO , A., Z HANG , A., RODRIGUEZ , A.,
+     claude/prompt-caching, 2025.                                                          G REGERSON , A., S PATARU , A., ROZIÈRE , B., B IRON , B.,
+ [6] A NTHROPIC.  Prompt library. https://docs.                                            TANG , B., C HERN , B., C AUCHETEUX , C., NAYAK , C., B I ,
+     anthropic.com/en/prompt-library/library,                                              C., M ARRA , C., M C C ONNELL , C., K ELLER , C., T OURET,
+     2025.                                                                                 C., W U , C., W ONG , C., F ERRER , C. C., N IKOLAIDIS ,
+                                                                                           C., A LLONSIUS , D., S ONG , D., P INTZ , D., L IVSHITS , D.,
+ [7] ATIKOGLU , B., X U , Y., F RACHTENBERG , E., J IANG , S.,                             E SIOBU , D., C HOUDHARY, D., M AHAJAN , D., G ARCIA -
+     AND PALECZNY, M. Workload analysis of a large-scale key-                              O LANO , D., P ERINO , D., H UPKES , D., L AKOMKIN , E., A L -
+     value store. In Proceedings of the 12th ACM SIGMETRIC-                                BADAWY, E., L OBANOVA , E., D INAN , E., S MITH , E. M.,
+     S/PERFORMANCE joint international conference on Measure-                              R ADENOVIC , F., Z HANG , F., S YNNAEVE , G., L EE , G., A N -
+     ment and Modeling of Computer Systems (2012), pp. 53–64.                              DERSON , G. L., NAIL , G., M IALON , G., PANG , G., C U -
+ [8] AUMASSON , J., AND B ERNSTEIN , D. J. Siphash: A fast                                 CURELL , G., N GUYEN , H., K OREVAAR , H., X U , H., T OU -
+     short-input PRF. In Progress in Cryptology - INDOCRYPT                                VRON , H., Z AROV, I., I BARRA , I. A., K LOUMANN , I. M.,
+     2012, 13th International Conference on Cryptology in India,                           M ISRA , I., E VTIMOV, I., C OPET, J., L EE , J., G EFFERT,
+     Kolkata, India, December 9-12, 2012. Proceedings (2012),                              J., V RANES , J., PARK , J., M AHADEOKAR , J., S HAH , J.,
+     S. D. Galbraith and M. Nandi, Eds., vol. 7668 of Lecture Notes                        VAN DER L INDE , J., B ILLOCK , J., H ONG , J., L EE , J., F U ,
+     in Computer Science, Springer, pp. 489–508.                                           J., C HI , J., H UANG , J., L IU , J., WANG , J., Y U , J., B ITTON ,
+                                                                                           J., S PISAK , J., PARK , J., ROCCA , J., J OHNSTUN , J., S AXE ,
+ [9] BAI , J., BAI , S., C HU , Y., C UI , Z., DANG , K., D ENG , X.,
+                                                                                           J., J IA , J., A LWALA , K. V., U PASANI , K., P LAWIAK , K., L I ,
+     FAN , Y., G E , W., H AN , Y., H UANG , F., H UI , B., J I , L., L I ,
+                                                                                           K., H EAFIELD , K., S TONE , K., AND ET AL . The llama 3
+     M., L IN , J., L IN , R., L IU , D., L IU , G., L U , C., L U , K., M A ,
+                                                                                           herd of models. CoRR abs/2407.21783 (2024).
+     J., M EN , R., R EN , X., R EN , X., TAN , C., TAN , S., T U , J.,
+     WANG , P., WANG , S., WANG , W., W U , S., X U , B., X U , J.,                   [16] E INZIGER , G., E YTAN , O., F RIEDMAN , R., AND M ANES ,
+     YANG , A., YANG , H., YANG , J., YANG , S., YAO , Y., Y U ,                           B. Lightweight robust size aware cache management. ACM
+     B., Y UAN , H., Y UAN , Z., Z HANG , J., Z HANG , X., Z HANG ,                        Trans. Storage 18, 3 (2022), 27:1–27:23.
+     Y., Z HANG , Z., Z HOU , C., Z HOU , J., Z HOU , X., AND Z HU ,                  [17] F UERST, A., AND S HARMA , P. Faascache: keeping serverless
+     T. Qwen technical report. arXiv preprint arXiv:2309.16609                             computing alive with greedy-dual caching. In ASPLOS ’21:
+     (2023).                                                                               26th ACM International Conference on Architectural Support
+[10] BANSAL , S., AND M ODHA , D. S. CAR: clock with adaptive                              for Programming Languages and Operating Systems, Virtual
+     replacement. In Proceedings of the FAST ’04 Conference                                Event, USA, April 19-23, 2021 (2021), T. Sherwood, E. D.
+     on File and Storage Technologies, March 31 - April 2, 2004,                           Berger, and C. Kozyrakis, Eds., ACM, pp. 386–400.
+     Grand Hyatt Hotel, San Francisco, California, USA (2004),                        [18] G AO , B., H E , Z., S HARMA , P., K ANG , Q., J EVDJIC , D.,
+     C. Thekkath, Ed., USENIX, pp. 187–200.                                                D ENG , J., YANG , X., Y U , Z., AND Z UO , P. Cost-efficient
+[11] B ECKMANN , N., C HEN , H., AND C IDON , A. LHD: im-                                  large language model serving for multi-turn conversations with
+     proving cache hit rate by maximizing hit density. In 15th                             cachedattention. In Proceedings of the 2024 USENIX Annual
+     USENIX Symposium on Networked Systems Design and Im-                                  Technical Conference, USENIX ATC 2024, Santa Clara, CA,
+     plementation, NSDI 2018, Renton, WA, USA, April 9-11, 2018                            USA, July 10-12, 2024 (2024), S. Bagchi and Y. Zhang, Eds.,
+     (2018), S. Banerjee and S. Seshan, Eds., USENIX Association,                          USENIX Association, pp. 111–126.
+     pp. 389–403.                                                                     [19] G IM , I., C HEN , G., L EE , S., S ARDA , N., K HANDELWAL , A.,
+[12] B ERG , B., B ERGER , D. S., M C A LLISTER , S., G ROSOF, I.,                         AND Z HONG , L. Prompt cache: Modular attention reuse for
+     G UNASEKAR , S., L U , J., U HLAR , M., C ARRIG , J., B ECK -                         low-latency inference. In Proceedings of the Seventh Annual
+     MANN , N., H ARCHOL -BALTER , M., AND G ANGER , G. R.                                 Conference on Machine Learning and Systems, MLSys 2024,
+     The CacheLib caching engine: Design and experiences at scale.                         Santa Clara, CA, USA, May 13-16, 2024 (2024), P. B. Gibbons,
+     In 14th USENIX Symposium on Operating Systems Design and                              G. Pekhimenko, and C. D. Sa, Eds., mlsys.org.
+     Implementation (OSDI 20) (Nov. 2020), USENIX Association,                        [20] G OOGLE. Gemini api. https://ai.google.dev/api,
+     pp. 753–768.                                                                          2025.
+
+
+
+                                                                                 14
+[21] H OOPER , C., K IM , S., M OHAMMADZADEH , H., M AHONEY,                     [32] L EE , W., L EE , J., S EO , J., AND S IM , J. Infinigen: Efficient
+     M. W., S HAO , Y. S., K EUTZER , K., AND G HOLAMI , A.                           generative inference of large language models with dynamic
+     Kvquant: Towards 10 million context length LLM inference                         KV cache management. In 18th USENIX Symposium on Oper-
+     with KV cache quantization. In Advances in Neural Informa-                       ating Systems Design and Implementation, OSDI 2024, Santa
+     tion Processing Systems 38: Annual Conference on Neural In-                      Clara, CA, USA, July 10-12, 2024 (2024), A. Gavrilovska and
+     formation Processing Systems 2024, NeurIPS 2024, Vancouver,                      D. B. Terry, Eds., USENIX Association, pp. 155–172.
+     BC, Canada, December 10 - 15, 2024 (2024), A. Globersons,                   [33] L I , Z., Z HENG , L., Z HONG , Y., L IU , V., S HENG , Y., J IN ,
+     L. Mackey, D. Belgrave, A. Fan, U. Paquet, J. M. Tomczak,                        X., H UANG , Y., C HEN , Z., Z HANG , H., G ONZALEZ , J. E.,
+     and C. Zhang, Eds.                                                               AND S TOICA , I. AlpaServe: Statistical multiplexing with
+[22] H U , J., H UANG , W., WANG , H., WANG , W., H U , T., Z HANG ,                  model parallelism for deep learning serving. In 17th USENIX
+     Q., F ENG , H., C HEN , X., S HAN , Y., AND X IE , T. Epic: Effi-                Symposium on Operating Systems Design and Implementation
+     cient position-independent context caching for serving large                     (OSDI 23) (Boston, MA, July 2023), USENIX Association,
+     language models, 2024.                                                           pp. 663–679.
+[23] J IANG , S., C HEN , F., AND Z HANG , X. Clock-pro: An effec-               [34] L IN , C., H AN , Z., Z HANG , C., YANG , Y., YANG , F., C HEN ,
+     tive improvement of the CLOCK replacement. In Proceedings                        C., AND Q IU , L. Parrot: Efficient serving of llm-based ap-
+     of the 2005 USENIX Annual Technical Conference, April 10-15,                     plications with semantic variable. In 18th USENIX Sym-
+     2005, Anaheim, CA, USA (2005), USENIX, pp. 323–336.                              posium on Operating Systems Design and Implementation,
+[24] J IANG , S., AND Z HANG , X. LIRS: an efficient low inter-                       OSDI 2024, Santa Clara, CA, USA, July 10-12, 2024 (2024),
+     reference recency set replacement policy to improve buffer                       A. Gavrilovska and D. B. Terry, Eds., USENIX Association,
+     cache performance. In Proceedings of the International Con-                      pp. 929–945.
+     ference on Measurements and Modeling of Computer Sys-                       [35] L IU , A., F ENG , B., X UE , B., WANG , B., W U , B.,
+     tems, SIGMETRICS 2002, June 15-19, 2002, Marina Del                              L U , C., Z HAO , C., D ENG , C., Z HANG , C., RUAN , C.,
+     Rey, California, USA (2002), R. R. Muntz, M. Martonosi, and                      ET AL .    Deepseek-v3 technical report. arXiv preprint
+     E. de Souza e Silva, Eds., ACM, pp. 31–42.                                       arXiv:2412.19437 (2024).
+[25] J IN , C., Z HANG , Z., J IANG , X., L IU , F., L IU , X., L IU ,           [36] L IU , Y., L I , H., C HENG , Y., R AY, S., H UANG , Y., Z HANG ,
+     X., AND J IN , X. Ragcache: Efficient knowledge caching                          Q., D U , K., YAO , J., L U , S., A NANTHANARAYANAN , G.,
+     for retrieval-augmented generation. CoRR abs/2404.12457                          M AIRE , M., H OFFMANN , H., H OLTZMAN , A., AND J IANG ,
+     (2024).                                                                          J. Cachegen: KV cache compression and streaming for fast
+[26] J IN , S., L IU , X., Z HANG , Q., AND M AO , Z. M. Compute or                   large language model serving. In Proceedings of the ACM
+     load KV cache? why not both? CoRR abs/2410.03065 (2024).                         SIGCOMM 2024 Conference, ACM SIGCOMM 2024, Sydney,
+[27] J OHNSON , T., AND S HASHA , D. E. 2q: A low overhead high                       NSW, Australia, August 4-8, 2024 (2024), ACM, pp. 38–56.
+     performance buffer management replacement algorithm. In                     [37] M EGIDDO , N., AND M ODHA , D. S. ARC: A self-tuning,
+     VLDB’94, Proceedings of 20th International Conference on                         low overhead replacement cache. In Proceedings of the FAST
+     Very Large Data Bases, September 12-15, 1994, Santiago de                       ’03 Conference on File and Storage Technologies, March 31 -
+     Chile, Chile (1994), J. B. Bocca, M. Jarke, and C. Zaniolo,                      April 2, 2003, Cathedral Hill Hotel, San Francisco, California,
+     Eds., Morgan Kaufmann, pp. 439–450.                                              USA (2003), J. Chase, Ed., USENIX.
+[28] K AREDLA , R., L OVE , J. S., AND W HERRY, B. G. Caching                    [38] NARAYANAN , D., S HOEYBI , M., C ASPER , J., L E G RES -
+     strategies to improve disk system performance. Computer 27,                      LEY, P., PATWARY, M., KORTHIKANTI , V., VAINBRAND , D.,
+     3 (1994), 38–46.                                                                 K ASHINKUNTI , P., B ERNAUER , J., C ATANZARO , B., ET AL .
+[29] K WON , W., L I , Z., Z HUANG , S., S HENG , Y., Z HENG , L.,                    Efficient large-scale language model training on gpu clusters
+     Y U , C. H., G ONZALEZ , J., Z HANG , H., AND S TOICA , I. Ef-                   using megatron-lm. In Proceedings of the International Confer-
+     ficient memory management for large language model serving                       ence for High Performance Computing, Networking, Storage
+     with pagedattention. In Proceedings of the 29th Symposium on                     and Analysis (2021), pp. 1–15.
+     Operating Systems Principles, SOSP 2023, Koblenz, Germany,                  [39] N ISHTALA , R., F UGAL , H., G RIMM , S., K WIATKOWSKI , M.,
+     October 23-26, 2023 (2023), J. Flinn, M. I. Seltzer, P. Druschel,                L EE , H., L I , H. C., M C E LROY, R., PALECZNY, M., P EEK ,
+     A. Kaufmann, and J. Mace, Eds., ACM, pp. 611–626.                                D., S AAB , P., S TAFFORD , D., T UNG , T., AND V ENKATARA -
+[30] K WON , W., L I , Z., Z HUANG , S., S HENG , Y., Z HENG , L.,                    MANI , V. Scaling memcache at facebook. In 10th USENIX
+     Y U , C. H., G ONZALEZ , J., Z HANG , H., AND S TOICA , I. Ef-                   Symposium on Networked Systems Design and Implementation
+     ficient memory management for large language model serving                       (NSDI 13) (Lombard, IL, Apr. 2013), USENIX Association,
+     with pagedattention. In Proceedings of the 29th Symposium on                     pp. 385–398.
+     Operating Systems Principles, SOSP 2023, Koblenz, Germany,                  [40] O’N EIL , E. J., O’N EIL , P. E., AND W EIKUM , G. The LRU-
+     October 23-26, 2023 (2023), J. Flinn, M. I. Seltzer, P. Druschel,                K page replacement algorithm for database disk buffering. In
+     A. Kaufmann, and J. Mace, Eds., ACM, pp. 611–626.                                Proceedings of the 1993 ACM SIGMOD International Con-
+[31] L EE , D., C HOI , J., K IM , J., N OH , S. H., M IN , S. L., C HO ,             ference on Management of Data, Washington, DC, USA, May
+     Y., AND K IM , C. LRFU: A spectrum of policies that subsumes                     26-28, 1993 (1993), P. Buneman and S. Jajodia, Eds., ACM
+     the least recently used and least frequently used policies. IEEE                 Press, pp. 297–306.
+     Trans. Computers 50, 12 (2001), 1352–1361.
+
+                                                                            15
+[41] O PENAI.  Openai developer platform. https://                                  H AMBRO , E., A ZHAR , F., RODRIGUEZ , A., J OULIN , A.,
+     platform.openai.com/docs/overview.                                             G RAVE , E., AND L AMPLE , G. Llama: Open and efficient
+[42] O PENAI. Chatgpt. https://chatgpt.com, 2024.                                   foundation language models. CoRR abs/2302.13971 (2023).
+
+[43] O PENAI. Introducing openai o1. https://openai.com/                       [54] VASWANI , A., S HAZEER , N., PARMAR , N., U SZKOREIT, J.,
+     o1/, 2025.                                                                     J ONES , L., G OMEZ , A. N., K AISER , L., AND P OLOSUKHIN ,
+                                                                                    I. Attention is all you need. In Advances in Neural Information
+[44] O PENAI. Prompt caching. https://platform.openai.                              Processing Systems 30: Annual Conference on Neural Infor-
+     com/docs/guides/prompt-caching, 2025.                                          mation Processing Systems 2017, December 4-9, 2017, Long
+[45] PATEL , P., C HOUKSE , E., Z HANG , C., S HAH , A., G OIRI , Í.,               Beach, CA, USA (2017), I. Guyon, U. von Luxburg, S. Ben-
+     M ALEKI , S., AND B IANCHINI , R. Splitwise: Efficient gener-                  gio, H. M. Wallach, R. Fergus, S. V. N. Vishwanathan, and
+     ative LLM inference using phase splitting. In 51st ACM/IEEE                    R. Garnett, Eds., pp. 5998–6008.
+     Annual International Symposium on Computer Architecture,
+                                                                               [55] WANG , X., WANG , Z., L IU , J., C HEN , Y., Y UAN , L., P ENG ,
+     ISCA 2024, Buenos Aires, Argentina, June 29 - July 3, 2024
+                                                                                    H., AND J I , H. Mint: Evaluating llms in multi-turn inter-
+     (2024), IEEE, pp. 118–132.
+                                                                                    action with tools and language feedback. arXiv preprint
+[46] P U , Q., L I , H., Z AHARIA , M., G HODSI , A., AND S TOICA ,                 arXiv:2309.10691 (2023).
+     I. Fairride: Near-optimal, fair cache sharing. In 13th USENIX
+                                                                               [56] W U , B., L IU , S., Z HONG , Y., S UN , P., L IU , X., AND
+     Symposium on Networked Systems Design and Implementa-
+                                                                                    J IN , X. Loongserve: Efficiently serving long-context large
+     tion, NSDI 2016, Santa Clara, CA, USA, March 16-18, 2016
+                                                                                    language models with elastic sequence parallelism. CoRR
+     (2016), K. J. Argyraki and R. Isaacs, Eds., USENIX Associa-
+                                                                                    abs/2404.09526 (2024).
+     tion, pp. 393–406.
+                                                                               [57] W U , Q., BANSAL , G., Z HANG , J., W U , Y., L I , B., Z HU ,
+[47] ROCK , D. Your brain at work: Strategies for overcoming
+                                                                                    E., J IANG , L., Z HANG , X., Z HANG , S., L IU , J., ET AL .
+     distraction, regaining focus, and working smarter all day long.
+                                                                                    Autogen: Enabling next-gen llm applications via multi-agent
+     Journal of Behavioral Optometry 21, 5 (2010), 130.
+                                                                                    conversations. In First Conference on Language Modeling
+[48] RODRIGUEZ , L. V., Y USUF, F. B., LYONS , S., PAZ , E., R AN -                 (2024).
+     GASWAMI , R., L IU , J., Z HAO , M., AND NARASIMHAN , G.
+                                                                               [58] X IAO , G., T IAN , Y., C HEN , B., H AN , S., AND L EWIS , M.
+     Learning cache replacement with CACHEUS. In 19th USENIX
+                                                                                    Efficient streaming language models with attention sinks. In
+     Conference on File and Storage Technologies, FAST 2021,
+                                                                                    The Twelfth International Conference on Learning Represen-
+     February 23-25, 2021 (2021), M. K. Aguilera and G. Yadgar,
+                                                                                    tations, ICLR 2024, Vienna, Austria, May 7-11, 2024 (2024),
+     Eds., USENIX Association, pp. 341–354.
+                                                                                    OpenReview.net.
+[49] ROY, R. B., PATEL , T., AND T IWARI , D. Icebreaker: warming
+     serverless functions better with heterogeneity. In ASPLOS ’22:            [59] YANG , J., Y UE , Y., AND R ASHMI , K. V. A large scale
+     27th ACM International Conference on Architectural Support                     analysis of hundreds of in-memory cache clusters at twitter. In
+     for Programming Languages and Operating Systems, Lau-                          14th USENIX Symposium on Operating Systems Design and
+     sanne, Switzerland, 28 February 2022 - 4 March 2022 (2022),                    Implementation (OSDI 20) (Nov. 2020), USENIX Association,
+     B. Falsafi, M. Ferdman, S. Lu, and T. F. Wenisch, Eds., ACM,                   pp. 191–208.
+     pp. 753–767.                                                              [60] YANG , J., Z HANG , Y., Q IU , Z., Y UE , Y., AND V INAYAK , R.
+[50] S AJAL , S. M., H ASAN , R., Z HU , T., U RGAONKAR , B., AND                   Fifo queues are all you need for cache eviction. In Proceedings
+     S EN , S. Tracesplitter: a new paradigm for downscaling traces.                of the 29th Symposium on Operating Systems Principles (New
+     In EuroSys ’21: Sixteenth European Conference on Computer                      York, NY, USA, 2023), SOSP ’23, Association for Computing
+     Systems, Online Event, United Kingdom, April 26-28, 2021                       Machinery, p. 130–149.
+     (2021), A. Barbalace, P. Bhatotia, L. Alvisi, and C. Cadar, Eds.,         [61] YAO , J., L I , H., L IU , Y., R AY, S., C HENG , Y., Z HANG , Q.,
+     ACM, pp. 606–619.                                                              D U , K., L U , S., AND J IANG , J. Cacheblend: Fast large lan-
+[51] S HENG , Y., C AO , S., L I , D., Z HU , B., L I , Z., Z HUO , D.,             guage model serving for RAG with cached knowledge fusion.
+     G ONZALEZ , J. E., AND S TOICA , I. Fairness in serving large                  CoRR abs/2405.16444 (2024).
+     language models. In 18th USENIX Symposium on Operating                    [62] Y E , L., TAO , Z., H UANG , Y., AND L I , Y. Chunkattention:
+     Systems Design and Implementation, OSDI 2024, Santa Clara,                     Efficient self-attention with prefix-aware kv cache and two-
+     CA, USA, July 10-12, 2024 (2024), A. Gavrilovska and D. B.                     phase partition. In Proceedings of the 62nd Annual Meeting of
+     Terry, Eds., USENIX Association, pp. 965–988.                                  the Association for Computational Linguistics (Volume 1: Long
+[52] S MARAGDAKIS , Y., K APLAN , S. F., AND W ILSON , P. R.                        Papers) (2024), Association for Computational Linguistics,
+     EELRU: simple and effective adaptive page replacement. In                      pp. 11608–11620.
+     Proceedings of the 1999 ACM SIGMETRICS international                      [63] Y U , G., J EONG , J. S., K IM , G., K IM , S., AND C HUN , B.
+     conference on Measurement and modeling of computer systems,                    Orca: A distributed serving system for transformer-based gen-
+     Atlanta, Georgia, USA, May 1-4, 1999 (1999), D. A. Menascé                     erative models. In 16th USENIX Symposium on Operating Sys-
+     and C. Williamson, Eds., ACM, pp. 122–133.                                     tems Design and Implementation, OSDI 2022, Carlsbad, CA,
+[53] T OUVRON , H., L AVRIL , T., I ZACARD , G., M ARTINET, X.,                     USA, July 11-13, 2022 (2022), M. K. Aguilera and H. Weath-
+     L ACHAUX , M., L ACROIX , T., ROZIÈRE , B., G OYAL , N.,                       erspoon, Eds., USENIX Association, pp. 521–538.
+
+
+
+                                                                          16
+[64] Y U , L., AND L I , J. Stateful large language model serving                  16, 2023 (2023), A. Oh, T. Naumann, A. Globerson, K. Saenko,
+     with pensieve. CoRR abs/2312.05516 (2023).                                    M. Hardt, and S. Levine, Eds.
+[65] Z HANG , D., WANG , H., L IU , Y., W EI , X., S HAN , Y., C HEN ,        [68] Z HENG , L., Y IN , L., X IE , Z., H UANG , J., S UN , C., Y U ,
+     R., AND C HEN , H. Fast and live model auto scaling with O(1)                 C. H., C AO , S., KOZYRAKIS , C., S TOICA , I., G ONZA -
+     host caching. CoRR abs/2412.17246 (2024).                                     LEZ , J. E., BARRETT, C. W., AND S HENG , Y. Efficiently
+[66] Z HANG , Y., YANG , J., Y UE , Y., V IGFUSSON , Y., AND                       programming large language models using sglang. CoRR
+     R ASHMI , K. V. SIEVE is simpler than LRU: an efficient                       abs/2312.07104 (2023).
+     turn-key eviction algorithm for web caches. In 21st USENIX               [69] Z HONG , Y., L IU , S., C HEN , J., H U , J., Z HU , Y., L IU , X.,
+     Symposium on Networked Systems Design and Implementa-                         J IN , X., AND Z HANG , H. Distserve: Disaggregating prefill
+     tion, NSDI 2024, Santa Clara, CA, April 15-17, 2024 (2024),                   and decoding for goodput-optimized large language model
+     L. Vanbever and I. Zhang, Eds., USENIX Association.                           serving. In 18th USENIX Symposium on Operating Systems
+[67] Z HANG , Z., S HENG , Y., Z HOU , T., C HEN , T., Z HENG , L.,                Design and Implementation, OSDI 2024, Santa Clara, CA,
+     C AI , R., S ONG , Z., T IAN , Y., R É , C., BARRETT, C. W.,                  USA, July 10-12, 2024 (2024), A. Gavrilovska and D. B. Terry,
+     WANG , Z., AND C HEN , B. H2O: heavy-hitter oracle for                        Eds., USENIX Association, pp. 193–210.
+     efficient generative inference of large language models. In              [70] Z HOU , Y., C HEN , Z., AND L I , K. Second-level buffer cache
+     Advances in Neural Information Processing Systems 36: An-                     management. IEEE Trans. Parallel Distributed Syst. 15, 6
+     nual Conference on Neural Information Processing Systems                      (2004), 505–519.
+     2023, NeurIPS 2023, New Orleans, LA, USA, December 10 -
+
+
+
+
+                                                                         17
+Figure 29: The evolution of cumulative distribution function of the reuse probability in 5 workdays. The first row: distributions from 9.00 a.m.
+to 10.00 a.m. The second row: distributions from 10.00 a.m. to 11.00 a.m.
+
+
+A     Appendix                                                               workdays. Therefore, we can analyze the reuse log of last day offline
+                                                                             to predict the reuse probability of each category in the next day.
+A.1    Trace results across different days                                   However, it is noted that the reuse probability of "image" type is
+Figure 29 shows the evolution of cumulative distribution (CDF)               harder to predict than other categories, we infer that this is because
+function of the reuse probability for each request category in future        image types have coarser reusability granularity compared to text
+time window over 5 continuous workdays. We can observe that                  types, and there exists greater variability among different users.
+the reuse probability at 9:00 a.m. to 10:00 a.m. similar between
+
+
+                                                                        18
+

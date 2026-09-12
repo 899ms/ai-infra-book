@@ -14,7 +14,7 @@ request=['| 模型 | 完整请求矩阵运算量（TFLOPs） | 本次计算采�
 paths=['CED＋末尾窗口重放，候选集内索引','有效因果注意力','矩形全注意力与块式线性分支','有效主注意力与参考索引','紧凑 MLA 与块式 KDA；decode 采用递推 KDA']
 for x,path in zip(d['requests'],paths):request.append(f"| {name(x)} | {x['matrix_flops']/1e12:.2f} | {path} |")
 md=H.parent/'02-模型架构.md';s=md.read_text()
-for marker,t in [('**表 2-D',table),('### 2.6.3',request)]:
+for marker,t in [('**表 2-E',table),('### 2.6.3',request)]:
  start=s.index(marker);m=re.search(r'^\|.*(?:\n\|.*)*',s[start:],re.M);a=start+m.start();b=start+m.end();s=s[:a]+'\n'.join(t)+s[b:]
 md.write_text(s)
 print('Rendered five-model long-context and complete-request tables.')

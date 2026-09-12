@@ -2,9 +2,9 @@
 
 对应草案 22 的十二章顺序：方法与需求、硬件与协作、推理训练、任务环境与端边云。收录原始论文、作者报告、芯片与系统规格、协议及官方软件文档，按具体论证选用。原件快照保留历史版本；本索引章号采用当前目录。
 
-当前清单 269 项：已保存正文 262 项，其中 PDF 162 份。其余项目的获取状态见文末。
+当前清单 279 项：已保存正文 272 项，其中 PDF 168 份。其余项目的获取状态见文末。
 
-[浏览本地索引](index.md) · [来源清单](sources.tsv) · [下载与校验记录](manifest.json) · [证据缺口](GAPS.md)
+[浏览本地索引](index.html) · [来源清单](sources.tsv) · [下载与校验记录](manifest.json) · [证据缺口](GAPS.md)
 
 [LLM 推理论文选读与写作落点](INFERENCE-PAPER-GUIDE.md)按问题整理 49 项核心与专题资料，标注查阅小节、可支撑的论点及引用边界；另有 [章节映射](inference-reading-map.tsv)和[本轮新增论文 BibTeX](inference-additions.bib)。
 
@@ -214,6 +214,7 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [Samsung LPDDR5X product page](https://semiconductor.samsung.com/dram/lpddr/lpddr5x/) | [原件](files/specs/samsung-lpddr5x-page.md) · [文本](text/samsung-lpddr5x-page.txt) | 每引脚数据速率、密度与封装；固定网页快照 |
 | [FP8 Formats for Deep Learning](https://arxiv.org/abs/2209.05433) | [原件](files/papers/fp8-formats.pdf) · [文本](text/fp8-formats.txt) | E4M3 与 E5M2 定义 |
 | [CUDA Programming Guide 13.2.1: Compute Capabilities](https://docs.nvidia.com/cuda/archive/13.2.1/cuda-programming-guide/05-appendices/compute-capabilities.html) | [原件](files/documents/cuda-compute-capabilities.md) · [文本](text/cuda-compute-capabilities.txt) | 各计算能力的每 SM 寄存器、共享内存、线程与块上限 |
+| [NVIDIA H20 96GB specification sheet — Flopper.io compilation, 2026-09-02](https://flopper.io/gpu/nvidia-h20-96gb) | [原件](files/specs/nvidia-h20-spec-sheet.pdf) · [文本](text/nvidia-h20-spec-sheet.txt) | 第三方汇编的 H20 SXM 96GB 峰值与带宽（BF16 dense 148 TFLOPS、FP8 296/592、HBM3 4.0 TB/s、400 W）；NVIDIA 未公开 H20 数据表，官方型号与容量另见 nvidia-h20-vgpu |
 
 ## 第 5 章 算子与运行时
 
@@ -360,6 +361,9 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [SK hynix HBM product page](https://product.skhynix.com/products/dram/hbm.go) | [原件](files/specs/skhynix-hbm-page.md) · [文本](text/skhynix-hbm-page.txt) | HBM3E 与 HBM4 的密度、引脚速率与带宽；固定网页快照 |
 | [TSMC CoWoS Technology](https://3dfabric.tsmc.com/english/dedicatedFoundry/technology/cowos.htm) | 未获取（failed） | 官方技术页；中介层与光罩尺寸表述 |
 | [Emergence and Expansion of Liquid Cooling in Mainstream Data Centers (ASHRAE TC 9.9 White Paper)](https://www.ashrae.org/technical-resources/bookstore/datacom-series) | [原件](files/documents/ashrae-liquid-cooling.pdf) · [文本](text/ashrae-liquid-cooling.txt) | 2021 年白皮书；风冷机柜功率上限与液冷转折条件 |
+| [NVIDIA DGX H100/H200 User Guide: Introduction to NVIDIA DGX H100/H200 Systems (last updated 2026-01-26)](https://docs.nvidia.com/dgx/dgxh100-user-guide/introduction-to-dgxh100.html) | [原件](files/specs/nvidia-dgx-h100-user-guide.md) · [文本](text/nvidia-dgx-h100-user-guide.txt) | DGX H100 硬件总览：8×H100 GPU（共 640 GB）、2×Intel Xeon 8480C（56 核）、NVSwitch 900 GB/s、8×ConnectX-7 400 Gb/s、2 TB DIMM、6×3.3 kW PSU（4+2 冗余），系统功耗 10.2 kW max |
+| [Intel Xeon Platinum 8480+ Processor (105M Cache, 2.00 GHz) — Product Specifications](https://ark.intel.com/content/www/us/en/ark/products/231746/intel-xeon-platinum-8480-processor-105m-cache-2-00-ghz.html) | [原件](files/specs/intel-xeon-8480plus-ark.md) · [文本](text/intel-xeon-8480plus-ark.txt) | DGX H100 所用 8480C 的零售对应型号（8480C 不在 ARK）：56 核、UPI 16 GT/s、最多 4 条 UPI 链路、8 通道 DDR5-4800（1DPC）、80 条 PCIe 5.0、350 W；ARK 未列最大内存带宽，也未给出 UPI 的 GB/s |
+| [Intel: 4th Gen Intel Xeon Processor Scalable Family (Sapphire Rapids) Technical Overview](https://www.intel.com/content/www/us/en/developer/articles/technical/fourth-generation-xeon-scalable-family-overview.html) | [原件](files/specs/intel-xeon-4th-gen-overview.md) · [文本](text/intel-xeon-4th-gen-overview.txt) | Sapphire Rapids 与上一代对照表：UPI 最多 4 条/CPU（x24 宽）、最高 16 GT/s，8 通道 DDR5（1DPC 4800 MT/s）；只给链路宽度与传输率，未给 UPI 的 GB/s |
 
 ## 第 7 章 数据中心网络
 
@@ -455,6 +459,7 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [Fast Distributed Inference Serving for Large Language Models](https://arxiv.org/abs/2305.05920v3) | [原件](files/papers/fastserve.pdf) · [文本](text/fastserve.txt) | FastServe；输出长度未知下的抢占式调度与 KV 交换 |
 | [LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339v2) | [原件](files/papers/llm-int8.pdf) · [文本](text/llm-int8.txt) | 大模型激活异常值与混合精度分解；低比特存储不等于端到端加速 |
 | [TensorRT LLM Architecture Overview](https://nvidia.github.io/TensorRT-LLM/developer-guide/overview.html) | [原件](files/documents/tensorrt-llm-architecture.md) · [文本](text/tensorrt-llm-architecture.txt) | 官方架构文档快照；作为开源项目实现资料，不标为学术论文 |
+| [Cost-Efficient Large Language Model Serving for Multi-turn Conversations with CachedAttention](https://www.usenix.org/conference/atc24/presentation/gao-bin-cost) | [原件](files/papers/cachedattention.pdf) · [文本](text/cachedattention.txt) | USENIX ATC 2024；多轮会话 KV 的 HBM／DRAM／SSD 分级存储、逐层预加载、异步保存与调度感知的预取和淘汰 |
 
 ## 第 9 章 分布式推理
 
@@ -497,6 +502,12 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [How NVIDIA Dynamo 1.0 Powers Multi-Node Inference at Production Scale](https://developer.nvidia.com/blog/?p=113961) | [原件](files/documents/dynamo-production.md) · [文本](text/dynamo-production.txt) | 2026 官方技术文章；编排、KV 路由与恢复；厂商比较须保留原条件 |
 | [TensorRT LLM Architecture Overview](https://nvidia.github.io/TensorRT-LLM/developer-guide/overview.html) | [原件](files/documents/tensorrt-llm-architecture.md) · [文本](text/tensorrt-llm-architecture.txt) | 官方架构文档快照；作为开源项目实现资料，不标为学术论文 |
 | [GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding](https://arxiv.org/abs/2006.16668) | [原件](files/papers/gshard.pdf) · [文本](text/gshard.txt) | 专家容量与容量因子定义 |
+| [NVIDIA H20 96GB specification sheet — Flopper.io compilation, 2026-09-02](https://flopper.io/gpu/nvidia-h20-96gb) | [原件](files/specs/nvidia-h20-spec-sheet.pdf) · [文本](text/nvidia-h20-spec-sheet.txt) | 第三方汇编的 H20 SXM 96GB 峰值与带宽（BF16 dense 148 TFLOPS、FP8 296/592、HBM3 4.0 TB/s、400 W）；NVIDIA 未公开 H20 数据表，官方型号与容量另见 nvidia-h20-vgpu |
+| [Cost-Efficient Large Language Model Serving for Multi-turn Conversations with CachedAttention](https://www.usenix.org/conference/atc24/presentation/gao-bin-cost) | [原件](files/papers/cachedattention.pdf) · [文本](text/cachedattention.txt) | USENIX ATC 2024；多轮会话 KV 的 HBM／DRAM／SSD 分级存储、逐层预加载、异步保存与调度感知的预取和淘汰 |
+| [IMPRESS: An Importance-Informed Multi-Tier Prefix KV Storage System for Large Language Model Inference](https://www.usenix.org/conference/fast25/presentation/chen-weijian-impress) | [原件](files/papers/impress.pdf) · [文本](text/impress.txt) | USENIX FAST 2025；GPU／CPU／SSD 三级前缀 KV 存储，按重要 token 选择性读取以减少 SSD I/O |
+| [KVCache Cache in the Wild: Characterizing and Optimizing KVCache Cache at a Large Cloud Provider](https://arxiv.org/abs/2506.02634) | [原件](files/papers/kvcache-in-the-wild.pdf) · [文本](text/kvcache-in-the-wild.txt) | USENIX ATC 2025；阿里云真实 trace 中 KV 复用距离、命中率与缓存容量的关系 |
+| [NVIDIA DGX A100 Datasheet](https://www.nvidia.com/en-us/data-center/dgx-a100/) | [原件](files/specs/nvidia-dgx-a100-datasheet.pdf) · [文本](text/nvidia-dgx-a100-datasheet.txt) | 8×A100 80GB、2 TB 系统内存、8×3.84 TB U.2 NVMe、8 个单端口 200 Gb/s ConnectX-6/7；第 9.5.2 节多级 KV 存储的每卡容量 |
+| [Solidigm D7-P5520 and D7-P5620 Product Brief](https://www.solidigm.com/products/data-center/d7/p5520.html) | [原件](files/specs/solidigm-d7-p5520-brief.pdf) · [文本](text/solidigm-d7-p5520-brief.txt) | PCIe 4.0 U.2 3.84 TB；128K 顺序读/写最高 7,100/4,200 MB/s，5 年内每天写满 1 次（1 DWPD）；第 9.5.2 节 SSD 层读写带宽与写入寿命 |
 
 ## 第 10 章 训练系统
 
@@ -570,6 +581,7 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [How NVIDIA Dynamo 1.0 Powers Multi-Node Inference at Production Scale](https://developer.nvidia.com/blog/?p=113961) | [原件](files/documents/dynamo-production.md) · [文本](text/dynamo-production.txt) | 2026 官方技术文章；编排、KV 路由与恢复；厂商比较须保留原条件 |
 | [Emergence and Expansion of Liquid Cooling in Mainstream Data Centers (ASHRAE TC 9.9 White Paper)](https://www.ashrae.org/technical-resources/bookstore/datacom-series) | [原件](files/documents/ashrae-liquid-cooling.pdf) · [文本](text/ashrae-liquid-cooling.txt) | 2021 年白皮书；风冷机柜功率上限与液冷转折条件 |
 | [Revisiting Reliability in Large-Scale Machine Learning Research Clusters](https://arxiv.org/abs/2410.21680) | [原件](files/papers/meta-cluster-reliability.pdf) · [文本](text/meta-cluster-reliability.txt) | Meta 集群故障率与掉队者统计 |
+| [E2B Pricing（沙箱按秒计价），2026-09-11 快照](https://e2b.dev/pricing) | [原件](files/documents/e2b-pricing.md) · [文本](text/e2b-pricing.txt) | 每 vCPU·秒 $0.000014、每 GiB·秒 $0.0000045；1/2/4/6/8 vCPU 与 1/2/4/8 GiB 规格 |
 
 ## 第 12 章 端边云协同
 

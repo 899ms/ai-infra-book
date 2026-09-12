@@ -192,6 +192,9 @@ outputs=list(dict.fromkeys(outputs+teaching_outputs))
 # UB-EP figures are drawn before the reading edition is assembled so the HTML embeds every active figure.
 from ub_ep_figures import draw as draw_ub_ep
 outputs += draw_ub_ep(9, HERE)
+# Section 9.5.2 multi-tier KV figures read calculations/results/kv-tiers-book.json.
+from kv_tier_figures import draw as draw_kv_tiers
+outputs += draw_kv_tiers(HERE)
 # Render formulas on the build machine; bundle all image/font bytes into HTML.
 md=HERE.parent/'09-分布式推理.md';raw=md.read_text();maths=[]
 def protect(match):

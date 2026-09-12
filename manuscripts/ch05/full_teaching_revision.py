@@ -11,12 +11,12 @@ def draw(here,data):
         cells=[]
         for y,kernel in enumerate(d['kernel_us']):
             start=0
-            for dur,label,c in [(3,'提\n交','orange'),(8,'H2D','blue'),(kernel,'内核','green'),(4,'D2H','purple')]:
+            for dur,label,c in [(3,'提\n交','orange'),(8,'H2D','blue'),(kernel,'kernel','green'),(4,'D2H','purple')]:
                 cell=a.barh(y,dur,left=start,height=.64,color=COL[c],edgecolor=COL['line'])[0]
                 label_artist=a.text(start+dur/2,y,label,fontsize=12,ha='center',va='center',linespacing=1.15)
                 cells.append((cell,label_artist))
                 start+=dur
-        a.set(yticks=[0,1],yticklabels=['原内核','内核加快'],xlim=(0,37),ylim=(-.6,1.6),xlabel='从 CPU 提交起计时（μs）')
+        a.set(yticks=[0,1],yticklabels=['原 kernel','kernel 加快'],xlim=(0,37),ylim=(-.6,1.6),xlabel='从 CPU 提交起计时（μs）')
         a.invert_yaxis()
         # Preserve proportional durations and require padding inside every cell.
         f.canvas.draw();renderer=f.canvas.get_renderer();padding=2*f.dpi/72
@@ -37,12 +37,12 @@ def draw(here,data):
         for y,title,expr,c in [(.57,'先相加，再激活','1 + (−1) = 0 → SiLU(0) = 0','green'),(.12,'先分别激活，再相加','SiLU(1) + SiLU(−1) ≈ 0.4621','orange')]:
             text(a,.04,y+.25,title,14);box(a,.04,y,.92,.17,expr,c)
         save(f,'activation-order')
-        f,a=canvas(3.8);text(a,.04,.94,'先读完整行，才能确定整行量化尺度',14)
+        f,a=canvas(3.8);text(a,.04,.94,'先读完整行，才能确定整行量化 scale',14)
         box(a,.04,.60,.40,.18,'块 0：最大值 1','blue');box(a,.56,.60,.40,.18,'块 1：最大值 10','orange')
         arrow(a,(.24,.60),(.42,.43));arrow(a,(.76,.60),(.58,.43));box(a,.20,.28,.60,.14,'整行最大值为 10','green')
         text(a,.5,.11,'第一项：1 → 44.8 → 舍入 44 → 55/56',12,ha='center');save(f,'quantization-scale')
         f,a=canvas(4.3)
-        for y,title,label,c in [(.59,'保存低位宽中间结果','读原输入 32 + 写量化 16 + 重读 192','green'),(.13,'每个列块重新量化','读原输入求尺度 32 + 重读原输入 384','orange')]:
+        for y,title,label,c in [(.59,'保存低位宽中间结果','读原输入 32 + 写量化 16 + 重读 192','green'),(.13,'每个列块重新量化','读原输入求 scale 32 + 重读原输入 384','orange')]:
             text(a,.04,y+.26,title,14);box(a,.04,y,.92,.17,label,c,11)
             text(a,.50,y-.065,'输入相关：240 MiB' if c=='green' else '输入相关：416 MiB',12,ha='center')
         save(f,'10-quantization')
@@ -55,7 +55,7 @@ def draw(here,data):
             # Host API collection is emitted by the fixed trace-analysis source.
             events=r.get('launches',r.get('apis',[]))
             for event in [e for e in events if 'Launch' in e['name']]:a.barh(0,(event['end_ns']-event['start_ns'])/1000,left=(event['start_ns']-r['start_ns'])/1000,height=.38,color=COL['blue'],edgecolor=COL['line'],lw=.5)
-            a.set(yticks=[0,1],yticklabels=['主机启动','加速器内核'],xlim=(0,(r['end_ns']-r['start_ns'])/1000),ylim=(-.6,1.6),xlabel='从本段采集起点计时（μs）');a.invert_yaxis();save(f,'12-runtime' if i==0 else f'runtime-{i}')
+            a.set(yticks=[0,1],yticklabels=['主机 launch','加速器 kernel'],xlim=(0,(r['end_ns']-r['start_ns'])/1000),ylim=(-.6,1.6),xlabel='从本段采集起点计时（μs）');a.invert_yaxis();save(f,'12-runtime' if i==0 else f'runtime-{i}')
         f,a=canvas(3.7);text(a,.04,.94,'图重放按已记录的地址读取输入',14)
         box(a,.04,.62,.34,.18,'本次新输入\n地址 X','blue');box(a,.62,.62,.34,.18,'固定图缓冲\n地址 G','orange');arrow(a,(.38,.71),(.62,.71))
         text(a,.5,.51,'X 与 G 不同时，复制到 G',11,ha='center')

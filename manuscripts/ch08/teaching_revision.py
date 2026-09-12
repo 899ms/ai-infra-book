@@ -8,7 +8,7 @@ def draw(here,data):
     out=Exporter(here)
     def save(f,n):out.save(f,'figure-8-'+n)
     with plt.rc_context(STYLE):
-        f,a=canvas(4.7);text(a,.04,.94,'请求保持身份，批次每轮重新组成',14)
+        f,a=canvas(4.7);text(a,.04,.94,'请求保持身份，batch 每轮重新组成',14)
         for row,labels in enumerate([['请求 A','请求 B'],['请求 A','请求 C']]):
             y=.60-row*.36;text(a,.04,y+.17,f'迭代 {row}',12)
             for i,label in enumerate(labels):box(a,.25+i*.37,y,.30,.20,label,'blue' if label=='请求 A' else 'green',12)

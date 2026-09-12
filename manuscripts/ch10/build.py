@@ -97,7 +97,7 @@ for idx,(name,label) in enumerate(policies):
 ax=f.add_axes([.09,.09,.57,.205]);x=np.arange(4)
 for idx,(_,label) in enumerate(policies):ax.bar(x+(idx-.5)*.34,np.array(pipedata[label]['summary']['reserved_activation_scope_peak_bytes'])/1e9,.32,color=C[['blue','orange'][idx]],label=label)
 ax.set(xticks=x,xticklabels=['阶段 0','阶段 1','阶段 2','阶段 3'],ylabel='中间结果与缓冲区峰值 / GB',ylim=(0,3.1));ax.legend(frameon=False,fontsize=10)
-f.text(.71,.23,'蓝：前向；橙：反向\n绿：参数更新\n块内数字：微批次编号',fontsize=11,va='top',linespacing=1.65)
+f.text(.71,.23,'蓝：前向；橙：反向\n绿：参数更新\n块内数字：micro-batch 编号',fontsize=11,va='top',linespacing=1.65)
 save(f,'figure-10-4-pipeline');data['10-4']=pipedata
 # 5. One relation: upload bandwidth determines recoverable progress at failure.
 f,ax=plt.subplots(figsize=(12.5,5.7));f.subplots_adjust(left=.17,right=.80,bottom=.18,top=.88);checkpointdata={}

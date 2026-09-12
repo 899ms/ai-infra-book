@@ -171,7 +171,7 @@ a.text(.055,.60,'$y_4$ 已返回但尚未再次进入模型；最终状态不是
 vals=[z['summary']['matrix_flops']/1e12 for z in r['comparisons']]
 ax=f.add_axes([.095,.22,.44,.29]);ax.barh(range(4),vals,color=[C['blue'],C['teal'],C['teal'],C['orange']]);ax.set_yticks(range(4),['Qwen3-8B','V4-Flash','V4-Pro','K3 expanded']);ax.invert_yaxis();ax.set_xlim(0,34);ax.set_xlabel('完整请求矩阵 TFLOPs')
 for i,z in enumerate(vals):ax.text(z+.5,i,f'{z:.3f}',va='center',fontsize=10)
-box(a,.65,.235,.29,.27,'同一文本的检索实验','Qwen 与 V4 Flash 各 8/8\n输入 token 数、部署与精度不同\nPro／K3 未测',color='sand',size=13)
+box(a,.65,.235,.29,.27,'同一文本的检索实验','Qwen 与 V4-Flash 各 8/8\n输入 token 数、部署与精度不同\nPro／K3 未测',color='sand',size=13)
 # Scope is stated in the external caption.
 a.text(.055,.055,'左侧按给定 token 数估算运算量；右侧用同一文本检查回答，并记录各模型的输入长度。',fontsize=11,color=C['muted'])
 save(f,'figure-2-10-request');data['figure_2_10']={'contract':r['contract'],'matrix_tflops':vals,'model_order':[z['model'] for z in r['comparisons']]}

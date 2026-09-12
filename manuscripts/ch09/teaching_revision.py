@@ -64,19 +64,12 @@ def draw(here,data):
                 arrow(a,(.61,.76),(.39,.76));box(a,.04,.31,.35,.18,'CPU 专家计算','blue');arrow(a,(.215,.67),(.215,.49));arrow(a,(.39,.40),(.61,.40));box(a,.61,.31,.35,.18,'GPU 汇合结果','orange',11)
             else:
                 arrow(a,(.39,.76),(.61,.76));box(a,.61,.31,.35,.18,'GPU 专家计算','green');arrow(a,(.785,.67),(.785,.49))
-            text(a,.5,.13,'激活往返：每行共 16 KiB' if local else '搬运一份专家权重：36 MiB',12,ha='center');save(f,name)
+            text(a,.5,.13,'激活往返：每行共 16 KiB' if local else '搬移一份专家权重：36 MiB',12,ha='center');save(f,name)
         d=data['9-6'];f,a=plot(3.9)
         for key,label,c,ls in [('cpu_avx512_ms','CPU，AVX-512','#267398','-'),('cpu_amx_ms','CPU，AMX','#267398','--'),('weight_copy_gpu_ms','搬权重到 GPU','#a56c28','-')]:a.plot(d['tokens_per_expert'],d[key],label=label,color=c,ls=ls)
         a.set_xscale('log',base=2);a.set(xlabel='每个专家收到的 token 数（对数刻度）',ylabel='八个专家的路径时间（ms）',xlim=(1,1024),ylim=(0,30),xticks=[1,4,16,64,256,1024],xticklabels=['1','4','16','64','256','1024']);a.minorticks_off();a.legend(frameon=False);save(f,'6-reuse')
         for i,(experts,rows) in enumerate(zip(data['new-footprint']['active_experts'],data['new-footprint']['rows_per_expert'])):
             f,a=plot(3.5);a.bar(0,rows,width=experts,align='edge',color=COL['blue'],edgecolor=COL['line']);a.set(xlim=(0,136),ylim=(0,70),xlabel='不同专家数',ylabel='每专家 token 数');a.text(.5,.9,f'{experts} × {rows} = 512 次分派',transform=a.transAxes,ha='center',fontsize=12);save(f,'7-footprint' if i==0 else 'footprint-reuse')
-        d=data['9-8'];f,a=plot(3.6)
-        for k,l,c in [('one_message_ms','一次发送','#267398'),('many_messages_ms','72 次发送','#a56c28')]:
-            # Stable source uses an explicit descriptive field for the second curve.
-            vals=d.get(k,d.get('seventy_two_messages_ms'))
-            if vals is None:vals=np.array(d['one_message_ms'])+71*np.array(d['startup_us'])/1000
-            a.plot(d['startup_us'],vals,label=l,color=c)
-        a.set(xlabel='每次启动开销（μs）',ylabel='同样 1.125 GiB 的总时间（ms）');a.legend(frameon=False);save(f,'8-handoff')
         d=data['9-mla-handoff'];f,a=plot(3.8)
         for k,l,c in [('pd_gqa_ms','PD 一次交接：GQA 1.125 GiB','#267398'),('pd_mla_ms','PD 一次交接：紧凑 MLA 549 MiB','#388768'),('af_step_ms','AF 一步交接：72 次','#a56c28')]:a.plot(d['startup_us'],d[k],label=l,color=c)
         for key,c in [('gqa25','#267398'),('mla25','#388768')]:

@@ -82,7 +82,7 @@ for stage in range(4):
  for batch in range(4):
   start=stage+batch
   ax.add_patch(Rectangle((start,3-stage-.32),.94,.64,fc=C[['blue','teal','orange','red'][batch]]))
-  ax.text(start+.47,3-stage,f'微批 {batch}',ha='center',va='center',color='white',fontsize=12)
+  ax.text(start+.47,3-stage,f'micro-batch {batch}',ha='center',va='center',color='white',fontsize=12)
 ax.set(xlim=(0,7.1),ylim=(-.6,3.6),yticks=[3,2,1,0],yticklabels=['阶段 0','阶段 1','阶段 2','阶段 3'],xticks=range(8),xlabel='时间 / ms')
 ax.axvline(4,color=C['muted'],ls=':',lw=1);ax.text(4.05,3.4,'首个结果',fontsize=11)
 ax.spines['left'].set_visible(False);ax.tick_params(axis='y',length=0)

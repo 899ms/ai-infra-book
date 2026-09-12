@@ -166,7 +166,7 @@ def draw(here, data):
         for y,(t0,t1),left,right in zip([.70,.43,.16],spans,['写入块 0','读取块 0','写入块 2'],['空闲','写入块 1','读取块 1']):
             text(a,.0,y+.07,f'{t0:.2f}–{t1:.2f} μs'.replace('0.00','0'),12);box(a,.23,y,.34,.14,left,'blue');box(a,.63,y,.34,.14,right,'green' if right!='空闲' else 'gray')
         arrow(a,(.40,.42),(.40,.365));text(a,.40,.34,f'{end(ev["compute",0]):.2f} μs 块 0 用完',11,ha='center')
-        text(a,.5,.05,f'槽 A 早已空出，块 2 等搬运器在 {ev["copy",2]["start"]:.2f} μs 空闲才写入',11,ha='center')
+        text(a,.5,.05,f'槽 A 早已空出，块 2 等搬移器在 {ev["copy",2]["start"]:.2f} μs 空闲才写入',11,ha='center')
         save(f,'figure-5-buffer-slots')
         data['buffer_slots']={'intervals_us':[list(s) for s in spans],'slot_A':['write 0','read 0','write 2'],'slot_B':['idle','write 1','read 1'],'slot_A_free_us':end(ev['compute',0]),'reuse_A_us':ev['copy',2]['start']}
 
@@ -178,7 +178,7 @@ def draw(here, data):
                 y=.65 if e['kind']=='copy' else .13
                 a.broken_barh([(e['start'],e['duration'])],(y,.28),facecolors=COL['blue' if e['slot']==0 else 'green'],edgecolors=COL['line'],lw=.8)
                 a.text(e['start']+e['duration']/2,y+.14,str(e['tile']),ha='center',va='center',fontsize=11)
-            a.set(xlim=(0,6.6),ylim=(0,1),xticks=[0,1,2,3,4,5,6],yticks=[.27,.79],yticklabels=['计算','搬运'])
+            a.set(xlim=(0,6.6),ylim=(0,1),xticks=[0,1,2,3,4,5,6],yticks=[.27,.79],yticklabels=['计算','搬移'])
             a.set_title(title_,loc='left',pad=9);a.axvline(end,ls='--',lw=.8,color=COL['line'])
         axs[1].set_xlabel('时间（μs）')
         f.legend(handles=[Patch(fc=COL[c],ec=COL['line'],label=l) for c,l in [('blue','槽 A：块 0、2'),('green','槽 B：块 1、3')]],loc='upper center',ncol=2,frameon=False)

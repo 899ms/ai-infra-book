@@ -47,8 +47,8 @@ def draw(here,data):
         for stage in range(4):
             for batch in range(4):
                 a.barh(stage,1,left=stage+batch,height=.72,color=COL[['blue','green','orange','purple'][batch]],edgecolor=COL['line']);a.text(stage+batch+.5,stage,str(batch),ha='center',va='center',fontsize=12)
-        a.set(yticks=range(4),yticklabels=[f'阶段 {i}' for i in range(4)],xticks=range(8),xlim=(0,7),xlabel='时间（ms）；格内为微批次编号');a.invert_yaxis();save(f,'4-pipeline')
-        f,a=canvas(4.7);box(a,.04,.72,.30,.18,'卡 0：输入 A','blue');box(a,.65,.72,.31,.18,'卡 3：输入 A','blue');arrow(a,(.34,.81),(.65,.81));text(a,.5,.94,'派发输入',12,ha='center')
+        a.set(yticks=range(4),yticklabels=[f'阶段 {i}' for i in range(4)],xticks=range(8),xlim=(0,7),xlabel='时间（ms）；格内为 micro-batch 编号');a.invert_yaxis();save(f,'4-pipeline')
+        f,a=canvas(4.7);box(a,.04,.72,.30,.18,'卡 0：输入 A','blue');box(a,.65,.72,.31,.18,'卡 3：输入 A','blue');arrow(a,(.34,.81),(.65,.81));text(a,.5,.94,'dispatch 输入',12,ha='center')
         for x,label in [(.04,'专家 1 → y1'),(.65,'专家 6 → y6')]:
             arrow(a,(x+.15,.72),(x+.15,.56));box(a,x,.39,.31,.17,label,'green');arrow(a,(x+.15,.39),(.5,.20))
         box(a,.12,.04,.76,.16,'卡 0：按路由权重合并 a1 y1 + a6 y6','orange',11);save(f,'5-dispatch')
@@ -148,6 +148,6 @@ def draw(here,data):
         for phase,name in [('healthy','21-scale-cost'),('fault','scale-cost-fault')]:
             f,a=plot(3.8)
             for c,col in zip(data['deadline_curves'][phase],['#267398','#388768','#a56c28','#86649b']):
-                if c['capacity_fits']:a.step(c['deadlines_ms'],[np.nan if v is None else v for v in c['cost_per_valid']],where='post',label=f'TP {c["tp"]}',color=col)
+                if c['capacity_fits']:a.step(c['deadlines_ms'],[np.nan if v is None else v for v in c['cost_per_valid']],where='post',label=f'TP{c["tp"]}',color=col)
             a.axvline(130,ls='--',color='#777777');a.set(xlim=(80,240),ylim=(0,.8),xlabel='完成期限（ms）',ylabel='每个按时会话（GPU·s）');a.legend(ncol=3,frameon=False);save(f,name)
     out.finish();return out.outputs,out.checks

@@ -607,6 +607,19 @@ def markdown(result: dict) -> str:
         lines.extend(['', '| 输入轮次 | worker | 输入token | 缓存token | 客户端秒 | 命中后逻辑FLOPs |', '| ---: | ---: | ---: | ---: | ---: | ---: |'])
         for row in result['router_request_rows']:
             lines.append(f"| {row['prompt_id']} | {row['worker']} | {row['prompt_tokens']} | {row['cached_tokens']} | {row['client_elapsed_s']} | {row['executed_logical_matrix_flops']} |")
+    if result.get('calculation') == 'kv-tiers':
+        def ms(v):
+            return '—' if v is None else f"{float(Fraction(v))*1e3:.1f}"
+        lines.extend(['', '| 层 | 容量 bytes | 保留 s | 读 8K 前缀 ms | 写 ms | 串行 ms | 逐层流水 ms | 全部重叠需预载层数 | 盖住读取的最少新 token |', '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |'])
+        for t in result['tiers']:
+            ret = '—' if t['retention_s_exact'] is None else f"{float(Fraction(t['retention_s_exact'])):.1f}"
+            lines.append(f"| {t['tier']} | {t['capacity_bytes'] or '—'} | {ret} | {ms(t['read_s_exact'])} | {ms(t['write_s_exact'])} | {ms(t.get('serial_s_exact'))} | {ms(t.get('layer_pipelined_s_exact'))} | {t.get('preload_layers_for_full_overlap','—')} | {t.get('min_suffix_tokens_to_hide_read','—')} |")
+        lines.extend(['', '| 复用窗口 s | 所需容量 bytes |', '| ---: | ---: |'])
+        for w in result['reuse_windows']:
+            lines.append(f"| {w['window_s']} | {float(Fraction(w['required_bytes_exact'])):.4g} |")
+        lines.extend(['', '| Mooncake 块数 | token | Qwen3-8B KV bytes | LRU 命中率 |', '| ---: | ---: | ---: | ---: |'])
+        for m in result['mooncake_lru_capacity']:
+            lines.append(f"| {m['blocks']} | {m['tokens']} | {m['qwen_bytes']} | {m['lru_hit_rate']} |")
     if 'cache_route_paths' in result:
         lines.extend(['', '| 路径 | GPU等待ns | 状态取回耗时ns | 首token ns |', '| --- | ---: | --- | --- |'])
         for row in result['cache_route_paths']:

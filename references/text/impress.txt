@@ -1,0 +1,1211 @@
+IMPRESS: An Importance-Informed Multi-Tier Prefix
+     KV Storage System for Large Language
+                Model Inference
+  Weijian Chen, Shuibing He, Haoyang Qu, Ruidong Zhang, Siling Yang, and
+  Ping Chen, Zhejiang University; Yi Zheng and Baoxing Huai, Huawei Cloud;
+                       Gang Chen, Zhejiang University
+     https://www.usenix.org/conference/fast25/presentation/chen-weijian-impress
+
+
+
+
+      This paper is included in the Proceedings of the
+ 23rd USENIX Conference on File and Storage Technologies.
+                 February 25–27, 2025 • Santa Clara, CA, USA
+                              ISBN 978-1-939133-45-8
+
+
+
+
+                                          Open access to the Proceedings
+                                         of the 23rd USENIX Conference on
+                                            File and Storage Technologies
+                                                   is sponsored by
+       IMPRESS: An Importance-Informed Multi-Tier Prefix KV Storage System
+                      for Large Language Model Inference
+
+    Weijian Chen1,2,3 , Shuibing He⇤1,2,3,* , Haoyang Qu1 , Ruidong Zhang1 , Siling Yang1 , Ping Chen1 , Yi
+                                 Zheng4 , Baoxing Huai4 , and Gang Chen1
+                  1 The State Key Laboratory of Blockchain and Data Security, Zhejiang University
+                  2 Hangzhou High-Tech Zone (Binjiang) Institute of Blockchain and Data Security
+                                3 Zhejiang Key Laboratory of Big Data Intelligent Computing
+                                                                  4 Huawei Cloud
+
+                              Abstract                                           While longer requests enhance the quality of the model’s
+                                                                              output, they also significantly increase response-generation la-
+   Modern advanced large language model (LLM) applica-
+                                                                              tency, particularly the time to first token (TTFT). This occurs
+tions often prepend long contexts before user queries to im-
+                                                                              because the computational complexity of processing a request
+prove model output quality. These contexts frequently re-
+                                                                              grows superlinearly with its length [35]. Such an increase can
+peat, either partially or fully, across multiple queries. Exist-
+                                                                              negatively impact user experience, particularly in real-time
+ing systems typically store and reuse the keys and values
+                                                                              applications like chatbots where a quick TTFT is essential.
+of these contexts (referred to as prefix KVs) to reduce re-
+dundant computation and time to first token (TTFT). When                         Existing systems have observed that many requests share
+prefix KVs need to be stored on disks due to insufficient CPU                 identical initial tokens, known as prefixes. Storing and reusing
+memory, reusing them does not always reduce TTFT, as disk                     keys (K) and values (V) of these common prefixes can de-
+I/O latency is high. In this paper, we propose IMPRESS, an                    crease TTFT by eliminating redundant computations. How-
+importance-informed multi-tier prefix KV storage system to                    ever, conventional systems only cache these prefix KVs in
+reduce I/O delay for LLM inference by only loading important                  GPU or CPU memory [8, 12, 39, 45], which can become insuf-
+prefix KVs. IMPRESS first leverages the insight that there                    ficient for lengthy sequences or large batches, thus restricting
+is significant similarity in important token index sets across                TTFT reduction. AttentionStore [5] expands KV storage to
+attention heads and introduces an I/O-efficient important KV                  local disks and pre-loads them into CPU memory based on
+identification algorithm. It then optimizes prefix KV storage                 the scheduler’s predictions for future requests. Yet, disk I/O
+and caching through importance-informed KV management,                        bandwidth limitations can pose a bottleneck, especially under
+reducing TTFT during model inference. Our experimental                        high request volumes or in preemptive scheduling environ-
+results show that IMPRESS can reduce TTFT by up to 2.8⇥                       ments where anticipating future requests is difficult. Our study
+compared to state-of-the-art systems, while maintaining com-                  shows that the I/O latency from SSD to GPU can be rarely
+parable inference accuracy.                                                   hidden by query computation and accounts for 51%-98% of
+                                                                              the total TTFT, as shown in §2.2.
+                                                                                 Meanwhile, recent research indicates that some tokens’
+1     Introduction                                                            KVs are more critical to the quality of model output than
+                                                                              others, and discarding less important KVs can still result in
+Generative large language models (LLMs), such as ChatGPT                      comparable LLM output quality [17,22,32,44]. Based on this
+and GPT-4, are increasingly utilized in applications like chat-               insight, we propose an importance-aware, multi-tier prefix KV
+bots [16, 37], document summarization [3, 7], and transla-                    storage system, IMPRESS, which leverages GPU memory,
+tion [9, 31] due to their powerful understanding and genera-                  CPU memory, and disks to reduce LLM inference latency
+tion capabilities. To generate more relevant and high-quality                 while maintaining comparable output quality. GPU and CPU
+responses, these applications often prepend context-rich pre-                 memory serve as caches for data stored on disks. The core
+fixes to user queries before sending the entire request to the                idea is to load only the important prefix tokens’ KVs, thereby
+model for inference. These prefixes may include the latest                    minimizing the I/O data accessed from slower disks. However,
+news retrieved from web searches relevant to the queries [18],                building such an efficient KV storage system involves two
+historical conversation with the user [5], and examples of                    significant challenges.
+question-answer pairs [25] to guide the model’s output for-                      First, the important tokens in a shared prefix can vary
+mat.                                                                          among multiple queries, incurring substantial I/O overhead to
+    ⇤ Shuibing He is the corresponding author (heshuibing@zju.edu.cn).        identify important prefix KV for each query. Existing systems
+
+
+
+USENIX Association                                                       23rd USENIX Conference on File and Storage Technologies         187
+                                                                      Output token: tl                             Xout_0
+need to load all prefix keys into GPU memory to calculate
+attention scores with the query, which determines the impor-           Output Layer
+
+
+
+
+                                                                                                                                                    FFN
+tance of each token’s KVs. Loading all keys from disk storage                 Xout_(n-1)                           Linear 2        Linear 1
+
+                                                                        Transformer
+significantly impacts I/O efficiency, impeding TTFT reduc-              Layer_(n-1)
+
+
+
+
+                                                                                                                                                    Attention Layer
+tion. A smarter method to identify key tokens with minimal                     …                   attention
+                                                                                                   weights
+                                                                                                                              attention output
+                                                                        Transformer
+I/O overhead is essential.                                                Layer_0
+   Second, existing systems often consolidate consecutive                      Xin                   q             k               v       head 2
+KVs into large objects (e.g., chunks), to optimize disk I/O             Input Layer            Q               K              V           head 1
+                                                                                                                                         head 0
+and PCIe transfer bandwidths. However, our system’s selec-         Input sequence:                     Wq              Wk         Wv
+                                                                   S = [t0, t1, …, tl-1]                           Xin
+tive retrieval of important KVs makes these methods less
+efficient for two key reasons. (1) Accessing important KVs                           Figure 1: The LLM model structure.
+also loads irrelevant KVs from the same chunk, diminishing
+disk read performance and filling cache with unnecessary                 to the state-of-the-art prefix KV storage systems while
+data. (2) Cache management, typically based on chunk access              maintaining comparable inference accuracy.
+patterns [12, 38, 45], overlooks the significance of individual
+prefix KVs within each chunk. This can result in crucial KV-
+rich chunks being stored on slower storage, reducing cache        2     Background
+hit ratios.
+   To address the first challenge, we study the important token   2.1      Large Language Model Basics
+distributions among multiple heads of each layer in the LLM.      Model inference. A generative LLM typically consists of an
+We find that important token indices are highly similar across    input layer, tens of consecutive transformer layers, and an
+heads within the same layer. Based on this insight, we propose    output layer, as shown in Figure 1. Assume an input sequence
+a similarity-guided important token identification method that    with l tokens denoted as S = [t0 ,t1 , . . . ,tl 1 ] and an LLM with
+only loads the keys from a subset of heads to identify crucial    n transformer layers. This sequence is first transformed into a
+KVs within the entire prefix.                                     tensor Xin with shape l ⇥ d by the input layer, where d is the
+   To tackle the second issue, we propose importance-             model’s hidden dimension. Xin then passes through the first
+informed KV management methods. We employ a KV re-                transformer layer, resulting in an intermediate output tensor
+ordering technique to reorder and repack the prefix KVs stored    Xout_0 that maintains the shape l ⇥ d. This Xout_0 becomes the
+on disk, thereby increasing the density of important KVs in       input for the subsequent transformer layer. The final block’s
+the chunks and improving the effective disk read bandwidth.       output, Xout_(n-1) , is passed to the output layer, generating the
+Additionally, we introduce a new score-based cache man-           first new token tl . Then, the newly generated token is fed back
+agement policy considering token’s importance to further          into the input layer to generate the next token. This process
+enhance cache hit ratios.                                         repeats until either the maximum token limit is reached or a
+   We implement IMPRESS and evaluate its performance on           special end-of-sequence (EOS) token is generated, signaling
+three LLM models with various sizes (from 6.7B to 30B)            the end of the LLM inference process. The generation of each
+across four datasets. Our experimental results show that IM-      token is referred to as an iteration. The process of generating
+PRESS achieves up to a 3.8⇥ reduction in I/O time and a 2.8⇥      the first token is called the prefill phase, while the subsequent
+reduction in TTFT, while maintaining an inference accuracy        token generation is known as the decoding phase.
+drop of less than 0.2%.                                           Transformer layer computation. Each transformer layer
+   The main contributions of this paper are as follows:           consists of an attention layer and a feed-forward network
+  • We present IMPRESS, the first importance-informed             (FFN) (we omit the description of layer normalization and
+    prefix KV storage system that integrates three storage        residual connections for simplicity in Figure 1). During the
+    tiers: GPU memory, CPU memory, and disk.                      prefill phase, the input tensor Xin is passed through three
+                                                                  weight matrices, Wq , Wk , and Wv , to generate three 3D tran-
+  • We propose a similarity-guided important token identifi-      sient tensors: query (Q), key (K), and value (V). Each of these
+    cation method to identify important KVs, significantly        tensors consists of multiple heads (e.g., 3 in Figure 1), with
+    reducing I/O overhead.                                        each head containing a 2D tensor referred to as q, k, or v. The
+  • We devise importance-informed KV management meth-             Q and K tensors are then used to produce attention weights,
+    ods including KV reordering and a new score-based             where each head has one corresponding 2D attention weight
+    cache management policy to further minimize I/O data          matrix. Each value in the attention weights indicates the rele-
+    volume from slower storage media.                             vance of one token to another. The attention weights are then
+                                                                  multiplied by the V tensor to form the attention output. This
+  • We implement IMPRESS and our evaluation demon-                output is passed through a feedforward network (FFN), which
+    strates that it reduces TTFT by up to 2.8⇥ compared           consists of two linear layers, ultimately producing the output
+
+
+
+188   23rd USENIX Conference on File and Storage Technologies                                                            USENIX Association
+       Computation                Stored prefix KVs                  Prefix KV loading                          ReComp              GPU load time           CPU load time
+                                                                                                                SSD load time       QueryComp
+(a)             query   L0        L1    L2                                                     120
+                                                                                 time
+                                              TTFT
+                                                                                                      70
+(b)    prefix   query        L0               L1           L2
+
+
+
+
+                                                                                          TTFT (ms)
+                                                                                 time
+                                                                 TTFT                                 20
+
+
+
+
+                                                                                                           //
+
+
+
+
+                                                                                                                                                  //
+
+                                                                                                                                                       //
+
+                                                                                                                                                             //
+
+                                                                                                                                                                  //
+                                                                                                                                                                       //
+                                                                                                                                                                       //
+                query   L0             L1     L2                                                      15
+(c)                                                                                                    9
+      KVs in GPU/CPU L0 L1             L2
+                                                                                 time
+                                                   TTFT                                                3
+                query                   L0           L1         L2
+(d)     KVs in Disk
+                                                                                                                128    256     512      1k      2k      4k             8k
+                             L0              L1           L2                                                                 Number of tokens in prefix
+                                                                                 time
+                                                                     TTFT
+                                                                                         Figure 3: TTFT breakdown. ‘ReComp’ refers to not reusing
+Figure 2: The TTFTs of various cases. Assume the LLM                                     the prefix KV. ‘QueryComp’ denotes the remaining computa-
+model consists of three transformer layers, denoted as ‘Lx’.                             tion after loading the prefix KV.
+
+tensor Xout , with the same shape as Xin . The transformer com-                          that shortening TTFT also reduces decoding latency for other
+putation in the decoding phase is generally similar to that in                           requests, as modern systems use continuous batching, where
+the prefill phase, with a few differences [26]. Since it is not                          the decoding of existing and newly-arrived requests are pro-
+the focus of this paper, we omit the details here.                                       cessed together after the completion of the prefill of the new
+                                                                                         requests [40].
+                                                                                         Prefix KV storage systems and I/O bottleneck. Re-
+2.2     Shared Prefixes and Storage System
+                                                                                         searchers have observed that these prefixes are often partially
+Long TTFT due to the use of context-rich prefixes. Di-                                   or completely shared across different requests [5, 8, 12, 21, 39,
+rectly using large models for inference can lead to suboptimal                           45]. For example, similar queries might retrieve partially or
+results. For instance, when queried about a recent event not                             entirely the same related documents using RAG; the same
+included in the model’s training data, the model might pro-                              GPT plugin can be used multiple times, resulting in identi-
+vide incorrect answers. Additionally, due to issues such as                              cal system prompts across requests. Recomputing the K and
+hallucinations, the model’s responses might contain inaccu-                              V tensors in Figure 1 for the same prefix leads to wasted
+rate or misleading information [43]. To improve response                                 computational resources and increased TTFT. To optimize
+quality, applications often prepend user queries with addi-                              TTFT, existing systems store and reuse the K and V tensors
+tional context-rich prefixes to form complete requests, which                            of these shared prefixes (referred to as prefix KV cache or
+are then fed into the LLM as input sequences. For example,                               simply prefix KV). Note that the Q tensor of the prefix is not
+Retrieval-Augmented Generation (RAG) [18] searches ex-                                   stored, as it is not needed for subsequent computations [5].
+ternal knowledge bases for documents relevant to the user’s                              When a new request with a repeated prefix arrives, the system
+query. Advanced GPT plugins, such as Chameleon [25], in-                                 asynchronously preloads its prefix KVs into GPU memory,
+clude tool definitions in the system prompt and use few-shot                             thereby reducing TTFT during the prefill phase of the new
+examples to guide the LLM in performing complex reason-                                  request.
+ing tasks. Multi-turn dialogue applications [5] add previous                                An effective prefix KV storage system must meet two re-
+question-answer pairs to the user’s latest query for better in-                          quirements. First, it needs sufficient storage capacity to hold
+tent understanding, while the self-consistency technique [2]                             enough prefix KVs. A 2,600-token prefix KV alone requires
+generates multiple responses to the same query and uses vot-                             3.4 GB of storage space for a medium-sized OPT-30B model.
+ing to improve accuracy.                                                                 Second, the latency for prefetching the prefix KV must be
+   Figure 2(a) and Figure 2(b) show that while these context-                            low. Otherwise, it will become a bottleneck of the LLM in-
+rich prefixes improve the quality of responses, they also signif-                        ference, limiting the reduction of TTFT. Currently, no system
+icantly increase the time-to-first-token (TTFT), which is the                            can simultaneously meet these two requirements across vari-
+delay before the model generates the first token. For instance,                          ous scenarios. Most existing systems store prefix KVs only
+the Chameleon system adds over 2,600 tokens of context be-                               in GPU and/or CPU memory [8, 12, 39, 45], as shown in Fig-
+fore the user’s query [24]. Given that the average real-world                            ure 2(c), to reduce TTFT. However, the limited space in GPU
+user query is about 750 tokens [34], this increases the request                          and CPU memory quickly becomes exhausted. Although the
+token count by more than 4⇥, extending the TTFT by 9⇥ for                                latest prefix KV storage system, AttentionStore [5], stores the
+the OPT-30B model due to the additional computation. This                                prefix KV on both CPU memory and disk to provide suffi-
+can negatively impact user experience, especially in TTFT-                               cient storage space, it doesn’t fundamentally reduce the load
+sensitive applications like real-time chatbots. Besides, it also                         time, as the latency from disk cannot be fully hidden by com-
+degrades the system’s overall throughput and increases the                               putation in some cases as shown in Figure 2(d). Thus, this
+enterprise costs. This paper focuses on reducing TTFT during                             approach may fail under heavy request loads or in preemp-
+the prefill phase without altering the decoding phase. Note                              tive scheduling scenarios, due to the bottleneck of disk I/O.
+
+
+
+USENIX Association                                                                  23rd USENIX Conference on File and Storage Technologies                                 189
+                  5%     10%   25%    50%                       ORI (OPT-6.7B)   SPI (OPT-6.7B)
+      100                                                       ORI (OPT-30B)    SPI (OPT-30B)
+                                                           60                                34
+            95
+
+
+
+
+                                            Accuracy (%)
+
+
+
+
+                                                                                                  F1 Score (%)
+                                                           55                                30
+Ratio (%)
+
+
+
+
+            90                                             50                                26
+
+            85                                             45                                22
+
+            80                                             40                                18
+                   OPT-6.7B    OPT-30B                           50% 25% 10%          5%
+
+                   (a) Recall Ratio                             (b) Generation Quality                                        (a)                             (b)
+Figure 4: The recall ratios and the impacts on model genera-                                                     Figure 5: (a) The ratio of important KVs within each chunk.
+tion quality of the static pre-identification method (SPI) under                                                 (b) Average ratio of important tokens in all chunks for a given
+various important token retention percentages. ‘ORI’ denotes                                                     chunk access frequency.
+the baseline where the SPI method is not applied.
+                                                                                                                    A straightforward approach to avoid loading all prefix
+Figure 3 shows the TTFT breakdown for recalculating shared                                                       keys is to statically record the identified important tokens
+prefixes versus loading and reusing prefix KVs from different                                                    for queries. Then, when another query with the same prefix
+storage media (i.e., GPU memory, CPU memory, and SSD).                                                           arrives, only the KVs of pre-identified important tokens would
+We vary the number of input prefix tokens from 128 to 8k.                                                        be loaded, reducing the I/O time. However, this approach has
+The “load” time represents the I/O latency that cannot be                                                        a significant flaw. We observed that the importance of tokens
+hidden by query computation. It shows that loading prefix                                                        within the same prefix can vary depending on the specific
+KVs from GPU or CPU results in shorter TTFT compared to                                                          query. We intuitively explain the observation here. For ex-
+recomputation, but loading from SSD leads to longer TTFT.                                                        ample, in a RAG scenario, different queries might use the
+This is due to the I/O latency from SSD to GPU, which is                                                         same document as the prefix, but the relevant answers could
+rarely hidden by query computation and accounts for 51%-                                                         be found in different text segments of the prefix. Thus, the
+98% of the total TTFT. Consequently, prefix KV loading has                                                       method that pre-identifies important tokens could miss critical
+become a new bottleneck in model inference, particularly for                                                     ones, substantially degrading the accuracy of LLM inference.
+longer prefixes.                                                                                                    To confirm this limitation, we assess the recall ratio of
+                                                                                                                 important tokens and its effect on model generation quality
+                                                                                                                 across two models and datasets: OPT-6.7B on RTE [6] and
+3                Motivation and Challenges
+                                                                                                                 OPT-30B on SQuAD [30]. We evaluate generation quality
+                                                                                                                 using accuracy and F1 score [21] for the two datasets respec-
+3.1               Not All KVs Are Equally Important                                                              tively. As depicted in Figure 4, even with recall ratios above
+Recent research [17, 22, 32, 44] indicates that not all tokens’                                                  80%, the omission of vital KVs results in accuracy and F1
+KVs are equally important for maintaining LLM inference                                                          score declines of up to 5% for RTE and 3.3% for SQuAD.
+accuracy. These methods generate and store the full set of                                                       Consequently, there is a need for a dynamic method that can
+KVs during the prefill phase, then identify and discard the                                                      discern important tokens within prefixes for various queries,
+less important tokens’ KVs during decoding by analyzing the                                                      while minimizing I/O overhead.
+attention weights. This approach reduces the computational                                                       Challenge 2: The existing prefix KV storage and caching
+load during the decoding phase while maintaining comparable                                                      systems are suboptimal considering token’s importance.
+LLM inference accuracy.                                                                                          Existing systems typically store and manage cache by group-
+   Inspired by this, we propose an importance-informed three-                                                    ing KV pairs from several consecutive or all prefix tokens
+tiered prefix KV storage system that encompasses GPU mem-                                                        into chunks [5, 14, 39, 45], which enhances the efficiency of
+ory, CPU memory, and disk storage. When reusing prefix KVs,                                                      disk reads and PCIe transfers. Each chunk contains a mix
+we aim to load only important KVs for prefill and decoding                                                       of important and unimportant KVs. When retrieving KVs
+computations, while unimportant tokens’ KVs are discarded.                                                       for important tokens, entire chunks are loaded into memory,
+Selectively loading the important KVs can fundamentally                                                          including the unimportant ones. This practice causes read am-
+alleviate the disk bottleneck, thereby reducing TTFT.                                                            plification, diminishing effective bandwidth and filling cache
+                                                                                                                 with unnecessary data, which lowers cache hit ratios.
+                                                                                                                    Furthermore, managing chunks in CPU and GPU caches
+3.2               Challenges
+                                                                                                                 based solely on traditional metrics like recency or frequency
+Challenge 1: Directly applying existing important token                                                          can further reduce GPU cache hit ratios and increase PCIe
+identification methods on prefix KV loading still has sig-                                                       data transfers. This is because these metrics ignore the impor-
+nificant I/O overhead. Existing methods must load all prefix                                                     tance of KVs and the proportion of important KVs in each
+keys into GPU memory to compute attention weights and                                                            chunk. As a result, less critical chunks may occupy valuable
+then identify important KVs [17, 22, 32, 44]. Reducing only                                                      GPU memory, while more critical ones are relegated to the
+the loading time of prefix values limits TTFT reduction.                                                         CPU memory. This misallocation decreases the GPU hit ra-
+
+
+
+190               23rd USENIX Conference on File and Storage Technologies                                                                                 USENIX Association
+tio for important KVs and necessitates more data transfers                       user request
+between CPU and GPU memory.                                                   prefix     query       Important Token Identification (§ 4.3)
+   We experimentally illustrate this challenge using OPT-6.7B
+on RTE. We designate half of the prefix tokens as important                            Disk               CPU                            GPU
+                                                                                                         Memory                         Memory
+and the remaining half as unimportant. Figure 5(a) shows
+
+
+
+
+                                                                                                                                                   Data Plane
+                                                                                                                                         runtime
+
+
+
+
+                                                                                                                           select KVs
+that only 46% of the KVs in the loaded chunks are important                              …               metadata
+                                                                                                                                          space
+on average, leading to 2.2⇥ read amplification. Figure 5(b)                              …               CPU                              GPU
+shows the ratio of important KVs for chunks with different                       prefix KVs
+                                                                                                         cache                            cache
+access frequency. The hotness or coldness of a chunk is not
+related to the ratio of important KVs it contains. These obser-
+vations underscore the need for new KV storage and cache                                 KV Reordering              Cache Replacement
+                                                                                           (§ 4.4.1)                     (§ 4.4.2)
+management methods to reduce the loading of unimportant
+KVs from disk and improve cache hit ratios.                                                   Prefix KV Management (§ 4.4)
+                                                                                        prefix KV transfer               control message
+
+4     IMPRESS Design
+                                                                                       Figure 6: Overview of the IMPRESS system.
+In this section, we present IMPRESS, an importance-informed
+three-tier prefix KV storage system. First, we describe the                and t q denote the prefix and non-prefix tokens respectively.
+overall architecture of IMPRESS (§4.1). Then, we discuss our               First, given the request, IMPRESS searches the radix tree to
+observations regarding important tokens (§4.2) and introduce               find the longest common prefix subsequence from all previous
+                                                                                                                                  p p        p
+an I/O-efficient technique to identify important tokens based              requests [39, 45]. Let’s assume the result is R = [t0 ,t1 , ...,t j ],
+on the insights (§4.3). Finally, we explain how prefix KVs                 whose KVs are stored in GPU memory, CPU memory, or disk.
+                                                                                                                                p         p
+are managed across three storage tiers to further reduce the               There may also be some prefix tokens NR = [t j+1 , ...,tm 1 ]
+latency when loading them into GPU memory (§4.4).                          that are not in the radix tree, and therefore their KVs do not
+                                                                           exist in the system. Next, IMPRESS employs the I/O-efficient
+                                                                           ITF method to identify the important tokens within R , as-
+4.1     Overview                                                                                       p p         p
+                                                                           suming Rimportant = [tt ,tt+1 , ...,ts ] (0  t  s  j) is identi-
+We propose IMPRESS to provide large storage capacity for                   fied. If KVs in Rimportant are not in GPU memory, they are
+prefix KVs while ensuring efficient I/O accesses to reduce                 loaded from disk or CPU memory. The KVs of unimportant
+TTFT. The system is designed based on two principles: (1)                  tokens in R are not reused and do not participate in further
+Using a minimal number of I/Os to identify the important KVs               inference. Then, the loaded Rimportant , the tokens NR, and the
+                                                                                     q q         q
+within a prefix, allowing only the essential KVs to be loaded              tokens [t0 ,t1 , ...,tn 1 ] are sent into LLM model, completing
+during the prefill phase; (2) Since loading only important KVs             the remaining computations in the prefill phase. Essentially,
+could degrade the efficiency of existing storage and caching               Rimportant plus NR becomes the defacto prefix used in the
+systems, we optimize the three-tier prefix KV management to                LLM inference, replacing the set of {t p } in S. Finally, the
+improve cache hit ratios and I/O efficiency.                               newly generated KVs for the prefix token in NR are stored on
+    Figure 6 presents the overall architecture of IMPRESS. In              disk, and the prefix tokens in NR are inserted into the radix
+the data plane, all prefix KVs are stored on disks in chunks,              tree for future reuse by other requests. The decoding phase
+with some prefix KVs cached in either CPU memory or GPU                    remains unchanged, following existing systems [35].
+memory. The data in the two cache spaces are exclusive                     Importance metric. In this paper, we use the sum of val-
+to avoid space wastage. The metadata in the CPU memory                     ues in each column of the attention weight matrix as the
+is organized using a radix tree [45], which facilitates quick              token’s importance, following the same method in H2O [44].
+searches for the reusable prefix KVs. The runtime space stores             A higher sum indicates greater token importance. Our system
+model parameters and intermediate data needed for GPU in-                  is also compatible with other metrics for measuring token
+ference. IMPRESS has two control components including                      importance [17, 22, 32].
+important token identification (ITF) (§4.3) and prefix KV
+management (PKM) (§4.4). ITF identifies important tokens                   4.2     Insights of Important Tokens
+within a chunk by loading only partial keys rather than all of
+them, reducing the amount of data loaded from disks. PKM                   Observation I: There is a high similarity in the set of impor-
+manages the storage and data movement of prefix KVs across                 tant token indices across different heads within the same layer
+disks and the two cache spaces in CPU and GPU memory.                      of an LLM.
+Dataflow of IMPRESS. Assume that a request S =                                As described in §2.1, each token has K and V tensors for
+  p p          p     q q          q
+[t0 ,t1 , ...,tm 1 ,t0 ,t1 , ...,tn 1 ] arrives. m is the number of to-    every head. We found that the set of important token indices
+kens in prefix and n is the number of tokens in the query. t p             is highly similar across different heads within the same layer.
+
+
+
+USENIX Association                                                    23rd USENIX Conference on File and Storage Technologies                       191
+                                                     Head Index
+        token index                              0    10   20     30
+                                                                       1.0
+
+
+
+
+                                                0
+   head 0:
+
+
+
+
+                                   Head Index
+                                                10
+                                                                       0.9
+                                                                                         (a) select the top 10% most important tokens
+
+
+
+
+                                                20
+   head 1:
+
+
+
+
+                                                30
+                                                                       0.8
+
+   (a) Two Heads of K Tensors       (b) Jaccard Scores Between Heads
+
+Figure 7: Examples of similarities. (a) The orange rows rep-
+resent the important keys whose token indices are marked in                              (b) select the top 40% most important tokens
+red. (b) Darker squares indicate a higher similarity between
+the important token index sets of two heads.                                 Figure 8: Similarities of important token index sets across all
+                                                                             transformer layers.
+This is intuitive because the k or v tensors in different heads
+are derived from the same large K or V tensors [35,42]. There-               0.68 and 0.48, respectively. This aligns with intuition, as the
+fore, if a token is significantly more important than another in             similarity reaches 1 when all the tokens (100%) are selected.
+one head, it is highly likely that this importance relationship              (2) Although smaller models and deeper transformer layers
+holds in other heads as well. Note that although we cannot                   tend to exhibit lower similarities, they are still significantly
+strictly prove these observations mathematically for all LLMs                higher than the expected value from random selection in most
+and scenarios, we will demonstrate the generality and prac-                  cases.
+ticality of these observations through accuracy evaluations
+(§6.2) after applying the corresponding techniques on four                   4.3    Similarity-Guided Important Token Iden-
+datasets across three models.                                                       tification
+   To quantitatively measure the similarity between these in-
+dex sets, we use the Jaccard index [4]. Assume the sets of                   Based on the above observations, we propose the similarity-
+the most important token indices selected from two heads                     guided important token identification technique. The core
+are A and B. The jaccard index is defined as the size of the                 idea is that because of the similarity we can leverage the im-
+intersection divided by the size of the union of the two sets:               portant token index set generated from a few selected heads
+                                                                             to approximate the important token index sets for the remain-
+J(A, B) = |A\B|
+             |A[B| . The Jaccard value is 0 when the two impor-              ing heads. For simplicity, we refer to these selected heads as
+tant token index sets are completely different and 1 when they
+                                                                             probe heads. Since this process involves loading only keys
+are identical. Figure 7(a) shows an example where an input
+                                                                             from a subset of the heads instead of all heads, it reduces both
+sequence contains four tokens, of which 50% are considered
+                                                                             I/O data volume and TTFT.
+as important tokens. The index set of important tokens for the
+                                                                                 As some layers exhibit less pronounced similarity between
+keys of head 0 is h0 = {0, 2}, and for head 1 it is h1 = {0, 1}.
+                                                                             important token sets across different heads, applying this tech-
+The similarity between the important token indices in these
+                                        1
+                                                                             nique to these layers may misidentify important tokens in
+two heads is J(h0 , h1 ) = |h 0 \h1 |
+                            |h0 [h1 | = 3 . Figure 7(b) shows a real         some heads, reducing the model’s inference accuracy. To
+similarity heatmap of the important token sets in the keys                   tackle this issue, we introduce a similarity threshold that dy-
+produced by the middle transformer layer of the OPT-6.7B                     namically determines whether to apply the technique for each
+model. It demonstrates that these similarities are quite high,               transformer layer. The similarity-guided important token iden-
+with average values exceeding 0.95.                                          tification is enabled only when the measured similarity value
+Observation II: The similarity of important tokens (repre-                   from the probe heads is higher than the similarity threshold.
+sented as important token index sets) exists across different                    Figure 9 illustrates the process of completing a transformer
+sampling ratios and LLM scales.                                              layer with and without this technique. Assume the prefix
+   To gain further insights, we study the average similarity                 contains 4 tokens, with only one being important. Each trans-
+of token index sets across different heads for the OPT-6.7B,                 former layer has 32 heads and all the prefix KVs of each head
+OPT-13B, and OPT-30B models, when selecting the top 10%                      are stored on disk. The number of probe heads is set to three.
+and 40% most important tokens (Figure 8). Each bar in the                    Without the similarity-guided important token identification
+figure represents the average value for a single transformer                 technique, it involves three steps: (1) loading the keys of all
+layer. These three models contain a total of 32, 40, and 48                  32 heads (total 32 ⇥ 4 = 128 vectors) from disk into the
+transformer layers, respectively. We have two findings. (1)                  GPU memory; (2) GPU calculates attention weights using
+The higher ratio of important tokens selected, the greater the               the query and all the keys, identifies the most important token
+similarity. For instance, when selecting 40% and 10% of the                  index in each head i: {xi }, 0  i  31, and returns them to the
+tokens, the average similarity across all layers of OPT-30B is               CPU memory; The detailed identification algorithm is based
+
+
+
+192    23rd USENIX Conference on File and Storage Technologies                                                            USENIX Association
+   Stored prefix KV                                                        GPU                             K loading            token selection             V loading                   computation
+                                                      (1) 128 vectors
+                                   k                                       select
+
+
+
+
+                                           …
+                                                   (2) { xi }, 0≤ i ≤ 31                                                                             Idle
+   k            v                      v                                    KVs                                GPU stream                0       0          1       1         2         2
+       …
+
+
+
+
+                     …
+           32                                          (3) 32 vectors                    (a)
+                                                                                                                I/O stream       0           0       1          1       2           2
+
+
+
+
+                                       …
+                                                                                                                                                                                                 time
+                (a) w/o similarity-guided token selection
+                                                                                                               GPU stream 0      0 1   1 2   2
+                                                                                         (b)                                                     TTFT
+                                       k              (1) 12 vectors                                            I/O stream 0 0 0 1 1 1 2 2 2   Reduction
+                                                                           select                                                                                                                time
+                                                          (2) {x}
+   k            v              k               v                            KVs
+                                                                                         Figure 10: The TTFTs with and without similarity-guided im-
+       …
+
+
+
+
+                     …
+
+
+
+
+                                                     (3) 64 vectors
+                                …
+
+
+
+                                               …                                         portant token identification. Assume the LLM model consists
+                    (b) w/ similarity-guided token selection                             of three transformer layers. The numbers inside the rectangles
+Figure 9: The process of transformer layer computation with                              represent the layer index.
+prefix kv. Each k and v tensor has four row vectors because
+of four tokens in the prefix.                                                                         100
+                                                                                                                          Load ratio                            Accuracy
+                                                                                                                                                                                            80
+
+
+
+
+                                                                                         Load Ratio (%)
+
+
+
+
+                                                                                                                                                                                                 Accuracy (%)
+                                                                                                          75                                                                                79
+
+on H2O [44]. (3) The CPU then loads the k and v vectors of                                                50                                                                                78
+                                                                                                          25                                                                                77
+{xi } from each head (total 32 ⇥ 1 = 32 vectors) into the GPU
+                                                                                                           0                                                                                76
+memory to complete the remaining prefill computations. The                                                      1   0.9   0.8     0.7     0.6 0.5 0.4 0.3               0.2   0.1       0
+entire process loads a total of 128 + 32 = 160 vectors.                                                                                 Similarity Threshold
+
+    In contrast, with the similarity-guided important token iden-                        Figure 11: The proportion of keys loaded and the model in-
+tification technique, the steps are as follows: (1) only the keys                        ference accuracy under different similarity thresholds.
+from the three probe heads (total 3 ⇥ 4 = 12 vectors) are
+loaded from disk into the GPU memory; (2) GPU calculates                                 reduces the time spent generating important token index sets
+attention weights using the query and the keys from the probe                            (in green color), leading to a shorter overall TTFT.
+heads, identifies the important token index sets of the three                            Hyperparameter decisions. To make this algorithm practi-
+heads, and computes the average Jaccard similarity. If this                              cal, we need to determine the number of probe heads and
+similarity exceeds the similarity threshold, only one token                              the similarity threshold. Selecting only one probe head to
+index deemed most important by all probe heads, {x}, are re-                             determine the most important token index may introduce bias,
+turned to the CPU; Then, proceed to step (3). If the threshold                           affecting model accuracy. Using two probe heads might fail
+is not met, the computation mode of the current layer falls                              to identify the most important index through voting when
+back to the version without enabling the similarity-guided im-                           disagreements arise. Therefore, we choose to use three probe
+portant token identification method. (3) The CPU then loads                              heads. Increasing the number of probe heads offers minimal
+the k and v vectors of {x} from each head (total 32 ⇥ 1 ⇥ 2 =                            improvements in accuracy but increases the keys loading time,
+64 vectors) into the GPU memory for the remaining computa-                               thereby extending the TTFT. Additionally, we found that the
+tions. The entire process loads a total of 12 + 64 = 76 vectors.                         choice of which three heads to use has no impact on accuracy
+While the I/O data volume cannot be reduced when the probe                               due to the similarity. Therefore, we simply select the first three
+heads’ similarity does not exceed the threshold, this situation                          heads in each transformer layer as the probe heads to keep
+only occurs in less than 20% transformer layers in the IM-                               the selection process quick. We first compute the similarity of
+PRESS system on average (see §6.3). Moreover, in practical                               important token sets between each pair of probe heads, and
+LLM models, each transformer layer typically has dozens of                               then take the average to measure the overall similarity among
+heads (e.g., 32-96 in various sizes of the OPT model) and                                the three probe heads. Thus, the similarity is independent of
+the prefix contains thousands of tokens [21, 39], making this                            the order of probe heads.
+technique effective in reducing I/O data volume across the                                  Setting the similarity threshold is complex. A threshold set
+entire model.                                                                            too high might fail to reduce the number of keys and values
+    Figure 10 compares the timeline for completing three                                 across many transformer layers, as the average similarity of
+transformer layers with and without this technique. With-                                the probe heads often falls short of the threshold. On the
+out similarity-guided important token identification, in Fig-                            other hand, a threshold set too low can introduce bias in the
+ure 10(a), the loading of a large number of keys leads to GPU                            identified important token index set, compromising model
+idle time, prolonging inference process. In contrast, when the                           accuracy. Figure 11 illustrates this on the PIQA [6] dataset,
+technique is enabled in Figure 10(b), and the probe heads’                               where each transformer layer selects the top 25% of the most
+similarity exceeds the threshold, the time required to load                              critical prefix KVs. Although decreasing the threshold from 1
+only the keys from the probe heads (in red color) is signifi-                            to 0 cuts the number of keys loaded by 4⇥, it also results in
+cantly shorter, thereby reducing GPU wait time. Additionally,                            a 1.6% decrease in accuracy, from 79.1% to 77.5%. Similar
+loading only a subset of keys for attention weight calculations                          patterns are observed across other datasets.
+
+
+
+USENIX Association                                                                  23rd USENIX Conference on File and Storage Technologies                                                  193
+          {t0, t3}   t0                            t0                                 s0 = [t0, t1, t2, t3]                       s0’ = [t0, t3, t1, t2]
+CPU target keys             t3                     t3                                 k_ptr:[     ,    ]                          m0 = [0, 2, 3, 1]
+                                                                                      v_ptr:[     ,    ]                          k_ptr:[     ,    ]
+Disk                                                                                                                              v_ptr:[     ,    ]
+        t0 t1 t2 t3 t0      t2         t0 t3 t1 t2 t0      t1
+        token seq. t1       t3                     t3      t2                                s2 = [t8, t9,                         s2 = [t9, t8, t10, t11]
+                                                                                                 t10, t11]
+                     chunk 0 chunk 1                chunk 0 chunk 1   s1 = [t4, t5,
+                                                                            t6, t7]
+                                                                                                …             s1 = [t4, t5,
+                                                                                                                    t6, t7]
+                                                                                                                                    m2 = [1, 0, 2, 3]
+                                                                                                                                          …
+           (a) before recordering       (b) after recordering           …                                         …
+                                                                                                              m1 = [0, 1, 2, 3]
+                                                                            (a) before recordering                    (b) after recordering
+Figure 12: Comparison of the number of chunks read before
+and after the token sequence is reordered. The orange (blue)          Figure 13: Comparison of meta structure before and after KV
+rectangles represent important (unimportant) keys.                    reordering. The orange (blue) rectangles represent important
+                                                                      (unimportant) keys.
+   To address this issue, we first calculate the expected value
+based on the proportion of selected important tokens, then            quest arrives. However, KV reordering may destroy the radix
+slightly increase this value and use it as the similarity thresh-     tree structure by altering the token order, causing new requests
+old. Specifically, suppose we have a prefix containing n to-          to fail in locating the correct shared prefix KVs. To overcome
+kens and need to select k important tokens (k  n). If we             this, we limit the scope of KV reordering to the tokens within
+randomly execute this selection twice, we obtain sets A and           each node of the radix tree. Additionally, we introduce a map-
+B. The probability of each token appearing in both sets is            ping list within each node to assist the checking operations of
+k2                                                 2      2
+n2
+   . Given N tokens in total, E(A \ B) = n · nk2 = kn , and           new requests. We use an example to explain the details.
+                                                        k2       k2      Consider two requests that retrieve related document seg-
+E(A [ B) = E(A) + E(B)           E(A \ B) = k + k       n = 2k   n.
+Therefore, E(Jaccard(A, B)) = E(A\B)      k/n                         ments as prefixes through RAG. Each prefix contains eight
+                              E(A[B) = 2 (k/n) . Denote this          tokens: p0=[t0, t1, t2, t3, t4, t5, t6, t7] for one request and
+expected value as j. We set the threshold t = ja , where we
+                                                                      p1=[t0, t1, t2, t3, t8, t9, t10, t11] for the other. t0, t3, t4, and t9
+empirically choose a = 0.6 in our experiments to achieve
+                                                                      are important data, while the remaining tokens are unimpor-
+a good balance between model inference accuracy and the
+                                                                      tant. Before applying the KV reordering technique, the radix
+amount of keys loaded.
+                                                                      tree is organized as shown in Figure 13(a), where the com-
+                                                                      mon prefix subsequence s0=[t0, t1, t2, t3] is grouped within
+4.4      Importance-Informed KV Management                            the same node, enabling the reuse of as many prefix KVs as
+                                                                      possible. Assume the chunk size is set to 2, with each chunk
+4.4.1    KV Reordering
+                                                                      containing the keys or values of two consecutive tokens. Each
+We present the KV reordering method to address the unnec-             node contains a list of pointers k_ptr (v_ptr) to these key
+essary loading of unimportant KVs during important KV re-             (value) chunks.
+trieval. By periodically reorganizing and repacking important            After enabling KV reordering, as shown in Figure 13(b),
+KVs into denser chunks, this approach optimizes read effi-            the token sequence within each node is reordered in a de-
+ciency and reduces bandwidth waste. Scheduled at regular              scending order of importance, and the keys and values are
+intervals (e.g., every 10 minutes), this process is based on          repacked. In Node 0, for example, the token sequence be-
+the average token importance and operates asynchronously to           comes s0’ = [t0, t3, t1, t2], with t0 and t3 now grouped within
+avoid disrupting the main I/O flow.                                   the same chunk. Consequently, reordering disrupts the token
+   To illustrate, consider a prefix [t0, t1, t2, t3] where the        sequence in the radix tree. We add a new mapping list to
+existing system stores keys for two adjacent tokens in one            Node 0 to address this issue. It is denoted as m0 = [0, 2, 3, 1],
+chunk, each containing one important and one unimportant              allowing the original s0 sequence to be recovered using the
+key. Without KV reordering (Figure 12(a)), both chunks must           torch index operation s0’[m0] when search reusable shared
+be loaded to retrieve the important keys {t0, t3}, wasting read       prefixes for new requests. This vectorized indexing operation
+bandwidth and cache space on unimportant keys. With KV                is highly efficient, consuming less than 2% of the TTFT in
+reordering (Figure 12(b)), tokens are reordered by importance,        our experiments.
+and keys of adjacent reordered tokens ([t0, t3] and [t1, t2]) are        We explicitly avoid cross-node reordering, such as placing
+packed into one chunk. This enables loading just one chunk            t4 and t9 into s0’, for two key reasons. First, it would destroy
+to access all important keys, reducing disk read data.                the radix tree structure since t4 and t9 are not common tokens
+Metadata adjustment. In LLMs, prefix KVs can only be                  shared by both prefixes (i.e., p0 and p1), potentially leading
+reused if two prefixes share a common subsequence starting            to errors in retrieving reusable prefix segments for new re-
+from the first token (i.e., the token order must be the same).        quests. Second, it would result in unnecessary read bandwidth
+Therefore, existing systems typically use a radix tree [39, 45]       consumption by loading t9 when reusing the KVs of p0. The
+or its variants [12] to record stored prefix tokens, enabling         constraint against cross-node reordering prevents packing un-
+quick search for reusable stored prefix KVs when a new re-            shared tokens’ KVs from different prefixes together, thereby
+
+
+
+194     23rd USENIX Conference on File and Storage Technologies                                                            USENIX Association
+        chunk 1 chunk 2               10*2=20     15*1=15        based cache replacement policy to oversee GPU and CPU
+                                        keys       keys          caches, utilizing two min-heaps in CPU memory to man-
+access                                                           age chunks in both caches and facilitate eviction. The heaps’
+ freq. 1.5         1      GPU
+                                                       PCIe      tops indicate the lowest-scored chunks in the GPU and CPU
+                          CPU
+                                                                 caches, respectively. To optimize data caching, we ensure non-
+         New requests:                                           redundancy between the GPU and CPU caches. Additionally,
+         15 for chunk 1         (a)             (b)
+         10 for chunk 2                                          we maintain all chunk replicas on disk, thus eliminating I/O
+                                                                 latency when chunks are evicted from CPU to disk.
+Figure 14: Comparison of two cache replacement policies.(a)         Upon receiving a new request, IMPRESS first identifies
+is the frequency-based cache replacement policy and (b) is       reusable important tokens and locates their associated chunks.
+the score-based cache management policy. The orange (blue)       If the chunk is already in the GPU cache, IMPRESS utilizes
+rectangles represent important (unimportant) keys. Only im-      the key or value vectors for inference and updates the chunk’s
+portant keys are needed for new requests.                        score, retaining it in the GPU cache. If the chunk is in the CPU
+                                                                 cache, after transferring the vectors to the GPU, IMPRESS
+reducing bandwidth wastage.                                      updates and compares the chunk’s score with the GPU cache’s
+                                                                 lowest. If superior, it replaces the lowest-scored chunk in the
+                                                                 GPU cache; otherwise, it stays in the CPU cache. Should
+4.4.2    Score-Based Cache Management                            the chunk reside on disk, IMPRESS loads it into CPU cache,
+To cut down on PCIe transfers, after loading a chunk from        transfers the necessary vectors to the GPU, and updates the
+disk into CPU memory, only the important key and value           chunk’s score. This new score is then assessed against the
+vectors from that chunk are sent to the GPU memory via           lowest scores in both caches to decide whether the chunk
+PCIe. However, as depicted in Figure 5(b), the presence of       should be promoted to the GPU cache, remain in the CPU
+important key or value vectors in a chunk does not align with    cache, or stay on disk.
+the chunk’s access frequency. Consequently, existing systems
+that base their caching decisions for GPU or CPU memory          5     Implementation
+solely on recency or frequency of chunk access may lower
+the GPU cache hit ratio for important key-value pairs, thus      We chose to implement IMPRESS on top of FlexGen [32]
+increasing PCIe traffic.                                         because its white-box model implementation facilitates the
+Score-based cache admission. To enhance cache efficiency,        development of our I/O-efficient KV identification method.
+we introduce the importance-aware cache admission policy.        Specifically, we modified the mha function for prefix reuse
+This policy assigns a score to each chunk based on its access    and used values in attn_weight to assess KV importance. For
+frequency and the proportion of important keys or values it      KV reordering, we implemented the PrefixKVLayer class to
+holds. Chunks with higher scores are preferentially cached       store reordered KVs and mapping lists per layer. For cache
+in GPU memory, whereas those with lower scores are stored        management, we developed the TokenCache class with our
+in CPU memory. This approach boosts the GPU cache hit            score-based policy.
+ratio and minimizes data transfers between CPU and GPU.
+The importance ratio is dynamically calculated as a moving
+                                                                 6     Evaluation
+average, updating online after each chunk access.
+   For instance, suppose key chunk 1 from application A and
+                                                                 6.1    Experimental Setup
+key chunk 2 from application B are contenders for the limited
+GPU memory, with application A’s request frequency being         Models and system configuration. We conduct tests using
+1.5 times that of B, making chunk 1 more frequently accessed.    three open-source OPT models of different scales (i.e., OPT-
+However, chunk 1 contains only one important key (50%),          6.7B, OPT-13B, and OPT-30B). Our experiments are per-
+while chunk 2 contains two important keys (100%). As de-         formed on a server with 2 ⇥ AMD EPYC 7763 CPUs (64
+picted in Figure 14(a), traditional systems would cache chunk    cores), 128 GB DRAM, one NVIDIA A100 GPU with 80GB
+1 in the GPU memory due to its higher access frequency, rele-    HBM, and one 2TB Intel SSD whose measured read through-
+gating chunk 2 to the CPU. With 15 new requests from A and       put is around 5GB/s. The GPU and CPU are connected via
+10 from B, this approach would necessitate transferring 20       PCIe 4.0 ⇥ 16.
+important keys from CPU to GPU. By contrast, factoring in        Datasets and metrics. We select four representative datasets
+the importance ratio, chunk 1 scores 0.75 (1.5 ⇥ 50%), and       from the standard LM-Evaluation-Harness benchmark [6]:
+chunk 2 scores 1 (1 ⇥ 100%). Thus, our method caches chunk       PIQA, RTE, COPA, and OpenBookQA. These datasets are
+2 in the GPU memory, as shown in Figure 14(b), cutting the       designed for few-shot tasks and structured as multiple-choice
+transfer of important keys to just 15.                           questions to evaluate the capabilities of large models in com-
+Dual-cache replacement algorithm. We employ score-               monsense reasoning, logical inference, causal reasoning, and
+
+
+
+USENIX Association                                          23rd USENIX Conference on File and Storage Technologies         195
+                            (a) PIQA                                                         (b) RTE
+
+
+
+
+                           (c) COPA                                                      (d) OpenBookQA
+
+                 Figure 15: Model generation quality of various systems across four datasets and three models.
+
+science question answering, respectively. Due to the lack of       cache for prefix KVs, leaving the remaining GPU and CPU
+open-source, real-world datasets for prefix reuse, we adopt a      memory for storing model weights, the KV cache used during
+similar approach to previous work [17] by prepending two to        the decoding phase, and the input data. On average, PIQA,
+ten few-shot examples as system prompts before each query.         RTE, COPA, and OpenBookQA require 55GB, 57GB, 64GB,
+These system prompts are shared across different queries,          and 65GB of storage for prefix KVs across three models,
+with reuse frequency following a normal distribution.              respectively. Uniformly, each chunk holds keys or values from
+   We measure model generation quality using accuracy, as in       64 tokens [39].
+prior works [17, 44], and vary the prefix KV retention ratios
+from 50% to 5% to observe accuracy changes. Additionally,
+to test TTFT with long prefixes as in [21] and to prevent          6.2   Overall Performance
+runtime out-of-memory errors, we extend the prefixes to a
+                                                                   Model generation quality. Figure 15 illustrates the impact
+maximum length of 4K for OPT-30B and 10K for the other
+                                                                   of different systems on model generation quality at various
+OPT models. The average number of tokens in the request
+                                                                   prefix KV retention ratios. As ReComp and AS-like share
+prefixes across the four datasets ranges from 4.8k to 5.7k.
+                                                                   the same accuracy, and AS+H2O+LRU and AS+H2O+LFU
+Baseline systems. We compare IMPRESS with four base-               also show identical accuracy, we present only the accuracy
+lines. (1) ReComp [35]: It recomputes all prefix KVs for each      of ReComp, AS+H2O+LRU, and IMPRESS for simplicity.
+request without storing or reusing them. (2) AS-like [5]: Atten-   It shows that IMPRESS has a negligible impact on accuracy
+tionStore (AS) asynchronously stores and loads all shared pre-     across these datasets and models, achieving accuracy drop
+fix KVs. Since it is not open-source, we reimplement it to the     less than 1% compared to ReComp or AS+H2O+LRU. In
+best of our ability based on the paper. To ensure a fair compar-   some cases, IMPRESS even slightly improves accuracy over
+ison, we additionally add the GPU cache with LRU for prefix        ReComp, suggesting that focusing on more important tokens
+KV storage. Besides, we disable its scheduler-aware optimiza-      can sometimes enhance generation quality.
+tions to make it more suitable for general scenarios, such as      The average TTFT. We pre-warm both CPU and GPU
+preemptive scheduling environments. (3) AS+H2O+LRU: We             caches for all systems, except ReComp (which doesn’t re-
+combine AS-like with one of the state-of-the-art important         quire prefix KV reuse), before evaluating TTFT. We set the
+KV selection systems, H2O [44]. Different from the AS-like,        KV retention ratio to 50% for COPA and 25% for the other
+it asynchronously loads only important values rather than the      three datasets across all systems. With this setup, IMPRESS
+full values of shared prefixes. (4) AS+H2O+LFU: It is simi-        shows an average accuracy reduction of 0.2% compared to
+lar to (3), but it uses LFU to manage the cache. In contrast,      ReComp. Figure 16 shows the average TTFT per request for
+IMPRESS selectively loads partial keys and values, reorders        different systems. IMPRESS outperforms alternatives, with
+KVs, and uses a score-based cache management strategy.             a 1.2⇥ to 2.8⇥ improvement over leading solutions, due to
+   To prevent runtime out-of-memory errors and ensure only         a 1.5⇥ to 3.8⇥ reduction in I/O time for loading prefix KVs
+a portion of the prefix KVs are cached (the other KVs reside       into GPU memory (Figure 17). Other systems have longer I/O
+on SSD), we allocate 10GB of GPU cache and 32GB of CPU             times, sometimes exceeding ReComp’s TTFT. Besides, IM-
+
+
+
+196   23rd USENIX Conference on File and Storage Technologies                                             USENIX Association
+                     ReComp                                        AS-like                           AS+H2O+LRU                                                            AS+H2O+LFU                                                       IMPRESS
+             4                                                     4                                    8                                                                        6
+             3                                                     3                                          6
+TTFT (s)
+
+
+
+
+                                                         TTFT (s)
+
+
+
+
+                                                                                                       TTFT (s)
+
+
+
+
+                                                                                                                                                                                    TTFT (s)
+                                                                                                                                                                                           4
+             2                                                     2                                          4
+                                                                                                                                                                                           2
+             1                                                     1                                          2
+             0                                                     0                                          0                                                                            0
+                   OPT-6.7B OPT-13B OPT-30B                            OPT-6.7B OPT-13B OPT-30B                                    OPT-6.7B OPT-13B OPT-30B                                                        OPT-6.7B OPT-13B OPT-30B
+                            (a) PIQA                                            (b) RTE                                                     (c) COPA                                                                     (d) OpenBookQA
+
+                                  Figure 16: The average TTFT with various systems across four dataset and three models.
+
+                     AS-like         AS+H2O+LRU                        AS+H2O+LFU     IMPRESS                                     100
+
+
+
+
+                                                                                                                  Ratio (%)
+                                                                                                                                   75
+I/O Time (s)
+
+
+
+
+                                                    I/O Time (s)
+
+               3                                                   6                                                               50
+               2                                                   4                                                               25
+               1                                                   2                                                                0
+                                                                                                                                                 0      4      8     12   16     20 24 28                                       32    36   40   44
+               0                                                   0                                                                                                              Layer ID
+                       OPT-13B     OPT-30B                              OPT-13B    OPT-30B
+                             (a) RTE                                         (b) COPA                             Figure 19: The retention of KVs per model layer using
+               Figure 17: Prefix KV loading time on the RTE dataset.                                              similarity-guided important token identification.
+                                                                                                                                                        +ITF               +RO                                                  +RO             All
+                        AS+H2O+LFU       +ITF                                +RO              All                                         10k                                                                      100
+
+
+
+
+                                                                                                                     # of loaded chunks
+
+
+
+
+                                                                                                                                                                                               GPU hit ratio (%)
+               1.0                                           1.0
+Norm. TTFT
+
+
+
+
+                                                Norm. TTFT
+
+
+
+
+                                                                                                                                          7.5k
+                                                                                                                                                                                                                   75
+                                                                                                                                          5.0k
+               0.6                                           0.6
+                                                                                                                                                                                                                   50
+                                                                                                                                          2.5k
+
+               0.2                                           0.2                                                                                                                                                   25
+                        OPT-13B     OPT-30B                              OPT-13B    OPT-30B                                                                           A       kQA                                                         A       k   QA
+                                                                                                                                                 PIQA       RTE    COPOpenBoo                                            PIQA    RTE   COPOpenBoo
+                              (a) RTE                                         (b) COPA
+     Figure 18: The performance impact of each optimization.                                                      Figure 20: The impact of KV Figure 21: The impact of
+                                                                                                                  reordering on the number of scored-based cache manage-
+PRESS’s performance gains vary across datasets and models                                                         loaded chunks.              ment on GPU hit ratios.
+due to different prefix KV sizes and computational demands.
+                                                                                                                  KV reordering results in an average 1.2⇥ reduction in loaded
+Notably, OPT-30B has a shorter TTFT than OPT-13B, as it
+                                                                                                                  chunks, as it consolidates important keys and values into fewer
+uses shorter prefixes to avoid GPU memory overflow.
+                                                                                                                  chunks. Figure 21 shows that score-based cache management
+The tail latency. IMPRESS achieves the shortest p99 tail
+                                                                                                                  boosts the average GPU hit ratio from 68% to 80% across
+TTFT. For example, on the RTE dataset with OPT-30B model,
+                                                                                                                  four datasets, thereby reducing PCIe data transfers.
+the p99 latencies for ReComp, AS-like, AS+H2O+LRU,
+AS+H2O+LFU, and IMPRESS are 3.9s, 9.3s, 6.6s, 5.9s, and
+2.95s, respectively. This shows IMPRESS effectively reduces                                                       6.4                                Sensitivity Analysis
+the tail I/O latency when KVs are loaded from SSD.                                                                Alpha value of similarity threshold. Figure 22 depicts the
+                                                                                                                  impact of varying the alpha value on inference accuracy and
+6.3                   Impact of Individual Techniques                                                             TTFT, ranging from 0 to 2. The findings indicate that while an
+                                                                                                                  increased alpha reduces TTFT, it marginally affects inference
+Figure 18 shows the impact of each optimization. Using the                                                        accuracy due to a lowered similarity threshold, leading to less
+current SOTA system AS+H2O+LFU as the baseline (TTFT                                                              KV loading. This trend is consistent across datasets. Thus, we
+normalized to one), +ITF adds similarity-guided important                                                         optimize alpha at 0.6 for a balance between low TTFT and
+token identification for loading important KVs, +RO enables                                                       high inference precision.
+KV reordering on +ITF, and All incorporates score-based                                                           Chunk size. Figure 23 compares the TTFT of the leading
+cache management on +RO. We observe that each optimiza-                                                           system and IMPRESS with chunk sizes ranging from 16 to
+tion reduces TTFT, with All achieving the shortest TTFT,                                                          256. Notably, IMPRESS achieves 2.2⇥ to 2.4⇥ improvement
+showing the effectiveness of IMPRESS’s individual tech-                                                           over the AS+H2O+LFU system across all sizes, underscor-
+niques. Besides, technique contributions vary across models                                                       ing IMPRESS’s robustness regardless of chunk dimensions.
+and datasets. For example, in OPT-30B on RTE, the contribu-                                                       Accuracy, being unaffected by chunk size, is not depicted.
+tions of the three techniques are 60%, 30%, and 10%, while                                                        Dataset size. We vary the number of prefixes (i.e., few-shot
+on COPA with OPT-13B, they are 36%, 8%, and 56%.                                                                  examples) to create different variants of OpenBookQA, with
+   Figure 19 shows the average KV loading ratio per layer for                                                     dataset sizes ranging from 65GB to 400GB. Figure 24 shows
+OPT-30B on the PIQA dataset using the +ITF system, which                                                          that IMPRESS consistently outperforms the leading compari-
+dynamically adjusts KV loading to optimize the trade-off                                                          son system, AS+H2O+LFU, achieving speedups ranging from
+between accuracy and TTFT. Figure 20 indicates that enabling                                                      1.2⇥ to 2.0⇥.
+
+
+
+USENIX Association                                                                                  23rd USENIX Conference on File and Storage Technologies                                                                                       197
+                      TTFT      Accuracy                                        AS+H2O+LFU     IMPRESS                    AS+H2O+LFU      IMPRESS                   AS+H2O+LFU      IMPRESS
+           0.40                             60                             3                                         8                                         8
+                                                                                                                                                                      PIQA         COPA
+
+
+
+
+                                                 Accuracy (%)
+           0.35                             55                                                                       6                                         6
+
+
+
+
+                                                                TTFT (s)
+
+
+
+
+                                                                                                          TTFT (s)
+
+
+
+
+                                                                                                                                                    TTFT (s)
+                                                                           2
+TTFT (s)
+
+
+
+
+           0.30                             50                                                                       4                                         4
+                                                                           1
+           0.25                             45                                                                       2                                         2
+
+           0.20                             40                             0                                         0                                         0
+                  0   0.4 0.8 1.2 1.6 2.0                                      16   32   64   128   256                  65GB   100GB 200GB 400GB                  LM-7B LM-13B LM-7B LM-13B
+
+
+Figure 22: Results of various Figure 23: Results of various                                               Figure 24: Results on various Figure 25: Results on Llama
+alpha values.                 chunk sizes.                                                                dataset sizes.                (LM) models.
+Model type. Figure 25 shows the average TTFT for Llama2-
+                                                                                                          identify these KVs. However, they require full keys during the
+7B and Llama2-13B models on PIQA and COPA. It demon-
+                                                                                                          prefill phase, leading to high I/O latency when combined with
+strates that IMPRESS achieves a 1.7⇥-2.7⇥ speedup on
+                                                                                                          prefix KV storage systems. IMPRESS leverages the similarity
+Llama models, attributed to similar reasons in §6.2.
+                                                                                                          of important token indices across heads to identify important
+                                                                                                          KVs with minimal I/O, reducing TTFT while maintaining
+6.5               Overhead Analysis                                                                       high accuracy. Others [10, 21, 23, 32, 41] focus on KV quanti-
+                                                                                                          zation to reduce bit counts per key and value element. They
+Time overhead. The similarity-guided important token iden-                                                can complement IMPRESS to further decrease data load.
+tification technique in IMPRESS loads keys from the probe                                                 Other efficient LLM serving systems. Some works opti-
+heads to determine the important token index set. While this                                              mize other aspects of inference systems, such as request
+adds some I/O and computation overhead, it averages only                                                  scheduling [1,40], model parallelism strategies [19,36], prefill-
+6% of our system’s overhead due to the limited number of                                                  decoding decoupling [11, 13, 27, 33, 46], and distributed KV
+probe heads, resulting in minimal loading and computation.                                                cache [20, 29]. These optimizations are also orthogonal to
+Furthermore, KV reordering asynchronously sorts tokens by                                                 IMPRESS and can complement its improvements.
+importance and repacks them onto disk, with a total experi-
+mental execution time of less than one minute. This process is
+non-intrusive to TTFT as it operates outside the critical path.                                           8              Conclusion
+Space overhead. KV reordering adds a mapping list to
+each chunk’s metadata for token position mappings post-                                                   Existing prefix KV reuse systems do not always reduce TTFT,
+reordering. Score-based cache management adds a score per                                                 especially when disk I/O latency is involved in large-scale
+chunk. With a 64-token chunk size, these additions account                                                LLM services. We propose IMPRESS, a multi-tier prefix
+for less than 0.5% of the chunk’s memory. Additionally,                                                   KV storage system to minimize I/O delay by only loading
+to avoid loading data from other heads when loading keys                                                  important KVs. Simply applying existing important token
+from the probe heads, we redundantly store the keys from the                                              identification algorithms is suboptimal, as the reduction in
+probe heads separately. This accounts for 1.2% of the total                                               I/O is limited. Therefore, we first introduce the I/O-efficient
+storage of all prefix KVs, which is a minimal cost considering                                            similarity-guided important token identification algorithm to
+high-capacity disks.                                                                                      identify important KVs with minimal I/O. Then, we propose
+                                                                                                          importance-informed KV management to optimize storage
+                                                                                                          and caching, further reducing TTFT. Our experiments show
+7            Related Work                                                                                 that IMPRESS reduces TTFT by up to 2.8⇥ compared to state-
+                                                                                                          of-the-art systems, while maintaining comparable inference
+KV cache reuse. Some works [15, 28, 32, 35] accelerate the                                                accuracy.
+decoding phase by reusing KVs across iterations within a
+request. These are orthogonal to IMPRESS, which targets
+the prefill phase. Recent studies [5, 12, 14, 21, 39, 45] reuse                                           Acknowledgments
+shared prefix KVs across requests to reduce prefill latency
+(i.e., TTFT), but load entire prefix KVs, causing high I/O la-                                            We sincerely thank the anonymous reviewers for their con-
+tency when KVs are on disk. In contrast, IMPRESS prefetches                                               structive suggestions. This work was supported in part by
+only important prefix KVs, reducing I/O latency. Other ef-                                                the National Key Research and Development Program of
+forts [8, 38] explore finer-grained reuse of prefix KVs at the                                            China (2023YFB4502100), the National Science Foundation
+text segment level, which is orthogonal to IMPRESS and can                                                of China (62172361), the Major Projects of Zhejiang Province
+be combined to enable more KV reuse.                                                                      (LD24F020012), the Open Project Program of Wuhan Na-
+KV pruning and quantization. Recent studies [17, 22, 32,                                                  tional Laboratory for Optoelectronics (2023WNLOKF005),
+44] show LLM inference can achieve similar output quality                                                 and the Pioneer and Leading Goose R&D Program of Zhe-
+using only a subset of KVs, proposing various methods to                                                  jiang Province (2024SSYS0002).
+
+
+
+198               23rd USENIX Conference on File and Storage Technologies                                                                                              USENIX Association
+References                                                       [10] Coleman Hooper, Sehoon Kim, Hiva Mohammadzadeh,
+                                                                      Michael W Mahoney, Yakun Sophia Shao, Kurt Keutzer,
+ [1] Amey Agrawal, Nitin Kedia, Ashish Panwar, Jayashree              and Amir Gholami. Kvquant: Towards 10 Million Con-
+     Mohan, Nipun Kwatra, Bhargav Gulavani, Alexey                    text Length LLM Inference with KV Cache Quantiza-
+     Tumanov, and Ramachandran Ramjee.             Taming             tion. arXiv preprint arXiv:2401.18079, 2024.
+     Throughput-Latency Tradeoff in LLM Inference with
+     Sarathi-Serve. In Proceedings of the 18th USENIX Sym-       [11] Cunchen Hu, Heyang Huang, Liangliang Xu, Xusheng
+     posium on Operating Systems Design and Implementa-               Chen, Jiang Xu, Shuang Chen, Hao Feng, Chenxi Wang,
+     tion (OSDI), pages 117–134, 2024.                                Sa Wang, Yungang Bao, et al. Inference without Inter-
+                                                                      ference: Disaggregate LLM Inference for Mixed Down-
+ [2] Toufique Ahmed and Premkumar Devanbu. Better Patch-              stream Workloads. arXiv preprint arXiv:2401.11181,
+     ing Using LLM Prompting, via Self-Consistency. In Pro-           2024.
+     ceedings of the 38th IEEE/ACM International Confer-
+     ence on Automated Software Engineering (ASE), pages         [12] Chao Jin, Zili Zhang, Xuanlin Jiang, Fangyue Liu, Xin
+     1742–1746. IEEE, 2023.                                           Liu, Xuanzhe Liu, and Xin Jin. RAGCache: Efficient
+                                                                      Knowledge Caching for Retrieval-Augmented Genera-
+ [3] G Bharathi Mohan, R Prasanna Kumar, Srinivasan                   tion. arXiv preprint arXiv:2404.12457, 2024.
+     Parathasarathy, S Aravind, KB Hanish, and G Pavithria.
+     Text Summarization for Big Data Analytics: A Compre-        [13] Yibo Jin, Tao Wang, Huimin Lin, Mingyang Song,
+     hensive Review of GPT 2 and BERT Approaches. Data                Peiyang Li, Yipeng Ma, Yicheng Shan, Zhengfan Yuan,
+     Analytics for Internet of Things Infrastructure, pages           Cailong Li, Yajing Sun, et al. P/D-Serve: Serving Disag-
+     247–264, 2023.                                                   gregated Large Language Model at Scale. arXiv preprint
+                                                                      arXiv:2408.08147, 2024.
+ [4] Sam Fletcher, Md Zahidul Islam, et al. Comparing Sets
+     of Patterns with the Jaccard Index. Australasian Journal    [14] Jordan Juravsky, Bradley Brown, Ryan Ehrlich, Daniel Y
+     of Information Systems, 22, 2018.                                Fu, Christopher Ré, and Azalia Mirhoseini. Hydragen:
+                                                                      High-Throughput LLM Inference with Shared Prefixes.
+ [5] Bin Gao, Zhuomin He, Puru Sharma, Qingxuan Kang,                 arXiv preprint arXiv:2402.05099, 2024.
+     Djordje Jevdjic, Junbo Deng, Xingkun Yang, Zhou
+     Yu, and Pengfei Zuo. AttentionStore: Cost-Effective         [15] Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying
+     Attention Reuse across Multi-Turn Conversations in               Sheng, Lianmin Zheng, Cody Hao Yu, Joseph Gonzalez,
+     Large Language Model Serving.       arXiv preprint               Hao Zhang, and Ion Stoica. Efficient Memory Man-
+     arXiv:2403.19708, 2024.                                          agement for Large Language Model Serving with Page-
+                                                                      dAttention. In Proceedings of the 29th Symposium on
+ [6] Leo Gao, Jonathan Tow, Stella Biderman, Sid Black,               Operating Systems Principles (SOSP), pages 611–626,
+     Anthony DiPofi, Charles Foster, Laurence Golding, Jef-           2023.
+     frey Hsu, Kyle McDonell, Niklas Muennighoff, et al. A
+     Framework for Few-Shot Language Model Evaluation,           [16] Peter Lee, Sebastien Bubeck, and Joseph Petro. Ben-
+     2024. https://zenodo.org/records/12608602.                       efits, Limits, and Risks of GPT-4 as an AI Chatbot
+                                                                      for Medicine. New England Journal of Medicine,
+ [7] Alireza Ghadimi and Hamid Beigy. Hybrid Multi-                   388(13):1233–1239, 2023.
+     Document Summarization using Pre-Trained Language
+     Models. Expert Systems with Applications, 192:116292,       [17] Wonbeom Lee, Jungi Lee, Junghwan Seo, and Jaewoong
+     2022.                                                            Sim. InfiniGen: Efficient Generative Inference of Large
+                                                                      Language Models with Dynamic KV Cache Manage-
+ [8] In Gim, Guojun Chen, Seung-seob Lee, Nikhil Sarda,               ment. In Proceedings of the 18th USENIX Sympo-
+     Anurag Khandelwal, and Lin Zhong. Prompt Cache:                  sium on Operating Systems Design and Implementation
+     Modular Attention Reuse for Low-Latency Inference. In            (OSDI), pages 155–172, 2024.
+     Proceedings of Machine Learning and Systems (MLSys),
+     volume 6, pages 325–338, 2024.                              [18] Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio
+                                                                      Petroni, Vladimir Karpukhin, Naman Goyal, Heinrich
+ [9] Amr Hendy, Mohamed Abdelrehim, Amr Sharaf,                       Küttler, Mike Lewis, Wen-tau Yih, Tim Rocktäschel, Se-
+     Vikas Raunak, Mohamed Gabr, Hitokazu Matsushita,                 bastian Riedel, and Douwe Kiela. Retrieval-Augmented
+     Young Jin Kim, Mohamed Afify, and Hany Hassan                    Generation for Knowledge-Intensive NLP Tasks. In
+     Awadalla. How Good are GPT Models at Machine                     Proceedings of the Conference on Neural Information
+     Translation? A Comprehensive Evaluation. arXiv                   Processing Systems (NeurIPS), volume 33, pages 9459–
+     preprint arXiv:2302.09210, 2023.                                 9474, 2020.
+
+
+
+USENIX Association                                          23rd USENIX Conference on File and Storage Technologies      199
+[19] Zhuohan Li, Lianmin Zheng, Yinmin Zhong, Vincent          [27] Pratyush Patel, Esha Choukse, Chaojie Zhang, Aashaka
+     Liu, Ying Sheng, Xin Jin, Yanping Huang, Zhifeng Chen,         Shah, Íñigo Goiri, Saeed Maleki, and Ricardo Bianchini.
+     Hao Zhang, Joseph E Gonzalez, et al. AlpaServe: Sta-           Splitwise: Efficient Generative LLM Inference using
+     tistical Multiplexing with Model Parallelism for Deep          Phase Splitting. In Proceedings of ACM/IEEE 51st
+     Learning Serving. In Proceedings of the 17th USENIX            Annual International Symposium on Computer Architec-
+     Symposium on Operating Systems Design and Imple-               ture (ISCA), pages 118–132, 2024.
+     mentation (OSDI), pages 663–679, 2023.
+                                                               [28] Reiner Pope, Sholto Douglas, Aakanksha Chowdhery,
+[20] Bin Lin, Tao Peng, Chen Zhang, Minmin Sun, Lanbo Li,           Jacob Devlin, James Bradbury, Jonathan Heek, Kefan
+     Hanyu Zhao, Wencong Xiao, Qi Xu, Xiafei Qiu, Shen              Xiao, Shivani Agrawal, and Jeff Dean. Efficiently Scal-
+     Li, et al. Infinite-LLM: Efficient LLM Service for Long        ing Transformer Inference. In Proceedings of Machine
+     Context with DistAttention and Distributed KVCache.            Learning and Systems (MLSys), volume 5, pages 606–
+     arXiv preprint arXiv:2401.02669, 2024.                         624, 2023.
+
+[21] Yuhan Liu, Hanchen Li, Yihua Cheng, Siddhant Ray,         [29] Ruoyu Qin, Zheming Li, Weiran He, Mingxing Zhang,
+     Yuyang Huang, Qizheng Zhang, Kuntai Du, Jiayi Yao,             Yongwei Wu, Weimin Zheng, and Xinran Xu. Moon-
+     Shan Lu, Ganesh Ananthanarayanan, et al. CacheGen:             cake: A KVCache-Centric Disaggregated Architecture
+     KV Cache Compression and Streaming for Fast Large              for LLM Serving. arXiv preprint arXiv:2407.00079,
+     Language Model Serving. In Proceedings of the ACM              2024.
+     Special Interest Group on Data Communication Confer-
+     ence (SIGCOMM), pages 38–56, 2024.                        [30] Pranav Rajpurkar, Robin Jia, and Percy Liang. Know
+                                                                    What You Don’t Know: Unanswerable Questions for
+[22] Zichang Liu, Aditya Desai, Fangshuo Liao, Weitao               SQuAD. arXiv preprint arXiv:1806.03822, 2018.
+     Wang, Victor Xie, Zhaozhuo Xu, Anastasios Kyrillidis,
+                                                               [31] Vikas Raunak, Amr Sharaf, Yiren Wang, Hany Awadalla,
+     and Anshumali Shrivastava. Scissorhands: Exploiting
+                                                                    and Arul Menezes. Leveraging GPT-4 for Automatic
+     the Persistence of Importance Hypothesis for LLM KV
+                                                                    Translation Post-Editing. In Proceedings of Find-
+     Cache Compression at Test Time. In Proceedings of
+                                                                    ings of the Association for Computational Linguistics
+     the Advances in Neural Information Processing Systems
+                                                                    (EMNLP), pages 12009–12024, 2023.
+     (NeurIPS), volume 36, pages 52342–52364, 2023.
+                                                               [32] Ying Sheng, Lianmin Zheng, Binhang Yuan, Zhuohan
+[23] Zirui Liu, Jiayi Yuan, Hongye Jin, Shaochen Zhong,
+                                                                    Li, Max Ryabinin, Beidi Chen, Percy Liang, Christo-
+     Zhaozhuo Xu, Vladimir Braverman, Beidi Chen, and
+                                                                    pher Ré, Ion Stoica, and Ce Zhang. FlexGen: High-
+     Xia Hu. KIVI: A Tuning-Free Asymmetric 2bit Quanti-
+                                                                    Throughput Generative Inference of Large Language
+     zation for KV Cache. arXiv preprint arXiv:2402.02750,
+                                                                    Models with A Single GPU. In Proceedings of Interna-
+     2024.
+                                                                    tional Conference on Machine Learning (ICML), pages
+[24] Pan Lu.      Chameleon-LLM, 2024.     https:                   31094–31116, 2023.
+     //github.com/lupantech/chameleon-llm/blob/                [33] Foteini Strati, Sara Mcallister, Amar Phanishayee, Jakub
+     main/run_tabmwp/demos/prompt_policy.py.                        Tarnawski, and Ana Klimovic. DéjàVu: KV-Cache
+[25] Pan Lu, Baolin Peng, Hao Cheng, Michel Galley, Kai-            Streaming for Fast, Fault-Tolerant Generative LLM
+     Wei Chang, Ying Nian Wu, Song-Chun Zhu, and Jian-              Serving. arXiv preprint arXiv:2403.01876, 2024.
+     feng Gao. Chameleon: Plug-and-Play Compositional          [34] ShareGPT Teams.        ShareGPT, 2023.       https://
+     Reasoning with Large Language Models. In Proceed-              sharegpt.com.
+     ings of the Advances in Neural Information Process-
+     ing Systems (NeurIPS), volume 36, pages 43447–43478,      [35] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob
+     2023.                                                          Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser,
+                                                                    and Illia Polosukhin. Attention Is All You Need. In
+[26] Jaehyun Park, Jaewan Choi, Kwanhee Kyung,                      Proceedings of the Advances in Neural Information Pro-
+     Michael Jaemin Kim, Yongsuk Kwon, Nam Sung Kim,                cessing Systems (NeurIPS), volume 30, 2017.
+     and Jung Ho Ahn. AttAcc! Unleashing the Power
+     of PIM for Batched Transformer-based Generative           [36] Bingyang Wu, Shengyu Liu, Yinmin Zhong, Peng Sun,
+     Model Inference. In Proceedings of the 29th ACM                Xuanzhe Liu, and Xin Jin. LoongServe: Efficiently Serv-
+     International Conference on Architectural Support              ing Long-context Large Language Models with Elastic
+     for Programming Languages and Operating Systems                Sequence Parallelism. arXiv preprint arXiv:2404.09526,
+     (ASPLOS), volume 2, pages 103–119, 2024.                       2024.
+
+
+
+200   23rd USENIX Conference on File and Storage Technologies                                          USENIX Association
+[37] Tianyu Wu, Shizhu He, Jingping Liu, Siqi Sun, Kang           [46] Yinmin Zhong, Shengyu Liu, Junda Chen, Jianbo Hu,
+     Liu, Qing-Long Han, and Yang Tang. A Brief Overview               Yibo Zhu, Xuanzhe Liu, Xin Jin, and Hao Zhang. Dist-
+     of ChatGPT: The History, Status Quo and Potential Fu-             Serve: Disaggregating Prefill and Decoding for Goodput-
+     ture Development. IEEE/CAA Journal of Automatica                  Optimized Large Language Model Serving. In Pro-
+     Sinica, 10(5):1122–1136, 2023.                                    ceedings of the 18th USENIX Symposium on Operating
+                                                                       Systems Design and Implementation (OSDI), pages 193–
+[38] Jiayi Yao, Hanchen Li, Yuhan Liu, Siddhant Ray, Yi-               210, 2024.
+     hua Cheng, Qizheng Zhang, Kuntai Du, Shan Lu, and
+     Junchen Jiang. CacheBlend: Fast Large Language
+     Model Serving with Cached Knowledge Fusion. arXiv
+     preprint arXiv:2405.16444, 2024.
+
+[39] Lu Ye, Ze Tao, Yong Huang, and Yang Li. Chunkat-
+     tention: Efficient Self-Attention With Prefix-Aware
+     KV Cache and Two-Phase Partition. arXiv preprint
+     arXiv:2402.15220, 2024.
+
+[40] Gyeong-In Yu, Joo Seong Jeong, Geon-Woo Kim, Soo-
+     jeong Kim, and Byung-Gon Chun. Orca: A Distributed
+     Serving System for Transformer-Based Generative Mod-
+     els. In Proceedings of the 16th USENIX Symposium on
+     Operating Systems Design and Implementation (OSDI),
+     pages 521–538, 2022.
+
+[41] Yuxuan Yue, Zhihang Yuan, Haojie Duanmu, Sifan
+     Zhou, Jianlong Wu, and Liqiang Nie. WKVQuant:
+     Quantizing Weight and Key/Value Cache for Large
+     Language Models Gains More.       arXiv preprint
+     arXiv:2402.12065, 2024.
+
+[42] Susan Zhang, Stephen Roller, Naman Goyal, Mikel
+     Artetxe, Moya Chen, Shuohui Chen, Christopher De-
+     wan, Mona Diab, Xian Li, Xi Victoria Lin, et al. OPT:
+     Open Pre-Trained Transformer Language Models. arXiv
+     preprint arXiv:2205.01068, 2022.
+
+[43] Yue Zhang, Yafu Li, Leyang Cui, Deng Cai, Lemao Liu,
+     Tingchen Fu, Xinting Huang, Enbo Zhao, Yu Zhang,
+     Yulong Chen, et al. Siren’s Song in the AI Ocean: A
+     Survey on Hallucination in Large Language Models.
+     arXiv preprint arXiv:2309.01219, 2023.
+
+[44] Zhenyu Zhang, Ying Sheng, Tianyi Zhou, Tianlong
+     Chen, Lianmin Zheng, Ruisi Cai, Zhao Song, Yuandong
+     Tian, Christopher Ré, Clark Barrett, et al. H2O: Heavy-
+     Hitter Oracle for Efficient Generative Inference of Large
+     Language Models. In Proceedings of the Advances in
+     Neural Information Processing Systems (NeurIPS), vol-
+     ume 36, pages 34661–34710, 2023.
+
+[45] Lianmin Zheng, Liangsheng Yin, Zhiqiang Xie, Jeff
+     Huang, Chuyue Sun, Cody Hao Yu, Shiyi Cao, Chris-
+     tos Kozyrakis, Ion Stoica, Joseph E Gonzalez, et al.
+     SGLang: Efficient Execution of Structured Language
+     Model Programs. arXiv preprint arXiv:2312.07104,
+     2023.
+
+
+
+USENIX Association                                           23rd USENIX Conference on File and Storage Technologies     201
+

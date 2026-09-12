@@ -10,12 +10,12 @@
 | q4_weight_bytes | 4,257,230,400 |
 | kv_bytes | 1,207,959,552 |
 | prefill_flops | 133,594,323,353,600 |
-| end_model_seconds_per_round | 2.8730554654205607 |
+| end_model_seconds_per_round | 2.900159762264151 |
 | near_model_seconds_per_round | 0.13723970303571428 |
 | cloud_model_seconds_per_round | 0.07341299935522388 |
 | near_prepare_seconds | 0.2651733294037316 |
 | cloud_prepare_seconds | 0.13502559465696382 |
-| totals_twenty_rounds_seconds | `[63.46110930841122, 11.009967390118018, 31.60328558176144]` |
+| totals_twenty_rounds_seconds | `[64.00319524528302, 11.009967390118018, 31.60328558176144]` |
 | energy_twenty_rounds_joules | `[[518.4, 680.4], [1805.9804340708104, 1805.9804340708104], [1122.299907233009, 1122.299907233009]]` |
 | lowest_energy_feasible_twenty_rounds | `"cloud"` |
 | cloud_deadline_uplink_mbit_per_second | 3.832712355982445 |

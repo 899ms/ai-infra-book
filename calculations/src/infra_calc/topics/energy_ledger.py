@@ -13,7 +13,9 @@ its archived text file, line, date and process node:
 - NVLink: references/text/nvidia-grace-hopper-blog.txt ("NVLink-C2C also only uses 1.3 picojoules per bit").
 - compute: references/text/dally-hotchips2023.txt line 204 ("HFMA 1.5pJ", 45 nm), one FMA = 2 FLOPs.
 - register file and NIC energy per byte: not stated in any archived source, so those levels are absent.
-- phone: references/text/micron-lpddr5x-page.txt line 273 ("top speed grade of 10.7 Gbps") per pin, x16 channel;
+- phone: references/text/qualcomm-8elite-brief.txt line 241 ("Support for LP-DDR5x memory, up to 5300 MHz"),
+  two transfers per clock = 10.6 Gbit/s per pin, x16 channel; the Micron 10.7 Gbps top speed grade
+  (references/text/micron-lpddr5x-page.txt line 273) is the device ceiling, above what this SoC drives;
   channel count is declared because the SoC briefs do not state the bus width.
 - MELTing point: references/text/melting-point.txt lines 1514-1515 (0.21/0.20/0.16 mWh per token) and line 2197.
 - rack air cooling: references/text/ashrae-liquid-cooling.txt states no explicit rack limit (only 40-50 kW rack
@@ -172,7 +174,10 @@ def calculate(decode_result='results/qwen3-8b-decode-b1-s8192.json', chapter1_co
         soc = _lookup(extract, 'qualcomm-8elite-brief', 'LPDDR5X speed')
         phone = dict(lpddr5x_pin_rate=pin, soc_memory_clock=soc, declared_phone_channels_x16=declared_phone_channels_x16)
         if pin is not None:
-            rate = exact(str(pin['value']), 'LPDDR5X pin rate') * 10**9  # bit/s per pin
+            # The book uses the rate this SoC supports (qualcomm-8elite-brief: up to 5300 MHz
+            # LPDDR5X, two transfers per clock = 10.6 Gbit/s per pin), not Micron's 10.7 Gbit/s
+            # device top speed grade.
+            rate = exact('10.6', 'LPDDR5X pin rate') * 10**9  # bit/s per pin
             channel = rate * 16 / 8
             bus = channel * declared_phone_channels_x16
             phone.update(x16_channel_bytes_per_second_exact=str(channel), x16_channel_gb_per_second=float(channel / 10**9),

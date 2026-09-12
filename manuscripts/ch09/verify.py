@@ -32,7 +32,7 @@ check(len(index)==count,'Active vector figure index')
 check(html.count('src="data:image/png;base64,')==count,'Reading HTML embeds all active figures')
 math=json.loads((HERE/'math-validation.json').read_text());check(math['expressions']>=80 and not math['errors'],'KaTeX parsed all inline and display formulas')
 check('MATHPLACEHOLDER' not in html and 'katex-error' not in html,'No unrendered math')
-layout=json.loads((HERE/'teaching-layout-validation.json').read_text())+json.loads((HERE/'ub-ep-layout-validation.json').read_text())
+layout=json.loads((HERE/'teaching-layout-validation.json').read_text())+json.loads((HERE/'ub-ep-layout-validation.json').read_text())+json.loads((HERE/'kv-tier-layout-validation.json').read_text())
 check(len(layout)==count and all(x['width_pt']==420 and x['min_label_pt']>=11 and not x['text_extent_warnings'] for x in layout),'Book-size readable labels')
 # Independently check the chapter's key arithmetic against frozen results.
 V=2*36*8192*8*128*2;check(V==1207959552,'GQA KV bytes');check(V/2**30==1.125,'Binary capacity conversion')

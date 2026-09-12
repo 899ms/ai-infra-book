@@ -29,7 +29,7 @@ def draw(here):
         out.save(f,'figure-4-evolution-precision')
 
         f,a=canvas(4.4)
-        for y,label,loader,acc in [(.72,'Ampere','异步拷贝','寄存器'),(.42,'Hopper','TMA 搬运','寄存器'),(.12,'Blackwell SM100','TMA 搬运','TMEM')]:
+        for y,label,loader,acc in [(.72,'Ampere','异步拷贝','寄存器'),(.42,'Hopper','TMA 搬移','寄存器'),(.12,'Blackwell SM100','TMA 搬移','TMEM')]:
             text(a,.03,y+.21,label,14)
             for x,w,t,c in [(.03,.20,loader,'blue'),(.29,.20,'共享内存','blue'),(.55,.19,'矩阵单元','orange'),(.80,.18,acc,'purple')]:box(a,x,y,w,.14,t,c,11)
             for x1,x2 in [(.23,.29),(.49,.55),(.74,.80)]:arrow(a,(x1,y+.07),(x2,y+.07))

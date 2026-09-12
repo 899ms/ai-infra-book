@@ -12,7 +12,7 @@ for stage in range(4):
   t=stage+mb;ax.add_patch(Rectangle((t,stage-.36),1,.72,fc=shade(.28+mb*.065),ec='white'))
   ax.text(t+.5,stage,str(mb+1),ha='center',va='center',fontsize=12,color=C['ink'] if mb<5 else 'white')
 ax.set(xlim=(0,11),ylim=(3.7,-.7),xticks=range(12),yticks=range(4),yticklabels=[f'阶段 {i+1}' for i in range(4)],xlabel='时间 / ms')
-ax.set_title('同一微批依次通过四个阶段；不同微批可以同时计算',pad=18,fontsize=14)
+ax.set_title('同一 micro-batch 依次通过四个阶段；不同 micro-batch 可以同时计算',pad=18,fontsize=14)
 ax.text(1,3,'启动时空闲',ha='center',va='center',fontsize=10,color=C['muted']);ax.text(9.5,0,'结束时空闲',ha='center',va='center',fontsize=10,color=C['muted'])
 save(f,'figure-7-4-pipeline');data['7-4']={'kind':'derived teaching','stages':4,'microbatches':8,'stage_ms':1,'start_ms':[[i+j for j in range(8)] for i in range(4)],'finish_ms':11}
 # 5: The same bytes meet one NIC, eight independent NICs, or the contrast configuration's dual-port NIC behind one PCIe Gen4 x16 slot.

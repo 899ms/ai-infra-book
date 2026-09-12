@@ -4,7 +4,7 @@
 
 ## 计算与图表
 
-表 2-A 至 2-D、完整请求表和相关配图统一覆盖五个典型模型。长上下文主图比较 8K 与 1M，200K 数据保留在计算结果中。表 2-E 分解 V4.1 Flash 的参考全层与 CED 输入计算；表 2-6 列出其矩阵组成。表 2-3 的 DeepSeek-V3 是 MLA 的历史参照。
+表 2-A 至 2-C 与表 2-E、完整请求表和相关配图统一覆盖五个典型模型。长上下文主图比较 8K 与 1M，200K 数据保留在计算结果中。表 2-D 分解 V4.1 Flash 的参考全层与 CED 输入计算；表 2-6 列出其矩阵组成。表 2-3 的 DeepSeek-V3 是 MLA 的历史参照。
 
 - [统一计算结果](../../calculations/results/chapter2-model-comparison.json)
 - [V4.1 CED 8K 前向记录](../../calculations/results/v41-forward-prefill-8192-ced.md)

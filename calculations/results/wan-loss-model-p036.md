@@ -1,6 +1,6 @@
 # wan-loss-model — 
 
-输入：`{"declared_model_seconds": "0.038", "fec_extra_losses": [0, 1], "fec_symbol_bytes": 1448, "fec_target": "0.999", "knee_bits_per_second": 333000000, "loss_probability": "0.036", "mss_bytes": 1448, "reference": null, "request_bytes": 354640, "rtt_seconds": "0.2"}`
+输入：`{"declared_model_seconds": "0.030", "fec_extra_losses": [0, 1], "fec_symbol_bytes": 1448, "fec_target": "0.999", "knee_bits_per_second": 333000000, "loss_probability": "0.036", "mss_bytes": 1448, "reference": null, "request_bytes": 354640, "rtt_seconds": "0.2"}`
 
 数值是分析计算；字节以 bytes 保存，FMA=2，不是硬件测量。
 
@@ -11,9 +11,9 @@
 | bdp_bytes | 8,325,000.0 |
 | packets | 245 |
 | expected_losses | 8.82 |
-| serial_budget_seconds | 0.2465198798798799 |
-| expected_completion_seconds | 0.5032928548099412 |
-| p99_completion_seconds | 0.8465198798798799 |
+| serial_budget_seconds | 0.23851987987987988 |
+| expected_completion_seconds | 0.4952928548099412 |
+| p99_completion_seconds | 0.8385198798798799 |
 | expected_rounds | 2.2838648746503067 |
 | p99_rounds | 4 |
 | fec_repair_symbols | 20 |

@@ -71,7 +71,7 @@ def draw(here,data):
             f,a=plot(4.8,left=.20);offset=0
             for n,c in zip(lengths,['blue','green']):a.add_patch(Polygon([(offset,offset),(offset,offset+n),(offset+n,offset+n)],facecolor=COL[c],edgecolor=COL['line']));offset+=n
             a.set(xlim=(0,8192),ylim=(8192,0),xticks=[0,lengths[0],8192],yticks=[0,lengths[0],8192],xlabel='键的 token 索引',ylabel='查询 token 索引');a.set_aspect('equal');save(f,'9-attention-area' if i==0 else 'attention-unequal')
-        f,a=canvas(4.1);box(a,.04,.65,.92,.17,'已训练：到批次 100','green')
+        f,a=canvas(4.1);box(a,.04,.65,.92,.17,'已训练：到 batch 100','green')
         for i in range(8):box(a,.04+(i%4)*.235,.37-(i//4)*.20,.21,.14,str(101+i),'blue' if i<4 else 'gray',12)
         text(a,.5,.05,'101—108：已安排准备，仍等待训练',12,ha='center');save(f,'10-input-queue')
         f,a=canvas(4.0)
@@ -134,8 +134,8 @@ def draw(here,data):
         # 24: smaller pipeline bubbles trade against transfers, activation peaks and parameters.
         d=data['10-24'];names=list(d);x=np.arange(4)
         f,(a1,a2)=plt.subplots(1,2,figsize=(420/72,3.9));f.subplots_adjust(left=.125,right=.94,bottom=.24,top=.80,wspace=.42)
-        a1.bar(x-.17,[d[k]['makespan_m8_ms'] for k in names],.32,color=COL['blue'],edgecolor=COL['line'],label='8 个微批次')
-        a1.bar(x+.17,[d[k]['makespan_m16_ms'] for k in names],.32,color=COL['orange'],edgecolor=COL['line'],label='16 个微批次')
+        a1.bar(x-.17,[d[k]['makespan_m8_ms'] for k in names],.32,color=COL['blue'],edgecolor=COL['line'],label='8 个 micro-batch')
+        a1.bar(x+.17,[d[k]['makespan_m16_ms'] for k in names],.32,color=COL['orange'],edgecolor=COL['line'],label='16 个 micro-batch')
         for xx,k in zip(x,names):a1.text(xx-.17,d[k]['makespan_m8_ms']+8,f"{d[k]['makespan_m8_ms']:.0f}",ha='center',fontsize=11);a1.text(xx+.17,d[k]['makespan_m16_ms']+8,f"{d[k]['makespan_m16_ms']:.0f}",ha='center',fontsize=11)
         a1.set(xticks=x,ylabel='完成时间（ms）',ylim=(0,700));a1.set_xticklabels(['1F1B','交错 v=2','零气泡','DualPipe'],rotation=22,ha='right');a1.legend(frameon=False,ncol=2,loc='lower center',bbox_to_anchor=(.5,1.01),fontsize=11)
         peaks=[max(d[k]['stage_peaks_m8_mib']) for k in names]
@@ -145,7 +145,7 @@ def draw(here,data):
         out.save(f,'figure-10-pipeline-schedules')
         # 29: capacity factor trades dropped assignments against padded rows.
         d=data['10-29'];f,a=plot(3.9)
-        a.bar(x-.17,[v*100 for v in d['model_dropped_fraction']],.32,color=COL['orange'],edgecolor=COL['line'],label='丢弃分派占总分派')
+        a.bar(x-.17,[v*100 for v in d['model_dropped_fraction']],.32,color=COL['orange'],edgecolor=COL['line'],label='丢弃的 dispatch 占比')
         a.bar(x+.17,[v*100 for v in d['model_padded_fraction']],.32,color=COL['blue'],edgecolor=COL['line'],label='补零行占执行量')
         for xx,dr,pa in zip(x,d['model_dropped_fraction'],d['model_padded_fraction']):
             a.text(xx-.17,dr*100+1.2,f'{dr*100:.1f}',ha='center',fontsize=11);a.text(xx+.17,pa*100+1.2,f'{pa*100:.0f}',ha='center',fontsize=11)

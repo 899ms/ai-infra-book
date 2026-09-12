@@ -48,7 +48,7 @@ def draw(here):
 
         # DP: model copied, samples split; gradients meet only in training.
         f, a = canvas(3.4)
-        box(a, .03, .40, .15, .22, '输入批次\n样本 0–7', 'gray', 11)
+        box(a, .03, .40, .15, .22, '输入 batch\n样本 0–7', 'gray', 11)
         for r, (y, col, s, o) in enumerate([(.66, 'blue', '样本 0–3', '输出 0–3'), (.12, 'green', '样本 4–7', '输出 4–7')]):
             text(a, .25, y + .27 if r == 0 else y - .07, f'卡 {r}', 12)
             arrow(a, (.18, .51), (.24, y + .10))
@@ -165,7 +165,7 @@ def draw(here):
         f, a = canvas(4.0)
         box(a, .10, .82, .80, .12, '注意力与路由器：每卡处理自己持有的 token', 'gray', 11)
         arrow(a, (.50, .82), (.50, .74))
-        box(a, .10, .64, .80, .10, 'All-to-All 派发：按所选专家的所在卡发送输入', 'orange', 11)
+        box(a, .10, .64, .80, .10, 'All-to-All dispatch：按所选专家的所在卡发送输入', 'orange', 11)
         for r, (x, col) in enumerate([(.10, 'blue'), (.52, 'green')]):
             arrow(a, (x + .19, .64), (x + .19, .56))
             box(a, x, .30, .38, .26, '', col); text(a, x + .19, .515, f'卡 {r}', 12, ha='center')

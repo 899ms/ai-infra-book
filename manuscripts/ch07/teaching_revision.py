@@ -53,7 +53,7 @@ def draw(here,data):
         f,a=plot(3.6,left=.18)
         for stage in range(4):
             for batch in range(8):a.barh(stage,1,left=stage+batch,height=.7,color=COL[['blue','green','orange','purple'][batch%4]],edgecolor=COL['line']);a.text(stage+batch+.5,stage,str(batch),ha='center',va='center',fontsize=11)
-        a.set(yticks=range(4),yticklabels=[f'阶段 {i}' for i in range(4)],xlim=(0,11),xticks=[0,2,4,6,8,10,11],xlabel='时间（ms）；格内为微批次编号');a.invert_yaxis();save(f,'4-pipeline')
+        a.set(yticks=range(4),yticklabels=[f'阶段 {i}' for i in range(4)],xlim=(0,11),xticks=[0,2,4,6,8,10,11],xlabel='时间（ms）；格内为 micro-batch 编号');a.invert_yaxis();save(f,'4-pipeline')
         for i in range(3):
             f,a=canvas(3.9);text(a,.04,.94,['集中到一张网卡','均分到八张独立网卡','对照配置：双端口网卡共用一个 PCIe 插槽'][i],14);box(a,.04,.42,.24,.24,'32 MiB','blue')
             if i==0:box(a,.64,.42,.30,.24,'网卡\n50 GB/s','orange');arrow(a,(.28,.54),(.64,.54))

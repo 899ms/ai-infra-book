@@ -55,8 +55,8 @@ def draw_local_tiers(out,data):
     """Three local device tiers reading the same 16.345 GB decode step."""
     rows=[('RTX PRO 6000',9.12,'109.6 token/s','green'),
           ('M3 Ultra',19.96,'50.1 token/s','green'),
-          ('手机，q4_0 权重',63.8,'15.7 token/s','blue'),
-          ('手机，BF16 权重',191,'5.2 token/s','blue')]
+          ('手机，q4_0 权重',64.4,'15.5 token/s','blue'),
+          ('手机，BF16 权重',192.7,'5.2 token/s','blue')]
     with plt.rc_context(STYLE):
         f,a=plot(3.4,left=.28)
         for y,(label,ms,rate,c) in enumerate(rows):
@@ -65,16 +65,16 @@ def draw_local_tiers(out,data):
         a.set(yticks=range(4),yticklabels=[r[0] for r in rows],xlabel='每步读取时间下界（ms）',xlim=(0,330))
         out.save(f,'figure-12-local-tiers')
     data['12-local-tiers']={'kind':'teaching_bound','step_bytes':16344778752,'phone_channels_x16_declared':4,
-        'phone_bus_GBps':85.6,'q4_weight_bytes':4257230400,'rows_ms':[r[1] for r in rows],
-        'token_per_s':[109.6,50.1,15.7,5.2],'relationship':'带宽决定每步读取下界'}
+        'phone_bus_GBps':84.8,'q4_weight_bytes':4257230400,'rows_ms':[r[1] for r in rows],
+        'token_per_s':[109.6,50.1,15.5,5.2],'relationship':'带宽决定每步读取下界'}
 
 def draw_loss_repair(out,data):
     """Completion time on the 14 percent loss path under three repair schemes."""
     rows=[('Mathis 上界下仅发送',18.33,'gray'),
-          ('逐轮重传 p99（6 轮）',1.247,'orange'),
-          ('逐轮重传期望',0.764,'orange'),
-          ('FEC 308 符号，99.9% 免重传',0.249,'blue'),
-          ('串行预算：RTT＋模型＋发送',0.247,'green')]
+          ('逐轮重传 p99（6 轮）',1.239,'orange'),
+          ('逐轮重传期望',0.756,'orange'),
+          ('FEC 308 符号，99.9% 免重传',0.2407,'blue'),
+          ('串行预算：RTT＋模型＋发送',0.2385,'green')]
     with plt.rc_context(STYLE):
         f,a=plot(3.6,left=.42)
         for y,(label,t,c) in enumerate(rows):
@@ -84,8 +84,8 @@ def draw_loss_repair(out,data):
               xlabel='完成时间（s，对数坐标）',xticks=[.1,1,10],xticklabels=['0.1','1','10'])
         out.save(f,'figure-12-loss-repair')
     data['12-loss-repair']={'kind':'teaching_bound','path':{'rtt_s':.2,'knee_Mbps':333,'loss':.14,'mss_bytes':1448,
-        'request_bytes':354640},'packets':245,'serial_budget_s':.2465,'mathis_Mbps':.1548,'mathis_send_s':18.33,
-        'retransmit_expected_s':.764,'retransmit_p99_s':1.247,'fec_repair':63,'fec_overhead':.257,'fec_s':.2487,
+        'request_bytes':354640},'packets':245,'serial_budget_s':.2385,'mathis_Mbps':.1548,'mathis_send_s':18.33,
+        'retransmit_expected_s':.756,'retransmit_p99_s':1.239,'fec_repair':63,'fec_overhead':.257,'fec_s':.2407,
         'relationship':'修复方式决定完成时间'}
 
 def draw(here,data):

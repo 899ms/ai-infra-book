@@ -66,11 +66,11 @@ check('all_physical_rows_retained',d['12-6']['starvation_ms']==[[520,360],[700,1
 edge=json.loads((ROOT/'calculations/results/edge-tiers-agent-book.json').read_text());tiers={x['tier']:x for x in edge['tiers']};up=edge['uplink'];cases={c['id']:{r['tier']:r for r in c['rows']} for c in edge['cases']}
 hw={x['id']:x for x in json.loads((ROOT/'calculations/configs/hardware.json').read_text())['devices']}
 step=15136819200*18//64+1207959552
-check('tier_bandwidths',tiers['near']['bandwidth_bytes_per_second']==hw['rtx-pro6000-blackwell-ws']['memory']['bandwidth_bytes_per_second'] and tiers['cloud']['bandwidth_bytes_per_second']==hw['h100-sxm']['memory']['bandwidth_bytes_per_second'] and close(tiers['end']['bandwidth_bytes_per_second'],85.6e9,1))
-check('tier_model_seconds',all(close(tiers[k]['model_seconds_per_round'],45*step/tiers[k]['bandwidth_bytes_per_second']) for k in tiers) and [round(tiers[k]['model_seconds_per_round'],3) for k in ('end','near','cloud')]==[2.873,0.137,0.073])
+check('tier_bandwidths',tiers['near']['bandwidth_bytes_per_second']==hw['rtx-pro6000-blackwell-ws']['memory']['bandwidth_bytes_per_second'] and tiers['cloud']['bandwidth_bytes_per_second']==hw['h100-sxm']['memory']['bandwidth_bytes_per_second'] and close(tiers['end']['bandwidth_bytes_per_second'],84.8e9,1))
+check('tier_model_seconds',all(close(tiers[k]['model_seconds_per_round'],45*step/tiers[k]['bandwidth_bytes_per_second']) for k in tiers) and [round(tiers[k]['model_seconds_per_round'],3) for k in ('end','near','cloud')]==[2.9,0.137,0.073])
 check('tier_prepare',close(tiers['near']['prepare_seconds'],133594323353600/503.8e12) and close(tiers['cloud']['prepare_seconds'],133594323353600/989.4e12) and tiers['end']['prepare_seconds']==0)
 T=[cases['twenty-rounds'][k]['total_seconds'] for k in ('end','near','cloud')]
-check('deployment_times',all(close(x,y) for x,y in zip(T,[20*(.3+tiers['end']['model_seconds_per_round']),tiers['near']['prepare_seconds']+20*(.3+tiers['near']['model_seconds_per_round']+.02+6.4/80),tiers['cloud']['prepare_seconds']+20*(.3+tiers['cloud']['model_seconds_per_round']+.2+6.4/6.4)])) and [round(x,1) for x in T]==[63.5,11.0,31.6] and d['12-7']['task_seconds']==T)
+check('deployment_times',all(close(x,y) for x,y in zip(T,[20*(.3+tiers['end']['model_seconds_per_round']),tiers['near']['prepare_seconds']+20*(.3+tiers['near']['model_seconds_per_round']+.02+6.4/80),tiers['cloud']['prepare_seconds']+20*(.3+tiers['cloud']['model_seconds_per_round']+.2+6.4/6.4)])) and [round(x,1) for x in T]==[64.0,11.0,31.6] and d['12-7']['task_seconds']==T)
 check('deployment_thresholds',close(up['cloud_fixed_seconds']+128/d['12-7']['feasible_threshold_Mbps'],45) and round(d['12-7']['feasible_threshold_Mbps'],1)==3.8 and up['cloud_fixed_seconds']>up['near_total_seconds'] and up['cloud_faster_than_near_uplink_bits_per_second'] is None)
 check('deployment_energy',close(cases['twenty-rounds']['near']['energy_joules'][0],600*(tiers['near']['prepare_seconds']+20*tiers['near']['model_seconds_per_round'])) and close(cases['twenty-rounds']['cloud']['energy_joules'][0],700*(tiers['cloud']['prepare_seconds']+20*tiers['cloud']['model_seconds_per_round'])) and cases['twenty-rounds']['end']['energy_joules']==[900*.576,900*.756] and edge['cases'][0]['lowest_energy_feasible']=='cloud')
 check('measured_ratio_rows',close(up['measured_ratio'],25.83/9.12) and round(up['measured_near_total_seconds'],1)==16.0 and round(up['measured_cloud_fixed_seconds'],1)==14.3 and round(up['measured_cloud_faster_uplink_bits_per_second']/1e6)==73)
@@ -115,10 +115,10 @@ check('all_figure_references_resolve',all(1<=x<=figure_count for x in refs))
 # 12.1.5 on-device execution resources; numbers come from the energy-ledger result and book formulas.
 el=json.loads((ROOT/'calculations/results/energy-ledger-book.json').read_text())['summary']
 w_bytes,kv_bytes=el['weight_read_bytes'],el['kv_read_bytes']
-check('phone_channel_bandwidth',close(16*10.7/8,21.4) and close(4*21.4,el['phone_bus_gb_per_second']))
-check('phone_weight_pass_seconds',close(w_bytes/85.6e9,.17683,1e-4) and close(1000/(w_bytes/85.6e9*1000),5.66,.01))
-check('phone_step_with_kv',close((w_bytes+kv_bytes)/85.6e9*1000,190.95,.01) and close(85.6e9/(w_bytes+kv_bytes),5.237,.001))
-check('q4_step',w_bytes*18//64==4257230400 and close((4257230400+kv_bytes)/85.6e9*1000,63.85,.01) and close(85.6e9/(4257230400+kv_bytes),15.66,.01))
+check('phone_channel_bandwidth',close(16*10.6/8,21.2) and close(4*21.2,el['phone_bus_gb_per_second']))
+check('phone_weight_pass_seconds',close(w_bytes/84.8e9,.1785,1e-4) and close(1000/(w_bytes/84.8e9*1000),5.60,.01))
+check('phone_step_with_kv',close((w_bytes+kv_bytes)/84.8e9*1000,192.75,.01) and close(84.8e9/(w_bytes+kv_bytes),5.188,.001))
+check('q4_step',w_bytes*18//64==4257230400 and close((4257230400+kv_bytes)/84.8e9*1000,64.45,.01) and close(84.8e9/(4257230400+kv_bytes),15.52,.01))
 check('q4_resident_weight',16381470720*18//64==4607288640)
 check('q8_resident_weight',16381470720*34//64==8702656320)
 check('kv_per_token',kv_bytes//8192==147456)
@@ -130,7 +130,7 @@ check('phone_16gb_q8',(16-4)*10**9-8702656320==3297343680 and 3297343680//kv_byt
 check('melt_energy_joules',close(.16*3.6,.576) and close(.21*3.6,.756) and close(14.8165*.576,8.53,.01))
 check('tier_bounds',close((w_bytes+kv_bytes)/819e9*1000,19.96,.01) and close((w_bytes+kv_bytes)/1792e9*1000,9.12,.005))
 check('tier_token_rates',close(819e9/(w_bytes+kv_bytes),50.1,.05) and close(1792e9/(w_bytes+kv_bytes),109.6,.05))
-check('local_tiers_figure',rendered_data['12-local-tiers']['step_bytes']==w_bytes+kv_bytes and rendered_data['12-local-tiers']['rows_ms'][2]==63.8)
+check('local_tiers_figure',rendered_data['12-local-tiers']['step_bytes']==w_bytes+kv_bytes and rendered_data['12-local-tiers']['rows_ms'][2]==64.4)
 # 12.3.3 loss is not congestion; numbers come from the two wan-loss-model results.
 wan={p:json.loads((ROOT/'calculations/results'/f'wan-loss-model-{p}.json').read_text())['summary'] for p in ['book','p036']}
 wb_,wp=wan['book'],wan['p036']
@@ -138,12 +138,12 @@ check('mathis_bound',close(wb_['mathis_mbit_per_second'],1448*8/.2/math.sqrt(.14
 check('mathis_send_only',close(354640*8/(wb_['mathis_mbit_per_second']*1e6),18.33,.01))
 check('bbr_ideal',wb_['bdp_bytes']==333e6*.2/8 and 2*wb_['bdp_bytes']==16.65e6 and close(wb_['bbr_ideal_goodput_mbit_per_second'],.86*333))
 check('bbr_vs_mathis',close(wb_['bbr_ideal_goodput_mbit_per_second']/wb_['mathis_mbit_per_second'],1850,1))
-check('retransmit_tail',wb_['packets']==245 and close(wb_['expected_losses'],34.3) and close(wb_['serial_budget_seconds'],.2+.038+354640*8/333e6))
-check('retransmit_completion',close(wb_['expected_completion_seconds'],.764,1e-3) and close(wb_['expected_completion_seconds']/wb_['serial_budget_seconds'],3.10,.01) and wb_['p99_rounds']==6 and close(wb_['p99_completion_seconds'],1.247,1e-3))
+check('retransmit_tail',wb_['packets']==245 and close(wb_['expected_losses'],34.3) and close(wb_['serial_budget_seconds'],.2+.030+354640*8/333e6))
+check('retransmit_completion',close(wb_['expected_completion_seconds'],.756,1e-3) and close(wb_['expected_completion_seconds']/wb_['serial_budget_seconds'],3.17,.01) and wb_['p99_rounds']==6 and close(wb_['p99_completion_seconds'],1.239,1e-3))
 check('fec_repair',wb_['fec_repair_symbols']==63 and close(wb_['fec_overhead_ratio'],63/245) and wp['fec_repair_symbols']==20 and close(wp['fec_overhead_ratio'],20/245))
-check('fec_completion',close(.238+(245+63)*1448*8/333e6,.2487,1e-3))
-check('p036_tail',close(wp['p99_completion_seconds'],.847,1e-3) and wp['p99_rounds']==4 and close(wp['mathis_mbit_per_second'],.3053,1e-3))
-check('loss_repair_figure',rendered_data['12-loss-repair']['fec_repair']==63 and close(rendered_data['12-loss-repair']['serial_budget_s'],.2465,1e-3))
+check('fec_completion',close(.230+(245+63)*1448*8/333e6,.2407,1e-3))
+check('p036_tail',close(wp['p99_completion_seconds'],.8385,1e-3) and wp['p99_rounds']==4 and close(wp['mathis_mbit_per_second'],.3053,1e-3))
+check('loss_repair_figure',rendered_data['12-loss-repair']['fec_repair']==63 and close(rendered_data['12-loss-repair']['serial_budget_s'],.2385,1e-3))
 # A compact arithmetic answer key verifies that the newly specified exercises have determinate inputs.
 answers={'12-1':{'compression_break_even_Mbps':120/.15,'only_0_2_s_accelerated_total_s':12.8-.2+.02},'12-2':{'compressed_38_rounds_s':38*2.78,'largest_faster_integer_rounds':37},'12-3':{'rtx4090_encode_s':1310300569600/165.2e12,'h100_encode_s':1310300569600/989.4e12,'extra_edge_encoding_s':1310300569600/165.2e12+10.24-(1+1310300569600/989.4e12),'migration_preparation_s':64*2**20*8/80e6+1},'12-5':{'ideal_airtime_saved_s':15400*134/1e6,'buffer_depletion_s':(.06*256000)/(256000-130000)},'12-6':{'ideal_split_fraction':2/3,'ideal_seconds':30*8/30,'shared_bottleneck_lower_s':30*8/24,'joint_failure':.02+.98*.1*.05},'12-8':{}}
 answers['12-2']['RTT_plus_100ms_totals_s']=[30*3.6,38*2.88]
@@ -152,8 +152,8 @@ answers['12-3']['extra_restore_minimum_rounds']=22
 answers['12-4']={'connection_new_each_s':12,'connection_reuse_s':.4,'saved_s':11.6}
 answers['12-5']['24kHz_60ms_buffer_depletion_s']=.06*384000/(384000-130000)
 answers['12-8']={'twenty_rounds_times_s':T,'twenty_rounds_energy_J':[cases['twenty-rounds'][k]['energy_joules'] for k in ('end','near','cloud')],'cloud_deadline_uplink_Mbps':up['cloud_deadline_uplink_bits_per_second']/1e6,'cloud_time_without_upload_s':up['cloud_fixed_seconds'],'near_time_s':up['near_total_seconds'],'ten_rounds_times_s':[cases['ten-rounds'][k]['total_seconds'] for k in ('end','near','cloud')],'ten_rounds_energy_J':[cases['ten-rounds'][k]['energy_joules'] for k in ('end','near','cloud')],'ten_rounds_23s_choice':edge['cases'][1]['lowest_energy_feasible'],'ten_rounds_15s_choice':edge['cases'][2]['lowest_energy_feasible'],'variable_bandwidth_twenty_rounds_s':up['variable_uplink_seconds'],'constant_8Mbps_s':up['constant_uplink_seconds']}
-answers['12-9']={'bus_GBps':4*16*10.7/8,'bf16_step_s':(15136819200+1207959552)/85.6e9,'bf16_token_per_s':85.6e9/(15136819200+1207959552),'q4_step_s':(4257230400+1207959552)/85.6e9,'q4_token_per_s':85.6e9/(4257230400+1207959552),'phone_12gb_free_bytes':3392711360,'phone_12gb_8k_requests':2,'phone_12gb_single_context_tokens':3392711360//147456,'power_ceiling_token_per_s':[13.8/.756,13.8/.576]}
-answers['12-10']={'mathis_Mbps':[1448*8/.2/math.sqrt(.14)/1e6,1448*8/.2/math.sqrt(.036)/1e6],'send_only_s':[354640*8/(1448*8/.2/math.sqrt(.14)),354640*8/(1448*8/.2/math.sqrt(.036))],'expected_losses':34.3,'rounds_cdf':'(1-p**n)**245','expected_completion_s':.7639545776801243,'p99_completion_s':1.2465198798798798,'fec_repair':[63,20],'fec_overhead':[63/245,20/245],'fec_completion_s':[.238+(245+63)*1448*8/333e6,.238+(245+20)*1448*8/333e6],'retransmit_p99_s':[1.2465198798798798,.8465198798798799]}
+answers['12-9']={'bus_GBps':4*16*10.6/8,'bf16_step_s':(15136819200+1207959552)/84.8e9,'bf16_token_per_s':84.8e9/(15136819200+1207959552),'q4_step_s':(4257230400+1207959552)/84.8e9,'q4_token_per_s':84.8e9/(4257230400+1207959552),'phone_12gb_free_bytes':3392711360,'phone_12gb_8k_requests':2,'phone_12gb_single_context_tokens':3392711360//147456,'power_ceiling_token_per_s':[13.8/.756,13.8/.576]}
+answers['12-10']={'mathis_Mbps':[1448*8/.2/math.sqrt(.14)/1e6,1448*8/.2/math.sqrt(.036)/1e6],'send_only_s':[354640*8/(1448*8/.2/math.sqrt(.14)),354640*8/(1448*8/.2/math.sqrt(.036))],'expected_losses':34.3,'rounds_cdf':'(1-p**n)**245','expected_completion_s':.7559545776801243,'p99_completion_s':1.2385198798798798,'fec_repair':[63,20],'fec_overhead':[63/245,20/245],'fec_completion_s':[.230+(245+63)*1448*8/333e6,.230+(245+20)*1448*8/333e6],'retransmit_p99_s':[1.2385198798798798,.8385198798798799]}
 answers['12-8']['ten_rounds_recovery']={cid:{'times_s':[cases[cid][k]['total_seconds'] for k in ('end','near','cloud')],'energy_J':[cases[cid][k]['energy_joules'] for k in ('end','near','cloud')],'remaining_after_disconnect_s':[None]+[cases[cid][k]['extra_seconds']+2*tiers[k]['round_seconds'] for k in ('near','cloud')],'choice':next(c['lowest_energy_feasible'] for c in edge['cases'] if c['id']==cid)} for cid in ('ten-retain-seven','ten-lose-eight')}
 (HERE/'exercise-check.json').write_text(json.dumps(answers,ensure_ascii=False,indent=2)+'\n')
 report={'passed':not errors,'checks':len(checks),'sections':6,'subsections':len(text_subs),'figures':figure_count,'exercises':10,'sources':len(json.loads((HERE/'sources.json').read_text())['sources']),'local_links':len(links),'chinese_characters':len(re.findall(r'[\u4e00-\u9fff]',text)),'errors':errors}

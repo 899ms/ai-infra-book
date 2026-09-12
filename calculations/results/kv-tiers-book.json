@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "calculation": "kv-tiers",
+  "scenario": {
+    "model": "qwen3-8b",
+    "prefix_tokens": 8192,
+    "suffix_tokens": 256,
+    "device": "a100-80gb-sxm",
+    "compute_efficiency": "1/2",
+    "hbm_bytes": 80000000000,
+    "host_dram_bytes": 2199023255552,
+    "gpus_per_server": 8,
+    "ssd_bytes": 3840000000000,
+    "ssd_read_bytes_per_second": 7100000000,
+    "ssd_write_bytes_per_second": 4200000000,
+    "ssd_dwpd": 1,
+    "pcie_bytes_per_second": 25000000000,
+    "nic_bytes_per_second": 25000000000,
+    "reuse_windows_s": [
+      10,
+      600
+    ],
+    "mooncake_block_tokens": 512,
+    "mooncake_lru": [
+      [
+        1000,
+        "0.30"
+      ],
+      [
+        10000,
+        "0.40"
+      ],
+      [
+        30000,
+        "0.48"
+      ],
+      [
+        50000,
+        "0.50"
+      ],
+      [
+        100000,
+        "0.51"
+      ]
+    ]
+  },
+  "sources": [
+    {
+      "file": "references/files/specs/nvidia-dgx-a100-datasheet.pdf",
+      "url": "https://images.nvidia.com/aem-dam/Solutions/Data-Center/nvidia-dgx-a100-datasheet.pdf",
+      "sha256": "183a3a104c36807f6bc9b1a6c705fcaa5825a25c3978043e89eeb22149edbdfd"
+    },
+    {
+      "file": "references/files/specs/solidigm-d7-p5520-brief.pdf",
+      "url": "https://www.solidigm.com/content/dam/solidigm/en/site/products/data-center/product-briefs/d7-p5520-p5620-product-brief/documents/d7-p5520-p5620-product-brief.pdf",
+      "sha256": "71e7b908c4a7d2bee23fd5abc6afbc4ccfb8f258823aa530343e04f7539b0b85"
+    },
+    {
+      "file": "references/files/papers/cachedattention.pdf",
+      "url": "https://www.usenix.org/system/files/atc24-gao-bin-cost.pdf",
+      "sha256": "5c5bd05811c38652883a3483e4d5a0bd936bc190571621830648acea90755d1a"
+    },
+    {
+      "file": "references/files/papers/kvcache-in-the-wild.pdf",
+      "url": "https://arxiv.org/pdf/2506.02634",
+      "sha256": "f54f033a1f62293ac662b44e2e51c68306157756cf20a2f951342d6cdeccee54"
+    },
+    {
+      "file": "references/files/papers/mooncake.pdf",
+      "url": "https://arxiv.org/pdf/2407.00079",
+      "sha256": "af8db47ba2ccbbd7ca3f46de6176292010192afb0ffe5c51da2db56e1006f27a"
+    }
+  ],
+  "summary": {
+    "kv_bytes_per_token": 147456,
+    "prefix_bytes": 1207959552,
+    "layers": 36,
+    "per_layer_bytes_exact": "33554432",
+    "weight_bytes": 16381470720,
+    "prefill_prefix_s_exact": "326158016/380859375",
+    "warm_suffix_s_exact": "293812928/9521484375",
+    "kv_production_bytes_per_second_exact": "7188480000000000/5096219",
+    "hbm_kv_bytes": 63618529280,
+    "dram_per_gpu_bytes": "274877906944",
+    "prefetch_window_prefixes": 227,
+    "ssd_endurance_bytes_per_second_exact": "400000000/9",
+    "ssd_write_over_endurance_exact": "161740800/5096219",
+    "ssd_admissible_fraction_exact": "5096219/161740800",
+    "ssd_write_bandwidth_fraction_exact": "11980800/35673533",
+    "dram_write_bandwidth_fraction_exact": "1437696/25481095"
+  },
+  "tiers": [
+    {
+      "tier": "HBM",
+      "capacity_bytes": "63618529280",
+      "read_bytes_per_second": null,
+      "write_bytes_per_second": null,
+      "read_path": "already on GPU",
+      "retention_s_exact": "31661519303593/702000000000",
+      "read_s_exact": "0",
+      "write_s_exact": "0"
+    },
+    {
+      "tier": "host DRAM",
+      "capacity_bytes": "274877906944",
+      "read_bytes_per_second": 25000000000,
+      "write_bytes_per_second": 25000000000,
+      "read_path": "PCIe 4.0 x16",
+      "retention_s_exact": "667971616768/3427734375",
+      "read_s_exact": "2359296/48828125",
+      "write_s_exact": "2359296/48828125",
+      "break_even_reuses": 1,
+      "load_per_layer_s_exact": "65536/48828125",
+      "compute_per_layer_s_exact": "73453232/85693359375",
+      "serial_s_exact": "753875648/9521484375",
+      "layer_pipelined_s_exact": "4214017712/85693359375",
+      "preload_layers_for_full_overlap": 14,
+      "preload_bytes": "469762048",
+      "cachedattention_buffer_bytes_exact": "85119893504/195",
+      "min_suffix_tokens_to_hide_read": 400
+    },
+    {
+      "tier": "local NVMe",
+      "capacity_bytes": "3840000000000",
+      "read_bytes_per_second": 7100000000,
+      "write_bytes_per_second": 4200000000,
+      "read_path": "NVMe drive limits the path",
+      "retention_s_exact": "5096219/1872",
+      "read_s_exact": "4718592/27734375",
+      "write_s_exact": "786432/2734375",
+      "break_even_reuses": 1,
+      "load_per_layer_s_exact": "131072/27734375",
+      "compute_per_layer_s_exact": "73453232/85693359375",
+      "serial_s_exact": "135876397888/676025390625",
+      "layer_pipelined_s_exact": "1040356299472/6084228515625",
+      "preload_layers_for_full_overlap": 30,
+      "preload_bytes": "1006632960",
+      "cachedattention_buffer_bytes_exact": "24103670300672/24375",
+      "min_suffix_tokens_to_hide_read": 1388
+    },
+    {
+      "tier": "remote pool",
+      "capacity_bytes": null,
+      "read_bytes_per_second": 25000000000,
+      "write_bytes_per_second": 25000000000,
+      "read_path": "NIC to host, then PCIe (serial whole object)",
+      "retention_s_exact": null,
+      "read_s_exact": "4718592/48828125",
+      "write_s_exact": "4718592/48828125",
+      "break_even_reuses": 1,
+      "load_per_layer_s_exact": "131072/48828125",
+      "compute_per_layer_s_exact": "73453232/85693359375",
+      "serial_s_exact": "1213938368/9521484375",
+      "layer_pipelined_s_exact": "8354582192/85693359375",
+      "preload_layers_for_full_overlap": 25,
+      "preload_bytes": "838860800",
+      "cachedattention_buffer_bytes_exact": "160336003072/195",
+      "min_suffix_tokens_to_hide_read": 796
+    }
+  ],
+  "reuse_windows": [
+    {
+      "window_s": 10,
+      "required_bytes_exact": "71884800000000000/5096219"
+    },
+    {
+      "window_s": 600,
+      "required_bytes_exact": "4313088000000000000/5096219"
+    }
+  ],
+  "mooncake_lru_capacity": [
+    {
+      "blocks": 1000,
+      "tokens": 512000,
+      "qwen_bytes": 75497472000,
+      "lru_hit_rate": "0.30"
+    },
+    {
+      "blocks": 10000,
+      "tokens": 5120000,
+      "qwen_bytes": 754974720000,
+      "lru_hit_rate": "0.40"
+    },
+    {
+      "blocks": 30000,
+      "tokens": 15360000,
+      "qwen_bytes": 2264924160000,
+      "lru_hit_rate": "0.48"
+    },
+    {
+      "blocks": 50000,
+      "tokens": 25600000,
+      "qwen_bytes": 3774873600000,
+      "lru_hit_rate": "0.50"
+    },
+    {
+      "blocks": 100000,
+      "tokens": 51200000,
+      "qwen_bytes": 7549747200000,
+      "lru_hit_rate": "0.51"
+    }
+  ],
+  "assumptions": [
+    "每卡一份：DGX A100 的 2 TB DIMM 按 8 张 GPU 均分（按二进制 TiB 计），每卡一块 3.84 TB U.2 NVMe 与一张 200 Gb/s 网卡。HBM 容量按厂商 80 GB 十进制计并扣除 BF16 权重，未扣激活与工作区，是 KV 可用空间的上限。",
+    "NVMe 读写带宽与耐久度取 Solidigm D7-P5520 3.84 TB 产品简介的最大值；路径时间只受盘本身限制，不计文件系统与 PCIe 争用。",
+    "KV 产生率 = 一张 GPU 连续执行无命中 8192-token prefill 时每秒产生的 KV 字节；保留时间 = 容量 / 产生率，对应只按时间先后淘汰、全部写入该层的情形。",
+    "远端池整份先经网卡到主机再经 PCIe 到 GPU，两段串行；逐层预加载按总读取时间均分到各层。",
+    "逐层计算时间按命中后 suffix 的矩阵 FLOPs 均分到各层；预加载层数 k 指计算开始前已在 HBM 的层数。",
+    "Mooncake 表 1 的块数按每块 512 token 换算为 Qwen3-8B 的 KV 字节；命中率属于该一小时采样 trace，容量随真实流量同比例放大。"
+  ]
+}

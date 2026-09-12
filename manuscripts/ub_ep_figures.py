@@ -12,6 +12,118 @@ from figure_style.typography import configure_font
 ROOT=Path(__file__).resolve().parents[1]
 
 
+EP_LINE={'blue':'#267398','orange':'#a56c28','green':'#28856a','purple':'#7a5c99'}
+
+
+def draw_ep_mechanisms(out):
+    """Chapter 9: one layer's dispatch/combine, CPU bottleneck switch, AF ping-pong, and skew growth with EP size."""
+    from matplotlib.patches import Rectangle, Patch
+    # One MoE layer on the two HGX servers of section 9.4.1: attention cards A0-A3, expert cards B0-B3.
+    # Time runs downward; chip colour names the expert card an input row is sent to.
+    dest=['blue','green','orange','purple']
+    f,a=canvas(6.0)
+    X=[.235+i*.19 for i in range(4)];W=.165;H=.13
+    Y={'attn':.80,'exp':.47,'merge':.14}
+    def chips(x,y,cols):
+        for j,c in enumerate(cols):
+            a.add_patch(Rectangle((x+.018+j*.035,y+.018),.027,.036,facecolor=COL[c],edgecolor=COL['line'],linewidth=.7))
+    for i,x in enumerate(X):
+        box(a,x,Y['attn'],W,H,'','gray');text(a,x+W/2,Y['attn']+.093,f'A{i}',12,ha='center');chips(x,Y['attn'],dest)
+        box(a,x,Y['exp'],W,H,'',dest[i]);text(a,x+W/2,Y['exp']+.093,f'B{i}',12,ha='center');chips(x,Y['exp'],[dest[i]]*4)
+        box(a,x,Y['merge'],W,H,'','gray');text(a,x+W/2,Y['merge']+.093,f'A{i}',12,ha='center');chips(x,Y['merge'],dest)
+    # All-to-All: chip j of source i travels to slot i of card j, and back along the same pair.
+    for i in range(4):
+        for j in range(4):
+            sx=X[i]+.0315+j*.035;dx=X[j]+.0315+i*.035
+            a.annotate('',xy=(dx,Y['exp']+H+.004),xytext=(sx,Y['attn']-.004),arrowprops=dict(arrowstyle='-|>',color=EP_LINE[dest[j]],lw=.9,shrinkA=0,shrinkB=0,mutation_scale=7))
+            a.annotate('',xy=(sx,Y['merge']+H+.004),xytext=(dx,Y['exp']-.004),arrowprops=dict(arrowstyle='-|>',color=EP_LINE[dest[j]],lw=.9,shrinkA=0,shrinkB=0,mutation_scale=7))
+    for y,label in [(Y['attn']+H/2,'注意力、路由\n服务器 A'),(.705,'dispatch'),(Y['exp']+H/2,'专家计算\n服务器 B'),(.375,'combine'),(Y['merge']+H/2,'加权求和\n服务器 A')]:
+        text(a,.005,y,label,12)
+    arrow(a,(.60,.98),(.60,Y['attn']+H));arrow(a,(.60,Y['merge']),(.60,.05))
+    text(a,.63,.975,'上一层输出',11);text(a,.63,.055,'下一层注意力',11)
+    out.save(f,'figure-9-ep-layer')
+
+    s=json.loads((ROOT/'calculations/results/ep-scale-skew-book.json').read_text())
+    res={r['ep']:r for r in s['results']};hot=s['scenario']['hot_expert_rows']
+    # Same hot expert, three EP sizes: bars are cards, stacked segments are the experts on that card.
+    f,axes=plt.subplots(1,3,figsize=(420/72,3.9),sharey=True)
+    f.subplots_adjust(left=.14,right=.985,bottom=.17,top=.83,wspace=.12)
+    pos=[0,1,2,3.4]
+    for k,(ax,ep) in enumerate(zip(axes,[8,32,256])):
+        r=res[ep];m=r['experts_per_card'];mean=r['mean_rows'];other=r['hot_other_expert_rows']/mean
+        for c,xc in enumerate(pos):
+            y=0
+            segs=[(hot/mean,'orange')]+[(other,'blue')]*(m-1) if c==0 else [(other,'blue')]*m
+            for h,col in segs:
+                ax.add_patch(Rectangle((xc-.34,y),.68,h,facecolor=COL[col],edgecolor='white',linewidth=.35 if m>8 else .8));y+=h
+            ax.add_patch(Rectangle((xc-.34,0),.68,y,fill=False,edgecolor=COL['line'],linewidth=.9))
+        ax.text(2.7,.45,'…',ha='center',fontsize=12)
+        ax.axhline(1,color=COL['line'],ls=(0,(2,2)),lw=.9)
+        ax.text(0,r['hot_ratio']+.1,f"{r['hot_ratio']:.2f}×" if ep<256 else '4×',ha='center',va='bottom',fontsize=11)
+        ax.set(xlim=(-.75,3.85),ylim=(0,4.5),xticks=pos)
+        ax.set_xticklabels(['0','1','2',str(ep-1)],fontsize=11)
+        ax.set_title(f'EP{ep}\n每卡 {m} 个专家',fontsize=12,loc='center')
+        ax.spines[['top','right']].set_visible(False)
+        if k:ax.tick_params(axis='y',length=0)
+    axes[0].set_ylabel('卡负载 ÷ 每卡平均')
+    axes[2].text(2.2,1.15,'虚线：平均',ha='center',va='bottom',fontsize=11)
+    f.text(.56,.035,'卡号',ha='center',fontsize=12)
+    out.save(f,'figure-9-ep-scale-cards')
+
+    # Busiest/mean against EP size: one hot expert (exact) and uniform random routing (seeded simulation).
+    f,a=plot(3.5,left=.15,bottom=.18)
+    eps=[r['ep'] for r in s['results']]
+    a.plot(eps,[r['hot_ratio'] for r in s['results']],marker='o',color=EP_LINE['orange'],label='一个 4 倍热点专家')
+    a.plot(eps,[r['random_mean_ratio'] for r in s['results']],marker='o',color=EP_LINE['blue'],label='均匀随机路由，1000 批均值')
+    for r in s['results'][-1:]:
+        a.text(r['ep']/1.12,r['hot_ratio'],f"{r['hot_ratio']:.1f}",ha='right',va='center',fontsize=11)
+        a.text(r['ep']/1.12,r['random_mean_ratio']+.2,f"{r['random_mean_ratio']:.2f}",ha='right',va='center',fontsize=11)
+    a.set_xscale('log',base=2);a.minorticks_off()
+    a.set(xticks=eps,xticklabels=[str(e) for e in eps],xlim=(6.5,300),ylim=(.9,4.3),yticks=[1,2,3,4],
+          xlabel='EP 组的卡数（每卡专家数 = 256 ÷ 卡数）',ylabel='最忙卡 ÷ 每卡平均')
+    a.axhline(1,color=COL['line'],ls=(0,(2,2)),lw=.9)
+    a.legend(frameon=False,loc='upper left');a.grid(axis='y',alpha=.15)
+    out.save(f,'figure-9-ep-scale-sweep')
+
+    # Section 9.3.2: eight 36 MiB experts, 128 tokens each, on one Xeon 8452Y socket; the longer bar sets the time.
+    P=3*4096*1536;W=2*P;flop=8*128*2*P
+    f,axes=plt.subplots(1,2,figsize=(420/72,3.3))
+    f.subplots_adjust(left=.17,right=.97,bottom=.30,top=.86,wspace=.35)
+    for ax,(kernel,C,xmax) in zip(axes,[('AVX-512 kernel：1.8 TFLOP/s',1.8e12,26),('AMX kernel：21.3 TFLOP/s',21.3e12,3.2)]):
+        for row,(bw,label) in enumerate([(220e9,'同插槽'),(125e9,'跨插槽')]):
+            read=8*W/bw*1e3;comp=flop/C*1e3
+            for off,(v,col) in zip((-.17,.17),[(read,'blue'),(comp,'green')]):
+                ax.barh(row+off,v,height=.3,color=COL[col],edgecolor=COL['line'],linewidth=1.6 if v==max(read,comp) else .8)
+                ax.text(v+xmax*.02,row+off,f'{v:.2f}',va='center',fontsize=11)
+        ax.set(yticks=[0,1],yticklabels=['同插槽\n220 GB/s','跨插槽\n125 GB/s'] if ax is axes[0] else ['',''],xlim=(0,xmax),ylim=(1.5,-.5))
+        ax.set_title(kernel,fontsize=12);ax.spines[['top','right']].set_visible(False)
+        if ax is not axes[0]:ax.tick_params(axis='y',length=0)
+    f.text(.57,.14,'时间（ms）',ha='center',fontsize=12)
+    f.legend(handles=[Patch(facecolor=COL['blue'],edgecolor=COL['line'],label='读取八份权重'),Patch(facecolor=COL['green'],edgecolor=COL['line'],label='八个专家的矩阵计算')],
+             frameon=False,ncol=2,loc='lower center',bbox_to_anchor=(.57,-.01))
+    out.save(f,'figure-9-cpu-bottleneck')
+
+    # Section 9.3.4: attention 2 ms and experts 3 ms per microbatch, four microbatches, serial versus ping-pong.
+    tA,tF,q=2,3,4
+    serial=[(0,i*(tA+tF),tA,i+1) for i in range(q)]+[(1,i*(tA+tF)+tA,tF,i+1) for i in range(q)]
+    pipe=[(0,i*tA,tA,i+1) for i in range(q)]
+    ready=0
+    for i in range(q):
+        start=max(i*tA+tA,ready);pipe.append((1,start,tF,i+1));ready=start+tF
+    f,axes=plt.subplots(2,1,figsize=(420/72,3.6),sharex=True)
+    f.subplots_adjust(left=.20,right=.97,bottom=.15,top=.91,hspace=.75)
+    for ax,(title,items) in zip(axes,[(f'依次执行：{q*(tA+tF)} ms',serial),(f'交错流水：{ready} ms',pipe)]):
+        for row,start,dur,k in items:
+            ax.barh(row,dur,left=start,height=.55,color=COL['blue' if row==0 else 'green'],edgecolor=COL['line'])
+            ax.text(start+dur/2,row,str(k),ha='center',va='center',fontsize=11)
+        ax.set(yticks=[0,1],yticklabels=['注意力节点','专家节点'],xlim=(0,21),ylim=(1.6,-.6),xticks=[0,5,10,14,20])
+        ax.set_title(title,loc='left',fontsize=12);ax.spines[['top','right']].set_visible(False);ax.grid(axis='x',alpha=.15)
+    axes[1].axvline(ready,color=EP_LINE['orange'],ls='--',lw=1)
+    axes[1].set_xlabel('时间（ms）；方块中的数字为 micro-batch 编号')
+    out.save(f,'figure-9-af-pingpong')
+
+
+
 def draw(ch, here):
     out=Exporter(here)
     with plt.rc_context(STYLE):
@@ -21,7 +133,7 @@ def draw(ch, here):
             for x,label in ((.06,'应用 A\nJetty A'),(.59,'应用 B\nJetty B')):
                 box(a,x,.69,.35,.18,label,'blue')
                 arrow(a,(x+.175,.69),(.5,.56))
-            box(a,.17,.37,.66,.19,'共享 TP 通道\n序号、确认、重传、拥塞控制','orange')
+            box(a,.17,.37,.66,.19,'共享传输通道\n序号、确认、重传、拥塞控制','orange')
             arrow(a,(.5,.37),(.5,.24))
             box(a,.17,.06,.66,.18,'远端事务层\n按目标端点分派与检查权限','green')
             text(a,.50,.63,'事务 → 报文',11,ha='center')
@@ -85,9 +197,9 @@ def draw(ch, here):
                 box(a, x0 + .09, .20, .12, .12, '网卡', 'orange' if ctrl == 2 else 'green', 11)
                 if ctrl == 0:
                     arrow(a, (x0 + .17, .76), (x0 + .13, .76)); text(a, x0 + .15, .86, '就绪', 11, ha='center')
-                    arrow(a, (x0 + .06, .70), (x0 + .12, .32)); text(a, x0 + .01, .45, '门铃、请求项', 11)
+                    arrow(a, (x0 + .06, .70), (x0 + .12, .32)); text(a, x0 + .01, .45, '门铃\n请求描述符', 11)
                 elif ctrl == 1:
-                    arrow(a, (x0 + .19, .70), (x0 + .13, .32)); text(a, x0 + .01, .45, '门铃、请求项', 11)
+                    arrow(a, (x0 + .19, .70), (x0 + .13, .32)); text(a, x0 + .01, .45, '门铃\n请求描述符', 11)
                 else:
                     arrow(a, (x0 + .06, .70), (x0 + .12, .32)); text(a, x0 + .01, .45, '每批一次触发', 11)
                 arrow(a, (x0 + .18, .32), (x0 + .24, .70)); text(a, x0 + .21, .40, '载荷、完成', 11)
@@ -226,6 +338,7 @@ def draw(ch, here):
             a.axvline(1.4,color=COL['line'],ls='--');a.set(yticks=[0,1],yticklabels=['快专家','慢专家'],xlabel='从该层分派开始计时（ms）',xlim=(0,1.52),ylim=(1.6,-.65))
             a.legend(handles=handles,frameon=False,ncol=4,loc='upper center',bbox_to_anchor=(.48,1.28),columnspacing=.65,handlelength=1)
             out.save(f,'figure-9-ep-tail')
+            draw_ep_mechanisms(out)
     (Path(here)/'ub-ep-layout-validation.json').write_text(json.dumps(out.checks,ensure_ascii=False,indent=2)+'\n')
     return out.outputs
 

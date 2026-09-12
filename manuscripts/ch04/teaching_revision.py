@@ -19,7 +19,7 @@ def draw(here,data,teaching):
         save(f,'1-reuse')
         f,a=canvas(4.9);box(a,.04,.79,.36,.14,'主机 CPU','gray');box(a,.60,.79,.36,.14,'片外显存','blue')
         box(a,.03,.06,.94,.60,'','gray');text(a,.06,.62,'加速器芯片内部',14)
-        box(a,.10,.41,.80,.12,'共享缓存与数据搬运','blue');arrow(a,(.78,.79),(.68,.53));arrow(a,(.22,.79),(.24,.53),'control')
+        box(a,.10,.41,.80,.12,'共享缓存与数据搬移','blue');arrow(a,(.78,.79),(.68,.53));arrow(a,(.22,.79),(.24,.53),'control')
         box(a,.10,.16,.24,.14,'局部缓冲','green');box(a,.41,.16,.24,.14,'矩阵单元','orange');box(a,.72,.16,.19,.14,'累加存储','purple',11)
         arrow(a,(.25,.41),(.22,.30));arrow(a,(.34,.23),(.41,.23));arrow(a,(.65,.23),(.72,.23));save(f,'2-components')
         f,a=canvas(3.9);text(a,.04,.94,'小阵列反复复用输入与权重',14)
@@ -41,7 +41,7 @@ def draw(here,data,teaching):
         a.set(yticks=[0,1],yticklabels=['256 个专家','8 个专家'],xlim=(0,4500),ylim=(-.7,1.7),xlabel='执行的矩阵行数（含补零）');a.invert_yaxis();a.legend(frameon=False);save(f,'expert-padding-total')
         vals=np.array(data['4-4']['service_cycles'])
         f,a=plot(4.0,left=.27)
-        for i,(label,c) in enumerate([('矩阵','orange'),('共享存储','blue'),('指数','green')]):a.barh(np.arange(4)+(i-1)*.22,vals[:,i],height=.20,color=COL[c],edgecolor=COL['line'],label=label)
+        for i,(label,c) in enumerate([('矩阵','orange'),('共享内存','blue'),('指数','green')]):a.barh(np.arange(4)+(i-1)*.22,vals[:,i],height=.20,color=COL[c],edgecolor=COL['line'],label=label)
         a.set(yticks=range(4),yticklabels=['原配置','矩阵 ×2','矩阵、指数均 ×2','三项 ×2'],xlabel='单计算组耗时（周期）',xlim=(0,1150),ylim=(-1.1,3.6));a.invert_yaxis();a.legend(ncol=3,loc='upper center',frameon=False,fontsize=11);save(f,'4-attention')
         f,a=canvas(4.3)
         for y,title,stages in [(.58,'先展开为高精度',[('压缩 8.5 MiB','blue'),('展开 32 MiB','orange'),('BF16 计算','green')]),(.12,'在低精度路径中计算',[('压缩 8.5 MiB','blue'),('低精度计算','orange'),('缩放与合并','green')])]:

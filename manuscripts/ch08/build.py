@@ -45,11 +45,11 @@ bs=np.arange(1,129);weight=15136811008/2**30/bs
 for L,col in [(2048,'blue'),(8192,'teal')]:
  kv=L*147456/2**30;a.plot(bs,weight+kv,color=C[col],lw=2.5,label=f'{L//1024}K 上下文：总读取');a.axhline(kv,color=C[col],ls='--',lw=1.2,label=f'{L//1024}K 上下文：KV')
  cross=(15136811008+L*147456-1)//(L*147456);yy=15136811008/2**30/cross+kv;a.scatter([cross],[yy],color=C[col],s=45);a.annotate(f'b = {cross}',xy=(cross,yy),xytext=(cross*.65,yy*1.6),arrowprops={'arrowstyle':'->','color':C[col]},color=C[col])
-a.plot(bs,weight,color='#7b858a',lw=1.7,label='每 token 分摊的权重');a.set(xscale='log',yscale='log',xlim=(1,128),ylim=(.09,20),xlabel='批量 b',ylabel='每个输出 token 的读取量 / GiB',xticks=[1,2,4,8,16,32,64,128],xticklabels=[1,2,4,8,16,32,64,128],yticks=[.125,.25,.5,1,2,4,8,16],yticklabels=['0.125','0.25','0.5','1','2','4','8','16']);a.minorticks_off();a.grid(alpha=.16);a.legend(frameon=False,loc='upper right')
+a.plot(bs,weight,color='#7b858a',lw=1.7,label='每 token 分摊的权重');a.set(xscale='log',yscale='log',xlim=(1,128),ylim=(.09,20),xlabel='batch size b',ylabel='每个输出 token 的读取量 / GiB',xticks=[1,2,4,8,16,32,64,128],xticklabels=[1,2,4,8,16,32,64,128],yticks=[.125,.25,.5,1,2,4,8,16],yticklabels=['0.125','0.25','0.5','1','2','4','8','16']);a.minorticks_off();a.grid(alpha=.16);a.legend(frameon=False,loc='upper right')
 data['batch']={'shared_weight_bytes':15136811008,'kv_bytes_per_position':147456,'batch':bs.tolist(),'history_lengths':[2048,8192]};save(f,'figure-8-2-batch')
 # 1. Time bars are read from saved events, never hand-estimated GPU times.
 f=plt.figure(figsize=(13,10));gs=f.add_gridspec(3,1,height_ratios=[1,1,1],hspace=.65,left=.08,right=.96,top=.95,bottom=.06)
-for j,(policy,label) in enumerate([('fixed','固定批次'),('continuous','连续批处理'),('chunked','Decode 优先分块')]):
+for j,(policy,label) in enumerate([('fixed','固定 batch'),('continuous','连续批处理'),('chunked','Decode 优先分块')]):
  d=calc('iteration-batching-pro6000-'+policy);a=f.add_subplot(gs[j]);data[policy]=d['batching_steps']
  for step in d['batching_steps']:
   for plan in step['plans']:

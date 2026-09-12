@@ -92,15 +92,15 @@ data['attention_area']={'lengths':[[4096,4096],[7168,1024]],'pairs':[16781312,26
 
 # 10: data is prepared at the right, then consumed from the left in batch order.
 f,a=canvas(5.5)
-box(a,.03,.67,.25,.18,'GPU 训练','刚完成批次 100',col='light',size=12)
+box(a,.03,.67,.25,.18,'GPU 训练','刚完成 batch 100',col='light',size=12)
 box(a,.71,.67,.25,.18,'读取与预处理','准备后续训练数据',size=12)
 for i in range(8):
  x=.12+i*.103
  a.add_patch(Rectangle((x,.34),.086,.12,fc=C['sand'],ec=C['orange'],lw=1,linestyle='--' if i>=5 else '-'))
  a.text(x+.043,.40,str(101+i),ha='center',va='center',fontsize=12)
 arrow(a,(.163,.47),(.163,.66));arrow(a,(.884,.66),(.884,.47),col='orange')
-a.text(.50,.56,'尚未用于训练的批次',ha='center',fontsize=13)
-arrow(a,(.82,.23),(.22,.23));a.text(.50,.15,'按批次顺序取出：先 101，再 102……',ha='center',fontsize=12)
+a.text(.50,.56,'尚未用于训练的 batch',ha='center',fontsize=13)
+arrow(a,(.82,.23),(.22,.23));a.text(.50,.15,'按 batch 顺序取出：先 101，再 102……',ha='center',fontsize=12)
 a.text(.14,.93,'训练位置：100',ha='center',fontsize=12,color=C['teal'])
 a.text(.84,.93,'预取位置：108',ha='center',fontsize=12,color=C['orange'])
 a.text(.50,.015,'恢复后从 101 继续；准备任务提前，不等于训练已经完成',ha='center',fontsize=12,color=C['muted'])

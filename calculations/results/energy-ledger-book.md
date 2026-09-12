@@ -19,7 +19,7 @@
 | dynamic_power_ratio | 0.4186851211072664 |
 | power_density_ratio | 1.25 |
 | rack_max_cards | 90 |
-| phone_bus_gb_per_second | 85.6 |
+| phone_bus_gb_per_second | 84.8 |
 
 计量条件：
 

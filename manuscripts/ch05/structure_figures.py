@@ -27,7 +27,7 @@ def draw(here, data=None):
             a.add_patch(Rectangle((x, .06), .42, .82, facecolor=COL['white'], edgecolor=COL['line'], lw=.9, ls=(0, (1, 2))))
             text(a, x + .21, .93, title, 12, ha='center')
         box(a, .06, .66, .34, .16, '普通内存\n页面可被换出', 'gray', 11)
-        box(a, .06, .42, .34, .16, '锁页缓冲\n驻留，可直接搬运', 'blue', 11)
+        box(a, .06, .42, .34, .16, '锁页缓冲\n驻留，可直接搬移', 'blue', 11)
         box(a, .06, .14, .34, .16, '结果缓冲', 'green', 11)
         box(a, .60, .66, .34, .16, '权重\n加载一次，长期驻留', 'gray', 11)
         box(a, .60, .42, .34, .16, '输入缓冲', 'blue', 11)
@@ -161,7 +161,7 @@ def draw(here, data=None):
             a.annotate('', xy=(begin, .81), xytext=(done, .19), arrowprops=dict(arrowstyle='-|>', lw=1, color=COL['line'], linestyle='--', shrinkA=0, shrinkB=0))
         a.text(full[0][0] + .05, .5, '满', fontsize=11, va='center'); a.text(empty[0][1] + .05, .62, '空', fontsize=11, va='center')
         a.text((computes[0]['start'] + compute_us + computes[1]['start']) / 2, -.42, '等数据', fontsize=11, ha='center', va='center')
-        a.set(yticks=[0, 1], yticklabels=['消费者 warp\n计算', '生产者 warp\n拷贝'], xlim=(0, 5.8), ylim=(-.6, 1.6),
+        a.set(yticks=[0, 1], yticklabels=['消费者 warp\n计算', '生产者 warp\n复制'], xlim=(0, 5.8), ylim=(-.6, 1.6),
               xticks=[0] + [round(c['start'] + copy_us, 2) for c in copies], xlabel='时间（μs）')
         a.set_xticklabels(['0'] + [f"{c['start'] + copy_us:.2f}" for c in copies])
         f.legend(handles=[Patch(fc=COL[c], ec=COL['line'], label=l) for c, l in [('blue', '槽 A：块 0、2'), ('green', '槽 B：块 1、3')]],

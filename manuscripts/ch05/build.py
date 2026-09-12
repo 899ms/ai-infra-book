@@ -138,12 +138,12 @@ save(f,'figure-5-17-request');data['5-17']={'kind':'measured_paired_requests','r
 
 # Added diagrams explain data movement and dependencies before comparing totals.
 f,a=plt.subplots(figsize=(11,4.6));f.subplots_adjust(left=.18,right=.96,top=.9,bottom=.18)
-for y,kernel,label in [(1,20,'原内核'),(0,5,'内核加快四倍')]:
+for y,kernel,label in [(1,20,'原 kernel'),(0,5,'kernel 加快四倍')]:
  start=0
  for duration,name,col in [(3,'提交','orange'),(8,'H2D','teal'),(kernel,'kernel','blue'),(4,'D2H','muted')]:
   a.barh(y,duration,left=start,height=.42,color=C[col]);a.text(start+duration/2,y,name,ha='center',va='center',color='white',fontsize=10);start+=duration
  a.text(start+.5,y,f'{start} μs\n结果可用',va='center',fontsize=11)
-a.set(xlim=(0,40),ylim=(-.65,1.65),xlabel='从 CPU 开始提交起计时 / μs');a.set_yticks([0,1],['内核加快四倍','原内核']);a.set_xticks([0,3,11,20,31,35]);a.grid(axis='x',alpha=.15)
+a.set(xlim=(0,40),ylim=(-.65,1.65),xlabel='从 CPU 开始提交起计时 / μs');a.set_yticks([0,1],['kernel 加快四倍','原 kernel']);a.set_xticks([0,3,11,20,31,35]);a.grid(axis='x',alpha=.15)
 save(f,'figure-5-1-execution');data['execution']={'kind':'teaching_timeline','submit_us':3,'h2d_us':8,'kernel_us':[20,5],'d2h_us':4,'completion_us':[35,20]}
 
 data['banks']={'kind':'address_mapping','strides_words':[32,33],'banks':32,'column_banks':[[i*s%32 for i in range(32)] for s in [32,33]],'rounds':[32,1]}
@@ -159,12 +159,12 @@ f,a=canvas(6.6)
 for y,fused in [(.57,False),(.12,True)]:
  a.text(.025,y+.31,'在矩阵乘中重新量化' if fused else '保存一份 FP8 量化结果',fontsize=16,weight='bold')
  box(a,.03,y+.05,.18,.18,'FP16 输入','32 MiB',size=13)
- box(a,.34,y+.05,.24,.18,'求行尺度' if fused else '求行尺度，量化并保存','不保存 FP8 矩阵' if fused else '写出 FP8：16 MiB',color='sand' if fused else 'light',size=12)
+ box(a,.34,y+.05,.24,.18,'求行 scale' if fused else '求行 scale，量化并保存','不保存 FP8 矩阵' if fused else '写出 FP8：16 MiB',color='sand' if fused else 'light',size=12)
  arrow(a,(.22,y+.14),(.33,y+.14))
  box(a,.74,y+.05,.23,.18,'12 个输出列块','各读 FP16 并量化' if fused else '各读同一份 FP8',size=12)
  if fused:
   arrow(a,(.59,y+.18),(.73,y+.18),col='line')
-  a.text(.66,y+.235,'行尺度',ha='center',fontsize=10,color=C['muted'])
+  a.text(.66,y+.235,'行 scale',ha='center',fontsize=10,color=C['muted'])
   arrow(a,(.21,y+.075),(.74,y+.075),col='orange',rad=.16)
   a.text(.45,y+.005,'原输入：12 × 32 MiB',ha='center',fontsize=11,color=C['orange'])
  else:arrow(a,(.59,y+.14),(.73,y+.14),col='teal')

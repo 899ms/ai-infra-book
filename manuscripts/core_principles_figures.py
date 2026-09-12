@@ -57,7 +57,7 @@ def draw(chapter, out):
             for batch in [1,16]:
                 v=(W/batch+K)/1e9;a.scatter([batch],[v],color='#527fa0',s=22)
                 a.annotate(f'{v:.2f} GB',(batch,v),xytext=(8,2),textcoords='offset points',fontsize=11)
-            a.set(xlim=(0,33),ylim=(0,20),xticks=[1,8,16,24,32],xlabel='批次大小 B',ylabel='每输出 token 的 HBM 读取（GB）')
+            a.set(xlim=(0,33),ylim=(0,20),xticks=[1,8,16,24,32],xlabel='batch size B',ylabel='每输出 token 的 HBM 读取（GB）')
             a.legend(frameon=False,loc='upper right');out.save(f,'figure-8-batch-counterfactual')
             f,a=canvas(4.2)
             rows=[(.72,'追加',[(8,'8K 复用','blue'),(1,'','orange')]),(.43,'改写开头',[(9,'9K 重新处理','orange')]),(.14,'总结历史',[(2,'2K','orange'),(1,'1K','orange')])]

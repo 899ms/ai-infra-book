@@ -84,7 +84,7 @@ def main():
         prepare(source,target,assets,args.source_ref)
         inputs.append(target)
     before = work / 'frontmatter.tex'
-    edition = f'第 {args.chapter} 章排版样张' if args.chapter else 'v0.1'
+    edition = f'第 {args.chapter} 章排版样张' if args.chapter else 'v1.0'
     before.write_text('\\renewcommand{\\BookEdition}{'+edition+'}\n\\input{cover.tex}\n'
                      '\\pagenumbering{Roman}\n')
     front_sources = []

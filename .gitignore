@@ -20,3 +20,27 @@ tmp/pdfs/
 .env
 .env.*
 !.env.example
+
+# LaTeX and Pandoc intermediates. The book PDF builds into book/build/, so these
+# are disposable; the one archived failed build under research/ stays tracked.
+# Note: *.out is deliberately absent — it is job output from experiments and
+# calculations, not a LaTeX artefact.
+*.aux
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.bbl
+*.blg
+*.idx
+*.ind
+*.ilg
+*.nav
+*.snm
+*.vrb
+
+# Build logs. Archived logs already in the repository stay tracked; new ones
+# that are meant to be kept need `git add -f`.
+*.log

@@ -29,16 +29,15 @@ def stage():
             catalog.append({'number': number, 'title': title, 'file': path.name})
     if [c['number'] for c in catalog] != list(range(1, 13)):
         raise ValueError('Expected manuscript chapters 1–12')
+    # The reading site carries only the book itself; repository and build notes stay on GitHub.
     sources = {ROOT / 'website/index.md': Path('index.md')}
     for folder in ('manuscripts',):
-        sources[ROOT / folder / 'README.md'] = Path(folder) / 'README.md'
         for chapter in catalog:
             path = ROOT / folder / chapter['file']
             if not path.is_file():
                 raise FileNotFoundError(path)
             sources[path] = path.relative_to(ROOT)
     sources[ROOT / 'manuscripts/00-前言.md'] = Path('manuscripts/00-前言.md')
-    sources[ROOT / 'website/README.md'] = Path('website/README.md')
 
     def rewrite(source, output, url, image=False):
         parsed = urlsplit(url)
@@ -84,9 +83,9 @@ def stage():
     for name in ('math.js', 'reading.css'):
         shutil.copy2(ROOT / 'website' / name, DOCS / 'assets' / name)
     # JSON is valid YAML and avoids quoting problems in Chinese chapter titles.
-    nav = [{'首页': 'index.md'}, {'正文': [{'前言': 'manuscripts/00-前言.md'}] + [
-        {f'{c["number"]}. {c["title"]}': f'manuscripts/{c["file"]}'} for c in catalog]},
-        {'配图与复算': 'manuscripts/README.md'}, {'构建与发布': 'website/README.md'}]
+    # One flat list: 首页, 前言, then the twelve chapters, so the reading order is the navigation.
+    nav = [{'首页': 'index.md'}, {'前言': 'manuscripts/00-前言.md'}] + [
+        {f'{c["number"]}. {c["title"]}': f'manuscripts/{c["file"]}'} for c in catalog]
     config = (ROOT / 'mkdocs.yml').read_text() + '\nnav: ' + json.dumps(nav, ensure_ascii=False) + '\n'
     # Config stays at the root so docs_dir/site_dir remain relative to the repository.
     (ROOT / '.mkdocs-build.yml').write_text(config)

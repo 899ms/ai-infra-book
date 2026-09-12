@@ -43,12 +43,10 @@
 
 ## 配套材料
 
-书中的数字大多可以复算，配图与实验记录都在仓库里：
+书中的数字大多可以复算，计算工具、实验记录与配图脚本都在 GitHub 仓库里：
 
-- [正文与配图索引](../manuscripts/README.md)：各章配图清单与绘图脚本
 - [量化计算项目](../calculations/README.md)：书中可复算数值的计算工具与固定输入
 - [配套实验](../experiments/README.md)：按章节组织的实验与运行记录
-- [PDF 编译说明](../book/README.md)：本地构建全书 PDF 的步骤
-- [网站构建与发布](README.md)：本站的构建与自动发布流程
+- [正文与配图](../manuscripts/README.md)：各章配图清单与绘图脚本
 
-本网站由仓库中的 Markdown 自动构建。正文的唯一维护源是 `manuscripts/` 下的前言与十二章，网站不会另存或维护章节正文副本。
+本网站由仓库中的 Markdown 自动构建，正文的唯一维护源是 `manuscripts/` 下的前言与十二章。

@@ -36,4 +36,3 @@ cd experiments/ch04/04-05 && python3 run.py      # 任取一项，独立运行
 
 记录保留规则：成功重跑后删除被替代的启动与配置调试失败产物，只交付最终成功运行及复现所需文件；正式实验的配对重复、预设故障注入、数值与质量负结果完整报告。
 
-详细分工与验证记录见 [PROGRESS.md](PROGRESS.md) 与 [SCOPE-REVIEW.md](SCOPE-REVIEW.md)。

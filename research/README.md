@@ -66,6 +66,5 @@
 | [草案 14／15 新增内容的后续保留情况](draft14-15-outline-audit/report.md) | `draft14-15-outline-audit` | — |
 | [概念覆盖补齐：计划与执行记录（2026-09-11）](gap-plan-2026-09-11/README.md) | `gap-plan-2026-09-11` | 12 |
 | [草案 22：从资料目录到跨层设计方法](outline-revision-2026-09-08/README.md) | `outline-revision-2026-09-08` | — |
-| [C68 / C69 状态审查](plan-c68-c69-audit.md) | `plan-c68-c69-audit.md` | — |
 | [“保存”用语审校](save-wording-review-2026-09-10/README.md) | `save-wording-review-2026-09-10` | — |
 | [全书去翻译腔修订前的章节快照](translationese-pass-2026-09-11/) | `translationese-pass-2026-09-11` | — |

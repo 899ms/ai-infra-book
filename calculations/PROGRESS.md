@@ -1684,7 +1684,7 @@ image-request-budget统一CLI、八固定场景、16 JSON/Markdown、显式同�
 
 4专项tests通过，全suite854项832通过22可选跳过；16实际CLI/16冻结结果一致。初次verify通过后，观察到其他复算PID36859更新共享results，等待其退出后重生受影响real-scaling图并按当前状态重验，未终止他人任务。最终2038产物26图、5121本地链接229引用hash77快照通过；[公共验收](research/image-request-integration/acceptance.json)与[范围说明](research/image-request-integration/scope.md)保存证据。
 
-另完成[分块/预览候选](research/image-request-streaming/README.md)：显式块独立依赖、分向传播、三资源排程与额外预览争用；5037作者断言/54网格/11拒绝，以及独立26场景/7拒绝通过。原C66回填已有/仍缺，分块/预览公共接入仍待，不勾整项。C68/C69原空框按[状态审计](../research/plan-c68-c69-audit.md)回填已有局部记录和具体连接缺口。主计划仍93项24勾选69未勾选，全书目标继续。
+另完成[分块/预览候选](research/image-request-streaming/README.md)：显式块独立依赖、分向传播、三资源排程与额外预览争用；5037作者断言/54网格/11拒绝，以及独立26场景/7拒绝通过。原C66回填已有/仍缺，分块/预览公共接入仍待，不勾整项。C68/C69原空框按状态审计回填已有局部记录和具体连接缺口。主计划仍93项24勾选69未勾选，全书目标继续。
 
 ## C66 分块/预览公共接入与原范围收口
 
@@ -1965,7 +1965,7 @@ FIFO即时无线大例也已实际exit0并完成逐轨迹独立审查，61626端
 
 ## 2026-09-10 跨章综合条目 C70–C76 收口
 
-按[状态复核](PLAN-STATUS-REVIEW.md)的收口顺序处理剩余的跨章综合队列，七项全部交付并勾选：C70 Queqiao 记录再核算、C71 跨地域放置、C72 执行图与多目标筛选、C73 权重驻留后的剩余流量、C74 同上限两侧独立选择、C75 专用化回本与整站费用、C76 输入区间与设计记录。
+按状态复核的收口顺序处理剩余的跨章综合队列，七项全部交付并勾选：C70 Queqiao 记录再核算、C71 跨地域放置、C72 执行图与多目标筛选、C73 权重驻留后的剩余流量、C74 同上限两侧独立选择、C75 专用化回本与整站费用、C76 输入区间与设计记录。
 
 新增七个模块、七个 CLI 子命令、七组 book.json 场景与 146 项独立测试；新增固定来源组 `sources/queqiao-records/`（两份作者文档按原 manifest 的 SHA 逐字节一致，加一份逐行转录的 records.json），锁入 `configs/queqiao-records.lock.json`。
 

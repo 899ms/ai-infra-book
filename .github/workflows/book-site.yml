@@ -109,18 +109,27 @@ jobs:
         with:
           name: book-pdf-download
           path: dist
+      - name: Compose release name
+        id: relname
+        run: |
+          # 按北京时间命名，精确到秒，保证每次发版互不覆盖且一眼可读
+          echo "tag=build-$(TZ=Asia/Shanghai date +%Y%m%d-%H%M%S)" >> "$GITHUB_OUTPUT"
+          echo "title=$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M')" >> "$GITHUB_OUTPUT"
       - name: Create release notes
         env:
           SOURCE_SHA: ${{ github.sha }}
           REPOSITORY: ${{ github.repository }}
+          BUILT_AT: ${{ steps.relname.outputs.title }}
         run: |
           python - <<'PY'
           import os
           from pathlib import Path
           sha = os.environ['SOURCE_SHA']
           repo = os.environ['REPOSITORY']
+          built = os.environ['BUILT_AT']
           Path('release-notes.md').write_text(
-              f'自动从 main 提交 [{sha}](https://github.com/{repo}/commit/{sha}) 构建。\n\n'
+              f'{built}（北京时间）自动从 main 提交 '
+              f'[{sha[:12]}](https://github.com/{repo}/commit/{sha}) 构建。\n\n'
               '下载 `AI-Infra-Book.pdf` 阅读完整十二章全书。\n\n'
               f'最新版固定链接：https://github.com/{repo}/releases/latest/download/AI-Infra-Book.pdf\n\n'
               '在线阅读：https://bojieli.github.io/ai-infra-book/\n')
@@ -130,10 +139,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           SOURCE_SHA: ${{ github.sha }}
+          TAG: ${{ steps.relname.outputs.tag }}
+          TITLE: ${{ steps.relname.outputs.title }}
         run: |
-          tag="build-${SOURCE_SHA}"
+          tag="$TAG"
           if ! gh release view "$tag" >/dev/null 2>&1; then
-            gh release create "$tag" --target "$SOURCE_SHA" --title "Book ${SOURCE_SHA:0:12}" --notes-file release-notes.md --draft
+            gh release create "$tag" --target "$SOURCE_SHA" --title "全书 $TITLE" --notes-file release-notes.md --draft
           fi
           gh release upload "$tag" dist/AI-Infra-Book.pdf --clobber
           # Remove legacy build extras if this commit's release is being rerun.

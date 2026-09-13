@@ -1,0 +1,52 @@
+{
+  "assumptions": [
+    "固定 256 张 H100 SXM 80 GB 做 DeepSeek V4.1 Flash 的 decode；超节点为 8、64、128、256 卡，一个推理实例占用一个超节点，实例数为 256/超节点卡数。会话上下文固定 200,000 个 token，与 OpenTallas 的分析点相同，每步每会话生成一个 token。",
+    "实例内注意力按数据并行放置：每张卡保存全部注意力投影、共享专家、归一化、嵌入与输出头，并处理自己会话的注意力与 KV；路由专家按专家并行均分到实例内各卡，Engram 查表按同样方式分片。每卡还预留 2 GiB 工作区。",
+    "权重字节按锁定的 48 个 safetensors 分片头逐张量累加，使用官方发布格式：路由专家 4 位打包加 FP8 scale，注意力与共享专家 FP8 加 scale，嵌入与输出头 BF16。每步每卡读取一遍本卡的注意力、共享专家与输出头权重；嵌入只查表。每层被本卡持有且被本批任一 token 选中的专家读取一遍，选中概率按各 token 独立均匀路由计算，并且每层至少读一份专家。",
+    "KV 容量与每 token 读取量取自 kv-comparison 在 200,000 上下文的 V4.1 Flash 行：驻留量为全局缓存加 SWA 窗口，读取量为生产候选受限的 main 与 index 读取。矩阵运算量取 v41-forward 在 200,000 历史、CED 执行、候选索引下的 decode 结果。",
+    "单卡时间沿式（6-2）：权重与 KV 共用 HBM，读取时间相加；计算按 H100 BF16 稠密峰值 989.4 TFLOP/s，取与访存中较慢的一项。每层一次 dispatch 与一次 combine，各按一轮 All-to-All 计：启动开销加本卡发出字节除以链路带宽。超节点内 NVLink 每卡每方向 450 GB/s，每轮启动 0.833 μs（与第 7.6.4 节相同，来自实验 7-3 的 nccl-tests 记录）；跨服务器经每卡一张 ConnectX-7，每方向 50 GB/s，每轮启动 5 μs（第 7.6.3 节）。发出字节按 BF16 隐藏向量、每 token 6 个专家、离开本卡（或本服务器）的比例计。",
+    "服务目标为每 token 50 ms（TPOT）。对每种超节点大小，在容量允许的会话数内取满足 TPOT 的最大每卡会话数，每卡吞吐为会话数除以步时间。专家负载偏斜、批处理调度、首 token 与故障均不计入；第 9.4.1 节另算偏斜。",
+    "对照行：同样 64 卡的专家并行组分布在八台 HGX H100 上，dispatch 与 combine 中离开本服务器的部分经网卡；另一对照行把 Engram 表放在主机内存而不占 HBM，只改变 8 卡超节点的容量，查表经 PCIe 的时间不计。",
+    "权重固定为 ROM 的两行取自 OpenTallas 仓库 commit c7093ba 的 DeepSeek-V4.1-Flash 候选 roofline（N5 掩模 ROM 对 B200，等硅面积，200K 上下文）：每 token 时间 = max(权重读取, KV 读取, 计算) + 集合通信 + 固定层延迟；KV 放 HBM 与放 SRAM 两种设计只在 KV 容量上不同。这些是确定性的分析结果，没有已流片的 OpenTallas 硅片。",
+    "SRAM 容量门取 Cerebras WSE-3 的 44 GB 片上 SRAM（第 4.7.2 节）；放入全部 checkpoint 所需晶圆数按 checkpoint 字节除以 44 GB 向上取整。"
+  ],
+  "model": "deepseek-v4.1-flash",
+  "gpu_id": "h100-sxm",
+  "gpus_total": 256,
+  "supernode_sizes": [
+    8,
+    64,
+    128,
+    256
+  ],
+  "server_gpus": 8,
+  "rdma_case": {
+    "ep_gpus": 64
+  },
+  "context_tokens": 200000,
+  "workspace_bytes": 2147483648,
+  "activation_bytes": 2,
+  "local_Bps": 450000000000,
+  "local_alpha_s": 8.33e-07,
+  "nic_Bps": 50000000000,
+  "remote_alpha_s": 5e-06,
+  "tpot_s": 0.05,
+  "opentallas": {
+    "excerpt": "calculations/sources/opentallas/v41-flash-roofline-n5-vs-b200.json",
+    "designs": [
+      {
+        "name": "ROM-N5-native-HBMKV-wafer-hybrid-x2",
+        "label": "两片 ROM 晶圆，KV 在 HBM"
+      },
+      {
+        "name": "ROM-N5-native-SRAMKV-wafer-hybrid-x2",
+        "label": "两片 ROM 晶圆，KV 在 SRAM"
+      },
+      {
+        "name": "b200_sxm-x58-tensor",
+        "label": "58 张 B200，权重在 HBM"
+      }
+    ]
+  },
+  "sram_only_bytes": 44000000000
+}

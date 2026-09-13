@@ -1081,6 +1081,7 @@ JSON分列端到端传输、同PN的MAC尝试、预约、DATA接收和MAC反馈�
 - [给定模型、容量与期限选择TP和实例](results/parallel-choice-book.md)
 - [专家分离的dispatch、计算与combine偏斜](results/ep-skew-book.md)
 - [1024卡训练：超节点、出口、并行候选与恢复](results/supernode-scaling-book.md)
+- [256卡 decode：超节点大小、ROM 权重与 SRAM 容量门](results/supernode-inference-book.md)：`python3 calculations/supernode_inference.py`，V4.1 Flash 在 8/64/128/256 卡超节点上的每卡吞吐、跨服务器 EP 对照，以及 OpenTallas c7093ba 的 ROM 晶圆分析点。
 
 ## 概念覆盖补齐（2026-09-11）：交换网络、核内执行、能耗、训练稳定性与广域丢包
 

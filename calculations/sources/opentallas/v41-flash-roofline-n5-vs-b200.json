@@ -1,0 +1,448 @@
+{
+ "source": {
+  "repository": "https://github.com/bojieli/OpenTallas",
+  "commit": "c7093ba51ece15e4ffc59680547bd04afe8e4d7e",
+  "path": "results/roofline/candidates/deepseek-v41-flash/n5_vs_b200/analytical.json",
+  "sha256": "208d78f3cd7443dee96b1347897a830053ee4f5cfde02298c59e49126868e42a",
+  "study_id": "n5_vs_b200-deepseek-v41-flash",
+  "note": "Excerpt of the DeepSeek-V4.1-Flash candidate roofline (N5 mask-ROM versus B200 at equal silicon area). Deterministic analytical outputs; no fabricated OpenTallas silicon exists. Copied verbatim by calculations/supernode_inference.py support tooling for the book."
+ },
+ "inputs": {
+  "wafer_area_mm2": 46225.0,
+  "reticle_area_mm2": 815.0,
+  "rom_node": "N5",
+  "hbm_generation": "hbm3e",
+  "gpu_parts": [
+   "b200_sxm"
+  ],
+  "batches": [
+   1,
+   2,
+   4,
+   8,
+   16,
+   32,
+   64,
+   256
+  ]
+ },
+ "model_summary": {
+  "model": "DeepSeek-V4.1-Flash",
+  "source_repo": "deepseek-ai/DeepSeek-V4.1-Flash",
+  "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277",
+  "checkpoint_bytes": 510286023000,
+  "active_parameters": 16000000000.0,
+  "context_tokens": 200000,
+  "experts_per_token": 6,
+  "num_experts": 384,
+  "num_layers": 40,
+  "hidden_size": 5120,
+  "kv_read_bytes_per_user_token": 46763136.0,
+  "kv_storage_bytes_per_user": 180703360.0,
+  "kv_write_bytes_per_user_token": 22010.0,
+  "native_bits_per_parameter": 7.395449608695652
+ },
+ "technology": {
+  "node": "N5",
+  "sram_capacity_bits_per_mm2": {
+   "grade": "assumed",
+   "note": "1e6 um2/mm2 / (bitcell_um2 / array_efficiency). N5 6T high-density SRAM array capacity density in bits/mm2",
+   "source": "https://semiwiki.com/semiconductor-manufacturers/tsmc/283487-tsmcs-5nm-0-021um2-sram-cell-using-euv-and-high-mobility-channel-with-write-assist-at-isscc2020/ ; no vendor macro floorplan published for the target arrays",
+   "value": 30952380.95238095
+  },
+  "rom_capacity_bits_per_mm2": {
+   "grade": "derived",
+   "note": "1e6 um2/mm2 / (sram_bitcell_um2 * rom_cell_ratio / rom_array_efficiency). N5 mask-ROM array capacity density in bits/mm2",
+   "source": "https://semiwiki.com/semiconductor-manufacturers/tsmc/283487-tsmcs-5nm-0-021um2-sram-cell-using-euv-and-high-mobility-channel-with-write-assist-at-isscc2020/ ; Wang et al., ROMA: a Read-Only-Memory-based Accelerator for QLoRA-based On-Device LLM, ASP-DAC 2026, doi:10.1109/ASP-DAC66049.2026.11420528, preprint arXiv:2503.12988, SS II-C (TSMC 7nm Memory Compiler) ; measured in this repository at two other nodes and reported side by side, never blended: results/spice/ihp_sg13g2_bitcell/bitcell.json (IHP SG13G2 130 nm, 0.1298) and results/asap7_physical/bitcell_density/bitcell_density.json (ASAP7 predictive 7 nm, 0.2500 via-programmed / 0.1250 shared source-drain) ; Wang et al., ROMA, ASP-DAC 2026, doi:10.1109/ASP-DAC66049.2026.11420528, preprint arXiv:2503.12988: ROM macro 57.8 Mbit/mm2 at 8192x64 over 111.1 Mbit/mm2 of bare cells, bar values extracted from the figure's own SVG with each reproducing its printed label to three figures",
+   "value": 75036075.03607504
+  },
+  "rom_full_array_sweep_time_s": 3.4465388796097466e-05,
+  "links": {
+   "ethernet": {
+    "bytes_s": {
+     "grade": "assumed",
+     "note": "50 GB/s per device payload rate",
+     "source": "400 GbE class NIC per device",
+     "value": 50000000000.0
+    },
+    "domain_size": {
+     "grade": "derived",
+     "note": "treated as a single-partition domain, so no traffic is credited to it as intra-domain",
+     "source": "links.ethernet declares no domain size",
+     "value": 1.0
+    },
+    "fabric": "switched",
+    "hop_latency_s": {
+     "grade": "assumed",
+     "note": "InfiniBand/Ethernet class scale-out hop. Not measured.",
+     "source": "docs/WAFER_VERSUS_ARRAY_LATENCY.md",
+     "value": 5e-06
+    },
+    "switch_radix": {
+     "grade": "assumed",
+     "note": "64-port leaf/spine class switch; not measured",
+     "source": "400 GbE class NIC per device",
+     "value": 64.0
+    }
+   },
+   "infiniband_ndr": {
+    "bytes_s": {
+     "grade": "derived",
+     "note": "DGX B200 carries eight ConnectX-7 single-port cards for eight GPUs at up to 400 Gb/s InfiniBand, so 400 Gb/s = 50 GB/s of payload per GPU in one direction. Cross-checks against the HGX B200 networking row of 0.8 TB/s = 8 x 400 Gb/s x 2 directions. Achievable RDMA payload is 44-48 GB/s; the line rate is used, which favours the GPU.",
+     "source": "https://docs.nvidia.com/dgx/dgxb200-user-guide/dgxb200-user-guide.pdf ; https://www.nvidia.com/content/dam/en-zz/Solutions/networking/infiniband-adapters/infiniband-connectx7-data-sheet.pdf",
+     "value": 50000000000.0
+    },
+    "domain_size": {
+     "grade": "published",
+     "note": "NVIDIA Quantum-2 QM9700: 64 NDR 400 Gb/s ports per switch",
+     "source": "https://www.nvidia.com/en-us/networking/quantum2/",
+     "value": 64.0
+    },
+    "fabric": "switched",
+    "hop_latency_s": {
+     "grade": "measured",
+     "note": "GPU-buffer to GPU-buffer inter-node latency, which is what a decode step actually pays -- not the 1.07 us CPU-memory MPI ping-pong, which is the figure usually quoted and is not reachable from a GPU. VERIFIER-CORRECTED ON THE VALUE AND ON TWO VERBATIM DOCUMENTARY ERRORS, both of which were duplicated word for word into `links.infiniband_ndr`. (1) The previous note read \"De Sensi et al. (SC24) measured 3.7-5.7 us across FIVE production supercomputers\"; the abstract reads \"This paper comprehensively characterizes THREE supercomputers -- Alps, Leonardo, and LUMI\" and Table I has three columns. (2) The previous note read \"on LEONARDO (A100 + HDR InfiniBand) 4.33 us within one switch rising to 5.56 us across switches\"; SS V-B.1 reads \"(from 4.33us to 5.56us ON ALPS), whereas ON LEONARDO it increases by 2x (from 2.03us to 4.23us)\". Alps is H100 + HPE Slingshot-11, an ETHERNET Dragonfly. So the entry that prices this study's scale-out fabric was carrying an Ethernet machine's number under an InfiniBand machine's name, and it was 2.13x too slow. STATED AT 2.03 us: Leonardo same-switch, which is the A100 + HDR InfiniBand machine this study actually models, measured on fabricated silicon in a peer-reviewed venue. The band is set by this file's own convention for `nvlink3`/`nvlink5` -- best measured kernel for the point, hardware floor and shipped library for the ends. LOW 1.9 us is the minimum of that same measured distribution; the published silicon floor underneath it is lower still (an NVIDIA Quantum HDR switch is published at sub-130 ns port to port and a ConnectX-6 adapter at sub-600 ns, so roughly 1.3 us of the 2.03 is adapter and switch and the rest is protocol and software). HIGH 22 us is the shipped collective library: the same paper's Observation 5 puts *CCL an order of magnitude above MPI on small inter-node transfers, about 22 us at 1 B on Leonardo (Fig. 7b), and a decode-step all-reduce runs on NCCL rather than on the GPU-Aware MPI 1-byte ping-pong these point values are measured with. That asymmetry is the whole reason the band is now 11.6x wide rather than 1.5x wide, and the honest output of this correction is the BAND and not the point. MEAN-VERSUS-MEDIAN, recorded because it bounds how much the point can be trusted: the annotated Fig. 8a values are outlier-inflated means (LUMI same-switch box about 2.5 us against an annotated 3.71 us mean, Max 184.46 us; Leonardo across-group median about 2.6 us against a 4.23 us mean, Max 132 us -- the paper attributes this to network noise from other jobs). Only Alps same-switch (4.33, min 3.64 / max 5.2) and Leonardo same-switch (2.03, min 1.9 / max 2.4) are tight enough for the mean to stand in for the distribution, and this entry uses the second of those. DIRECTION: this correction makes the GPU side FASTER and moves the headline DOWN by roughly 0.73x, which is the direction that needs the least suspicion and is why it is applied at the point rather than only in the band. THIS IS THE NDR ENTRY AND ITS VALUE IS AN HDR MEASUREMENT, STATED AS A KNOWN BIAS RATHER THAN HIDDEN. De Sensi et al. measure no NDR machine: Leonardo is HDR, Alps and LUMI are Slingshot Ethernet, and no third-party GPU-buffer-to-GPU-buffer NDR inter-node latency was located. Quantum-2 switch silicon is not slower than Quantum-1, so carrying the HDR figure here UNDER-credits the newer fabric and therefore FAVOURS THE ROM SIDE of the n5_vs_b200 study. It is carried anyway because inventing an NDR speed-up would be worse than recording a bias, and because the previous entry had exactly the same structure (one number serving both) with none of it said.",
+     "source": "De Sensi, De Matteis, Taranov, Di Girolamo, Rahn, Hoefler, Exploring GPU-to-GPU Communication: Insights into Supercomputer Interconnects, SC24, arXiv:2408.14090, doi:10.1109/SC41406.2024.00039 -- SS V-B.1 verbatim for the 2.03/4.23 us Leonardo pair and Fig. 7b for the ~22 us *CCL 1-byte figure ; https://network.nvidia.com/files/doc-2020/pb-qm8700.pdf for the sub-130 ns switch and sub-600 ns adapter silicon floors",
+     "value": 2.03e-06
+    },
+    "switch_radix": {
+     "grade": "published",
+     "note": "64 endpoints per NDR switch tier",
+     "source": "https://www.nvidia.com/en-us/networking/quantum2/",
+     "value": 64.0
+    }
+   },
+   "inter_wafer": {
+    "bytes_s": {
+     "grade": "derived",
+     "note": "The only shipping multi-wafer machine is a Cerebras cluster, and its off-wafer link is twelve 100 GbE data ports per system: 1.2 Tb/s = 150 GB/s per wafer per direction. Against 26.75 PB/s on-wafer that is a factor of 180,000, and it is the number a multi-wafer ROM design has to live with rather than the on-wafer figure this study used to charge it.",
+     "source": "https://8968533.fs1.hubspotusercontent-na2.net/hubfs/8968533/Cerebras%20Wafer%20Scale%20Cluster%20datasheet%20-%20final.pdf",
+     "value": 150000000000.0
+    },
+    "domain_size": {
+     "grade": "assumed",
+     "note": "sixteen wafers taken as one domain; the study never builds a machine larger than twelve, so the bound is not reached",
+     "source": "Cerebras CS Weight Streaming white paper, section 6.4 (SwarmX)",
+     "value": 16.0
+    },
+    "fabric": "switched",
+    "hop_latency_s": {
+     "grade": "assumed",
+     "note": "Cerebras publishes no SwarmX latency figure, and the one adjacent figure it does publish is a bound rather than a measurement: the Hot Chips 2024 CS-3 slide reads \"Latency: CS-3 IO is <5us / 4 hops required\", over RDMA over Ethernet. Read per hop that lands exactly on the 5.0 us stated here; read as the whole four-hop path it would be 1.25 us and would move the headline sharply in this study's favour. A slide bullet cannot be disambiguated and a vendor bound is not a third-party measurement, so the value is unchanged and the slide is recorded only as the reason the previous sentence -- \"no SwarmX latency figure in any form\" -- was too strong. SwarmX is a broadcast-reduce tree over 100 GbE, so the class of the link is known even where the number is not: 100 GbE RDMA between accelerator buffers is the same 3.7-5.7 us class the InfiniBand measurements give, and 5.0 us is taken as the point. The low end of the sweep, 1.0 us, is a purpose-built wafer-to-wafer link better than anything shipping; the high end, 10.0 us, is a tree with a second level. This is the number that decides whether a twelve-wafer machine is one machine or twelve, and this study previously charged it the on-wafer stitched-mesh hop of 100 ns -- the ROM-side mirror of charging a GPU cluster a 672-way pipeline.",
+     "source": "Cerebras CS Weight Streaming white paper, section 6.4 (SwarmX) ; De Sensi et al., Exploring GPU-to-GPU Communication: Insights into Supercomputer Interconnects, SC24, arXiv:2408.14090",
+     "value": 5e-06
+    },
+    "switch_radix": {
+     "grade": "published",
+     "note": "4. Cerebras' own CS-3 IO slide reads \"Latency: CS-3 IO is <5us / 4 hops required\", so four hops reach the fabric the vendor is describing and 16 was an assumption. WAS 16 `assumed` (\"one tree level reaches the whole rack\"). IT MOVES NOTHING AND THAT IS RECORDED RATHER THAN LEFT TO BE DISCOVERED: re-running both studies at radix 2, 4 and 8 changes NO headline row in either, and the maximum headline ratio anywhere is unchanged. 336 of 4,688 points and 178 non-headline comparison rows move. The reason is structural -- the wafer-hybrid topologies that are actually selected have tensor_group = intra_domain_size = 57, so across = ceil(57/57) = 1 and they emit no `inter_wafer` all-reduce at all. Applied because it is published and conservative, not because it changes an answer.",
+     "source": "Cerebras, Hot Chips 2024 CS-3 IO slide, \"Latency: CS-3 IO is <5us / 4 hops required\"",
+     "value": 4.0
+    }
+   },
+   "nvlink5": {
+    "bytes_s": {
+     "grade": "derived",
+     "note": "NVLink 5: eighteen links per GPU, published as 1,800 GB/s bidirectional, so 900 GB/s of payload in one direction. Cross-checks against the HGX B200 node aggregate of 14.4 TB/s = 8 x 1.8 TB/s.",
+     "source": "https://www.nvidia.com/en-us/data-center/nvlink/",
+     "value": 900000000000.0
+    },
+    "domain_size": {
+     "grade": "published",
+     "note": "Eight B200 SXM GPUs in one NVLink domain on an HGX/DGX B200 baseboard, 14.4 TB/s aggregate. GB200 NVL72 raises the domain to 72 GPUs in a single tier -- eighteen switch chips, one link from each GPU to each -- but NVL72 is built from GB200 superchips rather than the B200 SXM module this study prices at 1,600 mm2. 72 is reported as a sensitivity rather than taken as the value.",
+     "source": "https://www.nvidia.com/en-us/data-center/hgx/ ; https://docs.nvidia.com/dgx/dgxb200-user-guide/dgxb200-user-guide.pdf",
+     "value": 8.0
+    },
+    "fabric": "switched",
+    "hop_latency_s": {
+     "grade": "derived",
+     "note": "WHAT THIS MODEL CHARGES A HOP FOR: one traversal of the NVLink 5 switch tier. The domain is a single all-to-all tier, so `collective_traversals` charges an in-domain all-reduce exactly two of them and nothing else; with no per-collective software term anywhere in this model, 2 x hop IS the whole in-domain all-reduce at zero payload. The constant is half a measured collective, not a wire delay. WITHDRAWN: the previous note's claim that \"NVIDIA publishes no NVLink or NVSwitch latency figure in any form\". NCCL's shipping source states 0.6 us per NVLink ring step for the LL protocol (src/tuning/cost_model.cc), which is a first-party per-traversal figure; the previous note's arithmetic was also wrong, quoting the speed-of-light floor as \"0.306 us L2 round trip plus 0.792 us remote store\" when those sum to 1.098 and the published formula is 2 x L2 round trip + remote store = 1.404 us, of which only the remote store crosses the interconnect. WHAT IS MEASURED, on the Blackwell fabric this entry prices: on a GB200 NVL72 the speed-of-light all-reduce floor is 1.404 us; the best device-initiated low-latency kernel achieves 2.37 us for a small message on 4 GB200; and stock NCCL's ring costs 11.0 us for the same operation (Shen, Korzh, Bachan et al., arXiv:2607.16100, with NCCL's own maintainer as a co-author). The same paper states verbatim that a single-tier all-reduce's latency is \"independent of the number of ranks involved\", which is the published warrant for the two-traversal rule this constant is multiplied by. STATED AT 1.2 us -- the 2.37 us best measured kernel divided by the two traversals this model charges. That is BELOW the 1.5 us previously assumed, so re-grading made the GPU side faster and moved the headline against the side this study argues for. THE BAND. LOW 0.7 us is the measured speed-of-light floor halved, which is a hardware bound nothing can beat. HIGH 5.5 us is stock NCCL's measured ring halved, folded into the hop because the model has no term for a collective's fixed software cost. The A100 twin of this entry, `links.nvlink3`, carries the full measurement list and the A100-generation numbers; the two are set by the same rule -- best measured kernel for the point, hardware floor and shipped library for the ends -- so that the two studies price their GPUs the same way.",
+     "source": "Shen, Korzh, Bachan et al., Every Microsecond Matters: Achieving Near Speed-of-Light Latency in GPU Collectives, arXiv:2607.16100 (2026) ; NVIDIA NCCL, src/tuning/cost_model.cc, hwLatencies[NVLINK] (2024) ; https://www.nvidia.com/en-us/data-center/nvlink/",
+     "value": 1.2e-06
+    },
+    "switch_radix": {
+     "grade": "derived",
+     "note": "one NVSwitch tier reaches the whole eight-GPU domain",
+     "source": "https://docs.nvidia.com/dgx/dgxb200-user-guide/dgxb200-user-guide.pdf",
+     "value": 8.0
+    }
+   },
+   "on_wafer_n5": {
+    "bytes_s": {
+     "grade": "published",
+     "note": "26.75 PB/s. 214 Pbit/s is WSE-3's OWN published fabric bandwidth -- Hot Chips 36, 2024: \"214 Pbit/s fabric bandwidth\" on the same slide as \"46,225 mm2 silicon\", \"900,000 AI cores\" and \"5nm TSMC process\" -- so at N5 this figure needs no cross-generation borrowing. 214 Pbit/s is exactly 26.75 PB/s. Cerebras' documents disagree on the UNIT elsewhere (the CS-3 cluster datasheet says 214 PB/s core-to-core), and this model takes the bit reading, which is eight times the more conservative of the two and is therefore the reading that does NOT flatter the wafer. Note that the N7 part is the FASTER of the two on this term: WSE-2's published figure is 220 Pbit/s = 27.5 PB/s, 2.8% above WSE-3's, because it clocks 850,000 cores at 1.1 GHz against 900,000 at about 1.0. The `on_wafer` entry is nevertheless charged this lower N5 number too; see its note.",
+     "source": "Cerebras (Sean Lie), Wafer-Scale AI: GPU Impossible Performance, Hot Chips 36, 2024, doi:10.1109/HCS61935.2024.10664673 ; https://www.cerebras.ai/chip",
+     "value": 2.675e+16
+    },
+    "domain_size": {
+     "grade": "derived",
+     "note": "treated as a single-partition domain, so no traffic is credited to it as intra-domain",
+     "source": "links.on_wafer_n5 declares no domain size",
+     "value": 1.0
+    },
+    "fabric": "mesh",
+    "hop_latency_s": {
+     "grade": "derived",
+     "note": "THE N5 TWIN OF `links.on_wafer`, AND A NULL RESULT. This entry exists because one wafer-fabric constant was serving BOTH studies while the GPU side already had two -- `nvlink3` at 2.5 us for the A100/N7 study and `nvlink5` at 1.2 us for the B200/4NP study. `on_wafer` is derived from Cerebras WSE-2, a TSMC 7nm part, so the N6/N7 study was matched and the N5/4NP study was not: it charged the ROM side a 7nm-era wafer fabric against a 4nm-era NVLink, which understates the ROM side in exactly the study where it should be strongest. The wafer fabric is therefore node-keyed too, and this is the N5 entry, anchored on WSE-3 (TSMC 5nm, Hot Chips 2024). THE METHOD IS THE SAME ONE, DELIBERATELY -- two figures derived two ways are not comparable, which is the whole point of splitting the entry. A field crossing costs (28.55 mm / core pitch) cycles / clock, where 28.55 mm is sqrt(`reticle.area_mm2`), this model's reticle field edge, and the cycle is the vendor-published one-cycle core-to-core hop, router included. THE RESULT IS A NULL: N5 DOES NOT BUY A FASTER HOP, and this entry is therefore stated at the same 125 ns as its N7 twin. The method has exactly two terms and neither moved. (1) CORE PITCH DID NOT SHRINK. Cerebras publishes NO WSE-3 geometry. The Hot Chips 2024 successor to the WSE-2 slide that carried \"17mm x 30mm\", \"66 x 154 Cores\", \"228um x 170um\", \"12 x 7 Die\" and \"215mm x 215mm\" carries only three labels -- \"10.7k Cores\", \"84 Die\", \"900k Cores\" -- and every geometric dimension was dropped. What IS published bounds the pitch three ways, and all three land on or slightly ABOVE the N7 hop count of 127 per field: (a) the WSE-3 core is \"approximately 38,000 um2 of silicon area in the TSMC 5 nm process\" against WSE-2's published 228 x 170 = 38,760 um2, a 2.0% reduction, which at WSE-2's own fill fraction is 0.2218 mm of pitch and 129 hops; (b) 46,225 mm2 over the 900,000 ACTIVE cores is 0.2266 mm and 126 hops; (c) over the 970,000 PHYSICAL cores Cerebras states in its 2025 yield paper it is 0.2183 mm and 131 hops. The N7-to-N5 shrink went into the core, not into the distance between cores: the WSE-3 white paper gives the core the same 48 kB of SRAM, the same 110,000 standard cells and the same 50/50 logic-to-SRAM split as WSE-2, with the transistors spent on doubling the FP16 SIMD from 4-wide to 8-wide. Note the direction: a SMALLER core would make this constant WORSE. Latency across a fixed 28.55 mm is (distance / router pitch) x 1 cycle, so more routers per millimetre is more cycles per millimetre -- process scaling buys a mesh cores, not distance. (2) THE CLOCK DID NOT MOVE. Cerebras publishes 1.1 GHz for WSE-2 (Hot Chips 34, \"Power efficient design point ... 1.1GHz clock frequency\") and publishes NO WSE-3 clock in any document -- not the Hot Chips 36 deck, not the 2024 white paper, not the press release, not the product page. Two back-derivations from figures Cerebras DOES publish, each calibrated on WSE-2 where the answer is known, with every input stated so the arithmetic can be checked. MEMORY ROUTE, bandwidth / cores / the published 24 B per cycle SRAM port (\"192-bit access per cycle from two 64-bit reads and one 64-bit write\"): WSE-2 is 20 PB/s / 850,000 / 24 = 0.98 GHz against a published 1.1, so the method reads 1.12x low; WSE-3 is 21 PB/s / 900,000 / 24 = 0.97 GHz, or 1.00 GHz on the 21.6 PB/s the CS-4 datasheet's 43.2 PB/s implies for exactly half a WSE-3 Turbo -- corrected for the bias, 1.09 to 1.12 GHz. FABRIC ROUTE, bandwidth / cores / the published five-port router's 4 x 32-bit bidirectional interfaces (256 bit per cycle): WSE-2 is 220 Pbit/s / 850,000 / 256 = 1.01 GHz (bias 1.09x); WSE-3 is 214 Pbit/s / 900,000 / 256 = 0.93 GHz, corrected 1.01. So 1.01-1.12 GHz at N5 against 1.1 GHz published at N7: flat, inside a method whose own error on the calibration part is 9-12%. The 1.4 GHz that 2026 press reports quote for WSE-3 has NO vendor source -- it is a journalist's explicitly hedged inference (\"I think\", The Next Platform, 19 August 2026) back-read from the CS-4 launch -- and it is not used here. (3) THE BONDED ROUTE IS CHARGED AT BOTH NODES, WHICH IS THE CRUX. The N7 entry's 125 ns is the middle of TWO routes: Cerebras' stitched 116-150 ns and Tesla's bonded 111 ns, the latter from Dojo's published \"100ns die-to-die latency\" for a 645 mm2 reticle-class die inside a wafer-scale training tile, plus about 11 ns to scale its own-die traversal to 815 mm2 (Hot Chips 34, 2022). No bonded wafer-scale part has been published at N5. Withholding that route from the N5 entry -- which would put it at the stitched-only midpoint of about 132 ns and make N5 look WORSE than N7 -- would be applying a different method at the two nodes, and the whole reason for splitting this entry was that two figures derived two ways are not comparable. A bonded reticle interface is a packaging choice, not a property of the logic node, so it is offered to both. Both entries therefore blend the same two routes and differ only in the two node-dependent inputs above, neither of which moved. (4) WHAT THE NULL COSTS, STATED. 126-131 hops at N5 against 127 at N7 is -1% to +3% around the N7 figure, median estimator 1.6% SLOWER; the clock routes are flat to within their own bias. That is below the resolution of a method whose N7 input is itself rounded -- \"17mm x 30mm\" is a rounded 17.92 x 30.71, since 215/12 and 215/7 are what reproduce 46,225 exactly -- so the two nodes are stated EQUAL. Where the estimators do point they point SLOWER at N5, so stating them equal credits this study's own side by about 1.6% rather than costing it. Recorded here so it is not mistaken for a correction that went our way: a faster N5 wafer fabric would have RAISED the headline, and the evidence does not support one. THE STAKE, MEASURED: driving this entry alone to the low end of its own band, 75 ns, and re-simulating moves the N5 study's batch-1 headline from 5.85x to 8.03x and its DeepSeek-V4-Pro point at 554,700 mm2 from 4.01x to 5.00x, while leaving the N6 study unchanged to four decimals; driving `on_wafer` alone the same way moves N6 (10.78x to 13.95x) and leaves N5 unchanged. So the split is live and an N5-specific speed-up was worth up to 1.37x on that study's headline -- which is why it had to be derived rather than chosen. THE BAND, 75-250 ns, is the same as the N7 twin's and for the same two reasons, neither of which is a node argument. LOW is the coarsest tile pitch any wafer-scale part has shipped (CS-1's 0.348 mm, Rocki Fig. 2) at the fastest clock any vendor has published (1.1 GHz); it is a router-PITCH design choice, and a mask-ROM region is not a 38,000 um2 processing element, so a purpose-built design may legitimately put fewer routers across the same millimetres. HIGH is the same wire under the corner-rooted collective Cerebras' own SDK ships, which Luczynski et al. measure at about 2x the mesh diameter against the 1.1x `MESH_ALLREDUCE_DIAMETER_FACTOR` charges, plus their measured 62-146 ns per-collective fixed floor the model has no term for. NOT PUBLISHED AT EITHER NODE: the reticle-boundary crossing itself. For WSE-3 Cerebras states only that the fabric \"crosses less than a millimeter of scribe line\", that dies connect \"at full performance\" and that \"software always sees a fully uniform 2D mesh\" -- bandwidth and uniformity claims, never a latency. The boundary is taken as one ordinary hop at both nodes, which the end-to-end measurements cited on the N7 entry bound at no more than a few cycles.",
+     "source": "Cerebras (Sean Lie), Wafer-Scale AI: GPU Impossible Performance, Hot Chips 36, 2024, doi:10.1109/HCS61935.2024.10664673 (46,225 mm2, 900,000 AI cores, 84 die, \"10.7k Cores\" per die, 214 Pbit/s, 5nm TSMC; no core pitch and no clock) ; Cerebras, The Cerebras Wafer-Scale Architecture for Deep Learning (WSE-3 white paper), 2024 (core \"approximately 38,000 um2 of silicon area in the TSMC 5 nm process\", 48 kB SRAM, 110,000 standard cells, 8-wide FP16 SIMD, \"single clock cycle latency between nodes\", scribe crossing \"less than a millimeter\") ; Cerebras, How Cerebras Solved the Wafer-Scale Yield Challenge, 2025 (970,000 physical cores, ~900,000 active, 0.05 mm2 per core) ; Cerebras (Sean Lie), Cerebras Architecture Deep Dive, Hot Chips 34, 2022 (the N7 calibration: 17x30 mm die, 66 x 154 cores, 228x170 um core, 1.1 GHz, \"Single cycle latency between cores\") ; Rocki et al., Fast Stencil-Code Computation on a Wafer-Scale Processor, SC20, arXiv:2010.03660 ; Luczynski et al., Near-Optimal Wafer-Scale Reduce, HPDC 2024, doi:10.1145/3625549.3658693 ; Santos et al., Breaking the Molecular Dynamics Timescale Barrier Using a Wafer-Scale System, SC24, doi:10.1109/SC41406.2024.00014",
+     "value": 1.25e-07
+    },
+    "switch_radix": {
+     "grade": "derived",
+     "note": "max(2, links.<link>.domain_size). no switch radix stated, so one tier is taken to reach exactly one domain",
+     "source": "links.on_wafer_n5 declares no domain size",
+     "value": 2.0
+    }
+   }
+  },
+  "efficiencies": {
+   "stage_balance": {
+    "grade": "assumed",
+    "note": "penalty applied to a multi-device pipeline for imperfect layer balance across devices",
+    "source": "no measured layer-to-device partition for the modelled designs",
+    "value": 0.9
+   }
+  }
+ },
+ "points": [
+  {
+   "design": "DeepSeek-V4.1-Flash/ROM-N5-native-SRAMKV-array-tensor-x84",
+   "device_count": 84,
+   "batch_size": 1,
+   "binding_constraint": "link_latency",
+   "component_times_s": {
+    "compute": 3.3742786968030736e-05,
+    "kv_read": 4.238562091798318e-06,
+    "layer_fixed_latency": 1.0051735374500655e-05,
+    "link_latency": 0.0005638729696969696,
+    "weight_read": 3.4465388796097466e-05
+   },
+   "link_latency_s": 0.0005638729696969696,
+   "hop_events_per_token": 160.0,
+   "hop_semantics": "two all-reduces per layer per token over 8 partitions inside one nvlink5 domain; two all-reduces per layer per token across 11 infiniband_ndr domains",
+   "hop_breakdown": "80x all_reduce span 8 on nvlink5 (194.39 us); 80x all_reduce span 11 on infiniband_ndr (369.48 us)",
+   "intra_domain_size": 8,
+   "intra_link": "nvlink5",
+   "link": "infiniband_ndr",
+   "kv_capacity_bytes": 180703360.0,
+   "kv_store": "sram",
+   "max_resident_users": 1.0,
+   "per_user_tokens_s": 1633.4008747825187,
+   "aggregate_tokens_s": 1633.4008747825187,
+   "parallelism": "tensor",
+   "overlap_rule": "weights and KV are physically separate arrays: their times overlap",
+   "engaged_weight_bytes": 13035075008.0,
+   "feasible": true,
+   "layer_fixed_latency_s": 1.0051735374500655e-05
+  },
+  {
+   "design": "DeepSeek-V4.1-Flash/ROM-N5-native-SRAMKV-array-tensor-x84",
+   "device_count": 84,
+   "batch_size": 2,
+   "binding_constraint": "capacity_or_format",
+   "component_times_s": {
+    "compute": 6.748557393606147e-05,
+    "kv_read": 8.477124183596635e-06,
+    "layer_fixed_latency": 1.0051735374500655e-05,
+    "link_latency": 0.0006109459393939394,
+    "weight_read": 3.446538879609746e-05
+   },
+   "link_latency_s": 0.0006109459393939394,
+   "hop_events_per_token": 160.0,
+   "hop_semantics": "two all-reduces per layer per token over 8 partitions inside one nvlink5 domain; two all-reduces per layer per token across 11 infiniband_ndr domains",
+   "hop_breakdown": "80x all_reduce span 8 on nvlink5 (196.78 us); 80x all_reduce span 11 on infiniband_ndr (414.17 us)",
+   "intra_domain_size": 8,
+   "intra_link": "nvlink5",
+   "link": "infiniband_ndr",
+   "kv_capacity_bytes": 180703360.0,
+   "kv_store": "sram",
+   "max_resident_users": 1.0,
+   "per_user_tokens_s": 0.0,
+   "aggregate_tokens_s": 0.0,
+   "parallelism": "tensor",
+   "overlap_rule": "weights and KV are physically separate arrays: their times overlap",
+   "engaged_weight_bytes": 17476726208.0,
+   "feasible": false,
+   "layer_fixed_latency_s": 1.0051735374500655e-05
+  },
+  {
+   "design": "DeepSeek-V4.1-Flash/ROM-N5-native-SRAMKV-wafer-hybrid-x2",
+   "device_count": 2,
+   "batch_size": 1,
+   "binding_constraint": "link_latency",
+   "component_times_s": {
+    "compute": 5.327809166683011e-06,
+    "kv_read": 8.477124183596635e-06,
+    "layer_fixed_latency": 1.0051735374500655e-05,
+    "link_latency": 0.00015906835692775867,
+    "weight_read": 6.893077759219493e-05
+   },
+   "link_latency_s": 0.00015906835692775867,
+   "hop_events_per_token": 81.0,
+   "hop_semantics": "two all-reduces per layer per token over 57 partitions inside one on_wafer_n5 domain; 1 pipeline-stage boundaries across inter_wafer",
+   "hop_breakdown": "80x all_reduce span 57 on on_wafer_n5 (154.00 us); 1x point_to_point span 2 on inter_wafer (5.07 us)",
+   "intra_domain_size": 57,
+   "intra_link": "on_wafer_n5",
+   "link": "inter_wafer",
+   "kv_capacity_bytes": 180703360.0,
+   "kv_store": "sram",
+   "max_resident_users": 1.0,
+   "per_user_tokens_s": 4069.84099174924,
+   "aggregate_tokens_s": 4069.84099174924,
+   "parallelism": "hybrid",
+   "overlap_rule": "weights and KV are physically separate arrays: their times overlap",
+   "engaged_weight_bytes": 13035075008.0,
+   "feasible": true,
+   "layer_fixed_latency_s": 1.0051735374500655e-05
+  },
+  {
+   "design": "DeepSeek-V4.1-Flash/ROM-N5-native-SRAMKV-wafer-hybrid-x2",
+   "device_count": 2,
+   "batch_size": 2,
+   "binding_constraint": "capacity_or_format",
+   "component_times_s": {
+    "compute": 5.327809166683011e-06,
+    "kv_read": 8.477124183596635e-06,
+    "layer_fixed_latency": 1.0051735374500655e-05,
+    "link_latency": 0.00015906835692775867,
+    "weight_read": 6.893077759219493e-05
+   },
+   "link_latency_s": 0.00015906835692775867,
+   "hop_events_per_token": 81.0,
+   "hop_semantics": "two all-reduces per layer per token over 57 partitions inside one on_wafer_n5 domain; 1 pipeline-stage boundaries across inter_wafer",
+   "hop_breakdown": "80x all_reduce span 57 on on_wafer_n5 (154.00 us); 1x point_to_point span 2 on inter_wafer (5.07 us)",
+   "intra_domain_size": 57,
+   "intra_link": "on_wafer_n5",
+   "link": "inter_wafer",
+   "kv_capacity_bytes": 180703360.0,
+   "kv_store": "sram",
+   "max_resident_users": 1.0,
+   "per_user_tokens_s": 0.0,
+   "aggregate_tokens_s": 0.0,
+   "parallelism": "hybrid",
+   "overlap_rule": "weights and KV are physically separate arrays: their times overlap",
+   "engaged_weight_bytes": 13035075008.0,
+   "feasible": false,
+   "layer_fixed_latency_s": 1.0051735374500655e-05
+  },
+  {
+   "design": "DeepSeek-V4.1-Flash/ROM-N5-native-HBMKV-wafer-hybrid-x2",
+   "device_count": 2,
+   "batch_size": 1,
+   "binding_constraint": "link_latency",
+   "component_times_s": {
+    "compute": 5.5387195144329815e-06,
+    "kv_read": 1.618092661498708e-06,
+    "layer_fixed_latency": 1.0051735374500655e-05,
+    "link_latency": 0.00015906835692775867,
+    "weight_read": 6.893077759219493e-05
+   },
+   "link_latency_s": 0.00015906835692775867,
+   "hop_events_per_token": 81.0,
+   "hop_semantics": "two all-reduces per layer per token over 57 partitions inside one on_wafer_n5 domain; 1 pipeline-stage boundaries across inter_wafer",
+   "hop_breakdown": "80x all_reduce span 57 on on_wafer_n5 (154.00 us); 1x point_to_point span 2 on inter_wafer (5.07 us)",
+   "intra_domain_size": 57,
+   "intra_link": "on_wafer_n5",
+   "link": "inter_wafer",
+   "kv_capacity_bytes": 1741500000000.0,
+   "kv_store": "hbm",
+   "max_resident_users": 9637.0,
+   "per_user_tokens_s": 4069.84099174924,
+   "aggregate_tokens_s": 8139.68198349848,
+   "parallelism": "hybrid",
+   "overlap_rule": "weights and KV are physically separate arrays: their times overlap",
+   "engaged_weight_bytes": 13035075008.0,
+   "feasible": true,
+   "layer_fixed_latency_s": 1.0051735374500655e-05
+  },
+  {
+   "design": "DeepSeek-V4.1-Flash/ROM-N5-native-HBMKV-wafer-hybrid-x2",
+   "device_count": 2,
+   "batch_size": 2,
+   "binding_constraint": "link_latency",
+   "component_times_s": {
+    "compute": 5.5387195144329815e-06,
+    "kv_read": 1.618092661498708e-06,
+    "layer_fixed_latency": 1.0051735374500655e-05,
+    "link_latency": 0.00015906835692775867,
+    "weight_read": 6.893077759219493e-05
+   },
+   "link_latency_s": 0.00015906835692775867,
+   "hop_events_per_token": 81.0,
+   "hop_semantics": "two all-reduces per layer per token over 57 partitions inside one on_wafer_n5 domain; 1 pipeline-stage boundaries across inter_wafer",
+   "hop_breakdown": "80x all_reduce span 57 on on_wafer_n5 (154.00 us); 1x point_to_point span 2 on inter_wafer (5.07 us)",
+   "intra_domain_size": 57,
+   "intra_link": "on_wafer_n5",
+   "link": "inter_wafer",
+   "kv_capacity_bytes": 1741500000000.0,
+   "kv_store": "hbm",
+   "max_resident_users": 9637.0,
+   "per_user_tokens_s": 4069.84099174924,
+   "aggregate_tokens_s": 8139.68198349848,
+   "parallelism": "hybrid",
+   "overlap_rule": "weights and KV are physically separate arrays: their times overlap",
+   "engaged_weight_bytes": 13035075008.0,
+   "feasible": true,
+   "layer_fixed_latency_s": 1.0051735374500655e-05
+  },
+  {
+   "design": "DeepSeek-V4.1-Flash/b200_sxm-x58-tensor",
+   "device_count": 58,
+   "batch_size": 1,
+   "binding_constraint": "link_latency",
+   "component_times_s": {
+    "compute": 2.716550232292014e-07,
+    "kv_read": 1.4995255268199235e-07,
+    "layer_fixed_latency": 1.0051735374500655e-05,
+    "link_latency": 0.0005621973333333333,
+    "weight_read": 0.0001481140469907426
+   },
+   "link_latency_s": 0.0005621973333333333,
+   "hop_events_per_token": 160.0,
+   "hop_semantics": "two all-reduces per layer per token over 8 partitions inside one nvlink5 domain; two all-reduces per layer per token across 8 infiniband_ndr domains",
+   "hop_breakdown": "80x all_reduce span 8 on nvlink5 (194.39 us); 80x all_reduce span 8 on infiniband_ndr (367.81 us)",
+   "intra_domain_size": 8,
+   "intra_link": "nvlink5",
+   "link": "infiniband_ndr",
+   "kv_capacity_bytes": 9396000000000.0,
+   "kv_store": "hbm",
+   "max_resident_users": 49172.0,
+   "per_user_tokens_s": 1356.8763207334591,
+   "aggregate_tokens_s": 1356.8763207334591,
+   "parallelism": "tensor",
+   "overlap_rule": "weights and KV share one memory system: their times add",
+   "engaged_weight_bytes": 13035075008.0,
+   "feasible": true,
+   "layer_fixed_latency_s": 1.0051735374500655e-05
+  },
+  {
+   "design": "DeepSeek-V4.1-Flash/b200_sxm-x58-tensor",
+   "device_count": 58,
+   "batch_size": 2,
+   "binding_constraint": "link_latency",
+   "component_times_s": {
+    "compute": 5.433100464584028e-07,
+    "kv_read": 2.999051053639847e-07,
+    "layer_fixed_latency": 1.0051735374500655e-05,
+    "link_latency": 0.0006075946666666667,
+    "weight_read": 0.0001971657281079175
+   },
+   "link_latency_s": 0.0006075946666666667,
+   "hop_events_per_token": 160.0,
+   "hop_semantics": "two all-reduces per layer per token over 8 partitions inside one nvlink5 domain; two all-reduces per layer per token across 8 infiniband_ndr domains",
+   "hop_breakdown": "80x all_reduce span 8 on nvlink5 (196.78 us); 80x all_reduce span 8 on infiniband_ndr (410.82 us)",
+   "intra_domain_size": 8,
+   "intra_link": "nvlink5",
+   "link": "infiniband_ndr",
+   "kv_capacity_bytes": 9396000000000.0,
+   "kv_store": "hbm",
+   "max_resident_users": 49172.0,
+   "per_user_tokens_s": 1194.6679658192352,
+   "aggregate_tokens_s": 2389.3359316384704,
+   "parallelism": "tensor",
+   "overlap_rule": "weights and KV share one memory system: their times add",
+   "engaged_weight_bytes": 17476726208.0,
+   "feasible": true,
+   "layer_fixed_latency_s": 1.0051735374500655e-05
+  }
+ ]
+}

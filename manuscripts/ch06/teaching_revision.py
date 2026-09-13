@@ -150,4 +150,34 @@ def draw(here,data):
             for c,col in zip(data['deadline_curves'][phase],['#267398','#388768','#a56c28','#86649b']):
                 if c['capacity_fits']:a.step(c['deadlines_ms'],[np.nan if v is None else v for v in c['cost_per_valid']],where='post',label=f'TP{c["tp"]}',color=col)
             a.axvline(130,ls='--',color='#777777');a.set(xlim=(80,240),ylim=(0,.8),xlabel='完成期限（ms）',ylabel='每个按时会话（GPU·s）');a.legend(ncol=3,frameon=False);save(f,name)
+        # 6.7.4: V4.1 Flash decode throughput per card against supernode size, and the token time once weights leave HBM.
+        import json
+        from pathlib import Path
+        si=json.loads((Path(here).parents[1]/'calculations/results/supernode-inference-book.json').read_text())
+        rows=si['results'];rdma=si['rdma']
+        f,a=plot(3.7,left=.17);f.subplots_adjust(top=.84)
+        a.plot(range(4),[r['tokens_per_s_per_gpu']/1e3 for r in rows],marker='o',color='#267398',label='实例在一个超节点内')
+        a.plot([1],[rdma['tokens_per_s_per_gpu']/1e3],marker='s',linestyle='none',color='#a56c28',label='64 卡实例跨八台服务器')
+        for i,r in enumerate(rows[:2]):a.annotate(f"每卡 {r['sessions']} 个会话",(i,r['tokens_per_s_per_gpu']/1e3),xytext=(8,-14 if i==0 else 6),textcoords='offset points',fontsize=11)
+        a.set(xticks=range(4),xticklabels=['8','64','128','256'],xlabel='每超节点卡数',ylabel='每卡 decode 吞吐（千 token/s）',ylim=(0,24))
+        a.legend(frameon=False,ncol=2,loc='lower center',bbox_to_anchor=(.5,1.0));a.grid(axis='y',alpha=.15);save(f,'supernode-inference')
+        # Three placements of weights and KV: shared HBM, ROM + HBM, ROM + on-chip SRAM.
+        f,a=canvas(3.9)
+        cols=[('GPU 超节点',.03,.22,[('HBM\n权重 + KV','blue',.34)]),('ROM 晶圆 + HBM',.29,.33,[('ROM\n权重','gray',.34),('HBM\nKV','green',.34)]),('ROM 晶圆 + SRAM',.66,.33,[('ROM\n权重','gray',.34),('片上 SRAM\nKV','green',.18)])]
+        for title,x,w,stores in cols:
+            text(a,x+w/2,.95,title,13,ha='center')
+            box(a,x+w/2-.08,.64,.16,.15,'计算','orange')
+            n=len(stores);sw=(w-.03*(n-1))/n
+            for j,(label,col,h) in enumerate(stores):
+                sx=x+j*(sw+.03);box(a,sx,.48-h,sw,h,label,col,11);arrow(a,(sx+sw/2,.48),(x+w/2,.64))
+        text(a,.5,.03,'箭头：每一步都要读取的数据；方框高度示意容量',11,ha='center')
+        save(f,'weight-placement')
+        bars=[si['gpu_row'],si['rom']['rows'][2],si['rom']['rows'][0]];labels=['8 张 H100\n权重在 HBM','58 张 B200\n权重在 HBM','两片 ROM 晶圆\n权重在 ROM']
+        f,a=plot(3.5,left=.26);f.subplots_adjust(top=.84)
+        for j,(seg,col,name) in enumerate([('storage_compute_s','blue','存储与计算'),('link_s','orange','集合通信'),('fixed_s','gray','固定延迟')]):
+            left=np.array([sum(b[k] for k in ['storage_compute_s','link_s','fixed_s'][:j]) for b in bars])*1e6
+            a.barh(range(3),[b[seg]*1e6 for b in bars],left=left,height=.55,color=COL[col],edgecolor=COL['line'],label=name)
+        for i,b in enumerate(bars):a.text(b['token_s']*1e6+60,i,f"{b['per_user_tokens_s']:,.0f} token/s",va='center',fontsize=11)
+        a.set(yticks=range(3),yticklabels=labels,xlim=(0,3900),xlabel='单用户每 token 时间（μs）');a.invert_yaxis()
+        a.legend(frameon=False,ncol=3,loc='lower center',bbox_to_anchor=(.5,1.0));save(f,'rom-token-time')
     out.finish();return out.outputs,out.checks

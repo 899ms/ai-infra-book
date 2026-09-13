@@ -142,18 +142,27 @@ jobs:
           TAG: ${{ steps.relname.outputs.tag }}
           TITLE: ${{ steps.relname.outputs.title }}
         run: |
+          # GitHub 的 API 偶有 5xx 抖动，每个调用最多重试五次。
+          retry() {
+            local n=0
+            until "$@"; do
+              n=$((n + 1))
+              if [ "$n" -ge 5 ]; then return 1; fi
+              sleep $((n * 15))
+            done
+          }
           tag="$TAG"
           if ! gh release view "$tag" >/dev/null 2>&1; then
-            gh release create "$tag" --target "$SOURCE_SHA" --title "全书 $TITLE" --notes-file release-notes.md --draft
+            retry sh -c 'gh release view "$1" >/dev/null 2>&1 || gh release create "$1" --target "$2" --title "全书 $3" --notes-file release-notes.md --draft' _ "$tag" "$SOURCE_SHA" "$TITLE"
           fi
-          gh release upload "$tag" dist/AI-Infra-Book.pdf --clobber
+          retry gh release upload "$tag" dist/AI-Infra-Book.pdf --clobber
           # Remove legacy build extras if this commit's release is being rerun.
           for asset in AI-Infra-Book-build.json AI-Infra-Book-Cover.pdf AI-Infra-Book-Cover.png ai-infra-book-site.tar.gz pdf-validation.json SHA256SUMS; do
             if gh release view "$tag" --json assets --jq '.assets[].name' | grep -Fxq "$asset"; then
               gh release delete-asset "$tag" "$asset" --yes
             fi
           done
-          gh release edit "$tag" --notes-file release-notes.md --draft=false --latest
+          retry gh release edit "$tag" --notes-file release-notes.md --draft=false --latest
 
   deploy:
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')

@@ -23,7 +23,7 @@ from infra_calc.topics import kv_comparison, v41_forward  # noqa: E402
 def checkpoint_groups(model):
     """Bytes of the pinned checkpoint by placement group, from the safetensors headers."""
     index = json.loads(read_source(f'sources/{model}/model.safetensors.index.json'))
-    groups, embed = Counter(), 0
+    groups, embed, table_bytes, table_rows = Counter(), 0, 0, 0
     for shard in sorted(set(index['weight_map'].values())):
         raw = read_source(f'sources/{model}/headers/{shard}.header.bin')
         if struct.unpack('<Q', raw[:8])[0] != len(raw) - 8:
@@ -45,9 +45,13 @@ def checkpoint_groups(model):
             groups[group] += end - start
             if name == 'embed.weight':
                 embed = end - start
-    if not embed:
-        raise ValueError('embedding table not found')
-    return dict(groups), embed
+            if '.engram.embed.' in name:
+                table_bytes += end - start
+                if name.endswith('.weight'):
+                    table_rows += t['shape'][0]
+    if not embed or not table_rows:
+        raise ValueError('embedding or Engram table not found')
+    return dict(groups), embed, dict(bytes=table_bytes, rows=table_rows)
 
 
 def all_to_all_s(alpha, bytes_out, link_Bps):
@@ -109,7 +113,7 @@ def load_model(c):
     model = c['model']
     cfg = model_config(model)
     cfg = cfg.get('text_config', cfg)
-    groups, embed = checkpoint_groups(model)
+    groups, embed, table = checkpoint_groups(model)
     hw_row = next(d for d in json.loads((ROOT / 'calculations/configs/hardware.json').read_text())['devices'] if d['id'] == c['gpu_id'])
     peak = next(r for r in hw_row['peak_rates'] if r['input_precision'] in ('BF16', 'FP16') and r['sparsity'] == 'dense' and r['execution_unit'] == 'tensor')
     hw = dict(name=hw_row['name'], capacity_bytes=hw_row['memory']['nominal_capacity'] * 1e9,
@@ -122,6 +126,8 @@ def load_model(c):
         checkpoint_bytes=sum(groups.values()), groups=groups,
         replicated_bytes=groups['replicated'], routed_bytes=groups['routed_expert'], engram_bytes=groups['engram'],
         replicated_read_bytes=groups['replicated'] - embed, embedding_bytes=embed,
+        engram_table_bytes=table['bytes'], engram_rows=table['rows'],
+        engram_rows_per_token=len(cfg['engram_layer_ids']) * cfg['engram_n_heads'] * (cfg['engram_max_ngram_size'] - 1),
         expert_bytes=groups['routed_expert'] / (layers * experts),
         kv_resident_bytes=kv['global_history_bytes'] + kv['local_window_bytes'],
         kv_read_bytes=kv['decode_selected_history_read_bytes'],
@@ -154,6 +160,33 @@ def rom_rows(c, m):
                 sram_only_wafers=math.ceil(m['checkpoint_bytes'] / c['sram_only_bytes']))
 
 
+def engram_rows(c, m, results, rom):
+    ex = json.loads((ROOT / c['opentallas']['excerpt']).read_text())
+    row_bytes = m['engram_table_bytes'] / m['engram_rows']
+    lookup_bytes = m['engram_rows_per_token'] * row_bytes
+    rom_density = ex['technology']['rom_capacity_bits_per_mm2']['value']
+    rom_mm2 = m['engram_bytes'] * 8 / rom_density
+    wafer_mm2 = ex['inputs']['wafer_area_mm2']
+    host = ex['engram_host']['points'][0]
+    machines = []
+    for label, step_s, sessions in [(f"8 张 {m['hw']['name']}", results[0]['batch1']['step_s'], results[0]['sessions']),
+                                    ('两片 ROM 晶圆', rom['rows'][0]['token_s'], rom['rows'][0]['resident_sessions'])]:
+        machines.append(dict(label=label, step_s=step_s, hide_window_s=step_s / m['layers']))
+    placements = []
+    for S in c['supernode_sizes']:
+        placements.append(dict(placement='hbm', supernode_gpus=S, bytes_per_gpu=m['engram_bytes'] / S, sessions_displaced_per_gpu=m['engram_bytes'] / S / m['kv_resident_bytes'], lookup_s=c['local_alpha_s']))
+    # Batched host reads on the 64-card supernode: reads per card per step against the tag-limited rate.
+    r64 = results[1]
+    host_reads = r64['served']['sessions_per_card'] * m['engram_rows_per_token']
+    return dict(row_bytes=row_bytes, lookup_bytes=lookup_bytes, rows_per_token=m['engram_rows_per_token'],
+                host=dict(rtt_s=c['engram']['host_rtt_s'], reads_per_s=c['engram']['host_reads_per_s'], batched_reads_per_step=host_reads,
+                          batched_read_s=host_reads / c['engram']['host_reads_per_s'], step_s=r64['served']['step_s']),
+                hbm=placements, wafer_hbm_sessions_displaced=m['engram_bytes'] / m['kv_resident_bytes'],
+                rom=dict(mm2=rom_mm2, wafers=rom_mm2 / wafer_mm2, density_bits_per_mm2=rom_density),
+                machines=machines, exposed_at_tokens_per_s=1 / (m['layers'] * c['engram']['host_rtt_s']),
+                engram_host_wafer=dict(design=host['design'], per_user_tokens_s=host['per_user_tokens_s'], devices=host['device_count'], resident_sessions=host['max_resident_users']))
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--scenario', type=Path, default=ROOT / 'calculations/scenarios/supernode-inference-example.json')
@@ -166,12 +199,13 @@ def main():
     rdma = evaluate(c, m, ep, remote=c['server_gpus'], label=f"{ep} 卡跨 {ep // c['server_gpus']} 台服务器")
     engram_host = evaluate(c, m, c['supernode_sizes'][0], label=f"{c['supernode_sizes'][0]} 卡超节点，Engram 表在主机内存", engram_on_host=True)
     rom = rom_rows(c, m)
+    engram = engram_rows(c, m, results, rom)
     # H100 row of the ROM comparison: the 8-card supernode at batch 1.
     h100 = results[0]['batch1']
     gpu_row = dict(label=f"8 张 {m['hw']['name']}，权重在 HBM", weight_read_s=(h100['weight_bytes']) / m['hw']['hbm_Bps'], kv_read_s=h100['kv_bytes'] / m['hw']['hbm_Bps'],
                    compute_s=h100['compute_s'], storage_compute_s=h100['local_s'], link_s=h100['comm_s'], fixed_s=0.0, token_s=h100['step_s'],
                    per_user_tokens_s=1 / h100['step_s'], link_share=h100['comm_s'] / h100['step_s'], resident_sessions=results[0]['sessions'] * 8, kv_store='hbm')
-    out = dict(assumptions=c['assumptions'], model=m, results=results, rdma=rdma, engram_host=engram_host, rom=rom, gpu_row=gpu_row)
+    out = dict(assumptions=c['assumptions'], model=m, results=results, rdma=rdma, engram_host=engram_host, rom=rom, gpu_row=gpu_row, engram=engram)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     (args.output_dir / 'supernode-inference-book.json').write_text(json.dumps(out, ensure_ascii=False, indent=2) + '\n')
     L = ['# 固定 256 卡 decode 与超节点大小：DeepSeek V4.1 Flash', '',
@@ -194,7 +228,13 @@ def main():
           '| 机器 | 权重读取 μs | KV 读取 μs | 计算 μs | 存储与计算取较慢者 μs | 集合通信 μs | 固定延迟 μs | 每 token μs | 通信占比 | 单用户 token/s | 驻留会话 |', '|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|']
     for r in [gpu_row] + rom['rows']:
         L.append(f"| {r['label']} | {r['weight_read_s']*1e6:.1f} | {r['kv_read_s']*1e6:.1f} | {r['compute_s']*1e6:.1f} | {r['storage_compute_s']*1e6:.1f} | {r['link_s']*1e6:.1f} | {r['fixed_s']*1e6:.1f} | {r['token_s']*1e6:.1f} | {r['link_share']*100:.0f}% | {r['per_user_tokens_s']:.0f} | {r['resident_sessions']:.0f} |")
-    L += ['', '通信路径：']
+    e = engram
+    L += ['', '## Engram 表的放置', '',
+          f"每 token 查 {e['rows_per_token']} 行，每行 {e['row_bytes']:.0f} B，共 {e['lookup_bytes']/1e3:.2f} KB。可掩盖窗口（batch 1 步时间的四十分之一）：" + '；'.join(f"{x['label']} {x['hide_window_s']*1e6:.1f} μs" for x in e['machines']) + '。',
+          f"主机内存：一次往返 {e['host']['rtt_s']*1e6:.2f} μs；每 token 步时间短于 {40*e['host']['rtt_s']*1e6:.0f} μs（约 {e['exposed_at_tokens_per_s']:.0f} token/s）时无法掩盖。64 卡超节点每卡每步 {e['host']['batched_reads_per_step']:,} 次随机读，按每秒 {e['host']['reads_per_s']/1e6:.0f} M 次需 {e['host']['batched_read_s']*1e3:.2f} ms，占步时间 {e['host']['batched_read_s']/e['host']['step_s']*100:.1f}%。",
+          '各卡 HBM 分片：' + '；'.join(f"{x['supernode_gpus']} 卡每卡 {x['bytes_per_gpu']/1e9:.1f} GB（相当于 {x['sessions_displaced_per_gpu']:.0f} 个会话）" for x in e['hbm']) + f"；查表经一轮 NVLink 交换 {c['local_alpha_s']*1e6:.2f} μs。晶圆边缘 HBM：{m['engram_bytes']/1e9:.1f} GB 相当于 {e['wafer_hbm_sessions_displaced']:.0f} 个会话。",
+          f"掩模 ROM：{e['rom']['mm2']:,.0f} mm²，约 {e['rom']['wafers']:.2f} 片晶圆。OpenTallas 的 engram-host 设计：{e['engram_host_wafer']['devices']} 片晶圆 {e['engram_host_wafer']['per_user_tokens_s']:.0f} token/s，驻留 {e['engram_host_wafer']['resident_sessions']:.0f} 个会话。",
+          '', '通信路径：']
     for r in rom['rows']:
         L.append(f"- {r['label']}：{r['hops']}")
     (args.output_dir / 'supernode-inference-book.md').write_text('\n'.join(L) + '\n')

@@ -8,7 +8,8 @@
     "服务目标为每 token 50 ms（TPOT）。对每种超节点大小，在容量允许的会话数内取满足 TPOT 的最大每卡会话数，每卡吞吐为会话数除以步时间。专家负载偏斜、批处理调度、首 token 与故障均不计入；第 9.4.1 节另算偏斜。",
     "对照行：同样 64 卡的专家并行组分布在八台 HGX H100 上，dispatch 与 combine 中离开本服务器的部分经网卡；另一对照行把 Engram 表放在主机内存而不占 HBM，只改变 8 卡超节点的容量，查表经 PCIe 的时间不计。",
     "权重固定为 ROM 的两行取自 OpenTallas 仓库 commit c7093ba 的 DeepSeek-V4.1-Flash 候选 roofline（N5 掩模 ROM 对 B200，等硅面积，200K 上下文）：每 token 时间 = max(权重读取, KV 读取, 计算) + 集合通信 + 固定层延迟；KV 放 HBM 与放 SRAM 两种设计只在 KV 容量上不同。这些是确定性的分析结果，没有已流片的 OpenTallas 硅片。",
-    "SRAM 容量门取 Cerebras WSE-3 的 44 GB 片上 SRAM（第 4.7.2 节）；放入全部 checkpoint 所需晶圆数按 checkpoint 字节除以 44 GB 向上取整。"
+    "SRAM 容量门取 Cerebras WSE-3 的 44 GB 片上 SRAM（第 4.7.2 节）；放入全部 checkpoint 所需晶圆数按 checkpoint 字节除以 44 GB 向上取整。",
+    "Engram 表放置：每 token 两个模块各查 24 行（8 个头 × 3 种 n-gram 长度），每行 256 个 FP8 值加 8 字节 scale，按分片头累加；查表地址只取决于 token 序列，可在第 0 层计算时预取，可掩盖的窗口取 batch 1 步时间的四十分之一。主机内存经 PCIe 的一次随机读往返取第 7.3.4 节 KV-Direct 实测的 1050 ns，在途标签限制的读取率取同一测量的每秒 6100 万次；超节点内各卡 HBM 分片的查表按一轮 NVLink 交换 0.833 μs 计；ROM 面积按 OpenTallas N5 掩模 ROM 密度换算，晶圆面积 46,225 mm²。"
   ],
   "model": {
     "hw": {
@@ -34,6 +35,9 @@
     "engram_bytes": 203073076240,
     "replicated_read_bytes": 8207877568,
     "embedding_bytes": 1323827200,
+    "engram_table_bytes": 202758032400,
+    "engram_rows": 768022850,
+    "engram_rows_per_token": 48,
     "expert_bytes": 18800640.0,
     "kv_resident_bytes": 180703360,
     "kv_read_bytes": 46763136,
@@ -349,5 +353,72 @@
     "link_share": 0.027560253546697073,
     "resident_sessions": 296,
     "kv_store": "hbm"
+  },
+  "engram": {
+    "row_bytes": 264.0,
+    "lookup_bytes": 12672.0,
+    "rows_per_token": 48,
+    "host": {
+      "rtt_s": 1.05e-06,
+      "reads_per_s": 61000000.0,
+      "batched_reads_per_step": 16080,
+      "batched_read_s": 0.0002636065573770492,
+      "step_s": 0.017250611300262786
+    },
+    "hbm": [
+      {
+        "placement": "hbm",
+        "supernode_gpus": 8,
+        "bytes_per_gpu": 25384134530.0,
+        "sessions_displaced_per_gpu": 140.47405941981378,
+        "lookup_s": 8.33e-07
+      },
+      {
+        "placement": "hbm",
+        "supernode_gpus": 64,
+        "bytes_per_gpu": 3173016816.25,
+        "sessions_displaced_per_gpu": 17.559257427476723,
+        "lookup_s": 8.33e-07
+      },
+      {
+        "placement": "hbm",
+        "supernode_gpus": 128,
+        "bytes_per_gpu": 1586508408.125,
+        "sessions_displaced_per_gpu": 8.779628713738362,
+        "lookup_s": 8.33e-07
+      },
+      {
+        "placement": "hbm",
+        "supernode_gpus": 256,
+        "bytes_per_gpu": 793254204.0625,
+        "sessions_displaced_per_gpu": 4.389814356869181,
+        "lookup_s": 8.33e-07
+      }
+    ],
+    "wafer_hbm_sessions_displaced": 1123.7924753585103,
+    "rom": {
+      "mm2": 21650.71412835692,
+      "wafers": 0.46837672532951696,
+      "density_bits_per_mm2": 75036075.03607504
+    },
+    "machines": [
+      {
+        "label": "8 张 H100 SXM 80GB",
+        "step_s": 0.002764754439004975,
+        "hide_window_s": 6.911886097512438e-05
+      },
+      {
+        "label": "两片 ROM 晶圆",
+        "step_s": 0.0002457098451824759,
+        "hide_window_s": 6.1427461295618975e-06
+      }
+    ],
+    "exposed_at_tokens_per_s": 23809.52380952381,
+    "engram_host_wafer": {
+      "design": "DeepSeek-V4.1-Flash-engram-host/ROM-N5-native-HBMKV-wafer-tensor-x1",
+      "per_user_tokens_s": 5037.34652363914,
+      "devices": 1,
+      "resident_sessions": 4818.0
+    }
   }
 }

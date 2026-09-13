@@ -11,6 +11,7 @@ KV 容量与每 token 读取量取自 kv-comparison 在 200,000 上下文的 V4.
 对照行：同样 64 卡的专家并行组分布在八台 HGX H100 上，dispatch 与 combine 中离开本服务器的部分经网卡；另一对照行把 Engram 表放在主机内存而不占 HBM，只改变 8 卡超节点的容量，查表经 PCIe 的时间不计。
 权重固定为 ROM 的两行取自 OpenTallas 仓库 commit c7093ba 的 DeepSeek-V4.1-Flash 候选 roofline（N5 掩模 ROM 对 B200，等硅面积，200K 上下文）：每 token 时间 = max(权重读取, KV 读取, 计算) + 集合通信 + 固定层延迟；KV 放 HBM 与放 SRAM 两种设计只在 KV 容量上不同。这些是确定性的分析结果，没有已流片的 OpenTallas 硅片。
 SRAM 容量门取 Cerebras WSE-3 的 44 GB 片上 SRAM（第 4.7.2 节）；放入全部 checkpoint 所需晶圆数按 checkpoint 字节除以 44 GB 向上取整。
+Engram 表放置：每 token 两个模块各查 24 行（8 个头 × 3 种 n-gram 长度），每行 256 个 FP8 值加 8 字节 scale，按分片头累加；查表地址只取决于 token 序列，可在第 0 层计算时预取，可掩盖的窗口取 batch 1 步时间的四十分之一。主机内存经 PCIe 的一次随机读往返取第 7.3.4 节 KV-Direct 实测的 1050 ns，在途标签限制的读取率取同一测量的每秒 6100 万次；超节点内各卡 HBM 分片的查表按一轮 NVLink 交换 0.833 μs 计；ROM 面积按 OpenTallas N5 掩模 ROM 密度换算，晶圆面积 46,225 mm²。
 
 ## 模型与硬件输入
 
@@ -42,6 +43,13 @@ SRAM 容量门取 Cerebras WSE-3 的 44 GB 片上 SRAM（第 4.7.2 节）；放�
 | 两片 ROM 晶圆，KV 在 HBM | 68.9 | 1.6 | 5.5 | 76.6 | 159.1 | 10.1 | 245.7 | 65% | 4070 | 9637 |
 | 两片 ROM 晶圆，KV 在 SRAM | 68.9 | 8.5 | 5.3 | 76.6 | 159.1 | 10.1 | 245.7 | 65% | 4070 | 1 |
 | 58 张 B200，权重在 HBM | 148.1 | 0.1 | 0.3 | 164.7 | 562.2 | 10.1 | 737.0 | 76% | 1357 | 49172 |
+
+## Engram 表的放置
+
+每 token 查 48 行，每行 264 B，共 12.67 KB。可掩盖窗口（batch 1 步时间的四十分之一）：8 张 H100 SXM 80GB 69.1 μs；两片 ROM 晶圆 6.1 μs。
+主机内存：一次往返 1.05 μs；每 token 步时间短于 42 μs（约 23810 token/s）时无法掩盖。64 卡超节点每卡每步 16,080 次随机读，按每秒 61 M 次需 0.26 ms，占步时间 1.5%。
+各卡 HBM 分片：8 卡每卡 25.4 GB（相当于 140 个会话）；64 卡每卡 3.2 GB（相当于 18 个会话）；128 卡每卡 1.6 GB（相当于 9 个会话）；256 卡每卡 0.8 GB（相当于 4 个会话）；查表经一轮 NVLink 交换 0.83 μs。晶圆边缘 HBM：203.1 GB 相当于 1124 个会话。
+掩模 ROM：21,651 mm²，约 0.47 片晶圆。OpenTallas 的 engram-host 设计：1 片晶圆 5037 token/s，驻留 4818 个会话。
 
 通信路径：
 - 两片 ROM 晶圆，KV 在 HBM：80x all_reduce span 57 on on_wafer_n5 (154.00 us); 1x point_to_point span 2 on inter_wafer (5.07 us)

@@ -444,5 +444,49 @@
    "feasible": true,
    "layer_fixed_latency_s": 1.0051735374500655e-05
   }
- ]
+ ],
+ "engram_host": {
+  "source": {
+   "path": "results/roofline/candidates/deepseek-v41-flash-engram-host/n5_vs_b200/analytical.json",
+   "sha256": "e208101bec9f0c90d86049d17c237ff4da3d1bf0466817482cfa6a96cdeef570",
+   "note": "Same model with the two Engram tables kept in host memory; the checkpoint then fits one N5 wafer."
+  },
+  "model_summary": {
+   "model": "DeepSeek-V4.1-Flash-engram-host",
+   "checkpoint_bytes": 307527990600,
+   "kv_storage_bytes_per_user": 180703360.0
+  },
+  "points": [
+   {
+    "design": "DeepSeek-V4.1-Flash-engram-host/ROM-N5-native-HBMKV-wafer-tensor-x1",
+    "device_count": 1,
+    "batch_size": 1,
+    "binding_constraint": "link_latency",
+    "component_times_s": {
+     "compute": 8.793317665873248e-06,
+     "kv_read": 1.618092661498708e-06,
+     "layer_fixed_latency": 1.0051735374500655e-05,
+     "link_latency": 0.000154000090261092,
+     "weight_read": 3.4465388796097466e-05
+    },
+    "link_latency_s": 0.000154000090261092,
+    "hop_events_per_token": 80.0,
+    "hop_semantics": "two all-reduces per layer per token over 57 partitions inside one on_wafer_n5 domain",
+    "hop_breakdown": "80x all_reduce span 57 on on_wafer_n5 (154.00 us)",
+    "intra_domain_size": 57,
+    "intra_link": "on_wafer_n5",
+    "link": "inter_wafer",
+    "kv_capacity_bytes": 870750000000.0,
+    "kv_store": "hbm",
+    "max_resident_users": 4818.0,
+    "per_user_tokens_s": 5037.34652363914,
+    "aggregate_tokens_s": 5037.34652363914,
+    "parallelism": "tensor",
+    "overlap_rule": "weights and KV are physically separate arrays: their times overlap",
+    "engaged_weight_bytes": 13035075008.0,
+    "feasible": true,
+    "layer_fixed_latency_s": 1.0051735374500655e-05
+   }
+  ]
+ }
 }

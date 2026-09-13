@@ -52,4 +52,17 @@ class InferenceModelTests(unittest.TestCase):
         self.assertGreater(hbm['resident_sessions'],1000)
         self.assertEqual(rom['sram_only_wafers'],12)
 
+    def test_engram_placement(self):
+        c,m=self.c,self.m
+        results=[inf.evaluate(c,m,S) for S in c['supernode_sizes']]
+        e=inf.engram_rows(c,m,results,inf.rom_rows(c,m))
+        self.assertEqual(e['rows_per_token'],48)
+        self.assertAlmostEqual(e['row_bytes'],264,places=0)
+        self.assertLess(abs(e['lookup_bytes']-48*264),48)
+        for x in e['machines']:
+            self.assertGreater(x['hide_window_s'],e['host']['rtt_s'])
+        self.assertLess(e['rom']['wafers'],1)
+        host=inf.evaluate(c,m,8,engram_on_host=True)
+        self.assertAlmostEqual(host['sessions']-results[0]['sessions'],e['hbm'][0]['sessions_displaced_per_gpu'],delta=1)
+
 if __name__=='__main__':unittest.main()

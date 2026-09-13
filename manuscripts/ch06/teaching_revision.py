@@ -172,6 +172,17 @@ def draw(here,data):
                 sx=x+j*(sw+.03);box(a,sx,.48-h,sw,h,label,col,11);arrow(a,(sx+sw/2,.48),(x+w/2,.64))
         text(a,.5,.03,'箭头：每一步都要读取的数据；方框高度示意容量',11,ha='center')
         save(f,'weight-placement')
+        # Where the Engram tables live: host memory, sharded HBM, or mask ROM; the lookup address is known before layer 0.
+        f,a=canvas(4.2)
+        box(a,.05,.86,.90,.11,'token 序列 → 哈希 → 每 token 48 行的地址，在第 0 层计算前就已确定','gray',11)
+        cols=[('主机内存',.05,'DDR\n两张表 203 GB','gray',.26,'PCIe／RDMA 往返'),('超节点各卡 HBM',.375,'HBM 分片\n每卡 203 GB / S','green',.18,'NVLink 交换一轮'),('掩模 ROM',.70,'ROM\n约半片晶圆','gray',.34,'片内读取')]
+        for title,x,label,col,h,path in cols:
+            w=.25
+            text(a,x+w/2,.78,title,12,ha='center')
+            box(a,x+.03,.55,w-.06,.12,'第 1 层 Engram','orange',11)
+            box(a,x,.46-h,w,h,label,col,11)
+            arrow(a,(x+.05,.46),(x+.05,.55));text(a,x+.085,.505,path,11)
+        save(f,'engram-placement')
         bars=[si['gpu_row'],si['rom']['rows'][2],si['rom']['rows'][0]];labels=['8 张 H100\n权重在 HBM','58 张 B200\n权重在 HBM','两片 ROM 晶圆\n权重在 ROM']
         f,a=plot(3.5,left=.26);f.subplots_adjust(top=.84)
         for j,(seg,col,name) in enumerate([('storage_compute_s','blue','存储与计算'),('link_s','orange','集合通信'),('fixed_s','gray','固定延迟')]):

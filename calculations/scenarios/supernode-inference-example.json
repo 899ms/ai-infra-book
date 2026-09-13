@@ -8,7 +8,8 @@
     "服务目标为每 token 50 ms（TPOT）。对每种超节点大小，在容量允许的会话数内取满足 TPOT 的最大每卡会话数，每卡吞吐为会话数除以步时间。专家负载偏斜、批处理调度、首 token 与故障均不计入；第 9.4.1 节另算偏斜。",
     "对照行：同样 64 卡的专家并行组分布在八台 HGX H100 上，dispatch 与 combine 中离开本服务器的部分经网卡；另一对照行把 Engram 表放在主机内存而不占 HBM，只改变 8 卡超节点的容量，查表经 PCIe 的时间不计。",
     "权重固定为 ROM 的两行取自 OpenTallas 仓库 commit c7093ba 的 DeepSeek-V4.1-Flash 候选 roofline（N5 掩模 ROM 对 B200，等硅面积，200K 上下文）：每 token 时间 = max(权重读取, KV 读取, 计算) + 集合通信 + 固定层延迟；KV 放 HBM 与放 SRAM 两种设计只在 KV 容量上不同。这些是确定性的分析结果，没有已流片的 OpenTallas 硅片。",
-    "SRAM 容量门取 Cerebras WSE-3 的 44 GB 片上 SRAM（第 4.7.2 节）；放入全部 checkpoint 所需晶圆数按 checkpoint 字节除以 44 GB 向上取整。"
+    "SRAM 容量门取 Cerebras WSE-3 的 44 GB 片上 SRAM（第 4.7.2 节）；放入全部 checkpoint 所需晶圆数按 checkpoint 字节除以 44 GB 向上取整。",
+    "Engram 表放置：每 token 两个模块各查 24 行（8 个头 × 3 种 n-gram 长度），每行 256 个 FP8 值加 8 字节 scale，按分片头累加；查表地址只取决于 token 序列，可在第 0 层计算时预取，可掩盖的窗口取 batch 1 步时间的四十分之一。主机内存经 PCIe 的一次随机读往返取第 7.3.4 节 KV-Direct 实测的 1050 ns，在途标签限制的读取率取同一测量的每秒 6100 万次；超节点内各卡 HBM 分片的查表按一轮 NVLink 交换 0.833 μs 计；ROM 面积按 OpenTallas N5 掩模 ROM 密度换算，晶圆面积 46,225 mm²。"
   ],
   "model": "deepseek-v4.1-flash",
   "gpu_id": "h100-sxm",
@@ -48,5 +49,9 @@
       }
     ]
   },
-  "sram_only_bytes": 44000000000
+  "sram_only_bytes": 44000000000,
+  "engram": {
+    "host_rtt_s": 1.05e-06,
+    "host_reads_per_s": 61000000.0
+  }
 }

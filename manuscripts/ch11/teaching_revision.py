@@ -102,6 +102,22 @@ def draw(here,data):
         for i,model in enumerate([9,6]):
             for k in range(3):a.barh(i,model,left=k*(model+1),height=.5,color=COL['blue'],edgecolor=COL['line']);a.barh(i,1,left=k*(model+1)+model,height=.5,color=COL['orange'],edgecolor=COL['line'])
         a.axvline(24,ls='--',color='#a56c28');a.set(yticks=[0,1],yticklabels=['普通模型','快速模型'],xlim=(0,31),xlabel='完成时间（s）');save(f,'decision')
+        # Per-round cloud uploads may fail independently of local persistence.
+        f,a=canvas(3.6)
+        for x,label in [(.36,'运行测试\n第 1 轮'),(.59,'修改代码\n第 2 轮'),(.82,'再次测试\n第 3 轮')]:
+            text(a,x,.89,label,11,ha='center')
+        for y,label in [(.69,'本地记录'),(.43,'云端记录'),(.17,'云端进度')]:
+            text(a,.02,y,label,12)
+        for x in [.26,.49,.72]:box(a,x,.61,.20,.16,'已保存','blue',11)
+        box(a,.26,.35,.20,.16,'已保存','green',11)
+        gap=box(a,.49,.35,.20,.16,'上传失败','orange',11)
+        gap.set_linestyle('--')
+        box(a,.72,.35,.20,.16,'已保存','green',11)
+        box(a,.26,.09,.20,.16,'到第 1 轮','green',11)
+        a.plot([.475,.475],[.06,.56],color=COL['line'],ls='--',lw=1)
+        text(a,.71,.17,'第 2 轮缺失，不能跳到第 3 轮',11,ha='center')
+        save(f,'recovery-coverage')
+        data['recovery-coverage']={'kind':'teaching','unit':'react_round','trusted_base':0,'local_saved':[1,2,3],'cloud_saved':[1,3],'cloud_gap':[2],'cloud_covered_through':1,'upload_policy':'per-round incremental async; failed upload does not block later uploads'}
     from core_principles_figures import draw as draw_principles
     draw_principles(11, out)
     out.finish();return out.outputs,out.checks

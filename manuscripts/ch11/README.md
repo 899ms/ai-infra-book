@@ -111,8 +111,9 @@ python manuscripts/ch11/check_reading.py
 | 11-32 | 只有 B 命中的 4 s 路径满足 6 s 期限；再乘 98% 的验收通过率，按时成功比例为 0.98h。达到 90% 目标要求 h 至少约 91.8%。 | [SVG](figure-11-routing-deadline.svg) | [PNG](figure-11-routing-deadline.png) | [PDF](figure-11-routing-deadline.pdf) |
 | 11-33 | 4 张 B200 预留一个月共 19,555.2 美元，按量成本为 0.0081N 美元，N 为提交任务数。两条线在约 241 万项相交，对应预留 GPU 约 78.6% 的利用率；预留线止于每月 307.2 万项的处理上限。 | [SVG](figure-11-purchase.svg) | [PNG](figure-11-purchase.png) | [PDF](figure-11-purchase.pdf) |
 | 11-34 | 外部系统已执行并提交操作 K，确认却丢失。恢复环境不会撤回外部操作的结果；控制器按同一操作标识查询结果后接续任务。实线表示请求与执行，虚线表示确认及恢复查询。 | [SVG](figure-11-commit-ack.svg) | [PNG](figure-11-commit-ack.png) | [PDF](figure-11-commit-ack.pdf) |
-| 11-35 | 首次尝试在 10 s 后分为成功、局部修复、直接升级三类。框内比例以全部提交为分母；下一图展开修复的条件分支。 | [SVG](figure-11-retry-tree.svg) | [PNG](figure-11-retry-tree.png) | [PDF](figure-11-retry-tree.pdf) |
-| 11-36 | 把修复节点放大：进入此处的 12% 中，60% 修复成功，占全部提交 7.2%；40% 转入升级，占全部提交 4.8%。升级再用 8 s，因此后一条路径累计 22 s。 | [SVG](figure-11-retry-conditional.svg) | [PNG](figure-11-retry-conditional.png) | [PDF](figure-11-retry-conditional.pdf) |
-| 11-37 | 同一批提交任务换用恢复策略后的成本与结果。各柱均以相应策略的全部支出为分子，再分别除以通过测试的任务数或按时通过测试的任务数；只做首次尝试的成功率为 80%，有限恢复策略约为 99.7%，其中约 95.0% 的提交在 20 秒内成功。分支概率、成本和时间见例 11-8，期限用于评价而不强制停止执行。 | [SVG](figure-11-8-retry.svg) | [PNG](figure-11-8-retry.png) | [PDF](figure-11-8-retry.pdf) |
-| 11-38 | 模型加速后，环境创建成为工具开始执行前的等待来源。两种情况都在零时刻开始创建环境；工具须同时等待模型决策与环境就绪。横轴为秒。 | [SVG](figure-11-environment-overlap.svg) | [PNG](figure-11-environment-overlap.png) | [PDF](figure-11-environment-overlap.pdf) |
-| 11-39 | 两种方案均在模型调用期间准备环境，工具执行均为每轮 1 秒。模型调用从每轮 9 秒降至 6 秒，三轮结束时刻从第 30 秒移到第 21 秒，从 24 秒期限之后提前到期限之内。 | [SVG](figure-11-decision.svg) | [PNG](figure-11-decision.png) | [PDF](figure-11-decision.pdf) |
+| 11-35 | 每轮本地保存后异步上传新增记录；第二轮上传失败后，云端历史只完整到第一轮。 | [SVG](figure-11-recovery-coverage.svg) | [PNG](figure-11-recovery-coverage.png) | [PDF](figure-11-recovery-coverage.pdf) |
+| 11-36 | 首次尝试在 10 s 后分为成功、局部修复、直接升级三类。框内比例以全部提交为分母；下一图展开修复的条件分支。 | [SVG](figure-11-retry-tree.svg) | [PNG](figure-11-retry-tree.png) | [PDF](figure-11-retry-tree.pdf) |
+| 11-37 | 把修复节点放大：进入此处的 12% 中，60% 修复成功，占全部提交 7.2%；40% 转入升级，占全部提交 4.8%。升级再用 8 s，因此后一条路径累计 22 s。 | [SVG](figure-11-retry-conditional.svg) | [PNG](figure-11-retry-conditional.png) | [PDF](figure-11-retry-conditional.pdf) |
+| 11-38 | 同一批提交任务换用恢复策略后的成本与结果。各柱均以相应策略的全部支出为分子，再分别除以通过测试的任务数或按时通过测试的任务数；只做首次尝试的成功率为 80%，有限恢复策略约为 99.7%，其中约 95.0% 的提交在 20 秒内成功。分支概率、成本和时间见例 11-8，期限用于评价而不强制停止执行。 | [SVG](figure-11-8-retry.svg) | [PNG](figure-11-8-retry.png) | [PDF](figure-11-8-retry.pdf) |
+| 11-39 | 模型加速后，环境创建成为工具开始执行前的等待来源。两种情况都在零时刻开始创建环境；工具须同时等待模型决策与环境就绪。横轴为秒。 | [SVG](figure-11-environment-overlap.svg) | [PNG](figure-11-environment-overlap.png) | [PDF](figure-11-environment-overlap.pdf) |
+| 11-40 | 两种方案均在模型调用期间准备环境，工具执行均为每轮 1 秒。模型调用从每轮 9 秒降至 6 秒，三轮结束时刻从第 30 秒移到第 21 秒，从 24 秒期限之后提前到期限之内。 | [SVG](figure-11-decision.svg) | [PNG](figure-11-decision.png) | [PDF](figure-11-decision.pdf) |

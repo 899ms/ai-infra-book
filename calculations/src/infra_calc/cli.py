@@ -1,5 +1,6 @@
 """Reader-facing CLI. Default calculations are offline and require no GPU."""
 import argparse
+import inspect
 import json
 from pathlib import Path
 import sys
@@ -1103,6 +1104,22 @@ def model_list() -> list[dict]:
     return result
 
 
+def _calculate_from_json_inputs(calculate, path: Path | None):
+    """Report JSON shape and argument-binding errors at the CLI boundary."""
+    payload = json.loads(path.read_text()) if path is not None else {}
+    origin = f"--inputs {path}" if path is not None else "default inputs"
+    if not isinstance(payload, dict):
+        raise ValueError(f"{origin}: expected a JSON object")
+
+    call_signature = inspect.signature(calculate)
+    try:
+        call_signature.bind(**payload)
+    except TypeError as error:
+        raise ValueError(f"{origin}: {error}") from error
+
+    return calculate(**payload)
+
+
 def main(argv: list[str] | None = None) -> None:
     command = parser()
     args = command.parse_args(argv)
@@ -1173,72 +1190,72 @@ def main(argv: list[str] | None = None) -> None:
         elif args.command == 'dense-communication':
             result = dense_communication.calculate(**{key: value for key, value in vars(args).items() if key not in ('command', 'format', 'output')})
         elif args.command == 'omni-vision-encoding':
-            result = omni_vision_encoding.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(omni_vision_encoding.calculate, args.inputs)
         elif args.command == 'omni-understanding':
-            result = omni_understanding.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(omni_understanding.calculate, args.inputs)
         elif args.command == 'sequence-dependencies':
             result = sequence_dependencies.calculate()
         elif args.command == 'tpu-demand':
-            result = tpu_demand.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(tpu_demand.calculate, args.inputs)
         elif args.command == 'nic-budget':
-            result = nic_budget.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(nic_budget.calculate, args.inputs)
         elif args.command == 'omni-audio-encoder':
-            result = omni_audio_encoder.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(omni_audio_encoder.calculate, args.inputs)
         elif args.command == 'vl-request':
-            result = vl_request.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(vl_request.calculate, args.inputs)
         elif args.command == 'retry-paths':
-            result = retry_paths.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(retry_paths.calculate, args.inputs)
         elif args.command == 'vision-encoding':
-            result = vision_encoding.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(vision_encoding.calculate, args.inputs)
         elif args.command == 'omni-audio':
-            result = omni_audio.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(omni_audio.calculate, args.inputs)
         elif args.command == 'image-generation':
-            result = image_generation.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(image_generation.calculate, args.inputs)
         elif args.command == 'video-generation':
-            result = video_generation.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(video_generation.calculate, args.inputs)
         elif args.command in ("flux-vae-decode", "architecture-variants"):
             module = flux_vae_decode if args.command == "flux-vae-decode" else architecture_variants
-            result = module.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(module.calculate, args.inputs)
         elif args.command == "v4-prefix-continuation":
-            result = v4_prefix_continuation.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(v4_prefix_continuation.calculate, args.inputs)
         elif args.command == "qwen235-placement":
-            result = qwen235_placement.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(qwen235_placement.calculate, args.inputs)
         elif args.command == "dense-quantized-placement":
-            result = dense_quantized_placement.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(dense_quantized_placement.calculate, args.inputs)
         elif args.command == "request-model-comparison":
-            result = request_model_comparison.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(request_model_comparison.calculate, args.inputs)
         elif args.command == "fish-wave-export":
-            result = fish_wave_export.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(fish_wave_export.calculate, args.inputs)
         elif args.command == "strategy-record-cost":
             result = strategy_record_cost.calculate()
         elif args.command == "training-nonmatrix":
-            result = training_nonmatrix.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(training_nonmatrix.calculate, args.inputs)
         elif args.command == "real-scaling-fit":
             result = real_scaling_fit.calculate()
         elif args.command == "v4-training-primitives":
-            result = v4_training_primitives.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(v4_training_primitives.calculate, args.inputs)
         elif args.command == "v4-compressor-overlap":
-            result = v4_compressor_overlap.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(v4_compressor_overlap.calculate, args.inputs)
         elif args.command == "v4-compressor-training":
-            result = v4_compressor_training.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(v4_compressor_training.calculate, args.inputs)
         elif args.command == "v4-attention-projections":
-            result = v4_attention_projections.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(v4_attention_projections.calculate, args.inputs)
         elif args.command == "v4-attention-training":
-            result = v4_attention_training.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(v4_attention_training.calculate, args.inputs)
         elif args.command == "v4-hc-training":
-            result = v4_hc_training.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(v4_hc_training.calculate, args.inputs)
         elif args.command == "stage-resource-bounds":
-            result = stage_resource_bounds.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(stage_resource_bounds.calculate, args.inputs)
         elif args.command == "v4-compressor-online":
-            result = v4_compressor_online.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(v4_compressor_online.calculate, args.inputs)
         elif args.command == "training-input-supply":
-            result = training_input_supply.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(training_input_supply.calculate, args.inputs)
         elif args.command == "qwen235-execution":
-            result = qwen235_execution.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(qwen235_execution.calculate, args.inputs)
         elif args.command == "qwen235-expert-granularity":
-            result = qwen235_expert_granularity.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(qwen235_expert_granularity.calculate, args.inputs)
         elif args.command == "architecture-tile-work":
-            result = architecture_tile_work.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(architecture_tile_work.calculate, args.inputs)
         elif args.command == "plot-shared-airtime":
             from .shared_airtime_plot import render
             result = render()
@@ -1258,29 +1275,29 @@ def main(argv: list[str] | None = None) -> None:
             from .capacity_plot import render
             result = render()
         elif args.command == "trace-resource-bridge":
-            result = trace_resource_bridge.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(trace_resource_bridge.calculate, args.inputs)
         elif args.command == "paired-projection-cost":
-            result = paired_projection_cost.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(paired_projection_cost.calculate, args.inputs)
         elif args.command == "matrix-vector-handoff":
-            result = matrix_vector_handoff.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(matrix_vector_handoff.calculate, args.inputs)
         elif args.command == "v4-copy-coordinates":
             result = v4_copy_coordinates.calculate(rows=args.rows)
         elif args.command == "attention-input-pipeline":
-            result = attention_input_pipeline.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(attention_input_pipeline.calculate, args.inputs)
         elif args.command == "fa4-resource-balance":
             result = fa4_resource_balance.calculate()
         elif args.command == "iso-resource-comparison":
-            result = iso_resource_comparison.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(iso_resource_comparison.calculate, args.inputs)
         elif args.command == "specialization-payback":
-            result = specialization_payback.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(specialization_payback.calculate, args.inputs)
         elif args.command == "design-record":
-            result = design_record.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(design_record.calculate, args.inputs)
         elif args.command == "weight-resident-traffic":
-            result = weight_resident_traffic.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(weight_resident_traffic.calculate, args.inputs)
         elif args.command == "execution-dag":
-            result = execution_dag.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(execution_dag.calculate, args.inputs)
         elif args.command == "region-placement":
-            result = region_placement.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(region_placement.calculate, args.inputs)
         elif args.command == "delivery":
             result = delivery.calculate(include_rendered_book=not args.skip_rendered_book)
         elif args.command == "coverage":
@@ -1290,25 +1307,25 @@ def main(argv: list[str] | None = None) -> None:
         elif args.command == "storage-generation-comparison":
             result = storage_generation_comparison.calculate()
         elif args.command == "granularity-selection":
-            result = granularity_selection.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(granularity_selection.calculate, args.inputs)
         elif args.command == "trace-cache-lifecycle":
-            result = trace_cache_lifecycle.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(trace_cache_lifecycle.calculate, args.inputs)
         elif args.command == "v4-mtp-forward":
-            result = v4_mtp_forward.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(v4_mtp_forward.calculate, args.inputs)
         elif args.command == "request-hardware-bridge":
-            result = request_hardware_bridge.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(request_hardware_bridge.calculate, args.inputs)
         elif args.command == "omni-audio-preprocess":
-            result = omni_audio_preprocess.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(omni_audio_preprocess.calculate, args.inputs)
         elif args.command == "v4-optimizer":
-            result = v4_optimizer.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(v4_optimizer.calculate, args.inputs)
         elif args.command == "v4-moe-training":
-            result = v4_moe_training.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(v4_moe_training.calculate, args.inputs)
         elif args.command == "vision-preprocess":
-            result = vision_preprocess.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(vision_preprocess.calculate, args.inputs)
         elif args.command == "training-pipeline-gemm-state":
-            result = training_pipeline_gemm_state.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(training_pipeline_gemm_state.calculate, args.inputs)
         elif args.command == "training-pipeline-schedule":
-            result = training_pipeline_schedule.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(training_pipeline_schedule.calculate, args.inputs)
         elif args.command == "edge-tiers":
             payload = json.loads(args.inputs.read_text()) if args.inputs else {}
             result = edge_tiers.calculate(**payload.get("inputs", payload), input_sources=payload.get("input_sources") if "inputs" in payload else None)
@@ -1324,7 +1341,7 @@ def main(argv: list[str] | None = None) -> None:
             payload = json.loads(args.inputs.read_text()) if args.inputs else {}
             result = clos_cut.calculate(**{**payload.get("inputs", payload), "mode": "in_network"}, input_sources=payload.get("input_sources") if "inputs" in payload else None)
         elif args.command == "real-scaling-lifecycle":
-            result = real_scaling_lifecycle.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(real_scaling_lifecycle.calculate, args.inputs)
         elif args.command == "plot-real-scaling":
             from .real_scaling_plot import render
             result = render()
@@ -1341,25 +1358,25 @@ def main(argv: list[str] | None = None) -> None:
         elif args.command == "protocol-early-stream":
             result = protocol_early_stream.calculate(json.loads(args.inputs.read_text()) if args.inputs else None)
         elif args.command == "connection-sequence":
-            result = connection_sequence.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(connection_sequence.calculate, args.inputs)
         elif args.command == "connection-window":
-            result = connection_window.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(connection_window.calculate, args.inputs)
         elif args.command == "image-request-streaming":
-            result = image_request_streaming.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(image_request_streaming.calculate, args.inputs)
         elif args.command == "image-request-budget":
-            result = image_request_budget.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(image_request_budget.calculate, args.inputs)
         elif args.command == "plot-image-request":
             from .image_request_plot import render
             result = render()
         elif args.command == "hierarchical-gradient":
-            result = hierarchical_gradient.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(hierarchical_gradient.calculate, args.inputs)
         elif args.command == "supernode-cohort-cost":
-            result = supernode_cohort_cost.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(supernode_cohort_cost.calculate, args.inputs)
         elif args.command == "plot-supernode-cost":
             from .supernode_cost_plot import render
             result = render()
         elif args.command == "growing-remote-kv":
-            result = growing_remote_kv.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(growing_remote_kv.calculate, args.inputs)
         elif args.command == "memory-pool-access":
             result = memory_pool_access.calculate(copies=args.copies)
         elif args.command == "chapter2-models":
@@ -1369,13 +1386,13 @@ def main(argv: list[str] | None = None) -> None:
         elif args.command in ("v41-flash", "kv-comparison"):
             result = (v41_flash if args.command == "v41-flash" else kv_comparison).calculate(args.length, args.batch)
         elif args.command == "qwen36-forward":
-            result = qwen36_forward.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(qwen36_forward.calculate, args.inputs)
         elif args.command == "qwen36-capacity":
-            result = qwen36_capacity.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(qwen36_capacity.calculate, args.inputs)
         elif args.command == "qwen35-forward":
-            result = qwen35_forward.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(qwen35_forward.calculate, args.inputs)
         elif args.command == 'v3-forward':
-            result = v3_forward.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(v3_forward.calculate, args.inputs)
         elif args.command == 'reconfiguration':
             result = reconfiguration.calculate(json.loads(args.inputs.read_text()))
         elif args.command == 'scaling-law':
@@ -1386,29 +1403,29 @@ def main(argv: list[str] | None = None) -> None:
                 raise ValueError('training-history inputs accept comparisons, duration_scenarios and lifecycle only')
             result = training_history.calculate(**inputs)
         elif args.command == 'ub-fabric':
-            result = ub_fabric.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(ub_fabric.calculate, args.inputs)
         elif args.command == 'ub-scope':
-            result = ub_scope.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(ub_scope.calculate, args.inputs)
         elif args.command == 'environment-lifecycle':
-            result = environment_lifecycle.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(environment_lifecycle.calculate, args.inputs)
         elif args.command == 'environment-resources':
-            result = environment_resources.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(environment_resources.calculate, args.inputs)
         elif args.command == 'multimodal-cache':
-            result = multimodal_cache.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(multimodal_cache.calculate, args.inputs)
         elif args.command == 'v4-fp8-linear':
-            result = v4_fp8_linear.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(v4_fp8_linear.calculate, args.inputs)
         elif args.command == 'routing-cost':
-            result = routing_cost.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(routing_cost.calculate, args.inputs)
         elif args.command == 'weight-handoff':
-            result = weight_handoff.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(weight_handoff.calculate, args.inputs)
         elif args.command == 'teacher-cache':
-            result = teacher_cache.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(teacher_cache.calculate, args.inputs)
         elif args.command == 'routing-metadata':
-            result = routing_metadata.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(routing_metadata.calculate, args.inputs)
         elif args.command == 'dense-training-scale':
-            result = dense_training_scale.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(dense_training_scale.calculate, args.inputs)
         elif args.command == 'training-deadline':
-            result = training_deadline.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(training_deadline.calculate, args.inputs)
         elif args.command == 'checkpoint-resume':
             result = checkpoint_resume.calculate()
         elif args.command == 'checkpoint-fault':
@@ -1416,17 +1433,17 @@ def main(argv: list[str] | None = None) -> None:
         elif args.command == 'checkpoint-baseline':
             result = checkpoint_baseline.calculate()
         elif args.command == 'checkpoint-interval':
-            result = checkpoint_interval.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(checkpoint_interval.calculate, args.inputs)
         elif args.command == 'checkpoint-async':
-            result = checkpoint_async.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(checkpoint_async.calculate, args.inputs)
         elif args.command == 'checkpoint-reshard':
-            result = checkpoint_reshard.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(checkpoint_reshard.calculate, args.inputs)
         elif args.command == 'gradient-cast':
-            result = gradient_cast.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(gradient_cast.calculate, args.inputs)
         elif args.command == 'training-state':
-            result = training_state.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(training_state.calculate, args.inputs)
         elif args.command == 'cache-residency':
-            result = cache_residency.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(cache_residency.calculate, args.inputs)
         elif args.command == 'cache-fault':
             result = cache_fault.calculate()
         elif args.command == 'cache-missing':
@@ -1438,81 +1455,81 @@ def main(argv: list[str] | None = None) -> None:
         elif args.command == 'router-trace':
             result = router_trace.calculate(args.policy)
         elif args.command == 'kv-tiers':
-            result = kv_tiers.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(kv_tiers.calculate, args.inputs)
         elif args.command == 'cache-route':
-            result = cache_route.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(cache_route.calculate, args.inputs)
         elif args.command == 'replica-payback':
-            result = replica_payback.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(replica_payback.calculate, args.inputs)
         elif args.command == 'grouped-experts':
-            result = grouped_experts.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(grouped_experts.calculate, args.inputs)
         elif args.command == 'expert-locality':
-            result = expert_locality.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(expert_locality.calculate, args.inputs)
         elif args.command == 'pd-pool':
-            result = pd_pool.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(pd_pool.calculate, args.inputs)
         elif args.command == 'pd-af-handoff':
-            result = pd_af_handoff.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(pd_af_handoff.calculate, args.inputs)
         elif args.command == 'kv-quality':
             result = kv_quality.calculate(args.run)
         elif args.command == 'weight-offload':
-            result = weight_offload.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(weight_offload.calculate, args.inputs)
         elif args.command == 'kv-codec':
-            result = kv_codec.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(kv_codec.calculate, args.inputs)
         elif args.command == 'gguf-layout':
             result = gguf_layout.calculate(args.variant)
         elif args.command == 'gguf-inventory':
-            result = gguf_inventory.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(gguf_inventory.calculate, args.inputs)
         elif args.command == 'service-replay':
-            result = service_replay.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(service_replay.calculate, args.inputs)
         elif args.command == 'iteration-batching':
-            result = iteration_batching.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(iteration_batching.calculate, args.inputs)
         elif args.command == 'batch-reuse':
-            result = batch_reuse.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(batch_reuse.calculate, args.inputs)
         elif args.command == 'chunk-history':
             result = chunk_history.calculate()
         elif args.command == 'dflash-work':
-            result = dflash_work.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(dflash_work.calculate, args.inputs)
         elif args.command == 'speculative-budget':
-            result = speculative_budget.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(speculative_budget.calculate, args.inputs)
         elif args.command == 'speculative-sampling':
-            result = speculative_sampling.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(speculative_sampling.calculate, args.inputs)
         elif args.command == 'speculative-round':
-            result = speculative_round.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(speculative_round.calculate, args.inputs)
         elif args.command == 'apc-trace':
             result = apc_trace.calculate(run=args.run)
         elif args.command == 'prefix-value':
-            result = prefix_value.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(prefix_value.calculate, args.inputs)
         elif args.command == 'kv-restore':
-            result = kv_restore.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(kv_restore.calculate, args.inputs)
         elif args.command == 'kv-trace':
             result = kv_trace.calculate(run=args.run)
         elif args.command == 'kv-pages':
-            result = kv_pages.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(kv_pages.calculate, args.inputs)
         elif args.command == 'remote-state':
-            result = remote_state.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(remote_state.calculate, args.inputs)
         elif args.command == 'rpc-trace':
             result = rpc_trace.calculate(payload_bytes=args.payload_bytes)
         elif args.command == 'completion-reclaim':
-            result = completion_reclaim.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(completion_reclaim.calculate, args.inputs)
         elif args.command == 'operation-ordering':
-            result = operation_ordering.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(operation_ordering.calculate, args.inputs)
         elif args.command == 'connection-states':
-            result = connection_states.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(connection_states.calculate, args.inputs)
         elif args.command == 'collective-tail':
-            result = collective_tail.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(collective_tail.calculate, args.inputs)
         elif args.command == 'packet-reorder':
-            result = packet_reorder.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(packet_reorder.calculate, args.inputs)
         elif args.command == 'feedback-queue':
-            result = feedback_queue.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(feedback_queue.calculate, args.inputs)
         elif args.command == 'periodic-queue':
-            result = periodic_queue.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(periodic_queue.calculate, args.inputs)
         elif args.command == 'collective-paths':
             result = collective_paths.calculate(**{key:value for key,value in vars(args).items() if key not in ('command','format','output')})
         elif args.command == 'topology-allocation':
-            result = topology_allocation.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(topology_allocation.calculate, args.inputs)
         elif args.command == 'microbatch-overlap':
-            result = microbatch_overlap.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(microbatch_overlap.calculate, args.inputs)
         elif args.command == 'request-dag':
-            result = request_dag.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(request_dag.calculate, args.inputs)
         elif args.command == 'persistent-tasks':
             result = persistent_tasks.calculate(**{key:value for key,value in vars(args).items() if key not in ('command','format','output')})
         elif args.command == 'runtime-trace':
@@ -1527,9 +1544,9 @@ def main(argv: list[str] | None = None) -> None:
             from .specialization_plot import render
             result = render()
         elif args.command == 'shape-specialization':
-            result = shape_specialization.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(shape_specialization.calculate, args.inputs)
         elif args.command == 'optimization-deployment':
-            result = optimization_deployment.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(optimization_deployment.calculate, args.inputs)
         elif args.command == 'graph-execution':
             result = graph_execution.calculate(**{key:value for key,value in vars(args).items() if key not in ('command','format','output')})
         elif args.command == 'stream-buffer':
@@ -1539,7 +1556,7 @@ def main(argv: list[str] | None = None) -> None:
         elif args.command == 'attention-tiles':
             result = attention_tiles.calculate(**{key:value for key,value in vars(args).items() if key not in ('command','format','output')})
         elif args.command == 'online-softmax':
-            result = online_softmax.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(online_softmax.calculate, args.inputs)
         elif args.command == 'fusion-numerics':
             result = fusion_numerics.calculate(**{key:value for key,value in vars(args).items() if key not in ('command','format','output')})
         elif args.command == 'quantized-gemm':
@@ -1557,13 +1574,13 @@ def main(argv: list[str] | None = None) -> None:
         elif args.command == 'gemm-tiles':
             result = gemm_tiles.calculate(**{key: value for key,value in vars(args).items() if key not in ('command','format','output')})
         elif args.command == 'audio-timing':
-            result = audio_timing.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(audio_timing.calculate, args.inputs)
         elif args.command == 'agent-trace':
             result = agent_trace.calculate(**{key: value for key, value in vars(args).items() if key not in ('command', 'format', 'output')})
         elif args.command == 'request-trace':
-            result = request_trace.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(request_trace.calculate, args.inputs)
         elif args.command == 'rl-supply':
-            result = rl_supply.calculate(**(json.loads(args.inputs.read_text()) if args.inputs else {}))
+            result = _calculate_from_json_inputs(rl_supply.calculate, args.inputs)
         elif args.command == 'rl-cycle':
             result = rl_cycle.calculate(**{key: value for key, value in vars(args).items() if key not in ('command', 'format', 'output')})
         elif args.command == 'training-matrix':

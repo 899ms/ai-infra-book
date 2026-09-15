@@ -1,0 +1,138 @@
+{
+  "rows": [
+    {
+      "mode": "default",
+      "cid": "93afa2d77a7bd8f1fc04e71086752b58219187462d9f601741aa61466dc0b39e",
+      "before": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-iso2.sock",
+          "logs",
+          "93afa2d77a7bd8f1fc04e71086752b58219187462d9f601741aa61466dc0b39e"
+        ],
+        "start": 1616968.042036163,
+        "end": 1616968.055113671,
+        "rc": 0,
+        "stdout": "567cbbe26c074c909f77230efa0d9f1a\n",
+        "stderr": ""
+      },
+      "capture": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-iso2.sock",
+          "checkpoint",
+          "create",
+          "93afa2d77a7bd8f1fc04e71086752b58219187462d9f601741aa61466dc0b39e",
+          "probe"
+        ],
+        "start": 1616968.060576208,
+        "end": 1616968.588992636,
+        "rc": 0,
+        "stdout": "probe\n",
+        "stderr": ""
+      },
+      "restore": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-iso2.sock",
+          "start",
+          "--checkpoint",
+          "probe",
+          "93afa2d77a7bd8f1fc04e71086752b58219187462d9f601741aa61466dc0b39e"
+        ],
+        "start": 1616968.589632685,
+        "end": 1616968.784298869,
+        "rc": 1,
+        "stdout": "",
+        "stderr": "Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:6b25ea392090fb225e34d470b0ad81aa945a3ac83f4662be54103a7586d95327: already exists\n"
+      },
+      "state": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-iso2.sock",
+          "inspect",
+          "--format",
+          "{{json .State}}",
+          "93afa2d77a7bd8f1fc04e71086752b58219187462d9f601741aa61466dc0b39e"
+        ],
+        "start": 1616968.789085391,
+        "end": 1616968.801490415,
+        "rc": 0,
+        "stdout": "{\"Status\":\"exited\",\"Running\":false,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":0,\"ExitCode\":128,\"Error\":\"failed to upload checkpoint to containerd: commit failed: content sha256:6b25ea392090fb225e34d470b0ad81aa945a3ac83f4662be54103a7586d95327: already exists\",\"StartedAt\":\"2026-09-14T18:55:11.127003173Z\",\"FinishedAt\":\"2026-09-14T18:55:11.969627397Z\"}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "mode": "unconfined",
+      "cid": "6940367b000109def0724757e8cbf47acd1c23ae1db3473d5d9ca3b4b2de7ee6",
+      "before": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-iso2.sock",
+          "logs",
+          "6940367b000109def0724757e8cbf47acd1c23ae1db3473d5d9ca3b4b2de7ee6"
+        ],
+        "start": 1616969.527032541,
+        "end": 1616969.543433763,
+        "rc": 0,
+        "stdout": "d0750cdc956b42a9883e800cb8066fd9\n",
+        "stderr": ""
+      },
+      "capture": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-iso2.sock",
+          "checkpoint",
+          "create",
+          "6940367b000109def0724757e8cbf47acd1c23ae1db3473d5d9ca3b4b2de7ee6",
+          "probe"
+        ],
+        "start": 1616969.545836265,
+        "end": 1616970.01575767,
+        "rc": 0,
+        "stdout": "probe\n",
+        "stderr": ""
+      },
+      "restore": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-iso2.sock",
+          "start",
+          "--checkpoint",
+          "probe",
+          "6940367b000109def0724757e8cbf47acd1c23ae1db3473d5d9ca3b4b2de7ee6"
+        ],
+        "start": 1616970.016250353,
+        "end": 1616970.239437917,
+        "rc": 1,
+        "stdout": "",
+        "stderr": "Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:985aa84c2cc9524f9b4732b66deeb9fec9e877fb47dd16d54ea10c2c7e12e2c6: already exists\n"
+      },
+      "state": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-iso2.sock",
+          "inspect",
+          "--format",
+          "{{json .State}}",
+          "6940367b000109def0724757e8cbf47acd1c23ae1db3473d5d9ca3b4b2de7ee6"
+        ],
+        "start": 1616970.242953115,
+        "end": 1616970.262834773,
+        "rc": 0,
+        "stdout": "{\"Status\":\"exited\",\"Running\":false,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":0,\"ExitCode\":128,\"Error\":\"failed to upload checkpoint to containerd: commit failed: content sha256:985aa84c2cc9524f9b4732b66deeb9fec9e877fb47dd16d54ea10c2c7e12e2c6: already exists\",\"StartedAt\":\"2026-09-14T18:55:12.618203694Z\",\"FinishedAt\":\"2026-09-14T18:55:13.43218504Z\"}\n",
+        "stderr": ""
+      }
+    }
+  ],
+  "base_image": "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e",
+  "source_sha256": "9b7f86a8fcd1fe13924ef94dc63c135dcfae289bf82ea1a241f624a281fafc89"
+}

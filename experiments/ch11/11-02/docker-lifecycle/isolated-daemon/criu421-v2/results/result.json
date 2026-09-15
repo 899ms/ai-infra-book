@@ -1,0 +1,198 @@
+{
+  "rows": [
+    {
+      "after": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-c421v2.sock",
+          "logs",
+          "233d382043e903d2219807f50a840a9bfdcfb4955097b90e6509231990c5913d"
+        ],
+        "start": 1617653.986654946,
+        "end": 1617653.996858958,
+        "rc": 0,
+        "stdout": "c3149470cb3341aca2b2c424bc0736b9\n",
+        "stderr": ""
+      },
+      "initial_restore": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-c421v2.sock",
+          "start",
+          "--checkpoint",
+          "probe",
+          "233d382043e903d2219807f50a840a9bfdcfb4955097b90e6509231990c5913d"
+        ],
+        "start": 1617653.584725317,
+        "end": 1617653.746311577,
+        "rc": 1,
+        "stdout": "",
+        "stderr": "Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:6c5824af0d8b761227cb5850dec00137b438548ba2011c682dc94bc937801773: already exists\n"
+      },
+      "mode": "default",
+      "cid": "233d382043e903d2219807f50a840a9bfdcfb4955097b90e6509231990c5913d",
+      "before": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-c421v2.sock",
+          "logs",
+          "233d382043e903d2219807f50a840a9bfdcfb4955097b90e6509231990c5913d"
+        ],
+        "start": 1617653.294432347,
+        "end": 1617653.305203181,
+        "rc": 0,
+        "stdout": "c3149470cb3341aca2b2c424bc0736b9\n",
+        "stderr": ""
+      },
+      "capture": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-c421v2.sock",
+          "checkpoint",
+          "create",
+          "233d382043e903d2219807f50a840a9bfdcfb4955097b90e6509231990c5913d",
+          "probe"
+        ],
+        "start": 1617653.310746816,
+        "end": 1617653.584113921,
+        "rc": 0,
+        "stdout": "probe\n",
+        "stderr": ""
+      },
+      "restore": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-c421v2.sock",
+          "start",
+          "--checkpoint",
+          "probe",
+          "233d382043e903d2219807f50a840a9bfdcfb4955097b90e6509231990c5913d"
+        ],
+        "start": 1617653.77026273,
+        "end": 1617653.971288006,
+        "rc": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "state": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-c421v2.sock",
+          "inspect",
+          "--format",
+          "{{json .State}}",
+          "233d382043e903d2219807f50a840a9bfdcfb4955097b90e6509231990c5913d"
+        ],
+        "start": 1617653.975679105,
+        "end": 1617653.98631466,
+        "rc": 0,
+        "stdout": "{\"Status\":\"running\",\"Running\":true,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":3330227,\"ExitCode\":0,\"Error\":\"\",\"StartedAt\":\"2026-09-14T19:06:37.659915019Z\",\"FinishedAt\":\"2026-09-14T19:06:37.097543413Z\"}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "after": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-c421v2.sock",
+          "logs",
+          "aae6e0cbaf4fe08a9603b15db25ed7ca42a42bf8390e970547daab41a80657f9"
+        ],
+        "start": 1617655.469202087,
+        "end": 1617655.480164184,
+        "rc": 0,
+        "stdout": "ebbf5dd9b52142fa92a8c0a1fd5abb30\n",
+        "stderr": ""
+      },
+      "initial_restore": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-c421v2.sock",
+          "start",
+          "--checkpoint",
+          "probe",
+          "aae6e0cbaf4fe08a9603b15db25ed7ca42a42bf8390e970547daab41a80657f9"
+        ],
+        "start": 1617655.083839031,
+        "end": 1617655.241768874,
+        "rc": 1,
+        "stdout": "",
+        "stderr": "Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:18b5663a0d59db008e35b7e1c02fee84f1099bfe0c164d72462123d4b396a5da: already exists\n"
+      },
+      "mode": "unconfined",
+      "cid": "aae6e0cbaf4fe08a9603b15db25ed7ca42a42bf8390e970547daab41a80657f9",
+      "before": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-c421v2.sock",
+          "logs",
+          "aae6e0cbaf4fe08a9603b15db25ed7ca42a42bf8390e970547daab41a80657f9"
+        ],
+        "start": 1617654.77142206,
+        "end": 1617654.782518408,
+        "rc": 0,
+        "stdout": "ebbf5dd9b52142fa92a8c0a1fd5abb30\n",
+        "stderr": ""
+      },
+      "capture": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-c421v2.sock",
+          "checkpoint",
+          "create",
+          "aae6e0cbaf4fe08a9603b15db25ed7ca42a42bf8390e970547daab41a80657f9",
+          "probe"
+        ],
+        "start": 1617654.788099502,
+        "end": 1617655.083141718,
+        "rc": 0,
+        "stdout": "probe\n",
+        "stderr": ""
+      },
+      "restore": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-c421v2.sock",
+          "start",
+          "--checkpoint",
+          "probe",
+          "aae6e0cbaf4fe08a9603b15db25ed7ca42a42bf8390e970547daab41a80657f9"
+        ],
+        "start": 1617655.265341963,
+        "end": 1617655.455451519,
+        "rc": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "state": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-c421v2.sock",
+          "inspect",
+          "--format",
+          "{{json .State}}",
+          "aae6e0cbaf4fe08a9603b15db25ed7ca42a42bf8390e970547daab41a80657f9"
+        ],
+        "start": 1617655.459107136,
+        "end": 1617655.468711717,
+        "rc": 0,
+        "stdout": "{\"Status\":\"running\",\"Running\":true,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":3330533,\"ExitCode\":0,\"Error\":\"\",\"StartedAt\":\"2026-09-14T19:06:39.144837161Z\",\"FinishedAt\":\"2026-09-14T19:06:38.570587072Z\"}\n",
+        "stderr": ""
+      }
+    }
+  ],
+  "base_image": "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e",
+  "source_sha256": "d711bc6a4f8c3880e29e5123ecc87e3a00d2917250e90b504626dcdfdffa6bbe"
+}

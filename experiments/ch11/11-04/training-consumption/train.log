@@ -1,0 +1,16 @@
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights: 100%|██████████| 399/399 [00:00<00:00, 11627.61it/s]
+/home/ubuntu/ai-infra-book-experiments/ch11/11-04/training-consumption/train.py:46: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)
+  row=dict(request_id=s['request_id'],sample_sha256=s['sample_sha256'],loss=float(loss),gradient_norms=grad,completed_training_tokens=len(s['output_ids']),start_s=t,end_s=time.monotonic(),forward_s=forward_end-forward,backward_s=backward_end-forward_end,optimizer_s=step_end-backward_end,checkpoint_and_verify_s=time.monotonic()-step_end,adapter_sha256={n:th(v) for n,v in weights.items()},checkpoint_sha256=sha(dst),optimizer_step=1)
+extract-k32-baseline 242 0.00506990822032094 checkpoint verified
+extract-k32-preserve 242 0.00506990822032094 checkpoint verified
+extract-k32-restart 242 0.00506990822032094 checkpoint verified
+extract-k96-baseline 242 0.00506990822032094 checkpoint verified
+extract-k96-preserve 242 0.00506990822032094 checkpoint verified
+extract-k96-restart 242 0.00506990822032094 checkpoint verified
+sequence-k32-baseline 258 0.004406477324664593 checkpoint verified
+sequence-k32-preserve 258 0.004406477324664593 checkpoint verified
+sequence-k32-restart 258 0.004406477324664593 checkpoint verified
+sequence-k96-baseline 258 0.004406477324664593 checkpoint verified
+sequence-k96-preserve 258 0.004406477324664593 checkpoint verified
+sequence-k96-restart 258 0.004406477324664593 checkpoint verified

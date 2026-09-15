@@ -1,3 +1,7 @@
+## Historical11-7 completed as a negative result
+
+The [completion review](COMPLETION-REVIEW.md) links all original requirements. New measurements cover48 logical evaluations across budget/cache/queue states, two model candidates and a bounded feedback recipe; none passes the fixed quality gate. The [cost/routing replay and SVG/PDF](cost-routing/README.md) charges failed attempts under explicit teaching prices and reports no feasible quality-constrained route. Success cost and verified-usable time remain undefined, not fabricated. Earlier partial notes below are historical and superseded by the coverage review.
+
 # 11-8 同任务的思考开关与生成上限实测
 
 状态：预算与质量子实验完成，11-8整体partial。固定Qwen3-8B BF16、vLLM实际请求，三条件各两轮；输入为已知受控区间合并修复任务，所有条件使用相同规格和六例检查。**六次均未通过完整检查**，本次候选集没有满足质量门槛的方案。

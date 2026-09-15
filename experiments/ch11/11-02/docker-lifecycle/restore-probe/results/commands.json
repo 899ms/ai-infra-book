@@ -1,0 +1,231 @@
+[
+  {
+    "args": [
+      "docker",
+      "image",
+      "inspect",
+      "python:3.11-slim",
+      "--format",
+      "{{.Id}}"
+    ],
+    "start": 1616574.808393299,
+    "end": 1616574.834082496,
+    "rc": 0,
+    "stdout": "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "create",
+      "--name",
+      "book1102-probe-05f14d211b",
+      "--label",
+      "book.experiment=restore-probe",
+      "--network",
+      "host",
+      "--memory",
+      "128m",
+      "--cpus",
+      "1",
+      "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e",
+      "python",
+      "-u",
+      "-c",
+      "import time,uuid; print(uuid.uuid4().hex,flush=True); time.sleep(3600)"
+    ],
+    "start": 1616574.834341241,
+    "end": 1616574.971945631,
+    "rc": 0,
+    "stdout": "c8d53e9319a446c14c1716541adcfa9edf9fc37aa981244152df6928e81fb772\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "start",
+      "c8d53e9319a446c14c1716541adcfa9edf9fc37aa981244152df6928e81fb772"
+    ],
+    "start": 1616574.972223131,
+    "end": 1616575.427786961,
+    "rc": 0,
+    "stdout": "c8d53e9319a446c14c1716541adcfa9edf9fc37aa981244152df6928e81fb772\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "logs",
+      "c8d53e9319a446c14c1716541adcfa9edf9fc37aa981244152df6928e81fb772"
+    ],
+    "start": 1616575.428074675,
+    "end": 1616575.449807537,
+    "rc": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "checkpoint",
+      "create",
+      "c8d53e9319a446c14c1716541adcfa9edf9fc37aa981244152df6928e81fb772",
+      "probe"
+    ],
+    "start": 1616575.450220769,
+    "end": 1616576.045560151,
+    "rc": 0,
+    "stdout": "probe\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "start",
+      "--checkpoint",
+      "probe",
+      "c8d53e9319a446c14c1716541adcfa9edf9fc37aa981244152df6928e81fb772"
+    ],
+    "start": 1616576.046320626,
+    "end": 1616576.538101747,
+    "rc": 1,
+    "stdout": "",
+    "stderr": "Error response from daemon: OCI runtime restore failed: criu failed: type RESTORE errno 0: unknown\n"
+  },
+  {
+    "args": [
+      "docker",
+      "inspect",
+      "--format",
+      "{{json .State}}",
+      "c8d53e9319a446c14c1716541adcfa9edf9fc37aa981244152df6928e81fb772"
+    ],
+    "start": 1616576.538484549,
+    "end": 1616576.556198886,
+    "rc": 0,
+    "stdout": "{\"Status\":\"exited\",\"Running\":false,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":0,\"ExitCode\":128,\"Error\":\"OCI runtime restore failed: criu failed: type RESTORE errno 0: unknown\",\"StartedAt\":\"2026-09-14T18:48:38.712609214Z\",\"FinishedAt\":\"2026-09-14T18:48:39.381415162Z\"}\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "rm",
+      "-f",
+      "c8d53e9319a446c14c1716541adcfa9edf9fc37aa981244152df6928e81fb772"
+    ],
+    "start": 1616576.557478622,
+    "end": 1616576.591598778,
+    "rc": 0,
+    "stdout": "c8d53e9319a446c14c1716541adcfa9edf9fc37aa981244152df6928e81fb772\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "create",
+      "--name",
+      "book1102-probe-63b09328e9",
+      "--label",
+      "book.experiment=restore-probe",
+      "--network",
+      "host",
+      "--memory",
+      "128m",
+      "--cpus",
+      "1",
+      "--security-opt",
+      "seccomp=unconfined",
+      "--security-opt",
+      "apparmor=unconfined",
+      "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e",
+      "python",
+      "-u",
+      "-c",
+      "import time,uuid; print(uuid.uuid4().hex,flush=True); time.sleep(3600)"
+    ],
+    "start": 1616576.591972359,
+    "end": 1616576.66231213,
+    "rc": 0,
+    "stdout": "a76ca54588b3e058f0abaac02434901f32850ca2c87951cc3f8aa8e43b1601f0\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "start",
+      "a76ca54588b3e058f0abaac02434901f32850ca2c87951cc3f8aa8e43b1601f0"
+    ],
+    "start": 1616576.662729975,
+    "end": 1616576.820036106,
+    "rc": 0,
+    "stdout": "a76ca54588b3e058f0abaac02434901f32850ca2c87951cc3f8aa8e43b1601f0\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "logs",
+      "a76ca54588b3e058f0abaac02434901f32850ca2c87951cc3f8aa8e43b1601f0"
+    ],
+    "start": 1616576.820437486,
+    "end": 1616576.845854499,
+    "rc": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "checkpoint",
+      "create",
+      "a76ca54588b3e058f0abaac02434901f32850ca2c87951cc3f8aa8e43b1601f0",
+      "probe"
+    ],
+    "start": 1616576.846266465,
+    "end": 1616577.331675009,
+    "rc": 0,
+    "stdout": "probe\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "start",
+      "--checkpoint",
+      "probe",
+      "a76ca54588b3e058f0abaac02434901f32850ca2c87951cc3f8aa8e43b1601f0"
+    ],
+    "start": 1616577.332364964,
+    "end": 1616577.552842887,
+    "rc": 1,
+    "stdout": "",
+    "stderr": "Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:d4addbc9a473eaab15e6fa268fd82d5273fc7e946d6e3727b8a3c6a800563ecb: already exists\n"
+  },
+  {
+    "args": [
+      "docker",
+      "inspect",
+      "--format",
+      "{{json .State}}",
+      "a76ca54588b3e058f0abaac02434901f32850ca2c87951cc3f8aa8e43b1601f0"
+    ],
+    "start": 1616577.554663241,
+    "end": 1616577.577913746,
+    "rc": 0,
+    "stdout": "{\"Status\":\"exited\",\"Running\":false,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":0,\"ExitCode\":128,\"Error\":\"failed to upload checkpoint to containerd: commit failed: content sha256:d4addbc9a473eaab15e6fa268fd82d5273fc7e946d6e3727b8a3c6a800563ecb: already exists\",\"StartedAt\":\"2026-09-14T18:48:40.398674095Z\",\"FinishedAt\":\"2026-09-14T18:48:40.72678336Z\"}\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "rm",
+      "-f",
+      "a76ca54588b3e058f0abaac02434901f32850ca2c87951cc3f8aa8e43b1601f0"
+    ],
+    "start": 1616577.578454614,
+    "end": 1616577.612292512,
+    "rc": 0,
+    "stdout": "a76ca54588b3e058f0abaac02434901f32850ca2c87951cc3f8aa8e43b1601f0\n",
+    "stderr": ""
+  }
+]

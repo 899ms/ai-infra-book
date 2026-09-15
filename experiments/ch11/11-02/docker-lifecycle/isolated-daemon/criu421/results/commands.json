@@ -1,0 +1,149 @@
+[
+  {
+    "args": [
+      "criu",
+      "--version"
+    ],
+    "start": 1617593.288493561,
+    "end": 1617593.289953585,
+    "rc": 0,
+    "stdout": "Version: 4.2.1\nGitID: v4.2.1\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-c421.sock",
+      "image",
+      "inspect",
+      "python:3.11-slim",
+      "--format",
+      "{{.Id}}"
+    ],
+    "start": 1617593.290138225,
+    "end": 1617593.300754239,
+    "rc": 0,
+    "stdout": "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-c421.sock",
+      "create",
+      "--name",
+      "book1102-probe-6be32e9974",
+      "--label",
+      "book.experiment=restore-probe",
+      "--network",
+      "host",
+      "--memory",
+      "128m",
+      "--cpus",
+      "1",
+      "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e",
+      "python",
+      "-u",
+      "-c",
+      "import time,uuid; print(uuid.uuid4().hex,flush=True); time.sleep(3600)"
+    ],
+    "start": 1617593.301053523,
+    "end": 1617593.594136163,
+    "rc": 0,
+    "stdout": "da387682a31568bee5c5f46504395e0697f589594d97f78be7a5f4941bf0e10b\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-c421.sock",
+      "start",
+      "da387682a31568bee5c5f46504395e0697f589594d97f78be7a5f4941bf0e10b"
+    ],
+    "start": 1617593.594403235,
+    "end": 1617593.729277312,
+    "rc": 0,
+    "stdout": "da387682a31568bee5c5f46504395e0697f589594d97f78be7a5f4941bf0e10b\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-c421.sock",
+      "logs",
+      "da387682a31568bee5c5f46504395e0697f589594d97f78be7a5f4941bf0e10b"
+    ],
+    "start": 1617594.230134969,
+    "end": 1617594.240518245,
+    "rc": 0,
+    "stdout": "c7f0e85e654c43aba2cc1869c918a886\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-c421.sock",
+      "checkpoint",
+      "create",
+      "da387682a31568bee5c5f46504395e0697f589594d97f78be7a5f4941bf0e10b",
+      "probe"
+    ],
+    "start": 1617594.243056967,
+    "end": 1617594.538951293,
+    "rc": 0,
+    "stdout": "probe\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-c421.sock",
+      "start",
+      "--checkpoint",
+      "probe",
+      "da387682a31568bee5c5f46504395e0697f589594d97f78be7a5f4941bf0e10b"
+    ],
+    "start": 1617594.539553956,
+    "end": 1617594.711379684,
+    "rc": 1,
+    "stdout": "",
+    "stderr": "Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:caa3a35ce8a0a7457c2d7b2ba22250b914461d3e708f8af414e4799f3b0313ba: already exists\n"
+  },
+  {
+    "args": [
+      "ctr",
+      "--address",
+      "/run/book1102-c421-ctd.sock",
+      "--namespace",
+      "book1102",
+      "content",
+      "ls"
+    ],
+    "start": 1617594.711852221,
+    "end": 1617594.720831585,
+    "rc": 0,
+    "stdout": "DIGEST\tSIZE\tAGE\tLABELS\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-c421.sock",
+      "rm",
+      "-f",
+      "da387682a31568bee5c5f46504395e0697f589594d97f78be7a5f4941bf0e10b"
+    ],
+    "start": 1617594.721143331,
+    "end": 1617594.741937529,
+    "rc": 0,
+    "stdout": "da387682a31568bee5c5f46504395e0697f589594d97f78be7a5f4941bf0e10b\n",
+    "stderr": ""
+  }
+]

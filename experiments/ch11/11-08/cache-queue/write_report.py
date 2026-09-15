@@ -1,0 +1,15 @@
+import json,hashlib
+from pathlib import Path
+R=Path(__file__).resolve().parent
+for d,title in [(R,'8B budget/cache/queue measurement'),(R.parent/'model-choice-moe','30B MoE model candidate')]:
+ if not (d/'summary.json').exists():continue
+ s=json.loads((d/'summary.json').read_text());t=f'# {title}\n\nCompleted {s["targets"]} target requests on the fixed interval-repair task. {s["successes"]} passed all six unchanged checks. Exact task messages, tokenizer IDs, emitted outputs, scheduler metrics, cache counters and validation records are retained. Every engine exited zero and the final GPU process list was empty.\n\n'
+ t+='| Thinking | Total cap | Warm cache | Background queue | Passes /2 | Median queue (s) | Median target+validation (s) | Output tokens |\n|---|---:|---|---|---:|---:|---:|---|\n'
+ for x in s['groups']:t+=f'| {x["thinking"]} | {x["budget"]} | {x["warm"]} | {x["busy"]} | {x["passed"]} | {x["median_queue_s"]:.6f} | {x["median_total_s"]:.6f} | {x["output_tokens"]} |\n'
+ t+='\nAll warm targets have positive native prefix-cache hits; cold targets have zero. For every busy case the background emitted its first token before target submission, remained unfinished then, and its last-token scheduler time precedes target scheduling. Native queue waits exceed0.1s. APC is reset before every case. Warmup and128-token background requests are separate records and must not be omitted from workload cost.\n\n'
+ if d==R:t+='The100/1000 thinking caps are total generated-token limits, not independent thinking quotas. Increasing the cap to4096 lets answers finish in this dataset but does not fix the full task. Cold and warm large-budget outputs differ in both length and code, so their full latency difference cannot be interpreted as an isolated prefill speedup. Earlier failed runs are preserved in the parent report.\n\n'
+ else:t+='This text-only candidate is Qwen3-VL-30B-A3B-Instruct-FP8 at the recorded fixed revision, with its native tokenizer/template and no-thinking cap1000. It is a different architecture/precision, not an isolated parameter-count comparison. Task contents and checker are unchanged from the8B run.\n\n'
+ t+='First visible token and first post-thinking token segment are candidate latency metrics; neither proves usefulness. verified_usable_s is the completion of passing validation and stays null on failure. Two repetitions of one known task do not establish general model quality or production failure rates. No provider prices or monetary invoices are inferred here; declared-price routing belongs to the separate cost-routing report.\n\nRun `python3 '+str(d.relative_to(Path.cwd()))+'/analyze.py` from the repository root. Its checks cover source identity, randomized order, case copies, cache/queue conditions, output count, unchanged six-test results and successful/failed usable-time semantics.\n'
+ (d/'README.md').write_text(t)
+ files=[p for p in d.rglob('*') if p.is_file() and p.name!='manifest.json' and '__pycache__' not in p.parts]
+ (d/'manifest.json').write_text(json.dumps({str(p.relative_to(d)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},indent=2)+'\n')

@@ -1,0 +1,51 @@
+[
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-bypass.sock",
+      "info",
+      "--format",
+      "{{.DockerRootDir}}"
+    ],
+    "rc": 0,
+    "stdout": "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/content-bypass/data\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "/usr/bin/docker",
+      "image",
+      "save",
+      "-o",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/content-bypass/base.tar",
+      "python:3.11-slim"
+    ],
+    "rc": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-bypass.sock",
+      "image",
+      "load",
+      "-i",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/content-bypass/base.tar"
+    ],
+    "rc": 0,
+    "stdout": "Loaded image: python:3.11-slim\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "python3",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/content-bypass/probe.py"
+    ],
+    "rc": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/content-bypass/probe.py\", line 45, in <module>\n    restore=cmd(['docker','start','--checkpoint','probe',cid])\n  File \"/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/content-bypass/probe.py\", line 8, in cmd\n    t=time.monotonic();p=subprocess.run(args,text=True,capture_output=True,timeout=45)\n  File \"/usr/lib/python3.10/subprocess.py\", line 505, in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n  File \"/usr/lib/python3.10/subprocess.py\", line 1154, in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n  File \"/usr/lib/python3.10/subprocess.py\", line 2022, in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n  File \"/usr/lib/python3.10/subprocess.py\", line 1198, in _check_timeout\n    raise TimeoutExpired(\nsubprocess.TimeoutExpired: Command '['docker', '-H', 'unix:///run/book1102-bypass.sock', 'start', '--checkpoint', 'probe', '7cebd2f0c630b60e490585a760ec841584f3c3ace83d8348890cb2750853cd9c']' timed out after 45 seconds\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/content-bypass/probe.py\", line 52, in <module>\n    if cid:cmd(['docker','rm','-f',cid])\n  File \"/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/content-bypass/probe.py\", line 8, in cmd\n    t=time.monotonic();p=subprocess.run(args,text=True,capture_output=True,timeout=45)\n  File \"/usr/lib/python3.10/subprocess.py\", line 505, in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n  File \"/usr/lib/python3.10/subprocess.py\", line 1154, in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n  File \"/usr/lib/python3.10/subprocess.py\", line 2022, in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n  File \"/usr/lib/python3.10/subprocess.py\", line 1198, in _check_timeout\n    raise TimeoutExpired(\nsubprocess.TimeoutExpired: Command '['docker', '-H', 'unix:///run/book1102-bypass.sock', 'rm', '-f', '7cebd2f0c630b60e490585a760ec841584f3c3ace83d8348890cb2750853cd9c']' timed out after 45 seconds\n"
+  }
+]

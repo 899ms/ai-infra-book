@@ -1,0 +1,51 @@
+[
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-d24full.sock",
+      "info",
+      "--format",
+      "{{.DockerRootDir}}"
+    ],
+    "rc": 0,
+    "stdout": "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/docker24-full/data\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "/usr/bin/docker",
+      "image",
+      "save",
+      "-o",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/docker24-full/base.tar",
+      "python:3.11-slim"
+    ],
+    "rc": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-d24full.sock",
+      "image",
+      "load",
+      "-i",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/docker24-full/base.tar"
+    ],
+    "rc": 0,
+    "stdout": "Loaded image: python:3.11-slim\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "python3",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/docker24-full/probe.py"
+    ],
+    "rc": 0,
+    "stdout": "[\n  {\n    \"mode\": \"default\",\n    \"capture_rc\": 0,\n    \"restore_rc\": 1,\n    \"restore_error\": \"Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:26e49aba1d8b2f750349c971be2dab51ac2baf48cd9e69e8b09ed6e0cfb0d436: already exists\\n\"\n  },\n  {\n    \"mode\": \"unconfined\",\n    \"capture_rc\": 0,\n    \"restore_rc\": 1,\n    \"restore_error\": \"Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:0d842d74bf7193556b744a558acc4a9bc77f27c83c9caedd73620bd995166d21: already exists\\n\"\n  }\n]\n",
+    "stderr": ""
+  }
+]

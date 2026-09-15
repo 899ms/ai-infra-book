@@ -1,0 +1,12 @@
+# Docker lifecycle replacement authorized by the author
+
+The author explicitly substituted Docker containers on rtx-pro for unavailable E2B. This protocol tests Docker semantics, not E2B microVM behavior. Use the installed Python 3.11 slim image pinned by image ID, 1 CPU and 256 MiB per container, no GPU, no mounted user directories, and an isolated experiment label. All containers use identical worker source. Preparation includes copying that source into the stopped container. No image download, daemon configuration change or unrelated container shutdown.
+
+The worker holds a random nonce and counter only in RAM, a separate file marker in the writable layer, and a persistent TCP command connection. The host records an external event ledger that container recovery cannot rewind. Three trials, deterministic randomized ordering of pause/resume, checkpoint derivation, clean rebuild, and filesystem-only recovery; initial creation is recorded in every case. Every operation records wall-clock boundaries, CLI results, container identity, and first successful command. Timings include Docker CLI/API overhead and are host-load observations.
+
+- Pause/unpause: same ID, file, memory nonce, counter and live command connection; verify first command after unpause.
+- Checkpoint: attempt capture with a live connection and retain acceptance or failure. Then close the connection and capture a separate checkpoint with leave-running; record CRIU errors if unsupported. For successful captures, restore two fresh container identities from independent copies of the same checkpoint and captured filesystem image, verify initial memory/file state and independent mutations. Original continues. Reconnection is measured separately from memory state. Failure is not a passing memory snapshot.
+- Clean rebuild: new base-image container, new memory nonce and absent old file marker.
+- Filesystem recovery: Docker commit then fresh container, old file marker present but new memory nonce and reset counter. Commit is explicitly not memory checkpointing.
+
+Docker checkpoint is experimental; installed Docker/CRIU versions and kernel captured with the run. Reference: https://docs.docker.com/reference/cli/docker/checkpoint/ and https://www.criu.org/Docker . This trial does not establish durable power-loss recovery, cross-host portability or cloud costs. All failures retained. Clean up only containers and images created by this runner after saving evidence.

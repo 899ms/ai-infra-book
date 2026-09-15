@@ -1,0 +1,140 @@
+[
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-bypass.sock",
+      "image",
+      "inspect",
+      "python:3.11-slim",
+      "--format",
+      "{{.Id}}"
+    ],
+    "start": 1617305.819940674,
+    "end": 1617305.827358134,
+    "rc": 0,
+    "stdout": "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-bypass.sock",
+      "create",
+      "--name",
+      "book1102-probe-78fe776cd7",
+      "--label",
+      "book.experiment=restore-probe",
+      "--network",
+      "host",
+      "--memory",
+      "128m",
+      "--cpus",
+      "1",
+      "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e",
+      "python",
+      "-u",
+      "-c",
+      "import time,uuid; print(uuid.uuid4().hex,flush=True); time.sleep(3600)"
+    ],
+    "start": 1617305.827526251,
+    "end": 1617306.214412366,
+    "rc": 0,
+    "stdout": "7cebd2f0c630b60e490585a760ec841584f3c3ace83d8348890cb2750853cd9c\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-bypass.sock",
+      "start",
+      "7cebd2f0c630b60e490585a760ec841584f3c3ace83d8348890cb2750853cd9c"
+    ],
+    "start": 1617306.214664632,
+    "end": 1617306.348383347,
+    "rc": 0,
+    "stdout": "7cebd2f0c630b60e490585a760ec841584f3c3ace83d8348890cb2750853cd9c\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-bypass.sock",
+      "logs",
+      "7cebd2f0c630b60e490585a760ec841584f3c3ace83d8348890cb2750853cd9c"
+    ],
+    "start": 1617306.849204681,
+    "end": 1617306.860931138,
+    "rc": 0,
+    "stdout": "ef3081e54cab45eaa81b1869b11c518f\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-bypass.sock",
+      "checkpoint",
+      "create",
+      "7cebd2f0c630b60e490585a760ec841584f3c3ace83d8348890cb2750853cd9c",
+      "probe"
+    ],
+    "start": 1617306.863550106,
+    "end": 1617307.200527565,
+    "rc": 0,
+    "stdout": "probe\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-bypass.sock",
+      "start",
+      "--checkpoint",
+      "probe",
+      "7cebd2f0c630b60e490585a760ec841584f3c3ace83d8348890cb2750853cd9c"
+    ],
+    "start": 1617307.203231396,
+    "end": 1617307.431736053,
+    "rc": 1,
+    "stdout": "",
+    "stderr": "Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:b8854425fd74e91f0a18f4d72e9420dc8ad6b58f598ac71c2808eedc532ac2c6: already exists\n"
+  },
+  {
+    "args": [
+      "ctr",
+      "--address",
+      "/run/book1102-bypass-ctd.sock",
+      "--namespace",
+      "book1102",
+      "content",
+      "ls"
+    ],
+    "start": 1617307.432439706,
+    "end": 1617307.445425091,
+    "rc": 0,
+    "stdout": "DIGEST\t\t\t\t\t\t\t\t\tSIZE\tAGE\t\t\tLABELS\nsha256:4d8fec6e51024457c03bd9b3479eb451c057f2a86c1b6330610f3c1ab1af7f01\t10.27kB\tLess than a second\t-\nsha256:85981c099f41aff7944c41c293beda20f301e2873ea26a3cc86e40cf15d2e3f7\t484B\tLess than a second\tcontainerd.io/gc.ref.content.0=sha256:b8854425fd74e91f0a18f4d72e9420dc8ad6b58f598ac71c2808eedc532ac2c6,containerd.io/gc.ref.content.1=sha256:4d8fec6e51024457c03bd9b3479eb451c057f2a86c1b6330610f3c1ab1af7f01\nsha256:b8854425fd74e91f0a18f4d72e9420dc8ad6b58f598ac71c2808eedc532ac2c6\t7.388MB\tLess than a second\t-\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "ctr",
+      "--address",
+      "/run/book1102-bypass-ctd.sock",
+      "--namespace",
+      "book1102",
+      "content",
+      "rm",
+      "sha256:b8854425fd74e91f0a18f4d72e9420dc8ad6b58f598ac71c2808eedc532ac2c6"
+    ],
+    "start": 1617307.445783854,
+    "end": 1617307.466739323,
+    "rc": 0,
+    "stdout": "sha256:b8854425fd74e91f0a18f4d72e9420dc8ad6b58f598ac71c2808eedc532ac2c6\n",
+    "stderr": ""
+  }
+]

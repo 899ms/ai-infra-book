@@ -1,0 +1,122 @@
+{
+  "rows": [
+    {
+      "mode": "default",
+      "cid": "130a41fbc1e28e86aea0a57d061ec01688df98cf29ddfd536c56a4570b22d57e",
+      "before": {
+        "args": [
+          "docker",
+          "logs",
+          "130a41fbc1e28e86aea0a57d061ec01688df98cf29ddfd536c56a4570b22d57e"
+        ],
+        "start": 1616609.024706506,
+        "end": 1616609.038466242,
+        "rc": 0,
+        "stdout": "7892743c025446d6a277748dad68b147\n",
+        "stderr": ""
+      },
+      "capture": {
+        "args": [
+          "docker",
+          "checkpoint",
+          "create",
+          "130a41fbc1e28e86aea0a57d061ec01688df98cf29ddfd536c56a4570b22d57e",
+          "probe"
+        ],
+        "start": 1616609.045741993,
+        "end": 1616609.556291901,
+        "rc": 0,
+        "stdout": "probe\n",
+        "stderr": ""
+      },
+      "restore": {
+        "args": [
+          "docker",
+          "start",
+          "--checkpoint",
+          "probe",
+          "130a41fbc1e28e86aea0a57d061ec01688df98cf29ddfd536c56a4570b22d57e"
+        ],
+        "start": 1616609.556855815,
+        "end": 1616609.714046419,
+        "rc": 1,
+        "stdout": "",
+        "stderr": "Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:5266110dfadeeb7c1bed86ad9447ececcfee2d79d4911622e010ac114260c20d: already exists\n"
+      },
+      "state": {
+        "args": [
+          "docker",
+          "inspect",
+          "--format",
+          "{{json .State}}",
+          "130a41fbc1e28e86aea0a57d061ec01688df98cf29ddfd536c56a4570b22d57e"
+        ],
+        "start": 1616609.720049337,
+        "end": 1616609.734110241,
+        "rc": 0,
+        "stdout": "{\"Status\":\"exited\",\"Running\":false,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":0,\"ExitCode\":128,\"Error\":\"failed to upload checkpoint to containerd: commit failed: content sha256:5266110dfadeeb7c1bed86ad9447ececcfee2d79d4911622e010ac114260c20d: already exists\",\"StartedAt\":\"2026-09-14T18:49:12.053377677Z\",\"FinishedAt\":\"2026-09-14T18:49:12.952776903Z\"}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "mode": "unconfined",
+      "cid": "dc4f9cc6ebfe3230c1d9e35a7d86c2abd1f30807b9a65527017445fa7e17b2b5",
+      "before": {
+        "args": [
+          "docker",
+          "logs",
+          "dc4f9cc6ebfe3230c1d9e35a7d86c2abd1f30807b9a65527017445fa7e17b2b5"
+        ],
+        "start": 1616610.474029463,
+        "end": 1616610.489970305,
+        "rc": 0,
+        "stdout": "8b397b7e96fc472795b482afe088bdce\n",
+        "stderr": ""
+      },
+      "capture": {
+        "args": [
+          "docker",
+          "checkpoint",
+          "create",
+          "dc4f9cc6ebfe3230c1d9e35a7d86c2abd1f30807b9a65527017445fa7e17b2b5",
+          "probe"
+        ],
+        "start": 1616610.490334471,
+        "end": 1616610.938837626,
+        "rc": 0,
+        "stdout": "probe\n",
+        "stderr": ""
+      },
+      "restore": {
+        "args": [
+          "docker",
+          "start",
+          "--checkpoint",
+          "probe",
+          "dc4f9cc6ebfe3230c1d9e35a7d86c2abd1f30807b9a65527017445fa7e17b2b5"
+        ],
+        "start": 1616610.939500896,
+        "end": 1616611.39061181,
+        "rc": 1,
+        "stdout": "",
+        "stderr": "Error response from daemon: OCI runtime restore failed: criu failed: type RESTORE errno 0: unknown\n"
+      },
+      "state": {
+        "args": [
+          "docker",
+          "inspect",
+          "--format",
+          "{{json .State}}",
+          "dc4f9cc6ebfe3230c1d9e35a7d86c2abd1f30807b9a65527017445fa7e17b2b5"
+        ],
+        "start": 1616611.391713779,
+        "end": 1616611.405709097,
+        "rc": 0,
+        "stdout": "{\"Status\":\"exited\",\"Running\":false,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":0,\"ExitCode\":128,\"Error\":\"OCI runtime restore failed: criu failed: type RESTORE errno 0: unknown\",\"StartedAt\":\"2026-09-14T18:49:13.575422302Z\",\"FinishedAt\":\"2026-09-14T18:49:14.378486379Z\"}\n",
+        "stderr": ""
+      }
+    }
+  ],
+  "base_image": "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e",
+  "source_sha256": "537cefb543d0e68c51006e91eb85bac627cbffbe872c74661dea81d90a4b1765"
+}

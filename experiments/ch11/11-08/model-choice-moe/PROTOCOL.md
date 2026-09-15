@@ -1,0 +1,5 @@
+# Second model candidate: cached30B MoE FP8
+
+Same repair specification, prompt message contents, six-check quality gate, APC cold/warm and idle/128-token-background scenarios as cache-queue. Fixed locally cached Qwen3-VL-30B-A3B-Instruct-FP8 revision d9748a51ae66354c4dad665aab2c71f26cf2c8cd; text-only input, no images. Use native tokenizer/template and no-thinking mode, total output cap1000. Tokenization may differ; record all IDs. This is a different model/precision/architecture candidate, not an isolated parameter-count comparison or proof of general model superiority.
+
+Two repetitions ×four cache/queue states =eight targets; order seed1107. Same reset and warmup protocol; max_num_seqs1 makes the actual background queue observable. All failures retained. Teacher prices for later routing replay will be declared separately, not attributed to a provider. Before run: candidate quality unknown; no automatic assumption of success from size. No changes to task/checker based on first-model failures.

@@ -1,0 +1,51 @@
+[
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-c421.sock",
+      "info",
+      "--format",
+      "{{.DockerRootDir}}"
+    ],
+    "rc": 0,
+    "stdout": "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/criu421/data\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "/usr/bin/docker",
+      "image",
+      "save",
+      "-o",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/criu421/base.tar",
+      "python:3.11-slim"
+    ],
+    "rc": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-c421.sock",
+      "image",
+      "load",
+      "-i",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/criu421/base.tar"
+    ],
+    "rc": 0,
+    "stdout": "Loaded image: python:3.11-slim\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "python3",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/criu421/probe.py"
+    ],
+    "rc": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/criu421/probe.py\", line 43, in <module>\n    assert digest in listing['stdout']\nAssertionError\n"
+  }
+]

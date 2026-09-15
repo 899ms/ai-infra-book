@@ -1,0 +1,138 @@
+{
+  "rows": [
+    {
+      "mode": "default",
+      "cid": "2f6a232ddc29997420811a3ccf2c1c4ebdf560296bc2b3330ccac7fa38942763",
+      "before": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-d24full.sock",
+          "logs",
+          "2f6a232ddc29997420811a3ccf2c1c4ebdf560296bc2b3330ccac7fa38942763"
+        ],
+        "start": 1617174.65938708,
+        "end": 1617174.671249951,
+        "rc": 0,
+        "stdout": "b63986ad8e4548ed804aaba7a6c825df\n",
+        "stderr": ""
+      },
+      "capture": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-d24full.sock",
+          "checkpoint",
+          "create",
+          "2f6a232ddc29997420811a3ccf2c1c4ebdf560296bc2b3330ccac7fa38942763",
+          "probe"
+        ],
+        "start": 1617174.676692116,
+        "end": 1617174.985545702,
+        "rc": 0,
+        "stdout": "probe\n",
+        "stderr": ""
+      },
+      "restore": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-d24full.sock",
+          "start",
+          "--checkpoint",
+          "probe",
+          "2f6a232ddc29997420811a3ccf2c1c4ebdf560296bc2b3330ccac7fa38942763"
+        ],
+        "start": 1617174.986142788,
+        "end": 1617175.162434486,
+        "rc": 1,
+        "stdout": "",
+        "stderr": "Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:26e49aba1d8b2f750349c971be2dab51ac2baf48cd9e69e8b09ed6e0cfb0d436: already exists\n"
+      },
+      "state": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-d24full.sock",
+          "inspect",
+          "--format",
+          "{{json .State}}",
+          "2f6a232ddc29997420811a3ccf2c1c4ebdf560296bc2b3330ccac7fa38942763"
+        ],
+        "start": 1617175.163119458,
+        "end": 1617175.174526111,
+        "rc": 0,
+        "stdout": "{\"Status\":\"exited\",\"Running\":false,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":0,\"ExitCode\":128,\"Error\":\"failed to upload checkpoint to containerd: commit failed: content sha256:26e49aba1d8b2f750349c971be2dab51ac2baf48cd9e69e8b09ed6e0cfb0d436: already exists\",\"StartedAt\":\"2026-09-14T18:58:37.847017315Z\",\"FinishedAt\":\"2026-09-14T18:58:38.465637753Z\"}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "mode": "unconfined",
+      "cid": "5c426ae80a39f643a5f410c32ecc575553783edda3b978b1e08d11b3520331dc",
+      "before": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-d24full.sock",
+          "logs",
+          "5c426ae80a39f643a5f410c32ecc575553783edda3b978b1e08d11b3520331dc"
+        ],
+        "start": 1617175.932039253,
+        "end": 1617175.94726024,
+        "rc": 0,
+        "stdout": "98df27b51b6646d0a933a32cb2685738\n",
+        "stderr": ""
+      },
+      "capture": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-d24full.sock",
+          "checkpoint",
+          "create",
+          "5c426ae80a39f643a5f410c32ecc575553783edda3b978b1e08d11b3520331dc",
+          "probe"
+        ],
+        "start": 1617175.947658664,
+        "end": 1617176.325833182,
+        "rc": 0,
+        "stdout": "probe\n",
+        "stderr": ""
+      },
+      "restore": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-d24full.sock",
+          "start",
+          "--checkpoint",
+          "probe",
+          "5c426ae80a39f643a5f410c32ecc575553783edda3b978b1e08d11b3520331dc"
+        ],
+        "start": 1617176.326458898,
+        "end": 1617176.527400865,
+        "rc": 1,
+        "stdout": "",
+        "stderr": "Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:0d842d74bf7193556b744a558acc4a9bc77f27c83c9caedd73620bd995166d21: already exists\n"
+      },
+      "state": {
+        "args": [
+          "docker",
+          "-H",
+          "unix:///run/book1102-d24full.sock",
+          "inspect",
+          "--format",
+          "{{json .State}}",
+          "5c426ae80a39f643a5f410c32ecc575553783edda3b978b1e08d11b3520331dc"
+        ],
+        "start": 1617176.532505896,
+        "end": 1617176.544957143,
+        "rc": 0,
+        "stdout": "{\"Status\":\"exited\",\"Running\":false,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":0,\"ExitCode\":128,\"Error\":\"failed to upload checkpoint to containerd: commit failed: content sha256:0d842d74bf7193556b744a558acc4a9bc77f27c83c9caedd73620bd995166d21: already exists\",\"StartedAt\":\"2026-09-14T18:58:39.11336611Z\",\"FinishedAt\":\"2026-09-14T18:58:39.778708796Z\"}\n",
+        "stderr": ""
+      }
+    }
+  ],
+  "base_image": "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e",
+  "source_sha256": "b030f32bd633ae53ffb17110361a7ff3c6b4bcbb44c274b9cb7e0656460af1d9"
+}

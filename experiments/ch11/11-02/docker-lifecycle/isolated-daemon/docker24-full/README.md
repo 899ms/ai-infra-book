@@ -1,0 +1,9 @@
+# 显式独立containerd的Docker24诊断
+
+继docker24组后，明确启动归档工具目录中的containerd，root为本目录远端containerd-root，state为/run/book1102-d24full-ctd，socket为/run/book1102-d24full-ctd.sock；Docker daemon.json显式绑定该地址。Docker的data-root/exec-root/socket也独立。没有删除系统containerd内容或修改系统服务。
+
+两个最小Python进程（default及seccomp/AppArmor unconfined）checkpoint捕获均成功，restore均在上传内容提交时already exists失败。此次显式新content store仍复现，才支持“不是仅由系统daemon旧内容残留导致”的结论。仍没有成功的内存restore；没有将错误推断为应用socket或GPU问题。
+
+原始命令、daemon/containerd日志、probe源码SHA、两次rm及父进程wait结果均保存。containerd PID3301113退出0，dockerd退出0，两个实验容器rm返回0。远端data及containerd-root保留，本地省略镜像层与运行存储。尚无CRIU内部恢复错误日志，因为本组更早在内容提交失败。
+
+后续应检查Docker向containerd写入检查点的实现与实际版本，确定为何首次恢复已存在同摘要，而非继续无条件重复同一测试。当前仍保留11-2缺口。

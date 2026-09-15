@@ -1,0 +1,51 @@
+[
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-worker.sock",
+      "info",
+      "--format",
+      "{{.DockerRootDir}}"
+    ],
+    "rc": 0,
+    "stdout": "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/full-worker/data\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "/usr/bin/docker",
+      "image",
+      "save",
+      "-o",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/full-worker/base.tar",
+      "python:3.11-slim"
+    ],
+    "rc": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-worker.sock",
+      "image",
+      "load",
+      "-i",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/full-worker/base.tar"
+    ],
+    "rc": 0,
+    "stdout": "Loaded image: python:3.11-slim\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "python3",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/full-worker/probe.py"
+    ],
+    "rc": 0,
+    "stdout": "0 filesystem recorded\n0 checkpoint recorded\n0 pause recorded\n0 clean_rebuild recorded\n1 pause recorded\n1 checkpoint recorded\n1 clean_rebuild recorded\n1 filesystem recorded\n2 pause recorded\n2 filesystem recorded\n2 checkpoint recorded\n2 clean_rebuild recorded\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,99 @@
+{
+  "runid": "book1106-585f6a60c6",
+  "base_image": "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e",
+  "tasks": [
+    {
+      "id": "A0",
+      "batch": "A",
+      "arrival_s": 1.1480325309094042,
+      "code": "def solve(n):\n    total = 0\n    for i in range(n):\n        total += i * i\n    return total",
+      "test_n": 2000000,
+      "source_sha256": "8d3d71c523a7531733681bf0038853823056045c4bb8978c5e8495beb0bf315d"
+    },
+    {
+      "id": "A1",
+      "batch": "A",
+      "arrival_s": 1.1605523978359997,
+      "code": "def solve(n):\n    total = 0\n    for i in range(n):\n        total += i * i\n    return total",
+      "test_n": 2000000,
+      "source_sha256": "0d2da78d325a733ae8d8bb8bbeb8079d816c05b7724b6b3f82a01d072bb394ab"
+    },
+    {
+      "id": "A2",
+      "batch": "A",
+      "arrival_s": 1.160927461925894,
+      "code": "def solve(n):\n    total = 0\n    for i in range(n):\n        total += i * i\n    return total",
+      "test_n": 2000000,
+      "source_sha256": "936a0909622f51cb29b2adf031d6797621a177b15ab4fd126549f4a90218a2e8"
+    },
+    {
+      "id": "B0",
+      "batch": "B",
+      "arrival_s": 0.7083534018602222,
+      "code": "def solve(n):\n    if n == 0:\n        return 0\n    elif n == 1:\n        return 1\n    else:\n        return solve(n-1) + solve(n-2)",
+      "test_n": 35,
+      "source_sha256": "41a22e8f02783a0e4dab85bdb84352584ed09cec530e54de32c9e32b9554dda4"
+    },
+    {
+      "id": "B1",
+      "batch": "B",
+      "arrival_s": 0.7210362369660288,
+      "code": "def solve(n):\n    if n == 0:\n        return 0\n    elif n == 1:\n        return 1\n    else:\n        return solve(n-1) + solve(n-2)",
+      "test_n": 35,
+      "source_sha256": "734dc5b2869b96e617841a6e46514f8aa9298828639a2807ff76ba2acc8577e8"
+    },
+    {
+      "id": "B2",
+      "batch": "B",
+      "arrival_s": 0.7214018949307501,
+      "code": "def solve(n):\n    if n == 0:\n        return 0\n    elif n == 1:\n        return 1\n    else:\n        return solve(n-1) + solve(n-2)",
+      "test_n": 40,
+      "source_sha256": "26afb3dcfed7f19a81807c2ea8aa5d7e467227546195645ecca336b44aedc2da"
+    }
+  ],
+  "order": [
+    {
+      "trial": 0,
+      "policy": "fixed_quota"
+    },
+    {
+      "trial": 0,
+      "policy": "batch_A_first"
+    },
+    {
+      "trial": 0,
+      "policy": "fifo"
+    },
+    {
+      "trial": 1,
+      "policy": "batch_A_first"
+    },
+    {
+      "trial": 1,
+      "policy": "fixed_quota"
+    },
+    {
+      "trial": 1,
+      "policy": "fifo"
+    },
+    {
+      "trial": 2,
+      "policy": "batch_A_first"
+    },
+    {
+      "trial": 2,
+      "policy": "fixed_quota"
+    },
+    {
+      "trial": 2,
+      "policy": "fifo"
+    }
+  ],
+  "execution_deadline_s": 2,
+  "slots": 2,
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "source_sha256": {
+    "schedule_v2.py": "38023b8a2d55c24d0f0490e83730e2a77f738b891999bb66e39c1565af5efecd",
+    "validate_worker.py": "cdc0f1351bd79727036a85a14cd447ddbd86bc1dd6c892495c7adb0a93cea847"
+  }
+}

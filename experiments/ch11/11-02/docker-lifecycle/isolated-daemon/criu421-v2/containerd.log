@@ -1,0 +1,95 @@
+time="2026-09-14T19:06:34Z" level=warning msg="containerd config version `1` has been deprecated and will be removed in containerd v2.0, please switch to version `2`, see https://github.com/containerd/containerd/blob/main/docs/PLUGINS.md#version-header"
+time="2026-09-14T19:06:34.056254825Z" level=info msg="starting containerd" revision=7c3aca7a610df76212171d200ca3811ff6096eb8 version=v1.7.13
+time="2026-09-14T19:06:34.064449170Z" level=info msg="loading plugin \"io.containerd.warning.v1.deprecations\"..." type=io.containerd.warning.v1
+time="2026-09-14T19:06:34.064484092Z" level=info msg="loading plugin \"io.containerd.snapshotter.v1.aufs\"..." type=io.containerd.snapshotter.v1
+time="2026-09-14T19:06:34.066230022Z" level=info msg="skip loading plugin \"io.containerd.snapshotter.v1.aufs\"..." error="aufs is not supported (modprobe aufs failed: exit status 1 \"modprobe: FATAL: Module aufs not found in directory /lib/modules/6.8.0-138-generic\\n\"): skip plugin" type=io.containerd.snapshotter.v1
+time="2026-09-14T19:06:34.066247355Z" level=info msg="loading plugin \"io.containerd.content.v1.content\"..." type=io.containerd.content.v1
+time="2026-09-14T19:06:34.066313327Z" level=info msg="loading plugin \"io.containerd.snapshotter.v1.blockfile\"..." type=io.containerd.snapshotter.v1
+time="2026-09-14T19:06:34.066333160Z" level=info msg="skip loading plugin \"io.containerd.snapshotter.v1.blockfile\"..." error="no scratch file generator: skip plugin" type=io.containerd.snapshotter.v1
+time="2026-09-14T19:06:34.066337440Z" level=info msg="loading plugin \"io.containerd.snapshotter.v1.native\"..." type=io.containerd.snapshotter.v1
+time="2026-09-14T19:06:34.066360155Z" level=info msg="loading plugin \"io.containerd.snapshotter.v1.overlayfs\"..." type=io.containerd.snapshotter.v1
+time="2026-09-14T19:06:34.066465719Z" level=info msg="loading plugin \"io.containerd.snapshotter.v1.devmapper\"..." type=io.containerd.snapshotter.v1
+time="2026-09-14T19:06:34.066471224Z" level=warning msg="failed to load plugin io.containerd.snapshotter.v1.devmapper" error="devmapper not configured"
+time="2026-09-14T19:06:34.066474580Z" level=info msg="loading plugin \"io.containerd.snapshotter.v1.zfs\"..." type=io.containerd.snapshotter.v1
+time="2026-09-14T19:06:34.066694057Z" level=info msg="skip loading plugin \"io.containerd.snapshotter.v1.zfs\"..." error="path /home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/criu421-v2/containerd-root/io.containerd.snapshotter.v1.zfs must be a zfs filesystem to be used with the zfs snapshotter: skip plugin" type=io.containerd.snapshotter.v1
+time="2026-09-14T19:06:34.066700876Z" level=info msg="loading plugin \"io.containerd.metadata.v1.bolt\"..." type=io.containerd.metadata.v1
+time="2026-09-14T19:06:34.066720081Z" level=warning msg="could not use snapshotter devmapper in metadata plugin" error="devmapper not configured"
+time="2026-09-14T19:06:34.066723631Z" level=info msg="metadata content store policy set" policy=shared
+time="2026-09-14T19:06:34.084637684Z" level=info msg="loading plugin \"io.containerd.differ.v1.walking\"..." type=io.containerd.differ.v1
+time="2026-09-14T19:06:34.084680097Z" level=info msg="loading plugin \"io.containerd.event.v1.exchange\"..." type=io.containerd.event.v1
+time="2026-09-14T19:06:34.084685545Z" level=info msg="loading plugin \"io.containerd.gc.v1.scheduler\"..." type=io.containerd.gc.v1
+time="2026-09-14T19:06:34.084703123Z" level=info msg="loading plugin \"io.containerd.lease.v1.manager\"..." type=io.containerd.lease.v1
+time="2026-09-14T19:06:34.084708878Z" level=info msg="loading plugin \"io.containerd.nri.v1.nri\"..." type=io.containerd.nri.v1
+time="2026-09-14T19:06:34.084714038Z" level=info msg="NRI interface is disabled by configuration."
+time="2026-09-14T19:06:34.084719698Z" level=info msg="loading plugin \"io.containerd.runtime.v2.task\"..." type=io.containerd.runtime.v2
+time="2026-09-14T19:06:34.084805110Z" level=info msg="loading plugin \"io.containerd.runtime.v2.shim\"..." type=io.containerd.runtime.v2
+time="2026-09-14T19:06:34.084809773Z" level=info msg="loading plugin \"io.containerd.sandbox.store.v1.local\"..." type=io.containerd.sandbox.store.v1
+time="2026-09-14T19:06:34.084822303Z" level=info msg="loading plugin \"io.containerd.sandbox.controller.v1.local\"..." type=io.containerd.sandbox.controller.v1
+time="2026-09-14T19:06:34.084828157Z" level=info msg="loading plugin \"io.containerd.streaming.v1.manager\"..." type=io.containerd.streaming.v1
+time="2026-09-14T19:06:34.084833967Z" level=info msg="loading plugin \"io.containerd.service.v1.introspection-service\"..." type=io.containerd.service.v1
+time="2026-09-14T19:06:34.084840429Z" level=info msg="loading plugin \"io.containerd.service.v1.containers-service\"..." type=io.containerd.service.v1
+time="2026-09-14T19:06:34.084845490Z" level=info msg="loading plugin \"io.containerd.service.v1.content-service\"..." type=io.containerd.service.v1
+time="2026-09-14T19:06:34.084850645Z" level=info msg="loading plugin \"io.containerd.service.v1.diff-service\"..." type=io.containerd.service.v1
+time="2026-09-14T19:06:34.084856572Z" level=info msg="loading plugin \"io.containerd.service.v1.images-service\"..." type=io.containerd.service.v1
+time="2026-09-14T19:06:34.084862292Z" level=info msg="loading plugin \"io.containerd.service.v1.namespaces-service\"..." type=io.containerd.service.v1
+time="2026-09-14T19:06:34.084868628Z" level=info msg="loading plugin \"io.containerd.service.v1.snapshots-service\"..." type=io.containerd.service.v1
+time="2026-09-14T19:06:34.084873881Z" level=info msg="loading plugin \"io.containerd.runtime.v1.linux\"..." type=io.containerd.runtime.v1
+time="2026-09-14T19:06:34.084902826Z" level=info msg="loading plugin \"io.containerd.monitor.v1.cgroups\"..." type=io.containerd.monitor.v1
+time="2026-09-14T19:06:34.085022214Z" level=info msg="loading plugin \"io.containerd.service.v1.tasks-service\"..." type=io.containerd.service.v1
+time="2026-09-14T19:06:34.085032279Z" level=info msg="loading plugin \"io.containerd.grpc.v1.introspection\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085037429Z" level=info msg="loading plugin \"io.containerd.transfer.v1.local\"..." type=io.containerd.transfer.v1
+time="2026-09-14T19:06:34.085047990Z" level=info msg="loading plugin \"io.containerd.internal.v1.restart\"..." type=io.containerd.internal.v1
+time="2026-09-14T19:06:34.085089698Z" level=info msg="loading plugin \"io.containerd.grpc.v1.containers\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085095344Z" level=info msg="loading plugin \"io.containerd.grpc.v1.content\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085099768Z" level=info msg="loading plugin \"io.containerd.grpc.v1.diff\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085105799Z" level=info msg="loading plugin \"io.containerd.grpc.v1.events\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085110574Z" level=info msg="loading plugin \"io.containerd.grpc.v1.healthcheck\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085124224Z" level=info msg="loading plugin \"io.containerd.grpc.v1.images\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085128763Z" level=info msg="loading plugin \"io.containerd.grpc.v1.leases\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085133393Z" level=info msg="loading plugin \"io.containerd.grpc.v1.namespaces\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085138071Z" level=info msg="loading plugin \"io.containerd.internal.v1.opt\"..." type=io.containerd.internal.v1
+time="2026-09-14T19:06:34.085150487Z" level=info msg="loading plugin \"io.containerd.grpc.v1.sandbox-controllers\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085155446Z" level=info msg="loading plugin \"io.containerd.grpc.v1.sandboxes\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085159578Z" level=info msg="loading plugin \"io.containerd.grpc.v1.snapshots\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085164325Z" level=info msg="loading plugin \"io.containerd.grpc.v1.streaming\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085169870Z" level=info msg="loading plugin \"io.containerd.grpc.v1.tasks\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085177170Z" level=info msg="loading plugin \"io.containerd.grpc.v1.transfer\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085181285Z" level=info msg="loading plugin \"io.containerd.grpc.v1.version\"..." type=io.containerd.grpc.v1
+time="2026-09-14T19:06:34.085186116Z" level=info msg="loading plugin \"io.containerd.tracing.processor.v1.otlp\"..." type=io.containerd.tracing.processor.v1
+time="2026-09-14T19:06:34.085197465Z" level=info msg="skip loading plugin \"io.containerd.tracing.processor.v1.otlp\"..." error="no OpenTelemetry endpoint: skip plugin" type=io.containerd.tracing.processor.v1
+time="2026-09-14T19:06:34.085201833Z" level=info msg="loading plugin \"io.containerd.internal.v1.tracing\"..." type=io.containerd.internal.v1
+time="2026-09-14T19:06:34.085205473Z" level=info msg="skipping tracing processor initialization (no tracing plugin)" error="no OpenTelemetry endpoint: skip plugin"
+time="2026-09-14T19:06:34.085367047Z" level=info msg=serving... address=/run/book1102-c421v2-ctd.sock.ttrpc
+time="2026-09-14T19:06:34.085380388Z" level=info msg=serving... address=/run/book1102-c421v2-ctd.sock
+time="2026-09-14T19:06:34.085387030Z" level=info msg="containerd successfully booted in 0.030059s"
+time="2026-09-14T19:06:36.444832235Z" level=info msg="loading plugin \"io.containerd.internal.v1.shutdown\"..." runtime=io.containerd.runc.v2 type=io.containerd.internal.v1
+time="2026-09-14T19:06:36.444880343Z" level=info msg="loading plugin \"io.containerd.ttrpc.v1.pause\"..." runtime=io.containerd.runc.v2 type=io.containerd.ttrpc.v1
+time="2026-09-14T19:06:36.444893227Z" level=info msg="loading plugin \"io.containerd.event.v1.publisher\"..." runtime=io.containerd.runc.v2 type=io.containerd.event.v1
+time="2026-09-14T19:06:36.444900636Z" level=info msg="loading plugin \"io.containerd.ttrpc.v1.task\"..." runtime=io.containerd.runc.v2 type=io.containerd.ttrpc.v1
+time="2026-09-14T19:06:37.100920502Z" level=error msg="resuming exited container from paused state" error="runc did not terminate successfully: exit status 1: container does not exist\n"
+time="2026-09-14T19:06:37.105592304Z" level=info msg="shim disconnected" id=233d382043e903d2219807f50a840a9bfdcfb4955097b90e6509231990c5913d namespace=book1102
+time="2026-09-14T19:06:37.105652955Z" level=warning msg="cleaning up after shim disconnected" id=233d382043e903d2219807f50a840a9bfdcfb4955097b90e6509231990c5913d namespace=book1102
+time="2026-09-14T19:06:37.105660347Z" level=info msg="cleaning up dead shim" namespace=book1102
+time="2026-09-14T19:06:37.592707666Z" level=info msg="loading plugin \"io.containerd.internal.v1.shutdown\"..." runtime=io.containerd.runc.v2 type=io.containerd.internal.v1
+time="2026-09-14T19:06:37.592760352Z" level=info msg="loading plugin \"io.containerd.ttrpc.v1.pause\"..." runtime=io.containerd.runc.v2 type=io.containerd.ttrpc.v1
+time="2026-09-14T19:06:37.592774455Z" level=info msg="loading plugin \"io.containerd.event.v1.publisher\"..." runtime=io.containerd.runc.v2 type=io.containerd.event.v1
+time="2026-09-14T19:06:37.592782367Z" level=info msg="loading plugin \"io.containerd.ttrpc.v1.task\"..." runtime=io.containerd.runc.v2 type=io.containerd.ttrpc.v1
+time="2026-09-14T19:06:37.734073021Z" level=info msg="shim disconnected" id=233d382043e903d2219807f50a840a9bfdcfb4955097b90e6509231990c5913d namespace=book1102
+time="2026-09-14T19:06:37.734144785Z" level=warning msg="cleaning up after shim disconnected" id=233d382043e903d2219807f50a840a9bfdcfb4955097b90e6509231990c5913d namespace=book1102
+time="2026-09-14T19:06:37.734154142Z" level=info msg="cleaning up dead shim" namespace=book1102
+time="2026-09-14T19:06:37.745729418Z" level=warning msg="cleanup warnings time=\"2026-09-14T19:06:37Z\" level=warning msg=\"failed to remove runc container\" error=\"runc did not terminate successfully: exit status 255: \" runtime=io.containerd.runc.v2\n" namespace=book1102
+time="2026-09-14T19:06:37.928393754Z" level=info msg="loading plugin \"io.containerd.internal.v1.shutdown\"..." runtime=io.containerd.runc.v2 type=io.containerd.internal.v1
+time="2026-09-14T19:06:37.928441662Z" level=info msg="loading plugin \"io.containerd.ttrpc.v1.pause\"..." runtime=io.containerd.runc.v2 type=io.containerd.ttrpc.v1
+time="2026-09-14T19:06:37.928453241Z" level=info msg="loading plugin \"io.containerd.event.v1.publisher\"..." runtime=io.containerd.runc.v2 type=io.containerd.event.v1
+time="2026-09-14T19:06:37.928460903Z" level=info msg="loading plugin \"io.containerd.ttrpc.v1.task\"..." runtime=io.containerd.runc.v2 type=io.containerd.ttrpc.v1
+time="2026-09-14T19:06:38.574153650Z" level=error msg="resuming exited container from paused state" error="runc did not terminate successfully: exit status 1: container does not exist\n"
+time="2026-09-14T19:06:38.578599100Z" level=info msg="shim disconnected" id=aae6e0cbaf4fe08a9603b15db25ed7ca42a42bf8390e970547daab41a80657f9 namespace=book1102
+time="2026-09-14T19:06:38.578650407Z" level=warning msg="cleaning up after shim disconnected" id=aae6e0cbaf4fe08a9603b15db25ed7ca42a42bf8390e970547daab41a80657f9 namespace=book1102
+time="2026-09-14T19:06:38.578657497Z" level=info msg="cleaning up dead shim" namespace=book1102
+time="2026-09-14T19:06:39.087891137Z" level=info msg="loading plugin \"io.containerd.internal.v1.shutdown\"..." runtime=io.containerd.runc.v2 type=io.containerd.internal.v1
+time="2026-09-14T19:06:39.087939028Z" level=info msg="loading plugin \"io.containerd.ttrpc.v1.pause\"..." runtime=io.containerd.runc.v2 type=io.containerd.ttrpc.v1
+time="2026-09-14T19:06:39.087950445Z" level=info msg="loading plugin \"io.containerd.event.v1.publisher\"..." runtime=io.containerd.runc.v2 type=io.containerd.event.v1
+time="2026-09-14T19:06:39.087957567Z" level=info msg="loading plugin \"io.containerd.ttrpc.v1.task\"..." runtime=io.containerd.runc.v2 type=io.containerd.ttrpc.v1
+time="2026-09-14T19:06:39.205013687Z" level=info msg="shim disconnected" id=aae6e0cbaf4fe08a9603b15db25ed7ca42a42bf8390e970547daab41a80657f9 namespace=book1102
+time="2026-09-14T19:06:39.205077259Z" level=warning msg="cleaning up after shim disconnected" id=aae6e0cbaf4fe08a9603b15db25ed7ca42a42bf8390e970547daab41a80657f9 namespace=book1102
+time="2026-09-14T19:06:39.205085458Z" level=info msg="cleaning up dead shim" namespace=book1102

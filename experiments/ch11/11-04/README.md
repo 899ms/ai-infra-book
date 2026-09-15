@@ -1,3 +1,11 @@
+## Historical11-5 completed
+
+The [completion review](COMPLETION-REVIEW.md) checks each original requirement. The [final comparison](final-comparison/README.md) combines actual fixed/additional-device batches, actual restart/preserved-prefix paths and verified training checkpoints under explicit stage-composition and teaching-price assumptions. Canonical normalization gives the same exact500-position training batch across arrangements; raw formatting/token differences remain recorded. Lifetime cutoffs and continuous/discrete cost boundaries are calculations, not new fault injections or invoices. Earlier partial-status notes below are historical and superseded by this review.
+
+## Historical11-5: downstream training consumption update
+
+[Training consumption](training-consumption/README.md) now records12 actual one-step adapter checkpoints covering all3000 logical committed output positions, with source identities and optimizer reload verification. Sequence updates are bitwise equal; extraction differences are explicitly quantified. This is supervised downstream consumption, not full RL training. [Cost replay](cost-replay/README.md) retains teaching prices and resource-lifetime assumptions. Actual additional-resource expansion remains unfinished.
+
 # 11-4：真实生成被抢占后的token前缀恢复
 
 在Mac本机Metal上实际执行12条生成路径、20个模型worker。两项新任务全部严格验收通过；8条被抢占路径恢复后的完整token IDs均与对应不中断基线一致。从头重做实际多采样并重复投递32或96个token；保留已提交前缀没有这些重复采样，但确实重新处理了前缀以构建KV。

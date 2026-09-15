@@ -1,0 +1,5 @@
+# Bounded two-attempt feedback route
+
+Same MoE model, task/specification, six checks, initial prompt, cold/warm cache and initial background-queue scenarios as model-choice-moe. Two repetitions ×four states =eight logical tasks. After the first validation fails, append its actual structured result plus the generated assistant answer to the conversation and permit exactly one further cap1000 no-thinking attempt. No hand-written patch or changed acceptance tests. Initial failed candidate is retained. Do not reset APC between attempts; the second request can reuse the conversation prefix. Background is attached to the initial attempt only.
+
+All first attempts, warmups, background usage and feedback attempts remain recorded and charged. Total verified usable time starts at the initial target submission and ends at passing final validation; if neither attempt passes it stays null. This is a different repair recipe from one-shot generation, not proof that the larger model alone succeeds. Quality selection later must use rep0 only and evaluate rep1. Outcome is unknown before execution; all failures remain eligible evidence.

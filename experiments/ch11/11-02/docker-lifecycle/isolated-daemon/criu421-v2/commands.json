@@ -1,0 +1,51 @@
+[
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-c421v2.sock",
+      "info",
+      "--format",
+      "{{.DockerRootDir}}"
+    ],
+    "rc": 0,
+    "stdout": "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/criu421-v2/data\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "/usr/bin/docker",
+      "image",
+      "save",
+      "-o",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/criu421-v2/base.tar",
+      "python:3.11-slim"
+    ],
+    "rc": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "docker",
+      "-H",
+      "unix:///run/book1102-c421v2.sock",
+      "image",
+      "load",
+      "-i",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/criu421-v2/base.tar"
+    ],
+    "rc": 0,
+    "stdout": "Loaded image: python:3.11-slim\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "python3",
+      "/home/ubuntu/ai-infra-book-experiments/ch11/11-02/docker-lifecycle/isolated-daemon/criu421-v2/probe.py"
+    ],
+    "rc": 0,
+    "stdout": "[\n  {\n    \"mode\": \"default\",\n    \"capture_rc\": 0,\n    \"restore_rc\": 0,\n    \"restore_error\": \"\"\n  },\n  {\n    \"mode\": \"unconfined\",\n    \"capture_rc\": 0,\n    \"restore_rc\": 0,\n    \"restore_error\": \"\"\n  }\n]\n",
+    "stderr": ""
+  }
+]

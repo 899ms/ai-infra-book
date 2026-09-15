@@ -1,0 +1,5 @@
+# Training consumption of the new physical-device batches
+
+Consume all12 new logical samples from additional-device, with exact per-position IDs from receiver SQLite and input IDs from recorded producer environments. No old checkpoint is relabeled. The three RTX extraction samples contain289 output tokens rather than242 Mac output tokens; all satisfy the same content task but their training streams differ. Counts must preserve this distinction.
+
+Use the same fixed BF16 Qwen3-8B consumer and independently reset rank4 final-layer q_proj adapter/AdamW as training-consumption. Each sample gets one supervised optimizer step with prompt labels masked, followed by file+directory fsync, reload, tensor checks and step1 verification. This is independent downstream consumption, not live RL, sequential training or quality improvement. Source scripts and model identity are recorded. Checkpoint completion counts these new logical output positions only after verification. Teaching end-to-end accounting will compose separately measured stages and explicitly include fresh consumer preparation as an assumption; no cross-run timestamps are subtracted.

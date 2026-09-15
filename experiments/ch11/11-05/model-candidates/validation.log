@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/ubuntu/ai-infra-book-experiments/ch11/11-05/model-candidates/schedule.py", line 58, in <module>
+    if __name__=='__main__':asyncio.run(main())
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/home/ubuntu/ai-infra-book-experiments/ch11/11-05/model-candidates/schedule.py", line 49, in main
+    for t in done:rows.append(await t);del running[t]
+  File "/home/ubuntu/ai-infra-book-experiments/ch11/11-05/model-candidates/schedule.py", line 28, in launch
+    await command('docker','cp',str(work/'job.json'),cid+':/tmp/job.json');await command('docker','cp',str(P/'validate_worker.py'),cid+':/tmp/worker.py')
+  File "/home/ubuntu/ai-infra-book-experiments/ch11/11-05/model-candidates/schedule.py", line 11, in command
+    if p.returncode:raise RuntimeError(row)
+RuntimeError: {'args': ('docker', 'cp', '/home/ubuntu/ai-infra-book-experiments/ch11/11-05/model-candidates/validation/0-fixed_quota/B0/job.json', '401c355265da02fd1a4fc00f4a7272279b34fd08cbac4cd1e08bea63f1aec458:/tmp/job.json'), 'start_s': 1618397.725683915, 'end_s': 1618397.761264608, 'rc': 1, 'stdout': '', 'stderr': 'Error response from daemon: container rootfs is marked read-only\n'}

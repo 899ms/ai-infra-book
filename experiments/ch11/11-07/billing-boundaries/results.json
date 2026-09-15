@@ -1,0 +1,33 @@
+{
+  "scope": "conditional algebra on observed field sums; no invoice or monthly comparison",
+  "observed_turns": 21,
+  "threads": 17,
+  "conditional_price_coefficients_tokens": {
+    "uncached_input": 1987545,
+    "cached_input": 45657216,
+    "output_including_reasoning": 402591
+  },
+  "price_units": "currency per million tokens",
+  "formula": "(1987545*p_uncached + 45657216*p_cached + 402591*p_output)/1000000",
+  "conditions": [
+    "The input field includes cached input, and output includes reasoning output.",
+    "All usage records cover non-overlapping billable intervals.",
+    "All records use one identified model/version, price snapshot, currency and channel.",
+    "No missing fees, attempts or separately charged cache writes/storage."
+  ],
+  "observed_billed_total": null,
+  "accepted_monthly_tasks": null,
+  "quota_blocked_tasks": null,
+  "subscription_api_crossing_tasks": null,
+  "reseller_api_crossing_tasks": null,
+  "missing_fields": [
+    "monthly task IDs and quality acceptance",
+    "subscription plan, price, quota and concurrency behavior",
+    "API model, price snapshot and billable usage semantics",
+    "reseller identity, fees, usage semantics and matched task results",
+    "turn recovery interval deduplication"
+  ],
+  "source_sha256": {
+    "experiments/ch11/11-07/results/analysis.json": "225c4e0ce15a6c609f207874bf9eb18754c4d0b93cd152992aad6bfd25e4e4f8"
+  }
+}

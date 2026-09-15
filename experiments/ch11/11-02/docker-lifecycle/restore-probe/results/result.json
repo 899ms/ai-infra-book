@@ -1,0 +1,122 @@
+{
+  "rows": [
+    {
+      "mode": "default",
+      "cid": "c8d53e9319a446c14c1716541adcfa9edf9fc37aa981244152df6928e81fb772",
+      "before": {
+        "args": [
+          "docker",
+          "logs",
+          "c8d53e9319a446c14c1716541adcfa9edf9fc37aa981244152df6928e81fb772"
+        ],
+        "start": 1616575.428074675,
+        "end": 1616575.449807537,
+        "rc": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "capture": {
+        "args": [
+          "docker",
+          "checkpoint",
+          "create",
+          "c8d53e9319a446c14c1716541adcfa9edf9fc37aa981244152df6928e81fb772",
+          "probe"
+        ],
+        "start": 1616575.450220769,
+        "end": 1616576.045560151,
+        "rc": 0,
+        "stdout": "probe\n",
+        "stderr": ""
+      },
+      "restore": {
+        "args": [
+          "docker",
+          "start",
+          "--checkpoint",
+          "probe",
+          "c8d53e9319a446c14c1716541adcfa9edf9fc37aa981244152df6928e81fb772"
+        ],
+        "start": 1616576.046320626,
+        "end": 1616576.538101747,
+        "rc": 1,
+        "stdout": "",
+        "stderr": "Error response from daemon: OCI runtime restore failed: criu failed: type RESTORE errno 0: unknown\n"
+      },
+      "state": {
+        "args": [
+          "docker",
+          "inspect",
+          "--format",
+          "{{json .State}}",
+          "c8d53e9319a446c14c1716541adcfa9edf9fc37aa981244152df6928e81fb772"
+        ],
+        "start": 1616576.538484549,
+        "end": 1616576.556198886,
+        "rc": 0,
+        "stdout": "{\"Status\":\"exited\",\"Running\":false,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":0,\"ExitCode\":128,\"Error\":\"OCI runtime restore failed: criu failed: type RESTORE errno 0: unknown\",\"StartedAt\":\"2026-09-14T18:48:38.712609214Z\",\"FinishedAt\":\"2026-09-14T18:48:39.381415162Z\"}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "mode": "unconfined",
+      "cid": "a76ca54588b3e058f0abaac02434901f32850ca2c87951cc3f8aa8e43b1601f0",
+      "before": {
+        "args": [
+          "docker",
+          "logs",
+          "a76ca54588b3e058f0abaac02434901f32850ca2c87951cc3f8aa8e43b1601f0"
+        ],
+        "start": 1616576.820437486,
+        "end": 1616576.845854499,
+        "rc": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "capture": {
+        "args": [
+          "docker",
+          "checkpoint",
+          "create",
+          "a76ca54588b3e058f0abaac02434901f32850ca2c87951cc3f8aa8e43b1601f0",
+          "probe"
+        ],
+        "start": 1616576.846266465,
+        "end": 1616577.331675009,
+        "rc": 0,
+        "stdout": "probe\n",
+        "stderr": ""
+      },
+      "restore": {
+        "args": [
+          "docker",
+          "start",
+          "--checkpoint",
+          "probe",
+          "a76ca54588b3e058f0abaac02434901f32850ca2c87951cc3f8aa8e43b1601f0"
+        ],
+        "start": 1616577.332364964,
+        "end": 1616577.552842887,
+        "rc": 1,
+        "stdout": "",
+        "stderr": "Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:d4addbc9a473eaab15e6fa268fd82d5273fc7e946d6e3727b8a3c6a800563ecb: already exists\n"
+      },
+      "state": {
+        "args": [
+          "docker",
+          "inspect",
+          "--format",
+          "{{json .State}}",
+          "a76ca54588b3e058f0abaac02434901f32850ca2c87951cc3f8aa8e43b1601f0"
+        ],
+        "start": 1616577.554663241,
+        "end": 1616577.577913746,
+        "rc": 0,
+        "stdout": "{\"Status\":\"exited\",\"Running\":false,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":0,\"ExitCode\":128,\"Error\":\"failed to upload checkpoint to containerd: commit failed: content sha256:d4addbc9a473eaab15e6fa268fd82d5273fc7e946d6e3727b8a3c6a800563ecb: already exists\",\"StartedAt\":\"2026-09-14T18:48:40.398674095Z\",\"FinishedAt\":\"2026-09-14T18:48:40.72678336Z\"}\n",
+        "stderr": ""
+      }
+    }
+  ],
+  "base_image": "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e",
+  "source_sha256": "7a3ff69f66fc7379e09b0bd3f1ba8c5c0b1bd213a32b4126fbf6f090f99f6773"
+}

@@ -1,0 +1,178 @@
+{
+  "status": "measured_state_contracts_verified",
+  "author_substitution": "Docker on rtx-pro instead of E2B",
+  "reports": [
+    {
+      "run": "results",
+      "verified_cases": 12,
+      "external_events": 60,
+      "rows": [
+        {
+          "trial": 0,
+          "path": "filesystem",
+          "create_to_first_tool_s": 0.4798857341520488,
+          "create_api_s": 0.2748862251173705,
+          "state_contract": "file_only_new_memory",
+          "operation_to_first_tool_s": 0.2918325928039849,
+          "save_api_s": 0.08587735681794584
+        },
+        {
+          "trial": 0,
+          "path": "checkpoint",
+          "create_to_first_tool_s": 0.2708995670545846,
+          "create_api_s": 0.08547942596487701,
+          "state_contract": "checkpoint_two_independent_restores_verified",
+          "live_capture_exit_code": 1,
+          "capture_api_s": 0.2604391409549862,
+          "clone_restore_success": [
+            true,
+            true
+          ],
+          "restore_errors": [
+            "",
+            ""
+          ],
+          "successful_restore_latency_s": [
+            0.30485798115842044,
+            0.2918427549302578
+          ]
+        },
+        {
+          "trial": 0,
+          "path": "pause",
+          "create_to_first_tool_s": 0.2692258751485497,
+          "create_api_s": 0.0698838559910655,
+          "state_contract": "same_memory_file_identity_and_connection",
+          "operation_api_s": 0.026641278993338346,
+          "operation_to_first_tool_s": 0.027256028028205037
+        },
+        {
+          "trial": 0,
+          "path": "clean_rebuild",
+          "create_to_first_tool_s": 0.2572906611021608,
+          "create_api_s": 0.07444174704141915,
+          "state_contract": "clean_file_and_memory",
+          "operation_to_first_tool_s": 0.2588928381446749
+        },
+        {
+          "trial": 1,
+          "path": "pause",
+          "create_to_first_tool_s": 0.2704095719382167,
+          "create_api_s": 0.07860416010953486,
+          "state_contract": "same_memory_file_identity_and_connection",
+          "operation_api_s": 0.027355612022802234,
+          "operation_to_first_tool_s": 0.02800045209005475
+        },
+        {
+          "trial": 1,
+          "path": "checkpoint",
+          "create_to_first_tool_s": 0.2580709820613265,
+          "create_api_s": 0.07393063604831696,
+          "state_contract": "checkpoint_two_independent_restores_verified",
+          "live_capture_exit_code": 1,
+          "capture_api_s": 0.352682929020375,
+          "clone_restore_success": [
+            true,
+            true
+          ],
+          "restore_errors": [
+            "",
+            ""
+          ],
+          "successful_restore_latency_s": [
+            0.28461215319111943,
+            0.3061706128064543
+          ]
+        },
+        {
+          "trial": 1,
+          "path": "clean_rebuild",
+          "create_to_first_tool_s": 0.2506681839004159,
+          "create_api_s": 0.07977180392481387,
+          "state_contract": "clean_file_and_memory",
+          "operation_to_first_tool_s": 0.38594676507636905
+        },
+        {
+          "trial": 1,
+          "path": "filesystem",
+          "create_to_first_tool_s": 0.2702008031774312,
+          "create_api_s": 0.07977848500013351,
+          "state_contract": "file_only_new_memory",
+          "operation_to_first_tool_s": 0.27171417186036706,
+          "save_api_s": 0.08758724597282708
+        },
+        {
+          "trial": 2,
+          "path": "pause",
+          "create_to_first_tool_s": 0.24551060190424323,
+          "create_api_s": 0.0683035240508616,
+          "state_contract": "same_memory_file_identity_and_connection",
+          "operation_api_s": 0.09880856703966856,
+          "operation_to_first_tool_s": 0.09948533005081117
+        },
+        {
+          "trial": 2,
+          "path": "filesystem",
+          "create_to_first_tool_s": 0.2861969491932541,
+          "create_api_s": 0.07013694802299142,
+          "state_contract": "file_only_new_memory",
+          "operation_to_first_tool_s": 0.27297500614076853,
+          "save_api_s": 0.08402447192929685
+        },
+        {
+          "trial": 2,
+          "path": "checkpoint",
+          "create_to_first_tool_s": 0.2991812920663506,
+          "create_api_s": 0.0753674281295389,
+          "state_contract": "checkpoint_two_independent_restores_verified",
+          "live_capture_exit_code": 1,
+          "capture_api_s": 0.266959983156994,
+          "clone_restore_success": [
+            true,
+            true
+          ],
+          "restore_errors": [
+            "",
+            ""
+          ],
+          "successful_restore_latency_s": [
+            0.2805890829768032,
+            0.30775489495135844
+          ]
+        },
+        {
+          "trial": 2,
+          "path": "clean_rebuild",
+          "create_to_first_tool_s": 0.3335293219424784,
+          "create_api_s": 0.08023150777444243,
+          "state_contract": "clean_file_and_memory",
+          "operation_to_first_tool_s": 0.2860217180568725
+        }
+      ],
+      "metrics": [
+        {
+          "path": "pause",
+          "median_create_to_first_tool_s": 0.2692258751485497,
+          "median_operation_to_first_tool_s": 0.02800045209005475
+        },
+        {
+          "path": "clean_rebuild",
+          "median_create_to_first_tool_s": 0.2572906611021608,
+          "median_operation_to_first_tool_s": 0.2860217180568725
+        },
+        {
+          "path": "filesystem",
+          "median_create_to_first_tool_s": 0.2861969491932541,
+          "median_operation_to_first_tool_s": 0.27297500614076853
+        },
+        {
+          "path": "checkpoint",
+          "median_create_to_first_tool_s": 0.2708995670545846,
+          "median_operation_to_first_tool_s": null
+        }
+      ]
+    }
+  ],
+  "scope": "12 cases in isolated Docker24/CRIU4.2.1, UNIX control; three checkpoint trials with two independently mutated and rechecked clones each; content-store retry intervention retained.",
+  "checkpoint_restore_complete": true
+}

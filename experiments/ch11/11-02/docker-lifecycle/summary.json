@@ -1,0 +1,491 @@
+{
+  "status": "measured_state_contracts_verified",
+  "author_substitution": "Docker on rtx-pro instead of E2B",
+  "reports": [
+    {
+      "run": "results",
+      "verified_cases": 12,
+      "external_events": 42,
+      "rows": [
+        {
+          "trial": 0,
+          "path": "filesystem",
+          "create_to_first_tool_s": 0.5723588329274207,
+          "create_api_s": 0.19423193903639913,
+          "state_contract": "file_only_new_memory",
+          "operation_to_first_tool_s": 0.40264981403015554,
+          "save_api_s": 0.12983888294547796
+        },
+        {
+          "trial": 0,
+          "path": "checkpoint",
+          "create_to_first_tool_s": 0.536169916857034,
+          "create_api_s": 0.13398512895219028,
+          "state_contract": "checkpoint_captured_restore_outcomes_retained",
+          "live_capture_exit_code": 1,
+          "capture_api_s": 0.513530156109482,
+          "clone_restore_success": [
+            false,
+            false
+          ],
+          "restore_errors": [
+            "Error response from daemon: custom checkpointdir is not supported\n",
+            "Error response from daemon: custom checkpointdir is not supported\n"
+          ],
+          "successful_restore_latency_s": null
+        },
+        {
+          "trial": 0,
+          "path": "pause",
+          "create_to_first_tool_s": 0.49122918490320444,
+          "create_api_s": 0.09112718887627125,
+          "state_contract": "same_memory_file_identity_and_connection",
+          "operation_api_s": 0.04485395108349621,
+          "operation_to_first_tool_s": 0.04779955116100609
+        },
+        {
+          "trial": 0,
+          "path": "clean_rebuild",
+          "create_to_first_tool_s": 0.4859207740519196,
+          "create_api_s": 0.10195760312490165,
+          "state_contract": "clean_file_and_memory",
+          "operation_to_first_tool_s": 0.4399009421467781
+        },
+        {
+          "trial": 1,
+          "path": "pause",
+          "create_to_first_tool_s": 0.46925980201922357,
+          "create_api_s": 0.1474297260865569,
+          "state_contract": "same_memory_file_identity_and_connection",
+          "operation_api_s": 0.04960158094763756,
+          "operation_to_first_tool_s": 0.05025034793652594
+        },
+        {
+          "trial": 1,
+          "path": "checkpoint",
+          "create_to_first_tool_s": 0.46358597092330456,
+          "create_api_s": 0.1188789380248636,
+          "state_contract": "checkpoint_captured_restore_outcomes_retained",
+          "live_capture_exit_code": 1,
+          "capture_api_s": 0.6691066490020603,
+          "clone_restore_success": [
+            false,
+            false
+          ],
+          "restore_errors": [
+            "Error response from daemon: custom checkpointdir is not supported\n",
+            "Error response from daemon: custom checkpointdir is not supported\n"
+          ],
+          "successful_restore_latency_s": null
+        },
+        {
+          "trial": 1,
+          "path": "clean_rebuild",
+          "create_to_first_tool_s": 0.5136834150180221,
+          "create_api_s": 0.09880992397665977,
+          "state_contract": "clean_file_and_memory",
+          "operation_to_first_tool_s": 0.4654852678067982
+        },
+        {
+          "trial": 1,
+          "path": "filesystem",
+          "create_to_first_tool_s": 0.46017669094726443,
+          "create_api_s": 0.12418203987181187,
+          "state_contract": "file_only_new_memory",
+          "operation_to_first_tool_s": 0.3997379820793867,
+          "save_api_s": 0.1262545078061521
+        },
+        {
+          "trial": 2,
+          "path": "pause",
+          "create_to_first_tool_s": 0.40653444710187614,
+          "create_api_s": 0.08421591692604125,
+          "state_contract": "same_memory_file_identity_and_connection",
+          "operation_api_s": 0.05868484894745052,
+          "operation_to_first_tool_s": 0.059378367848694324
+        },
+        {
+          "trial": 2,
+          "path": "filesystem",
+          "create_to_first_tool_s": 0.4262802309822291,
+          "create_api_s": 0.12890523206442595,
+          "state_contract": "file_only_new_memory",
+          "operation_to_first_tool_s": 0.3572630169801414,
+          "save_api_s": 0.10851147910580039
+        },
+        {
+          "trial": 2,
+          "path": "checkpoint",
+          "create_to_first_tool_s": 0.430308636976406,
+          "create_api_s": 0.10157156316563487,
+          "state_contract": "checkpoint_captured_restore_outcomes_retained",
+          "live_capture_exit_code": 1,
+          "capture_api_s": 0.4953277118038386,
+          "clone_restore_success": [
+            false,
+            false
+          ],
+          "restore_errors": [
+            "Error response from daemon: custom checkpointdir is not supported\n",
+            "Error response from daemon: custom checkpointdir is not supported\n"
+          ],
+          "successful_restore_latency_s": null
+        },
+        {
+          "trial": 2,
+          "path": "clean_rebuild",
+          "create_to_first_tool_s": 0.39739987114444375,
+          "create_api_s": 0.10922175203450024,
+          "state_contract": "clean_file_and_memory",
+          "operation_to_first_tool_s": 0.4200710242148489
+        }
+      ],
+      "metrics": [
+        {
+          "path": "pause",
+          "median_create_to_first_tool_s": 0.46925980201922357,
+          "median_operation_to_first_tool_s": 0.05025034793652594
+        },
+        {
+          "path": "clean_rebuild",
+          "median_create_to_first_tool_s": 0.4859207740519196,
+          "median_operation_to_first_tool_s": 0.4399009421467781
+        },
+        {
+          "path": "filesystem",
+          "median_create_to_first_tool_s": 0.46017669094726443,
+          "median_operation_to_first_tool_s": 0.3997379820793867
+        },
+        {
+          "path": "checkpoint",
+          "median_create_to_first_tool_s": 0.46358597092330456,
+          "median_operation_to_first_tool_s": null
+        }
+      ]
+    },
+    {
+      "run": "results-default-restore",
+      "verified_cases": 12,
+      "external_events": 42,
+      "rows": [
+        {
+          "trial": 0,
+          "path": "filesystem",
+          "create_to_first_tool_s": 0.5459140490274876,
+          "create_api_s": 0.24312035203911364,
+          "state_contract": "file_only_new_memory",
+          "operation_to_first_tool_s": 0.34632821986451745,
+          "save_api_s": 0.1087023641448468
+        },
+        {
+          "trial": 0,
+          "path": "checkpoint",
+          "create_to_first_tool_s": 0.41127859614789486,
+          "create_api_s": 0.0870380389969796,
+          "state_contract": "checkpoint_captured_restore_outcomes_retained",
+          "live_capture_exit_code": 1,
+          "capture_api_s": 0.5228764910716563,
+          "clone_restore_success": [
+            false,
+            false
+          ],
+          "restore_errors": [
+            "Error response from daemon: bind-mount /proc/0/ns/net -> /var/run/docker/netns/ea6f3cb52458: no such file or directory\n",
+            "Error response from daemon: bind-mount /proc/0/ns/net -> /var/run/docker/netns/4bae527fdcb4: no such file or directory\n"
+          ],
+          "successful_restore_latency_s": null
+        },
+        {
+          "trial": 0,
+          "path": "pause",
+          "create_to_first_tool_s": 0.4129397929646075,
+          "create_api_s": 0.09898011293262243,
+          "state_contract": "same_memory_file_identity_and_connection",
+          "operation_api_s": 0.033488736022263765,
+          "operation_to_first_tool_s": 0.033965792041271925
+        },
+        {
+          "trial": 0,
+          "path": "clean_rebuild",
+          "create_to_first_tool_s": 0.4324267781339586,
+          "create_api_s": 0.10788429505191743,
+          "state_contract": "clean_file_and_memory",
+          "operation_to_first_tool_s": 0.43198947911150753
+        },
+        {
+          "trial": 1,
+          "path": "pause",
+          "create_to_first_tool_s": 0.44758974690921605,
+          "create_api_s": 0.09186138887889683,
+          "state_contract": "same_memory_file_identity_and_connection",
+          "operation_api_s": 0.03237719903700054,
+          "operation_to_first_tool_s": 0.03279898897744715
+        },
+        {
+          "trial": 1,
+          "path": "checkpoint",
+          "create_to_first_tool_s": 0.4215347298886627,
+          "create_api_s": 0.08125721896067262,
+          "state_contract": "checkpoint_captured_restore_outcomes_retained",
+          "live_capture_exit_code": 1,
+          "capture_api_s": 0.4951342057902366,
+          "clone_restore_success": [
+            false,
+            false
+          ],
+          "restore_errors": [
+            "Error response from daemon: bind-mount /proc/0/ns/net -> /var/run/docker/netns/77fd582bdd6c: no such file or directory\n",
+            "Error response from daemon: bind-mount /proc/0/ns/net -> /var/run/docker/netns/b1b333df8451: no such file or directory\n"
+          ],
+          "successful_restore_latency_s": null
+        },
+        {
+          "trial": 1,
+          "path": "clean_rebuild",
+          "create_to_first_tool_s": 0.43410175992175937,
+          "create_api_s": 0.10114909498952329,
+          "state_contract": "clean_file_and_memory",
+          "operation_to_first_tool_s": 0.4351923558861017
+        },
+        {
+          "trial": 1,
+          "path": "filesystem",
+          "create_to_first_tool_s": 0.4750288361683488,
+          "create_api_s": 0.11805423116311431,
+          "state_contract": "file_only_new_memory",
+          "operation_to_first_tool_s": 0.38211288093589246,
+          "save_api_s": 0.10174234001897275
+        },
+        {
+          "trial": 2,
+          "path": "pause",
+          "create_to_first_tool_s": 0.42508087400346994,
+          "create_api_s": 0.10435745981521904,
+          "state_contract": "same_memory_file_identity_and_connection",
+          "operation_api_s": 0.0349558899179101,
+          "operation_to_first_tool_s": 0.03561602300032973
+        },
+        {
+          "trial": 2,
+          "path": "filesystem",
+          "create_to_first_tool_s": 0.4346969679463655,
+          "create_api_s": 0.08736160397529602,
+          "state_contract": "file_only_new_memory",
+          "operation_to_first_tool_s": 0.37698153709061444,
+          "save_api_s": 0.1117362619843334
+        },
+        {
+          "trial": 2,
+          "path": "checkpoint",
+          "create_to_first_tool_s": 0.49805215396918356,
+          "create_api_s": 0.11604979285039008,
+          "state_contract": "checkpoint_captured_restore_outcomes_retained",
+          "live_capture_exit_code": 1,
+          "capture_api_s": 0.6230396279133856,
+          "clone_restore_success": [
+            false,
+            false
+          ],
+          "restore_errors": [
+            "Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:4867f8dca65123943cce54bb1112a4cbc63ddc8624be21579d0c2ba1ddbe4c45: already exists\n",
+            "Error response from daemon: bind-mount /proc/0/ns/net -> /var/run/docker/netns/12a791e08806: no such file or directory\n"
+          ],
+          "successful_restore_latency_s": null
+        },
+        {
+          "trial": 2,
+          "path": "clean_rebuild",
+          "create_to_first_tool_s": 0.42862095288001,
+          "create_api_s": 0.09714232385158539,
+          "state_contract": "clean_file_and_memory",
+          "operation_to_first_tool_s": 0.4525976600125432
+        }
+      ],
+      "metrics": [
+        {
+          "path": "pause",
+          "median_create_to_first_tool_s": 0.42508087400346994,
+          "median_operation_to_first_tool_s": 0.033965792041271925
+        },
+        {
+          "path": "clean_rebuild",
+          "median_create_to_first_tool_s": 0.4324267781339586,
+          "median_operation_to_first_tool_s": 0.4351923558861017
+        },
+        {
+          "path": "filesystem",
+          "median_create_to_first_tool_s": 0.4750288361683488,
+          "median_operation_to_first_tool_s": 0.37698153709061444
+        },
+        {
+          "path": "checkpoint",
+          "median_create_to_first_tool_s": 0.4215347298886627,
+          "median_operation_to_first_tool_s": null
+        }
+      ]
+    },
+    {
+      "run": "results-host-unix-v2",
+      "verified_cases": 12,
+      "external_events": 42,
+      "rows": [
+        {
+          "trial": 0,
+          "path": "filesystem",
+          "create_to_first_tool_s": 0.5540763069875538,
+          "create_api_s": 0.2166814219672233,
+          "state_contract": "file_only_new_memory",
+          "operation_to_first_tool_s": 0.447117063915357,
+          "save_api_s": 0.12660590698942542
+        },
+        {
+          "trial": 0,
+          "path": "checkpoint",
+          "create_to_first_tool_s": 0.4785809610038996,
+          "create_api_s": 0.12450989801436663,
+          "state_contract": "checkpoint_captured_restore_outcomes_retained",
+          "live_capture_exit_code": 1,
+          "capture_api_s": 0.5134960270952433,
+          "clone_restore_success": [
+            false,
+            false
+          ],
+          "restore_errors": [
+            "Error response from daemon: OCI runtime restore failed: criu failed: type RESTORE errno 0: unknown\n",
+            "Error response from daemon: OCI runtime restore failed: criu failed: type RESTORE errno 0: unknown\n"
+          ],
+          "successful_restore_latency_s": null
+        },
+        {
+          "trial": 0,
+          "path": "pause",
+          "create_to_first_tool_s": 0.48002182599157095,
+          "create_api_s": 0.13365343399345875,
+          "state_contract": "same_memory_file_identity_and_connection",
+          "operation_api_s": 0.04267517593689263,
+          "operation_to_first_tool_s": 0.04503137501887977
+        },
+        {
+          "trial": 0,
+          "path": "clean_rebuild",
+          "create_to_first_tool_s": 0.4745552451349795,
+          "create_api_s": 0.136903417063877,
+          "state_contract": "clean_file_and_memory",
+          "operation_to_first_tool_s": 0.4975526931229979
+        },
+        {
+          "trial": 1,
+          "path": "pause",
+          "create_to_first_tool_s": 0.49437623703852296,
+          "create_api_s": 0.12062582699581981,
+          "state_contract": "same_memory_file_identity_and_connection",
+          "operation_api_s": 0.04595869313925505,
+          "operation_to_first_tool_s": 0.04683413216844201
+        },
+        {
+          "trial": 1,
+          "path": "checkpoint",
+          "create_to_first_tool_s": 0.43450521398335695,
+          "create_api_s": 0.10561868292279541,
+          "state_contract": "checkpoint_captured_restore_outcomes_retained",
+          "live_capture_exit_code": 1,
+          "capture_api_s": 0.5194939440116286,
+          "clone_restore_success": [
+            false,
+            false
+          ],
+          "restore_errors": [
+            "Error response from daemon: failed to upload checkpoint to containerd: commit failed: content sha256:eef5a3a6f1ccb963268cd7886b9ce41de5efae3d1b3d891ef5452b2bee8e3b11: already exists\n",
+            "Error response from daemon: OCI runtime restore failed: criu failed: type RESTORE errno 0: unknown\n"
+          ],
+          "successful_restore_latency_s": null
+        },
+        {
+          "trial": 1,
+          "path": "clean_rebuild",
+          "create_to_first_tool_s": 0.36881672497838736,
+          "create_api_s": 0.09633455891162157,
+          "state_contract": "clean_file_and_memory",
+          "operation_to_first_tool_s": 0.5352146199438721
+        },
+        {
+          "trial": 1,
+          "path": "filesystem",
+          "create_to_first_tool_s": 0.4333760910667479,
+          "create_api_s": 0.1208420260809362,
+          "state_contract": "file_only_new_memory",
+          "operation_to_first_tool_s": 0.41436460497789085,
+          "save_api_s": 0.12296144594438374
+        },
+        {
+          "trial": 2,
+          "path": "pause",
+          "create_to_first_tool_s": 0.4599069699179381,
+          "create_api_s": 0.1267288459930569,
+          "state_contract": "same_memory_file_identity_and_connection",
+          "operation_api_s": 0.03684885706752539,
+          "operation_to_first_tool_s": 0.040173632092773914
+        },
+        {
+          "trial": 2,
+          "path": "filesystem",
+          "create_to_first_tool_s": 0.47961049480363727,
+          "create_api_s": 0.09897912899032235,
+          "state_contract": "file_only_new_memory",
+          "operation_to_first_tool_s": 0.5090130099561065,
+          "save_api_s": 0.11685712798498571
+        },
+        {
+          "trial": 2,
+          "path": "checkpoint",
+          "create_to_first_tool_s": 0.42059988505207,
+          "create_api_s": 0.0901476819999516,
+          "state_contract": "checkpoint_captured_restore_outcomes_retained",
+          "live_capture_exit_code": 1,
+          "capture_api_s": 0.48552092211320996,
+          "clone_restore_success": [
+            false,
+            false
+          ],
+          "restore_errors": [
+            "Error response from daemon: OCI runtime restore failed: criu failed: type RESTORE errno 0: unknown\n",
+            "Error response from daemon: OCI runtime restore failed: criu failed: type RESTORE errno 0: unknown\n"
+          ],
+          "successful_restore_latency_s": null
+        },
+        {
+          "trial": 2,
+          "path": "clean_rebuild",
+          "create_to_first_tool_s": 0.47691398905590177,
+          "create_api_s": 0.11724151810631156,
+          "state_contract": "clean_file_and_memory",
+          "operation_to_first_tool_s": 0.49699283903464675
+        }
+      ],
+      "metrics": [
+        {
+          "path": "pause",
+          "median_create_to_first_tool_s": 0.48002182599157095,
+          "median_operation_to_first_tool_s": 0.04503137501887977
+        },
+        {
+          "path": "clean_rebuild",
+          "median_create_to_first_tool_s": 0.4745552451349795,
+          "median_operation_to_first_tool_s": 0.4975526931229979
+        },
+        {
+          "path": "filesystem",
+          "median_create_to_first_tool_s": 0.47961049480363727,
+          "median_operation_to_first_tool_s": 0.447117063915357
+        },
+        {
+          "path": "checkpoint",
+          "median_create_to_first_tool_s": 0.43450521398335695,
+          "median_operation_to_first_tool_s": null
+        }
+      ]
+    }
+  ],
+  "scope": "36 cases across original bridge/custom-dir, bridge/default-dir and host-network UNIX controls. Do not pool timings across controls. Capture is not restore; failed restore latency remains null.",
+  "checkpoint_restore_complete": false
+}

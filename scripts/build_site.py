@@ -25,7 +25,7 @@ def stage():
     for path in sorted((ROOT / 'manuscripts').glob('[0-9][0-9]-*.md')):
         number = int(path.name[:2])
         if 1 <= number <= 12:
-            title = re.sub(r'^# 第 \d+ 章 ', '', path.read_text().splitlines()[0])
+            title = re.sub(r'^# 第 \d+ 章 ', '', path.read_text(encoding='utf-8').splitlines()[0])
             catalog.append({'number': number, 'title': title, 'file': path.name})
     if [c['number'] for c in catalog] != list(range(1, 13)):
         raise ValueError('Expected manuscript chapters 1–12')
@@ -62,7 +62,7 @@ def stage():
         return f'{REPO}/blob/{quote(ref, safe="")}/{quote(target.relative_to(ROOT).as_posix(), safe="/")}' + fragment
 
     for source, output in sources.items():
-        content = source.read_text()
+        content = source.read_text(encoding='utf-8')
         # Historical unused note definitions otherwise emit broken backlink anchors.
         used_notes = set(re.findall(r'\[\^([^\]]+)\](?!:)', content))
         content = re.sub(
@@ -78,7 +78,7 @@ def stage():
         content = re.sub(r'^(\[(?!\^)[^\]\n]+\]:\s*)(\S+)(.*)$', reference, content, flags=re.M)
         dest = DOCS / output
         dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_text(content)
+        dest.write_text(content, encoding='utf-8')
     (DOCS / 'assets').mkdir(exist_ok=True)
     for name in ('math.js', 'reading.css'):
         shutil.copy2(ROOT / 'website' / name, DOCS / 'assets' / name)
@@ -86,9 +86,9 @@ def stage():
     # One flat list: 首页, 前言, then the twelve chapters, so the reading order is the navigation.
     nav = [{'首页': 'index.md'}, {'前言': 'manuscripts/00-前言.md'}] + [
         {f'{c["number"]}. {c["title"]}': f'manuscripts/{c["file"]}'} for c in catalog]
-    config = (ROOT / 'mkdocs.yml').read_text() + '\nnav: ' + json.dumps(nav, ensure_ascii=False) + '\n'
+    config = (ROOT / 'mkdocs.yml').read_text(encoding='utf-8') + '\nnav: ' + json.dumps(nav, ensure_ascii=False) + '\n'
     # Config stays at the root so docs_dir/site_dir remain relative to the repository.
-    (ROOT / '.mkdocs-build.yml').write_text(config)
+    (ROOT / '.mkdocs-build.yml').write_text(config, encoding='utf-8')
     print(f'Staged {len(sources)} Markdown pages from source ref {ref}.')
 
 

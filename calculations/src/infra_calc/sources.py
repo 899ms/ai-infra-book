@@ -11,7 +11,7 @@ from .paths import PROJECT
 
 
 def records() -> list[dict]:
-    return json.loads((PROJECT / "configs/sources.lock.json").read_text())["sources"]
+    return json.loads((PROJECT / "configs/sources.lock.json").read_text(encoding="utf-8"))["sources"]
 
 
 def read_source(relative_path: str) -> bytes:

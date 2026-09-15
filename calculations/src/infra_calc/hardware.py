@@ -7,7 +7,7 @@ from .units import positive_int, positive_number
 
 
 def catalog() -> dict:
-    result = json.loads((PROJECT / "configs/hardware.json").read_text())
+    result = json.loads((PROJECT / "configs/hardware.json").read_text(encoding="utf-8"))
     sources = {row.get("id"): row for row in records() if row.get("id")}
     verified = set()
     identifiers = set()

@@ -1327,7 +1327,7 @@ def main(argv: list[str] | None = None) -> None:
         elif args.command == "training-pipeline-schedule":
             result = _calculate_from_json_inputs(training_pipeline_schedule.calculate, args.inputs)
         elif args.command == "edge-tiers":
-            payload = json.loads(args.inputs.read_text()) if args.inputs else {}
+            payload = json.loads(args.inputs.read_text(encoding="utf-8")) if args.inputs else {}
             result = edge_tiers.calculate(**payload.get("inputs", payload), input_sources=payload.get("input_sources") if "inputs" in payload else None)
         elif args.command in ("clos-cut", "hash-collision", "sm-occupancy", "energy-ledger", "critical-batch", "straggler-max", "moe-capacity", "wan-loss-model"):
             module = dict(zip(("clos-cut", "hash-collision", "sm-occupancy", "energy-ledger", "critical-batch", "straggler-max", "moe-capacity", "wan-loss-model"),

@@ -10,7 +10,7 @@ class Links(HTMLParser):
     def __init__(self, path):
         super().__init__()
         self.path, self.ids, self.links = path, set(), []
-        self.feed(path.read_text())
+        self.feed(path.read_text(encoding='utf-8'))
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)

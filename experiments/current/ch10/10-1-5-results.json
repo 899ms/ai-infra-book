@@ -1,0 +1,531 @@
+{
+  "exercises": [
+    "10-1",
+    "10-5"
+  ],
+  "training_state": {
+    "schema_version": 1,
+    "calculation": "training-state",
+    "model": "qwen3-8b",
+    "scenario": {
+      "model": "qwen3-8b",
+      "participants": 8,
+      "gradient_bytes": 4,
+      "partition": "flat",
+      "extra_live_bytes": 0,
+      "capacity_bytes": 25769803776
+    },
+    "sources": [
+      {
+        "file": "configs/models/qwen3-8b/config.json",
+        "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+        "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+        "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+      },
+      {
+        "file": "sources/qwen3-8b/model.safetensors.index.json",
+        "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+        "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+        "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+      },
+      {
+        "file": "sources/qwen3/modeling_qwen3.py",
+        "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+        "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+        "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+      },
+      {
+        "file": "sources/qwen3/modeling_qwen3_moe.py",
+        "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+        "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+        "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+      },
+      {
+        "file": "sources/training-state/zero3.rst",
+        "url": "https://raw.githubusercontent.com/deepspeedai/DeepSpeed/0e741714f5a708b75a4db0a8140f9016f3aa5fd3/docs/code-docs/source/zero3.rst",
+        "revision": "0e741714f5a708b75a4db0a8140f9016f3aa5fd3",
+        "sha256": "e8eeb0ccfd067c371e522b494d70e0a233e7aeda4d5ccf6dd1a200d01a4b6847",
+        "retrieved": "2026-09-09"
+      }
+    ],
+    "training_state_tensors": [
+      {
+        "name": "model.embed_tokens.weight",
+        "shape": [
+          151936,
+          4096
+        ],
+        "copies": 1,
+        "parameters_each": 622329856,
+        "parameters": 622329856,
+        "shard_elements_each": 77791232
+      },
+      {
+        "name": "model.layers.{layer}.self_attn.q_proj.weight",
+        "shape": [
+          4096,
+          4096
+        ],
+        "copies": 36,
+        "parameters_each": 16777216,
+        "parameters": 603979776,
+        "shard_elements_each": 2097152
+      },
+      {
+        "name": "model.layers.{layer}.self_attn.k_proj.weight",
+        "shape": [
+          1024,
+          4096
+        ],
+        "copies": 36,
+        "parameters_each": 4194304,
+        "parameters": 150994944,
+        "shard_elements_each": 524288
+      },
+      {
+        "name": "model.layers.{layer}.self_attn.v_proj.weight",
+        "shape": [
+          1024,
+          4096
+        ],
+        "copies": 36,
+        "parameters_each": 4194304,
+        "parameters": 150994944,
+        "shard_elements_each": 524288
+      },
+      {
+        "name": "model.layers.{layer}.self_attn.o_proj.weight",
+        "shape": [
+          4096,
+          4096
+        ],
+        "copies": 36,
+        "parameters_each": 16777216,
+        "parameters": 603979776,
+        "shard_elements_each": 2097152
+      },
+      {
+        "name": "model.layers.{layer}.self_attn.q_norm.weight",
+        "shape": [
+          128
+        ],
+        "copies": 36,
+        "parameters_each": 128,
+        "parameters": 4608,
+        "shard_elements_each": 16
+      },
+      {
+        "name": "model.layers.{layer}.self_attn.k_norm.weight",
+        "shape": [
+          128
+        ],
+        "copies": 36,
+        "parameters_each": 128,
+        "parameters": 4608,
+        "shard_elements_each": 16
+      },
+      {
+        "name": "model.layers.{layer}.input_layernorm.weight",
+        "shape": [
+          4096
+        ],
+        "copies": 36,
+        "parameters_each": 4096,
+        "parameters": 147456,
+        "shard_elements_each": 512
+      },
+      {
+        "name": "model.layers.{layer}.post_attention_layernorm.weight",
+        "shape": [
+          4096
+        ],
+        "copies": 36,
+        "parameters_each": 4096,
+        "parameters": 147456,
+        "shard_elements_each": 512
+      },
+      {
+        "name": "model.norm.weight",
+        "shape": [
+          4096
+        ],
+        "copies": 1,
+        "parameters_each": 4096,
+        "parameters": 4096,
+        "shard_elements_each": 512
+      },
+      {
+        "name": "lm_head.weight",
+        "shape": [
+          151936,
+          4096
+        ],
+        "copies": 1,
+        "parameters_each": 622329856,
+        "parameters": 622329856,
+        "shard_elements_each": 77791232
+      },
+      {
+        "name": "model.layers.{layer}.mlp.gate_proj.weight",
+        "shape": [
+          12288,
+          4096
+        ],
+        "copies": 36,
+        "parameters_each": 50331648,
+        "parameters": 1811939328,
+        "shard_elements_each": 6291456
+      },
+      {
+        "name": "model.layers.{layer}.mlp.up_proj.weight",
+        "shape": [
+          12288,
+          4096
+        ],
+        "copies": 36,
+        "parameters_each": 50331648,
+        "parameters": 1811939328,
+        "shard_elements_each": 6291456
+      },
+      {
+        "name": "model.layers.{layer}.mlp.down_proj.weight",
+        "shape": [
+          4096,
+          12288
+        ],
+        "copies": 36,
+        "parameters_each": 50331648,
+        "parameters": 1811939328,
+        "shard_elements_each": 6291456
+      }
+    ],
+    "training_state_stages": [
+      {
+        "stage": 0,
+        "components": [
+          {
+            "component": "weights_bf16",
+            "bytes_per_element": 2,
+            "sharded": false,
+            "per_rank_bytes": 16381470720,
+            "cluster_bytes": 131051765760,
+            "unique_payload_bytes": 16381470720,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 114670295040
+          },
+          {
+            "component": "gradients",
+            "bytes_per_element": 4,
+            "sharded": false,
+            "per_rank_bytes": 32762941440,
+            "cluster_bytes": 262103531520,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 229340590080
+          },
+          {
+            "component": "master_weights_fp32",
+            "bytes_per_element": 4,
+            "sharded": false,
+            "per_rank_bytes": 32762941440,
+            "cluster_bytes": 262103531520,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 229340590080
+          },
+          {
+            "component": "adam_m_fp32",
+            "bytes_per_element": 4,
+            "sharded": false,
+            "per_rank_bytes": 32762941440,
+            "cluster_bytes": 262103531520,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 229340590080
+          },
+          {
+            "component": "adam_v_fp32",
+            "bytes_per_element": 4,
+            "sharded": false,
+            "per_rank_bytes": 32762941440,
+            "cluster_bytes": 262103531520,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 229340590080
+          }
+        ],
+        "persistent_bytes_per_rank": 147433236480,
+        "persistent_bytes_cluster": 1179465891840,
+        "supplied_extra_live_bytes": 0,
+        "specified_live_bytes_per_rank": 147433236480,
+        "signed_capacity_headroom_bytes": -121663432704,
+        "specified_allocations_fit": false
+      },
+      {
+        "stage": 1,
+        "components": [
+          {
+            "component": "weights_bf16",
+            "bytes_per_element": 2,
+            "sharded": false,
+            "per_rank_bytes": 16381470720,
+            "cluster_bytes": 131051765760,
+            "unique_payload_bytes": 16381470720,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 114670295040
+          },
+          {
+            "component": "gradients",
+            "bytes_per_element": 4,
+            "sharded": false,
+            "per_rank_bytes": 32762941440,
+            "cluster_bytes": 262103531520,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 229340590080
+          },
+          {
+            "component": "master_weights_fp32",
+            "bytes_per_element": 4,
+            "sharded": true,
+            "per_rank_bytes": 4095367680,
+            "cluster_bytes": 32762941440,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 0
+          },
+          {
+            "component": "adam_m_fp32",
+            "bytes_per_element": 4,
+            "sharded": true,
+            "per_rank_bytes": 4095367680,
+            "cluster_bytes": 32762941440,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 0
+          },
+          {
+            "component": "adam_v_fp32",
+            "bytes_per_element": 4,
+            "sharded": true,
+            "per_rank_bytes": 4095367680,
+            "cluster_bytes": 32762941440,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 0
+          }
+        ],
+        "persistent_bytes_per_rank": 61430515200,
+        "persistent_bytes_cluster": 491444121600,
+        "supplied_extra_live_bytes": 0,
+        "specified_live_bytes_per_rank": 61430515200,
+        "signed_capacity_headroom_bytes": -35660711424,
+        "specified_allocations_fit": false
+      },
+      {
+        "stage": 2,
+        "components": [
+          {
+            "component": "weights_bf16",
+            "bytes_per_element": 2,
+            "sharded": false,
+            "per_rank_bytes": 16381470720,
+            "cluster_bytes": 131051765760,
+            "unique_payload_bytes": 16381470720,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 114670295040
+          },
+          {
+            "component": "gradients",
+            "bytes_per_element": 4,
+            "sharded": true,
+            "per_rank_bytes": 4095367680,
+            "cluster_bytes": 32762941440,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 0
+          },
+          {
+            "component": "master_weights_fp32",
+            "bytes_per_element": 4,
+            "sharded": true,
+            "per_rank_bytes": 4095367680,
+            "cluster_bytes": 32762941440,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 0
+          },
+          {
+            "component": "adam_m_fp32",
+            "bytes_per_element": 4,
+            "sharded": true,
+            "per_rank_bytes": 4095367680,
+            "cluster_bytes": 32762941440,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 0
+          },
+          {
+            "component": "adam_v_fp32",
+            "bytes_per_element": 4,
+            "sharded": true,
+            "per_rank_bytes": 4095367680,
+            "cluster_bytes": 32762941440,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 0
+          }
+        ],
+        "persistent_bytes_per_rank": 32762941440,
+        "persistent_bytes_cluster": 262103531520,
+        "supplied_extra_live_bytes": 0,
+        "specified_live_bytes_per_rank": 32762941440,
+        "signed_capacity_headroom_bytes": -6993137664,
+        "specified_allocations_fit": false
+      },
+      {
+        "stage": 3,
+        "components": [
+          {
+            "component": "weights_bf16",
+            "bytes_per_element": 2,
+            "sharded": true,
+            "per_rank_bytes": 2047683840,
+            "cluster_bytes": 16381470720,
+            "unique_payload_bytes": 16381470720,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 0
+          },
+          {
+            "component": "gradients",
+            "bytes_per_element": 4,
+            "sharded": true,
+            "per_rank_bytes": 4095367680,
+            "cluster_bytes": 32762941440,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 0
+          },
+          {
+            "component": "master_weights_fp32",
+            "bytes_per_element": 4,
+            "sharded": true,
+            "per_rank_bytes": 4095367680,
+            "cluster_bytes": 32762941440,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 0
+          },
+          {
+            "component": "adam_m_fp32",
+            "bytes_per_element": 4,
+            "sharded": true,
+            "per_rank_bytes": 4095367680,
+            "cluster_bytes": 32762941440,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 0
+          },
+          {
+            "component": "adam_v_fp32",
+            "bytes_per_element": 4,
+            "sharded": true,
+            "per_rank_bytes": 4095367680,
+            "cluster_bytes": 32762941440,
+            "unique_payload_bytes": 32762941440,
+            "partition_padding_bytes": 0,
+            "replicated_extra_bytes": 0
+          }
+        ],
+        "persistent_bytes_per_rank": 18429154560,
+        "persistent_bytes_cluster": 147433236480,
+        "supplied_extra_live_bytes": 0,
+        "specified_live_bytes_per_rank": 18429154560,
+        "signed_capacity_headroom_bytes": 7340649216,
+        "specified_allocations_fit": true
+      }
+    ],
+    "summary": {
+      "parameters": 8190735360,
+      "tensor_instances": 399,
+      "bytes_per_parameter_unsharded": 18,
+      "unsharded_persistent_bytes": 147433236480,
+      "padded_shard_elements_per_rank": 1023841920,
+      "padding_elements_per_sharded_component": 0,
+      "minimum_persistent_bytes_per_rank": 18429154560,
+      "stages_fitting_specified_allocations": [
+        3
+      ]
+    },
+    "assumptions": [
+      "\u5168\u53c2\u6570Adam\u6559\u5b66\u914d\u7f6e\uff1aBF16\u53c2\u65702bytes\uff0c\u68af\u5ea6\u663e\u5f0fBF16/FP32\uff0cFP32 master\u53ca\u4e24\u4e2amoment\u54044bytes\u300216/18bytes\u7531\u6b64\u5f97\u5230\uff0c\u4e0d\u4ee3\u8868\u6240\u6709BF16\u4f18\u5316\u5668\u5b9e\u73b0\u7684\u9ed8\u8ba4\u503c\u3002",
+      "ZeRO stage1\u5206\u7247optimizer\uff08\u542bmaster\uff09\uff0cstage2\u518d\u5206\u7247\u68af\u5ea6\uff0cstage3\u518d\u5206\u7247\u53c2\u6570\uff1b\u65e0TP/PP/EP\u3001offload\u6216\u51bb\u7ed3\u53c2\u6570\u3002MoE\u603b\u6301\u4e45\u72b6\u6001\u5305\u542b\u6240\u6709\u4e13\u5bb6\uff0c\u4e0d\u6309top-k\u7f29\u5c0f\u3002",
+      "flat\u628a\u5b8c\u6574\u53c2\u6570\u5c55\u5e73\u540e\u8865\u9f50\u5230DP\u6574\u6570\u500d\uff1bper_tensor\u9010\u7269\u7406\u5f20\u91cf\u8865\u9f50\u540e\u6bcfrank\u7b49\u957f\u3002\u4e24\u8005\u662f\u58f0\u660e\u7684\u5e03\u5c40\u6a21\u578b\uff0c\u5177\u4f53\u6846\u67b6bucket\u3001\u5bf9\u9f50\u3001\u6301\u4e45\u5316\u9608\u503c\u9700\u53e6\u6838\u9a8c\u3002",
+      "\u8fd9\u91cc\u53ea\u8ba1\u5df2\u7269\u5316\u7684\u6301\u4e45\u72b6\u6001\uff1a\u521d\u59cb\u5316\u61d2\u5206\u914d\u3001\u5b8c\u6574\u68af\u5ea6\u4e34\u65f6\u503c\u3001all-gather\u3001prefetch\u3001casting\u3001\u6fc0\u6d3b\u3001\u901a\u4fe1bucket\u548callocator\u53e6\u8ba1\u3002extra_live_bytes\u987b\u662f\u540c\u4e00\u5cf0\u503c\u65f6\u523b\u989d\u5916\u5206\u914d\u4e14\u4e0d\u91cd\u590d\u8ba1\u7b97\u7684\u8f93\u5165\uff0c\u9ed8\u8ba40\u4e0d\u7b49\u4e8e\u5b9e\u9645\u989d\u5916\u5f00\u95000\u3002",
+      "\u5bb9\u91cf\u4e3a\u8f93\u5165\u7684\u51c0\u9884\u7b97\uff0c\u4e0d\u662f\u67d0\u8bbe\u5907\u7684\u5b98\u65b9\u5bb9\u91cf\u3002specified_allocations_fit\u4ec5\u8868\u793a\u6240\u5217\u5206\u914d\u80fd\u653e\u4e0b\uff0c\u4e0d\u80fd\u8bc1\u660e\u8bad\u7ec3\u5cf0\u503c\u3001\u62d3\u6251\u6216\u541e\u5410\u53ef\u884c\uff1b\u5f20\u91cf\u6e05\u5355\u5b58JSON\u4f9b\u72ec\u7acb\u6838\u7b97\u3002"
+    ]
+  },
+  "peak_cases": [
+    {
+      "stage": 0,
+      "persistent_bytes": 147433236480,
+      "persistent_GiB": 137.3079013824463,
+      "simultaneous_peak_bytes": 160318138368,
+      "sequential_peak_bytes": 157096912896,
+      "simultaneous_peak_GiB": 149.3079013824463,
+      "sequential_peak_GiB": 146.3079013824463
+    },
+    {
+      "stage": 1,
+      "persistent_bytes": 61430515200,
+      "persistent_GiB": 57.21162557601929,
+      "simultaneous_peak_bytes": 74315417088,
+      "sequential_peak_bytes": 71094191616,
+      "simultaneous_peak_GiB": 69.21162557601929,
+      "sequential_peak_GiB": 66.21162557601929
+    },
+    {
+      "stage": 2,
+      "persistent_bytes": 32762941440,
+      "persistent_GiB": 30.512866973876953,
+      "simultaneous_peak_bytes": 45647843328,
+      "sequential_peak_bytes": 42426617856,
+      "simultaneous_peak_GiB": 42.51286697387695,
+      "sequential_peak_GiB": 39.51286697387695
+    },
+    {
+      "stage": 3,
+      "persistent_bytes": 18429154560,
+      "persistent_GiB": 17.163487672805786,
+      "simultaneous_peak_bytes": 31314056448,
+      "sequential_peak_bytes": 28092830976,
+      "simultaneous_peak_GiB": 29.163487672805786,
+      "sequential_peak_GiB": 26.163487672805786
+    }
+  ],
+  "input_supply": {
+    "consumption_sequences_s": 7.2727272727272725,
+    "paused_supply_sequences_s": 6,
+    "deficit_sequences_s": 1.2727272727272727,
+    "pause_s": 60,
+    "depleted_sequences_exact": "840/11",
+    "minimum_integer_prebuffer": 77,
+    "replenishment_surplus_sequences_s": 0.7272727272727273,
+    "time_to_restore_actual_depletion_s": 105.0,
+    "time_to_fill77_from_empty_s": 105.875
+  },
+  "checkpoint": {
+    "rounded_115GB_min_interval_s": 16.428571428571427,
+    "exact_14N_bytes": 114670295040,
+    "exact_min_interval_s": 16.38147072
+  },
+  "source_sha256": {
+    "manuscripts/10-\u8bad\u7ec3\u7cfb\u7edf.md": "4b9be956378407ee53e7425c3aa1128daac2332aa8ca2dc6d84211e0e8017315",
+    "calculations/src/infra_calc/topics/training_state.py": "8cf3022ea68e903cbbdb050b9d99a4ac505c00f9277ef7f8223d354b0eba9c85",
+    "calculations/configs/models/qwen3-8b/config.json": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30",
+    "calculations/sources/qwen3-8b/model.safetensors.index.json": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc",
+    "calculations/sources/qwen3/modeling_qwen3.py": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2",
+    "calculations/sources/qwen3/modeling_qwen3_moe.py": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8",
+    "calculations/sources/training-state/zero3.rst": "e8eeb0ccfd067c371e522b494d70e0a233e7aeda4d5ccf6dd1a200d01a4b6847"
+  }
+}

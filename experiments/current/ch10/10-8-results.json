@@ -1,0 +1,99 @@
+{
+  "exercise": "10-8",
+  "single_sequence_entries": 3145728,
+  "uint16_single_bytes": 6291456,
+  "int32_single_bytes": 12582912,
+  "two_sequence_bytes_uint16": 12582912,
+  "two_sequence_bytes_int32": 25165824,
+  "pack_order": [
+    "B",
+    "A"
+  ],
+  "shards": [
+    {
+      "rank": 0,
+      "packed_start": 0,
+      "packed_stop": 4096,
+      "sample": "B",
+      "original_start": 0,
+      "original_stop": 4096,
+      "uint16_bytes": 3145728,
+      "int32_bytes": 6291456,
+      "route_sha256": "4515bb3a8190dc23ac9beb43253ef1c20356d941d73276a3d4ecee1e8c3feab9",
+      "identity_and_route_sha256": "c0b487d806dde9eac1b2f5aa0413a3abbc4176f8d2a3a1c7f7052e1c84626cbb"
+    },
+    {
+      "rank": 1,
+      "packed_start": 4096,
+      "packed_stop": 8192,
+      "sample": "B",
+      "original_start": 4096,
+      "original_stop": 8192,
+      "uint16_bytes": 3145728,
+      "int32_bytes": 6291456,
+      "route_sha256": "4515bb3a8190dc23ac9beb43253ef1c20356d941d73276a3d4ecee1e8c3feab9",
+      "identity_and_route_sha256": "953efb39c96bc70af566fd9f6a931acce7c597e6b1590083f91f609f8d5d597d"
+    },
+    {
+      "rank": 2,
+      "packed_start": 8192,
+      "packed_stop": 12288,
+      "sample": "A",
+      "original_start": 0,
+      "original_stop": 4096,
+      "uint16_bytes": 3145728,
+      "int32_bytes": 6291456,
+      "route_sha256": "c2941eb431dfbfa63572430562b9549bd2367ce8d3d24b7e85200f518f1e5ff7",
+      "identity_and_route_sha256": "d5abd273581525ec9fa5ba976f196655d6bbea430b14e02e75665880f9f620f6"
+    },
+    {
+      "rank": 3,
+      "packed_start": 12288,
+      "packed_stop": 16384,
+      "sample": "A",
+      "original_start": 4096,
+      "original_stop": 8192,
+      "uint16_bytes": 3145728,
+      "int32_bytes": 6291456,
+      "route_sha256": "c2941eb431dfbfa63572430562b9549bd2367ce8d3d24b7e85200f518f1e5ff7",
+      "identity_and_route_sha256": "41f28e8f2adb308b776f069ee319669bbd97576b0a3a23ae7de7428a6df0c8db"
+    }
+  ],
+  "roundtrip_equal": true,
+  "misalignment": {
+    "rank": 0,
+    "sample": "B",
+    "expected_original_position": 17,
+    "used_original_position": 18,
+    "affected_layers": 48,
+    "example_layer": 3,
+    "correct_experts": [
+      3,
+      20,
+      37,
+      54,
+      71,
+      88,
+      105,
+      122
+    ],
+    "wrong_experts": [
+      10,
+      27,
+      44,
+      61,
+      78,
+      95,
+      112,
+      129
+    ],
+    "toy_correct_output": 63.5,
+    "toy_wrong_output": 70.5,
+    "shape_range_uniqueness_checks_pass": true,
+    "identity_route_check_rejected": true
+  },
+  "scope": "Synthetic routes and toy expert output. No NeMo/R3 training replay, learned scores, logprob equivalence or multi-GPU execution claim.",
+  "source_sha256": {
+    "manuscripts/10-\u8bad\u7ec3\u7cfb\u7edf.md": "4b9be956378407ee53e7425c3aa1128daac2332aa8ca2dc6d84211e0e8017315"
+  }
+}

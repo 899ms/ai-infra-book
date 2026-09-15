@@ -1,3 +1,15 @@
+## Completed conditional calculation route
+
+[Final requirement review](COMPLETION-REVIEW.md) verifies the original calculation/public-record scope. [Eight exact deadline proofs](deadline-proof/README.md) reject all selected100B-token/30-day candidates even with312TF/card and zero communication/other overhead. The assumed H20 scenarios also fail. Omitted nonnegative costs cannot reverse the rejection, so no complete-step time or full workspace measurement is fabricated. Earlier partial-status sections below describe intermediate work; missing matched hardware traces remain a disclosed limitation, not an extra mandatory gate.
+
+## Concrete candidate accounting
+
+[Eight PP-only candidates](candidate-layouts/README.md) now assign all parameters, checkpointed activations and bidirectional boundary messages. PP4/32-microbatch Qwen8 and PP47 Qwen235 exceed the candidate memory before workspace. Positive headroom is not asserted to prove full fit. Timing dependencies and temporary workspace remain to be resolved.
+
+## Conditional calculation route in progress
+
+The original task permits explicitly assumed effective performance. [64 conditional deadline/communication cases](conditional-thresholds/README.md) now use the archived Qwen8/Qwen235 matrix work and exact state totals. This is additional calculation evidence, not matched hardware measurement. Candidate placement, activation peaks and concrete communication volumes still need verification;10-4 remains incomplete.
+
 # 实验 10-4：A100／A800／H20 训练公开记录准备
 
 本轮完成了公开来源冻结与离线核验，**尚未完成原题要求的同模型跨硬件训练校准**。没有找到可将 Qwen3-8B 或 Qwen3-235B 在 A100、A800、H20 上按相同精度、batch、序列长度、训练方式和并行布局比较的完整稳态原始训练记录。公开配置、作者汇总、日志截图和可解析原始文本分开保存；没有用推理吞吐、H100 记录或硬件峰值填补训练步时间，也没有生成缺失的时间分解图。

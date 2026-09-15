@@ -1,0 +1,100 @@
+{
+  "exercise": "10-6",
+  "status": "calculation_complete_physical_evidence_in_commit_after",
+  "save_s": 16.38147072,
+  "recovery_s": 120,
+  "cases": [
+    {
+      "name": "1024_independent",
+      "rate_per_s": 3.516174402250352e-05,
+      "job_MTBF_s": 28440.0,
+      "optimal_interval_s": 965.2865142296354,
+      "rows": [
+        {
+          "interval_s": 300,
+          "save_fraction": 0.0546049024,
+          "redo_fraction": 0.005274261603375527,
+          "restart_fraction": 0.004219409282700422,
+          "total_fraction": 0.06409857328607595
+        },
+        {
+          "interval_s": 900,
+          "save_fraction": 0.018201634133333332,
+          "redo_fraction": 0.015822784810126583,
+          "restart_fraction": 0.004219409282700422,
+          "total_fraction": 0.03824382822616034
+        },
+        {
+          "interval_s": 1800,
+          "save_fraction": 0.009100817066666666,
+          "redo_fraction": 0.03164556962025317,
+          "restart_fraction": 0.004219409282700422,
+          "total_fraction": 0.044965795969620255
+        }
+      ]
+    },
+    {
+      "name": "1024_plus_daily_common",
+      "rate_per_s": 4.673581809657759e-05,
+      "job_MTBF_s": 21396.865203761754,
+      "optimal_interval_s": 837.2719042643316,
+      "rows": [
+        {
+          "interval_s": 300,
+          "save_fraction": 0.0546049024,
+          "redo_fraction": 0.007010372714486638,
+          "restart_fraction": 0.005608298171589311,
+          "total_fraction": 0.06722357328607595
+        },
+        {
+          "interval_s": 900,
+          "save_fraction": 0.018201634133333332,
+          "redo_fraction": 0.021031118143459916,
+          "restart_fraction": 0.005608298171589311,
+          "total_fraction": 0.04484105044838256
+        },
+        {
+          "interval_s": 1800,
+          "save_fraction": 0.009100817066666666,
+          "redo_fraction": 0.04206223628691983,
+          "restart_fraction": 0.005608298171589311,
+          "total_fraction": 0.05677135152517581
+        }
+      ]
+    },
+    {
+      "name": "48_independent",
+      "rate_per_s": 1.6485328058028355e-06,
+      "job_MTBF_s": 606600.0,
+      "optimal_interval_s": 4458.026500314237,
+      "rows": [
+        {
+          "interval_s": 600,
+          "save_fraction": 0.0273024512,
+          "redo_fraction": 0.0004945598417408506,
+          "restart_fraction": 0.00019782393669634025,
+          "total_fraction": 0.027994834978437192
+        }
+      ]
+    },
+    {
+      "name": "48_plus_weekly_rollback",
+      "rate_per_s": 3.3019719592419888e-06,
+      "job_MTBF_s": 302849.33135215455,
+      "optimal_interval_s": 3149.9579216608267,
+      "rows": [
+        {
+          "interval_s": 600,
+          "save_fraction": 0.0273024512,
+          "redo_fraction": 0.0009905915877725967,
+          "restart_fraction": 0.00039623663510903866,
+          "total_fraction": 0.028689279422881634
+        }
+      ]
+    }
+  ],
+  "scope": "First-order extra time per useful time. Daily/weekly common shock adds once per job, not once per GPU. Weekly rollback treated as loss since latest usable checkpoint with same 120s recovery; deeper loss requires a different model.",
+  "source_sha256": {
+    "manuscripts/10-\u8bad\u7ec3\u7cfb\u7edf.md": "4b9be956378407ee53e7425c3aa1128daac2332aa8ca2dc6d84211e0e8017315"
+  }
+}

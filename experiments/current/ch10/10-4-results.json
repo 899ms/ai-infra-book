@@ -1,0 +1,222 @@
+{
+  "exercise": "10-4",
+  "ideal": [
+    {
+      "microbatches": 1,
+      "compute_per_stage_ms": 30,
+      "bubble_ms": 90,
+      "total_ms": 120,
+      "utilization": 0.25
+    },
+    {
+      "microbatches": 4,
+      "compute_per_stage_ms": 120,
+      "bubble_ms": 90,
+      "total_ms": 210,
+      "utilization": 0.5714285714285714
+    },
+    {
+      "microbatches": 8,
+      "compute_per_stage_ms": 240,
+      "bubble_ms": 90,
+      "total_ms": 330,
+      "utilization": 0.7272727272727273
+    },
+    {
+      "microbatches": 16,
+      "compute_per_stage_ms": 480,
+      "bubble_ms": 90,
+      "total_ms": 570,
+      "utilization": 0.8421052631578947
+    }
+  ],
+  "bubble_bounds_ms": {
+    "oneFoneB": 90,
+    "interleaved_v2": 45,
+    "ZB_H1": 30
+  },
+  "schedules": {
+    "1f1b-m8": {
+      "summary": {
+        "total_sequences": 8,
+        "total_tokens": 1024,
+        "gradient_ready_seconds": 0.3460000000000001,
+        "step_makespan_seconds": 0.3470000000000001,
+        "zero_transfer_counterfactual_seconds": 0.33100000000000007,
+        "exposed_transfer_makespan_delta_seconds": 0.016000000000000014,
+        "useful_forward_backward_device_seconds": 0.96,
+        "reserved_activation_scope_peak_bytes": [
+          965758976,
+          725892096,
+          484976640,
+          322901504
+        ],
+        "complete_training_activation_peak_bytes": null,
+        "measured_runtime_seconds": null
+      },
+      "forward_messages": 24,
+      "gradient_messages": 24,
+      "events_verified": 117
+    },
+    "interleaved-m8": {
+      "summary": {
+        "total_sequences": 8,
+        "total_tokens": 1024,
+        "gradient_ready_seconds": 0.2966666666666667,
+        "step_makespan_seconds": 0.2976666666666667,
+        "zero_transfer_counterfactual_seconds": 0.29100000000000004,
+        "exposed_transfer_makespan_delta_seconds": 0.006666666666666654,
+        "useful_forward_backward_device_seconds": 0.96,
+        "idle_device_seconds": 0.2266666666666668,
+        "idle_per_stage_seconds": [
+          0.0566666666666667,
+          0.0566666666666667,
+          0.0566666666666667,
+          0.0566666666666667
+        ],
+        "idle_per_stage_zero_transfer_counterfactual_seconds": [
+          0.050000000000000044,
+          0.050000000000000044,
+          0.050000000000000044,
+          0.050000000000000044
+        ],
+        "bubble_bound_policy_seconds": 0.045,
+        "bubble_bound_1f1b_seconds": 0.09,
+        "bubble_bound_1f1b_fraction": 0.375,
+        "bubble_bound_interleaved_seconds": 0.045,
+        "bubble_bound_interleaved_fraction": 0.1875,
+        "bubble_bound_zb_h1_seconds": 0.03,
+        "bubble_bound_zb_h2_seconds": 0.0,
+        "bubble_bound_dualpipe_seconds": null,
+        "reserved_activation_scope_peak_bytes": [
+          1394053120,
+          1180954624,
+          941087744,
+          725475840
+        ],
+        "complete_training_activation_peak_bytes": null,
+        "measured_runtime_seconds": null
+      },
+      "forward_messages": 56,
+      "gradient_messages": 56,
+      "events_verified": 245
+    },
+    "zero-bubble-m8": {
+      "summary": {
+        "total_sequences": 8,
+        "total_tokens": 1024,
+        "gradient_ready_seconds": 0.2820000000000001,
+        "step_makespan_seconds": 0.2830000000000001,
+        "zero_transfer_counterfactual_seconds": 0.2710000000000001,
+        "exposed_transfer_makespan_delta_seconds": 0.01200000000000001,
+        "useful_forward_backward_device_seconds": 0.96,
+        "idle_device_seconds": 0.16800000000000037,
+        "idle_per_stage_seconds": [
+          0.04200000000000009,
+          0.04200000000000009,
+          0.04200000000000009,
+          0.04200000000000009
+        ],
+        "idle_per_stage_zero_transfer_counterfactual_seconds": [
+          0.030000000000000082,
+          0.030000000000000082,
+          0.030000000000000082,
+          0.030000000000000082
+        ],
+        "bubble_bound_policy_seconds": 0.03,
+        "bubble_bound_1f1b_seconds": 0.09,
+        "bubble_bound_1f1b_fraction": 0.375,
+        "bubble_bound_interleaved_seconds": null,
+        "bubble_bound_interleaved_fraction": null,
+        "bubble_bound_zb_h1_seconds": 0.03,
+        "bubble_bound_zb_h2_seconds": 0.0,
+        "bubble_bound_dualpipe_seconds": null,
+        "reserved_activation_scope_peak_bytes": [
+          965758976,
+          965758976,
+          965758976,
+          1285314560
+        ],
+        "complete_training_activation_peak_bytes": null,
+        "measured_runtime_seconds": null
+      },
+      "forward_messages": 24,
+      "gradient_messages": 24,
+      "events_verified": 149
+    }
+  },
+  "gap_events": [
+    {
+      "kind": "B",
+      "stage": 3,
+      "microbatch": 1,
+      "duration": 0.02,
+      "resource": "compute:3",
+      "dependencies": [
+        "F:3:1"
+      ],
+      "priority": 2,
+      "id": "B:3:1",
+      "start": 0.073,
+      "end": 0.093
+    },
+    {
+      "kind": "F",
+      "stage": 2,
+      "microbatch": 2,
+      "duration": 0.01,
+      "resource": "compute:2",
+      "dependencies": [
+        "B:2:0",
+        "A:1:2"
+      ],
+      "priority": 3,
+      "id": "F:2:2",
+      "start": 0.084,
+      "end": 0.094
+    },
+    {
+      "kind": "A",
+      "stage": 2,
+      "microbatch": 2,
+      "duration": 0.001,
+      "resource": "link:A:2",
+      "dependencies": [
+        "F:2:2"
+      ],
+      "priority": 1,
+      "id": "A:2:2",
+      "start": 0.094,
+      "end": 0.095
+    },
+    {
+      "kind": "F",
+      "stage": 3,
+      "microbatch": 2,
+      "duration": 0.01,
+      "resource": "compute:3",
+      "dependencies": [
+        "B:3:1",
+        "A:2:2"
+      ],
+      "priority": 3,
+      "id": "F:3:2",
+      "start": 0.095,
+      "end": 0.105
+    }
+  ],
+  "rebuild": {
+    "original_MiB": 360,
+    "one_at_time_workspace_MiB": 10,
+    "net_peak_reduction_MiB": 350,
+    "two_at_time_workspace_MiB": 20,
+    "two_at_time_net_reduction_MiB": 340
+  },
+  "source_sha256": {
+    "manuscripts/10-\u8bad\u7ec3\u7cfb\u7edf.md": "4b9be956378407ee53e7425c3aa1128daac2332aa8ca2dc6d84211e0e8017315",
+    "calculations/src/infra_calc/topics/training_pipeline_schedule.py": "89c691d7d472164aa0ca7a4091dcc382b4504024df5a195b3c2ba2df250d4a9f",
+    "calculations/results/training-pipeline-1f1b-m8.json": "c10acf1f3a7134d305ee3d385bebcad0969acec992abb11ba62ceb1f07641655",
+    "calculations/results/training-pipeline-interleaved-m8.json": "773f52ffe9134ea65961825a000bba925cd1734beb6937b2488ef400710703a3",
+    "calculations/results/training-pipeline-zero-bubble-m8.json": "0f7b9e27648e284d9a8561061bdacc64bfdb341bb2af515aaeeb72bb032e15d2"
+  }
+}

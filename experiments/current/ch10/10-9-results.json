@@ -1,0 +1,254 @@
+{
+  "exercise": "10-9",
+  "cases": [
+    {
+      "case": "base",
+      "compute_s": 52.223727875520225,
+      "communication_wait_s": 0.07617058133333333,
+      "input_wait_s": 0.5,
+      "step_s": 52.79989845685356,
+      "finish_days": 24.636648533576864,
+      "meets30days": true
+    },
+    {
+      "case": "half_PCIe_prefetch",
+      "compute_s": 52.223727875520225,
+      "communication_wait_s": 0.15234116266666667,
+      "input_wait_s": 0.5,
+      "step_s": 52.87606903818689,
+      "finish_days": 24.664976901205506,
+      "meets30days": true
+    },
+    {
+      "case": "half_PCIe_no_prefetch",
+      "compute_s": 52.223727875520225,
+      "communication_wait_s": 24.06028512,
+      "input_wait_s": 0.5,
+      "step_s": 76.78401299552023,
+      "finish_days": 33.556507119473736,
+      "meets30days": false
+    },
+    {
+      "case": "efficiency30",
+      "compute_s": 69.6316371673603,
+      "communication_wait_s": 0.07617058133333333,
+      "input_wait_s": 0.5,
+      "step_s": 70.20780774869363,
+      "finish_days": 31.110770765982014,
+      "meets30days": false
+    },
+    {
+      "case": "input5",
+      "compute_s": 52.223727875520225,
+      "communication_wait_s": 0.07617058133333333,
+      "input_wait_s": 5,
+      "step_s": 57.29989845685356,
+      "finish_days": 26.310229752171534,
+      "meets30days": true
+    },
+    {
+      "case": "independent_normal_5pct",
+      "compute_s": 58.05482273524182,
+      "communication_wait_s": 0.07617058133333333,
+      "input_wait_s": 0.5,
+      "step_s": 58.63099331657516,
+      "finish_days": 26.80527316492664,
+      "meets30days": true
+    },
+    {
+      "case": "A100_peak_only_counterfactual",
+      "compute_s": 27.651794375115195,
+      "communication_wait_s": 0.07617058133333333,
+      "input_wait_s": 0.5,
+      "step_s": 28.227964956448528,
+      "finish_days": 15.498175997835736,
+      "meets30days": true
+    }
+  ],
+  "standard_normal_max48": 2.2331208808457803,
+  "quadrature_change": 1.3322676295501878e-14,
+  "combined_degradation": [
+    {
+      "prefetch": true,
+      "include_5pct_normal": false,
+      "degraded_step_s": 74.78397833002697,
+      "alternatives": [
+        {
+          "option": "restore_PCIe",
+          "step_s": 74.70780774869363,
+          "saved_s": 0.07617058133334353,
+          "finish_days": 32.78435198457669
+        },
+        {
+          "option": "restore_efficiency40",
+          "step_s": 57.37606903818689,
+          "saved_s": 17.407909291840078,
+          "finish_days": 26.33855811980018
+        },
+        {
+          "option": "restore_input0_5",
+          "step_s": 70.28397833002697,
+          "saved_s": 4.5,
+          "finish_days": 31.139099133610667
+        }
+      ]
+    },
+    {
+      "prefetch": true,
+      "include_5pct_normal": true,
+      "degraded_step_s": 82.55877147632243,
+      "alternatives": [
+        {
+          "option": "restore_PCIe",
+          "step_s": 82.48260089498909,
+          "saved_s": 0.07617058133334353,
+          "finish_days": 35.675851493043055
+        },
+        {
+          "option": "restore_efficiency40",
+          "step_s": 63.20716389790849,
+          "saved_s": 19.351607578413947,
+          "finish_days": 28.50718275114996
+        },
+        {
+          "option": "restore_input0_5",
+          "step_s": 78.05877147632243,
+          "saved_s": 4.5,
+          "finish_days": 34.03059864207704
+        },
+        {
+          "option": "remove_compute_variability",
+          "step_s": 74.78397833002697,
+          "saved_s": 7.774793146295465,
+          "finish_days": 32.812680352205334
+        }
+      ]
+    },
+    {
+      "prefetch": false,
+      "include_5pct_normal": false,
+      "degraded_step_s": 98.6919222873603,
+      "alternatives": [
+        {
+          "option": "restore_PCIe",
+          "step_s": 86.6617797273603,
+          "saved_s": 12.030142560000002,
+          "finish_days": 37.23011709371081
+        },
+        {
+          "option": "restore_efficiency40",
+          "step_s": 81.28401299552023,
+          "saved_s": 17.40790929184007,
+          "finish_days": 35.23008833806841
+        },
+        {
+          "option": "restore_input0_5",
+          "step_s": 94.1919222873603,
+          "saved_s": 4.5,
+          "finish_days": 40.03062935187889
+        },
+        {
+          "option": "restore_prefetch_only",
+          "step_s": 74.78397833002697,
+          "saved_s": 23.90794395733333,
+          "finish_days": 32.812680352205334
+        }
+      ]
+    },
+    {
+      "prefetch": false,
+      "include_5pct_normal": true,
+      "degraded_step_s": 106.46671543365576,
+      "alternatives": [
+        {
+          "option": "restore_PCIe",
+          "step_s": 94.43657287365576,
+          "saved_s": 12.030142560000002,
+          "finish_days": 40.12161660217717
+        },
+        {
+          "option": "restore_efficiency40",
+          "step_s": 87.11510785524182,
+          "saved_s": 19.351607578413947,
+          "finish_days": 37.39871296941818
+        },
+        {
+          "option": "restore_input0_5",
+          "step_s": 101.96671543365576,
+          "saved_s": 4.5,
+          "finish_days": 42.92212886034527
+        },
+        {
+          "option": "restore_prefetch_only",
+          "step_s": 82.55877147632243,
+          "saved_s": 23.90794395733333,
+          "finish_days": 35.70417986067171
+        },
+        {
+          "option": "remove_compute_variability",
+          "step_s": 98.6919222873603,
+          "saved_s": 7.774793146295465,
+          "finish_days": 41.70421057047356
+        }
+      ]
+    }
+  ],
+  "substitution": {
+    "source_device": "A100 80GB SXM",
+    "peak_TFLOPs": 312,
+    "sources": [
+      {
+        "model": "hardware",
+        "id": "nvidia-a100-page",
+        "repository": "www.nvidia.com",
+        "revision": "snapshot-2026-09-08",
+        "upstream_file": "nvidia-a100-page.md",
+        "url": "https://www.nvidia.com/en-us/data-center/a100/",
+        "file": "sources/hardware/nvidia-a100-page.md",
+        "sha256": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed",
+        "bytes": 104477,
+        "downloaded_at": "2026-09-08T14:38:44.340054+00:00",
+        "status": "downloaded",
+        "note": "HTML \u5feb\u7167\u5df2\u4e8e\u63d0\u4ea4 cb190322 \u8f6c\u4e3a Markdown\uff1b\u9501\u6309\u73b0\u6709 .md \u6587\u4ef6\u91cd\u65b0\u767b\u8bb0\u3002"
+      },
+      {
+        "model": "hardware",
+        "id": "nvidia-a100",
+        "repository": "images.nvidia.com",
+        "revision": "book-official-archive-2026-09-06",
+        "upstream_file": "nvidia-a100.pdf",
+        "url": "https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf",
+        "file": "../references/files/specs/nvidia-a100.pdf",
+        "sha256": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815",
+        "bytes": 7979890,
+        "status": "downloaded",
+        "archive_note": "Official original already archived in this book; hash reverified 2026-09-08"
+      },
+      {
+        "model": "hardware",
+        "id": "nvidia-ptx-isa-9-3",
+        "repository": "docs.nvidia.com",
+        "revision": "snapshot-2026-09-08",
+        "upstream_file": "nvidia-ptx-isa-9-3.md",
+        "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+        "resolved_url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+        "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+        "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7",
+        "bytes": 1419236,
+        "downloaded_at": "2026-09-08T15:05:43.727341+00:00",
+        "status": "downloaded",
+        "note": "HTML \u5feb\u7167\u5df2\u4e8e\u63d0\u4ea4 cb190322 \u8f6c\u4e3a Markdown\uff1b\u9501\u6309\u73b0\u6709 .md \u6587\u4ef6\u91cd\u65b0\u767b\u8bb0\u3002"
+      }
+    ],
+    "scope": "Only peak compute changed from165.2 to312, eta40% and all other inputs held fixed. Hybrid sensitivity, not an actual A100 deployment performance prediction."
+  },
+  "scope": "Normal independent rank variability is explicit; standard deviation alone does not specify expected maximum. Recovery fraction and five planned days unchanged.",
+  "source_sha256": {
+    "manuscripts/ch10/design-case.json": "5011af9f4c8191ecc8eb340f9186d2f780bdfd97221ad210063380918864532c",
+    "calculations/src/infra_calc/topics/straggler_max.py": "aa40ccc1131ed07ef442711fc60d0df559f4ed2f5a24365df5dd93e36de9684d",
+    "manuscripts/10-\u8bad\u7ec3\u7cfb\u7edf.md": "4b9be956378407ee53e7425c3aa1128daac2332aa8ca2dc6d84211e0e8017315",
+    "calculations/sources/hardware/nvidia-a100-page.md": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed",
+    "calculations/../references/files/specs/nvidia-a100.pdf": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815",
+    "calculations/sources/hardware/nvidia-ptx-isa-9-3.md": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+  }
+}

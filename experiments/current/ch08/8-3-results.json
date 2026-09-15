@@ -1,0 +1,98 @@
+{
+  "exercise": "8-3",
+  "paging": [
+    {
+      "block_tokens": 2,
+      "blocks_per_sequence": [
+        5,
+        7,
+        3,
+        8
+      ],
+      "unused_slots_per_sequence": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "total_unused_slots": 4,
+      "block_table_entries": 23
+    },
+    {
+      "block_tokens": 4,
+      "blocks_per_sequence": [
+        3,
+        4,
+        2,
+        4
+      ],
+      "unused_slots_per_sequence": [
+        3,
+        3,
+        3,
+        1
+      ],
+      "total_unused_slots": 10,
+      "block_table_entries": 13
+    },
+    {
+      "block_tokens": 8,
+      "blocks_per_sequence": [
+        2,
+        2,
+        1,
+        2
+      ],
+      "unused_slots_per_sequence": [
+        7,
+        3,
+        3,
+        1
+      ],
+      "total_unused_slots": 14,
+      "block_table_entries": 7
+    }
+  ],
+  "long_request_capacity": [
+    {
+      "requests": 8,
+      "independent_blocks": 4224,
+      "shared_physical_blocks": 1536,
+      "shared_block_table_entries": 4224,
+      "independent_KV_MiB": 9504.0,
+      "shared_KV_MiB": 3456.0,
+      "independent_fits_12GiB": true,
+      "shared_fits_12GiB": true
+    },
+    {
+      "requests": 16,
+      "independent_blocks": 8448,
+      "shared_physical_blocks": 2688,
+      "shared_block_table_entries": 8448,
+      "independent_KV_MiB": 19008.0,
+      "shared_KV_MiB": 6048.0,
+      "independent_fits_12GiB": false,
+      "shared_fits_12GiB": true
+    },
+    {
+      "requests": 32,
+      "independent_blocks": 16896,
+      "shared_physical_blocks": 4992,
+      "shared_block_table_entries": 16896,
+      "independent_KV_MiB": 38016.0,
+      "shared_KV_MiB": 11232.0,
+      "independent_fits_12GiB": false,
+      "shared_fits_12GiB": true
+    }
+  ],
+  "one_private_block_becomes_shared": {
+    "before_physical_blocks": "P+bQ",
+    "after_physical_blocks": "P+1+b(Q-1)",
+    "saved_physical_blocks": "b-1",
+    "block_table_entries_change": 0
+  },
+  "scope": "Analytical BF16 KV model, 256 outputs include first prefill output, final emitted token has no KV; no extra allocator metadata in given KV pool",
+  "source_sha256": {
+    "manuscripts/08-\u63a8\u7406\u4f18\u5316.md": "8bcd8d5b337171850a085b1a8d4e7b6150e7d29a5b80e85a889142c7161953fc"
+  }
+}

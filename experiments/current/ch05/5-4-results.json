@@ -1,0 +1,56 @@
+{
+  "exercise": "5-4",
+  "nonlinear": {
+    "partial_sums": [
+      1.0,
+      -1.0
+    ],
+    "correct": 0.0,
+    "premature_stores_without_acc_mutation": [
+      0.7310585786300049,
+      0.0
+    ],
+    "silu_each_partial_then_sum": 0.4621171572600098,
+    "overwrite_acc_inside_loop": -0.11649654678244799
+  },
+  "rounding": {
+    "A": [
+      1.0,
+      0.00390625
+    ],
+    "W": [
+      1.0,
+      1.0
+    ],
+    "fp32_sum": 1.00390625,
+    "bf16_sum": 1.0,
+    "silu_after_bf16": 0.7310585786300049,
+    "silu_without_bf16": 0.7346845953785479,
+    "final_bf16_with": 0.73046875,
+    "final_bf16_without": 0.734375
+  },
+  "quantization": {
+    "shape": [
+      4096,
+      4096,
+      1536
+    ],
+    "output_column_blocks": 12,
+    "quantized_elements_materialized": 16777216,
+    "quantized_elements_repeated": 201326592,
+    "materialized_input_path_bytes": 251658240,
+    "repeated_input_path_bytes": 436207616,
+    "common_weight_output_bytes": 213909504,
+    "materialized_total_bytes": 465567744,
+    "repeated_total_bytes": 650117120,
+    "example_scale": 0.002232142857142857,
+    "example_quantized_values": [
+      0.0,
+      448.0
+    ],
+    "scope": "Same precomputed full-row scale and exact representable0/448 values; no implementation of general FP8 conversion or proof for every input"
+  },
+  "source_sha256": {
+    "manuscripts/05-\u7b97\u5b50\u4e0e\u8fd0\u884c\u65f6.md": "82bdcfc0764e24ac70d6259f7708f2085b3e57161a07b226324378dfa575dc6c"
+  }
+}

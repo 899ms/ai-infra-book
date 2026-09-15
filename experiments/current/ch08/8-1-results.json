@@ -1,0 +1,93 @@
+{
+  "exercise": "8-1",
+  "contexts": [
+    {
+      "context_tokens": 2048,
+      "read_per_output": [
+        {
+          "batch": 1,
+          "weight_bytes": 15136811008,
+          "kv_bytes": 301989888,
+          "total_bytes": 15438800896,
+          "total_GiB": 14.378503799438477
+        },
+        {
+          "batch": 4,
+          "weight_bytes": 3784202752,
+          "kv_bytes": 301989888,
+          "total_bytes": 4086192640,
+          "total_GiB": 3.805563449859619
+        },
+        {
+          "batch": 16,
+          "weight_bytes": 946050688,
+          "kv_bytes": 301989888,
+          "total_bytes": 1248040576,
+          "total_GiB": 1.1623283624649048
+        },
+        {
+          "batch": 64,
+          "weight_bytes": 236512672,
+          "kv_bytes": 301989888,
+          "total_bytes": 538502560,
+          "total_GiB": 0.5015195906162262
+        }
+      ],
+      "KV_dominance_minimum_batch": 51,
+      "stored_tokens": 2303,
+      "allocated_tokens": 2304,
+      "blocks_per_request": 144,
+      "request_KV_bytes": 339738624,
+      "maximum_independent_requests": 37,
+      "used_bytes_at_limit": 12570329088,
+      "remaining_bytes": 314572800,
+      "capacity_precedes_read_crossover": true
+    },
+    {
+      "context_tokens": 8192,
+      "read_per_output": [
+        {
+          "batch": 1,
+          "weight_bytes": 15136811008,
+          "kv_bytes": 1207959552,
+          "total_bytes": 16344770560,
+          "total_GiB": 15.222253799438477
+        },
+        {
+          "batch": 4,
+          "weight_bytes": 3784202752,
+          "kv_bytes": 1207959552,
+          "total_bytes": 4992162304,
+          "total_GiB": 4.649313449859619
+        },
+        {
+          "batch": 16,
+          "weight_bytes": 946050688,
+          "kv_bytes": 1207959552,
+          "total_bytes": 2154010240,
+          "total_GiB": 2.006078362464905
+        },
+        {
+          "batch": 64,
+          "weight_bytes": 236512672,
+          "kv_bytes": 1207959552,
+          "total_bytes": 1444472224,
+          "total_GiB": 1.3452695906162262
+        }
+      ],
+      "KV_dominance_minimum_batch": 13,
+      "stored_tokens": 8447,
+      "allocated_tokens": 8448,
+      "blocks_per_request": 528,
+      "request_KV_bytes": 1245708288,
+      "maximum_independent_requests": 10,
+      "used_bytes_at_limit": 12457082880,
+      "remaining_bytes": 427819008,
+      "capacity_precedes_read_crossover": true
+    }
+  ],
+  "scope": "Analytical BF16 KV model, 256 outputs include first prefill output, final emitted token has no KV; no extra allocator metadata in given KV pool",
+  "source_sha256": {
+    "manuscripts/08-\u63a8\u7406\u4f18\u5316.md": "8bcd8d5b337171850a085b1a8d4e7b6150e7d29a5b80e85a889142c7161953fc"
+  }
+}

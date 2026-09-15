@@ -1,0 +1,1624 @@
+{
+  "scope": "One RTX GPU, pinned H2D copy plus FP32 GEMM [16,4096]@[4096,4096]; not AllReduce or multi-GPU communication",
+  "shape": [
+    16,
+    4096,
+    4096
+  ],
+  "dtype": "float32",
+  "tf32": false,
+  "seed": 605,
+  "torch": "2.11.0+cu130",
+  "python": "3.10.12",
+  "device": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+  "gpu_before": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition, 595.91.07",
+  "source_sha256": "869560423e75befad50e307d49534254cdddfb7de9ffb7fe27362c5aac499edf",
+  "input_sha256": {
+    "a": "e8bbe0f305eb32e42e7e42243933edffabc97789566b70077d910501a87657b3",
+    "b": "d783fef4ac56853d8e5b8aaa5f783a73f745372bb5da3837f16328e1b4bfd30a",
+    "reference": "09b6c3ac487b88768f8fe2cea99e2b2d520c843368df5ae16cad6bca473b5b6a"
+  },
+  "rows": [
+    {
+      "bytes": 4194304,
+      "trial": -3,
+      "warmup": true,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0019199999514967203,
+          "end_ms": 0.14950400590896606,
+          "duration_ms": 0.1475840061903
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0022720000706613064,
+          "end_ms": 109.60774230957031,
+          "duration_ms": 109.60546875
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 109.60774230957031
+    },
+    {
+      "bytes": 4194304,
+      "trial": -3,
+      "warmup": true,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.028351999819278717,
+          "duration_ms": 0.02630399912595749
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.028351999819278717
+    },
+    {
+      "bytes": 4194304,
+      "trial": -3,
+      "warmup": true,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.008960000239312649,
+          "end_ms": 0.14742399752140045,
+          "duration_ms": 0.13846400380134583
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 0.14742399752140045
+    },
+    {
+      "bytes": 4194304,
+      "trial": -2,
+      "warmup": true,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.00848000030964613,
+          "end_ms": 0.1406400054693222,
+          "duration_ms": 0.1321599930524826
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 0.1406400054693222
+    },
+    {
+      "bytes": 4194304,
+      "trial": -2,
+      "warmup": true,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0020800000056624413,
+          "end_ms": 0.028351999819278717,
+          "duration_ms": 0.02627200074493885
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.028351999819278717
+    },
+    {
+      "bytes": 4194304,
+      "trial": -2,
+      "warmup": true,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002687999978661537,
+          "end_ms": 0.1419840008020401,
+          "duration_ms": 0.13929599523544312
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002176000038161874,
+          "end_ms": 0.03551999852061272,
+          "duration_ms": 0.033344000577926636
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 0.1419840008020401
+    },
+    {
+      "bytes": 4194304,
+      "trial": -1,
+      "warmup": true,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.028351999819278717,
+          "duration_ms": 0.02630399912595749
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.028351999819278717
+    },
+    {
+      "bytes": 4194304,
+      "trial": -1,
+      "warmup": true,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0025279999244958162,
+          "end_ms": 0.14880000054836273,
+          "duration_ms": 0.14627200365066528
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002240000059828162,
+          "end_ms": 0.035679999738931656,
+          "duration_ms": 0.033440001308918
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 0.14880000054836273
+    },
+    {
+      "bytes": 4194304,
+      "trial": -1,
+      "warmup": true,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.006432000081986189,
+          "end_ms": 0.14256000518798828,
+          "duration_ms": 0.1361279934644699
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 0.14256000518798828
+    },
+    {
+      "bytes": 4194304,
+      "trial": 0,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.007135999854654074,
+          "end_ms": 0.14640000462532043,
+          "duration_ms": 0.13926400244235992
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.035392001271247864,
+          "duration_ms": 0.033344000577926636
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 0.14640000462532043
+    },
+    {
+      "bytes": 4194304,
+      "trial": 0,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002655999967828393,
+          "end_ms": 0.1420159935951233,
+          "duration_ms": 0.1393599957227707
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 0.1420159935951233
+    },
+    {
+      "bytes": 4194304,
+      "trial": 0,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.028351999819278717,
+          "duration_ms": 0.02630399912595749
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.028351999819278717
+    },
+    {
+      "bytes": 4194304,
+      "trial": 1,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002655999967828393,
+          "end_ms": 0.14614400267601013,
+          "duration_ms": 0.14348800480365753
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.03590400144457817,
+          "duration_ms": 0.03385600075125694
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 0.14614400267601013
+    },
+    {
+      "bytes": 4194304,
+      "trial": 1,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.005439999978989363,
+          "end_ms": 0.1409280002117157,
+          "duration_ms": 0.13548800349235535
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 0.1409280002117157
+    },
+    {
+      "bytes": 4194304,
+      "trial": 1,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0020800000056624413,
+          "end_ms": 0.028384000062942505,
+          "duration_ms": 0.02630399912595749
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.028384000062942505
+    },
+    {
+      "bytes": 4194304,
+      "trial": 2,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0016639999812468886,
+          "end_ms": 0.13942399621009827,
+          "duration_ms": 0.1377599984407425
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 0.13942399621009827
+    },
+    {
+      "bytes": 4194304,
+      "trial": 2,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.028351999819278717,
+          "duration_ms": 0.02630399912595749
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.028351999819278717
+    },
+    {
+      "bytes": 4194304,
+      "trial": 2,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0012159999459981918,
+          "end_ms": 0.14652800559997559,
+          "duration_ms": 0.14531199634075165
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.006175999995321035,
+          "end_ms": 0.04601600021123886,
+          "duration_ms": 0.03984000161290169
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 0.14652800559997559
+    },
+    {
+      "bytes": 4194304,
+      "trial": 3,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0018240000354126096,
+          "end_ms": 0.028095999732613564,
+          "duration_ms": 0.02627200074493885
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.028095999732613564
+    },
+    {
+      "bytes": 4194304,
+      "trial": 3,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.004383999854326248,
+          "end_ms": 0.1438080072402954,
+          "duration_ms": 0.13942399621009827
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002015999983996153,
+          "end_ms": 0.035711999982595444,
+          "duration_ms": 0.033695999532938004
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 0.1438080072402954
+    },
+    {
+      "bytes": 4194304,
+      "trial": 3,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.008511999621987343,
+          "end_ms": 0.14553600549697876,
+          "duration_ms": 0.13702400028705597
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 0.14553600549697876
+    },
+    {
+      "bytes": 4194304,
+      "trial": 4,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.008191999979317188,
+          "end_ms": 0.1364479959011078,
+          "duration_ms": 0.12825599312782288
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.03488000109791756,
+          "duration_ms": 0.03283200040459633
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 0.1364479959011078
+    },
+    {
+      "bytes": 4194304,
+      "trial": 4,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002623999956995249,
+          "end_ms": 0.14268800616264343,
+          "duration_ms": 0.14006400108337402
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 0.14268800616264343
+    },
+    {
+      "bytes": 4194304,
+      "trial": 4,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0020800000056624413,
+          "end_ms": 0.028384000062942505,
+          "duration_ms": 0.02630399912595749
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.028384000062942505
+    },
+    {
+      "bytes": 4194304,
+      "trial": 5,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.007552000228315592,
+          "end_ms": 0.14371199905872345,
+          "duration_ms": 0.1361600011587143
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0021440000273287296,
+          "end_ms": 0.03526400029659271,
+          "duration_ms": 0.03311999887228012
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 0.14371199905872345
+    },
+    {
+      "bytes": 4194304,
+      "trial": 5,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.028351999819278717,
+          "duration_ms": 0.02630399912595749
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.028351999819278717
+    },
+    {
+      "bytes": 4194304,
+      "trial": 5,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.006463999859988689,
+          "end_ms": 0.1472959965467453,
+          "duration_ms": 0.14083200693130493
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 0.1472959965467453
+    },
+    {
+      "bytes": 4194304,
+      "trial": 6,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0009919999865815043,
+          "end_ms": 0.1401599943637848,
+          "duration_ms": 0.13916799426078796
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.005791999865323305,
+          "end_ms": 0.04479999840259552,
+          "duration_ms": 0.0390079990029335
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 0.1401599943637848
+    },
+    {
+      "bytes": 4194304,
+      "trial": 6,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0015999999595806003,
+          "end_ms": 0.1319040060043335,
+          "duration_ms": 0.1303039938211441
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 0.1319040060043335
+    },
+    {
+      "bytes": 4194304,
+      "trial": 6,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.02828799933195114,
+          "duration_ms": 0.026240000501275063
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.02828799933195114
+    },
+    {
+      "bytes": 4194304,
+      "trial": 7,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.008736000396311283,
+          "end_ms": 0.1430400013923645,
+          "duration_ms": 0.1343040019273758
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 0.1430400013923645
+    },
+    {
+      "bytes": 4194304,
+      "trial": 7,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0009280000231228769,
+          "end_ms": 0.13568000495433807,
+          "duration_ms": 0.13475200533866882
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.004383999854326248,
+          "end_ms": 0.04243199899792671,
+          "duration_ms": 0.038047999143600464
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 0.13568000495433807
+    },
+    {
+      "bytes": 4194304,
+      "trial": 7,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002015999983996153,
+          "end_ms": 0.028351999819278717,
+          "duration_ms": 0.026335999369621277
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.028351999819278717
+    },
+    {
+      "bytes": 4194304,
+      "trial": 8,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.004416000097990036,
+          "end_ms": 0.13673600554466248,
+          "duration_ms": 0.13232000172138214
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 0.13673600554466248
+    },
+    {
+      "bytes": 4194304,
+      "trial": 8,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0032319999299943447,
+          "end_ms": 0.13519999384880066,
+          "duration_ms": 0.13196800649166107
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0019839999731630087,
+          "end_ms": 0.03484800085425377,
+          "duration_ms": 0.03286400064826012
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 0.13519999384880066
+    },
+    {
+      "bytes": 4194304,
+      "trial": 8,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002015999983996153,
+          "end_ms": 0.028351999819278717,
+          "duration_ms": 0.026335999369621277
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.028351999819278717
+    },
+    {
+      "bytes": 4194304,
+      "trial": 9,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.028384000062942505,
+          "duration_ms": 0.026335999369621277
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.028384000062942505
+    },
+    {
+      "bytes": 4194304,
+      "trial": 9,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.001120000029914081,
+          "end_ms": 0.13286399841308594,
+          "duration_ms": 0.13174399733543396
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 0.13286399841308594
+    },
+    {
+      "bytes": 4194304,
+      "trial": 9,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.007135999854654074,
+          "end_ms": 0.14265599846839905,
+          "duration_ms": 0.13551999628543854
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002015999983996153,
+          "end_ms": 0.035232000052928925,
+          "duration_ms": 0.033215999603271484
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 0.14265599846839905
+    },
+    {
+      "bytes": 4194304,
+      "trial": 10,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0020800000056624413,
+          "end_ms": 0.028384000062942505,
+          "duration_ms": 0.02630399912595749
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.028384000062942505
+    },
+    {
+      "bytes": 4194304,
+      "trial": 10,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.004416000097990036,
+          "end_ms": 0.13859200477600098,
+          "duration_ms": 0.13417600095272064
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 0.13859200477600098
+    },
+    {
+      "bytes": 4194304,
+      "trial": 10,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0012799999676644802,
+          "end_ms": 0.1372479945421219,
+          "duration_ms": 0.13596799969673157
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.005632000043988228,
+          "end_ms": 0.043327998369932175,
+          "duration_ms": 0.037696000188589096
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 0.1372479945421219
+    },
+    {
+      "bytes": 67108864,
+      "trial": -3,
+      "warmup": true,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.0344959981739521,
+          "duration_ms": 0.03244800120592117
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.0344959981739521
+    },
+    {
+      "bytes": 67108864,
+      "trial": -3,
+      "warmup": true,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.008448000065982342,
+          "end_ms": 2.0558080673217773,
+          "duration_ms": 2.0473599433898926
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.03830400109291077,
+          "duration_ms": 0.03625600039958954
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 2.0558080673217773
+    },
+    {
+      "bytes": 67108864,
+      "trial": -3,
+      "warmup": true,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.008511999621987343,
+          "end_ms": 2.076767921447754,
+          "duration_ms": 2.06825590133667
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 2.076767921447754
+    },
+    {
+      "bytes": 67108864,
+      "trial": -2,
+      "warmup": true,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0013439999893307686,
+          "end_ms": 2.074496030807495,
+          "duration_ms": 2.0731520652770996
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 2.074496030807495
+    },
+    {
+      "bytes": 67108864,
+      "trial": -2,
+      "warmup": true,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.004352000076323748,
+          "end_ms": 2.2092480659484863,
+          "duration_ms": 2.2048959732055664
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.04281599819660187,
+          "duration_ms": 0.04076800122857094
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 2.2092480659484863
+    },
+    {
+      "bytes": 67108864,
+      "trial": -2,
+      "warmup": true,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.0344959981739521,
+          "duration_ms": 0.03244800120592117
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.0344959981739521
+    },
+    {
+      "bytes": 67108864,
+      "trial": -1,
+      "warmup": true,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002015999983996153,
+          "end_ms": 0.03244800120592117,
+          "duration_ms": 0.030432000756263733
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.03244800120592117
+    },
+    {
+      "bytes": 67108864,
+      "trial": -1,
+      "warmup": true,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.00854399986565113,
+          "end_ms": 2.2209599018096924,
+          "duration_ms": 2.212415933609009
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002208000048995018,
+          "end_ms": 0.04169600084424019,
+          "duration_ms": 0.03948799893260002
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 2.2209599018096924
+    },
+    {
+      "bytes": 67108864,
+      "trial": -1,
+      "warmup": true,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0013119999784976244,
+          "end_ms": 2.2737278938293457,
+          "duration_ms": 2.272416114807129
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 2.2737278938293457
+    },
+    {
+      "bytes": 67108864,
+      "trial": 0,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002240000059828162,
+          "end_ms": 0.0344959981739521,
+          "duration_ms": 0.032255999743938446
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.0344959981739521
+    },
+    {
+      "bytes": 67108864,
+      "trial": 0,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.003008000086992979,
+          "end_ms": 2.2084479331970215,
+          "duration_ms": 2.205440044403076
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0019839999731630087,
+          "end_ms": 0.03827200084924698,
+          "duration_ms": 0.036288000643253326
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 2.2084479331970215
+    },
+    {
+      "bytes": 67108864,
+      "trial": 0,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0015999999595806003,
+          "end_ms": 2.2029759883880615,
+          "duration_ms": 2.201375961303711
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 2.2029759883880615
+    },
+    {
+      "bytes": 67108864,
+      "trial": 1,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.004383999854326248,
+          "end_ms": 2.0995519161224365,
+          "duration_ms": 2.095168113708496
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.0414079986512661,
+          "duration_ms": 0.03936000168323517
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 2.0995519161224365
+    },
+    {
+      "bytes": 67108864,
+      "trial": 1,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002368000103160739,
+          "end_ms": 2.187999963760376,
+          "duration_ms": 2.1856319904327393
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 2.187999963760376
+    },
+    {
+      "bytes": 67108864,
+      "trial": 1,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0021120000164955854,
+          "end_ms": 0.03657599911093712,
+          "duration_ms": 0.03446400165557861
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.03657599911093712
+    },
+    {
+      "bytes": 67108864,
+      "trial": 2,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002176000038161874,
+          "end_ms": 0.032416000962257385,
+          "duration_ms": 0.030239999294281006
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.032416000962257385
+    },
+    {
+      "bytes": 67108864,
+      "trial": 2,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0013439999893307686,
+          "end_ms": 2.1252479553222656,
+          "duration_ms": 2.12390398979187
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 2.1252479553222656
+    },
+    {
+      "bytes": 67108864,
+      "trial": 2,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.004416000097990036,
+          "end_ms": 2.0794880390167236,
+          "duration_ms": 2.0750720500946045
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.040511999279260635,
+          "duration_ms": 0.03846399858593941
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 2.0794880390167236
+    },
+    {
+      "bytes": 67108864,
+      "trial": 3,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.005727999843657017,
+          "end_ms": 2.129024028778076,
+          "duration_ms": 2.123296022415161
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 2.129024028778076
+    },
+    {
+      "bytes": 67108864,
+      "trial": 3,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0021120000164955854,
+          "end_ms": 0.03452799841761589,
+          "duration_ms": 0.032416000962257385
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.03452799841761589
+    },
+    {
+      "bytes": 67108864,
+      "trial": 3,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0081599997356534,
+          "end_ms": 2.244767904281616,
+          "duration_ms": 2.2366080284118652
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.038943998515605927,
+          "duration_ms": 0.036896001547575
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 2.244767904281616
+    },
+    {
+      "bytes": 67108864,
+      "trial": 4,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.007007999811321497,
+          "end_ms": 2.167936086654663,
+          "duration_ms": 2.1609280109405518
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0019199999514967203,
+          "end_ms": 0.043327998369932175,
+          "duration_ms": 0.0414079986512661
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 2.167936086654663
+    },
+    {
+      "bytes": 67108864,
+      "trial": 4,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.006816000211983919,
+          "end_ms": 2.140928030014038,
+          "duration_ms": 2.1341118812561035
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 2.140928030014038
+    },
+    {
+      "bytes": 67108864,
+      "trial": 4,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.03452799841761589,
+          "duration_ms": 0.03248000144958496
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.03452799841761589
+    },
+    {
+      "bytes": 67108864,
+      "trial": 5,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002848000032827258,
+          "end_ms": 2.1918399333953857,
+          "duration_ms": 2.1889920234680176
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0021440000273287296,
+          "end_ms": 0.04153599962592125,
+          "duration_ms": 0.03939199820160866
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 2.1918399333953857
+    },
+    {
+      "bytes": 67108864,
+      "trial": 5,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0020800000056624413,
+          "end_ms": 0.03452799841761589,
+          "duration_ms": 0.03244800120592117
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.03452799841761589
+    },
+    {
+      "bytes": 67108864,
+      "trial": 5,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0074880002066493034,
+          "end_ms": 2.1736960411071777,
+          "duration_ms": 2.166208028793335
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 2.1736960411071777
+    },
+    {
+      "bytes": 67108864,
+      "trial": 6,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0018560000462457538,
+          "end_ms": 0.034304000437259674,
+          "duration_ms": 0.03244800120592117
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.034304000437259674
+    },
+    {
+      "bytes": 67108864,
+      "trial": 6,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0010239999974146485,
+          "end_ms": 2.070784091949463,
+          "duration_ms": 2.0697600841522217
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0020800000056624413,
+          "end_ms": 0.045504000037908554,
+          "duration_ms": 0.04342399910092354
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 2.070784091949463
+    },
+    {
+      "bytes": 67108864,
+      "trial": 6,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.006719999946653843,
+          "end_ms": 2.219935894012451,
+          "duration_ms": 2.2132160663604736
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 2.219935894012451
+    },
+    {
+      "bytes": 67108864,
+      "trial": 7,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.008767999708652496,
+          "end_ms": 1.9916479587554932,
+          "duration_ms": 1.9828799962997437
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 1.9916479587554932
+    },
+    {
+      "bytes": 67108864,
+      "trial": 7,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002176000038161874,
+          "end_ms": 0.03446400165557861,
+          "duration_ms": 0.032287999987602234
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.03446400165557861
+    },
+    {
+      "bytes": 67108864,
+      "trial": 7,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.007104000076651573,
+          "end_ms": 1.9495359659194946,
+          "duration_ms": 1.9424320459365845
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0021440000273287296,
+          "end_ms": 0.03855999931693077,
+          "duration_ms": 0.03641600161790848
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 1.9495359659194946
+    },
+    {
+      "bytes": 67108864,
+      "trial": 8,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0013119999784976244,
+          "end_ms": 2.1848320960998535,
+          "duration_ms": 2.1835200786590576
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 2.1848320960998535
+    },
+    {
+      "bytes": 67108864,
+      "trial": 8,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0033279999624937773,
+          "end_ms": 2.255743980407715,
+          "duration_ms": 2.252415895462036
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0020800000056624413,
+          "end_ms": 0.0414079986512661,
+          "duration_ms": 0.03932800143957138
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 2.255743980407715
+    },
+    {
+      "bytes": 67108864,
+      "trial": 8,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0019839999731630087,
+          "end_ms": 0.034432001411914825,
+          "duration_ms": 0.03244800120592117
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.034432001411914825
+    },
+    {
+      "bytes": 67108864,
+      "trial": 9,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002015999983996153,
+          "end_ms": 0.03446400165557861,
+          "duration_ms": 0.03244800120592117
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.03446400165557861
+    },
+    {
+      "bytes": 67108864,
+      "trial": 9,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.004416000097990036,
+          "end_ms": 2.0746560096740723,
+          "duration_ms": 2.070240020751953
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0020800000056624413,
+          "end_ms": 0.04153599962592125,
+          "duration_ms": 0.039455998688936234
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 2.0746560096740723
+    },
+    {
+      "bytes": 67108864,
+      "trial": 9,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002368000103160739,
+          "end_ms": 2.187808036804199,
+          "duration_ms": 2.1854400634765625
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 2.187808036804199
+    },
+    {
+      "bytes": 67108864,
+      "trial": 10,
+      "warmup": false,
+      "mode": "shared",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.004095999989658594,
+          "end_ms": 2.189824104309082,
+          "duration_ms": 2.185728073120117
+        },
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0020800000056624413,
+          "end_ms": 0.0414079986512661,
+          "duration_ms": 0.03932800143957138
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": true,
+      "makespan_ms": 2.189824104309082
+    },
+    {
+      "bytes": 67108864,
+      "trial": 10,
+      "warmup": false,
+      "mode": "compute",
+      "events": {
+        "compute": {
+          "ready_ms": 0.0,
+          "start_ms": 0.002047999994829297,
+          "end_ms": 0.03654399886727333,
+          "duration_ms": 0.0344959981739521
+        }
+      },
+      "transfer_exact": null,
+      "compute_exact": true,
+      "makespan_ms": 0.03654399886727333
+    },
+    {
+      "bytes": 67108864,
+      "trial": 10,
+      "warmup": false,
+      "mode": "transfer",
+      "events": {
+        "transfer": {
+          "ready_ms": 0.0,
+          "start_ms": 0.0036800000816583633,
+          "end_ms": 2.2037439346313477,
+          "duration_ms": 2.200063943862915
+        }
+      },
+      "transfer_exact": true,
+      "compute_exact": null,
+      "makespan_ms": 2.2037439346313477
+    }
+  ],
+  "limitations": [
+    "CUDA events bracket operation stream intervals, not instruction-level kernel start",
+    "Readiness is common artificial release event after delay; stream start can include scheduling delay",
+    "H2D uses copy engine and PCIe; cannot substitute for NCCL SM/network contention"
+  ]
+}

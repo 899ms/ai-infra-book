@@ -1,0 +1,153 @@
+{
+  "exercise": "4-6",
+  "scope": "Independent reanalysis of recorded synthetic matched projections, not a new timing run",
+  "rows": [
+    {
+      "m": 1,
+      "mode": "reused",
+      "mac_wall_us": 165.98699949099682,
+      "rtx_wall_us": 42.91812365408987,
+      "mac_to_rtx_wall_ratio": 3.8675269410380935,
+      "logical_input_weight_output_bytes": 33570816,
+      "flops": 33554432,
+      "counters": {
+        "m": 1,
+        "mode": "reused",
+        "kernels": [
+          {
+            "name": "enable_if<!T7, void>::type kernel<int, int, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, float, 0, 1, 0, 0, 8, 0, cublasGemvParamsEx<int, cublasGemvTensorStridedBatched<const __nv_bfloat16>, cublasGemvTensorStridedBatched<const __nv_bfloat16>, cublasGemvTensorStridedBatched<__nv_bfloat16>, float>>(T13)",
+            "metrics": {
+              "dram__bytes_op_read.sum": 33554688.0,
+              "dram__bytes_op_write.sum": 404224.0,
+              "lts__t_bytes.sum": 34372832.0,
+              "gpu__time_duration.sum": 55296.0
+            }
+          }
+        ],
+        "totals": {
+          "dram__bytes_op_read.sum": 33554688.0,
+          "dram__bytes_op_write.sum": 404224.0,
+          "lts__t_bytes.sum": 34372832.0,
+          "gpu__time_duration.sum": 55296.0
+        }
+      }
+    },
+    {
+      "m": 1,
+      "mode": "rotating",
+      "mac_wall_us": 182.65099788550287,
+      "rtx_wall_us": 51.86606722418219,
+      "mac_to_rtx_wall_ratio": 3.521589502748015,
+      "logical_input_weight_output_bytes": 33570816,
+      "flops": 33554432,
+      "counters": {
+        "m": 1,
+        "mode": "rotating",
+        "kernels": [
+          {
+            "name": "enable_if<!T7, void>::type kernel<int, int, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, float, 0, 1, 0, 0, 8, 0, cublasGemvParamsEx<int, cublasGemvTensorStridedBatched<const __nv_bfloat16>, cublasGemvTensorStridedBatched<const __nv_bfloat16>, cublasGemvTensorStridedBatched<__nv_bfloat16>, float>>(T13)",
+            "metrics": {
+              "dram__bytes_op_read.sum": 33554688.0,
+              "dram__bytes_op_write.sum": 0.0,
+              "lts__t_bytes.sum": 34372832.0,
+              "gpu__time_duration.sum": 55424.0
+            }
+          }
+        ],
+        "totals": {
+          "dram__bytes_op_read.sum": 33554688.0,
+          "dram__bytes_op_write.sum": 0.0,
+          "lts__t_bytes.sum": 34372832.0,
+          "gpu__time_duration.sum": 55424.0
+        }
+      }
+    },
+    {
+      "m": 256,
+      "mode": "reused",
+      "mac_wall_us": 1835.3749983361922,
+      "rtx_wall_us": 32.64899714849889,
+      "mac_to_rtx_wall_ratio": 56.21535601808148,
+      "logical_input_weight_output_bytes": 37748736,
+      "flops": 8589934592,
+      "counters": {
+        "m": 256,
+        "mode": "reused",
+        "kernels": [
+          {
+            "name": "void cutlass::Kernel2<cutlass_80_tensorop_s16816gemm_bf16_128x128_32x4_nn_align8>(T1::Params)",
+            "metrics": {
+              "dram__bytes_op_read.sum": 256.0,
+              "dram__bytes_op_write.sum": 327936.0,
+              "lts__t_bytes.sum": 143204800.0,
+              "gpu__time_duration.sum": 31328.0
+            }
+          },
+          {
+            "name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, __nv_bfloat16, float, __nv_bfloat16, 0, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, 1, 0, 0>(cublasLt::cublasSplitKParams<T6>, const T4 *, const T10 *, T9 *, T5 *, const T6 *, const T6 *, const T11 *, const T4 *, T11 *, void *, long, T6 *, int *, T6 *, T6 *, const T6 *, const T6 *, const T6 *, const T6 *, const T6 *)",
+            "metrics": {
+              "dram__bytes_op_read.sum": 0.0,
+              "dram__bytes_op_write.sum": 182528.0,
+              "lts__t_bytes.sum": 10889536.0,
+              "gpu__time_duration.sum": 5536.0
+            }
+          }
+        ],
+        "totals": {
+          "dram__bytes_op_read.sum": 256.0,
+          "dram__bytes_op_write.sum": 510464.0,
+          "lts__t_bytes.sum": 154094336.0,
+          "gpu__time_duration.sum": 36864.0
+        }
+      }
+    },
+    {
+      "m": 256,
+      "mode": "rotating",
+      "mac_wall_us": 1835.2239349042065,
+      "rtx_wall_us": 33.47769961692393,
+      "mac_to_rtx_wall_ratio": 54.819296304828804,
+      "logical_input_weight_output_bytes": 37748736,
+      "flops": 8589934592,
+      "counters": {
+        "m": 256,
+        "mode": "rotating",
+        "kernels": [
+          {
+            "name": "void cutlass::Kernel2<cutlass_80_tensorop_s16816gemm_bf16_128x128_32x4_nn_align8>(T1::Params)",
+            "metrics": {
+              "dram__bytes_op_read.sum": 33590784.0,
+              "dram__bytes_op_write.sum": 3072.0,
+              "lts__t_bytes.sum": 143204800.0,
+              "gpu__time_duration.sum": 34752.0
+            }
+          },
+          {
+            "name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, __nv_bfloat16, float, __nv_bfloat16, 0, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, 1, 0, 0>(cublasLt::cublasSplitKParams<T6>, const T4 *, const T10 *, T9 *, T5 *, const T6 *, const T6 *, const T11 *, const T4 *, T11 *, void *, long, T6 *, int *, T6 *, T6 *, const T6 *, const T6 *, const T6 *, const T6 *, const T6 *)",
+            "metrics": {
+              "dram__bytes_op_read.sum": 17152.0,
+              "dram__bytes_op_write.sum": 0.0,
+              "lts__t_bytes.sum": 10889536.0,
+              "gpu__time_duration.sum": 5920.0
+            }
+          }
+        ],
+        "totals": {
+          "dram__bytes_op_read.sum": 33607936.0,
+          "dram__bytes_op_write.sum": 3072.0,
+          "lts__t_bytes.sum": 154094336.0,
+          "gpu__time_duration.sum": 40672.0
+        }
+      }
+    }
+  ],
+  "source_sha256": {
+    "experiments/ch04/04-06/analyze_projection.py": "02d3da92d2a15d7a2bce2025728b8676e5d83e60a3b2f098f373946a04324b59",
+    "experiments/ch04/04-06/analyze_counters.py": "60704dfb34ffebdb2b29d3fbac70332d6bde17706af8d4331ee96173d8b720f9",
+    "experiments/ch04/04-06/results/projection-summary.json": "8f9ebba3eb0faba06f14e74538c3c325f0c8f18d12a8b0aa0301f7f64c4249a9",
+    "experiments/ch04/04-06/results/projection-traffic.json": "36f8a7897d00c31600e8a56464988b3e30d7455d6f7cc914258558151b4874a7",
+    "experiments/ch04/04-06/results/projection-manifest.json": "8ec2d01b7b1dce23f608a14b030989bb86d5d15f5bfa48b53a55cc9806252eee",
+    "experiments/ch04/04-06/results/counter-manifest.json": "05f69a7a94b4a3003c5e5ec007e44f407526cceb4de180ca32cae936ab0b9cfd"
+  },
+  "gates": "Original raw tensors and FP64 reference recalculated, identical inputs, 11 trial medians, source hashes, counter units and kernel sums verified by original analyzers"
+}

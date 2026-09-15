@@ -1,0 +1,227 @@
+{
+  "exercise": "8-2",
+  "hand_rounds": [
+    {
+      "name": "r0_r1_initial_prefill",
+      "new_tokens": 4096,
+      "causal_pairs": 4196352,
+      "duration_ns": 163327456,
+      "duration_ms": 163.327456
+    },
+    {
+      "name": "r0_r1_next_decode",
+      "new_tokens": 2,
+      "causal_pairs": 4098,
+      "duration_ns": 26293094,
+      "duration_ms": 26.293094
+    },
+    {
+      "name": "r0_decode_and_r2_prefill",
+      "new_tokens": 8193,
+      "causal_pairs": 33560578,
+      "duration_ns": 375968934,
+      "duration_ms": 375.968934
+    }
+  ],
+  "attention_pairs": [
+    {
+      "new_tokens": 512,
+      "history": 0,
+      "causal_pairs": 131328
+    },
+    {
+      "new_tokens": 512,
+      "history": 7680,
+      "causal_pairs": 4063488
+    }
+  ],
+  "replay": [
+    {
+      "configuration": "measured-chunk512",
+      "budget": 512,
+      "max_ITL_ms": 31.939761014655232,
+      "median_ITL_ms": 12.935550883412361,
+      "p95_ITL_ms": 27.49984711408615,
+      "passes_observed_strict_50ms": true,
+      "per_request": [
+        {
+          "id": "r0",
+          "median_engine_queue_ms": 0.020305858924984932,
+          "median_TTFT_ms": 22.204698994755745
+        },
+        {
+          "id": "r1",
+          "median_engine_queue_ms": 0.004446133971214294,
+          "median_TTFT_ms": 134.7593921236694
+        },
+        {
+          "id": "r2",
+          "median_engine_queue_ms": 27.53309183754027,
+          "median_TTFT_ms": 54.12935116328299
+        },
+        {
+          "id": "r3",
+          "median_engine_queue_ms": 0.003997934982180595,
+          "median_TTFT_ms": 267.78574008494616
+        },
+        {
+          "id": "r4",
+          "median_engine_queue_ms": 149.41617101430893,
+          "median_TTFT_ms": 216.11512918025255
+        },
+        {
+          "id": "r5",
+          "median_engine_queue_ms": 91.96610609069467,
+          "median_TTFT_ms": 187.34329286962748
+        }
+      ]
+    },
+    {
+      "configuration": "measured-chunk8192",
+      "budget": 8192,
+      "max_ITL_ms": 183.0656889360398,
+      "median_ITL_ms": 12.729428941383958,
+      "p95_ITL_ms": 22.774406941607594,
+      "passes_observed_strict_50ms": false,
+      "per_request": [
+        {
+          "id": "r0",
+          "median_engine_queue_ms": 0.016283011063933372,
+          "median_TTFT_ms": 15.605543041601777
+        },
+        {
+          "id": "r1",
+          "median_engine_queue_ms": 0.0044549815356731415,
+          "median_TTFT_ms": 99.7937039937824
+        },
+        {
+          "id": "r2",
+          "median_engine_queue_ms": 0.0049551017582416534,
+          "median_TTFT_ms": 39.734800811856985
+        },
+        {
+          "id": "r3",
+          "median_engine_queue_ms": 0.0047120265662670135,
+          "median_TTFT_ms": 191.57475396059453
+        },
+        {
+          "id": "r4",
+          "median_engine_queue_ms": 0.010013114660978317,
+          "median_TTFT_ms": 184.25508681684732
+        },
+        {
+          "id": "r5",
+          "median_engine_queue_ms": 0.005218898877501488,
+          "median_TTFT_ms": 105.77252111397684
+        }
+      ]
+    },
+    {
+      "configuration": "measured-nochunk8192",
+      "budget": 8192,
+      "max_ITL_ms": 183.23210696689785,
+      "median_ITL_ms": 12.789792846888304,
+      "p95_ITL_ms": 22.98732614144683,
+      "passes_observed_strict_50ms": false,
+      "per_request": [
+        {
+          "id": "r0",
+          "median_engine_queue_ms": 0.015228986740112305,
+          "median_TTFT_ms": 15.479129971936345
+        },
+        {
+          "id": "r1",
+          "median_engine_queue_ms": 0.006201909855008125,
+          "median_TTFT_ms": 100.15135700814426
+        },
+        {
+          "id": "r2",
+          "median_engine_queue_ms": 0.004647066816687584,
+          "median_TTFT_ms": 39.2528239171952
+        },
+        {
+          "id": "r3",
+          "median_engine_queue_ms": 0.006494112312793732,
+          "median_TTFT_ms": 198.29674996435642
+        },
+        {
+          "id": "r4",
+          "median_engine_queue_ms": 0.008335104212164879,
+          "median_TTFT_ms": 192.51498812809587
+        },
+        {
+          "id": "r5",
+          "median_engine_queue_ms": 0.004148110747337341,
+          "median_TTFT_ms": 111.94866499863565
+        }
+      ]
+    },
+    {
+      "configuration": "measured-graph512",
+      "budget": 512,
+      "max_ITL_ms": 32.13832783512771,
+      "median_ITL_ms": 13.237020932137966,
+      "p95_ITL_ms": 27.463658014312387,
+      "passes_observed_strict_50ms": true,
+      "per_request": [
+        {
+          "id": "r0",
+          "median_engine_queue_ms": 0.021365936845541,
+          "median_TTFT_ms": 16.214237082749605
+        },
+        {
+          "id": "r1",
+          "median_engine_queue_ms": 0.004532979801297188,
+          "median_TTFT_ms": 137.31382810510695
+        },
+        {
+          "id": "r2",
+          "median_engine_queue_ms": 28.155151987448335,
+          "median_TTFT_ms": 56.57148198224604
+        },
+        {
+          "id": "r3",
+          "median_engine_queue_ms": 0.004712957888841629,
+          "median_TTFT_ms": 282.164819072932
+        },
+        {
+          "id": "r4",
+          "median_engine_queue_ms": 151.7095249146223,
+          "median_TTFT_ms": 231.0151169076562
+        },
+        {
+          "id": "r5",
+          "median_engine_queue_ms": 93.66091503761709,
+          "median_TTFT_ms": 197.176911868155
+        }
+      ]
+    }
+  ],
+  "scope": "Four-request analytical model distinct from archived six-request real GPU replay; observed interval maximum is not a prospective SLO guarantee; no new replay",
+  "source_sha256": {
+    "manuscripts/08-\u63a8\u7406\u4f18\u5316.md": "8bcd8d5b337171850a085b1a8d4e7b6150e7d29a5b80e85a889142c7161953fc",
+    "experiments/ch08/08-02/run.py": "9833622b7e16654e4744e83eeb7f11cee488b582586e6117cc878487597ca5f6",
+    "experiments/ch08/08-02/analyze.py": "d6026d82ce544850986d0edbd724c752b6c56b86ae07d5e555d7c56ce44e3c78",
+    "experiments/ch08/08-02/verify.py": "8b72b721ae7f6479abfda4ad1d094ccc27a9a438fec5ff41be6c924a9d0149fc",
+    "experiments/ch08/08-02/results/measured-chunk512/environment.json": "f279e9c379086941b4c7c530b8e83270d73736d784f03911104dd9e407d0f442",
+    "experiments/ch08/08-02/results/measured-chunk512/requests.json": "281218473d145d45f6e4698d650f8ea7b917b8974c5ebd0846af83ecb23f940d",
+    "experiments/ch08/08-02/results/measured-chunk512/summary.json": "d19a6e25ac5b1f5b822166389034810711451027b64f45c6bfc41881105c770a",
+    "experiments/ch08/08-02/results/measured-chunk512/engine-stats.jsonl": "6f318cfdbdd2aa82c15b694b97fe88c2967dfa762ff940e15d88fd6cac584524",
+    "experiments/ch08/08-02/results/measured-chunk512/events.jsonl": "fcce27e7e7f8f8684c211c07d1a9be39b28688b9565c4d0bdaee905ecd9d67cd",
+    "experiments/ch08/08-02/results/measured-chunk8192/environment.json": "ff10c55c422cbb6ec457752e451a5b34da44e0f5da5d84d5bb9b8b5a94339c34",
+    "experiments/ch08/08-02/results/measured-chunk8192/requests.json": "281218473d145d45f6e4698d650f8ea7b917b8974c5ebd0846af83ecb23f940d",
+    "experiments/ch08/08-02/results/measured-chunk8192/summary.json": "fe1620d5e6f9642e5ac1fe4a03b8408f1bca3e7d623da33f7ccba236fc5f1ace",
+    "experiments/ch08/08-02/results/measured-chunk8192/engine-stats.jsonl": "95229c7477fd2c2848995f31d18d9a1d589710d2f7ef5e9e3b250ce406df1c8a",
+    "experiments/ch08/08-02/results/measured-chunk8192/events.jsonl": "bc1d2bf8031d23e7a289336cc74714a15f07356379c3cc020fbef3d912083dae",
+    "experiments/ch08/08-02/results/measured-nochunk8192/environment.json": "71365a3bbc3c399f10bfb9359952490f13ae7caf92c90a9809169f94681f51e6",
+    "experiments/ch08/08-02/results/measured-nochunk8192/requests.json": "281218473d145d45f6e4698d650f8ea7b917b8974c5ebd0846af83ecb23f940d",
+    "experiments/ch08/08-02/results/measured-nochunk8192/summary.json": "66d800b10f5d5a7e19a74c121e41cf40f34710b26795c985fdd8e9ba516f7831",
+    "experiments/ch08/08-02/results/measured-nochunk8192/engine-stats.jsonl": "4aac658746bfe728c7f5871b4980076b408bc4946267c71f7213a5084a651fd8",
+    "experiments/ch08/08-02/results/measured-nochunk8192/events.jsonl": "323d8224dfe7767db8e8a985f98cad64cc52ad13c0f3334142c0e88273594160",
+    "experiments/ch08/08-02/results/measured-graph512/environment.json": "574bd9a95a42bf4683bb7dbfac82d109c55ae22ff5f216dae60704cbf8ceac7d",
+    "experiments/ch08/08-02/results/measured-graph512/requests.json": "281218473d145d45f6e4698d650f8ea7b917b8974c5ebd0846af83ecb23f940d",
+    "experiments/ch08/08-02/results/measured-graph512/summary.json": "491e3961d57b8613632d95ed1a0c6d264fe9bc3a6a8ed569545a68cdc9664612",
+    "experiments/ch08/08-02/results/measured-graph512/engine-stats.jsonl": "5df729eb5fc65237db39329663768359beb0909b84158e897e62fd577227fe31",
+    "experiments/ch08/08-02/results/measured-graph512/events.jsonl": "b3b4af77de597e2533f7b16eccf557f0eec689dad8bf03c4ba2925bdd3ee025d"
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "exercise": "6-1",
+  "kv_bytes_per_token": 192512,
+  "KV": [
+    {
+      "tokens": 4096,
+      "bytes": 788529152,
+      "GiB": 0.734375,
+      "GB": 0.788529152
+    },
+    {
+      "tokens": 8192,
+      "bytes": 1577058304,
+      "GiB": 1.46875,
+      "GB": 1.577058304
+    },
+    {
+      "tokens": 16384,
+      "bytes": 3154116608,
+      "GiB": 2.9375,
+      "GB": 3.154116608
+    }
+  ],
+  "capacity": {
+    "per_card_weights_bytes": [
+      58959617024,
+      58959617024,
+      58959617024,
+      58959617024,
+      58959617024,
+      58959617024,
+      58959617024,
+      58959617024
+    ],
+    "workspace_bytes": 2147483648,
+    "per_card_session_32768_bytes": 1577058304,
+    "max_sessions": 11,
+    "used_bytes_at_limit": 78454742016,
+    "next_session_used_bytes": 80031800320,
+    "free_bytes_at_limit": 1545257984,
+    "global_unique_weight_bytes": 470187269120,
+    "aggregate_8card_weight_bytes": 471676936192
+  },
+  "expert_layer": [
+    {
+      "tokens": 1,
+      "selected_experts": 8.0,
+      "selection": "uniform independent tokens, each chooses k distinct experts",
+      "matrix_flops": 301989888,
+      "weight_read_bytes": 301989888.0,
+      "compute_s": 3.052252759248029e-07,
+      "read_s": 9.01462352238806e-05,
+      "bound": "memory",
+      "call_s": 9.01462352238806e-05,
+      "half_bandwidth_read_s": 0.0001802924704477612,
+      "half_bandwidth_call_s": 0.0001802924704477612,
+      "half_bandwidth_bound": "memory",
+      "slowdown": 2.0,
+      "increase_percent": 100.0
+    },
+    {
+      "tokens": 64,
+      "selected_experts": 125.94234926707806,
+      "selection": "uniform independent tokens, each chooses k distinct experts",
+      "matrix_flops": 19327352832,
+      "weight_read_bytes": 4754164493.7027235,
+      "compute_s": 1.9534417659187386e-05,
+      "read_s": 0.001419153580209768,
+      "bound": "memory",
+      "call_s": 0.001419153580209768,
+      "half_bandwidth_read_s": 0.002838307160419536,
+      "half_bandwidth_call_s": 0.002838307160419536,
+      "half_bandwidth_bound": "memory",
+      "slowdown": 2.0,
+      "increase_percent": 100.0
+    },
+    {
+      "tokens": 8192,
+      "selected_experts": 128.0,
+      "selection": "all 128 experts selected, manuscript prefill assumption",
+      "matrix_flops": 2473901162496,
+      "weight_read_bytes": 4831838208.0,
+      "compute_s": 0.0025004054603759854,
+      "read_s": 0.0014423397635820896,
+      "bound": "compute",
+      "call_s": 0.0025004054603759854,
+      "half_bandwidth_read_s": 0.0028846795271641793,
+      "half_bandwidth_call_s": 0.0028846795271641793,
+      "half_bandwidth_bound": "memory",
+      "slowdown": 1.1536847014925373,
+      "increase_percent": 15.368470149253731
+    }
+  ],
+  "scope": "One-layer expert matrix/selected-weight roofline using one H100 resource rate, not full model latency, not TP8 executed throughput; capacity bound excludes extra runtime state beyond the declared workspace",
+  "source_sha256": {
+    "manuscripts/06-\u8d85\u8282\u70b9.md": "42bcb3880a2104517cdf8990ddf51550f3f60540d9442a6f99fabe95ae0dcc26",
+    "calculations/configs/models/qwen3-235b-a22b/config.json": "0ecd5d6fe6f2db6739e4e36ab06b88ebe7bd013ef31b9583f43796059a2b23a4",
+    "calculations/configs/hardware.json": "9c4639ec65ca3b808923a7f332114f800c7930635b6fdac08f49686cddbf0ba2",
+    "calculations/results/qwen235-placement-tp8-kv-replica.json": "4363e9b12ac8abadf0744beda897ec5546e3f0f7fa04fe6012c884663eb903f2",
+    "calculations/sources/qwen3-235b-a22b/model.safetensors.index.json": "53dd34fac4a29fc7ee58fa9d92c7892ea6884431c3bd3d0dc93def7bbd0b8b78",
+    "calculations/sources/qwen3/modeling_qwen3.py": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2",
+    "calculations/sources/qwen3/modeling_qwen3_moe.py": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "exercise": "5-8",
+  "actual_three_FFN_counts": [
+    {
+      "mode": "eager",
+      "host_launches": 18,
+      "graph_launches": 0,
+      "kernels": 18
+    },
+    {
+      "mode": "fused",
+      "host_launches": 15,
+      "graph_launches": 0,
+      "kernels": 15
+    },
+    {
+      "mode": "graph",
+      "host_launches": 3,
+      "graph_launches": 3,
+      "kernels": 18
+    },
+    {
+      "mode": "fused_graph",
+      "host_launches": 3,
+      "graph_launches": 3,
+      "kernels": 15
+    }
+  ],
+  "bandwidth_bytes_s": 1008000000000,
+  "input_break_even_bytes": 7560000,
+  "input_break_even_mib": 7.20977783203125,
+  "examples": [
+    {
+      "input_mib": 2,
+      "copy_us": 4.161015873015873,
+      "eager_us": 40,
+      "graph_with_copy_us": 29.161015873015874,
+      "graph_direct_write_us": 25,
+      "direct_saving_us": 15
+    },
+    {
+      "input_mib": 16,
+      "copy_us": 33.28812698412698,
+      "eager_us": 40,
+      "graph_with_copy_us": 58.28812698412698,
+      "graph_direct_write_us": 25,
+      "direct_saving_us": 15
+    }
+  ],
+  "scope": "Trace counts are measurements; copy time and fixed compute/submission are teaching estimates, not new RTX4090 timing",
+  "source_sha256": {
+    "experiments/ch05/05-08/results/timeline.sqlite": "a1300141a43d71de4ffe90fa5721a1d06061896e813818c6f48c1f8b36b7568a",
+    "experiments/ch05/05-08/results/trace-analysis.json": "16447fc693cfe411dc65663188044067d2e49259dfaac1294aa8564ba68e9573",
+    "manuscripts/05-\u7b97\u5b50\u4e0e\u8fd0\u884c\u65f6.md": "82bdcfc0764e24ac70d6259f7708f2085b3e57161a07b226324378dfa575dc6c",
+    "calculations/configs/hardware.json": "9c4639ec65ca3b808923a7f332114f800c7930635b6fdac08f49686cddbf0ba2"
+  }
+}

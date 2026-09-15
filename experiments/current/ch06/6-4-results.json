@@ -1,0 +1,117 @@
+{
+  "exercise": "6-4",
+  "block1_trace": [
+    {
+      "round": 0,
+      "holder": 1,
+      "contributors": [
+        1
+      ]
+    },
+    {
+      "round": 1,
+      "holder": 2,
+      "contributors": [
+        1,
+        2
+      ]
+    },
+    {
+      "round": 2,
+      "holder": 3,
+      "contributors": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "round": 3,
+      "holder": 0,
+      "contributors": [
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "collectives": [
+    {
+      "cards": 4,
+      "ring_send_M_coefficient": "3/2",
+      "ring_send_bytes_10KiB": 15360,
+      "ring_s": 4.966133333333333e-06,
+      "tree_s": 3.379022222222222e-06
+    },
+    {
+      "cards": 8,
+      "ring_send_M_coefficient": "7/4",
+      "ring_send_bytes_10KiB": 17920,
+      "ring_s": 1.1547822222222223e-05,
+      "tree_s": 5.068533333333333e-06
+    }
+  ],
+  "crossovers": [
+    {
+      "alpha_s": 8.22e-07,
+      "exact_bytes": "11836800/17",
+      "bytes": 696282.3529411765,
+      "KiB": 679.9632352941177,
+      "first_integer_bytes_ring_faster": 696283
+    },
+    {
+      "alpha_s": 4.11e-07,
+      "exact_bytes": "5918400/17",
+      "bytes": 348141.17647058825,
+      "KiB": 339.98161764705884,
+      "first_integer_bytes_ring_faster": 348142
+    }
+  ],
+  "TP8_first_step": [
+    {
+      "variant": "ring",
+      "collective_s": 1.1547822222222223e-05,
+      "communication_s": 0.0014781212444444445,
+      "local_s": 0.003668842220895522,
+      "total_s": 0.005146963465339967,
+      "saving_vs_ring_s": 0.0,
+      "speedup_vs_ring": 1.0
+    },
+    {
+      "variant": "tree",
+      "collective_s": 5.068533333333333e-06,
+      "communication_s": 0.0006487722666666667,
+      "local_s": 0.003668842220895522,
+      "total_s": 0.0043176144875621885,
+      "saving_vs_ring_s": 0.0008293489777777786,
+      "speedup_vs_ring": 1.192084999753196
+    },
+    {
+      "variant": "ring_double_link_bandwidth",
+      "collective_s": 1.152791111111111e-05,
+      "communication_s": 0.0014755726222222222,
+      "local_s": 0.003668842220895522,
+      "total_s": 0.005144414843117744,
+      "saving_vs_ring_s": 2.5486222222231847e-06,
+      "speedup_vs_ring": 1.0004954153776366
+    },
+    {
+      "variant": "tree_double_link_bandwidth",
+      "collective_s": 5.000266666666667e-06,
+      "communication_s": 0.0006400341333333334,
+      "local_s": 0.003668842220895522,
+      "total_s": 0.004308876354228856,
+      "saving_vs_ring_s": 0.0008380871111111111,
+      "speedup_vs_ring": 1.194502474012416
+    }
+  ],
+  "scope": "Exact declared synchronous ring/unsegmented binomial-tree model; no new multi-GPU measurement; bandwidth doubling applies to NVLink, not HBM",
+  "source_sha256": {
+    "manuscripts/06-\u8d85\u8282\u70b9.md": "42bcb3880a2104517cdf8990ddf51550f3f60540d9442a6f99fabe95ae0dcc26",
+    "manuscripts/ch06/continuity_model.py": "a313268bca7832878a568c6441308e0eb1a5f3fb5d70ce7f4af206c4971cd8c3",
+    "manuscripts/ch06/continuity-model.json": "4f7b7764d5ca25a14d2d8d5126c3133fd75cf4371c08eb6e1e99972ad7e4277c",
+    "calculations/configs/hardware.json": "9c4639ec65ca3b808923a7f332114f800c7930635b6fdac08f49686cddbf0ba2",
+    "calculations/configs/models/qwen3-32b/config.json": "97e295b63283935788fac5e4f8860862a56d4089538cafc93f0431f2ebe483bb"
+  }
+}

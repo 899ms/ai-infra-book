@@ -1,0 +1,319 @@
+{
+  "exercise": "6-6",
+  "TP": {
+    "tp8_step_s": 0.005146963465339967,
+    "tp16_local_s": 0.0024754267701492536,
+    "tp16_step_s": 0.006666146770149254,
+    "measured_allreduce_s": 3.274e-05,
+    "equality_allreduce_s": 2.087138043117745e-05
+  },
+  "ports": [
+    {
+      "down": 32,
+      "up": 32,
+      "up_GBps": 800,
+      "per_down_GBps": 25.0,
+      "oversubscription": 1.0
+    },
+    {
+      "down": 48,
+      "up": 16,
+      "up_GBps": 400,
+      "per_down_GBps": 8.333333333333334,
+      "oversubscription": 3.0
+    }
+  ],
+  "third_round_clockwise_sources_per_link": {
+    "0->1": [
+      0,
+      13,
+      14,
+      15
+    ],
+    "1->2": [
+      0,
+      1,
+      14,
+      15
+    ],
+    "2->3": [
+      0,
+      1,
+      2,
+      15
+    ],
+    "3->4": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "4->5": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "5->6": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "6->7": [
+      3,
+      4,
+      5,
+      6
+    ],
+    "7->8": [
+      4,
+      5,
+      6,
+      7
+    ],
+    "8->9": [
+      5,
+      6,
+      7,
+      8
+    ],
+    "9->10": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "10->11": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "11->12": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "12->13": [
+      9,
+      10,
+      11,
+      12
+    ],
+    "13->14": [
+      10,
+      11,
+      12,
+      13
+    ],
+    "14->15": [
+      11,
+      12,
+      13,
+      14
+    ],
+    "15->0": [
+      12,
+      13,
+      14,
+      15
+    ]
+  },
+  "third_round_total_physical_MiB": 64,
+  "numa": [
+    {
+      "label": "all_buffers_A",
+      "order": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "transfers": [
+        {
+          "src": 0,
+          "dst": 1,
+          "buffer_node": "A",
+          "crossings": [],
+          "bytes": 12582912
+        },
+        {
+          "src": 1,
+          "dst": 2,
+          "buffer_node": "A",
+          "crossings": [
+            "A->B"
+          ],
+          "bytes": 12582912
+        },
+        {
+          "src": 2,
+          "dst": 3,
+          "buffer_node": "A",
+          "crossings": [
+            "B->A",
+            "A->B"
+          ],
+          "bytes": 12582912
+        },
+        {
+          "src": 3,
+          "dst": 0,
+          "buffer_node": "A",
+          "crossings": [
+            "B->A"
+          ],
+          "bytes": 12582912
+        }
+      ],
+      "UPI_bytes": {
+        "A->B": 25165824,
+        "B->A": 25165824
+      }
+    },
+    {
+      "label": "local_buffers_grouped",
+      "order": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "transfers": [
+        {
+          "src": 0,
+          "dst": 1,
+          "buffer_node": "A",
+          "crossings": [],
+          "bytes": 12582912
+        },
+        {
+          "src": 1,
+          "dst": 2,
+          "buffer_node": "A",
+          "crossings": [
+            "A->B"
+          ],
+          "bytes": 12582912
+        },
+        {
+          "src": 2,
+          "dst": 3,
+          "buffer_node": "B",
+          "crossings": [],
+          "bytes": 12582912
+        },
+        {
+          "src": 3,
+          "dst": 0,
+          "buffer_node": "B",
+          "crossings": [
+            "B->A"
+          ],
+          "bytes": 12582912
+        }
+      ],
+      "UPI_bytes": {
+        "A->B": 12582912,
+        "B->A": 12582912
+      }
+    },
+    {
+      "label": "local_buffers_alternating",
+      "order": [
+        0,
+        2,
+        1,
+        3
+      ],
+      "transfers": [
+        {
+          "src": 0,
+          "dst": 2,
+          "buffer_node": "A",
+          "crossings": [
+            "A->B"
+          ],
+          "bytes": 12582912
+        },
+        {
+          "src": 2,
+          "dst": 1,
+          "buffer_node": "B",
+          "crossings": [
+            "B->A"
+          ],
+          "bytes": 12582912
+        },
+        {
+          "src": 1,
+          "dst": 3,
+          "buffer_node": "A",
+          "crossings": [
+            "A->B"
+          ],
+          "bytes": 12582912
+        },
+        {
+          "src": 3,
+          "dst": 0,
+          "buffer_node": "B",
+          "crossings": [
+            "B->A"
+          ],
+          "bytes": 12582912
+        }
+      ],
+      "UPI_bytes": {
+        "A->B": 25165824,
+        "B->A": 25165824
+      }
+    }
+  ],
+  "torus": [
+    {
+      "side": 4,
+      "cards": 64,
+      "diameter": 6,
+      "mean_hops_other_destinations": "64/21",
+      "directed_links": 384,
+      "per_link_M": "32/63",
+      "manuscript_approx_mean_hops": 3.0,
+      "manuscript_approx_per_link_M": 0.5,
+      "physical_links": 192
+    },
+    {
+      "side": 8,
+      "cards": 512,
+      "diameter": 12,
+      "mean_hops_other_destinations": "3072/511",
+      "directed_links": 3072,
+      "per_link_M": "512/511",
+      "manuscript_approx_mean_hops": 6.0,
+      "manuscript_approx_per_link_M": 1.0,
+      "physical_links": 1536
+    }
+  ],
+  "fabric": {
+    "planes": 6,
+    "per_plane_leaf_chips": 16,
+    "per_leaf_down_ports": 32,
+    "per_leaf_up_ports": 32,
+    "per_plane_spine_chips": 8,
+    "links_per_leaf_spine_pair": 4,
+    "total_chips": 144,
+    "endpoint_links": 3072,
+    "leaf_spine_links": 3072,
+    "total_physical_links": 6144
+  },
+  "scope": "Analytical paths and byte counts; full-bisection routable fabric assumes striped traffic across equal-capacity planes and parallel uplinks; no multi-GPU runtime measurement",
+  "source_sha256": {
+    "manuscripts/06-\u8d85\u8282\u70b9.md": "42bcb3880a2104517cdf8990ddf51550f3f60540d9442a6f99fabe95ae0dcc26",
+    "manuscripts/ch06/continuity_model.py": "a313268bca7832878a568c6441308e0eb1a5f3fb5d70ce7f4af206c4971cd8c3",
+    "calculations/configs/hardware.json": "9c4639ec65ca3b808923a7f332114f800c7930635b6fdac08f49686cddbf0ba2",
+    "calculations/configs/models/qwen3-32b/config.json": "97e295b63283935788fac5e4f8860862a56d4089538cafc93f0431f2ebe483bb",
+    "experiments/ch07/07-03/rows.csv": "87d6afa730b7103c6ab47c2f9d3806960c1bb837ae22d83867c12fad1a327e82"
+  }
+}

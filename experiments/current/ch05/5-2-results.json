@@ -1,0 +1,375 @@
+{
+  "exercise": "5-2",
+  "separate_traffic_mib": [
+    48,
+    72,
+    36
+  ],
+  "separate_total_mib": 156,
+  "fused_total_mib": 60,
+  "saved_bytes_per_row": 98304,
+  "continuous_threshold_rows": "4375/48",
+  "first_strictly_beneficial_rows": 92,
+  "ledgers": [
+    {
+      "fused": false,
+      "retain_caller_inputs": false,
+      "peak_bytes": 75497472,
+      "events": [
+        {
+          "action": "allocate",
+          "tensor": "G",
+          "live": {
+            "G": 25165824
+          },
+          "bytes": 25165824
+        },
+        {
+          "action": "allocate",
+          "tensor": "U",
+          "live": {
+            "G": 25165824,
+            "U": 25165824
+          },
+          "bytes": 50331648
+        },
+        {
+          "action": "allocate",
+          "tensor": "T",
+          "live": {
+            "G": 25165824,
+            "U": 25165824,
+            "T": 25165824
+          },
+          "bytes": 75497472
+        },
+        {
+          "action": "read G / write T",
+          "tensor": "silu",
+          "live": {
+            "G": 25165824,
+            "U": 25165824,
+            "T": 25165824
+          },
+          "bytes": 75497472
+        },
+        {
+          "action": "release",
+          "tensor": "G",
+          "live": {
+            "U": 25165824,
+            "T": 25165824
+          },
+          "bytes": 50331648
+        },
+        {
+          "action": "allocate",
+          "tensor": "Z",
+          "live": {
+            "U": 25165824,
+            "T": 25165824,
+            "Z": 25165824
+          },
+          "bytes": 75497472
+        },
+        {
+          "action": "read T,U / write Z",
+          "tensor": "multiply",
+          "live": {
+            "U": 25165824,
+            "T": 25165824,
+            "Z": 25165824
+          },
+          "bytes": 75497472
+        },
+        {
+          "action": "release",
+          "tensor": "T",
+          "live": {
+            "U": 25165824,
+            "Z": 25165824
+          },
+          "bytes": 50331648
+        },
+        {
+          "action": "release",
+          "tensor": "U",
+          "live": {
+            "Z": 25165824
+          },
+          "bytes": 25165824
+        },
+        {
+          "action": "allocate",
+          "tensor": "Q",
+          "live": {
+            "Z": 25165824,
+            "Q": 12582912
+          },
+          "bytes": 37748736
+        },
+        {
+          "action": "read Z / write Q",
+          "tensor": "quantize",
+          "live": {
+            "Z": 25165824,
+            "Q": 12582912
+          },
+          "bytes": 37748736
+        },
+        {
+          "action": "release",
+          "tensor": "Z",
+          "live": {
+            "Q": 12582912
+          },
+          "bytes": 12582912
+        }
+      ]
+    },
+    {
+      "fused": false,
+      "retain_caller_inputs": true,
+      "peak_bytes": 100663296,
+      "events": [
+        {
+          "action": "allocate",
+          "tensor": "G",
+          "live": {
+            "G": 25165824
+          },
+          "bytes": 25165824
+        },
+        {
+          "action": "allocate",
+          "tensor": "U",
+          "live": {
+            "G": 25165824,
+            "U": 25165824
+          },
+          "bytes": 50331648
+        },
+        {
+          "action": "allocate",
+          "tensor": "T",
+          "live": {
+            "G": 25165824,
+            "U": 25165824,
+            "T": 25165824
+          },
+          "bytes": 75497472
+        },
+        {
+          "action": "read G / write T",
+          "tensor": "silu",
+          "live": {
+            "G": 25165824,
+            "U": 25165824,
+            "T": 25165824
+          },
+          "bytes": 75497472
+        },
+        {
+          "action": "allocate",
+          "tensor": "Z",
+          "live": {
+            "G": 25165824,
+            "U": 25165824,
+            "T": 25165824,
+            "Z": 25165824
+          },
+          "bytes": 100663296
+        },
+        {
+          "action": "read T,U / write Z",
+          "tensor": "multiply",
+          "live": {
+            "G": 25165824,
+            "U": 25165824,
+            "T": 25165824,
+            "Z": 25165824
+          },
+          "bytes": 100663296
+        },
+        {
+          "action": "release",
+          "tensor": "T",
+          "live": {
+            "G": 25165824,
+            "U": 25165824,
+            "Z": 25165824
+          },
+          "bytes": 75497472
+        },
+        {
+          "action": "allocate",
+          "tensor": "Q",
+          "live": {
+            "G": 25165824,
+            "U": 25165824,
+            "Z": 25165824,
+            "Q": 12582912
+          },
+          "bytes": 88080384
+        },
+        {
+          "action": "read Z / write Q",
+          "tensor": "quantize",
+          "live": {
+            "G": 25165824,
+            "U": 25165824,
+            "Z": 25165824,
+            "Q": 12582912
+          },
+          "bytes": 88080384
+        },
+        {
+          "action": "release",
+          "tensor": "Z",
+          "live": {
+            "G": 25165824,
+            "U": 25165824,
+            "Q": 12582912
+          },
+          "bytes": 62914560
+        }
+      ]
+    },
+    {
+      "fused": true,
+      "retain_caller_inputs": false,
+      "peak_bytes": 62914560,
+      "events": [
+        {
+          "action": "allocate",
+          "tensor": "G",
+          "live": {
+            "G": 25165824
+          },
+          "bytes": 25165824
+        },
+        {
+          "action": "allocate",
+          "tensor": "U",
+          "live": {
+            "G": 25165824,
+            "U": 25165824
+          },
+          "bytes": 50331648
+        },
+        {
+          "action": "allocate",
+          "tensor": "Q",
+          "live": {
+            "G": 25165824,
+            "U": 25165824,
+            "Q": 12582912
+          },
+          "bytes": 62914560
+        },
+        {
+          "action": "read G,U / write Q",
+          "tensor": "fused",
+          "live": {
+            "G": 25165824,
+            "U": 25165824,
+            "Q": 12582912
+          },
+          "bytes": 62914560
+        },
+        {
+          "action": "release",
+          "tensor": "G",
+          "live": {
+            "U": 25165824,
+            "Q": 12582912
+          },
+          "bytes": 37748736
+        },
+        {
+          "action": "release",
+          "tensor": "U",
+          "live": {
+            "Q": 12582912
+          },
+          "bytes": 12582912
+        }
+      ]
+    },
+    {
+      "fused": true,
+      "retain_caller_inputs": true,
+      "peak_bytes": 62914560,
+      "events": [
+        {
+          "action": "allocate",
+          "tensor": "G",
+          "live": {
+            "G": 25165824
+          },
+          "bytes": 25165824
+        },
+        {
+          "action": "allocate",
+          "tensor": "U",
+          "live": {
+            "G": 25165824,
+            "U": 25165824
+          },
+          "bytes": 50331648
+        },
+        {
+          "action": "allocate",
+          "tensor": "Q",
+          "live": {
+            "G": 25165824,
+            "U": 25165824,
+            "Q": 12582912
+          },
+          "bytes": 62914560
+        },
+        {
+          "action": "read G,U / write Q",
+          "tensor": "fused",
+          "live": {
+            "G": 25165824,
+            "U": 25165824,
+            "Q": 12582912
+          },
+          "bytes": 62914560
+        }
+      ]
+    }
+  ],
+  "measured": [
+    {
+      "tokens": 1,
+      "graph_median_us": {
+        "separate": 1.5596799552440643,
+        "fused": 0.865280032157898
+      },
+      "scope": "Measured2-op SiLU/multiply chain, not3-op quantization extension"
+    },
+    {
+      "tokens": 32,
+      "graph_median_us": {
+        "separate": 1.9196799397468567,
+        "fused": 1.0355199873447418
+      },
+      "scope": "Measured2-op SiLU/multiply chain, not3-op quantization extension"
+    },
+    {
+      "tokens": 1024,
+      "graph_median_us": {
+        "separate": 14.198720455169678,
+        "fused": 7.678719758987427
+      },
+      "scope": "Measured2-op SiLU/multiply chain, not3-op quantization extension"
+    }
+  ],
+  "source_sha256": {
+    "manuscripts/05-\u7b97\u5b50\u4e0e\u8fd0\u884c\u65f6.md": "82bdcfc0764e24ac70d6259f7708f2085b3e57161a07b226324378dfa575dc6c",
+    "experiments/ch05/05-02/results/results.json": "0c6f2ae632b6d49af9ea7c04552ae6dea9d94fc550d9a38badad63761398caf6",
+    "experiments/ch05/05-02/results/provenance.json": "4bb157aff48c83e24e08ea0ce686170a27541897ac39154e5987be701243fa43"
+  }
+}

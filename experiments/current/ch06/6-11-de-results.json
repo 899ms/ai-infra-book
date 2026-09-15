@@ -1,0 +1,91 @@
+{
+  "exercise": "6-11",
+  "completed_parts": [
+    "d",
+    "e"
+  ],
+  "ROM": {
+    "on_wafer_latency_s": 0.00015400000000000003,
+    "on_wafer_payload_s": 9.026109198229219e-11,
+    "inter_wafer_latency_s": 5e-06,
+    "inter_wafer_payload_s": 6.826666666666667e-08,
+    "old_communication_s": 0.00015906835692775867,
+    "new_communication_s": 8.206835692775866e-05,
+    "storage_compute_s": 7.658975288021659e-05,
+    "fixed_s": 1.0051735374500655e-05,
+    "new_token_s": 0.0001687098451824759,
+    "new_tokens_s": 5927.336362133484,
+    "new_communication_share": 0.4864467561984533
+  },
+  "KV": [
+    {
+      "context_tokens": 200000,
+      "global_bytes": 178000000,
+      "window_bytes": 2703360,
+      "state_bytes": 180703360,
+      "capacity": [
+        {
+          "store": "hbm",
+          "capacity_bytes": 1741500000000,
+          "sessions": 9637,
+          "next_session_bytes": 1741618983680
+        },
+        {
+          "store": "sram",
+          "capacity_bytes": 180703360,
+          "sessions": 1,
+          "next_session_bytes": 361406720
+        }
+      ]
+    },
+    {
+      "context_tokens": 1000000,
+      "global_bytes": 890000000,
+      "window_bytes": 2703360,
+      "state_bytes": 892703360,
+      "capacity": [
+        {
+          "store": "hbm",
+          "capacity_bytes": 1741500000000,
+          "sessions": 1950,
+          "next_session_bytes": 1741664255360
+        },
+        {
+          "store": "sram",
+          "capacity_bytes": 180703360,
+          "sessions": 0,
+          "next_session_bytes": 892703360
+        }
+      ]
+    },
+    {
+      "context_tokens": 1048576,
+      "global_bytes": 933232640,
+      "window_bytes": 2703360,
+      "state_bytes": 935936000,
+      "capacity": [
+        {
+          "store": "hbm",
+          "capacity_bytes": 1741500000000,
+          "sessions": 1860,
+          "next_session_bytes": 1741776896000
+        },
+        {
+          "store": "sram",
+          "capacity_bytes": 180703360,
+          "sessions": 0,
+          "next_session_bytes": 935936000
+        }
+      ]
+    }
+  ],
+  "scope": "Fixed original ROM/HBM/SRAM capacities, no redesign; decimal 1M primary and binary 1Mi alternative; halve only on-wafer propagation, preserve payload and off-wafer latency",
+  "source_sha256": {
+    "calculations/configs/models/deepseek-v4.1-flash/config.json": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+    "manuscripts/06-\u8d85\u8282\u70b9.md": "42bcb3880a2104517cdf8990ddf51550f3f60540d9442a6f99fabe95ae0dcc26",
+    "calculations/sources/opentallas/v41-flash-roofline-n5-vs-b200.json": "8d9bece91390d301885e0584777de9abb590e365bb7766af0a84e26f54d4a356",
+    "calculations/results/supernode-inference-book.json": "af9205b25f29796b311f0f7e9a2f5b5bea1d0b649654b3151216f54adcdfd9d7",
+    "calculations/src/infra_calc/topics/kv_comparison.py": "fb3c9d3d506fead25b33a5af74cb9bdf76e57838457e21586b9bfbdb1b755fa6",
+    "experiments/current/ch06/sources/opentallas-roofline.py": "3f8b2ab0e473e31f0d99e11f2d5ec6ec356f7933730b254e85f85bd8ba8b9f13"
+  }
+}

@@ -1,0 +1,2558 @@
+{
+  "exercise": "6-11",
+  "completed_parts": [
+    "b"
+  ],
+  "design": "Main attention query heads and output groups TP8; query low-rank projection, shared latent KV, compressor and complete indexer replicated. Shared experts/output head/EP paths unchanged. FP32 attention output reduction once per layer.",
+  "sharded_tensors": [
+    {
+      "name": "layers.0.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.0.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.0.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.0.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.0.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.0.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.0.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.1.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.1.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.1.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.1.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.1.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.1.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.1.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.2.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.2.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.2.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.2.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.2.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.2.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.2.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.3.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.3.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.3.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.3.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.3.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.3.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.3.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.4.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.4.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.4.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.4.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.4.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.4.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.4.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.5.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.5.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.5.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.5.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.5.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.5.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.5.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.6.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.6.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.6.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.6.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.6.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.6.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.6.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.7.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.7.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.7.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.7.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.7.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.7.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.7.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.8.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.8.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.8.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.8.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.8.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.8.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.8.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.9.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.9.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.9.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.9.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.9.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.9.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.9.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.10.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.10.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.10.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.10.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.10.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.10.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.10.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.11.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.11.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.11.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.11.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.11.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.11.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.11.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.12.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.12.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.12.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.12.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.12.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.12.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.12.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.13.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.13.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.13.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.13.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.13.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.13.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.13.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.14.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.14.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.14.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.14.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.14.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.14.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.14.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.15.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.15.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.15.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.15.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.15.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.15.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.15.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.16.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.16.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.16.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.16.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.16.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.16.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.16.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.17.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.17.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.17.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.17.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.17.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.17.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.17.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.18.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.18.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.18.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.18.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.18.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.18.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.18.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.19.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.19.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.19.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.19.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.19.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.19.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.19.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.20.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.20.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.20.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.20.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.20.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.20.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.20.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.21.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.21.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.21.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.21.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.21.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.21.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.21.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.22.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.22.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.22.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.22.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.22.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.22.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.22.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.23.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.23.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.23.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.23.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.23.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.23.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.23.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.24.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.24.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.24.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.24.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.24.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.24.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.24.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.25.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.25.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.25.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.25.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.25.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.25.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.25.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.26.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.26.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.26.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.26.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.26.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.26.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.26.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.27.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.27.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.27.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.27.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.27.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.27.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.27.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.28.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.28.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.28.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.28.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.28.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.28.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.28.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.29.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.29.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.29.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.29.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.29.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.29.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.29.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.30.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.30.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.30.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.30.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.30.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.30.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.30.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.31.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.31.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.31.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.31.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.31.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.31.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.31.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.32.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.32.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.32.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.32.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.32.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.32.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.32.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.33.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.33.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.33.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.33.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.33.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.33.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.33.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.34.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.34.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.34.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.34.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.34.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.34.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.34.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.35.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.35.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.35.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.35.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.35.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.35.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.35.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.36.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.36.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.36.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.36.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.36.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.36.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.36.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.37.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.37.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.37.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.37.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.37.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.37.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.37.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.38.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.38.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.38.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.38.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.38.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.38.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.38.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.39.attn.attn_sink",
+      "shape": [
+        64
+      ],
+      "global_bytes": 256,
+      "per_rank_bytes": 32
+    },
+    {
+      "name": "layers.39.attn.wo_a.scale",
+      "shape": [
+        256,
+        128
+      ],
+      "global_bytes": 32768,
+      "per_rank_bytes": 4096
+    },
+    {
+      "name": "layers.39.attn.wo_b.scale",
+      "shape": [
+        160,
+        256
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.39.attn.wq_b.scale",
+      "shape": [
+        1024,
+        40
+      ],
+      "global_bytes": 40960,
+      "per_rank_bytes": 5120
+    },
+    {
+      "name": "layers.39.attn.wo_a.weight",
+      "shape": [
+        8192,
+        4096
+      ],
+      "global_bytes": 33554432,
+      "per_rank_bytes": 4194304
+    },
+    {
+      "name": "layers.39.attn.wo_b.weight",
+      "shape": [
+        5120,
+        8192
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    },
+    {
+      "name": "layers.39.attn.wq_b.weight",
+      "shape": [
+        32768,
+        1280
+      ],
+      "global_bytes": 41943040,
+      "per_rank_bytes": 5242880
+    }
+  ],
+  "shardable_attention_weight_bytes": 4702218240,
+  "unsharded_replicated_read_bytes": 3505659328,
+  "new_total_weight_read_bytes": 4845462208.0,
+  "KV_read_bytes_unchanged": 46763136,
+  "memory_s": 0.0014603657743283583,
+  "unsharded_compute_upper_bound_s": 4.0543436717202347e-05,
+  "existing_EP_communication_s": 7.619733333333334e-05,
+  "new_attention_allreduce_message_bytes": 20480,
+  "new_attention_allreduce_s": 1.1741644444444444e-05,
+  "new_attention_communication_s": 0.00046966577777777775,
+  "new_token_s": 0.0020062288854394692,
+  "new_tokens_s": 498.44761345909325,
+  "baseline_tokens_s": 361.6957751806328,
+  "speedup": 1.378085251922464,
+  "scope": "Conditional byte/roofline model with explicitly replicated indexer; not an executed native world_size=8 run, which also shards indexer and changes other modules; no blanket division of all replicated weights or KV by eight",
+  "source_sha256": {
+    "manuscripts/06-\u8d85\u8282\u70b9.md": "42bcb3880a2104517cdf8990ddf51550f3f60540d9442a6f99fabe95ae0dcc26",
+    "calculations/results/supernode-inference-book.json": "af9205b25f29796b311f0f7e9a2f5b5bea1d0b649654b3151216f54adcdfd9d7",
+    "calculations/configs/models/deepseek-v4.1-flash/config.json": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+    "calculations/sources/deepseek-v4.1-flash/inference/model.py": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00001-of-00048.safetensors.header.bin": "4868e9de02a65ac3bc07fb19af0122e7963ed441dda87fdcecc7dfab80dcca08",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00002-of-00048.safetensors.header.bin": "129528c27f70585ccbef06de790837dc4f7a7fbe06fcab08e807212f4621d034",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00003-of-00048.safetensors.header.bin": "ff66dd94d7eb6ef5cc1457b2ac13b422c14e9891914c786af995edaa4f10a614",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00004-of-00048.safetensors.header.bin": "f02a4b31fc5b310ed6e77dcb3b96473df806794ed2996c5711181ee852538411",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00005-of-00048.safetensors.header.bin": "f921056a11b2bee72e36ea301b533dd4d67cc8ae6fcc4c24f642516a2e3c4f31",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00006-of-00048.safetensors.header.bin": "758bbceaef14ca838a4b6dec90cf3946dfa0d7b35e223153587f6354c0fbb0a1",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00007-of-00048.safetensors.header.bin": "1283c3fff6a48f347c929c106c95f2ffcd7e9768b5ae414588d0a9f5dc70968f",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00008-of-00048.safetensors.header.bin": "cab61806b0231bd4928bd852dee3df6ad0b3e62f0fbbb9445a76e8c8d67a60c8",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00009-of-00048.safetensors.header.bin": "a064ee45313ab51341b00b17a74859feb2f91af858f28398d89df07ea1b48a38",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00010-of-00048.safetensors.header.bin": "8b32e2ebfee9bf12080f41f13cd85425780f3d3536af943c4f345872b7ba84ae",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00011-of-00048.safetensors.header.bin": "9ea69355f30af20a80c3cbb1652184ed86c085e976178cee0a9283382e643e21",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00012-of-00048.safetensors.header.bin": "423a05803c18836ca5c4a764689ec6c95d2205814feadb881fea79c3ce8ab783",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00013-of-00048.safetensors.header.bin": "5c844570348abb72d04657672d5f81ff262ab1ba596dff85ad1ddd60cc3c42aa",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00014-of-00048.safetensors.header.bin": "ba69bf37728caeb1daa8763b9576732c2ea4b43fc90f02bfaacdcab4ae21e45d",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00015-of-00048.safetensors.header.bin": "30e7bf8c2236a5c00cca7bcc2fc3ddd80c4d1290f4a731b4ef8862637e1fca2f",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00016-of-00048.safetensors.header.bin": "8e5dc969144c6ff9363c595f83d9cbb4957144b685c7759674de5f586d4fe3d8",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00017-of-00048.safetensors.header.bin": "b092419551bc23f939f4bc75dc0a18c603da376f2766af321727f456e7291f4d",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00018-of-00048.safetensors.header.bin": "b16e9ed3a18d70b6aa03ff240dac72591e81060774fabd988923ef60896d6aa9",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00019-of-00048.safetensors.header.bin": "bad7bf329a0fb3802ec1db1e01726fe322543aca9966ef74d952d81752f0100f",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00020-of-00048.safetensors.header.bin": "99a1e14c1c319351d84d577d518ce1b5ad89905731b87d346aad4e3fb2dc0a45",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00021-of-00048.safetensors.header.bin": "2f878ebc68e16c1f94b1fa11e46f264f8f523f7471e0d0c7a8d2d6351e656d6e",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00022-of-00048.safetensors.header.bin": "deb4903850578c39001d10148cf8dec587de68ac5be44ff739644fbe0b83efe2",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00023-of-00048.safetensors.header.bin": "3daa085f9ef36b6f2b11c0608ae16d8c163d7106eb318ffddb9700816f87481b",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00024-of-00048.safetensors.header.bin": "ca757ef80d54a5271140663fe1fd675a52ad2fd9b589f4ccedc5eec3dbbd2255",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00025-of-00048.safetensors.header.bin": "f5593669946de6d1c7eeba5541c14352d89a8ee6dacd0cb3c15cc304e58c9bcb",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00026-of-00048.safetensors.header.bin": "8b28e31da8cb6ce1c58056c94a89a3e6c464b4ba321f6846463eac8fc84b91bf",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00027-of-00048.safetensors.header.bin": "31269efb9aca4e77e770ec2161939d13735d9a83485281eff7e8b8afc77d4dd0",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00028-of-00048.safetensors.header.bin": "f8bbdcbb568c9dad45d780b23c7ae962fcd04adb3abc685cec46036539b437ca",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00029-of-00048.safetensors.header.bin": "cba716ddb64d109550a114eb9aedab2cd8b61367193d16a1ffc50e8a48c42ac6",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00030-of-00048.safetensors.header.bin": "2d96f856ed545b76eadfcde7656f808ab0af745d949b382bb6e6bd103d15692d",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00031-of-00048.safetensors.header.bin": "3b061de8ce5a963c86aa820e7444d1f9f3632c33ffb1d2604fd4813f61ed8839",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00032-of-00048.safetensors.header.bin": "2ecd0c0958382db2459ab9e0d519509e71429faa79d5797dce103589f31eae39",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00033-of-00048.safetensors.header.bin": "099872f6b55c62ac3a126399950c32addcbaa8323bcb949ca9e3c5835a18abe5",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00034-of-00048.safetensors.header.bin": "fdf13a88a5f8d71f9178082acf7de279928767df3a073d78ade53405bf49021d",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00035-of-00048.safetensors.header.bin": "5b2c5c669d6cf0b27bd49ea7ba72df747b17fe8d80493941a04c562ece572340",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00036-of-00048.safetensors.header.bin": "79602d58ae094cbe25b92749640e2b4c967b233749e9c827879a233a62b068e0",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00037-of-00048.safetensors.header.bin": "8c9968b922facdddbdd634f9a80df732cefe864ef67fc1c358706ced841bb879",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00038-of-00048.safetensors.header.bin": "8a8c9fa0231cdd292756cc9b1d8a2214f69b4b36091ed2b1461f3180659feb65",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00039-of-00048.safetensors.header.bin": "053e342f8388030f03e6c02e7d077b1adf5aea3839a9005fe19c62cabe6d8989",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00040-of-00048.safetensors.header.bin": "6d5225cc55821348122025f204c292651d22b810833509e0af83eb928f72d8e5",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00041-of-00048.safetensors.header.bin": "1da3f66ed02aac282013916f5221d2437cb7d465cbcad83c3b4cd5b84ddc2d37",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00042-of-00048.safetensors.header.bin": "e115fc9ad378fe162d382445f523f58904d5e8965c3970bb8cc7d7f004a53db6",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00043-of-00048.safetensors.header.bin": "032804db9bc5aadc7a7933ff37f499f99dfbc5cb62b85abd1cddc2ee3569bc9d",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00044-of-00048.safetensors.header.bin": "5742a9c79ddad723de1fbfa4c6818a583967d6bb884269b770826c8378b23a2b",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00045-of-00048.safetensors.header.bin": "5f1fbe51de5a9898ef08d34d52c043beb2c27e88116614bfedc882396677de61",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00046-of-00048.safetensors.header.bin": "b85fa794726df6ba6bda1133dbd2742f616205237395875bc86eed0f81e5750b",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00047-of-00048.safetensors.header.bin": "9055d06658af74f431f6675f6880f187b24a3f648b3f70ae949edc328b7702fc",
+    "calculations/sources/deepseek-v4.1-flash/headers/model-00048-of-00048.safetensors.header.bin": "ffc9da89096525ea191d967531f8063db66327b0880a9d2f4d7d73a42d641f28"
+  }
+}

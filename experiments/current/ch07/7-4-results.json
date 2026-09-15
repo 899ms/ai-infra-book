@@ -1,0 +1,73 @@
+{
+  "exercise": "7-4",
+  "BF16": [
+    {
+      "servers": 2,
+      "per_NIC_shard_bytes": 12582912,
+      "ring_rounds": 2,
+      "ring_send_bytes": 12582912.0,
+      "ring_ms": 0.25332424,
+      "in_network_unlimited_engine_ms": 0.25249124,
+      "engine": [
+        {
+          "convention": "reduced_result_bytes",
+          "engine_bytes": 100663296,
+          "engine_service_ms": 0.50331648,
+          "is_engine_bottleneck": true,
+          "in_network_with_200GBps_ms": 0.50414948,
+          "strict_engine_threshold_GBps": 398.680350256904,
+          "minimum_integer_GBps": 399
+        },
+        {
+          "convention": "all_input_operand_bytes",
+          "engine_bytes": 201326592,
+          "engine_service_ms": 1.00663296,
+          "is_engine_bottleneck": true,
+          "in_network_with_200GBps_ms": 1.00746596,
+          "strict_engine_threshold_GBps": 797.360700513808,
+          "minimum_integer_GBps": 798
+        }
+      ]
+    },
+    {
+      "servers": 8,
+      "per_NIC_shard_bytes": 12582912,
+      "ring_rounds": 14,
+      "ring_send_bytes": 22020096.0,
+      "ring_ms": 0.45206392,
+      "in_network_unlimited_engine_ms": 0.25249124,
+      "engine": [
+        {
+          "convention": "reduced_result_bytes",
+          "engine_bytes": 100663296,
+          "engine_service_ms": 0.50331648,
+          "is_engine_bottleneck": true,
+          "in_network_with_200GBps_ms": 0.50414948,
+          "strict_engine_threshold_GBps": 223.0859888768261,
+          "minimum_integer_GBps": 224
+        },
+        {
+          "convention": "all_input_operand_bytes",
+          "engine_bytes": 805306368,
+          "engine_service_ms": 4.02653184,
+          "is_engine_bottleneck": true,
+          "in_network_with_200GBps_ms": 4.02736484,
+          "strict_engine_threshold_GBps": 1784.6879110146087,
+          "minimum_integer_GBps": 1785
+        }
+      ]
+    }
+  ],
+  "decode_startup": {
+    "layers": 36,
+    "reductions": 72,
+    "alpha_us": 5,
+    "ring_total_us": 5040,
+    "in_network_total_us": 360,
+    "saved_us": 4680
+  },
+  "scope": "Cross-server stage only; payload shard 12MiB per rail; engine shared across eight rails; reduced-result and aggregate-input throughput conventions both explicit",
+  "source_sha256": {
+    "manuscripts/07-\u6570\u636e\u4e2d\u5fc3\u7f51\u7edc.md": "0a4a82a4d541300e78250f365e996df48601b8d699dff2411444d9407b37d9e5"
+  }
+}

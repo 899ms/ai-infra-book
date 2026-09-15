@@ -1,0 +1,66 @@
+{
+  "exercise": "7-3",
+  "clos": [
+    {
+      "ports": 64,
+      "levels": 2,
+      "endpoints": 2048,
+      "switches": 96,
+      "bisection_one_direction_TBps": 51.2
+    },
+    {
+      "ports": 64,
+      "levels": 3,
+      "endpoints": 65536,
+      "switches": 5120,
+      "bisection_one_direction_TBps": 1638.4
+    },
+    {
+      "ports": 128,
+      "levels": 2,
+      "endpoints": 8192,
+      "switches": 192,
+      "bisection_one_direction_TBps": 204.8
+    },
+    {
+      "ports": 128,
+      "levels": 3,
+      "endpoints": 524288,
+      "switches": 20480,
+      "bisection_one_direction_TBps": 13107.2
+    }
+  ],
+  "partition_1024": {
+    "exact_ratio": {
+      "down_ports": 42,
+      "up_ports": 21,
+      "unused_ports_per_leaf": 1,
+      "leaves": 25,
+      "unused_down_slots": 26,
+      "uplinks": 525,
+      "cut_TBps": 26.25,
+      "per_card_GBps": 25.634765625
+    },
+    "proportional_model": {
+      "cut_TBps": 25.6,
+      "per_card_GBps": 25
+    }
+  },
+  "supernode_128": {
+    "cross_domain_send_bytes": 112000000000,
+    "nominal_2_to_1_egress_TBps": 3.2,
+    "pure_transfer_ms": 35.0,
+    "startup_rounds": 14,
+    "alpha_us": 0.833,
+    "with_startup_ms": 35.011662,
+    "dedicated_four_leaf_alternative": {
+      "egress_TBps": 4.2,
+      "pure_transfer_ms": 26.666666666666668
+    }
+  },
+  "minimum_local_fraction_at_ratio_3": "2/3",
+  "scope": "Analytical exercise; one-direction payload bandwidth; no physical Clos or multi-GPU measurement",
+  "source_sha256": {
+    "manuscripts/07-\u6570\u636e\u4e2d\u5fc3\u7f51\u7edc.md": "0a4a82a4d541300e78250f365e996df48601b8d699dff2411444d9407b37d9e5"
+  }
+}

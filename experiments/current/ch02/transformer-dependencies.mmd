@@ -1,0 +1,35 @@
+flowchart LR
+    L1T1["layer 1 / token 1 / finish 1"]
+    L1T2["layer 1 / token 2 / finish 1"]
+    L1T3["layer 1 / token 3 / finish 1"]
+    L1T4["layer 1 / token 4 / finish 1"]
+    L2T1["layer 2 / token 1 / finish 2"]
+    L2T2["layer 2 / token 2 / finish 2"]
+    L2T3["layer 2 / token 3 / finish 2"]
+    L2T4["layer 2 / token 4 / finish 2"]
+    L3T1["layer 3 / token 1 / finish 3"]
+    L3T2["layer 3 / token 2 / finish 3"]
+    L3T3["layer 3 / token 3 / finish 3"]
+    L3T4["layer 3 / token 4 / finish 3"]
+    L1T1 --> L2T1
+    L1T1 --> L2T2
+    L1T2 --> L2T2
+    L1T1 --> L2T3
+    L1T2 --> L2T3
+    L1T3 --> L2T3
+    L1T1 --> L2T4
+    L1T2 --> L2T4
+    L1T3 --> L2T4
+    L1T4 --> L2T4
+    L2T1 --> L3T1
+    L2T1 --> L3T2
+    L2T2 --> L3T2
+    L2T1 --> L3T3
+    L2T2 --> L3T3
+    L2T3 --> L3T3
+    L2T1 --> L3T4
+    L2T2 --> L3T4
+    L2T3 --> L3T4
+    L2T4 --> L3T4
+    L3T4 --> Sample["sample next token"]
+    Sample --> L1T5["new position: layer 1"]

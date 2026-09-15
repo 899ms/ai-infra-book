@@ -1,0 +1,116 @@
+{
+  "exercise": "7-10",
+  "schedules": [
+    {
+      "schedule": "serial_ABC",
+      "events": {
+        "write": {
+          "start_us": 0,
+          "end_us": 20,
+          "depends_on": []
+        },
+        "recovery": {
+          "start_us": 20,
+          "end_us": 100,
+          "depends_on": [
+            "write"
+          ]
+        },
+        "notify": {
+          "start_us": 100,
+          "end_us": 102,
+          "depends_on": [
+            "recovery"
+          ]
+        },
+        "C": {
+          "start_us": 102,
+          "end_us": 152,
+          "depends_on": [
+            "notify"
+          ]
+        },
+        "consume": {
+          "start_us": 102,
+          "end_us": 132,
+          "depends_on": [
+            "notify"
+          ]
+        }
+      },
+      "ABC_complete_us": 152,
+      "C_complete_us": 152,
+      "destination_D_reusable_us": 132,
+      "including_consumer_complete_us": 152
+    },
+    {
+      "schedule": "only_A_to_B",
+      "events": {
+        "write": {
+          "start_us": 0,
+          "end_us": 20,
+          "depends_on": []
+        },
+        "recovery": {
+          "start_us": 20,
+          "end_us": 100,
+          "depends_on": [
+            "write"
+          ]
+        },
+        "notify": {
+          "start_us": 100,
+          "end_us": 102,
+          "depends_on": [
+            "recovery"
+          ]
+        },
+        "C": {
+          "start_us": 0,
+          "end_us": 50,
+          "depends_on": []
+        },
+        "consume": {
+          "start_us": 102,
+          "end_us": 132,
+          "depends_on": [
+            "notify"
+          ]
+        }
+      },
+      "ABC_complete_us": 102,
+      "C_complete_us": 50,
+      "destination_D_reusable_us": 132,
+      "including_consumer_complete_us": 132
+    }
+  ],
+  "stale_paths": [
+    {
+      "name": "incorrect_delayed_return",
+      "read_us": 1,
+      "flag_read_us": 4,
+      "return_us": 5,
+      "value": 0
+    },
+    {
+      "name": "wait_then_read",
+      "flag_read_us": 4,
+      "read_start_us": 4,
+      "read_complete_us": 6,
+      "value": 1
+    },
+    {
+      "name": "speculate_validate_reread",
+      "early_read_us": 1,
+      "early_value": 0,
+      "flag_and_conflict_check_us": 4,
+      "reread_start_us": 4,
+      "reread_complete_us": 6,
+      "value": 1
+    }
+  ],
+  "scope": "Deterministic dependency model with independent C resources and 2us read duration in corrected paths; notification is not consumption completion",
+  "source_sha256": {
+    "manuscripts/07-\u6570\u636e\u4e2d\u5fc3\u7f51\u7edc.md": "0a4a82a4d541300e78250f365e996df48601b8d699dff2411444d9407b37d9e5"
+  }
+}

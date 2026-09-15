@@ -1,0 +1,51 @@
+{
+  "exercise": "8-8",
+  "independent_halving": [
+    {
+      "halved_phase": "prefill",
+      "phase_seconds": {
+        "prefill": 10.0,
+        "decode": 50.0,
+        "tools_and_wait": 30.0
+      },
+      "total_seconds": 90.0,
+      "speedup_exact": "10/9",
+      "speedup": 1.1111111111111112
+    },
+    {
+      "halved_phase": "decode",
+      "phase_seconds": {
+        "prefill": 20.0,
+        "decode": 25.0,
+        "tools_and_wait": 30.0
+      },
+      "total_seconds": 75.0,
+      "speedup_exact": "4/3",
+      "speedup": 1.3333333333333333
+    },
+    {
+      "halved_phase": "tools_and_wait",
+      "phase_seconds": {
+        "prefill": 20.0,
+        "decode": 50.0,
+        "tools_and_wait": 15.0
+      },
+      "total_seconds": 85.0,
+      "speedup_exact": "20/17",
+      "speedup": 1.1764705882352942
+    }
+  ],
+  "decode_fourfold": {
+    "before_preparation_seconds": 62.5,
+    "preparation_seconds": 8.0,
+    "total_seconds": 70.5,
+    "saved_seconds": 29.5,
+    "net_speedup_exact": "200/141",
+    "net_speedup": 1.4184397163120568,
+    "preparation_break_even_seconds": 37.5
+  },
+  "scope": "Serial task phases; changes evaluated separately against original 100s; preparation paid once per task and not overlapped",
+  "source_sha256": {
+    "manuscripts/08-\u63a8\u7406\u4f18\u5316.md": "8bcd8d5b337171850a085b1a8d4e7b6150e7d29a5b80e85a889142c7161953fc"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "exercise": "4-8",
+  "rows": [
+    {
+      "batch": 1,
+      "weight_j": 0.480745377792,
+      "kv_j": 0.03836479537152,
+      "compute_j": 0.014976466944,
+      "total_j": 0.53408664010752
+    },
+    {
+      "batch": 8,
+      "weight_j": 0.060093172224,
+      "kv_j": 0.03836479537152,
+      "compute_j": 0.014976466944,
+      "total_j": 0.11343443453952
+    },
+    {
+      "batch": 32,
+      "weight_j": 0.015023293056,
+      "kv_j": 0.03836479537152,
+      "compute_j": 0.014976466944,
+      "total_j": 0.06836455537152
+    },
+    {
+      "batch": 128,
+      "weight_j": 0.003755823264,
+      "kv_j": 0.03836479537152,
+      "compute_j": 0.014976466944,
+      "total_j": 0.05709708557952
+    }
+  ],
+  "minimum_batch_weight_below_compute": 33,
+  "continuous_crossover_32k_batch_exact": "821225/262144",
+  "continuous_crossover_32k_batch": 3.1327247619628906,
+  "first_integer_batch_kv_ge_weight": 4,
+  "h100": {
+    "power_watts": 700,
+    "bandwidth_bytes_s": 3350000000000.0,
+    "bf16_dense_flops_s": 989400000000000.0,
+    "memory_power_watts": 106.396,
+    "compute_power_budget_watts": 593.604,
+    "budget_pj_per_flop": 0.5999636143117041,
+    "assumed_actual_pj_per_flop": 0.8999454214675561
+  },
+  "power": [
+    {
+      "mode": "constant_voltage",
+      "frequency_ratio": 0.6666666666666666,
+      "compute_seconds": 0.0009687627697756216,
+      "memory_seconds": 0.01605717160119403,
+      "step_seconds": 0.01605717160119403,
+      "step_energy_j": 2.18766577188864,
+      "ledger_average_watts": 136.24228638909,
+      "tdp_minus_ledger_average_watts": 563.7577136109101,
+      "limiter": "memory"
+    },
+    {
+      "mode": "voltage_proportional_to_frequency",
+      "frequency_ratio": 0.8735804647362989,
+      "compute_seconds": 0.0007393043601450456,
+      "memory_seconds": 0.01605717160119403,
+      "step_seconds": 0.01605717160119403,
+      "step_energy_j": 2.18766577188864,
+      "ledger_average_watts": 136.24228638909,
+      "tdp_minus_ledger_average_watts": 563.7577136109101,
+      "limiter": "memory"
+    }
+  ],
+  "source_sha256": {
+    "calculations/results/energy-ledger-book.json": "80c80e440167b0b3274f0c3dc1193ca3146fb61876e8f54228c8e1ea0b246e59",
+    "calculations/configs/hardware.json": "9c4639ec65ca3b808923a7f332114f800c7930635b6fdac08f49686cddbf0ba2",
+    "manuscripts/04-\u52a0\u901f\u5668\u67b6\u6784.md": "d5df8934b96e71fe45910c7db17d4ed049e9b466eb4bf37365c4ff0325b464fb"
+  }
+}

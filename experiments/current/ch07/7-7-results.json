@@ -1,0 +1,376 @@
+{
+  "exercise": "7-7",
+  "selection": "First formal 1MiB trial (trial 0), modes JSON copy worker and binary copy worker; no timing-based selection",
+  "selected": [
+    {
+      "id": 26,
+      "mode": "json_copy_worker",
+      "payload_sha256": "18dbc1fc7e1f2f2ab505fb8f7734b5ec27a3830ed67ec3e28181bf5240e31a17",
+      "client": [
+        {
+          "stage": "Encode",
+          "start_ms": 0.0,
+          "duration_ms": 7.973042
+        },
+        {
+          "stage": "Prepare",
+          "start_ms": 7.973042,
+          "duration_ms": 0.079666
+        },
+        {
+          "stage": "Send call",
+          "start_ms": 8.052708,
+          "duration_ms": 0.595709
+        },
+        {
+          "stage": "Response wait",
+          "start_ms": 8.648417,
+          "duration_ms": 324.37075
+        },
+        {
+          "stage": "Decode + verify",
+          "start_ms": 333.019167,
+          "duration_ms": 0.131166
+        }
+      ],
+      "server": [
+        {
+          "stage": "Receive body",
+          "start_ms": 0.0,
+          "duration_ms": 101.006581
+        },
+        {
+          "stage": "Dispatch gap",
+          "start_ms": 101.006581,
+          "duration_ms": 0.002364
+        },
+        {
+          "stage": "Decode/materialize",
+          "start_ms": 101.008945,
+          "duration_ms": 7.395866
+        },
+        {
+          "stage": "Submit gap",
+          "start_ms": 108.404811,
+          "duration_ms": 0.059997
+        },
+        {
+          "stage": "Queue",
+          "start_ms": 108.464808,
+          "duration_ms": 0.057831
+        },
+        {
+          "stage": "Execute SHA256",
+          "start_ms": 108.522639,
+          "duration_ms": 0.459012
+        },
+        {
+          "stage": "Completion notice",
+          "start_ms": 108.981651,
+          "duration_ms": 0.020679
+        }
+      ],
+      "total_ms": 333.150333,
+      "client_cpu_ms": 8.877,
+      "request_bytes": 1398135,
+      "encode_fraction": 0.02393226483732796,
+      "client_encode_only_zero_cost_speedup": 1.0245190615109712
+    },
+    {
+      "id": 28,
+      "mode": "binary_copy_worker",
+      "payload_sha256": "18dbc1fc7e1f2f2ab505fb8f7734b5ec27a3830ed67ec3e28181bf5240e31a17",
+      "client": [
+        {
+          "stage": "Encode",
+          "start_ms": 0.0,
+          "duration_ms": 0.001667
+        },
+        {
+          "stage": "Prepare",
+          "start_ms": 0.001667,
+          "duration_ms": 0.118292
+        },
+        {
+          "stage": "Send call",
+          "start_ms": 0.119959,
+          "duration_ms": 0.988375
+        },
+        {
+          "stage": "Response wait",
+          "start_ms": 1.108334,
+          "duration_ms": 272.829375
+        },
+        {
+          "stage": "Decode + verify",
+          "start_ms": 273.937709,
+          "duration_ms": 0.133666
+        }
+      ],
+      "server": [
+        {
+          "stage": "Receive body",
+          "start_ms": 0.0,
+          "duration_ms": 56.02829
+        },
+        {
+          "stage": "Dispatch gap",
+          "start_ms": 56.02829,
+          "duration_ms": 0.003629
+        },
+        {
+          "stage": "Decode/materialize",
+          "start_ms": 56.031919,
+          "duration_ms": 0.534071
+        },
+        {
+          "stage": "Submit gap",
+          "start_ms": 56.56599,
+          "duration_ms": 0.031379
+        },
+        {
+          "stage": "Queue",
+          "start_ms": 56.597369,
+          "duration_ms": 0.041235
+        },
+        {
+          "stage": "Execute SHA256",
+          "start_ms": 56.638604,
+          "duration_ms": 0.418688
+        },
+        {
+          "stage": "Completion notice",
+          "start_ms": 57.057292,
+          "duration_ms": 0.021124
+        }
+      ],
+      "total_ms": 274.071375,
+      "client_cpu_ms": 1.394,
+      "request_bytes": 1048593,
+      "encode_fraction": 6.082357196186578e-06,
+      "client_encode_only_zero_cost_speedup": 1.0000060823941914
+    }
+  ],
+  "bytes": {
+    "payload_bytes": 1048576,
+    "base64_bytes": 1398104,
+    "base64_only_saved_bytes": 349528,
+    "json_wrapper_bytes": 14,
+    "frame_bytes": 17,
+    "total_request_saved_bytes": 349542,
+    "fraction_original_request_saved": 0.25000590071774187
+  },
+  "all_20_pairs": [
+    {
+      "trial": 0,
+      "ids": [
+        26,
+        28
+      ],
+      "json_ms": 333.150333,
+      "binary_ms": 274.071375,
+      "saved_ms": 59.078958
+    },
+    {
+      "trial": 1,
+      "ids": [
+        37,
+        36
+      ],
+      "json_ms": 513.634166,
+      "binary_ms": 308.942709,
+      "saved_ms": 204.69145700000007
+    },
+    {
+      "trial": 2,
+      "ids": [
+        56,
+        53
+      ],
+      "json_ms": 305.391375,
+      "binary_ms": 278.5025,
+      "saved_ms": 26.888874999999985
+    },
+    {
+      "trial": 3,
+      "ids": [
+        64,
+        60
+      ],
+      "json_ms": 285.691209,
+      "binary_ms": 278.917792,
+      "saved_ms": 6.773416999999995
+    },
+    {
+      "trial": 4,
+      "ids": [
+        81,
+        80
+      ],
+      "json_ms": 488.451333,
+      "binary_ms": 287.805917,
+      "saved_ms": 200.64541599999995
+    },
+    {
+      "trial": 5,
+      "ids": [
+        91,
+        86
+      ],
+      "json_ms": 293.341917,
+      "binary_ms": 472.562958,
+      "saved_ms": -179.22104099999996
+    },
+    {
+      "trial": 6,
+      "ids": [
+        107,
+        96
+      ],
+      "json_ms": 327.354041,
+      "binary_ms": 274.587459,
+      "saved_ms": 52.76658199999997
+    },
+    {
+      "trial": 7,
+      "ids": [
+        117,
+        113
+      ],
+      "json_ms": 292.646083,
+      "binary_ms": 297.855875,
+      "saved_ms": -5.20979200000005
+    },
+    {
+      "trial": 8,
+      "ids": [
+        128,
+        123
+      ],
+      "json_ms": 480.631917,
+      "binary_ms": 467.218041,
+      "saved_ms": 13.41387599999996
+    },
+    {
+      "trial": 9,
+      "ids": [
+        143,
+        137
+      ],
+      "json_ms": 452.121,
+      "binary_ms": 468.142375,
+      "saved_ms": -16.021375000000035
+    },
+    {
+      "trial": 10,
+      "ids": [
+        148,
+        151
+      ],
+      "json_ms": 367.529375,
+      "binary_ms": 462.191125,
+      "saved_ms": -94.66174999999998
+    },
+    {
+      "trial": 11,
+      "ids": [
+        162,
+        167
+      ],
+      "json_ms": 468.599084,
+      "binary_ms": 646.377167,
+      "saved_ms": -177.77808299999998
+    },
+    {
+      "trial": 12,
+      "ids": [
+        179,
+        174
+      ],
+      "json_ms": 360.675792,
+      "binary_ms": 474.631625,
+      "saved_ms": -113.95583299999998
+    },
+    {
+      "trial": 13,
+      "ids": [
+        186,
+        183
+      ],
+      "json_ms": 364.521625,
+      "binary_ms": 240.80475,
+      "saved_ms": 123.71687499999996
+    },
+    {
+      "trial": 14,
+      "ids": [
+        202,
+        203
+      ],
+      "json_ms": 265.675125,
+      "binary_ms": 285.379041,
+      "saved_ms": -19.703915999999992
+    },
+    {
+      "trial": 15,
+      "ids": [
+        206,
+        211
+      ],
+      "json_ms": 351.83775,
+      "binary_ms": 525.441416,
+      "saved_ms": -173.60366599999998
+    },
+    {
+      "trial": 16,
+      "ids": [
+        227,
+        221
+      ],
+      "json_ms": 507.227917,
+      "binary_ms": 306.238416,
+      "saved_ms": 200.98950100000002
+    },
+    {
+      "trial": 17,
+      "ids": [
+        235,
+        230
+      ],
+      "json_ms": 437.511125,
+      "binary_ms": 462.648125,
+      "saved_ms": -25.137
+    },
+    {
+      "trial": 18,
+      "ids": [
+        245,
+        240
+      ],
+      "json_ms": 333.773583,
+      "binary_ms": 279.307292,
+      "saved_ms": 54.466290999999956
+    },
+    {
+      "trial": 19,
+      "ids": [
+        255,
+        261
+      ],
+      "json_ms": 472.414,
+      "binary_ms": 250.607292,
+      "saved_ms": 221.806708
+    }
+  ],
+  "binary_faster_pairs": 11,
+  "median_paired_saved_ms": 10.093646499999977,
+  "clock_caveat": "Separate host-relative origins; server timestamps cannot be positioned inside client send/wait without clock alignment. Server execution is already part of the RPC critical path.",
+  "source_sha256": {
+    "manuscripts/07-\u6570\u636e\u4e2d\u5fc3\u7f51\u7edc.md": "0a4a82a4d541300e78250f365e996df48601b8d699dff2411444d9407b37d9e5",
+    "experiments/ch07/07-04/client.py": "36bbb9bbc4465c6fae4f6a6212034374930d25f524098826eb6ae999afc39b92",
+    "experiments/ch07/07-04/server.py": "b5de2d1a48a0fe6f7d0782f8d45c2080e5f591ddca4eeed7c7352c84a37855c6",
+    "experiments/ch07/07-04/results/raw-manifest.json": "695814f195dd3930469c1db80ca35395ffd029bc5e9605d7311f2bd16b4b2dda",
+    "experiments/ch07/07-04/results/client/requests.jsonl": "074f27a32aa9d579c29c344413d63c2821e2e88e8b45f2fae1324ad8aacc3d20",
+    "experiments/ch07/07-04/results/server/requests.jsonl": "4df63b7cc545f473efe003a2b98c849ba946979a65635eb830e1b32ebcdda5ce"
+  }
+}

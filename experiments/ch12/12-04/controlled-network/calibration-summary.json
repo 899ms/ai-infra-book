@@ -1,0 +1,119 @@
+{
+  "status": "measured_namespace_shaping",
+  "profiles": [
+    {
+      "profile": "unshaped",
+      "ping_min_ms": 0.021,
+      "ping_mean_ms": 0.037,
+      "ping_max_ms": 0.053,
+      "tcp_receiver_mbit_s": 85221.70567926705,
+      "tcp_retransmits": 0,
+      "qdisc": [
+        {
+          "kind": "noqueue",
+          "handle": "0:",
+          "root": true,
+          "refcnt": 2,
+          "options": {},
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ]
+    },
+    {
+      "profile": "rtt80-rate20-loss0",
+      "ping_min_ms": 80.114,
+      "ping_mean_ms": 80.126,
+      "ping_max_ms": 80.148,
+      "tcp_receiver_mbit_s": 17.723259987097975,
+      "tcp_retransmits": 0,
+      "qdisc": [
+        {
+          "kind": "netem",
+          "handle": "8001:",
+          "root": true,
+          "refcnt": 2,
+          "options": {
+            "limit": 10000,
+            "delay": {
+              "delay": 0.04,
+              "jitter": 0,
+              "correlation": 0
+            },
+            "rate": {
+              "rate": 2500000,
+              "packetoverhead": 0,
+              "cellsize": 0,
+              "celloverhead": 0
+            },
+            "seed": 17140138679827773760,
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 9359369,
+          "packets": 374,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 66,
+          "qlen": 1
+        }
+      ]
+    },
+    {
+      "profile": "rtt80-rate20-loss01",
+      "ping_min_ms": 80.103,
+      "ping_mean_ms": 80.12,
+      "ping_max_ms": 80.153,
+      "tcp_receiver_mbit_s": 17.387640300089462,
+      "tcp_retransmits": 1,
+      "qdisc": [
+        {
+          "kind": "netem",
+          "handle": "8001:",
+          "root": true,
+          "refcnt": 2,
+          "options": {
+            "limit": 10000,
+            "delay": {
+              "delay": 0.04,
+              "jitter": 0,
+              "correlation": 0
+            },
+            "loss-random": {
+              "loss": 0.001,
+              "correlation": 0
+            },
+            "rate": {
+              "rate": 2500000,
+              "packetoverhead": 0,
+              "cellsize": 0,
+              "celloverhead": 0
+            },
+            "seed": 17140138679827773760,
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 19769857,
+          "packets": 796,
+          "drops": 2,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 66,
+          "qlen": 1
+        }
+      ]
+    }
+  ],
+  "scope": "Docker network-none loopback netem calibration; 10 pings/3-second TCP per profile; not a physical WAN or completed application comparison",
+  "source_sha256": {
+    "Dockerfile": "d1b562b19dca349419c8cee758d5b161538c336986a0f1e497f193e709acea71",
+    "calibrate.py": "62e5ec9dd953a7a90fbeb24329eefac898bc9ec45fc90fef9457f532f549c703",
+    "image-inspect.json": "4f6ea4c905f63dbd7dea0d1d3cd0ea3a7a18c77bfb28a1402028adf61b037afc"
+  }
+}

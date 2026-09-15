@@ -1,0 +1,59 @@
+{
+  "python": "3.11.16 (main, Aug 13 2026, 19:40:50) [GCC 14.2.0]",
+  "asyncio_set_nodelay_source": "    def _set_nodelay(sock):\n        if (sock.family in {socket.AF_INET, socket.AF_INET6} and\n                sock.type == socket.SOCK_STREAM and\n                sock.proto == socket.IPPROTO_TCP):\n            sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)\n",
+  "source_sha256": "d5147b6da8d1a92aec4b16da2f2b465a7988d43c1c684adbc22bc401a7cada9b",
+  "rows": [
+    {
+      "mode": "implicit",
+      "client": {
+        "family": 2,
+        "type": 1,
+        "proto": 6,
+        "nodelay": 1,
+        "rcvbuf": 131072
+      },
+      "server": {
+        "family": 2,
+        "type": 1,
+        "proto": 6,
+        "nodelay": 1,
+        "rcvbuf": 131072
+      }
+    },
+    {
+      "mode": "manual-proto0",
+      "client": {
+        "family": 2,
+        "type": 1,
+        "proto": 0,
+        "nodelay": 0,
+        "rcvbuf": 131072
+      },
+      "server": {
+        "family": 2,
+        "type": 1,
+        "proto": 0,
+        "nodelay": 0,
+        "rcvbuf": 131072
+      }
+    },
+    {
+      "mode": "manual-tcp6",
+      "client": {
+        "family": 2,
+        "type": 1,
+        "proto": 6,
+        "nodelay": 1,
+        "rcvbuf": 131072
+      },
+      "server": {
+        "family": 2,
+        "type": 1,
+        "proto": 6,
+        "nodelay": 1,
+        "rcvbuf": 131072
+      }
+    }
+  ],
+  "scope": "Fresh socket-creation-path diagnostic in same pinned Docker image; not retrospective reads of completed benchmark sockets"
+}

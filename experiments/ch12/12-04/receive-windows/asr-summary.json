@@ -1,0 +1,1500 @@
+{
+  "requests": 54,
+  "formal_requests": 36,
+  "valid": 54,
+  "conditions": [
+    {
+      "mode": "default",
+      "protocol": "h1",
+      "count": 6,
+      "median_s": 1.4391254630172625,
+      "samples_s": [
+        1.555427976185456,
+        1.324899598956108,
+        1.5581271690316498,
+        1.2221794261131436,
+        1.553351327078417,
+        1.2213460200000554
+      ],
+      "fresh_median_s": 1.555427976185456,
+      "reused_median_s": 1.2221794261131436
+    },
+    {
+      "mode": "default",
+      "protocol": "h3",
+      "count": 6,
+      "median_s": 1.5570055750431493,
+      "samples_s": [
+        1.5576185618992895,
+        1.282864152919501,
+        3.926675137830898,
+        3.1067171040922403,
+        1.556392588187009,
+        1.3225082319695503
+      ],
+      "fresh_median_s": 1.5576185618992895,
+      "reused_median_s": 1.3225082319695503
+    },
+    {
+      "mode": "64k",
+      "protocol": "h1",
+      "count": 6,
+      "median_s": 2.3259404679993168,
+      "samples_s": [
+        2.532971269916743,
+        1.8434885069727898,
+        2.5313198410440236,
+        1.8425652692094445,
+        2.5303132489789277,
+        2.1215676870197058
+      ],
+      "fresh_median_s": 2.5313198410440236,
+      "reused_median_s": 1.8434885069727898
+    },
+    {
+      "mode": "64k",
+      "protocol": "h3",
+      "count": 6,
+      "median_s": 1.5697954419301823,
+      "samples_s": [
+        1.6263644699938595,
+        2.401699251960963,
+        1.5720861149020493,
+        1.428020971827209,
+        1.5675047689583153,
+        1.4636342390440404
+      ],
+      "fresh_median_s": 1.5720861149020493,
+      "reused_median_s": 1.4636342390440404
+    },
+    {
+      "mode": "4m",
+      "protocol": "h1",
+      "count": 6,
+      "median_s": 1.3030855880351737,
+      "samples_s": [
+        1.4265195238403976,
+        1.1805842241737992,
+        1.425932199927047,
+        1.180490795057267,
+        1.4255869518965483,
+        1.1801479561254382
+      ],
+      "fresh_median_s": 1.425932199927047,
+      "reused_median_s": 1.180490795057267
+    },
+    {
+      "mode": "4m",
+      "protocol": "h3",
+      "count": 6,
+      "median_s": 1.5579849164932966,
+      "samples_s": [
+        2.3088642100337893,
+        2.3741349540650845,
+        1.5577190569601953,
+        1.278949260013178,
+        1.558250776026398,
+        1.2205283408984542
+      ],
+      "fresh_median_s": 1.558250776026398,
+      "reused_median_s": 1.278949260013178
+    }
+  ],
+  "evidence": [
+    {
+      "trial": 0,
+      "mode": "default",
+      "name": "trial0-default",
+      "tcp_client_rwnd_limited_us": 620000,
+      "tcp_client_busy_us": 2234000,
+      "tcp_buffers": [
+        131072,
+        1727888,
+        5911282
+      ],
+      "tcp_connections": [
+        {
+          "connection": 0,
+          "ready": {
+            "tcpi_snd_wnd": 78336,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 39168,
+            "tcpi_rtt": 80193,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 80000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 3886592,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 24,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 211249,
+            "tcpi_rwnd_limited": 310000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 847000,
+            "tcpi_total_retrans": 0
+          }
+        },
+        {
+          "connection": 2,
+          "ready": {
+            "tcpi_snd_wnd": 78336,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 39168,
+            "tcpi_rtt": 80188,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 5819392,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 16,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 235446,
+            "tcpi_rwnd_limited": 310000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 1548000,
+            "tcpi_total_retrans": 1
+          }
+        }
+      ],
+      "server_tcp_sample_count": 40,
+      "server_peer_window_range": [
+        83968,
+        84992
+      ],
+      "quic_initial": 1048576,
+      "quic_parameters": [
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 1048576,
+          "initial_max_stream_data_bidi_local": 1048576,
+          "initial_max_stream_data_bidi_remote": 1048576,
+          "initial_max_stream_data_uni": 1048576,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "29de6ef020bba9bb"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "a14edc6379220e03",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "26d37feafec5a63e08fd02ddbd7dab96",
+          "initial_max_data": 1048576,
+          "initial_max_stream_data_bidi_local": 1048576,
+          "initial_max_stream_data_bidi_remote": 1048576,
+          "initial_max_stream_data_uni": 1048576,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "cd03e317ff7d9025"
+        },
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 1048576,
+          "initial_max_stream_data_bidi_local": 1048576,
+          "initial_max_stream_data_bidi_remote": 1048576,
+          "initial_max_stream_data_uni": 1048576,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "26133f9f3d721d72"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "cf187b45590696bc",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "d1294fb7ceaaae64b55bef2e90731516",
+          "initial_max_data": 1048576,
+          "initial_max_stream_data_bidi_local": 1048576,
+          "initial_max_stream_data_bidi_remote": 1048576,
+          "initial_max_stream_data_uni": 1048576,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "02c6bd222a15162c"
+        }
+      ],
+      "quic_frame_counts": {
+        "crypto": 8,
+        "ack": 1062,
+        "new_connection_id": 28,
+        "stream": 3088,
+        "padding": 2,
+        "handshake_done": 2,
+        "max_data": 5,
+        "max_stream_data": 6,
+        "ping": 15,
+        "connection_close": 2
+      },
+      "quic_limit_ranges": {
+        "max_data": [
+          2097152,
+          8388608
+        ],
+        "max_stream_data": [
+          2097152,
+          4194304
+        ]
+      }
+    },
+    {
+      "trial": 0,
+      "mode": "64k",
+      "name": "trial0-64k",
+      "tcp_client_rwnd_limited_us": 4400000,
+      "tcp_client_busy_us": 4750000,
+      "tcp_buffers": [
+        131072
+      ],
+      "tcp_connections": [
+        {
+          "connection": 0,
+          "ready": {
+            "tcpi_snd_wnd": 77874,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 38937,
+            "tcpi_rtt": 80190,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 109742,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 54871,
+            "tcpi_rtt": 106330,
+            "tcpi_rwnd_limited": 1638000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 1825000,
+            "tcpi_total_retrans": 0
+          }
+        },
+        {
+          "connection": 2,
+          "ready": {
+            "tcpi_snd_wnd": 77874,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 38937,
+            "tcpi_rtt": 80186,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 109742,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 54871,
+            "tcpi_rtt": 106883,
+            "tcpi_rwnd_limited": 2762000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 3087000,
+            "tcpi_total_retrans": 0
+          }
+        }
+      ],
+      "server_tcp_sample_count": 64,
+      "server_peer_window_range": [
+        83688,
+        84698
+      ],
+      "quic_initial": 65536,
+      "quic_parameters": [
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 65536,
+          "initial_max_stream_data_bidi_local": 65536,
+          "initial_max_stream_data_bidi_remote": 65536,
+          "initial_max_stream_data_uni": 65536,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "a2b0351cfec2e451"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "2fd812fb2089f1d9",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "0c3c2d9893cf000e6df394b3a2750175",
+          "initial_max_data": 65536,
+          "initial_max_stream_data_bidi_local": 65536,
+          "initial_max_stream_data_bidi_remote": 65536,
+          "initial_max_stream_data_uni": 65536,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "c5f46b7ac992da58"
+        },
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 65536,
+          "initial_max_stream_data_bidi_local": 65536,
+          "initial_max_stream_data_bidi_remote": 65536,
+          "initial_max_stream_data_uni": 65536,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "93590e48f551a6a0"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "711f6722063c1ebb",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "c4971ec2ea8f12a41d383bf69da43a86",
+          "initial_max_data": 65536,
+          "initial_max_stream_data_bidi_local": 65536,
+          "initial_max_stream_data_bidi_remote": 65536,
+          "initial_max_stream_data_uni": 65536,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "d274f324df765082"
+        }
+      ],
+      "quic_frame_counts": {
+        "crypto": 8,
+        "ack": 1123,
+        "new_connection_id": 28,
+        "stream": 3119,
+        "padding": 2,
+        "handshake_done": 2,
+        "max_data": 13,
+        "max_stream_data": 18,
+        "ping": 24,
+        "connection_close": 2
+      },
+      "quic_limit_ranges": {
+        "max_data": [
+          131072,
+          8388608
+        ],
+        "max_stream_data": [
+          131072,
+          4194304
+        ]
+      }
+    },
+    {
+      "trial": 0,
+      "mode": "4m",
+      "name": "trial0-4m",
+      "tcp_client_rwnd_limited_us": 502000,
+      "tcp_client_busy_us": 1880000,
+      "tcp_buffers": [
+        8388608
+      ],
+      "tcp_connections": [
+        {
+          "connection": 0,
+          "ready": {
+            "tcpi_snd_wnd": 196608,
+            "tcpi_rcv_space": 65535,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 80192,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 2685056,
+            "tcpi_rcv_space": 65535,
+            "tcpi_snd_cwnd": 27,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 320435,
+            "tcpi_rwnd_limited": 251000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 744000,
+            "tcpi_total_retrans": 1
+          }
+        },
+        {
+          "connection": 2,
+          "ready": {
+            "tcpi_snd_wnd": 196608,
+            "tcpi_rcv_space": 65535,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 80184,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 5173376,
+            "tcpi_rcv_space": 65535,
+            "tcpi_snd_cwnd": 35,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 511450,
+            "tcpi_rwnd_limited": 251000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 1298000,
+            "tcpi_total_retrans": 1
+          }
+        }
+      ],
+      "server_tcp_sample_count": 36,
+      "server_peer_window_range": [
+        196608,
+        458496
+      ],
+      "quic_initial": 4194304,
+      "quic_parameters": [
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 4194304,
+          "initial_max_stream_data_bidi_local": 4194304,
+          "initial_max_stream_data_bidi_remote": 4194304,
+          "initial_max_stream_data_uni": 4194304,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "473ae54df1025424"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "4652c71413b0d678",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "acd7bd9369d64a80c0deb6754cc258f7",
+          "initial_max_data": 4194304,
+          "initial_max_stream_data_bidi_local": 4194304,
+          "initial_max_stream_data_bidi_remote": 4194304,
+          "initial_max_stream_data_uni": 4194304,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "bbf89d7145223099"
+        },
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 4194304,
+          "initial_max_stream_data_bidi_local": 4194304,
+          "initial_max_stream_data_bidi_remote": 4194304,
+          "initial_max_stream_data_uni": 4194304,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "f0c595b5ebbb6c50"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "bac1dcf2c8b9d8b4",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "9158f823723da96706553c1eb686b38d",
+          "initial_max_data": 4194304,
+          "initial_max_stream_data_bidi_local": 4194304,
+          "initial_max_stream_data_bidi_remote": 4194304,
+          "initial_max_stream_data_uni": 4194304,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "e53b6486bfd47c6e"
+        }
+      ],
+      "quic_frame_counts": {
+        "crypto": 8,
+        "ack": 1255,
+        "new_connection_id": 28,
+        "stream": 3115,
+        "padding": 2,
+        "handshake_done": 2,
+        "ping": 13,
+        "connection_close": 2,
+        "max_data": 1
+      },
+      "quic_limit_ranges": {
+        "max_data": [
+          8388608,
+          8388608
+        ]
+      }
+    },
+    {
+      "trial": 1,
+      "mode": "64k",
+      "name": "trial1-64k",
+      "tcp_client_rwnd_limited_us": 4401000,
+      "tcp_client_busy_us": 4747000,
+      "tcp_buffers": [
+        131072
+      ],
+      "tcp_connections": [
+        {
+          "connection": 0,
+          "ready": {
+            "tcpi_snd_wnd": 77874,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 38937,
+            "tcpi_rtt": 80192,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 80000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 109742,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 54871,
+            "tcpi_rtt": 106322,
+            "tcpi_rwnd_limited": 1638000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 1824000,
+            "tcpi_total_retrans": 0
+          }
+        },
+        {
+          "connection": 2,
+          "ready": {
+            "tcpi_snd_wnd": 77874,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 38937,
+            "tcpi_rtt": 80186,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 109742,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 54871,
+            "tcpi_rtt": 106899,
+            "tcpi_rwnd_limited": 2763000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 3084000,
+            "tcpi_total_retrans": 0
+          }
+        }
+      ],
+      "server_tcp_sample_count": 64,
+      "server_peer_window_range": [
+        83690,
+        84698
+      ],
+      "quic_initial": 65536,
+      "quic_parameters": [
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 65536,
+          "initial_max_stream_data_bidi_local": 65536,
+          "initial_max_stream_data_bidi_remote": 65536,
+          "initial_max_stream_data_uni": 65536,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "08837c45d01305f1"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "b05657ce84bb147f",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "4de938a7646679070354b3767766f803",
+          "initial_max_data": 65536,
+          "initial_max_stream_data_bidi_local": 65536,
+          "initial_max_stream_data_bidi_remote": 65536,
+          "initial_max_stream_data_uni": 65536,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "504c5e34c11c5ef4"
+        },
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 65536,
+          "initial_max_stream_data_bidi_local": 65536,
+          "initial_max_stream_data_bidi_remote": 65536,
+          "initial_max_stream_data_uni": 65536,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "c14dda2353871ea1"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "6c8f6b2e1a7540b8",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "a4c8a732ab9bd679367904e9e34a96a6",
+          "initial_max_data": 65536,
+          "initial_max_stream_data_bidi_local": 65536,
+          "initial_max_stream_data_bidi_remote": 65536,
+          "initial_max_stream_data_uni": 65536,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "39df8551f21a841c"
+        }
+      ],
+      "quic_frame_counts": {
+        "crypto": 8,
+        "ack": 1078,
+        "new_connection_id": 28,
+        "stream": 3099,
+        "padding": 2,
+        "handshake_done": 2,
+        "max_data": 13,
+        "max_stream_data": 18,
+        "ping": 27,
+        "connection_close": 2
+      },
+      "quic_limit_ranges": {
+        "max_data": [
+          131072,
+          8388608
+        ],
+        "max_stream_data": [
+          131072,
+          4194304
+        ]
+      }
+    },
+    {
+      "trial": 1,
+      "mode": "4m",
+      "name": "trial1-4m",
+      "tcp_client_rwnd_limited_us": 504000,
+      "tcp_client_busy_us": 1880000,
+      "tcp_buffers": [
+        8388608
+      ],
+      "tcp_connections": [
+        {
+          "connection": 0,
+          "ready": {
+            "tcpi_snd_wnd": 196608,
+            "tcpi_rcv_space": 65535,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 80190,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 2685056,
+            "tcpi_rcv_space": 65535,
+            "tcpi_snd_cwnd": 27,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 320363,
+            "tcpi_rwnd_limited": 252000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 744000,
+            "tcpi_total_retrans": 1
+          }
+        },
+        {
+          "connection": 2,
+          "ready": {
+            "tcpi_snd_wnd": 196608,
+            "tcpi_rcv_space": 65535,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 80190,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 5173376,
+            "tcpi_rcv_space": 65535,
+            "tcpi_snd_cwnd": 35,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 511466,
+            "tcpi_rwnd_limited": 252000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 1298000,
+            "tcpi_total_retrans": 1
+          }
+        }
+      ],
+      "server_tcp_sample_count": 36,
+      "server_peer_window_range": [
+        196608,
+        458496
+      ],
+      "quic_initial": 4194304,
+      "quic_parameters": [
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 4194304,
+          "initial_max_stream_data_bidi_local": 4194304,
+          "initial_max_stream_data_bidi_remote": 4194304,
+          "initial_max_stream_data_uni": 4194304,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "2cfb7fbd59d1d370"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "934f9a9aba3ed626",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "80a95e4b5a59d0fbc33d65838578a4d4",
+          "initial_max_data": 4194304,
+          "initial_max_stream_data_bidi_local": 4194304,
+          "initial_max_stream_data_bidi_remote": 4194304,
+          "initial_max_stream_data_uni": 4194304,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "ac60c1badbb2295a"
+        },
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 4194304,
+          "initial_max_stream_data_bidi_local": 4194304,
+          "initial_max_stream_data_bidi_remote": 4194304,
+          "initial_max_stream_data_uni": 4194304,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "ee57f2cc45d68a93"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "05303f5d379d5825",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "f31f988c89bb94dfeeb49020ec0b759d",
+          "initial_max_data": 4194304,
+          "initial_max_stream_data_bidi_local": 4194304,
+          "initial_max_stream_data_bidi_remote": 4194304,
+          "initial_max_stream_data_uni": 4194304,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "8638bd3786900a09"
+        }
+      ],
+      "quic_frame_counts": {
+        "crypto": 8,
+        "ack": 997,
+        "new_connection_id": 28,
+        "stream": 3090,
+        "padding": 2,
+        "handshake_done": 2,
+        "connection_close": 2,
+        "ping": 12,
+        "max_data": 1
+      },
+      "quic_limit_ranges": {
+        "max_data": [
+          8388608,
+          8388608
+        ]
+      }
+    },
+    {
+      "trial": 1,
+      "mode": "default",
+      "name": "trial1-default",
+      "tcp_client_rwnd_limited_us": 621000,
+      "tcp_client_busy_us": 2131000,
+      "tcp_buffers": [
+        131072,
+        1727888,
+        5911282
+      ],
+      "tcp_connections": [
+        {
+          "connection": 0,
+          "ready": {
+            "tcpi_snd_wnd": 78336,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 39168,
+            "tcpi_rtt": 80189,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 3886592,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 24,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 211274,
+            "tcpi_rwnd_limited": 310000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 848000,
+            "tcpi_total_retrans": 0
+          }
+        },
+        {
+          "connection": 2,
+          "ready": {
+            "tcpi_snd_wnd": 78336,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 39168,
+            "tcpi_rtt": 80186,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 5494784,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 14,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 266030,
+            "tcpi_rwnd_limited": 311000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 1445000,
+            "tcpi_total_retrans": 1
+          }
+        }
+      ],
+      "server_tcp_sample_count": 39,
+      "server_peer_window_range": [
+        83968,
+        84992
+      ],
+      "quic_initial": 1048576,
+      "quic_parameters": [
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 1048576,
+          "initial_max_stream_data_bidi_local": 1048576,
+          "initial_max_stream_data_bidi_remote": 1048576,
+          "initial_max_stream_data_uni": 1048576,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "22fedd8484dddc9b"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "dcc9021df1a86c4e",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "d8b8f14c1cbe65d6728f491f24df3d86",
+          "initial_max_data": 1048576,
+          "initial_max_stream_data_bidi_local": 1048576,
+          "initial_max_stream_data_bidi_remote": 1048576,
+          "initial_max_stream_data_uni": 1048576,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "72fbcafd3f454d06"
+        },
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 1048576,
+          "initial_max_stream_data_bidi_local": 1048576,
+          "initial_max_stream_data_bidi_remote": 1048576,
+          "initial_max_stream_data_uni": 1048576,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "e3bc15f9bd9cacc5"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "3aaf61215a870a33",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "507b08b8233ae465ea57fffbb1e31455",
+          "initial_max_data": 1048576,
+          "initial_max_stream_data_bidi_local": 1048576,
+          "initial_max_stream_data_bidi_remote": 1048576,
+          "initial_max_stream_data_uni": 1048576,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "683a7026ef45f91a"
+        }
+      ],
+      "quic_frame_counts": {
+        "crypto": 8,
+        "ack": 1362,
+        "new_connection_id": 28,
+        "stream": 3133,
+        "padding": 2,
+        "handshake_done": 2,
+        "max_data": 5,
+        "max_stream_data": 6,
+        "ping": 20,
+        "connection_close": 2
+      },
+      "quic_limit_ranges": {
+        "max_data": [
+          2097152,
+          8388608
+        ],
+        "max_stream_data": [
+          2097152,
+          4194304
+        ]
+      }
+    },
+    {
+      "trial": 2,
+      "mode": "4m",
+      "name": "trial2-4m",
+      "tcp_client_rwnd_limited_us": 504000,
+      "tcp_client_busy_us": 1878000,
+      "tcp_buffers": [
+        8388608
+      ],
+      "tcp_connections": [
+        {
+          "connection": 0,
+          "ready": {
+            "tcpi_snd_wnd": 196608,
+            "tcpi_rcv_space": 65535,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 80186,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 2685056,
+            "tcpi_rcv_space": 65535,
+            "tcpi_snd_cwnd": 27,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 320341,
+            "tcpi_rwnd_limited": 252000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 743000,
+            "tcpi_total_retrans": 1
+          }
+        },
+        {
+          "connection": 2,
+          "ready": {
+            "tcpi_snd_wnd": 196608,
+            "tcpi_rcv_space": 65535,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 80186,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 5173376,
+            "tcpi_rcv_space": 65535,
+            "tcpi_snd_cwnd": 35,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 511456,
+            "tcpi_rwnd_limited": 252000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 1297000,
+            "tcpi_total_retrans": 1
+          }
+        }
+      ],
+      "server_tcp_sample_count": 36,
+      "server_peer_window_range": [
+        196608,
+        458496
+      ],
+      "quic_initial": 4194304,
+      "quic_parameters": [
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 4194304,
+          "initial_max_stream_data_bidi_local": 4194304,
+          "initial_max_stream_data_bidi_remote": 4194304,
+          "initial_max_stream_data_uni": 4194304,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "14f4f9d5ae0f85a9"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "520bad8f0a74e2ca",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "2ee5443ab0574dc4d06e5dda86e4404f",
+          "initial_max_data": 4194304,
+          "initial_max_stream_data_bidi_local": 4194304,
+          "initial_max_stream_data_bidi_remote": 4194304,
+          "initial_max_stream_data_uni": 4194304,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "4acb00780c5ec7be"
+        },
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 4194304,
+          "initial_max_stream_data_bidi_local": 4194304,
+          "initial_max_stream_data_bidi_remote": 4194304,
+          "initial_max_stream_data_uni": 4194304,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "9364f67f96d75699"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "563025e68e592f8c",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "02a742250217e415df428df81fdb2f1d",
+          "initial_max_data": 4194304,
+          "initial_max_stream_data_bidi_local": 4194304,
+          "initial_max_stream_data_bidi_remote": 4194304,
+          "initial_max_stream_data_uni": 4194304,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "84321c2157c48e13"
+        }
+      ],
+      "quic_frame_counts": {
+        "crypto": 8,
+        "ack": 1189,
+        "new_connection_id": 28,
+        "stream": 3101,
+        "padding": 2,
+        "handshake_done": 2,
+        "ping": 10,
+        "connection_close": 2,
+        "max_data": 1
+      },
+      "quic_limit_ranges": {
+        "max_data": [
+          8388608,
+          8388608
+        ]
+      }
+    },
+    {
+      "trial": 2,
+      "mode": "default",
+      "name": "trial2-default",
+      "tcp_client_rwnd_limited_us": 620000,
+      "tcp_client_busy_us": 2127000,
+      "tcp_buffers": [
+        131072,
+        1727888,
+        5911282
+      ],
+      "tcp_connections": [
+        {
+          "connection": 0,
+          "ready": {
+            "tcpi_snd_wnd": 78336,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 39168,
+            "tcpi_rtt": 80206,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 3886592,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 24,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 211252,
+            "tcpi_rwnd_limited": 310000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 847000,
+            "tcpi_total_retrans": 0
+          }
+        },
+        {
+          "connection": 2,
+          "ready": {
+            "tcpi_snd_wnd": 78336,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 39168,
+            "tcpi_rtt": 80177,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 5811712,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 25,
+            "tcpi_snd_mss": 65483,
+            "tcpi_rtt": 265664,
+            "tcpi_rwnd_limited": 310000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 1442000,
+            "tcpi_total_retrans": 0
+          }
+        }
+      ],
+      "server_tcp_sample_count": 39,
+      "server_peer_window_range": [
+        83968,
+        84992
+      ],
+      "quic_initial": 1048576,
+      "quic_parameters": [
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 1048576,
+          "initial_max_stream_data_bidi_local": 1048576,
+          "initial_max_stream_data_bidi_remote": 1048576,
+          "initial_max_stream_data_uni": 1048576,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "0f75a992fd1c25b8"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "9c6c1c32ed1dab43",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "bb5ae76b7e7e46709eea97db7a1911db",
+          "initial_max_data": 1048576,
+          "initial_max_stream_data_bidi_local": 1048576,
+          "initial_max_stream_data_bidi_remote": 1048576,
+          "initial_max_stream_data_uni": 1048576,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "2ebf0a0a3011442d"
+        },
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 1048576,
+          "initial_max_stream_data_bidi_local": 1048576,
+          "initial_max_stream_data_bidi_remote": 1048576,
+          "initial_max_stream_data_uni": 1048576,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "aeb7e39fc4a0c7f3"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "158328dae21948cf",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "408900dc3b13a1e0c60b8fce022ae46f",
+          "initial_max_data": 1048576,
+          "initial_max_stream_data_bidi_local": 1048576,
+          "initial_max_stream_data_bidi_remote": 1048576,
+          "initial_max_stream_data_uni": 1048576,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "0c2e25523f43b41a"
+        }
+      ],
+      "quic_frame_counts": {
+        "crypto": 8,
+        "ack": 1157,
+        "new_connection_id": 28,
+        "stream": 3100,
+        "padding": 2,
+        "handshake_done": 2,
+        "ping": 24,
+        "max_data": 5,
+        "max_stream_data": 6,
+        "connection_close": 2
+      },
+      "quic_limit_ranges": {
+        "max_data": [
+          2097152,
+          8388608
+        ],
+        "max_stream_data": [
+          2097152,
+          4194304
+        ]
+      }
+    },
+    {
+      "trial": 2,
+      "mode": "64k",
+      "name": "trial2-64k",
+      "tcp_client_rwnd_limited_us": 4554000,
+      "tcp_client_busy_us": 4980000,
+      "tcp_buffers": [
+        131072
+      ],
+      "tcp_connections": [
+        {
+          "connection": 0,
+          "ready": {
+            "tcpi_snd_wnd": 77874,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 38937,
+            "tcpi_rtt": 80181,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 81000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 109742,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 54871,
+            "tcpi_rtt": 106287,
+            "tcpi_rwnd_limited": 1638000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 1823000,
+            "tcpi_total_retrans": 0
+          }
+        },
+        {
+          "connection": 2,
+          "ready": {
+            "tcpi_snd_wnd": 77874,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 10,
+            "tcpi_snd_mss": 38937,
+            "tcpi_rtt": 80183,
+            "tcpi_rwnd_limited": 0,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 80000,
+            "tcpi_total_retrans": 0
+          },
+          "close": {
+            "tcpi_snd_wnd": 128512,
+            "tcpi_rcv_space": 65495,
+            "tcpi_snd_cwnd": 7,
+            "tcpi_snd_mss": 64256,
+            "tcpi_rtt": 116731,
+            "tcpi_rwnd_limited": 2916000,
+            "tcpi_sndbuf_limited": 0,
+            "tcpi_busy_time": 3318000,
+            "tcpi_total_retrans": 1
+          }
+        }
+      ],
+      "server_tcp_sample_count": 68,
+      "server_peer_window_range": [
+        83688,
+        84698
+      ],
+      "quic_initial": 65536,
+      "quic_parameters": [
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 65536,
+          "initial_max_stream_data_bidi_local": 65536,
+          "initial_max_stream_data_bidi_remote": 65536,
+          "initial_max_stream_data_uni": 65536,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "9a4c212530d5a988"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "dc29d4c7dd90361e",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "053baeea540540f0ab9d710ec3da7521",
+          "initial_max_data": 65536,
+          "initial_max_stream_data_bidi_local": 65536,
+          "initial_max_stream_data_bidi_remote": 65536,
+          "initial_max_stream_data_uni": 65536,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "6be015b054bccce6"
+        },
+        {
+          "owner": "local",
+          "max_idle_timeout": 60000,
+          "initial_max_data": 65536,
+          "initial_max_stream_data_bidi_local": 65536,
+          "initial_max_stream_data_bidi_remote": 65536,
+          "initial_max_stream_data_uni": 65536,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "65e57513f2708a03"
+        },
+        {
+          "owner": "remote",
+          "original_destination_connection_id": "144165c04c8ae25b",
+          "max_idle_timeout": 60000,
+          "stateless_reset_token": "24510f0095bf32df60b01665f28a8177",
+          "initial_max_data": 65536,
+          "initial_max_stream_data_bidi_local": 65536,
+          "initial_max_stream_data_bidi_remote": 65536,
+          "initial_max_stream_data_uni": 65536,
+          "initial_max_streams_bidi": 128,
+          "initial_max_streams_uni": 128,
+          "ack_delay_exponent": 3,
+          "max_ack_delay": 25,
+          "disable_active_migration": false,
+          "active_connection_id_limit": 8,
+          "initial_source_connection_id": "f1307a7462407ae5"
+        }
+      ],
+      "quic_frame_counts": {
+        "crypto": 8,
+        "ack": 1093,
+        "new_connection_id": 28,
+        "stream": 3103,
+        "padding": 2,
+        "handshake_done": 2,
+        "max_data": 13,
+        "max_stream_data": 18,
+        "connection_close": 2,
+        "ping": 11
+      },
+      "quic_limit_ranges": {
+        "max_data": [
+          131072,
+          8388608
+        ],
+        "max_stream_data": [
+          131072,
+          4194304
+        ]
+      }
+    }
+  ]
+}

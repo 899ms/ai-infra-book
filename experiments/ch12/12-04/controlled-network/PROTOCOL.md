@@ -1,0 +1,7 @@
+# Controlled network prerequisite for application replay
+
+Use a dedicated Docker container on RTX with network=none, NET_ADMIN,2CPU and2GiB RAM. Only its loopback qdisc changes. Netem profiles configure40ms per traversal,20Mbit/s rate and loss0 or0.1%. Ten pings and a three-second TCP transfer calibrate both profiles; short TCP goodput is observed separately from the configured link rate. The baseline unshaped calibration is not a WAN.
+
+Then execute the unchanged previously verified loopback HTTP/1.1-TLS1.3 and HTTP/3 runner under each profile. Each has192 formal64KiB echo requests plus2 warmups; three shuffled repetitions across connection reuse on/off and concurrency1/4. Sources, negotiated protocols, every uploaded/returned hash, connection reuse and qlogs are retained. No HTTP/2,0RTT or session resumption is added. Loss is stochastic and actual qdisc counters are recorded; identical configured loss does not mean identical packet-drop positions. Separate profile results are not pooled into a single latency statistic.
+
+This stage establishes controlled transport and reproduction of the original protocol matrix. It does not yet execute image refinement, ASR/TTS, Computer Use, tuning of windows/chunks or interrupted application recovery; those remain the original experiment's outstanding work. A completed transport echo is not recorded as a completed application task. No GPU is needed.

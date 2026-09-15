@@ -1,0 +1,554 @@
+{
+  "tasks": 20,
+  "valid": 20,
+  "formal": 18,
+  "exchanges": 32,
+  "injected_interruptions": 12,
+  "service_replays": 26,
+  "qlog_headers": 16,
+  "close_frames": 16,
+  "expected_server_close_errors": [
+    {
+      "time_s": 1631481.395621272,
+      "headers": [
+        [
+          "host",
+          "localhost"
+        ],
+        [
+          "x-operation",
+          "op5"
+        ],
+        [
+          "content-length",
+          "10656312"
+        ],
+        [
+          ":path",
+          "/image"
+        ]
+      ],
+      "error": "BrokenPipeError(32, 'Broken pipe')",
+      "phase": "wait_closed"
+    },
+    {
+      "time_s": 1631534.340362499,
+      "headers": [
+        [
+          "host",
+          "localhost"
+        ],
+        [
+          "x-operation",
+          "op7"
+        ],
+        [
+          "content-length",
+          "10656312"
+        ],
+        [
+          ":path",
+          "/image"
+        ]
+      ],
+      "error": "BrokenPipeError(32, 'Broken pipe')",
+      "phase": "wait_closed"
+    },
+    {
+      "time_s": 1631638.341860219,
+      "headers": [
+        [
+          "host",
+          "localhost"
+        ],
+        [
+          "x-operation",
+          "op12"
+        ],
+        [
+          "content-length",
+          "10656312"
+        ],
+        [
+          ":path",
+          "/image"
+        ]
+      ],
+      "error": "ConnectionResetError(104, 'Connection reset by peer')",
+      "phase": "wait_closed"
+    },
+    {
+      "time_s": 1631652.456452357,
+      "headers": [
+        [
+          "host",
+          "localhost"
+        ],
+        [
+          "x-operation",
+          "op13"
+        ],
+        [
+          "content-length",
+          "10656312"
+        ],
+        [
+          ":path",
+          "/image"
+        ]
+      ],
+      "error": "BrokenPipeError(32, 'Broken pipe')",
+      "phase": "wait_closed"
+    },
+    {
+      "time_s": 1631695.366341347,
+      "headers": [
+        [
+          "host",
+          "localhost"
+        ],
+        [
+          "x-operation",
+          "op15"
+        ],
+        [
+          "content-length",
+          "10656312"
+        ],
+        [
+          ":path",
+          "/image"
+        ]
+      ],
+      "error": "BrokenPipeError(32, 'Broken pipe')",
+      "phase": "wait_closed"
+    },
+    {
+      "time_s": 1631703.787562807,
+      "headers": [
+        [
+          "host",
+          "localhost"
+        ],
+        [
+          "x-operation",
+          "op16"
+        ],
+        [
+          "content-length",
+          "10656312"
+        ],
+        [
+          ":path",
+          "/image"
+        ]
+      ],
+      "error": "BrokenPipeError(32, 'Broken pipe')",
+      "phase": "wait_closed"
+    }
+  ],
+  "conditions": [
+    {
+      "protocol": "h1",
+      "policy": "uninterrupted",
+      "samples_s": [
+        7.700243919156492,
+        7.670263699954376,
+        7.556581698125228
+      ],
+      "median_s": 7.670263699954376,
+      "upload_bytes": [
+        10656312
+      ],
+      "client_retained_bytes": [
+        4556971,
+        4556971,
+        4556971
+      ],
+      "median_recovery_s": null,
+      "median_close_s": 2.0442064851522446e-05
+    },
+    {
+      "protocol": "h1",
+      "policy": "restart",
+      "samples_s": [
+        14.12936276406981,
+        14.316570956027135,
+        14.093351060058922
+      ],
+      "median_s": 14.12936276406981,
+      "upload_bytes": [
+        21312624
+      ],
+      "client_retained_bytes": [
+        5605547,
+        5654699,
+        5605547
+      ],
+      "median_recovery_s": 8.106415441026911,
+      "median_close_s": 8.897297084331512e-05
+    },
+    {
+      "protocol": "h1",
+      "policy": "resume",
+      "samples_s": [
+        8.406866002827883,
+        8.484355646185577,
+        8.17217507190071
+      ],
+      "median_s": 8.406866002827883,
+      "upload_bytes": [
+        10656312
+      ],
+      "client_retained_bytes": [
+        4556971,
+        4556971,
+        4556971
+      ],
+      "median_recovery_s": 2.4299716961104423,
+      "median_close_s": 8.654710836708546e-05
+    },
+    {
+      "protocol": "h3",
+      "policy": "uninterrupted",
+      "samples_s": [
+        23.531119477003813,
+        23.503856071969494,
+        20.279428853886202
+      ],
+      "median_s": 23.503856071969494,
+      "upload_bytes": [
+        10656312
+      ],
+      "client_retained_bytes": [
+        4556971,
+        4556971,
+        4556971
+      ],
+      "median_recovery_s": null,
+      "median_close_s": 0.35434183315373957
+    },
+    {
+      "protocol": "h3",
+      "policy": "restart",
+      "samples_s": [
+        38.83553237002343,
+        36.710644743870944,
+        34.74113295204006
+      ],
+      "median_s": 36.710644743870944,
+      "upload_bytes": [
+        21312624
+      ],
+      "client_retained_bytes": [
+        5606660,
+        5605596,
+        5606649
+      ],
+      "median_recovery_s": 19.235167067032307,
+      "median_close_s": 0.8986991920974106
+    },
+    {
+      "protocol": "h3",
+      "policy": "resume",
+      "samples_s": [
+        16.513536360114813,
+        27.42915762984194,
+        18.452015997841954
+      ],
+      "median_s": 18.452015997841954,
+      "upload_bytes": [
+        10656312
+      ],
+      "client_retained_bytes": [
+        4556971,
+        4556971,
+        4556971
+      ],
+      "median_recovery_s": 4.20739256683737,
+      "median_close_s": 1.0166030921973288
+    }
+  ],
+  "verified": [
+    {
+      "trial": -1,
+      "protocol": "h1",
+      "policy": "uninterrupted",
+      "warmup": true,
+      "elapsed_s": 7.738273047842085,
+      "upload_bytes": 10656312,
+      "client_retained_bytes": 4556971,
+      "prepared_response_bytes": 4556971,
+      "service_calls": 1,
+      "prefix_bytes": null,
+      "recovery_s": null,
+      "close_s": 7.693911902606487e-05
+    },
+    {
+      "trial": -1,
+      "protocol": "h3",
+      "policy": "uninterrupted",
+      "warmup": true,
+      "elapsed_s": 33.17932741809636,
+      "upload_bytes": 10656312,
+      "client_retained_bytes": 4556971,
+      "prepared_response_bytes": 4556971,
+      "service_calls": 1,
+      "prefix_bytes": null,
+      "recovery_s": null,
+      "close_s": 0.32792498893104494
+    },
+    {
+      "trial": 0,
+      "protocol": "h1",
+      "policy": "uninterrupted",
+      "warmup": false,
+      "elapsed_s": 7.700243919156492,
+      "upload_bytes": 10656312,
+      "client_retained_bytes": 4556971,
+      "prepared_response_bytes": 4556971,
+      "service_calls": 1,
+      "prefix_bytes": null,
+      "recovery_s": null,
+      "close_s": 2.6992056518793106e-05
+    },
+    {
+      "trial": 0,
+      "protocol": "h3",
+      "policy": "uninterrupted",
+      "warmup": false,
+      "elapsed_s": 23.531119477003813,
+      "upload_bytes": 10656312,
+      "client_retained_bytes": 4556971,
+      "prepared_response_bytes": 4556971,
+      "service_calls": 1,
+      "prefix_bytes": null,
+      "recovery_s": null,
+      "close_s": 0.35434183315373957
+    },
+    {
+      "trial": 0,
+      "protocol": "h3",
+      "policy": "resume",
+      "warmup": false,
+      "elapsed_s": 16.513536360114813,
+      "upload_bytes": 10656312,
+      "client_retained_bytes": 4556971,
+      "prepared_response_bytes": 7938868,
+      "service_calls": 1,
+      "prefix_bytes": 1175074,
+      "recovery_s": 4.190592434955761,
+      "close_s": 1.0001661081332713
+    },
+    {
+      "trial": 0,
+      "protocol": "h1",
+      "policy": "restart",
+      "warmup": false,
+      "elapsed_s": 14.12936276406981,
+      "upload_bytes": 21312624,
+      "client_retained_bytes": 5605547,
+      "prepared_response_bytes": 9113942,
+      "service_calls": 2,
+      "prefix_bytes": 1048576,
+      "recovery_s": 8.13197663007304,
+      "close_s": 0.0001143540721386671
+    },
+    {
+      "trial": 0,
+      "protocol": "h3",
+      "policy": "restart",
+      "warmup": false,
+      "elapsed_s": 38.83553237002343,
+      "upload_bytes": 21312624,
+      "client_retained_bytes": 5606660,
+      "prepared_response_bytes": 9113942,
+      "service_calls": 2,
+      "prefix_bytes": 1049689,
+      "recovery_s": 20.169580355053768,
+      "close_s": 0.9379791219253093
+    },
+    {
+      "trial": 0,
+      "protocol": "h1",
+      "policy": "resume",
+      "warmup": false,
+      "elapsed_s": 8.406866002827883,
+      "upload_bytes": 10656312,
+      "client_retained_bytes": 4556971,
+      "prepared_response_bytes": 8065366,
+      "service_calls": 1,
+      "prefix_bytes": 1048576,
+      "recovery_s": 2.4300362039357424,
+      "close_s": 8.762418292462826e-05
+    },
+    {
+      "trial": 1,
+      "protocol": "h3",
+      "policy": "restart",
+      "warmup": false,
+      "elapsed_s": 36.710644743870944,
+      "upload_bytes": 21312624,
+      "client_retained_bytes": 5605596,
+      "prepared_response_bytes": 9113942,
+      "service_calls": 2,
+      "prefix_bytes": 1048625,
+      "recovery_s": 18.136904182843864,
+      "close_s": 0.6692666418384761
+    },
+    {
+      "trial": 1,
+      "protocol": "h3",
+      "policy": "uninterrupted",
+      "warmup": false,
+      "elapsed_s": 23.503856071969494,
+      "upload_bytes": 10656312,
+      "client_retained_bytes": 4556971,
+      "prepared_response_bytes": 4556971,
+      "service_calls": 1,
+      "prefix_bytes": null,
+      "recovery_s": null,
+      "close_s": 0.3438347429037094
+    },
+    {
+      "trial": 1,
+      "protocol": "h3",
+      "policy": "resume",
+      "warmup": false,
+      "elapsed_s": 27.42915762984194,
+      "upload_bytes": 10656312,
+      "client_retained_bytes": 4556971,
+      "prepared_response_bytes": 8065280,
+      "service_calls": 1,
+      "prefix_bytes": 1048662,
+      "recovery_s": 5.375906785018742,
+      "close_s": 1.0166030921973288
+    },
+    {
+      "trial": 1,
+      "protocol": "h1",
+      "policy": "uninterrupted",
+      "warmup": false,
+      "elapsed_s": 7.670263699954376,
+      "upload_bytes": 10656312,
+      "client_retained_bytes": 4556971,
+      "prepared_response_bytes": 4556971,
+      "service_calls": 1,
+      "prefix_bytes": null,
+      "recovery_s": null,
+      "close_s": 2.0442064851522446e-05
+    },
+    {
+      "trial": 1,
+      "protocol": "h1",
+      "policy": "restart",
+      "warmup": false,
+      "elapsed_s": 14.316570956027135,
+      "upload_bytes": 21312624,
+      "client_retained_bytes": 5654699,
+      "prepared_response_bytes": 9113942,
+      "service_calls": 2,
+      "prefix_bytes": 1097728,
+      "recovery_s": 7.95650753704831,
+      "close_s": 8.897297084331512e-05
+    },
+    {
+      "trial": 1,
+      "protocol": "h1",
+      "policy": "resume",
+      "warmup": false,
+      "elapsed_s": 8.484355646185577,
+      "upload_bytes": 10656312,
+      "client_retained_bytes": 4556971,
+      "prepared_response_bytes": 8065366,
+      "service_calls": 1,
+      "prefix_bytes": 1048576,
+      "recovery_s": 2.4299716961104423,
+      "close_s": 8.117896504700184e-05
+    },
+    {
+      "trial": 2,
+      "protocol": "h3",
+      "policy": "restart",
+      "warmup": false,
+      "elapsed_s": 34.74113295204006,
+      "upload_bytes": 21312624,
+      "client_retained_bytes": 5606649,
+      "prepared_response_bytes": 9113942,
+      "service_calls": 2,
+      "prefix_bytes": 1049678,
+      "recovery_s": 19.235167067032307,
+      "close_s": 0.8986991920974106
+    },
+    {
+      "trial": 2,
+      "protocol": "h1",
+      "policy": "resume",
+      "warmup": false,
+      "elapsed_s": 8.17217507190071,
+      "upload_bytes": 10656312,
+      "client_retained_bytes": 4556971,
+      "prepared_response_bytes": 8065366,
+      "service_calls": 1,
+      "prefix_bytes": 1048576,
+      "recovery_s": 2.1942642289213836,
+      "close_s": 8.654710836708546e-05
+    },
+    {
+      "trial": 2,
+      "protocol": "h1",
+      "policy": "restart",
+      "warmup": false,
+      "elapsed_s": 14.093351060058922,
+      "upload_bytes": 21312624,
+      "client_retained_bytes": 5605547,
+      "prepared_response_bytes": 9113942,
+      "service_calls": 2,
+      "prefix_bytes": 1048576,
+      "recovery_s": 8.106415441026911,
+      "close_s": 8.567096665501595e-05
+    },
+    {
+      "trial": 2,
+      "protocol": "h3",
+      "policy": "resume",
+      "warmup": false,
+      "elapsed_s": 18.452015997841954,
+      "upload_bytes": 10656312,
+      "client_retained_bytes": 4556971,
+      "prepared_response_bytes": 7804156,
+      "service_calls": 1,
+      "prefix_bytes": 1309786,
+      "recovery_s": 4.20739256683737,
+      "close_s": 1.0729892458766699
+    },
+    {
+      "trial": 2,
+      "protocol": "h1",
+      "policy": "uninterrupted",
+      "warmup": false,
+      "elapsed_s": 7.556581698125228,
+      "upload_bytes": 10656312,
+      "client_retained_bytes": 4556971,
+      "prepared_response_bytes": 4556971,
+      "service_calls": 1,
+      "prefix_bytes": null,
+      "recovery_s": null,
+      "close_s": 2.0008999854326248e-05
+    },
+    {
+      "trial": 2,
+      "protocol": "h3",
+      "policy": "uninterrupted",
+      "warmup": false,
+      "elapsed_s": 20.279428853886202,
+      "upload_bytes": 10656312,
+      "client_retained_bytes": 4556971,
+      "prepared_response_bytes": 4556971,
+      "service_calls": 1,
+      "prefix_bytes": null,
+      "recovery_s": null,
+      "close_s": 0.386142608942464
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 130B done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/ai-infra-book-net1204:local
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.1s
+
+#4 [1/2] FROM docker.io/library/ai-infra-book-net1204:local
+#4 DONE 0.1s
+
+#5 [2/2] RUN pip install --no-cache-dir rawpy==0.27.1 Pillow==12.1.1
+#5 0.420 Collecting rawpy==0.27.1
+#5 0.442   Downloading rawpy-0.27.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.7 kB)
+#5 0.444 Requirement already satisfied: Pillow==12.1.1 in /usr/local/lib/python3.11/site-packages (12.1.1)
+#5 0.561 Collecting numpy>=1.26.0 (from rawpy==0.27.1)
+#5 0.564   Downloading numpy-2.4.6-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+#5 0.575 Downloading rawpy-0.27.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (3.0 MB)
+#5 0.604    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.0/3.0 MB 109.2 MB/s eta 0:00:00
+#5 0.607 Downloading numpy-2.4.6-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.9 MB)
+#5 0.751    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.9/16.9 MB 117.4 MB/s eta 0:00:00
+#5 0.828 Installing collected packages: numpy, rawpy
+#5 1.971 Successfully installed numpy-2.4.6 rawpy-0.27.1
+#5 1.971 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#5 2.019 
+#5 2.019 [notice] A new release of pip is available: 24.0 -> 26.2.1
+#5 2.019 [notice] To update, run: pip install --upgrade pip
+#5 DONE 2.3s
+
+#6 exporting to image
+#6 exporting layers
+#6 exporting layers 0.2s done
+#6 writing image sha256:29eb3422d1bc639573fbf05b26a668d5ea507832417324c443b20b445c86ea42 done
+#6 naming to docker.io/library/ai-infra-book-image1204:local done
+#6 DONE 0.3s

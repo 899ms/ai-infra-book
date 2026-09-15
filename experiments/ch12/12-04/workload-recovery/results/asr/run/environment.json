@@ -1,0 +1,34 @@
+{
+  "workload": "asr",
+  "python": "3.11.16 (main, Aug 13 2026, 19:40:50) [GCC 14.2.0]",
+  "packages": {
+    "aioquic": "1.3.0",
+    "h11": "0.16.0",
+    "cryptography": "50.0.1"
+  },
+  "certificate_sha256": "7f2a582d8812d2383bc82596ee3ff43cb09c7d5a1fc0ca03e527c020420972be",
+  "sources": [
+    {
+      "upload_file": "audio.wav",
+      "response_file": "transcript.txt",
+      "upload_sha256": "8489119d2e8701e68bc1767fbb3495cd5f52d8d48692d1b7bdfa5a9f028c91f6",
+      "response_sha256": "48ebb5d434fd08d8954f4c2e221285ff18e9652afc3f8a6437c2b284cd1108df",
+      "service_s": 0.622926892,
+      "source_sha256": {
+        "experiments/ch12/12-07/tts-stream/runs/3-stream-true/request.json": "3b69cd02a5d106f9f2694e14c9ed638e75d7494b56bef34fb323f91b69c1825c",
+        "experiments/ch12/12-04/speech-records/asr-results/requests.json": "edc628f0ec4a639e65144e93a1bb04f8d4c132eb23b1e3620b9d9d52ab13fe15",
+        "experiments/ch12/12-04/speech-records/asr-results/environment.json": "572ed16382e8a26aeb0c01122994a1e5b4964d6d158345570bf3e7935467db34"
+      },
+      "scope": "Actual ASR input/result with median GPU service-time replay; no per-protocol model execution"
+    }
+  ],
+  "source_sha256": {
+    "run.py": "b77d0b015aa50b0997687dbe2109bff6191982ebe126e8a0dd2c465c5fb308cb",
+    "producer.py": "a75a9dca74b37628c86153c4eb73f0b3b7df4704527c1b39422fc3554a3a6fbc",
+    "transport.py": "7be4128c15b78d7ab08701a9600317fa79858a09acc89c860356be8cf6ea9a6c",
+    "fixtures.py": "3af191bd7da9303ebdc25a38600446fd60e8b18ff40f921f2e7ca52c67e3bae5",
+    "PROTOCOL.md": "ed79ae20104225094cd3d03504a7729790f541d90638135277f355fd5c4123dd",
+    "../image-records/run_network120.py": "dad123618db728352dc43091f42c2c93383ffc01b7c199f9226ee1cc9f071d05"
+  },
+  "scope": "Recorded model producer survives client connection loss; actual transfers, no fresh GPU inference or browser actions"
+}

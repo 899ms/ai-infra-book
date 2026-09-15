@@ -1,0 +1,224 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 310B done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/python:3.11-slim
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context:
+#3 transferring context: 2B done
+#3 DONE 0.1s
+
+#4 [1/4] FROM docker.io/library/python:3.11-slim
+#4 CACHED
+
+#5 [2/4] RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends iproute2 iputils-ping iperf3 && rm -rf /var/lib/apt/lists/*
+#5 0.217 Get:1 http://deb.debian.org/debian trixie InRelease [140 kB]
+#5 0.229 Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+#5 0.229 Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+#5 0.242 Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9678 kB]
+#5 0.338 Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [4412 B]
+#5 0.339 Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [261 kB]
+#5 0.793 Fetched 10.2 MB in 1s (17.2 MB/s)
+#5 0.793 Reading package lists...
+#5 1.193 Reading package lists...
+#5 1.590 Building dependency tree...
+#5 1.710 Reading state information...
+#5 1.861 The following additional packages will be installed:
+#5 1.861   libbpf1 libcap2 libcap2-bin libcom-err2 libelf1t64 libgssapi-krb5-2
+#5 1.861   libidn2-0 libiperf0 libk5crypto3 libkeyutils1 libkrb5-3 libkrb5support0
+#5 1.861   libmnl0 libsctp1 libtirpc-common libtirpc3t64 libunistring5 libxtables12
+#5 1.862 Suggested packages:
+#5 1.862   python3:any krb5-doc krb5-user lksctp-tools
+#5 1.862 Recommended packages:
+#5 1.862   linux-sysctl-defaults libpam-cap krb5-locales
+#5 1.948 The following NEW packages will be installed:
+#5 1.948   iperf3 iproute2 iputils-ping libbpf1 libcap2-bin libcom-err2 libelf1t64
+#5 1.948   libgssapi-krb5-2 libidn2-0 libiperf0 libk5crypto3 libkeyutils1 libkrb5-3
+#5 1.949   libkrb5support0 libmnl0 libsctp1 libtirpc-common libtirpc3t64 libunistring5
+#5 1.949   libxtables12
+#5 1.950 The following packages will be upgraded:
+#5 1.950   libcap2
+#5 1.976 1 upgraded, 20 newly installed, 0 to remove and 23 not upgraded.
+#5 1.976 Need to get 3064 kB of archives.
+#5 1.976 After this operation, 11.4 MB of additional disk space will be used.
+#5 1.976 Get:1 http://deb.debian.org/debian trixie/main amd64 libsctp1 amd64 1.0.21+dfsg-1 [25.8 kB]
+#5 1.979 Get:2 http://deb.debian.org/debian trixie/main amd64 libiperf0 amd64 3.18-2+deb13u2 [100 kB]
+#5 1.982 Get:3 http://deb.debian.org/debian trixie/main amd64 iperf3 amd64 3.18-2+deb13u2 [37.3 kB]
+#5 1.982 Get:4 http://deb.debian.org/debian trixie/main amd64 libcap2 amd64 1:2.75-10+deb13u1+b3 [29.0 kB]
+#5 1.984 Get:5 http://deb.debian.org/debian trixie/main amd64 libelf1t64 amd64 0.192-4 [189 kB]
+#5 1.988 Get:6 http://deb.debian.org/debian trixie/main amd64 libbpf1 amd64 1:1.5.0-3 [169 kB]
+#5 1.990 Get:7 http://deb.debian.org/debian trixie/main amd64 libmnl0 amd64 1.0.5-3 [11.9 kB]
+#5 1.990 Get:8 http://deb.debian.org/debian trixie/main amd64 libkrb5support0 amd64 1.21.3-5+deb13u1 [33.1 kB]
+#5 1.990 Get:9 http://deb.debian.org/debian trixie/main amd64 libcom-err2 amd64 1.47.2-3+b12 [25.0 kB]
+#5 1.990 Get:10 http://deb.debian.org/debian trixie/main amd64 libk5crypto3 amd64 1.21.3-5+deb13u1 [81.2 kB]
+#5 1.991 Get:11 http://deb.debian.org/debian trixie/main amd64 libkeyutils1 amd64 1.6.3-6 [9456 B]
+#5 1.991 Get:12 http://deb.debian.org/debian trixie/main amd64 libkrb5-3 amd64 1.21.3-5+deb13u1 [326 kB]
+#5 1.994 Get:13 http://deb.debian.org/debian trixie/main amd64 libgssapi-krb5-2 amd64 1.21.3-5+deb13u1 [138 kB]
+#5 1.995 Get:14 http://deb.debian.org/debian trixie/main amd64 libtirpc-common all 1.3.6+ds-1 [11.0 kB]
+#5 1.995 Get:15 http://deb.debian.org/debian trixie/main amd64 libtirpc3t64 amd64 1.3.6+ds-1 [83.3 kB]
+#5 1.996 Get:16 http://deb.debian.org/debian trixie/main amd64 libxtables12 amd64 1.8.11-2 [31.9 kB]
+#5 2.005 Get:17 http://deb.debian.org/debian trixie/main amd64 libcap2-bin amd64 1:2.75-10+deb13u1+b3 [36.5 kB]
+#5 2.005 Get:18 http://deb.debian.org/debian trixie/main amd64 iproute2 amd64 6.15.0-1 [1089 kB]
+#5 2.009 Get:19 http://deb.debian.org/debian trixie/main amd64 libunistring5 amd64 1.3-2 [477 kB]
+#5 2.013 Get:20 http://deb.debian.org/debian trixie/main amd64 libidn2-0 amd64 2.3.8-2 [109 kB]
+#5 2.013 Get:21 http://deb.debian.org/debian trixie/main amd64 iputils-ping amd64 3:20240905-3 [51.2 kB]
+#5 2.474 Preconfiguring packages ...
+#5 2.581 Fetched 3064 kB in 0s (55.9 MB/s)
+#5 2.612 Selecting previously unselected package libsctp1:amd64.
+#5 2.612 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 5645 files and directories currently installed.)
+#5 2.615 Preparing to unpack .../libsctp1_1.0.21+dfsg-1_amd64.deb ...
+#5 2.627 Unpacking libsctp1:amd64 (1.0.21+dfsg-1) ...
+#5 2.672 Selecting previously unselected package libiperf0:amd64.
+#5 2.673 Preparing to unpack .../libiperf0_3.18-2+deb13u2_amd64.deb ...
+#5 2.679 Unpacking libiperf0:amd64 (3.18-2+deb13u2) ...
+#5 2.738 Selecting previously unselected package iperf3.
+#5 2.739 Preparing to unpack .../iperf3_3.18-2+deb13u2_amd64.deb ...
+#5 2.746 Unpacking iperf3 (3.18-2+deb13u2) ...
+#5 2.791 Preparing to unpack .../libcap2_1%3a2.75-10+deb13u1+b3_amd64.deb ...
+#5 2.809 Unpacking libcap2:amd64 (1:2.75-10+deb13u1+b3) over (1:2.75-10+deb13u1+b1) ...
+#5 2.870 Setting up libcap2:amd64 (1:2.75-10+deb13u1+b3) ...
+#5 2.926 Selecting previously unselected package libelf1t64:amd64.
+#5 2.926 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 5672 files and directories currently installed.)
+#5 2.929 Preparing to unpack .../00-libelf1t64_0.192-4_amd64.deb ...
+#5 2.936 Unpacking libelf1t64:amd64 (0.192-4) ...
+#5 2.987 Selecting previously unselected package libbpf1:amd64.
+#5 2.987 Preparing to unpack .../01-libbpf1_1%3a1.5.0-3_amd64.deb ...
+#5 2.994 Unpacking libbpf1:amd64 (1:1.5.0-3) ...
+#5 3.043 Selecting previously unselected package libmnl0:amd64.
+#5 3.044 Preparing to unpack .../02-libmnl0_1.0.5-3_amd64.deb ...
+#5 3.050 Unpacking libmnl0:amd64 (1.0.5-3) ...
+#5 3.097 Selecting previously unselected package libkrb5support0:amd64.
+#5 3.098 Preparing to unpack .../03-libkrb5support0_1.21.3-5+deb13u1_amd64.deb ...
+#5 3.104 Unpacking libkrb5support0:amd64 (1.21.3-5+deb13u1) ...
+#5 3.168 Selecting previously unselected package libcom-err2:amd64.
+#5 3.169 Preparing to unpack .../04-libcom-err2_1.47.2-3+b12_amd64.deb ...
+#5 3.175 Unpacking libcom-err2:amd64 (1.47.2-3+b12) ...
+#5 3.219 Selecting previously unselected package libk5crypto3:amd64.
+#5 3.220 Preparing to unpack .../05-libk5crypto3_1.21.3-5+deb13u1_amd64.deb ...
+#5 3.226 Unpacking libk5crypto3:amd64 (1.21.3-5+deb13u1) ...
+#5 3.275 Selecting previously unselected package libkeyutils1:amd64.
+#5 3.276 Preparing to unpack .../06-libkeyutils1_1.6.3-6_amd64.deb ...
+#5 3.282 Unpacking libkeyutils1:amd64 (1.6.3-6) ...
+#5 3.330 Selecting previously unselected package libkrb5-3:amd64.
+#5 3.331 Preparing to unpack .../07-libkrb5-3_1.21.3-5+deb13u1_amd64.deb ...
+#5 3.337 Unpacking libkrb5-3:amd64 (1.21.3-5+deb13u1) ...
+#5 3.402 Selecting previously unselected package libgssapi-krb5-2:amd64.
+#5 3.402 Preparing to unpack .../08-libgssapi-krb5-2_1.21.3-5+deb13u1_amd64.deb ...
+#5 3.408 Unpacking libgssapi-krb5-2:amd64 (1.21.3-5+deb13u1) ...
+#5 3.456 Selecting previously unselected package libtirpc-common.
+#5 3.457 Preparing to unpack .../09-libtirpc-common_1.3.6+ds-1_all.deb ...
+#5 3.463 Unpacking libtirpc-common (1.3.6+ds-1) ...
+#5 3.513 Selecting previously unselected package libtirpc3t64:amd64.
+#5 3.514 Preparing to unpack .../10-libtirpc3t64_1.3.6+ds-1_amd64.deb ...
+#5 3.523 Adding 'diversion of /lib/x86_64-linux-gnu/libtirpc.so.3 to /lib/x86_64-linux-gnu/libtirpc.so.3.usr-is-merged by libtirpc3t64'
+#5 3.532 Adding 'diversion of /lib/x86_64-linux-gnu/libtirpc.so.3.0.0 to /lib/x86_64-linux-gnu/libtirpc.so.3.0.0.usr-is-merged by libtirpc3t64'
+#5 3.536 Unpacking libtirpc3t64:amd64 (1.3.6+ds-1) ...
+#5 3.583 Selecting previously unselected package libxtables12:amd64.
+#5 3.584 Preparing to unpack .../11-libxtables12_1.8.11-2_amd64.deb ...
+#5 3.590 Unpacking libxtables12:amd64 (1.8.11-2) ...
+#5 3.627 Selecting previously unselected package libcap2-bin.
+#5 3.628 Preparing to unpack .../12-libcap2-bin_1%3a2.75-10+deb13u1+b3_amd64.deb ...
+#5 3.634 Unpacking libcap2-bin (1:2.75-10+deb13u1+b3) ...
+#5 3.691 Selecting previously unselected package iproute2.
+#5 3.691 Preparing to unpack .../13-iproute2_6.15.0-1_amd64.deb ...
+#5 3.730 Unpacking iproute2 (6.15.0-1) ...
+#5 3.803 Selecting previously unselected package libunistring5:amd64.
+#5 3.803 Preparing to unpack .../14-libunistring5_1.3-2_amd64.deb ...
+#5 3.809 Unpacking libunistring5:amd64 (1.3-2) ...
+#5 3.877 Selecting previously unselected package libidn2-0:amd64.
+#5 3.878 Preparing to unpack .../15-libidn2-0_2.3.8-2_amd64.deb ...
+#5 3.884 Unpacking libidn2-0:amd64 (2.3.8-2) ...
+#5 3.925 Selecting previously unselected package iputils-ping.
+#5 3.926 Preparing to unpack .../16-iputils-ping_3%3a20240905-3_amd64.deb ...
+#5 3.932 Unpacking iputils-ping (3:20240905-3) ...
+#5 3.982 Setting up libkeyutils1:amd64 (1.6.3-6) ...
+#5 4.010 Setting up libtirpc-common (1.3.6+ds-1) ...
+#5 4.032 Setting up libcom-err2:amd64 (1.47.2-3+b12) ...
+#5 4.050 Setting up libelf1t64:amd64 (0.192-4) ...
+#5 4.069 Setting up libkrb5support0:amd64 (1.21.3-5+deb13u1) ...
+#5 4.087 Setting up libcap2-bin (1:2.75-10+deb13u1+b3) ...
+#5 4.105 Setting up libunistring5:amd64 (1.3-2) ...
+#5 4.122 Setting up libmnl0:amd64 (1.0.5-3) ...
+#5 4.140 Setting up libk5crypto3:amd64 (1.21.3-5+deb13u1) ...
+#5 4.158 Setting up libxtables12:amd64 (1.8.11-2) ...
+#5 4.176 Setting up libsctp1:amd64 (1.0.21+dfsg-1) ...
+#5 4.194 Setting up libkrb5-3:amd64 (1.21.3-5+deb13u1) ...
+#5 4.212 Setting up libbpf1:amd64 (1:1.5.0-3) ...
+#5 4.230 Setting up libidn2-0:amd64 (2.3.8-2) ...
+#5 4.248 Setting up libiperf0:amd64 (3.18-2+deb13u2) ...
+#5 4.266 Setting up libgssapi-krb5-2:amd64 (1.21.3-5+deb13u1) ...
+#5 4.285 Setting up iputils-ping (3:20240905-3) ...
+#5 4.303 Setting up libtirpc3t64:amd64 (1.3.6+ds-1) ...
+#5 4.319 Setting up iperf3 (3.18-2+deb13u2) ...
+#5 4.571 Setting up iproute2 (6.15.0-1) ...
+#5 4.669 Processing triggers for libc-bin (2.41-12+deb13u3) ...
+#5 DONE 4.8s
+
+#6 [3/4] RUN pip install --no-cache-dir aioquic==1.3.0 h11==0.16.0 Pillow==12.1.1
+#6 1.059 Collecting aioquic==1.3.0
+#6 1.076   Downloading aioquic-1.3.0-cp310-abi3-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl.metadata (6.3 kB)
+#6 1.090 Collecting h11==0.16.0
+#6 1.093   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+#6 1.188 Collecting Pillow==12.1.1
+#6 1.191   Downloading pillow-12.1.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (8.8 kB)
+#6 1.206 Collecting certifi (from aioquic==1.3.0)
+#6 1.209   Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+#6 1.352 Collecting cryptography>=42.0.0 (from aioquic==1.3.0)
+#6 1.355   Downloading cryptography-50.0.1-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (4.3 kB)
+#6 1.378 Collecting pylsqpack<0.4.0,>=0.3.3 (from aioquic==1.3.0)
+#6 1.380   Downloading pylsqpack-0.3.24-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.1 kB)
+#6 1.392 Collecting pyopenssl>=24 (from aioquic==1.3.0)
+#6 1.394   Downloading pyopenssl-26.4.0-py3-none-any.whl.metadata (22 kB)
+#6 1.403 Collecting service-identity>=24.1.0 (from aioquic==1.3.0)
+#6 1.406   Downloading service_identity-26.1.0-py3-none-any.whl.metadata (4.8 kB)
+#6 1.471 Collecting cffi>=2.0.0 (from cryptography>=42.0.0->aioquic==1.3.0)
+#6 1.474   Downloading cffi-2.1.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.5 kB)
+#6 1.499 Collecting typing-extensions>=4.9 (from pyopenssl>=24->aioquic==1.3.0)
+#6 1.502   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+#6 1.515 Collecting attrs>=19.1.0 (from service-identity>=24.1.0->aioquic==1.3.0)
+#6 1.517   Downloading attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+#6 1.537 Collecting pycparser (from cffi>=2.0.0->cryptography>=42.0.0->aioquic==1.3.0)
+#6 1.540   Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+#6 1.550 Downloading aioquic-1.3.0-cp310-abi3-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl (2.4 MB)
+#6 1.574    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.4/2.4 MB 111.9 MB/s eta 0:00:00
+#6 1.577 Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+#6 1.581 Downloading pillow-12.1.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (7.0 MB)
+#6 1.642    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7.0/7.0 MB 119.3 MB/s eta 0:00:00
+#6 1.645 Downloading cryptography-50.0.1-cp311-abi3-manylinux_2_34_x86_64.whl (4.7 MB)
+#6 1.686    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 119.6 MB/s eta 0:00:00
+#6 1.689 Downloading pylsqpack-0.3.24-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (250 kB)
+#6 1.691    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 250.3/250.3 kB 146.7 MB/s eta 0:00:00
+#6 1.694 Downloading pyopenssl-26.4.0-py3-none-any.whl (56 kB)
+#6 1.695    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 56.0/56.0 kB 588.2 MB/s eta 0:00:00
+#6 1.698 Downloading service_identity-26.1.0-py3-none-any.whl (11 kB)
+#6 1.700 Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+#6 1.702    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 137.0/137.0 kB 259.7 MB/s eta 0:00:00
+#6 1.705 Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+#6 1.706    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 67.5/67.5 kB 604.7 MB/s eta 0:00:00
+#6 1.709 Downloading cffi-2.1.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (217 kB)
+#6 1.711    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 217.8/217.8 kB 198.5 MB/s eta 0:00:00
+#6 1.714 Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+#6 1.715    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 45.6/45.6 kB 563.9 MB/s eta 0:00:00
+#6 1.717 Downloading pycparser-3.0-py3-none-any.whl (48 kB)
+#6 1.718    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 48.2/48.2 kB 568.2 MB/s eta 0:00:00
+#6 1.814 Installing collected packages: typing-extensions, pylsqpack, pycparser, Pillow, h11, certifi, attrs, cffi, cryptography, service-identity, pyopenssl, aioquic
+#6 2.360 Successfully installed Pillow-12.1.1 aioquic-1.3.0 attrs-26.1.0 certifi-2026.7.22 cffi-2.1.1 cryptography-50.0.1 h11-0.16.0 pycparser-3.0 pylsqpack-0.3.24 pyopenssl-26.4.0 service-identity-26.1.0 typing-extensions-4.16.0
+#6 2.360 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#6 2.400 
+#6 2.400 [notice] A new release of pip is available: 24.0 -> 26.2.1
+#6 2.400 [notice] To update, run: pip install --upgrade pip
+#6 DONE 2.8s
+
+#7 [4/4] WORKDIR /experiment
+#7 DONE 0.1s
+
+#8 exporting to image
+#8 exporting layers
+#8 exporting layers 0.2s done
+#8 writing image sha256:bc544dc84aa48ca11602c4840b9f9642c129fa882ce24d4579dedf80c6026396 done
+#8 naming to docker.io/library/ai-infra-book-net1204:local done
+#8 DONE 0.2s

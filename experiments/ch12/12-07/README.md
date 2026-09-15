@@ -1,3 +1,11 @@
+## Original requirement verified
+
+[Completion review](COMPLETION-REVIEW.md): the baseline/pool comparison, two-endpoint first-playable PCM, device-source starvation, cancellation records and SVG fulfill historical12-7. Acoustic onset remains unmeasured; it is not an explicit first-playable requirement. The partial-status notes below are historical and superseded by this review.
+
+## Model cancellation boundary measured
+
+[Isolated Fish Speech backend experiment](model-cancel/README.md): one warmup and three full/cancel pairs completed. Every cancellation left11 semantic chunks finishing after client close, including10 after HTTP handler exit. Natural completion followed cancellation by24.7–42.9s. This is measured failure to cancel queued model work, not a cancellation acknowledgement; same-host clocks and CUDA-sync observation are explicit. GPU process exited and cleanup verified. Acoustic measurement and final requirement review remain pending.
+
 # 12-7：Queqiao 的单因素比较
 
 **总体部分完成。** [固定音频隧道实跑](audio-tunnel/README.md)已完成原生 Queqiao／TUIC 基线的 8 次完整流和 8 次主动取消：音频逐字节一致，三帧预缓冲的软件消费端未空缓冲，origin 观察到关闭。另已补实际静音输出设备回调；另有Mac—RTX两端实跑，但默认经既有TUN；另已补显式en0绑定与RTX来源核验；声学测量与模型取消仍缺。

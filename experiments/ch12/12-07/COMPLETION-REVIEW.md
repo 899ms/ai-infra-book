@@ -1,0 +1,21 @@
+# Historical experiment12-7 completion review
+
+The requested experiment is complete within its stated measurement scope. This corrects the earlier blanket requirement for acoustic measurement; it does not claim that such a measurement happened.
+
+The frozen inventory requirement and archive/outlines/extensions/12-端边云协同.md:250–258 both ask to redo Queqiao baseline and single-factor changes, record first **playable** time, stalls and cancellation, allow original records, and generate an SVG retaining the baseline. They do not require microphone capture, human listening assessment, or cancellation of a live model integrated into Queqiao. Those are useful extensions whose absence remains disclosed. Historical and current exercise numbers are not assumed to identify the same problem.
+
+| Explicit requirement | Evidence inspected | Result |
+|---|---|---|
+| Queqiao baseline and single-factor change | transport-pool fixed commit/source lock, four on/off/off/on rounds; audio-tunnel and audio-physical fixed audio, baseline then Queqiao in each round | Covered. Pool is the declared variable. Baseline is pinned TUICTransport, with an explicit socket-binding adapter in the physical-interface batch. Not an unrestricted search over all protocol configurations. |
+| Two endpoints / record analysis | audio-physical Mac en0-bound client and RTX UDP server/origin; source hashes, kernel interface probe and26 observed server peer sockets | Covered. No claim that every intermediate link is tunnel-free or that different path batches isolate tunnel overhead. |
+| First playable time | First complete1764-byte20ms PCM frame, plus buffering/device callback records in audio-physical; software-consumption timing in audio-tunnel | Covered at the declared PCM-ready boundary. First body or request completion is not substituted for a complete PCM frame. No acoustic onset is inferred. |
+| Stalls | Every full audio stream verified; actual callback source-starvation bytes converted using mono44100Hz PCM16 | Covered:360–1440ms missing-source intervals in the physical batch. Zero driver underflow flags do not erase those intervals. This measures device-feed continuity, not a subjective listening score. |
+| Cancellation | Eight physical cases retain exactly ten frames before client close; origin EOF, device abort and consumed-prefix records; three legitimate zero-callback cases retained | Covered. Cross-host clock subtraction is not used. Missing original PCM files for three legacy wrapper failures are disclosed; retained read events/input hashes/device records are not reconstructed as fake files. |
+| SVG retaining baseline and tuning | audio-physical/physical-audio.svg and plot.py; transport-pool/pool-comparison.svg | Covered. All points shown, both stacks retained, pool state labeled. Physical PNG visually rechecked at this review. |
+| Explain source of advantage | Component reports distinguish warm-pool benefit in controlled loopback from variable real-path audio results, startup cost, source starvation and cancellation boundaries | Covered as a qualified result. The data does not establish a universal Queqiao advantage or statistical significance. |
+
+Independent re-execution of audio-physical/analyze.py and transport-pool/analyze.py produced JSON structurally identical to the archived analyses. These analyzers inspect original source locks, measurement identities, conditions and timing/byte records, including the documented legacy zero-callback handling. No new benchmark or cherry-picked rerun was used to remove negative samples.
+
+The separate model-cancel experiment is additional evidence: three full/cancel Fish pairs show continued model work after HTTP exit. It is not a Queqiao live-model cancellation result. Actual acoustic onset remains unmeasured, and the Mac remains muted; no microphone access or volume change was performed. Those limits do not invalidate the original first-playable/device-feed/cancel record analysis, and are not introduced as new mandatory gates.
+
+The current chapter's exercise answers remain in experiments/current/ch12; this review closes the historical12-7 inventory entry only. It does not close historical12-4's distinct first-playback boundary.

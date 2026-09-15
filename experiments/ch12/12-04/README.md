@@ -1,25 +1,25 @@
 # 实验 12-4：连接复用与多流传输
 
-对应正文 12.2。本目录交付两组真实传输实测，均走本地真实 socket，**不是用计时模拟协议**。
+**已按原题允许的计算／网络记录范围完成。** 四类实际源计算、连接复用、匹配窗口、分块/释放、恢复与贡献分析均已核验。[播放记录计算](playback-records/README.md)将196条实测TTS到达轨迹转换成明确三帧缓冲策略下的首次播放、逐帧消费与停顿。实际声学起播未测，不冒充人耳或麦克风测量；原题没有额外声学必需条件。逐项证据与此范围判定见[覆盖审查](COVERAGE-REVIEW.md)。
 
-## 两组记录
+本实验使用本地Mac与RTX服务器，以及隔离Docker中的真实TCP/TLS和QUIC传输，无E2B依赖。源模型/CPU计算实际执行过；网络矩阵使用固定真实输入输出及已测服务时间/可用时间记录重放，不把每次传输算作新推理或新浏览器任务。固定网络为容器loopback netem配置80ms RTT、20Mbit/s、0.1%损失；部分复用实验另有零损失对照。早期短校准RTT约80.12ms、TCP有效吞吐17.4–17.7Mbit/s，配置带宽与应用goodput不等同。
 
-- [loopback/](loopback/README.md)：HTTP/1.1 over TCP+TLS1.3 与 HTTP/3 over QUIC 的对照。**192 个正式请求 ＋ 2 个预热，194/194 上传与回传字节校验通过**；HTTP/1.1 实际协商 TLSv1.3／ALPN `http/1.1`，HTTP/3 实际握手 ALPN `h3`，97 个成功响应头与 DATA 帧由原始 qlog 复核。两路径共享 64 KiB 固定载荷与同一现场生成的自签证书。没有 HTTP/2，也没有 0-RTT／会话恢复。
-- [h3-multistream/](h3-multistream/README.md)：HTTP/3 单连接多流真实 PNG 传输。正式批次 144 次请求 ＋ 18 次连接预热共 **162 次响应全部通过 PNG 字节与 RGBA 像素校验**；此前独立 smoke 的 48 次请求与 6 次预热也全部通过。并发条件下客户端在途与服务端接收的重叠峰值**实际达到 8**，串行条件均为 1。
+| 子项 | 当前证据 |
+|---|---|
+| 图片源与复用 | [Mac/RTX RAW处理与成片](image-records/README.md)：各1预热3正式；最终26/26传输经完整JPEG/RGB核验。初始超时批次保留。 |
+| ASR源与复用 | [Whisper实际识别与52网络交换](speech-records/README.md)：固定Fish音频、完整UTF8结果；对合成意图文本的编辑距不当作人工声学真值。 |
+| TTS源与复用 | [52次完整音频传输](tts-network/README.md)：294段源接收可用时序重放，完整WAV/PCM、首20ms及三帧阈值核验。 |
+| Computer Use源与复用 | [真实截图模型任务与98交换](computer-use/README.md)：无约束3次均JSON失败；独立结构化解码3次均完成8动作，失败记录保留。网络阶段为固定八轮动作记录。 |
+| 接收窗口 | [匹配设置324交换](receive-windows/README.md)：四负载、三配置、三位置平衡轮次，显式TCP_NODELAY=1/proto6与实际readback，全部通过。 |
+| TTS释放/分块 | [90交换](tts-chunking/README.md)：原294段、64KiB合并、整段等待；全字节与释放时间核验。 |
+| 应用写入分块 | [transfer-chunks](transfer-chunks/README.md)：whole/16KiB/64KiB，三负载270交换全部验证，27容器已清理。 |
+| 图片恢复 | [20任务/32交换](interrupted-recovery/README.md)：12次断连，完整重传与保留不可变输出续传，完整成片身份核验。 |
+| 其余负载恢复 | [workload-recovery](workload-recovery/PROTOCOL.md)：合同、运行器、独立分析器已准备，60任务/222交换/36断连全部独立验收，三容器已清理。 |
 
-## 结论
+匹配窗口前发现手工socket的proto元数据影响asyncio默认NODELAY行为，[同镜像探针](socket-defaults/README.md)对此做了复核。旧窗口批次保留并注明条件，不与新的NODELAY1矩阵混合。随机损失、共享事件循环、qlog及测量开销都可能影响结果；小样本中位数不支持一般协议排名。
 
-连接复用与多流是两件不同的事，两组记录分别给出证据：
+附加协议证据包括[固定网络校准与388交换](controlled-network/README.md)、[HTTP3实际多流并发](h3-multistream/README.md)及[早期loopback记录与勘误](loopback/README.md)。这些记录不替代四类业务结果。客户端是归档h11/aioquic实现，default表示这些实现的默认设置，不声称代表所有浏览器或网络库。
 
-1. **协议本身的差别在本地 loopback 上很小**，因为没有丢包、没有排队，QUIC 的主要优势（连接迁移、无队头阻塞）用不上。194/194 字节校验说明两条路径功能等价——**要比较协议，必须在有损网络上比**。
-2. **单连接多流真正做到了并发**：在途峰值 8 对串行的 1，证明多流不是"轮流用一条连接"。这是连接复用能兑现的部分。
+[跨负载贡献分析](CONTRIBUTIONS.md)汇总同批次对照与限制。
 
-## 独立运行
-
-各子目录自带运行入口与依赖锁文件（`requirements-lock.txt`）。本地 Mac arm64、Python 3.14.7、h11 0.16.0、aioquic 1.3.0。
-
-## 限制
-
-- 本地 loopback，无丢包、无排队、无跨主机路径；不能据此排名两种协议在广域网上的表现。
-- 原需求中的图片成片、ASR/TTS、Computer Use 结果及固定广域网络条件仍未完成——这几项的时间预算由实验 12-2 的计算给出。
-- 证书为现场生成的自签测试证书，客户端将其作为可信 CA 验证 localhost SAN；不代表生产 PKI 路径的开销。
+[历史进展记录](PROGRESS-HISTORY.md)保留各中间检查点。复跑入口、原始结果、分析器及适用限制见各子目录。不同实验的服务/连接清理/结果验证边界须分别读取，不混合绝对延迟。

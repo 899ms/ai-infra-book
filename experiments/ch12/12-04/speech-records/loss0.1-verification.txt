@@ -1,0 +1,99 @@
+{
+  "status": "26/26 actual ASR upload/result record replays under Docker netem including 2 warmups; model service is a calibrated wait",
+  "conditions": [
+    {
+      "protocol": "h1",
+      "reuse": false,
+      "concurrency": 1,
+      "requests": 6,
+      "valid": 6,
+      "connections": 6,
+      "median_attempt_ms": 1553.0964793870226,
+      "median_ready_to_body_complete_ms": 1390.164625016041,
+      "median_request_to_first_body_ms": 1390.1371485553682,
+      "per_trial_attempt_median_ms": [
+        1553.1249945051968,
+        1553.455285495147,
+        1553.0316858785227
+      ]
+    },
+    {
+      "protocol": "h1",
+      "reuse": true,
+      "concurrency": 1,
+      "requests": 6,
+      "valid": 6,
+      "connections": 3,
+      "median_attempt_ms": 1386.6536299465224,
+      "median_ready_to_body_complete_ms": 1305.1658830372617,
+      "median_request_to_first_body_ms": 1305.1357199437916,
+      "per_trial_attempt_median_ms": [
+        1386.7291025817394,
+        1387.5744719989598,
+        1386.6536299465224
+      ]
+    },
+    {
+      "protocol": "h3",
+      "reuse": false,
+      "concurrency": 1,
+      "requests": 6,
+      "valid": 6,
+      "connections": 6,
+      "median_attempt_ms": 1671.2491086218506,
+      "median_ready_to_body_complete_ms": 1585.0938964867964,
+      "median_request_to_first_body_ms": 1585.092327091843,
+      "per_trial_attempt_median_ms": [
+        3402.281040442176,
+        1556.534425006248,
+        1671.2491086218506
+      ]
+    },
+    {
+      "protocol": "h3",
+      "reuse": true,
+      "concurrency": 1,
+      "requests": 6,
+      "valid": 6,
+      "connections": 3,
+      "median_attempt_ms": 1799.1234440123662,
+      "median_ready_to_body_complete_ms": 1739.0409419313073,
+      "median_request_to_first_body_ms": 1739.0398149145767,
+      "per_trial_attempt_median_ms": [
+        1780.2076045190915,
+        1640.2587994234636,
+        2202.7022470720112
+      ]
+    }
+  ],
+  "handshake_median_ms": {
+    "h1": 162.8917990019545,
+    "h3": 85.78820689581335
+  },
+  "qlog_events": {
+    "http:stream_type_set": 60,
+    "transport:version_information": 10,
+    "transport:alpn_information": 10,
+    "transport:parameters_set": 20,
+    "recovery:metrics_updated": 18600,
+    "transport:packet_sent": 13490,
+    "transport:datagrams_sent": 13470,
+    "transport:datagrams_received": 5189,
+    "transport:packet_received": 5199,
+    "security:key_updated": 40,
+    "transport:packet_dropped": 10,
+    "http:frame_created": 26,
+    "connectivity:spin_bit_updated": 5179,
+    "security:key_retired": 40,
+    "http:frame_parsed": 26,
+    "recovery:packet_lost": 13
+  },
+  "qlog_drop_triggers": {
+    "header_parse_error": 10
+  },
+  "configured_loss_percent": 0.1,
+  "configured_rtt_ms": 80,
+  "configured_rate_mbit_s": 20,
+  "calibration_file": "../controlled-network/calibration-summary.json",
+  "model_service_replay_s": 0.622926892
+}

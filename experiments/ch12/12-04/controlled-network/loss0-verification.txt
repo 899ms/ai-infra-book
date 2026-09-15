@@ -1,0 +1,161 @@
+{
+  "status": "194/194 byte-exact echo responses under Docker netem including 2 warmups; transport comparison only",
+  "conditions": [
+    {
+      "protocol": "h1",
+      "reuse": false,
+      "concurrency": 1,
+      "requests": 24,
+      "valid": 24,
+      "connections": 24,
+      "median_attempt_ms": 296.6308230534196,
+      "median_ready_to_body_complete_ms": 133.30457638949156,
+      "median_request_to_first_body_ms": 123.79523646086454,
+      "per_trial_attempt_median_ms": [
+        296.10174894332886,
+        297.08378901705146,
+        296.557167544961
+      ]
+    },
+    {
+      "protocol": "h1",
+      "reuse": false,
+      "concurrency": 4,
+      "requests": 24,
+      "valid": 24,
+      "connections": 24,
+      "median_attempt_ms": 400.988872977905,
+      "median_ready_to_body_complete_ms": 209.15660343598574,
+      "median_request_to_first_body_ms": 199.6847529662773,
+      "per_trial_attempt_median_ms": [
+        400.6751000415534,
+        407.6008955016732,
+        407.15077647473663
+      ]
+    },
+    {
+      "protocol": "h1",
+      "reuse": true,
+      "concurrency": 1,
+      "requests": 24,
+      "valid": 24,
+      "connections": 3,
+      "median_attempt_ms": 133.36411293130368,
+      "median_ready_to_body_complete_ms": 133.2744493847713,
+      "median_request_to_first_body_ms": 133.1555270589888,
+      "per_trial_attempt_median_ms": [
+        133.32748040556908,
+        133.3279365208,
+        133.45574506092817
+      ]
+    },
+    {
+      "protocol": "h1",
+      "reuse": true,
+      "concurrency": 4,
+      "requests": 24,
+      "valid": 24,
+      "connections": 12,
+      "median_attempt_ms": 311.3812244264409,
+      "median_ready_to_body_complete_ms": 261.36020908597857,
+      "median_request_to_first_body_ms": 253.92227701377124,
+      "per_trial_attempt_median_ms": [
+        311.4187899045646,
+        311.35802948847413,
+        311.64764903951436
+      ]
+    },
+    {
+      "protocol": "h3",
+      "reuse": false,
+      "concurrency": 1,
+      "requests": 24,
+      "valid": 24,
+      "connections": 24,
+      "median_attempt_ms": 565.7903819810599,
+      "median_ready_to_body_complete_ms": 479.4432671042159,
+      "median_request_to_first_body_ms": 285.8513955725357,
+      "per_trial_attempt_median_ms": [
+        564.7516114404425,
+        567.2779524466023,
+        564.8951673647389
+      ]
+    },
+    {
+      "protocol": "h3",
+      "reuse": false,
+      "concurrency": 4,
+      "requests": 24,
+      "valid": 24,
+      "connections": 24,
+      "median_attempt_ms": 588.3104254025966,
+      "median_ready_to_body_complete_ms": 500.93514507170767,
+      "median_request_to_first_body_ms": 293.9324430190027,
+      "per_trial_attempt_median_ms": [
+        588.3104254025966,
+        599.2137000430375,
+        588.428373564966
+      ]
+    },
+    {
+      "protocol": "h3",
+      "reuse": true,
+      "concurrency": 1,
+      "requests": 24,
+      "valid": 24,
+      "connections": 3,
+      "median_attempt_ms": 137.0156198972836,
+      "median_ready_to_body_complete_ms": 136.82874757796526,
+      "median_request_to_first_body_ms": 109.48943498078734,
+      "per_trial_attempt_median_ms": [
+        136.8590034544468,
+        137.04009645152837,
+        137.03578698914498
+      ]
+    },
+    {
+      "protocol": "h3",
+      "reuse": true,
+      "concurrency": 4,
+      "requests": 24,
+      "valid": 24,
+      "connections": 12,
+      "median_attempt_ms": 443.59674595762044,
+      "median_ready_to_body_complete_ms": 398.28068495262414,
+      "median_request_to_first_body_ms": 252.92975746560842,
+      "per_trial_attempt_median_ms": [
+        440.8563585020602,
+        444.46685747243464,
+        441.9024174567312
+      ]
+    }
+  ],
+  "handshake_median_ms": {
+    "h1": 163.54788350872695,
+    "h3": 86.24334842897952
+  },
+  "qlog_events": {
+    "http:stream_type_set": 384,
+    "transport:version_information": 64,
+    "transport:alpn_information": 64,
+    "transport:parameters_set": 128,
+    "recovery:metrics_updated": 8983,
+    "transport:packet_sent": 8706,
+    "transport:datagrams_sent": 8578,
+    "transport:datagrams_received": 8401,
+    "transport:packet_received": 8465,
+    "security:key_updated": 256,
+    "transport:packet_dropped": 64,
+    "http:frame_created": 194,
+    "connectivity:spin_bit_updated": 8337,
+    "security:key_retired": 256,
+    "http:frame_parsed": 194
+  },
+  "qlog_drop_triggers": {
+    "header_parse_error": 64
+  },
+  "configured_loss_percent": 0,
+  "configured_rtt_ms": 80,
+  "configured_rate_mbit_s": 20,
+  "calibration_file": "calibration-summary.json"
+}

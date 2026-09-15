@@ -1,0 +1,7 @@
+# Real TTS audio through controlled HTTP paths
+
+Use the unchanged PCM from12-7's full streaming Fish response, with valid WAV length fields. The observed source client's read offsets/times define an availability trace. This is not native model-chunk timing: it includes the source loopback/server/read overhead. Start that trace when the entire new request arrives at the replay origin, so it is an explicit availability-trace transplant, not a newly measured GPU service.
+
+Replay each source read at its recorded cumulative time, then transmit those bytes through actual HTTP1.1/TLS1.3 or HTTP3 in Docker. Keep the original corrected44-byte WAV header, and distinguish headers, first body, first complete20ms PCM frame (1764 PCM bytes), and three-frame buffer readiness. Save every client body-read offset/time; verify complete WAV/PCM identity. Playback times, if calculated, must be labeled software schedule calculations, not speaker output.
+
+Two previously calibrated netem profiles: configured80ms RTT/20Mbit/s/loss0 or0.1%. Each has26 requests: one warmup per protocol then three shuffled repetitions of protocol×reuse off/on, two sequential requests per condition. One request at a time; no model queue/concurrency inference. Source chunking is held fixed in this stage. Full recording and errors are retained; no warmup selected after observing results. Network protocols and qdisc state are verified. Docker only; no microphone or sound output.

@@ -1,3 +1,19 @@
+## Completed request-replay / storage-record scope
+
+[Requirement-by-requirement completion review](COMPLETION-REVIEW.md) integrates native GPU/host scans, actual local/remote page I/O,729 reference-policy scenarios and24 V4 state scenarios. [Figure9-7](final-comparison/figure-9-7.svg) shows retention, writing and recovery; [PDF](final-comparison/figure-9-7.pdf) is available for export. Historical notes below preserve the stages of work; the completion review supersedes their pending-work statements. No V4 execution, semantic task-quality or production-p95 claim is made.
+
+## V4 state accounting update
+
+[24 snapshot scenarios / 288 recovery records](v4-state-accounting/README.md) now account for window, compressed/index history and full FP32 compressor state. This uses the recorded Agent workload shape and pinned V4 layout; no V4 execution or latency claim. Final requirement/figure integration remains pending.
+
+## Agent storage and checkpoint replay update
+
+[Direct-I/O page measurements](agent-storage-io/README.md) verify197 real Agent KV pages through788 operations on RTX local storage. [Capacity/checkpoint replay](agent-policy-replay/README.md) covers729 logical four-tier retention/policy/fault scenarios using those records and the existing SSH measurements. The replay defines page-LRU, synchronous barriers and model timing proxies explicitly; it is not a newly measured four-tier serving system. V4 compressed/window-state accounting and final integration remain open.
+
+## Agent HBM/DRAM capacity update
+
+[GPU/host capacity scan](agent-host-capacity/README.md) and [independent host-capacity scan](agent-dram-capacity/README.md) completed180 model calls across five fresh engines, with all120 target outputs equal. Native counters show actual host recovery under pressure. With GPU pool4096 fixed, post-pressure token hit rate rises13.58%→61.44%→99.49% as host ratio rises1.01→1.25→2. Storage-capacity, save-policy and V4-state integration remain open; the overall historical experiment is still partial.
+
 # 9-8：HiCache 文件后端与正常重启恢复（部分完成）
 
 RTX PRO 6000 上，SGLang 0.5.13.post1 的原生 HiCacheFile 完成 Qwen3-8B BF16 写入及独立进程重启读取。固定 1024 token 输入、16 token 强制输出，每个进程连续请求三次。新进程首请求实际读取 64 个文件，报告从存储复用 1008 个 token；之后两次从显存复用。六次完整输出相同。

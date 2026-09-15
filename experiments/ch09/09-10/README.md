@@ -1,3 +1,9 @@
+## 首完成零缓存的后续机制验证
+
+[branch-observation](branch-observation/README.md)的四组18请求已完成主复核。两轮8请求波中，首完成native-4遇到prefetch占用4096/限额3289，被跳过预取且未登记ongoing；就绪检查返回true，pop loaded=0，实际prefill的prefix/host/storage均0，API cached=0。两个单请求对照均storage命中1008。这是后续固定配置批次的实际分支证据，不是把旧批次不存在的事件补写为已记录。
+
+独立分析器重跑通过。事件索引表曾把progress的原始return=true误显示为false；现由write_request_evidence.py直接从原始PID/seq读取return生成，旧错误文档保留。原始事件、分析和图未变。以下早期“原因未定位”描述只适用于当时封存批次，不再作为后续机制工作尚未完成的理由。9-10的多设备动态切换和综合部署缺口保持独立。
+
 # 实验 9-10：异构推理的完整部署
 
 对应正文 9.6 的核心练习。综合 PD 分离、AF 分离与共享 KV 池三项案例，按 Chat、Agentic、Real-time 请求选择硬件、切分和路由；先列可恢复状态与交接条件，再算服务目标与成本，最后说明哪些组合值得进一步实测。

@@ -1,0 +1,148 @@
+{
+  "exercise": "9-8",
+  "read_tokens": 1024,
+  "reused_tokens": 1008,
+  "read_pages": 64,
+  "reused_pages": 63,
+  "bytes_per_token": 147456,
+  "file_read_bytes": 150994944,
+  "reused_state_bytes": 148635648,
+  "unused_read_bytes": 2359296,
+  "token_reuse_fraction": 0.984375,
+  "missing_page_cases": [
+    {
+      "bf16_different_elements": 0,
+      "bf16_total_elements": 1179648,
+      "bf16_max_abs_difference": 0.0,
+      "case": "first",
+      "missing_page_index": 0,
+      "requests": [
+        {
+          "index": 0,
+          "elapsed_s": 17.04645134578459,
+          "cached_tokens": 0,
+          "details": null
+        },
+        {
+          "index": 1,
+          "elapsed_s": 0.20168115408159792,
+          "cached_tokens": 1008,
+          "details": {
+            "device": 1008,
+            "host": 0,
+            "storage": 0,
+            "storage_backend": "HiCacheFile"
+          }
+        },
+        {
+          "index": 2,
+          "elapsed_s": 0.18510361714288592,
+          "cached_tokens": 1008,
+          "details": {
+            "device": 1008,
+            "host": 0,
+            "storage": 0,
+            "storage_backend": "HiCacheFile"
+          }
+        }
+      ],
+      "get_calls": 0,
+      "get_file_bytes": 0,
+      "omitted_file_restored": true,
+      "restored_bitwise_matches_original": true,
+      "other_files_unchanged": true
+    },
+    {
+      "bf16_different_elements": 995403,
+      "bf16_total_elements": 1179648,
+      "bf16_max_abs_difference": 26.75,
+      "case": "middle",
+      "missing_page_index": 32,
+      "requests": [
+        {
+          "index": 0,
+          "elapsed_s": 1.1946705197915435,
+          "cached_tokens": 512,
+          "details": {
+            "device": 0,
+            "host": 0,
+            "storage": 512,
+            "storage_backend": "HiCacheFile"
+          }
+        },
+        {
+          "index": 1,
+          "elapsed_s": 0.19818214001134038,
+          "cached_tokens": 1008,
+          "details": {
+            "device": 1008,
+            "host": 0,
+            "storage": 0,
+            "storage_backend": "HiCacheFile"
+          }
+        },
+        {
+          "index": 2,
+          "elapsed_s": 0.1849832918960601,
+          "cached_tokens": 1008,
+          "details": {
+            "device": 1008,
+            "host": 0,
+            "storage": 0,
+            "storage_backend": "HiCacheFile"
+          }
+        }
+      ],
+      "get_calls": 32,
+      "get_file_bytes": 75497472,
+      "omitted_file_restored": true,
+      "restored_bitwise_matches_original": false,
+      "other_files_unchanged": true
+    }
+  ],
+  "verification": [
+    {
+      "script": "experiments/ch09/09-08/verify_manifest.py",
+      "exit_code": 0,
+      "stdout_sha256": "00a020badc4f31543ead42d424db95ec6eeca9dd4ba6ff56162e21870ed83d34"
+    },
+    {
+      "script": "experiments/ch09/09-08/missing-pages/analyze.py",
+      "exit_code": 0,
+      "stdout_sha256": "4264a19a13c4f5d3df745846f6cfccf868a2a423dd3d3e277a015788652fdf41"
+    },
+    {
+      "script": "experiments/ch09/09-08/missing-pages/verify_manifest.py",
+      "exit_code": 0,
+      "stdout_sha256": "74c04775924f8c3f0527278d358b3d5f24d990ec2e98c4995ea6aae74ed295bd"
+    },
+    {
+      "script": "experiments/ch09/09-08/truncated-request/verify.py",
+      "exit_code": 0,
+      "stdout_sha256": "779e5b1699ac2e3b3afee9911886643c14ea928f44b31ce75c91cca5326995e9"
+    },
+    {
+      "script": "experiments/ch09/09-08/truncated-request/verify_manifest.py",
+      "exit_code": 0,
+      "stdout_sha256": "8820ddc6ea85a229b56accf015918adede417ae391ed440a5c08ae958477000a"
+    },
+    {
+      "script": "experiments/ch09/09-08/storage-contract/verify.py",
+      "exit_code": 0,
+      "stdout_sha256": "46e10ff74a6f230cde02cf53da3a12738fbfa3a1ae73cab44f6533191beb3d2a"
+    },
+    {
+      "script": "experiments/ch09/09-08/storage-contract/verify_manifest.py",
+      "exit_code": 0,
+      "stdout_sha256": "4677121417252dce7d6072f598e01f6418063d2a5e2b06dbf0669a901e0b2d42"
+    }
+  ],
+  "scope": "Current explanatory exercise supported by retained GPU runs and CPU backend observations. No end-to-end version incompatibility experiment or physical disk byte claim. Historical full protocol remains incomplete.",
+  "source_sha256": {
+    "manuscripts/09-\u5206\u5e03\u5f0f\u63a8\u7406.md": "c0a232ddb6c038c17560f1e524d3e50129afd638493be711172cd589dd8f3088",
+    "experiments/ch09/09-08/summary.json": "950cbe0a7a050180f35da049520b6de3b75959ef71cccd76637c19524f6211b6",
+    "experiments/ch09/09-08/missing-pages/summary.json": "28605815ebd5793c4d645cfbcf651d21ac8b8505ab9e38df2a382e06c525e2ee",
+    "experiments/ch09/09-08/truncated-request/README.md": "f15bcb0f1794dcb912f40da99242f9dcdae2375ba855d5bb53b2d53dca18ad6d",
+    "experiments/ch09/09-08/storage-contract/README.md": "bdee66693fa9a9e823be6d2641f539c6431728e6ee88981c18d7e74822dabab4"
+  }
+}

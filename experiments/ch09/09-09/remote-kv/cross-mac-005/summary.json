@@ -1,0 +1,96 @@
+{
+  "status": "cross_mac_network_kv_recovery_verified",
+  "requests": [
+    {
+      "phase": "producer",
+      "index": 0,
+      "wall_s": 1.8251708399038762,
+      "cached_tokens": 0,
+      "details": {
+        "device": 0,
+        "host": 0,
+        "storage": 0
+      }
+    },
+    {
+      "phase": "producer",
+      "index": 1,
+      "wall_s": 0.21361365797929466,
+      "cached_tokens": 1008,
+      "details": {
+        "device": 1008,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      }
+    },
+    {
+      "phase": "producer",
+      "index": 2,
+      "wall_s": 0.18602681113407016,
+      "cached_tokens": 1008,
+      "details": {
+        "device": 1008,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      }
+    },
+    {
+      "phase": "consumer",
+      "index": 0,
+      "wall_s": 82.64192314702086,
+      "cached_tokens": 1008,
+      "details": {
+        "device": 0,
+        "host": 0,
+        "storage": 1008,
+        "storage_backend": "RemoteKV"
+      }
+    },
+    {
+      "phase": "consumer",
+      "index": 1,
+      "wall_s": 0.3439364340156317,
+      "cached_tokens": 1008,
+      "details": {
+        "device": 1008,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      }
+    },
+    {
+      "phase": "consumer",
+      "index": 2,
+      "wall_s": 0.3065945638809353,
+      "cached_tokens": 1008,
+      "details": {
+        "device": 1008,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      }
+    }
+  ],
+  "outputs_identical": true,
+  "remote_pages": 65,
+  "page_bytes": [
+    2359296
+  ],
+  "consumer_get_operations": 64,
+  "consumer_get_wall_s": 45.66434449679218,
+  "consumer_get_HTTP_payload_bytes": 151015360,
+  "scope": "One producer and one fresh consumer, six model requests. Native SGLang dynamic backend over SSH reverse forwarding to storage on the local Mac. Not a production remote-cache benchmark, physical SSD I/O, representative p95, complete Agent quality, or complete9-9 matrix.",
+  "artifact_sha256": {
+    "results/producer/raw.json": "bc347eacce12665472bc1a8837fac4406f02a5ea65d08f3781a7948b15043cc3",
+    "results/consumer/raw.json": "8ae0d5eeb3e1162d23bc1577cd7720d98153c29d3574198d69141f68aaae66f1",
+    "results/execution.json": "28f3b254410f7f65033697e1d7cece86fc14029eaff92d2f01ee61d964bd84c9",
+    "mac-store/ledger.jsonl": "07b303e4fc86f3220ff509892e8cc0aae284f0aadf926063b3b340937d748ded"
+  },
+  "get_page_rpc_p95_s": 1.021702280966565,
+  "get_page_rpc_median_s": 0.6451033640187234,
+  "p95_scope": "Nearest-rank across sequential page RPCs in one consumer recovery, not independent request p95.",
+  "conflicting_duplicate_writes": 1,
+  "conflicting_keys_read": []
+}

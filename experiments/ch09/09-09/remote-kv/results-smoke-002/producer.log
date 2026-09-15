@@ -1,0 +1,56 @@
+Multi-thread loading shards:   0% Completed | 0/5 [00:00<?, ?it/s]Multi-thread loading shards:  20% Completed | 1/5 [00:01<00:04,  1.14s/it]Multi-thread loading shards:  40% Completed | 2/5 [00:02<00:03,  1.17s/it]Multi-thread loading shards:  60% Completed | 3/5 [00:03<00:02,  1.20s/it]Multi-thread loading shards:  80% Completed | 4/5 [00:04<00:01,  1.13s/it]Multi-thread loading shards: 100% Completed | 5/5 [00:05<00:00,  1.14it/s]Multi-thread loading shards: 100% Completed | 5/5 [00:05<00:00,  1.00s/it]
+request 0 returned
+request 1 returned
+request 2 returned
+Exception in thread Thread-5 (backup_thread_func):
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/urllib/request.py", line 1348, in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+  File "/usr/lib/python3.10/http/client.py", line 1312, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/usr/lib/python3.10/http/client.py", line 1358, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.10/http/client.py", line 1307, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.10/http/client.py", line 1106, in _send_output
+    self.send(chunk)
+  File "/usr/lib/python3.10/http/client.py", line 1028, in send
+    self.sock.sendall(data)
+TimeoutError: timed out
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.10/threading.py", line 953, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/lib/python3.10/site-packages/sglang/srt/managers/cache_controller.py", line 1244, in backup_thread_func
+    self._page_backup(operation)
+  File "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/lib/python3.10/site-packages/sglang/srt/managers/cache_controller.py", line 1218, in _page_backup
+    success = self.page_set_func(batch_hashes, batch_host_indices, extra_info)
+  File "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/lib/python3.10/site-packages/sglang/srt/managers/cache_controller.py", line 1133, in _generic_page_set
+    return self.storage_backend.batch_set(hash_values, data)
+  File "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/remote_backend.py", line 42, in batch_set
+    meta,_=self.rpc('set',dict(entries=entries),blobs);assert len(meta['entries'])==len(keys);return True
+  File "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/remote_backend.py", line 15, in rpc
+    with urllib.request.urlopen(req,timeout=120) as f:response=f.read()
+  File "/usr/lib/python3.10/urllib/request.py", line 216, in urlopen
+    return opener.open(url, data, timeout)
+  File "/usr/lib/python3.10/urllib/request.py", line 519, in open
+    response = self._open(req, data)
+  File "/usr/lib/python3.10/urllib/request.py", line 536, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+  File "/usr/lib/python3.10/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+  File "/usr/lib/python3.10/urllib/request.py", line 1377, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+  File "/usr/lib/python3.10/urllib/request.py", line 1351, in do_open
+    raise URLError(err)
+urllib.error.URLError: <urlopen error timed out>
+Traceback (most recent call last):
+  File "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/run.py", line 37, in <module>
+    p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--phase',required=True);main(p.parse_args())
+  File "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/run.py", line 29, in main
+    if time.monotonic()>deadline:raise TimeoutError('remote page publication incomplete')
+TimeoutError: remote page publication incomplete

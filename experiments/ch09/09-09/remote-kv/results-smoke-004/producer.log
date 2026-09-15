@@ -1,0 +1,69 @@
+Multi-thread loading shards:   0% Completed | 0/5 [00:00<?, ?it/s]Multi-thread loading shards:  20% Completed | 1/5 [00:00<00:02,  1.39it/s]Multi-thread loading shards:  40% Completed | 2/5 [00:01<00:02,  1.29it/s]Multi-thread loading shards:  60% Completed | 3/5 [00:02<00:01,  1.30it/s]Multi-thread loading shards:  80% Completed | 4/5 [00:02<00:00,  1.41it/s]Multi-thread loading shards: 100% Completed | 5/5 [00:03<00:00,  1.84it/s]Multi-thread loading shards: 100% Completed | 5/5 [00:03<00:00,  1.58it/s]
+request 0 returned
+request 1 returned
+request 2 returned
+Exception in thread Thread-5 (backup_thread_func):
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.10/threading.py", line 953, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/lib/python3.10/site-packages/sglang/srt/managers/cache_controller.py", line 1244, in backup_thread_func
+    self._page_backup(operation)
+  File "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/lib/python3.10/site-packages/sglang/srt/managers/cache_controller.py", line 1218, in _page_backup
+    success = self.page_set_func(batch_hashes, batch_host_indices, extra_info)
+  File "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/lib/python3.10/site-packages/sglang/srt/managers/cache_controller.py", line 1133, in _generic_page_set
+    return self.storage_backend.batch_set(hash_values, data)
+  File "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/remote_backend.py", line 45, in batch_set
+    if not self._batch_set_chunk(keys[i:i+1],values[i:i+1]):return False
+  File "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/remote_backend.py", line 50, in _batch_set_chunk
+    meta,_=self.rpc('set',dict(entries=entries),blobs);assert len(meta['entries'])==len(keys);return True
+  File "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/remote_backend.py", line 15, in rpc
+    with urllib.request.urlopen(req,timeout=120) as f:response=f.read()
+  File "/usr/lib/python3.10/urllib/request.py", line 216, in urlopen
+    return opener.open(url, data, timeout)
+  File "/usr/lib/python3.10/urllib/request.py", line 519, in open
+    response = self._open(req, data)
+  File "/usr/lib/python3.10/urllib/request.py", line 536, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+  File "/usr/lib/python3.10/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+  File "/usr/lib/python3.10/urllib/request.py", line 1377, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+  File "/usr/lib/python3.10/urllib/request.py", line 1352, in do_open
+    r = h.getresponse()
+  File "/usr/lib/python3.10/http/client.py", line 1404, in getresponse
+    response.begin()
+  File "/usr/lib/python3.10/http/client.py", line 323, in begin
+    version, status, reason = self._read_status()
+  File "/usr/lib/python3.10/http/client.py", line 284, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/usr/lib/python3.10/socket.py", line 705, in readinto
+    return self._sock.recv_into(b)
+TimeoutError: timed out
+Traceback (most recent call last):
+  File "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/run.py", line 41, in <module>
+    p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--phase',required=True);main(p.parse_args())
+  File "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/run.py", line 26, in main
+    with urllib.request.urlopen(req,timeout=120) as f:inventory=unpack(f.read())[0]
+  File "/usr/lib/python3.10/urllib/request.py", line 216, in urlopen
+    return opener.open(url, data, timeout)
+  File "/usr/lib/python3.10/urllib/request.py", line 519, in open
+    response = self._open(req, data)
+  File "/usr/lib/python3.10/urllib/request.py", line 536, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+  File "/usr/lib/python3.10/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+  File "/usr/lib/python3.10/urllib/request.py", line 1377, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+  File "/usr/lib/python3.10/urllib/request.py", line 1352, in do_open
+    r = h.getresponse()
+  File "/usr/lib/python3.10/http/client.py", line 1404, in getresponse
+    response.begin()
+  File "/usr/lib/python3.10/http/client.py", line 323, in begin
+    version, status, reason = self._read_status()
+  File "/usr/lib/python3.10/http/client.py", line 284, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/usr/lib/python3.10/socket.py", line 705, in readinto
+    return self._sock.recv_into(b)
+TimeoutError: timed out

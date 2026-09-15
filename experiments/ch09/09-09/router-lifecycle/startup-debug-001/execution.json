@@ -1,0 +1,142 @@
+{
+  "commands": [
+    {
+      "label": "t0-w0-original",
+      "command": [
+        "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/bin/python",
+        "-m",
+        "sglang.launch_server",
+        "--model-path",
+        "/home/ubuntu/.cache/huggingface/hub/models--Qwen--Qwen3-8B/snapshots/b968826d9c46dd6066d109eabc6255188de91218",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "31591",
+        "--dtype",
+        "bfloat16",
+        "--context-length",
+        "4096",
+        "--mem-fraction-static",
+        "0.45",
+        "--max-total-tokens",
+        "4096",
+        "--max-running-requests",
+        "8",
+        "--chunked-prefill-size",
+        "1024",
+        "--disable-cuda-graph",
+        "--disable-piecewise-cuda-graph",
+        "--attention-backend",
+        "triton",
+        "--sampling-backend",
+        "pytorch",
+        "--random-seed",
+        "909",
+        "--log-requests",
+        "--log-requests-level",
+        "0",
+        "--log-requests-format",
+        "json",
+        "--log-requests-target",
+        "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/router-lifecycle/results/t0-w0-original-requests"
+      ]
+    },
+    {
+      "label": "t0-w1-original",
+      "command": [
+        "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/bin/python",
+        "-m",
+        "sglang.launch_server",
+        "--model-path",
+        "/home/ubuntu/.cache/huggingface/hub/models--Qwen--Qwen3-8B/snapshots/b968826d9c46dd6066d109eabc6255188de91218",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "31592",
+        "--dtype",
+        "bfloat16",
+        "--context-length",
+        "4096",
+        "--mem-fraction-static",
+        "0.45",
+        "--max-total-tokens",
+        "4096",
+        "--max-running-requests",
+        "8",
+        "--chunked-prefill-size",
+        "1024",
+        "--disable-cuda-graph",
+        "--disable-piecewise-cuda-graph",
+        "--attention-backend",
+        "triton",
+        "--sampling-backend",
+        "pytorch",
+        "--random-seed",
+        "909",
+        "--log-requests",
+        "--log-requests-level",
+        "0",
+        "--log-requests-format",
+        "json",
+        "--log-requests-target",
+        "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/router-lifecycle/results/t0-w1-original-requests"
+      ]
+    },
+    {
+      "label": "t0-router",
+      "command": [
+        "/home/ubuntu/ai-infra-book-experiments/tools/router032-venv/bin/python",
+        "-m",
+        "sglang_router.launch_router",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "31590",
+        "--worker-urls",
+        "http://127.0.0.1:31591",
+        "http://127.0.0.1:31592",
+        "--policy",
+        "cache_aware",
+        "--prometheus-port",
+        "31599",
+        "--disable-retries",
+        "--log-level",
+        "debug",
+        "--health-check-interval-secs",
+        "2",
+        "--health-check-timeout-secs",
+        "1"
+      ]
+    }
+  ],
+  "cleanup": [
+    {
+      "pid": 1376642,
+      "role": "t0-router",
+      "exit_code": 0,
+      "start": 1583445.589041917,
+      "end": 1583445.770140735,
+      "hard": false
+    },
+    {
+      "pid": 1025470,
+      "role": "t0-w1-original",
+      "exit_code": -9,
+      "start": 1583445.770150494,
+      "end": 1583451.706241833,
+      "hard": false
+    },
+    {
+      "pid": 965005,
+      "role": "t0-w0-original",
+      "exit_code": -9,
+      "start": 1583451.706250543,
+      "end": 1583458.345218344,
+      "hard": false
+    }
+  ],
+  "source_hashes": {
+    "run.py": "f0ca82e85d6de0f9d22c0a69919d997a105548cb213b346299bb689f3b753a73",
+    "agent-prompts.json": "6819e3779cc050416e0c8dd29f10b8f6c6a38b01670141139e20619011f3f4d5"
+  }
+}

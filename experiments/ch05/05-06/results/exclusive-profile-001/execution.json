@@ -1,0 +1,170 @@
+[
+  {
+    "label": "schedule-0",
+    "command": [
+      "/home/ubuntu/vllm023-venv/bin/python",
+      "/home/ubuntu/ai-infra-book-experiments/ch05/05-06/evaluate_agent_profile.py",
+      "--kind",
+      "native",
+      "--block",
+      "256",
+      "--warps",
+      "4",
+      "--output",
+      "results/exclusive-profile-001/schedule/0-native.json"
+    ],
+    "pid": 1552160,
+    "exit_code": 0,
+    "elapsed_s": 12.475859731901437
+  },
+  {
+    "label": "schedule-1",
+    "command": [
+      "/home/ubuntu/vllm023-venv/bin/python",
+      "/home/ubuntu/ai-infra-book-experiments/ch05/05-06/evaluate_agent_profile.py",
+      "--kind",
+      "compiled",
+      "--block",
+      "256",
+      "--warps",
+      "4",
+      "--output",
+      "results/exclusive-profile-001/schedule/1-compiled.json"
+    ],
+    "pid": 1552885,
+    "exit_code": 0,
+    "elapsed_s": 14.043219394050539
+  },
+  {
+    "label": "schedule-2",
+    "command": [
+      "/home/ubuntu/vllm023-venv/bin/python",
+      "/home/ubuntu/ai-infra-book-experiments/ch05/05-06/evaluate_agent_profile.py",
+      "--kind",
+      "schedule",
+      "--block",
+      "128",
+      "--warps",
+      "4",
+      "--output",
+      "results/exclusive-profile-001/schedule/2-schedule.json"
+    ],
+    "pid": 1553512,
+    "exit_code": 0,
+    "elapsed_s": 8.753856177907437
+  },
+  {
+    "label": "schedule-3",
+    "command": [
+      "/home/ubuntu/vllm023-venv/bin/python",
+      "/home/ubuntu/ai-infra-book-experiments/ch05/05-06/evaluate_agent_profile.py",
+      "--kind",
+      "schedule",
+      "--block",
+      "256",
+      "--warps",
+      "4",
+      "--output",
+      "results/exclusive-profile-001/schedule/3-schedule.json"
+    ],
+    "pid": 1554587,
+    "exit_code": 0,
+    "elapsed_s": 10.631725460058078
+  },
+  {
+    "label": "schedule-4",
+    "command": [
+      "/home/ubuntu/vllm023-venv/bin/python",
+      "/home/ubuntu/ai-infra-book-experiments/ch05/05-06/evaluate_agent_profile.py",
+      "--kind",
+      "schedule",
+      "--block",
+      "512",
+      "--warps",
+      "4",
+      "--output",
+      "results/exclusive-profile-001/schedule/4-schedule.json"
+    ],
+    "pid": 1555350,
+    "exit_code": 0,
+    "elapsed_s": 10.737849470926449
+  },
+  {
+    "label": "schedule-5",
+    "command": [
+      "/home/ubuntu/vllm023-venv/bin/python",
+      "/home/ubuntu/ai-infra-book-experiments/ch05/05-06/evaluate_agent_profile.py",
+      "--kind",
+      "schedule",
+      "--block",
+      "1024",
+      "--warps",
+      "4",
+      "--output",
+      "results/exclusive-profile-001/schedule/5-schedule.json"
+    ],
+    "pid": 1555902,
+    "exit_code": 0,
+    "elapsed_s": 13.68992821010761
+  },
+  {
+    "label": "schedule-6",
+    "command": [
+      "/home/ubuntu/vllm023-venv/bin/python",
+      "/home/ubuntu/ai-infra-book-experiments/ch05/05-06/evaluate_agent_profile.py",
+      "--kind",
+      "schedule",
+      "--block",
+      "2048",
+      "--warps",
+      "8",
+      "--output",
+      "results/exclusive-profile-001/schedule/6-schedule.json"
+    ],
+    "pid": 1557467,
+    "exit_code": 0,
+    "elapsed_s": 15.62307353806682
+  },
+  {
+    "label": "schedule-7",
+    "command": [
+      "/home/ubuntu/vllm023-venv/bin/python",
+      "/home/ubuntu/ai-infra-book-experiments/ch05/05-06/evaluate_agent_profile.py",
+      "--kind",
+      "schedule",
+      "--block",
+      "4096",
+      "--warps",
+      "8",
+      "--output",
+      "results/exclusive-profile-001/schedule/7-schedule.json"
+    ],
+    "pid": 1560786,
+    "exit_code": 0,
+    "elapsed_s": 14.95156208705157
+  },
+  {
+    "label": "agent",
+    "command": [
+      "/home/ubuntu/vllm023-venv/bin/python",
+      "/home/ubuntu/ai-infra-book-experiments/ch05/05-06/run_agent_profile.py",
+      "--output",
+      "results/exclusive-profile-001/agent"
+    ],
+    "pid": 1563083,
+    "exit_code": 0,
+    "elapsed_s": 93.72152561019175
+  },
+  {
+    "label": "interleaved",
+    "command": [
+      "/home/ubuntu/vllm023-venv/bin/python",
+      "/home/ubuntu/ai-infra-book-experiments/ch05/05-06/compare.py",
+      "--output",
+      "results/exclusive-profile-001/interleaved"
+    ],
+    "pid": 1572934,
+    "exit_code": 0,
+    "elapsed_s": 12.223939043935388
+  }
+]

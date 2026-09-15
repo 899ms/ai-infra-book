@@ -1,0 +1,71 @@
+{
+  "status": "remote_recovery_not_verified",
+  "run": "001",
+  "phases": [
+    {
+      "phase": "producer",
+      "status": "all_requests_returned",
+      "requests_returned": 3,
+      "cached_tokens": [
+        0,
+        1008,
+        1008
+      ],
+      "storage_hits": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "phase": "consumer",
+      "status": "all_requests_returned",
+      "requests_returned": 3,
+      "cached_tokens": [
+        0,
+        1008,
+        1008
+      ],
+      "storage_hits": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "execution": {
+    "rows": [
+      {
+        "phase": "producer",
+        "command": [
+          "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/bin/python",
+          "-u",
+          "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/run.py",
+          "--phase",
+          "producer",
+          "--output",
+          "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/results-smoke-001/producer"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 58.641132816905156
+      },
+      {
+        "phase": "consumer",
+        "command": [
+          "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/bin/python",
+          "-u",
+          "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/run.py",
+          "--phase",
+          "consumer",
+          "--output",
+          "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/results-smoke-001/consumer"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 65.6243310009595
+      }
+    ],
+    "after_gpu": ""
+  },
+  "post_run_page_count": 1,
+  "reason": "Shutdown after fixed5s while async write unfinished; later partial unacknowledged file must not be counted as durable publication."
+}

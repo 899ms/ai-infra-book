@@ -1,0 +1,94 @@
+{
+  "exercise": "9-4",
+  "PD_bytes": 1207959552,
+  "same_bytes_split_per_transfer": 16777216,
+  "AF_decode_step_bytes": 589824,
+  "AF_prefill_bytes": 4831838208,
+  "AF_full_request_bytes": 5435817984,
+  "AF_full_request_transfers": 73800,
+  "communication": [
+    {
+      "alpha_us": 1,
+      "one_PD_ms": 48.31938208,
+      "same_bytes_72_transfers_ms": 48.39038208,
+      "extra_split_ms": 0.071,
+      "actual_AF_prefill_ms": 193.34552832,
+      "actual_AF_decode_step_ms": 0.09559296,
+      "actual_AF_1024_decode_ms": 97.88719104,
+      "actual_AF_full_request_ms": 291.23271936
+    },
+    {
+      "alpha_us": 5,
+      "one_PD_ms": 48.32338208,
+      "same_bytes_72_transfers_ms": 48.67838208,
+      "extra_split_ms": 0.355,
+      "actual_AF_prefill_ms": 193.63352832,
+      "actual_AF_decode_step_ms": 0.38359296,
+      "actual_AF_1024_decode_ms": 392.79919104,
+      "actual_AF_full_request_ms": 586.43271936
+    },
+    {
+      "alpha_us": 20,
+      "one_PD_ms": 48.33838208,
+      "same_bytes_72_transfers_ms": 49.75838208,
+      "extra_split_ms": 1.42,
+      "actual_AF_prefill_ms": 194.71352832,
+      "actual_AF_decode_step_ms": 1.46359296,
+      "actual_AF_1024_decode_ms": 1498.71919104,
+      "actual_AF_full_request_ms": 1693.43271936
+    }
+  ],
+  "pipeline": [
+    {
+      "microbatch": 0,
+      "attention_ms": [
+        0,
+        2
+      ],
+      "FFN_ms": [
+        2,
+        5
+      ]
+    },
+    {
+      "microbatch": 1,
+      "attention_ms": [
+        2,
+        4
+      ],
+      "FFN_ms": [
+        5,
+        8
+      ]
+    },
+    {
+      "microbatch": 2,
+      "attention_ms": [
+        4,
+        6
+      ],
+      "FFN_ms": [
+        8,
+        11
+      ]
+    },
+    {
+      "microbatch": 3,
+      "attention_ms": [
+        6,
+        8
+      ],
+      "FFN_ms": [
+        11,
+        14
+      ]
+    }
+  ],
+  "serial_ms": 20,
+  "pipeline_ms": 14,
+  "strict_added_critical_path_bound_ms": 6,
+  "scope": "Serial AF transfers, unchunked prefill, 1025 outputs require 1024 subsequent decode steps; four independent microbatches with separate compute resources",
+  "source_sha256": {
+    "manuscripts/09-\u5206\u5e03\u5f0f\u63a8\u7406.md": "c0a232ddb6c038c17560f1e524d3e50129afd638493be711172cd589dd8f3088"
+  }
+}

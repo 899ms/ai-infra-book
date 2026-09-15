@@ -1,0 +1,86 @@
+INFO 09-14 10:20:40 [model.py:611] Resolved architecture: Qwen3ForCausalLM
+INFO 09-14 10:20:40 [model.py:1745] Using max model len 16384
+INFO 09-14 10:20:40 [scheduler.py:239] Chunked prefill is enabled with max_num_batched_tokens=16384.
+INFO 09-14 10:20:40 [vllm.py:999] Asynchronous scheduling is disabled.
+WARNING 09-14 10:20:40 [vllm.py:1055] Enforce eager set, disabling torch.compile and CUDAGraphs. This is equivalent to setting -cc.mode=none -cc.cudagraph_mode=none
+WARNING 09-14 10:20:40 [vllm.py:1097] Inductor compilation was disabled by user settings, optimizations settings that are only active during inductor compilation will be ignored.
+INFO 09-14 10:20:40 [kernel.py:270] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+INFO 09-14 10:20:40 [vllm.py:1273] Cudagraph is disabled under eager mode
+INFO 09-14 10:20:40 [compilation.py:321] Enabled custom fusions: norm_quant, act_quant
+(EngineCore pid=1689171) INFO 09-14 10:20:43 [core.py:113] Initializing a V1 LLM engine (v0.23.0) with config: model='/home/ubuntu/.cache/huggingface/hub/models--Qwen--Qwen3-8B/snapshots/b968826d9c46dd6066d109eabc6255188de91218', speculative_config=None, tokenizer='/home/ubuntu/.cache/huggingface/hub/models--Qwen--Qwen3-8B/snapshots/b968826d9c46dd6066d109eabc6255188de91218', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=16384, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=None, quantization_config=None, enforce_eager=True, enable_return_routed_experts=False, kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, kv_cache_metrics=False, kv_cache_metrics_sample=0.01, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False), seed=808, served_model_name=/home/ubuntu/.cache/huggingface/hub/models--Qwen--Qwen3-8B/snapshots/b968826d9c46dd6066d109eabc6255188de91218, enable_prefix_caching=False, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.NONE: 0>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['all'], 'ir_enable_torch_wrap': False, 'splitting_ops': [], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'compile_sizes': [], 'compile_ranges_endpoints': [16384], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'size_asserts': False, 'alignment_asserts': False, 'scalar_asserts': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.NONE: 0>, 'cudagraph_num_of_warmups': 0, 'cudagraph_capture_sizes': [], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': True, 'fuse_act_quant': True, 'fuse_attn_quant': False, 'enable_sp': False, 'fuse_gemm_comms': False, 'fuse_allreduce_rms': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False}, 'max_cudagraph_capture_size': 0, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native']), enable_flashinfer_autotune=True, moe_backend='auto', linear_backend='auto')
+(EngineCore pid=1689171) INFO 09-14 10:20:44 [worker_base.py:282] Injected <class 'replacement_worker.ReplacementWorker'> into <class 'vllm.v1.worker.gpu_worker.Worker'> for extended collective_rpc calls ['install_replacement', 'replacement_snapshot', 'set_replacement']
+(EngineCore pid=1689171) INFO 09-14 10:20:44 [parallel_state.py:1568] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://155.103.252.95:58363 backend=nccl
+(EngineCore pid=1689171) INFO 09-14 10:20:44 [parallel_state.py:1903] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, EP rank N/A, EPLB rank N/A
+(EngineCore pid=1689171) INFO 09-14 10:20:44 [gpu_worker.py:303] Using V2 Model Runner
+(EngineCore pid=1689171) INFO 09-14 10:20:44 [topk_topp_sampler.py:39] FlashInfer top-p/top-k sampling disabled via VLLM_USE_FLASHINFER_SAMPLER=0.
+(EngineCore pid=1689171) INFO 09-14 10:20:44 [model_runner.py:298] Loading model from scratch...
+(EngineCore pid=1689171) INFO 09-14 10:20:44 [cuda.py:318] Using AttentionBackendEnum.TRITON_ATTN backend.
+(EngineCore pid=1689171) INFO 09-14 10:20:45 [weight_utils.py:922] Filesystem type for checkpoints: EXT4. Checkpoint size: 15.26 GiB. Available RAM: 111.41 GiB.
+(EngineCore pid=1689171) INFO 09-14 10:20:45 [weight_utils.py:945] Auto-prefetch is disabled because the filesystem (EXT4) is not a recognized network FS (NFS/Lustre). If you want to force prefetching, start vLLM with --safetensors-load-strategy=prefetch.
+(EngineCore pid=1689171) Loading safetensors checkpoint shards:   0% Completed | 0/5 [00:00<?, ?it/s]
+(EngineCore pid=1689171) Loading safetensors checkpoint shards:  20% Completed | 1/5 [00:00<00:03,  1.21it/s]
+(EngineCore pid=1689171) Loading safetensors checkpoint shards:  40% Completed | 2/5 [00:01<00:02,  1.16it/s]
+(EngineCore pid=1689171) Loading safetensors checkpoint shards:  60% Completed | 3/5 [00:02<00:01,  1.22it/s]
+(EngineCore pid=1689171) Loading safetensors checkpoint shards:  80% Completed | 4/5 [00:03<00:00,  1.33it/s]
+(EngineCore pid=1689171) Loading safetensors checkpoint shards: 100% Completed | 5/5 [00:03<00:00,  1.74it/s]
+(EngineCore pid=1689171) Loading safetensors checkpoint shards: 100% Completed | 5/5 [00:03<00:00,  1.48it/s]
+(EngineCore pid=1689171) 
+(EngineCore pid=1689171) INFO 09-14 10:20:48 [default_loader.py:397] Loading weights took 3.41 seconds
+(EngineCore pid=1689171) INFO 09-14 10:20:48 [model_runner.py:319] Model loading took 15.27 GiB and 4.340750 seconds
+(EngineCore pid=1689171) INFO 09-14 10:20:50 [gpu_worker.py:401] Initial free memory 94.43 GiB, reserved 12.0 GiB memory for KV Cache as specified by kv_cache_memory_bytes config and skipped memory profiling. This does not respect the gpu_memory_utilization config. Only use kv_cache_memory_bytes config when you want manual control of KV cache memory size. If OOM'ed, check the difference of initial free memory between the current run and the previous run where kv_cache_memory_bytes is suggested and update it correspondingly.
+(EngineCore pid=1689171) INFO 09-14 10:20:50 [kv_cache_utils.py:1744] GPU KV cache size: 87,376 tokens
+(EngineCore pid=1689171) INFO 09-14 10:20:50 [kv_cache_utils.py:1745] Maximum concurrency for 16,384 tokens per request: 5.33x
+(EngineCore pid=1689171) 2026-09-14 10:20:50,579 - INFO - autotuner.py:622 - flashinfer.jit: [Autotuner]: Autotuning process starts ...
+(EngineCore pid=1689171) 2026-09-14 10:20:50,617 - INFO - autotuner.py:641 - flashinfer.jit: [Autotuner]: Autotuning process ends
+(EngineCore pid=1689171) INFO 09-14 10:20:51 [jit_monitor.py:54] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+(EngineCore pid=1689171) INFO 09-14 10:20:51 [core.py:313] init engine (profile, create kv cache, warmup model) took 3.03 s
+(EngineCore pid=1689171) WARNING 09-14 10:20:51 [vllm.py:1055] Enforce eager set, disabling torch.compile and CUDAGraphs. This is equivalent to setting -cc.mode=none -cc.cudagraph_mode=none
+(EngineCore pid=1689171) WARNING 09-14 10:20:51 [vllm.py:1097] Inductor compilation was disabled by user settings, optimizations settings that are only active during inductor compilation will be ignored.
+(EngineCore pid=1689171) INFO 09-14 10:20:51 [kernel.py:270] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+(EngineCore pid=1689171) INFO 09-14 10:20:51 [vllm.py:1273] Cudagraph is disabled under eager mode
+WARNING 09-14 10:20:51 [input_processor.py:282] Passing raw prompts to InputProcessor is deprecated and will be removed in v0.18. You should instead pass the outputs of Renderer.render_cmpl() or Renderer.render_chat().
+(EngineCore pid=1689171) WARNING 09-14 10:20:52 [jit_monitor.py:103] Triton kernel JIT compilation during inference: kernel_unified_attention. This causes a latency spike; consider extending warmup to cover this shape/config.
+(EngineCore pid=1689171) WARNING 09-14 10:20:52 [jit_monitor.py:103] Triton kernel JIT compilation during inference: reduce_segments. This causes a latency spike; consider extending warmup to cover this shape/config.
+(EngineCore pid=1689171) WARNING 09-14 10:20:55 [jit_monitor.py:103] Triton kernel JIT compilation during inference: kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+0 native 0.4469262710772455 1.385572002036497
+0 schedule 0.4465760288294405 1.408957399893552
+0 agent 0.44766253395937383 1.418612218927592
+1 schedule 0.4466789758298546 1.4114467760082334
+1 agent 0.4551831998396665 1.4507926979567856
+1 native 0.44883862789720297 1.3770926219876856
+2 schedule 0.4474880350753665 1.4017163501121104
+2 native 0.44896819698624313 1.3838207710068673
+2 agent 0.4521082399878651 1.4364745649509132
+3 agent 0.45539999194443226 1.4169448669999838
+3 schedule 0.45147526590153575 1.5458160790149122
+3 native 0.4473367191385478 1.4006164399906993
+4 native 0.45192687097005546 1.442078948020935
+4 schedule 0.45086958003230393 1.4075347741600126
+4 agent 0.4494499119464308 1.4530290209222585
+5 native 0.44823307800106704 1.4220509370788932
+5 agent 0.4525232471060008 1.4553987081162632
+5 schedule 0.45269461907446384 1.4334544991143048
+6 agent 0.4493421739898622 1.4211390370037407
+6 schedule 0.4495683719869703 1.4397234909702092
+6 native 0.45233435300178826 1.3774734921753407
+7 agent 0.4533632539678365 1.4086421800311655
+7 schedule 0.45147298905067146 1.417105239117518
+7 native 0.4527177109848708 1.4000058209057897
+8 schedule 0.4505169710610062 1.4177210449706763
+8 agent 0.45074439607560635 1.4339752988889813
+8 native 0.4532709268387407 1.4363546608947217
+9 native 0.44991674181073904 1.4347156528383493
+9 schedule 0.4536349759437144 1.4363297659438103
+9 agent 0.45106601412408054 1.4210518449544907
+10 agent 0.45378156192600727 1.4751706540118903
+10 schedule 0.44985095295123756 1.394875471945852
+10 native 0.44958469993434846 1.3770278710871935
+INFO 09-14 10:21:48 [core_client.py:652] [shutdown] MPClient: start timeout=default
+INFO 09-14 10:21:48 [core_client.py:654] [shutdown] MPClient: stopping engine manager
+(EngineCore pid=1689171) INFO 09-14 10:21:48 [core.py:1178] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=1689171) INFO 09-14 10:21:48 [core.py:1297] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=1689171) INFO 09-14 10:21:48 [core.py:1328] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=1689171) INFO 09-14 10:21:48 [core.py:1191] [shutdown] EngineCore: exiting busy loop
+INFO 09-14 10:21:49 [core_client.py:656] [shutdown] MPClient: engine manager stopped
+INFO 09-14 10:21:49 [core_client.py:657] [shutdown] MPClient: cleaning up background resources
+INFO 09-14 10:21:49 [core_client.py:659] [shutdown] MPClient: complete

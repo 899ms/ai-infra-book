@@ -1,0 +1,199 @@
+{
+  "status": "exclusive_run_verified",
+  "schedules": [
+    {
+      "kind": "native",
+      "block": 256,
+      "warps": 4,
+      "shape_medians_us": [
+        2.3360000923275948,
+        350.96960067749023
+      ],
+      "mean_shape_us": 176.65280038490891,
+      "actual_36_calls_each_us": 12719.001627713442,
+      "score_us": 353.30560076981783,
+      "event_window_s": 1.189214599609375
+    },
+    {
+      "kind": "compiled",
+      "block": 256,
+      "warps": 4,
+      "shape_medians_us": [
+        1.929599978029728,
+        353.46879959106445
+      ],
+      "mean_shape_us": 177.6991997845471,
+      "actual_36_calls_each_us": 12794.34238448739,
+      "score_us": 355.3983995690942,
+      "event_window_s": 2.742634033203125
+    },
+    {
+      "kind": "schedule",
+      "block": 128,
+      "warps": 4,
+      "shape_medians_us": [
+        0.9727999567985535,
+        348.85120391845703
+      ],
+      "mean_shape_us": 174.9120019376278,
+      "actual_36_calls_each_us": 12593.664139509201,
+      "score_us": 349.8240038752556,
+      "event_window_s": 1.795382080078125
+    },
+    {
+      "kind": "schedule",
+      "block": 256,
+      "warps": 4,
+      "shape_medians_us": [
+        1.0495999827980995,
+        348.1247901916504
+      ],
+      "mean_shape_us": 174.58719508722425,
+      "actual_36_calls_each_us": 12570.278046280146,
+      "score_us": 349.1743901744485,
+      "event_window_s": 1.313707275390625
+    },
+    {
+      "kind": "schedule",
+      "block": 512,
+      "warps": 4,
+      "shape_medians_us": [
+        1.1264000087976456,
+        349.99680519104004
+      ],
+      "mean_shape_us": 175.56160259991884,
+      "actual_36_calls_each_us": 12640.435387194157,
+      "score_us": 351.1232051998377,
+      "event_window_s": 1.66279833984375
+    },
+    {
+      "kind": "schedule",
+      "block": 1024,
+      "warps": 4,
+      "shape_medians_us": [
+        1.0784000158309937,
+        352.50558853149414
+      ],
+      "mean_shape_us": 176.79199427366257,
+      "actual_36_calls_each_us": 12729.023587703705,
+      "score_us": 353.58398854732513,
+      "event_window_s": 1.5152564697265625
+    },
+    {
+      "kind": "schedule",
+      "block": 2048,
+      "warps": 8,
+      "shape_medians_us": [
+        1.8303999677300453,
+        353.2383918762207
+      ],
+      "mean_shape_us": 177.53439592197537,
+      "actual_36_calls_each_us": 12782.476506382227,
+      "score_us": 355.06879184395075,
+      "event_window_s": 2.0469188232421875
+    },
+    {
+      "kind": "schedule",
+      "block": 4096,
+      "warps": 8,
+      "shape_medians_us": [
+        1.9007999449968338,
+        353.9360046386719
+      ],
+      "mean_shape_us": 177.91840229183435,
+      "actual_36_calls_each_us": 12810.124965012074,
+      "score_us": 355.8368045836687,
+      "event_window_s": 1.850936279296875
+    }
+  ],
+  "selected_schedule_this_run": {
+    "kind": "schedule",
+    "block": 256,
+    "warps": 4,
+    "shape_medians_us": [
+      1.0495999827980995,
+      348.1247901916504
+    ],
+    "mean_shape_us": 174.58719508722425,
+    "actual_36_calls_each_us": 12570.278046280146,
+    "score_us": 349.1743901744485,
+    "event_window_s": 1.313707275390625
+  },
+  "schedule_candidate_event_s": 10.184999267578124,
+  "agent": {
+    "status": "no_valid_candidate",
+    "selected_turn": null,
+    "selected_sha256": null,
+    "score_us": null,
+    "charged_s": 55.72865502466448,
+    "budget_s": 60,
+    "budget_overrun_s": 0,
+    "elapsed_s": 55.96476602484472,
+    "round_count": 6,
+    "inference_s": 55.72865502466448,
+    "evaluator_gpu_event_s": 0,
+    "protocol_sha256": "893989ea9e1ce8950315e0f2c7f45848fa165d7f75301c458defa02171988c62"
+  },
+  "agent_new_kernels": 0,
+  "paired_existing_schedule_comparison": [
+    {
+      "t": 1,
+      "mode": "eager",
+      "baseline": "native",
+      "paired_saving_us": -9.497600048780441,
+      "positive_trials": 0
+    },
+    {
+      "t": 1,
+      "mode": "eager",
+      "baseline": "compiled",
+      "paired_saving_us": 21.878401935100555,
+      "positive_trials": 11
+    },
+    {
+      "t": 1,
+      "mode": "graph",
+      "baseline": "native",
+      "paired_saving_us": 1.6192000359296799,
+      "positive_trials": 11
+    },
+    {
+      "t": 1,
+      "mode": "graph",
+      "baseline": "compiled",
+      "paired_saving_us": 0.009599979966878891,
+      "positive_trials": 6
+    },
+    {
+      "t": 7239,
+      "mode": "eager",
+      "baseline": "native",
+      "paired_saving_us": -1.9872188568115234,
+      "positive_trials": 3
+    },
+    {
+      "t": 7239,
+      "mode": "eager",
+      "baseline": "compiled",
+      "paired_saving_us": 14.323186874389648,
+      "positive_trials": 11
+    },
+    {
+      "t": 7239,
+      "mode": "graph",
+      "baseline": "native",
+      "paired_saving_us": 3.040003776550293,
+      "positive_trials": 11
+    },
+    {
+      "t": 7239,
+      "mode": "graph",
+      "baseline": "compiled",
+      "paired_saving_us": 3.0848026275634766,
+      "positive_trials": 11
+    }
+  ],
+  "profiler_feedback_limit": "Every baseline/schedule candidate produced CUDA profiler traces. All Agent submissions were rejected before evaluation, so no new Agent-candidate profiler feedback occurred; prepared follow-up supplies the measured starting-kernel profile explicitly.",
+  "contention_source": "results/original-hotspot-concurrency.json: 72 original hotspot calls, compared against all981 kernels and12 copies, zero observed overlap.",
+  "scope": "Exclusive GPU by author allocation and sampled foreign-process checks; CPU background load remains. Same six-candidate and60s ceilings, not equal actual spend. No Agent winner or Agent deployment benefit claimed."
+}

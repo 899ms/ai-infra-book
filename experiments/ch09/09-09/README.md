@@ -1,3 +1,9 @@
+# 9-9 completion update
+
+Historical9-9 is complete within its original calculation / real-system-record scope. The [requirement-by-requirement review](COMPLETION-REVIEW.md) links the live routing, Chat/Agent, queue, lifecycle, remote retrieval and matched recomputation evidence. The final [remote-aware three-policy record comparison](remote-kv/routing-record-replay/README.md) verifies1152 independent additive queue scenarios, with prediction errors and sample limits retained. This does not claim a newly measured concurrent remote router or production SLO.
+
+The earlier partial report below is retained as historical context; its pending remote/lifecycle items are superseded by the linked review.
+
 # 9-9：两个真实worker的原生缓存路由（部分完成）
 
 SGLang 0.5.13.post1的两个独立Qwen3-8B BF16 HTTP worker共用一张RTX PRO；另用独立环境的原生Router0.3.2，依次运行round_robin、cache_aware和power_of_two。每组重放同一实际12轮Agent输入，每次强制1输出token，串行完成再发下一次。每组开始前清空两worker前缀缓存，并重新启动router。36个响应均与各自输入对应的其他策略输出一致。

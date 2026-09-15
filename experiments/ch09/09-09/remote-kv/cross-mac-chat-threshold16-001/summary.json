@@ -1,0 +1,234 @@
+{
+  "status": "multi_turn_remote_replay_verified",
+  "phases": {
+    "chat-producer": {
+      "requests": 4,
+      "request_hit_fraction": 0.75,
+      "token_hit_fraction": 0.6374501992031872,
+      "wall_s": 2.797242840984836,
+      "request_p95_s": 1.494259644066915,
+      "levels": {
+        "device": 480,
+        "host": 0,
+        "storage": 0
+      },
+      "requests_with_remote_get": 0,
+      "per_request_get_sum_median_s": null,
+      "per_request_get_sum_p95_s": null,
+      "retrieval_quantile_scope": "Sum of successful GET RPC times within each request; excludes exists checks, scheduling and model work. Descriptive nearest-rank sample."
+    },
+    "chat-consumer": {
+      "requests": 4,
+      "request_hit_fraction": 1.0,
+      "token_hit_fraction": 0.9561752988047809,
+      "wall_s": 18.468864849070087,
+      "request_p95_s": 9.840255204122514,
+      "levels": {
+        "device": 480,
+        "host": 0,
+        "storage": 240
+      },
+      "requests_with_remote_get": 4,
+      "per_request_get_sum_median_s": 1.9308111888822168,
+      "per_request_get_sum_p95_s": 5.728505466133356,
+      "retrieval_quantile_scope": "Sum of successful GET RPC times within each request; excludes exists checks, scheduling and model work. Descriptive nearest-rank sample."
+    }
+  },
+  "requests": [
+    {
+      "kind": "chat",
+      "phase": "producer",
+      "turn": 0,
+      "input_tokens": 116,
+      "cached_tokens": 0,
+      "details": {
+        "device": 0,
+        "host": 0,
+        "storage": 0
+      },
+      "wall_s": 1.494259644066915,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": null
+    },
+    {
+      "kind": "chat",
+      "phase": "producer",
+      "turn": 1,
+      "input_tokens": 168,
+      "cached_tokens": 112,
+      "details": {
+        "device": 112,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.4335289290174842,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 8.33628917299211
+    },
+    {
+      "kind": "chat",
+      "phase": "producer",
+      "turn": 2,
+      "input_tokens": 217,
+      "cached_tokens": 160,
+      "details": {
+        "device": 160,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.4337115769740194,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 3.235318929888308
+    },
+    {
+      "kind": "chat",
+      "phase": "producer",
+      "turn": 3,
+      "input_tokens": 252,
+      "cached_tokens": 208,
+      "details": {
+        "device": 208,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.4357426909264177,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 3.237947663059458
+    },
+    {
+      "kind": "chat",
+      "phase": "consumer",
+      "turn": 0,
+      "input_tokens": 116,
+      "cached_tokens": 112,
+      "details": {
+        "device": 0,
+        "host": 0,
+        "storage": 112,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 9.840255204122514,
+      "get_rpc_count": 7,
+      "get_rpc_sum_s": 5.728505466133356,
+      "get_rpc_p95_s": 1.8444678001105785,
+      "replay_gap_since_previous_response_s": null
+    },
+    {
+      "kind": "chat",
+      "phase": "consumer",
+      "turn": 1,
+      "input_tokens": 168,
+      "cached_tokens": 160,
+      "details": {
+        "device": 112,
+        "host": 0,
+        "storage": 48,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 3.245684589026496,
+      "get_rpc_count": 3,
+      "get_rpc_sum_s": 1.9297456999775022,
+      "get_rpc_p95_s": 0.6457948579918593,
+      "replay_gap_since_previous_response_s": 0.8823582988698035
+    },
+    {
+      "kind": "chat",
+      "phase": "consumer",
+      "turn": 2,
+      "input_tokens": 217,
+      "cached_tokens": 208,
+      "details": {
+        "device": 160,
+        "host": 0,
+        "storage": 48,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 3.2035034869331867,
+      "get_rpc_count": 3,
+      "get_rpc_sum_s": 1.9318766777869314,
+      "get_rpc_p95_s": 0.6459447739180177,
+      "replay_gap_since_previous_response_s": 0.8218573429621756
+    },
+    {
+      "kind": "chat",
+      "phase": "consumer",
+      "turn": 3,
+      "input_tokens": 252,
+      "cached_tokens": 240,
+      "details": {
+        "device": 208,
+        "host": 0,
+        "storage": 32,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 2.179421568987891,
+      "get_rpc_count": 2,
+      "get_rpc_sum_s": 1.292867376934737,
+      "get_rpc_p95_s": 0.6540768789127469,
+      "replay_gap_since_previous_response_s": 0.8226463270839304
+    }
+  ],
+  "paired_outputs": [
+    {
+      "kind": "chat",
+      "turn": 0,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        37788
+      ],
+      "consumer_output_ids": [
+        37788
+      ]
+    },
+    {
+      "kind": "chat",
+      "turn": 1,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        82280
+      ],
+      "consumer_output_ids": [
+        82280
+      ]
+    },
+    {
+      "kind": "chat",
+      "turn": 2,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        18
+      ],
+      "consumer_output_ids": [
+        18
+      ]
+    },
+    {
+      "kind": "chat",
+      "turn": 3,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        785
+      ],
+      "consumer_output_ids": [
+        785
+      ]
+    }
+  ],
+  "all_paired_outputs_equal": true,
+  "published_pages": 15,
+  "get_operations": 15,
+  "conflicting_duplicate_writes": 0,
+  "conflicting_keys_read": [],
+  "scope": "One recorded Chat trace at threshold16 with forced one-token responses. Publication barriers instrument replay and are not original think times. Quantiles are nearest-rank descriptive samples; no full task-quality or stable p95 claim. No three-policy remote routing comparison in this run."
+}

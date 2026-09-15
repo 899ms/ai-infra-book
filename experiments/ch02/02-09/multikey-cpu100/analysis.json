@@ -1,0 +1,61 @@
+{
+  "status": "four_cases_independently_verified",
+  "cases": [
+    {
+      "case_id": "n512-r0",
+      "strict_success": true,
+      "request_wall_s": 316.1994827790186,
+      "prompt_tokens": 4148,
+      "completion_tokens": 28
+    },
+    {
+      "case_id": "n512-r1",
+      "strict_success": true,
+      "request_wall_s": 219.481311557116,
+      "prompt_tokens": 4148,
+      "completion_tokens": 28
+    },
+    {
+      "case_id": "n512-r2",
+      "strict_success": true,
+      "request_wall_s": 217.2451220168732,
+      "prompt_tokens": 4148,
+      "completion_tokens": 28
+    },
+    {
+      "case_id": "n512-r3",
+      "strict_success": true,
+      "request_wall_s": 214.9249855610542,
+      "prompt_tokens": 4148,
+      "completion_tokens": 28
+    }
+  ],
+  "full_model_load_and_pool_log": {
+    "lines": [
+      "[2026-09-14 09:57:27] Load weight end. elapsed=315.00 s, type=DeepseekV4ForCausalLM, quant=fp8, fmt=e4m3, avail mem=22.48 GB, mem usage=71.73 GB.",
+      "[2026-09-14 09:57:27] DSV4 memory calculation: bytes_per_full_token=124322.25, available_bytes=13.05 GB, full_token=112640",
+      "[2026-09-14 09:57:27] DSV4 pool sizes: full=112640, swa=112640, c4=28160, c128=880, c4_state=7040, c128_state=112640",
+      "[2026-09-14 09:57:27] DSV4 pool sizes: full=5120, swa=5120, c4=1280, c128=40, c4_state=320, c128_state=5120"
+    ]
+  },
+  "telemetry": {
+    "samples": 992,
+    "minimum_available_GiB": 27.886531829833984,
+    "maximum_own_GPU_MiB": 79328,
+    "minimum_GPU_free_MiB": 17711
+  },
+  "cleanup": {
+    "exit_code": 0,
+    "leftovers": []
+  },
+  "strict_numerical_clearance": false,
+  "scope": "Four previously selected known retrieval cases, full fixed quantized V4 checkpoint and native encoding. No general quality, BF16-only execution, performance ranking, or broad numerical clearance.",
+  "source_hashes": {
+    "tasks.json": "423da970e9679850465ba95a96fa3e8bf748f20902b6482cfb376648347bd195",
+    "runs/multikey-exclusive-100-001/cases.json": "3926dc7429996f43399fa19034d8f4527a8a6f44bbac35fb3a435a4e4e641ba8",
+    "runs/multikey-exclusive-100-001/requests.json": "5022180bae159552492b31d36a9272f6bd5d462e2e78caea68d00d9f48121d89",
+    "runs/multikey-exclusive-100-001/scores.json": "8ee7a91bca6e2adcb3b7f91510459854cf3a0a6c5a26e40ce8d7c59d49b69fa3",
+    "runs/multikey-exclusive-100-001/supervisor.json": "8cb84a1ea7ddf491e88a27603d67ad7c7f86749a8a51ab47075ba3bbb1e82cd3",
+    "runs/multikey-exclusive-100-001/watchdog.jsonl": "0e53f3f08de534a24ecb624485b1f8d86a98dba76717de5d14ce12c26330ddad"
+  }
+}

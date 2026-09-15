@@ -1,0 +1,41 @@
+Multi-thread loading shards:   0% Completed | 0/5 [00:00<?, ?it/s]Multi-thread loading shards:  20% Completed | 1/5 [00:01<00:04,  1.09s/it]Multi-thread loading shards:  40% Completed | 2/5 [00:02<00:03,  1.15s/it]Multi-thread loading shards:  60% Completed | 3/5 [00:03<00:02,  1.19s/it]Multi-thread loading shards:  80% Completed | 4/5 [00:04<00:01,  1.09s/it]Multi-thread loading shards: 100% Completed | 5/5 [00:04<00:00,  1.22it/s]Multi-thread loading shards: 100% Completed | 5/5 [00:04<00:00,  1.04it/s]
+request 0 returned
+Exception in thread Thread-5 (backup_thread_func):
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.10/threading.py", line 953, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/lib/python3.10/site-packages/sglang/srt/managers/cache_controller.py", line 1244, in backup_thread_func
+    self._page_backup(operation)
+  File "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/lib/python3.10/site-packages/sglang/srt/managers/cache_controller.py", line 1218, in _page_backup
+    success = self.page_set_func(batch_hashes, batch_host_indices, extra_info)
+  File "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/lib/python3.10/site-packages/sglang/srt/managers/cache_controller.py", line 1133, in _generic_page_set
+    return self.storage_backend.batch_set(hash_values, data)
+  File "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/docker-control/remote_backend.py", line 45, in batch_set
+    if not self._batch_set_chunk(keys[i:i+1],values[i:i+1]):return False
+  File "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/docker-control/remote_backend.py", line 50, in _batch_set_chunk
+    meta,_=self.rpc('set',dict(entries=entries),blobs);assert len(meta['entries'])==len(keys);return True
+  File "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/docker-control/remote_backend.py", line 15, in rpc
+    with urllib.request.urlopen(req,timeout=120) as f:response=f.read()
+  File "/usr/lib/python3.10/urllib/request.py", line 216, in urlopen
+    return opener.open(url, data, timeout)
+  File "/usr/lib/python3.10/urllib/request.py", line 525, in open
+    response = meth(req, response)
+  File "/usr/lib/python3.10/urllib/request.py", line 634, in http_response
+    response = self.parent.error(
+  File "/usr/lib/python3.10/urllib/request.py", line 563, in error
+    return self._call_chain(*args)
+  File "/usr/lib/python3.10/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+  File "/usr/lib/python3.10/urllib/request.py", line 643, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 400: Bad Request
+request 1 returned
+request 2 returned
+Traceback (most recent call last):
+  File "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/docker-control/run.py", line 41, in <module>
+    p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--phase',required=True);main(p.parse_args())
+  File "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/docker-control/run.py", line 30, in main
+    if any(x['error'] is not None for x in acknowledged):raise RuntimeError('Recorded remote transport failure; no waiting for a dead backup thread')
+RuntimeError: Recorded remote transport failure; no waiting for a dead backup thread

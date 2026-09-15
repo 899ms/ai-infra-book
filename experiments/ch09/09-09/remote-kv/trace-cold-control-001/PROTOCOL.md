@@ -1,0 +1,3 @@
+# Matched-input recomputation control
+
+Same sixteen recorded Chat/Agent inputs, Qwen3-8B revision, BF16, eager attention settings, one forced token, temperature zero as cross-mac-traces-001. Radix caching disabled and no hierarchical storage. Three passes in independently shuffled order using seed909; retain first pass warmup sensitivity and all sixteen inputs per pass. One fresh engine, single GPU idle before and after. This measures recomputation service without queueing; it does not supply actual busy-worker queue records. Outputs and zero cached tokens must be checked. Durations include complete engine.generate calls, not isolated GPU kernels.

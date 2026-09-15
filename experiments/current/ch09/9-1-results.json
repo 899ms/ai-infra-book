@@ -1,0 +1,35 @@
+{
+  "exercise": "9-1",
+  "cases": [
+    {
+      "input_tokens": 8192,
+      "output_tokens": 1025,
+      "prefill_calls": 1,
+      "decode_calls": 1024,
+      "total_forward_calls": 1025,
+      "KV_tokens_after_prefill": 8192,
+      "KV_tokens_at_end": 9216,
+      "KV_bytes_at_end": 1358954496,
+      "last_returned_without_KV_zero_based_position": 9216,
+      "PD_handoffs_needed_for_current_generation": 1,
+      "PD_payload_bytes_for_current_generation": 1207959552
+    },
+    {
+      "input_tokens": 8192,
+      "output_tokens": 1,
+      "prefill_calls": 1,
+      "decode_calls": 0,
+      "total_forward_calls": 1,
+      "KV_tokens_after_prefill": 8192,
+      "KV_tokens_at_end": 8192,
+      "KV_bytes_at_end": 1207959552,
+      "last_returned_without_KV_zero_based_position": 8192,
+      "PD_handoffs_needed_for_current_generation": 0,
+      "PD_payload_bytes_for_current_generation": 0
+    }
+  ],
+  "scope": "Single request, cold prompt, unchunked prefill, ordinary autoregressive decode. Shared cache adds storage operations, not model calls; hits require explicit valid prefix and last-token/logits boundary.",
+  "source_sha256": {
+    "manuscripts/09-\u5206\u5e03\u5f0f\u63a8\u7406.md": "c0a232ddb6c038c17560f1e524d3e50129afd638493be711172cd589dd8f3088"
+  }
+}

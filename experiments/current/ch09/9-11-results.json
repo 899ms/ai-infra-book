@@ -1,0 +1,73 @@
+{
+  "exercise": "9-11",
+  "state_bytes": 575668224,
+  "state_MiB": 549.0,
+  "bytes_per_token": 70272,
+  "AF_bytes_per_step": 589824,
+  "P_requests_per_s": 4.6708984375,
+  "D_requests_per_s": 4.5546875,
+  "network_bottleneck_threshold_GBps": 2.621988864,
+  "links": [
+    {
+      "bandwidth_GBps": 25.0,
+      "PD_payload_ms": 23.02672896,
+      "PD_with_startup_ms": 23.03172896,
+      "AF_one_step_ms": 0.38359296,
+      "link_requests_per_s": 43.42779218607696,
+      "alpha_crossover_us": 323.9878309859155,
+      "decode": [
+        {
+          "output_tokens": 1025,
+          "steps": 1024,
+          "AF_cumulative_ms": 392.79919104,
+          "AF_to_PD_ratio": 17.054698399854736
+        },
+        {
+          "output_tokens": 4097,
+          "steps": 4096,
+          "AF_cumulative_ms": 1571.19676416,
+          "AF_to_PD_ratio": 68.21879359941894
+        }
+      ]
+    },
+    {
+      "bandwidth_GBps": 50.0,
+      "PD_payload_ms": 11.51336448,
+      "PD_with_startup_ms": 11.51836448,
+      "AF_one_step_ms": 0.37179648,
+      "link_requests_per_s": 86.85558437215391,
+      "alpha_crossover_us": 161.99391549295774,
+      "decode": [
+        {
+          "output_tokens": 1025,
+          "steps": 1024,
+          "AF_cumulative_ms": 380.71959552,
+          "AF_to_PD_ratio": 33.05326864600138
+        },
+        {
+          "output_tokens": 4097,
+          "steps": 4096,
+          "AF_cumulative_ms": 1522.87838208,
+          "AF_to_PD_ratio": 132.2130745840055
+        }
+      ]
+    }
+  ],
+  "query_transform": {
+    "extra_per_request_step_us": 27.7027027027027,
+    "extra_batch32_step_ms": 0.8864864864864865,
+    "extra_1024_steps_ms": 28.36756756756757,
+    "original_D_GPU_s": 0.8782161234991424,
+    "new_D_GPU_s": 0.9065836910667099,
+    "new_four_H20_requests_per_s": 4.412168495214707,
+    "new_three_H20_requests_per_s": 3.30912637141103,
+    "relative_capacity_loss": 0.031290621976874024,
+    "four_card_extra_step_limit_us": 258.43849546679735,
+    "arrival_requests_per_s": 3.5,
+    "minimum_D_cards": 4
+  },
+  "scope": "Fixed exercise stage rates 9566 and 1166, not a full DeepSeek-V3 deployment model. Serial exposed query transform; bandwidth link term excludes startup per specified equation. AF comparison includes decode only.",
+  "source_sha256": {
+    "manuscripts/09-\u5206\u5e03\u5f0f\u63a8\u7406.md": "c0a232ddb6c038c17560f1e524d3e50129afd638493be711172cd589dd8f3088"
+  }
+}

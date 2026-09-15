@@ -1,0 +1,827 @@
+{
+  "status": "multi_turn_remote_replay_verified",
+  "phases": {
+    "chat-producer": {
+      "requests": 4,
+      "request_hit_fraction": 0.75,
+      "token_hit_fraction": 0.6374501992031872,
+      "wall_s": 1.2530769619625062,
+      "request_p95_s": 1.144840395078063,
+      "levels": {
+        "device": 480,
+        "host": 0,
+        "storage": 0
+      },
+      "requests_with_remote_get": 0,
+      "per_request_get_sum_median_s": null,
+      "per_request_get_sum_p95_s": null,
+      "retrieval_quantile_scope": "Sum of successful GET RPC times within each request; excludes exists checks, scheduling and model work. Descriptive nearest-rank sample."
+    },
+    "chat-consumer": {
+      "requests": 4,
+      "request_hit_fraction": 0.75,
+      "token_hit_fraction": 0.6374501992031872,
+      "wall_s": 1.1788607612252235,
+      "request_p95_s": 1.105765538988635,
+      "levels": {
+        "device": 480,
+        "host": 0,
+        "storage": 0
+      },
+      "requests_with_remote_get": 0,
+      "per_request_get_sum_median_s": null,
+      "per_request_get_sum_p95_s": null,
+      "retrieval_quantile_scope": "Sum of successful GET RPC times within each request; excludes exists checks, scheduling and model work. Descriptive nearest-rank sample."
+    },
+    "agent-producer": {
+      "requests": 12,
+      "request_hit_fraction": 0.9166666666666666,
+      "token_hit_fraction": 0.8337083248107997,
+      "wall_s": 3.490569255547598,
+      "request_p95_s": 1.091814411105588,
+      "levels": {
+        "device": 16304,
+        "host": 0,
+        "storage": 0
+      },
+      "requests_with_remote_get": 0,
+      "per_request_get_sum_median_s": null,
+      "per_request_get_sum_p95_s": null,
+      "retrieval_quantile_scope": "Sum of successful GET RPC times within each request; excludes exists checks, scheduling and model work. Descriptive nearest-rank sample."
+    },
+    "agent-consumer": {
+      "requests": 12,
+      "request_hit_fraction": 0.9166666666666666,
+      "token_hit_fraction": 0.9237062794027409,
+      "wall_s": 145.08690959005617,
+      "request_p95_s": 37.207157254219055,
+      "levels": {
+        "device": 16304,
+        "host": 0,
+        "storage": 1760
+      },
+      "requests_with_remote_get": 5,
+      "per_request_get_sum_median_s": 14.339168953243643,
+      "per_request_get_sum_p95_s": 24.467310012085363,
+      "retrieval_quantile_scope": "Sum of successful GET RPC times within each request; excludes exists checks, scheduling and model work. Descriptive nearest-rank sample."
+    }
+  },
+  "requests": [
+    {
+      "kind": "chat",
+      "phase": "producer",
+      "turn": 0,
+      "input_tokens": 116,
+      "cached_tokens": 0,
+      "details": {
+        "device": 0,
+        "host": 0,
+        "storage": 0
+      },
+      "wall_s": 1.144840395078063,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": null
+    },
+    {
+      "kind": "chat",
+      "phase": "producer",
+      "turn": 1,
+      "input_tokens": 168,
+      "cached_tokens": 112,
+      "details": {
+        "device": 112,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.04350290587171912,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 8.409735294058919
+    },
+    {
+      "kind": "chat",
+      "phase": "producer",
+      "turn": 2,
+      "input_tokens": 217,
+      "cached_tokens": 160,
+      "details": {
+        "device": 160,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.03851807420141995,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 3.2395839339587837
+    },
+    {
+      "kind": "chat",
+      "phase": "producer",
+      "turn": 3,
+      "input_tokens": 252,
+      "cached_tokens": 208,
+      "details": {
+        "device": 208,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.026215586811304092,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 3.2386856069788337
+    },
+    {
+      "kind": "chat",
+      "phase": "consumer",
+      "turn": 0,
+      "input_tokens": 116,
+      "cached_tokens": 0,
+      "details": {
+        "device": 0,
+        "host": 0,
+        "storage": 0
+      },
+      "wall_s": 1.105765538988635,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": null
+    },
+    {
+      "kind": "chat",
+      "phase": "consumer",
+      "turn": 1,
+      "input_tokens": 168,
+      "cached_tokens": 112,
+      "details": {
+        "device": 112,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.023336359998211265,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 1.0631442181766033
+    },
+    {
+      "kind": "chat",
+      "phase": "consumer",
+      "turn": 2,
+      "input_tokens": 217,
+      "cached_tokens": 160,
+      "details": {
+        "device": 160,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.02364759612828493,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 1.0528837128076702
+    },
+    {
+      "kind": "chat",
+      "phase": "consumer",
+      "turn": 3,
+      "input_tokens": 252,
+      "cached_tokens": 208,
+      "details": {
+        "device": 208,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.0261112661100924,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 1.3110128769185394
+    },
+    {
+      "kind": "agent",
+      "phase": "producer",
+      "turn": 0,
+      "input_tokens": 210,
+      "cached_tokens": 0,
+      "details": {
+        "device": 0,
+        "host": 0,
+        "storage": 0
+      },
+      "wall_s": 1.091814411105588,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": null
+    },
+    {
+      "kind": "agent",
+      "phase": "producer",
+      "turn": 1,
+      "input_tokens": 316,
+      "cached_tokens": 192,
+      "details": {
+        "device": 192,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.023723497986793518,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 13.535184003878385
+    },
+    {
+      "kind": "agent",
+      "phase": "producer",
+      "turn": 2,
+      "input_tokens": 670,
+      "cached_tokens": 304,
+      "details": {
+        "device": 304,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.4473091650288552,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 8.28589455713518
+    },
+    {
+      "kind": "agent",
+      "phase": "producer",
+      "turn": 3,
+      "input_tokens": 884,
+      "cached_tokens": 656,
+      "details": {
+        "device": 656,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.0380874159745872,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 21.71444581192918
+    },
+    {
+      "kind": "agent",
+      "phase": "producer",
+      "turn": 4,
+      "input_tokens": 1233,
+      "cached_tokens": 880,
+      "details": {
+        "device": 880,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.43855376821011305,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 13.53169342293404
+    },
+    {
+      "kind": "agent",
+      "phase": "producer",
+      "turn": 5,
+      "input_tokens": 1447,
+      "cached_tokens": 1216,
+      "details": {
+        "device": 1216,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.029749274952337146,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 21.19268023292534
+    },
+    {
+      "kind": "agent",
+      "phase": "producer",
+      "turn": 6,
+      "input_tokens": 1796,
+      "cached_tokens": 1440,
+      "details": {
+        "device": 1440,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.44166830996982753,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 13.516748903086409
+    },
+    {
+      "kind": "agent",
+      "phase": "producer",
+      "turn": 7,
+      "input_tokens": 2010,
+      "cached_tokens": 1792,
+      "details": {
+        "device": 1792,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.029582034097984433,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 21.422750633908436
+    },
+    {
+      "kind": "agent",
+      "phase": "producer",
+      "turn": 8,
+      "input_tokens": 2359,
+      "cached_tokens": 2000,
+      "details": {
+        "device": 2000,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.4414416151121259,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 14.00367673090659
+    },
+    {
+      "kind": "agent",
+      "phase": "producer",
+      "turn": 9,
+      "input_tokens": 2573,
+      "cached_tokens": 2352,
+      "details": {
+        "device": 2352,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.0311481689568609,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 21.606758255977184
+    },
+    {
+      "kind": "agent",
+      "phase": "producer",
+      "turn": 10,
+      "input_tokens": 2922,
+      "cached_tokens": 2560,
+      "details": {
+        "device": 2560,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.4450766770169139,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 13.793713802006096
+    },
+    {
+      "kind": "agent",
+      "phase": "producer",
+      "turn": 11,
+      "input_tokens": 3136,
+      "cached_tokens": 2912,
+      "details": {
+        "device": 2912,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.032414917135611176,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 21.391164731932804
+    },
+    {
+      "kind": "agent",
+      "phase": "consumer",
+      "turn": 0,
+      "input_tokens": 210,
+      "cached_tokens": 0,
+      "details": {
+        "device": 0,
+        "host": 0,
+        "storage": 0
+      },
+      "wall_s": 1.1120783321093768,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": null
+    },
+    {
+      "kind": "agent",
+      "phase": "consumer",
+      "turn": 1,
+      "input_tokens": 316,
+      "cached_tokens": 192,
+      "details": {
+        "device": 192,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.027607438853010535,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 1.068496841005981
+    },
+    {
+      "kind": "agent",
+      "phase": "consumer",
+      "turn": 2,
+      "input_tokens": 670,
+      "cached_tokens": 656,
+      "details": {
+        "device": 304,
+        "host": 0,
+        "storage": 352,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 37.207157254219055,
+      "get_rpc_count": 22,
+      "get_rpc_sum_s": 24.467310012085363,
+      "get_rpc_p95_s": 1.906817686976865,
+      "replay_gap_since_previous_response_s": 1.5050083689857274
+    },
+    {
+      "kind": "agent",
+      "phase": "consumer",
+      "turn": 3,
+      "input_tokens": 884,
+      "cached_tokens": 656,
+      "details": {
+        "device": 656,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.02503036893904209,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 0.828391897957772
+    },
+    {
+      "kind": "agent",
+      "phase": "consumer",
+      "turn": 4,
+      "input_tokens": 1233,
+      "cached_tokens": 1232,
+      "details": {
+        "device": 880,
+        "host": 0,
+        "storage": 352,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 26.85586131294258,
+      "get_rpc_count": 22,
+      "get_rpc_sum_s": 14.374691203935072,
+      "get_rpc_p95_s": 0.6714888222049922,
+      "replay_gap_since_previous_response_s": 1.0625121740158647
+    },
+    {
+      "kind": "agent",
+      "phase": "consumer",
+      "turn": 5,
+      "input_tokens": 1447,
+      "cached_tokens": 1216,
+      "details": {
+        "device": 1216,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.025335913058370352,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 0.8383412619587034
+    },
+    {
+      "kind": "agent",
+      "phase": "consumer",
+      "turn": 6,
+      "input_tokens": 1796,
+      "cached_tokens": 1792,
+      "details": {
+        "device": 1440,
+        "host": 0,
+        "storage": 352,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 26.790802326984704,
+      "get_rpc_count": 22,
+      "get_rpc_sum_s": 14.326384573010728,
+      "get_rpc_p95_s": 0.6591974250040948,
+      "replay_gap_since_previous_response_s": 1.0884976929519325
+    },
+    {
+      "kind": "agent",
+      "phase": "consumer",
+      "turn": 7,
+      "input_tokens": 2010,
+      "cached_tokens": 1792,
+      "details": {
+        "device": 1792,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.02419718890450895,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 0.8411190630868077
+    },
+    {
+      "kind": "agent",
+      "phase": "consumer",
+      "turn": 8,
+      "input_tokens": 2359,
+      "cached_tokens": 2352,
+      "details": {
+        "device": 2000,
+        "host": 0,
+        "storage": 352,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 26.4461722811684,
+      "get_rpc_count": 22,
+      "get_rpc_sum_s": 14.271054241806269,
+      "get_rpc_p95_s": 0.6622334071435034,
+      "replay_gap_since_previous_response_s": 1.0562202320434153
+    },
+    {
+      "kind": "agent",
+      "phase": "consumer",
+      "turn": 9,
+      "input_tokens": 2573,
+      "cached_tokens": 2352,
+      "details": {
+        "device": 2352,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.02462871582247317,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 0.8478821769822389
+    },
+    {
+      "kind": "agent",
+      "phase": "consumer",
+      "turn": 10,
+      "input_tokens": 2922,
+      "cached_tokens": 2912,
+      "details": {
+        "device": 2560,
+        "host": 0,
+        "storage": 352,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 26.514185277046636,
+      "get_rpc_count": 22,
+      "get_rpc_sum_s": 14.339168953243643,
+      "get_rpc_p95_s": 0.6597208131570369,
+      "replay_gap_since_previous_response_s": 1.0886522710788995
+    },
+    {
+      "kind": "agent",
+      "phase": "consumer",
+      "turn": 11,
+      "input_tokens": 3136,
+      "cached_tokens": 2912,
+      "details": {
+        "device": 2912,
+        "host": 0,
+        "storage": 0,
+        "storage_backend": "RemoteKV"
+      },
+      "wall_s": 0.033853180008009076,
+      "get_rpc_count": 0,
+      "get_rpc_sum_s": 0,
+      "get_rpc_p95_s": null,
+      "replay_gap_since_previous_response_s": 0.8505714328493923
+    }
+  ],
+  "paired_outputs": [
+    {
+      "kind": "chat",
+      "turn": 0,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        37788
+      ],
+      "consumer_output_ids": [
+        37788
+      ]
+    },
+    {
+      "kind": "chat",
+      "turn": 1,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        82280
+      ],
+      "consumer_output_ids": [
+        82280
+      ]
+    },
+    {
+      "kind": "chat",
+      "turn": 2,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        18
+      ],
+      "consumer_output_ids": [
+        18
+      ]
+    },
+    {
+      "kind": "chat",
+      "turn": 3,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        785
+      ],
+      "consumer_output_ids": [
+        785
+      ]
+    },
+    {
+      "kind": "agent",
+      "turn": 0,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        515
+      ],
+      "consumer_output_ids": [
+        515
+      ]
+    },
+    {
+      "kind": "agent",
+      "turn": 1,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        515
+      ],
+      "consumer_output_ids": [
+        515
+      ]
+    },
+    {
+      "kind": "agent",
+      "turn": 2,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        515
+      ],
+      "consumer_output_ids": [
+        515
+      ]
+    },
+    {
+      "kind": "agent",
+      "turn": 3,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        515
+      ],
+      "consumer_output_ids": [
+        515
+      ]
+    },
+    {
+      "kind": "agent",
+      "turn": 4,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        515
+      ],
+      "consumer_output_ids": [
+        515
+      ]
+    },
+    {
+      "kind": "agent",
+      "turn": 5,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        515
+      ],
+      "consumer_output_ids": [
+        515
+      ]
+    },
+    {
+      "kind": "agent",
+      "turn": 6,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        515
+      ],
+      "consumer_output_ids": [
+        515
+      ]
+    },
+    {
+      "kind": "agent",
+      "turn": 7,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        515
+      ],
+      "consumer_output_ids": [
+        515
+      ]
+    },
+    {
+      "kind": "agent",
+      "turn": 8,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        515
+      ],
+      "consumer_output_ids": [
+        515
+      ]
+    },
+    {
+      "kind": "agent",
+      "turn": 9,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        515
+      ],
+      "consumer_output_ids": [
+        515
+      ]
+    },
+    {
+      "kind": "agent",
+      "turn": 10,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        515
+      ],
+      "consumer_output_ids": [
+        515
+      ]
+    },
+    {
+      "kind": "agent",
+      "turn": 11,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        515
+      ],
+      "consumer_output_ids": [
+        515
+      ]
+    }
+  ],
+  "all_paired_outputs_equal": true,
+  "published_pages": 213,
+  "get_operations": 110,
+  "conflicting_duplicate_writes": 0,
+  "conflicting_keys_read": [],
+  "scope": "Two single recorded traces with forced one-token responses. Publication barriers instrument replay and are not original think times. Quantiles are nearest-rank descriptive samples; no full task-quality or stable p95 claim. No three-policy remote routing comparison in this run."
+}

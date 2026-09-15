@@ -1,0 +1,58 @@
+{
+  "exercise": "9-6",
+  "padding": [
+    {
+      "policy": "effective_only",
+      "rows": 64,
+      "matrix_flops": 2415919104,
+      "relative_to_effective": 1.0
+    },
+    {
+      "policy": "nonempty_to_32",
+      "rows": 224,
+      "matrix_flops": 8455716864,
+      "relative_to_effective": 3.5
+    },
+    {
+      "policy": "all_to_32",
+      "rows": 256,
+      "matrix_flops": 9663676416,
+      "relative_to_effective": 4.0
+    }
+  ],
+  "payback": [
+    {
+      "link_GBps": 450,
+      "copy_ms": 0.62220256,
+      "saved_per_batch_ms": 0.24046821253731343,
+      "first_strictly_profitable_batch": 3,
+      "net_savings_ms": {
+        "16": 3.225288840597015,
+        "64": 14.76776304238806
+      }
+    },
+    {
+      "link_GBps": 50,
+      "copy_ms": 5.31982304,
+      "saved_per_batch_ms": 0.24046821253731343,
+      "first_strictly_profitable_batch": 23,
+      "net_savings_ms": {
+        "16": -1.472331639402985,
+        "64": 10.07014256238806
+      }
+    }
+  ],
+  "capacity": {
+    "replica_MiB_per_receiver": 36,
+    "receivers": 7,
+    "total_copy_MiB": 252,
+    "original_free_MiB_per_receiver": 64,
+    "reduced_free_MiB_per_receiver": 32,
+    "deficit_MiB_per_receiver": 4,
+    "feasible_with_32": false
+  },
+  "scope": "Fixed replica-route model; padding counts model GEMM work, no new multi-GPU timing; gain must be on the request critical path",
+  "source_sha256": {
+    "manuscripts/09-\u5206\u5e03\u5f0f\u63a8\u7406.md": "c0a232ddb6c038c17560f1e524d3e50129afd638493be711172cd589dd8f3088"
+  }
+}

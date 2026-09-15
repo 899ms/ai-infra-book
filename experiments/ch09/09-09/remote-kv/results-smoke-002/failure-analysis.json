@@ -1,0 +1,42 @@
+{
+  "status": "remote_recovery_not_verified",
+  "run": "002",
+  "phases": [
+    {
+      "phase": "producer",
+      "status": "running",
+      "requests_returned": 3,
+      "cached_tokens": [
+        0,
+        1008,
+        1008
+      ],
+      "storage_hits": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "execution": {
+    "rows": [
+      {
+        "phase": "producer",
+        "command": [
+          "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/bin/python",
+          "-u",
+          "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/run.py",
+          "--phase",
+          "producer",
+          "--output",
+          "/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/results-smoke-002/producer"
+        ],
+        "exit_code": 1,
+        "elapsed_s": 292.1999736279249
+      }
+    ],
+    "after_gpu": ""
+  },
+  "post_run_page_count": 5,
+  "reason": "120s bulk upload timeout killed backup thread; 240s publication gate failed, consumer not launched."
+}

@@ -1,4 +1,6 @@
-# 2-9多键检索：实际V4编码与启动条件准备
+# 2-9多键检索：准备与首次中断记录
+
+**最新结果：后续[100GiB offload完整补跑](../multikey-cpu100/README.md)已完成四题4/4；以下准备状态和首次中断为历史记录。**
 
 四道512行多键检索文档已由固定V4原生编码器实际编码：**每题4148token**，Qwen原记录每题7239token。加128输出预算需要4276位置，原V44096配置不够，提出context/max_total_tokens5120。两模型分词不同，不能用Qwen长度直接代入V4容量。
 
@@ -32,3 +34,9 @@ check_capacity.py读取prepared/cases.json且以RTX固定模型缓存路径解�
 `run.py`先保存完整原响应，再由`score.py`验证输入、采样、输出ID、自然stop和精确JSON对象；没有模型响应时不能得到成功。`scorer-review.json`只重评原Qwen四响应（仍3/4），并确认重复键、代码围栏、附加解释等5个反例被拒绝，没有生成或伪造V4输出。既有小矩阵数值门槛未被本任务解除，正确检索也不代表整体数值或模型质量验证。
 
 `runtime-reference/`保存此前成功V4的依赖/权重元数据和源码原件，`origins.json`注明代码复制来源SHA；这不是本轮模型加载证据。最新`execution-readiness.json`保存实际共享主机快照。旧`capacity-check.json`为较早参数解析证据，两者都不是失败的模型运行。
+
+## 2026-09-14独占GPU补跑
+
+作者允许停止原GPU服务后，`runs/multikey-exclusive-001`通过140GiB主存和80GiB显存门槛并实际加载完整43层模型。前两题均返回精确三键JSON且自然结束（346.096秒、253.712秒）；第三题期间全局可用主存跌破24GiB，watchdog终止运行，第四题未发出。原始响应、分母4的未完成评分、资源采样与终止记录已取回，不能记作四题完成。监督结束时保留一个RSS=0的scheduler条目，后续确认无本次GPU上下文，未称所有PID均不存在。
+
+[新的100GiB CPU offload协议](../multikey-cpu100/PROTOCOL.md)保持输入、模型、采样与主存安全阈值，利用独占GPU减少主存压力；会重新执行全部四题，不拼接两个不同placement的记录做同配置性能比较。

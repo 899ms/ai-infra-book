@@ -1,0 +1,4003 @@
+{
+  "exercise": "9-2",
+  "cases": {
+    "base": {
+      "schema_version": 1,
+      "calculation": "pd-pool",
+      "sources": [
+        {
+          "file": "configs/models/qwen3-8b/config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+          "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+          "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+        },
+        {
+          "file": "sources/qwen3-8b/model.safetensors.index.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+          "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+          "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+        },
+        {
+          "file": "sources/qwen3/modeling_qwen3.py",
+          "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+          "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+          "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+        },
+        {
+          "file": "sources/qwen3/modeling_qwen3_moe.py",
+          "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+          "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+          "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+        },
+        {
+          "file": "sources/hardware/nvidia-a100-page.md",
+          "url": "https://www.nvidia.com/en-us/data-center/a100/",
+          "revision": "snapshot-2026-09-08",
+          "sha256": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed"
+        },
+        {
+          "file": "../references/files/specs/nvidia-a100.pdf",
+          "url": "https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf",
+          "revision": "book-official-archive-2026-09-06",
+          "sha256": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815"
+        },
+        {
+          "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+          "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+          "revision": "snapshot-2026-09-08",
+          "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+        },
+        {
+          "file": "sources/hardware/nvidia-h20-vgpu-release7.md",
+          "url": "https://docs.nvidia.com/ai-enterprise/release-7/latest/infra-software/vgpu/reference/hopper.html",
+          "revision": "snapshot-2026-09-09",
+          "sha256": "c1bc1f43b221a4e7c3d2fb7fd3e1998bc3a74412ad634f7be40e3461fe9f5d86"
+        },
+        {
+          "file": "../references/files/specs/nvidia-h20-spec-sheet.pdf",
+          "url": "https://flopper.io/gpu/nvidia-h20-96gb/spec-sheet.pdf",
+          "revision": "sheet-2026-09-02",
+          "sha256": "10066ce28de21151385fc05110af461ccce6a2ea73a0b3322efe5a47e67ce1e5"
+        },
+        {
+          "file": "../references/outline-checks/2026-09-07/execution-feedback/megascale-infer.pdf",
+          "url": "https://arxiv.org/pdf/2504.02263v1",
+          "revision": "2504.02263v1",
+          "sha256": "3596ecc1eda339b0e33e3f3de5d4910b42f1aeb2e880c68b405a59678a66f403"
+        }
+      ],
+      "derived_stage_rates": [
+        {
+          "device": "a100-80gb-sxm",
+          "device_name": "A100 80GB SXM",
+          "model": "qwen3-8b",
+          "peak_tera_ops_per_second": 312,
+          "memory_bandwidth_bytes_per_second": 2039000000000.0,
+          "nominal_capacity_bytes": 80000000000,
+          "effective_flops_per_second_exact": "156000000000000",
+          "effective_bytes_per_second_exact": "1019500000000",
+          "prefill": {
+            "new_tokens": 8192,
+            "matrix_flops": 133594323353600,
+            "weight_bytes": 15203919872,
+            "compute_seconds_exact": "326158016/380859375",
+            "memory_seconds_exact": "59390312/3982421875",
+            "seconds_exact": "326158016/380859375",
+            "bound": "compute",
+            "tokens_per_second_exact": "48750000000/5096219"
+          },
+          "decode": {
+            "batch": 32,
+            "average_history_tokens": 8704,
+            "calls_per_request": 1024,
+            "step_matrix_flops": 648659599360,
+            "step_weight_bytes": 15137073152,
+            "step_kv_bytes": 41075343360,
+            "step_compute_seconds_exact": "7918208/1904296875",
+            "step_memory_seconds_exact": "219579752/3982421875",
+            "step_seconds_exact": "219579752/3982421875",
+            "bound": "memory",
+            "calls_per_second_exact": "15929687500/27447469",
+            "seconds_per_request_exact": "7026552064/3982421875"
+          },
+          "resident_bytes_at_full_batch": 59868014592,
+          "fits_nominal_capacity": true,
+          "colocated_seconds_per_request_exact": "2035213847104/776572265625",
+          "sources": [
+            {
+              "file": "sources/hardware/nvidia-a100-page.md",
+              "url": "https://www.nvidia.com/en-us/data-center/a100/",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed"
+            },
+            {
+              "file": "../references/files/specs/nvidia-a100.pdf",
+              "url": "https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf",
+              "revision": "book-official-archive-2026-09-06",
+              "sha256": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815"
+            },
+            {
+              "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+              "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+            },
+            {
+              "file": "configs/models/qwen3-8b/config.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+            },
+            {
+              "file": "sources/qwen3-8b/model.safetensors.index.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3_moe.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+            }
+          ]
+        },
+        {
+          "device": "h20-sxm5-96gb",
+          "device_name": "H20 SXM5 96GB",
+          "model": "qwen3-8b",
+          "peak_tera_ops_per_second": 148,
+          "memory_bandwidth_bytes_per_second": 4096000000000.0,
+          "nominal_capacity_bytes": 96000000000,
+          "effective_flops_per_second_exact": "74000000000000",
+          "effective_bytes_per_second_exact": "2048000000000",
+          "prefill": {
+            "new_tokens": 8192,
+            "matrix_flops": 133594323353600,
+            "weight_bytes": 15203919872,
+            "compute_seconds_exact": "652316032/361328125",
+            "memory_seconds_exact": "7423789/1000000000",
+            "seconds_exact": "652316032/361328125",
+            "bound": "compute",
+            "tokens_per_second_exact": "23125000000/5096219"
+          },
+          "decode": {
+            "batch": 32,
+            "average_history_tokens": 8704,
+            "calls_per_request": 1024,
+            "step_matrix_flops": 648659599360,
+            "step_weight_bytes": 15137073152,
+            "step_kv_bytes": 41075343360,
+            "step_compute_seconds_exact": "15836416/1806640625",
+            "step_memory_seconds_exact": "27447469/1000000000",
+            "step_seconds_exact": "27447469/1000000000",
+            "bound": "memory",
+            "calls_per_second_exact": "32000000000/27447469",
+            "seconds_per_request_exact": "27447469/31250000"
+          },
+          "resident_bytes_at_full_batch": 59868014592,
+          "fits_nominal_capacity": true,
+          "colocated_seconds_per_request_exact": "15514838277/5781250000",
+          "sources": [
+            {
+              "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+              "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+            },
+            {
+              "file": "sources/hardware/nvidia-h20-vgpu-release7.md",
+              "url": "https://docs.nvidia.com/ai-enterprise/release-7/latest/infra-software/vgpu/reference/hopper.html",
+              "revision": "snapshot-2026-09-09",
+              "sha256": "c1bc1f43b221a4e7c3d2fb7fd3e1998bc3a74412ad634f7be40e3461fe9f5d86"
+            },
+            {
+              "file": "../references/files/specs/nvidia-h20-spec-sheet.pdf",
+              "url": "https://flopper.io/gpu/nvidia-h20-96gb/spec-sheet.pdf",
+              "revision": "sheet-2026-09-02",
+              "sha256": "10066ce28de21151385fc05110af461ccce6a2ea73a0b3322efe5a47e67ce1e5"
+            },
+            {
+              "file": "../references/outline-checks/2026-09-07/execution-feedback/megascale-infer.pdf",
+              "url": "https://arxiv.org/pdf/2504.02263v1",
+              "revision": "2504.02263v1",
+              "sha256": "3596ecc1eda339b0e33e3f3de5d4910b42f1aeb2e880c68b405a59678a66f403"
+            },
+            {
+              "file": "configs/models/qwen3-8b/config.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+            },
+            {
+              "file": "sources/qwen3-8b/model.safetensors.index.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3_moe.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+            }
+          ]
+        }
+      ],
+      "scenario": {
+        "model": "qwen3-8b",
+        "prompt_tokens": 8192,
+        "output_tokens": 1025,
+        "cached_prefix_tokens": 0,
+        "workers": [
+          {
+            "name": "A100",
+            "count": 4,
+            "device": "a100-80gb-sxm",
+            "decode_batch": 32,
+            "compute_efficiency": 0.5,
+            "bandwidth_efficiency": 0.5
+          },
+          {
+            "name": "H20",
+            "count": 4,
+            "device": "h20-sxm5-96gb",
+            "decode_batch": 32,
+            "compute_efficiency": 0.5,
+            "bandwidth_efficiency": 0.5
+          }
+        ],
+        "network_bytes_per_second": 25000000000,
+        "arrival_requests_per_second": "3.5",
+        "kv_layout": "gqa",
+        "kv_model": "deepseek-v3"
+      },
+      "summary": {
+        "new_prefill_tokens_per_request": 8192,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 1207959552,
+        "pd_transfer_bytes_per_request": 1207959552,
+        "network_capacity_requests_per_second_exact": "48828125/2359296",
+        "assignments": 25,
+        "best_prefill_workers": {
+          "A100": 4,
+          "H20": 0
+        },
+        "best_decode_workers": {
+          "A100": 0,
+          "H20": 4
+        },
+        "best_pd_bound_requests_per_second_exact": "125000000/27447469",
+        "colocated_bound_requests_per_second_exact": "23814473165145361328125/7894003424232391199952",
+        "pd_to_colocated_bound_ratio_exact": "505216219150873036796928/334667271143249503000325",
+        "best_bottlenecks": [
+          "decode"
+        ],
+        "arrival_strictly_below_best_pd_bound": true,
+        "arrival_strictly_below_colocated_bound": false
+      },
+      "pool_assignments": [
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "0",
+          "decode_requests_per_second_exact": "11982421875/1756638016",
+          "bound_requests_per_second_exact": "0",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "0"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "361328125/652316032",
+          "decode_requests_per_second_exact": "9982421875/1756638016",
+          "bound_requests_per_second_exact": "361328125/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "3409920000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "361328125/326158016",
+          "decode_requests_per_second_exact": "7982421875/1756638016",
+          "bound_requests_per_second_exact": "361328125/326158016",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "6819840000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "1083984375/652316032",
+          "decode_requests_per_second_exact": "5982421875/1756638016",
+          "bound_requests_per_second_exact": "1083984375/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "10229760000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "361328125/163079008",
+          "decode_requests_per_second_exact": "3982421875/1756638016",
+          "bound_requests_per_second_exact": "361328125/163079008",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "13639680000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "380859375/326158016",
+          "decode_requests_per_second_exact": "43947265625/7026552064",
+          "bound_requests_per_second_exact": "380859375/326158016",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "7188480000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "1123046875/652316032",
+          "decode_requests_per_second_exact": "35947265625/7026552064",
+          "bound_requests_per_second_exact": "1123046875/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "10598400000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "185546875/81539504",
+          "decode_requests_per_second_exact": "27947265625/7026552064",
+          "bound_requests_per_second_exact": "185546875/81539504",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "14008320000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "1845703125/652316032",
+          "decode_requests_per_second_exact": "2849609375/1003793152",
+          "bound_requests_per_second_exact": "1845703125/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "17418240000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "1103515625/326158016",
+          "decode_requests_per_second_exact": "11947265625/7026552064",
+          "bound_requests_per_second_exact": "11947265625/7026552064",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "56374272000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "380859375/163079008",
+          "decode_requests_per_second_exact": "19982421875/3513276032",
+          "bound_requests_per_second_exact": "380859375/163079008",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "14376960000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "1884765625/652316032",
+          "decode_requests_per_second_exact": "2283203125/501896576",
+          "bound_requests_per_second_exact": "1884765625/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "17786880000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "1123046875/326158016",
+          "decode_requests_per_second_exact": "11982421875/3513276032",
+          "bound_requests_per_second_exact": "11982421875/3513276032",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "113080320000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "2607421875/652316032",
+          "decode_requests_per_second_exact": "7982421875/3513276032",
+          "bound_requests_per_second_exact": "7982421875/3513276032",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "75331584000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "185546875/40769752",
+          "decode_requests_per_second_exact": "3982421875/3513276032",
+          "bound_requests_per_second_exact": "3982421875/3513276032",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "37582848000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "1142578125/326158016",
+          "decode_requests_per_second_exact": "35982421875/7026552064",
+          "bound_requests_per_second_exact": "1142578125/326158016",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "21565440000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "2646484375/652316032",
+          "decode_requests_per_second_exact": "27982421875/7026552064",
+          "bound_requests_per_second_exact": "27982421875/7026552064",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "132037632000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "751953125/163079008",
+          "decode_requests_per_second_exact": "19982421875/7026552064",
+          "bound_requests_per_second_exact": "19982421875/7026552064",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "94288896000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "3369140625/652316032",
+          "decode_requests_per_second_exact": "11982421875/7026552064",
+          "bound_requests_per_second_exact": "11982421875/7026552064",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "56540160000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "1865234375/326158016",
+          "decode_requests_per_second_exact": "3982421875/7026552064",
+          "bound_requests_per_second_exact": "3982421875/7026552064",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "18791424000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "380859375/81539504",
+          "decode_requests_per_second_exact": "125000000/27447469",
+          "bound_requests_per_second_exact": "125000000/27447469",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "150994944000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "3408203125/652316032",
+          "decode_requests_per_second_exact": "93750000/27447469",
+          "bound_requests_per_second_exact": "93750000/27447469",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "113246208000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "1884765625/326158016",
+          "decode_requests_per_second_exact": "62500000/27447469",
+          "bound_requests_per_second_exact": "62500000/27447469",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "75497472000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "4130859375/652316032",
+          "decode_requests_per_second_exact": "31250000/27447469",
+          "bound_requests_per_second_exact": "31250000/27447469",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "37748736000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "1123046875/163079008",
+          "decode_requests_per_second_exact": "0",
+          "bound_requests_per_second_exact": "0",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "0"
+        }
+      ],
+      "pool_worker_rates": [
+        {
+          "name": "A100",
+          "count": 4,
+          "prefill_service_seconds_exact": "326158016/380859375",
+          "decode_service_seconds_exact": "7026552064/3982421875",
+          "colocated_requests_per_second_exact": "776572265625/2035213847104"
+        },
+        {
+          "name": "H20",
+          "count": 4,
+          "prefill_service_seconds_exact": "652316032/361328125",
+          "decode_service_seconds_exact": "27447469/31250000",
+          "colocated_requests_per_second_exact": "5781250000/15514838277"
+        }
+      ],
+      "assumptions": [
+        "\u6bcf\u4e2aworker\u4ee3\u8868\u5df2\u80fd\u5bb9\u7eb3\u8be5\u5b8c\u6574\u6a21\u578b\u4e0e\u6240\u9700KV\u7684\u72ec\u7acb\u670d\u52a1\u526f\u672c\u3002device\u5f62\u5f0f\u7684worker\u6309hardware.json\u9501\u5b9a\u7684\u5b98\u65b9\u5cf0\u503c\u4e58\u4ee5\u58f0\u660e\u6548\u7387\uff0c\u7528\u6a21\u578bforward\u8d26\u63a8\u51fa\u4e24\u9636\u6bb5\u670d\u52a1\u65f6\u95f4\uff1b\u663e\u5f0ftoken/s\u5f62\u5f0f\u5219\u76f4\u63a5\u91c7\u7528\u7ed9\u5b9a\u7684\u6709\u6548\u80fd\u529b\u3002",
+        "\u8f93\u5165\u9636\u6bb5token/s\u5fc5\u987b\u5bf9\u5e94\u76f8\u540c\u6a21\u578b\u3001\u7cbe\u5ea6\u3001\u4e0a\u4e0b\u6587\u3001batch\u548c\u8d28\u91cf\u6761\u4ef6\u4e0b\u7684\u6709\u6548\u670d\u52a1\u80fd\u529b\u3002prefill\u6309\u65b0\u5904\u7406token\u6570\uff0cdecode\u6309\u8c03\u7528\u6b21\u6570\uff1bprefill\u6700\u540elogits\u4ea7\u751f\u9996\u8f93\u51fa\uff0c\u6240\u4ee5G\u8f93\u51fa\u9700\u8981G-1\u6b21decode\u3002",
+        "\u6bcf\u4e2aworker\u56fa\u5b9a\u5206\u914dP\u6216D\uff0c\u6c60\u5185\u5141\u8bb8\u7406\u60f3\u6d41\u91cf\u5206\u914d\uff1b\u72ec\u7acb\u8d44\u6e90\u5bb9\u91cf\u53d6min\uff0c\u5f02\u6784\u526f\u672c\u7684\u8bf7\u6c42/s\u5148\u76f8\u52a0\u3002\u5171\u7f6e\u6bcf\u526f\u672c\u5148\u52a0\u4e24\u4e2a\u9636\u6bb5\u7684\u8d44\u6e90\u79d2\u518d\u53d6\u5012\u6570\uff0c\u5047\u5b9a\u9636\u6bb5\u5171\u4eab\u8d44\u6e90\u4e14\u65e0\u989d\u5916\u6df7\u8dd1\u60e9\u7f5a\u3002",
+        "\u8fd9\u662f\u7ed9\u5b9a\u670d\u52a1\u80fd\u529b\u7684\u7a33\u6001\u4e0a\u754c\u3002\u6ca1\u6709\u8bf7\u6c42\u6392\u961f\u3001\u65f6\u53d8\u8d1f\u8f7d\u3001\u542f\u52a8\u540c\u6b65\u3001\u6d41\u6c34\u586b\u5145\u3001transfer\u7a97\u53e3\u9650\u5236\u3001SLO\u3001\u80fd\u8017\u6216\u8d39\u7528\uff0c\u4e0d\u80fd\u628a\u4f4e\u4e8e\u4e0a\u754c\u89c6\u4e3a\u7a33\u5b9a\u6027\u6216\u5c3e\u5ef6\u8fdf\u4fdd\u8bc1\u3002",
+        "P\u5df2\u547d\u4e2d\u524d\u7f00\u4ec5\u51cf\u5c11\u5176\u65b0token\u5de5\u4f5c\uff1b\u5047\u8bbeD\u51b7\u7f13\u5b58\uff0c\u4ecd\u4ea4\u63a5\u5b8c\u6574prompt\u72b6\u6001\u3002\u8de8\u957f\u5ea6\u590d\u7528\u76f8\u540ctoken/s\u53ea\u662f\u4e00\u9879\u6559\u5b66\u654f\u611f\u6027\u5047\u8bbe\uff0c\u5b9e\u9645\u9700\u91cd\u65b0\u6821\u51c6\u3002",
+        "KV\u4f7f\u7528state\u6a21\u5757\u7684\u9ed8\u8ba4BF16\u4e0e\u6a21\u578b\u72b6\u6001\u7ea6\u5b9a\uff0c\u4e0d\u542b\u683c\u5f0f\u8f6c\u6362\u3001\u5206\u7247\u590d\u5236\u3001\u8def\u7531\u5143\u6570\u636e\u6216\u53cc\u7aeftemporary\u3002\u7f51\u7edc\u7ed9\u5171\u4eab\u6709\u6548\u5355\u5411payload\u5e26\u5bbd\u4e0a\u754c\uff0c\u6536\u53d1\u4e0d\u91cd\u590d\u76f8\u52a0\u3002",
+        "\u4ec5\u4e00\u4e2a\u8f93\u51fa\u65f6\u4e0d\u9700\u8981D\u8c03\u7528\u6216KV\u4ea4\u63a5\uff0c\u6700\u4f18\u628a\u5168\u90e8worker\u7ed9P\uff1b\u591a\u8f93\u51fa\u65f6\u8981\u6c42\u4e24\u4e2a\u6c60\u90fd\u6709\u6b63\u80fd\u529b\u3002\u5230\u8fbe\u7387\u6070\u7b49\u5bb9\u91cf\u4e0d\u6807\u4e3a\u4e25\u683c\u4f4e\u4e8e\uff0c\u4f59\u91cf\u4e5f\u4e0d\u4ee3\u66ffSLO\u8bc1\u636e\u3002",
+        "\u679a\u4e3e\u5185\u6700\u5927\u503c\u53ea\u5bf9\u5f53\u524d\u6574\u6570\u5019\u9009\u4e0e\u5047\u8bbe\u6210\u7acb\uff1b\u540c\u503c\u9009\u8f93\u5165\u987a\u5e8f\u4e2d\u7684\u9996\u9879\uff0c\u4e0d\u662f\u552f\u4e00\u914d\u6bd4\u6216\u771f\u5b9e\u7cfb\u7edf\u6700\u4f18\u3002",
+        "kv_layout=mla \u65f6\uff0c\u4ea4\u63a5\u72b6\u6001\u6309\u9501\u5b9a DeepSeek-V3 config \u7684\u7d27\u51d1 MLA \u6bcf token \u5b57\u8282\uff08\u5c42\u6570\u00d7(d_c+d_r)\u00d72 B\uff09\u4e58\u76f8\u540c prompt \u957f\u5ea6\uff1b\u5176\u4f59\u9636\u6bb5\u901f\u7387\u4e0e\u6a21\u578b\u4e0d\u53d8\uff0c\u53ea\u6bd4\u8f83\u4ea4\u63a5\u5b57\u8282\u7684\u5f71\u54cd\u3002"
+      ],
+      "all_best_prefill_workers": [
+        {
+          "A100": 4,
+          "H20": 0
+        }
+      ]
+    },
+    "limited_link": {
+      "schema_version": 1,
+      "calculation": "pd-pool",
+      "sources": [
+        {
+          "file": "configs/models/qwen3-8b/config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+          "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+          "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+        },
+        {
+          "file": "sources/qwen3-8b/model.safetensors.index.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+          "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+          "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+        },
+        {
+          "file": "sources/qwen3/modeling_qwen3.py",
+          "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+          "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+          "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+        },
+        {
+          "file": "sources/qwen3/modeling_qwen3_moe.py",
+          "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+          "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+          "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+        },
+        {
+          "file": "sources/hardware/nvidia-a100-page.md",
+          "url": "https://www.nvidia.com/en-us/data-center/a100/",
+          "revision": "snapshot-2026-09-08",
+          "sha256": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed"
+        },
+        {
+          "file": "../references/files/specs/nvidia-a100.pdf",
+          "url": "https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf",
+          "revision": "book-official-archive-2026-09-06",
+          "sha256": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815"
+        },
+        {
+          "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+          "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+          "revision": "snapshot-2026-09-08",
+          "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+        },
+        {
+          "file": "sources/hardware/nvidia-h20-vgpu-release7.md",
+          "url": "https://docs.nvidia.com/ai-enterprise/release-7/latest/infra-software/vgpu/reference/hopper.html",
+          "revision": "snapshot-2026-09-09",
+          "sha256": "c1bc1f43b221a4e7c3d2fb7fd3e1998bc3a74412ad634f7be40e3461fe9f5d86"
+        },
+        {
+          "file": "../references/files/specs/nvidia-h20-spec-sheet.pdf",
+          "url": "https://flopper.io/gpu/nvidia-h20-96gb/spec-sheet.pdf",
+          "revision": "sheet-2026-09-02",
+          "sha256": "10066ce28de21151385fc05110af461ccce6a2ea73a0b3322efe5a47e67ce1e5"
+        },
+        {
+          "file": "../references/outline-checks/2026-09-07/execution-feedback/megascale-infer.pdf",
+          "url": "https://arxiv.org/pdf/2504.02263v1",
+          "revision": "2504.02263v1",
+          "sha256": "3596ecc1eda339b0e33e3f3de5d4910b42f1aeb2e880c68b405a59678a66f403"
+        }
+      ],
+      "derived_stage_rates": [
+        {
+          "device": "a100-80gb-sxm",
+          "device_name": "A100 80GB SXM",
+          "model": "qwen3-8b",
+          "peak_tera_ops_per_second": 312,
+          "memory_bandwidth_bytes_per_second": 2039000000000.0,
+          "nominal_capacity_bytes": 80000000000,
+          "effective_flops_per_second_exact": "156000000000000",
+          "effective_bytes_per_second_exact": "1019500000000",
+          "prefill": {
+            "new_tokens": 8192,
+            "matrix_flops": 133594323353600,
+            "weight_bytes": 15203919872,
+            "compute_seconds_exact": "326158016/380859375",
+            "memory_seconds_exact": "59390312/3982421875",
+            "seconds_exact": "326158016/380859375",
+            "bound": "compute",
+            "tokens_per_second_exact": "48750000000/5096219"
+          },
+          "decode": {
+            "batch": 32,
+            "average_history_tokens": 8704,
+            "calls_per_request": 1024,
+            "step_matrix_flops": 648659599360,
+            "step_weight_bytes": 15137073152,
+            "step_kv_bytes": 41075343360,
+            "step_compute_seconds_exact": "7918208/1904296875",
+            "step_memory_seconds_exact": "219579752/3982421875",
+            "step_seconds_exact": "219579752/3982421875",
+            "bound": "memory",
+            "calls_per_second_exact": "15929687500/27447469",
+            "seconds_per_request_exact": "7026552064/3982421875"
+          },
+          "resident_bytes_at_full_batch": 59868014592,
+          "fits_nominal_capacity": true,
+          "colocated_seconds_per_request_exact": "2035213847104/776572265625",
+          "sources": [
+            {
+              "file": "sources/hardware/nvidia-a100-page.md",
+              "url": "https://www.nvidia.com/en-us/data-center/a100/",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed"
+            },
+            {
+              "file": "../references/files/specs/nvidia-a100.pdf",
+              "url": "https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf",
+              "revision": "book-official-archive-2026-09-06",
+              "sha256": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815"
+            },
+            {
+              "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+              "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+            },
+            {
+              "file": "configs/models/qwen3-8b/config.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+            },
+            {
+              "file": "sources/qwen3-8b/model.safetensors.index.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3_moe.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+            }
+          ]
+        },
+        {
+          "device": "h20-sxm5-96gb",
+          "device_name": "H20 SXM5 96GB",
+          "model": "qwen3-8b",
+          "peak_tera_ops_per_second": 148,
+          "memory_bandwidth_bytes_per_second": 4096000000000.0,
+          "nominal_capacity_bytes": 96000000000,
+          "effective_flops_per_second_exact": "74000000000000",
+          "effective_bytes_per_second_exact": "2048000000000",
+          "prefill": {
+            "new_tokens": 8192,
+            "matrix_flops": 133594323353600,
+            "weight_bytes": 15203919872,
+            "compute_seconds_exact": "652316032/361328125",
+            "memory_seconds_exact": "7423789/1000000000",
+            "seconds_exact": "652316032/361328125",
+            "bound": "compute",
+            "tokens_per_second_exact": "23125000000/5096219"
+          },
+          "decode": {
+            "batch": 32,
+            "average_history_tokens": 8704,
+            "calls_per_request": 1024,
+            "step_matrix_flops": 648659599360,
+            "step_weight_bytes": 15137073152,
+            "step_kv_bytes": 41075343360,
+            "step_compute_seconds_exact": "15836416/1806640625",
+            "step_memory_seconds_exact": "27447469/1000000000",
+            "step_seconds_exact": "27447469/1000000000",
+            "bound": "memory",
+            "calls_per_second_exact": "32000000000/27447469",
+            "seconds_per_request_exact": "27447469/31250000"
+          },
+          "resident_bytes_at_full_batch": 59868014592,
+          "fits_nominal_capacity": true,
+          "colocated_seconds_per_request_exact": "15514838277/5781250000",
+          "sources": [
+            {
+              "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+              "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+            },
+            {
+              "file": "sources/hardware/nvidia-h20-vgpu-release7.md",
+              "url": "https://docs.nvidia.com/ai-enterprise/release-7/latest/infra-software/vgpu/reference/hopper.html",
+              "revision": "snapshot-2026-09-09",
+              "sha256": "c1bc1f43b221a4e7c3d2fb7fd3e1998bc3a74412ad634f7be40e3461fe9f5d86"
+            },
+            {
+              "file": "../references/files/specs/nvidia-h20-spec-sheet.pdf",
+              "url": "https://flopper.io/gpu/nvidia-h20-96gb/spec-sheet.pdf",
+              "revision": "sheet-2026-09-02",
+              "sha256": "10066ce28de21151385fc05110af461ccce6a2ea73a0b3322efe5a47e67ce1e5"
+            },
+            {
+              "file": "../references/outline-checks/2026-09-07/execution-feedback/megascale-infer.pdf",
+              "url": "https://arxiv.org/pdf/2504.02263v1",
+              "revision": "2504.02263v1",
+              "sha256": "3596ecc1eda339b0e33e3f3de5d4910b42f1aeb2e880c68b405a59678a66f403"
+            },
+            {
+              "file": "configs/models/qwen3-8b/config.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+            },
+            {
+              "file": "sources/qwen3-8b/model.safetensors.index.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3_moe.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+            }
+          ]
+        }
+      ],
+      "scenario": {
+        "model": "qwen3-8b",
+        "prompt_tokens": 8192,
+        "output_tokens": 1025,
+        "cached_prefix_tokens": 0,
+        "workers": [
+          {
+            "name": "A100",
+            "count": 4,
+            "device": "a100-80gb-sxm",
+            "decode_batch": 32,
+            "compute_efficiency": 0.5,
+            "bandwidth_efficiency": 0.5
+          },
+          {
+            "name": "H20",
+            "count": 4,
+            "device": "h20-sxm5-96gb",
+            "decode_batch": 32,
+            "compute_efficiency": 0.5,
+            "bandwidth_efficiency": 0.5
+          }
+        ],
+        "network_bytes_per_second": 1207959552,
+        "arrival_requests_per_second": "3.5",
+        "kv_layout": "gqa",
+        "kv_model": "deepseek-v3"
+      },
+      "summary": {
+        "new_prefill_tokens_per_request": 8192,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 1207959552,
+        "pd_transfer_bytes_per_request": 1207959552,
+        "network_capacity_requests_per_second_exact": "1",
+        "assignments": 25,
+        "best_prefill_workers": {
+          "A100": 0,
+          "H20": 2
+        },
+        "best_decode_workers": {
+          "A100": 4,
+          "H20": 2
+        },
+        "best_pd_bound_requests_per_second_exact": "1",
+        "colocated_bound_requests_per_second_exact": "23814473165145361328125/7894003424232391199952",
+        "pd_to_colocated_bound_ratio_exact": "7894003424232391199952/23814473165145361328125",
+        "best_bottlenecks": [
+          "network"
+        ],
+        "arrival_strictly_below_best_pd_bound": false,
+        "arrival_strictly_below_colocated_bound": false
+      },
+      "pool_assignments": [
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "0",
+          "decode_requests_per_second_exact": "11982421875/1756638016",
+          "bound_requests_per_second_exact": "0",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "0"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "361328125/652316032",
+          "decode_requests_per_second_exact": "9982421875/1756638016",
+          "bound_requests_per_second_exact": "361328125/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "3409920000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "361328125/326158016",
+          "decode_requests_per_second_exact": "7982421875/1756638016",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "1083984375/652316032",
+          "decode_requests_per_second_exact": "5982421875/1756638016",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "361328125/163079008",
+          "decode_requests_per_second_exact": "3982421875/1756638016",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "380859375/326158016",
+          "decode_requests_per_second_exact": "43947265625/7026552064",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "1123046875/652316032",
+          "decode_requests_per_second_exact": "35947265625/7026552064",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "185546875/81539504",
+          "decode_requests_per_second_exact": "27947265625/7026552064",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "1845703125/652316032",
+          "decode_requests_per_second_exact": "2849609375/1003793152",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "1103515625/326158016",
+          "decode_requests_per_second_exact": "11947265625/7026552064",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "380859375/163079008",
+          "decode_requests_per_second_exact": "19982421875/3513276032",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "1884765625/652316032",
+          "decode_requests_per_second_exact": "2283203125/501896576",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "1123046875/326158016",
+          "decode_requests_per_second_exact": "11982421875/3513276032",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "2607421875/652316032",
+          "decode_requests_per_second_exact": "7982421875/3513276032",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "185546875/40769752",
+          "decode_requests_per_second_exact": "3982421875/3513276032",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "1142578125/326158016",
+          "decode_requests_per_second_exact": "35982421875/7026552064",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "2646484375/652316032",
+          "decode_requests_per_second_exact": "27982421875/7026552064",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "751953125/163079008",
+          "decode_requests_per_second_exact": "19982421875/7026552064",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "3369140625/652316032",
+          "decode_requests_per_second_exact": "11982421875/7026552064",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "1865234375/326158016",
+          "decode_requests_per_second_exact": "3982421875/7026552064",
+          "bound_requests_per_second_exact": "3982421875/7026552064",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "18791424000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "380859375/81539504",
+          "decode_requests_per_second_exact": "125000000/27447469",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "3408203125/652316032",
+          "decode_requests_per_second_exact": "93750000/27447469",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "1884765625/326158016",
+          "decode_requests_per_second_exact": "62500000/27447469",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "4130859375/652316032",
+          "decode_requests_per_second_exact": "31250000/27447469",
+          "bound_requests_per_second_exact": "1",
+          "bottlenecks": [
+            "network"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "1207959552"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "1123046875/163079008",
+          "decode_requests_per_second_exact": "0",
+          "bound_requests_per_second_exact": "0",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "0"
+        }
+      ],
+      "pool_worker_rates": [
+        {
+          "name": "A100",
+          "count": 4,
+          "prefill_service_seconds_exact": "326158016/380859375",
+          "decode_service_seconds_exact": "7026552064/3982421875",
+          "colocated_requests_per_second_exact": "776572265625/2035213847104"
+        },
+        {
+          "name": "H20",
+          "count": 4,
+          "prefill_service_seconds_exact": "652316032/361328125",
+          "decode_service_seconds_exact": "27447469/31250000",
+          "colocated_requests_per_second_exact": "5781250000/15514838277"
+        }
+      ],
+      "assumptions": [
+        "\u6bcf\u4e2aworker\u4ee3\u8868\u5df2\u80fd\u5bb9\u7eb3\u8be5\u5b8c\u6574\u6a21\u578b\u4e0e\u6240\u9700KV\u7684\u72ec\u7acb\u670d\u52a1\u526f\u672c\u3002device\u5f62\u5f0f\u7684worker\u6309hardware.json\u9501\u5b9a\u7684\u5b98\u65b9\u5cf0\u503c\u4e58\u4ee5\u58f0\u660e\u6548\u7387\uff0c\u7528\u6a21\u578bforward\u8d26\u63a8\u51fa\u4e24\u9636\u6bb5\u670d\u52a1\u65f6\u95f4\uff1b\u663e\u5f0ftoken/s\u5f62\u5f0f\u5219\u76f4\u63a5\u91c7\u7528\u7ed9\u5b9a\u7684\u6709\u6548\u80fd\u529b\u3002",
+        "\u8f93\u5165\u9636\u6bb5token/s\u5fc5\u987b\u5bf9\u5e94\u76f8\u540c\u6a21\u578b\u3001\u7cbe\u5ea6\u3001\u4e0a\u4e0b\u6587\u3001batch\u548c\u8d28\u91cf\u6761\u4ef6\u4e0b\u7684\u6709\u6548\u670d\u52a1\u80fd\u529b\u3002prefill\u6309\u65b0\u5904\u7406token\u6570\uff0cdecode\u6309\u8c03\u7528\u6b21\u6570\uff1bprefill\u6700\u540elogits\u4ea7\u751f\u9996\u8f93\u51fa\uff0c\u6240\u4ee5G\u8f93\u51fa\u9700\u8981G-1\u6b21decode\u3002",
+        "\u6bcf\u4e2aworker\u56fa\u5b9a\u5206\u914dP\u6216D\uff0c\u6c60\u5185\u5141\u8bb8\u7406\u60f3\u6d41\u91cf\u5206\u914d\uff1b\u72ec\u7acb\u8d44\u6e90\u5bb9\u91cf\u53d6min\uff0c\u5f02\u6784\u526f\u672c\u7684\u8bf7\u6c42/s\u5148\u76f8\u52a0\u3002\u5171\u7f6e\u6bcf\u526f\u672c\u5148\u52a0\u4e24\u4e2a\u9636\u6bb5\u7684\u8d44\u6e90\u79d2\u518d\u53d6\u5012\u6570\uff0c\u5047\u5b9a\u9636\u6bb5\u5171\u4eab\u8d44\u6e90\u4e14\u65e0\u989d\u5916\u6df7\u8dd1\u60e9\u7f5a\u3002",
+        "\u8fd9\u662f\u7ed9\u5b9a\u670d\u52a1\u80fd\u529b\u7684\u7a33\u6001\u4e0a\u754c\u3002\u6ca1\u6709\u8bf7\u6c42\u6392\u961f\u3001\u65f6\u53d8\u8d1f\u8f7d\u3001\u542f\u52a8\u540c\u6b65\u3001\u6d41\u6c34\u586b\u5145\u3001transfer\u7a97\u53e3\u9650\u5236\u3001SLO\u3001\u80fd\u8017\u6216\u8d39\u7528\uff0c\u4e0d\u80fd\u628a\u4f4e\u4e8e\u4e0a\u754c\u89c6\u4e3a\u7a33\u5b9a\u6027\u6216\u5c3e\u5ef6\u8fdf\u4fdd\u8bc1\u3002",
+        "P\u5df2\u547d\u4e2d\u524d\u7f00\u4ec5\u51cf\u5c11\u5176\u65b0token\u5de5\u4f5c\uff1b\u5047\u8bbeD\u51b7\u7f13\u5b58\uff0c\u4ecd\u4ea4\u63a5\u5b8c\u6574prompt\u72b6\u6001\u3002\u8de8\u957f\u5ea6\u590d\u7528\u76f8\u540ctoken/s\u53ea\u662f\u4e00\u9879\u6559\u5b66\u654f\u611f\u6027\u5047\u8bbe\uff0c\u5b9e\u9645\u9700\u91cd\u65b0\u6821\u51c6\u3002",
+        "KV\u4f7f\u7528state\u6a21\u5757\u7684\u9ed8\u8ba4BF16\u4e0e\u6a21\u578b\u72b6\u6001\u7ea6\u5b9a\uff0c\u4e0d\u542b\u683c\u5f0f\u8f6c\u6362\u3001\u5206\u7247\u590d\u5236\u3001\u8def\u7531\u5143\u6570\u636e\u6216\u53cc\u7aeftemporary\u3002\u7f51\u7edc\u7ed9\u5171\u4eab\u6709\u6548\u5355\u5411payload\u5e26\u5bbd\u4e0a\u754c\uff0c\u6536\u53d1\u4e0d\u91cd\u590d\u76f8\u52a0\u3002",
+        "\u4ec5\u4e00\u4e2a\u8f93\u51fa\u65f6\u4e0d\u9700\u8981D\u8c03\u7528\u6216KV\u4ea4\u63a5\uff0c\u6700\u4f18\u628a\u5168\u90e8worker\u7ed9P\uff1b\u591a\u8f93\u51fa\u65f6\u8981\u6c42\u4e24\u4e2a\u6c60\u90fd\u6709\u6b63\u80fd\u529b\u3002\u5230\u8fbe\u7387\u6070\u7b49\u5bb9\u91cf\u4e0d\u6807\u4e3a\u4e25\u683c\u4f4e\u4e8e\uff0c\u4f59\u91cf\u4e5f\u4e0d\u4ee3\u66ffSLO\u8bc1\u636e\u3002",
+        "\u679a\u4e3e\u5185\u6700\u5927\u503c\u53ea\u5bf9\u5f53\u524d\u6574\u6570\u5019\u9009\u4e0e\u5047\u8bbe\u6210\u7acb\uff1b\u540c\u503c\u9009\u8f93\u5165\u987a\u5e8f\u4e2d\u7684\u9996\u9879\uff0c\u4e0d\u662f\u552f\u4e00\u914d\u6bd4\u6216\u771f\u5b9e\u7cfb\u7edf\u6700\u4f18\u3002",
+        "kv_layout=mla \u65f6\uff0c\u4ea4\u63a5\u72b6\u6001\u6309\u9501\u5b9a DeepSeek-V3 config \u7684\u7d27\u51d1 MLA \u6bcf token \u5b57\u8282\uff08\u5c42\u6570\u00d7(d_c+d_r)\u00d72 B\uff09\u4e58\u76f8\u540c prompt \u957f\u5ea6\uff1b\u5176\u4f59\u9636\u6bb5\u901f\u7387\u4e0e\u6a21\u578b\u4e0d\u53d8\uff0c\u53ea\u6bd4\u8f83\u4ea4\u63a5\u5b57\u8282\u7684\u5f71\u54cd\u3002"
+      ],
+      "all_best_prefill_workers": [
+        {
+          "A100": 0,
+          "H20": 2
+        },
+        {
+          "A100": 0,
+          "H20": 3
+        },
+        {
+          "A100": 0,
+          "H20": 4
+        },
+        {
+          "A100": 1,
+          "H20": 0
+        },
+        {
+          "A100": 1,
+          "H20": 1
+        },
+        {
+          "A100": 1,
+          "H20": 2
+        },
+        {
+          "A100": 1,
+          "H20": 3
+        },
+        {
+          "A100": 1,
+          "H20": 4
+        },
+        {
+          "A100": 2,
+          "H20": 0
+        },
+        {
+          "A100": 2,
+          "H20": 1
+        },
+        {
+          "A100": 2,
+          "H20": 2
+        },
+        {
+          "A100": 2,
+          "H20": 3
+        },
+        {
+          "A100": 2,
+          "H20": 4
+        },
+        {
+          "A100": 3,
+          "H20": 0
+        },
+        {
+          "A100": 3,
+          "H20": 1
+        },
+        {
+          "A100": 3,
+          "H20": 2
+        },
+        {
+          "A100": 3,
+          "H20": 3
+        },
+        {
+          "A100": 4,
+          "H20": 0
+        },
+        {
+          "A100": 4,
+          "H20": 1
+        },
+        {
+          "A100": 4,
+          "H20": 2
+        },
+        {
+          "A100": 4,
+          "H20": 3
+        }
+      ]
+    },
+    "prefix_hit": {
+      "schema_version": 1,
+      "calculation": "pd-pool",
+      "sources": [
+        {
+          "file": "configs/models/qwen3-8b/config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+          "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+          "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+        },
+        {
+          "file": "sources/qwen3-8b/model.safetensors.index.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+          "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+          "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+        },
+        {
+          "file": "sources/qwen3/modeling_qwen3.py",
+          "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+          "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+          "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+        },
+        {
+          "file": "sources/qwen3/modeling_qwen3_moe.py",
+          "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+          "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+          "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+        },
+        {
+          "file": "sources/hardware/nvidia-a100-page.md",
+          "url": "https://www.nvidia.com/en-us/data-center/a100/",
+          "revision": "snapshot-2026-09-08",
+          "sha256": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed"
+        },
+        {
+          "file": "../references/files/specs/nvidia-a100.pdf",
+          "url": "https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf",
+          "revision": "book-official-archive-2026-09-06",
+          "sha256": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815"
+        },
+        {
+          "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+          "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+          "revision": "snapshot-2026-09-08",
+          "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+        },
+        {
+          "file": "sources/hardware/nvidia-h20-vgpu-release7.md",
+          "url": "https://docs.nvidia.com/ai-enterprise/release-7/latest/infra-software/vgpu/reference/hopper.html",
+          "revision": "snapshot-2026-09-09",
+          "sha256": "c1bc1f43b221a4e7c3d2fb7fd3e1998bc3a74412ad634f7be40e3461fe9f5d86"
+        },
+        {
+          "file": "../references/files/specs/nvidia-h20-spec-sheet.pdf",
+          "url": "https://flopper.io/gpu/nvidia-h20-96gb/spec-sheet.pdf",
+          "revision": "sheet-2026-09-02",
+          "sha256": "10066ce28de21151385fc05110af461ccce6a2ea73a0b3322efe5a47e67ce1e5"
+        },
+        {
+          "file": "../references/outline-checks/2026-09-07/execution-feedback/megascale-infer.pdf",
+          "url": "https://arxiv.org/pdf/2504.02263v1",
+          "revision": "2504.02263v1",
+          "sha256": "3596ecc1eda339b0e33e3f3de5d4910b42f1aeb2e880c68b405a59678a66f403"
+        }
+      ],
+      "derived_stage_rates": [
+        {
+          "device": "a100-80gb-sxm",
+          "device_name": "A100 80GB SXM",
+          "model": "qwen3-8b",
+          "peak_tera_ops_per_second": 312,
+          "memory_bandwidth_bytes_per_second": 2039000000000.0,
+          "nominal_capacity_bytes": 80000000000,
+          "effective_flops_per_second_exact": "156000000000000",
+          "effective_bytes_per_second_exact": "1019500000000",
+          "prefill": {
+            "new_tokens": 2048,
+            "matrix_flops": 37110366076928,
+            "weight_bytes": 15153588224,
+            "compute_seconds_exact": "2265036992/9521484375",
+            "memory_seconds_exact": "62732648/3982421875",
+            "seconds_exact": "2265036992/9521484375",
+            "bound": "compute",
+            "tokens_per_second_exact": "304687500000/35391203"
+          },
+          "decode": {
+            "batch": 32,
+            "average_history_tokens": 8704,
+            "calls_per_request": 1024,
+            "step_matrix_flops": 648659599360,
+            "step_weight_bytes": 15137073152,
+            "step_kv_bytes": 41075343360,
+            "step_compute_seconds_exact": "7918208/1904296875",
+            "step_memory_seconds_exact": "219579752/3982421875",
+            "step_seconds_exact": "219579752/3982421875",
+            "bound": "memory",
+            "calls_per_second_exact": "15929687500/27447469",
+            "seconds_per_request_exact": "7026552064/3982421875"
+          },
+          "resident_bytes_at_full_batch": 59868014592,
+          "fits_nominal_capacity": true,
+          "colocated_seconds_per_request_exact": "38872851738688/19414306640625",
+          "sources": [
+            {
+              "file": "sources/hardware/nvidia-a100-page.md",
+              "url": "https://www.nvidia.com/en-us/data-center/a100/",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed"
+            },
+            {
+              "file": "../references/files/specs/nvidia-a100.pdf",
+              "url": "https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf",
+              "revision": "book-official-archive-2026-09-06",
+              "sha256": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815"
+            },
+            {
+              "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+              "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+            },
+            {
+              "file": "configs/models/qwen3-8b/config.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+            },
+            {
+              "file": "sources/qwen3-8b/model.safetensors.index.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3_moe.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+            }
+          ]
+        },
+        {
+          "device": "h20-sxm5-96gb",
+          "device_name": "H20 SXM5 96GB",
+          "model": "qwen3-8b",
+          "peak_tera_ops_per_second": 148,
+          "memory_bandwidth_bytes_per_second": 4096000000000.0,
+          "nominal_capacity_bytes": 96000000000,
+          "effective_flops_per_second_exact": "74000000000000",
+          "effective_bytes_per_second_exact": "2048000000000",
+          "prefill": {
+            "new_tokens": 2048,
+            "matrix_flops": 37110366076928,
+            "weight_bytes": 15153588224,
+            "compute_seconds_exact": "122434432/244140625",
+            "memory_seconds_exact": "7841581/1000000000",
+            "seconds_exact": "122434432/244140625",
+            "bound": "compute",
+            "tokens_per_second_exact": "3906250000/956519"
+          },
+          "decode": {
+            "batch": 32,
+            "average_history_tokens": 8704,
+            "calls_per_request": 1024,
+            "step_matrix_flops": 648659599360,
+            "step_weight_bytes": 15137073152,
+            "step_kv_bytes": 41075343360,
+            "step_compute_seconds_exact": "15836416/1806640625",
+            "step_memory_seconds_exact": "27447469/1000000000",
+            "step_seconds_exact": "27447469/1000000000",
+            "bound": "memory",
+            "calls_per_second_exact": "32000000000/27447469",
+            "seconds_per_request_exact": "27447469/31250000"
+          },
+          "resident_bytes_at_full_batch": 59868014592,
+          "fits_nominal_capacity": true,
+          "colocated_seconds_per_request_exact": "5389884537/3906250000",
+          "sources": [
+            {
+              "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+              "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+            },
+            {
+              "file": "sources/hardware/nvidia-h20-vgpu-release7.md",
+              "url": "https://docs.nvidia.com/ai-enterprise/release-7/latest/infra-software/vgpu/reference/hopper.html",
+              "revision": "snapshot-2026-09-09",
+              "sha256": "c1bc1f43b221a4e7c3d2fb7fd3e1998bc3a74412ad634f7be40e3461fe9f5d86"
+            },
+            {
+              "file": "../references/files/specs/nvidia-h20-spec-sheet.pdf",
+              "url": "https://flopper.io/gpu/nvidia-h20-96gb/spec-sheet.pdf",
+              "revision": "sheet-2026-09-02",
+              "sha256": "10066ce28de21151385fc05110af461ccce6a2ea73a0b3322efe5a47e67ce1e5"
+            },
+            {
+              "file": "../references/outline-checks/2026-09-07/execution-feedback/megascale-infer.pdf",
+              "url": "https://arxiv.org/pdf/2504.02263v1",
+              "revision": "2504.02263v1",
+              "sha256": "3596ecc1eda339b0e33e3f3de5d4910b42f1aeb2e880c68b405a59678a66f403"
+            },
+            {
+              "file": "configs/models/qwen3-8b/config.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+            },
+            {
+              "file": "sources/qwen3-8b/model.safetensors.index.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3_moe.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+            }
+          ]
+        }
+      ],
+      "scenario": {
+        "model": "qwen3-8b",
+        "prompt_tokens": 8192,
+        "output_tokens": 1025,
+        "cached_prefix_tokens": 6144,
+        "workers": [
+          {
+            "name": "A100",
+            "count": 4,
+            "device": "a100-80gb-sxm",
+            "decode_batch": 32,
+            "compute_efficiency": 0.5,
+            "bandwidth_efficiency": 0.5
+          },
+          {
+            "name": "H20",
+            "count": 4,
+            "device": "h20-sxm5-96gb",
+            "decode_batch": 32,
+            "compute_efficiency": 0.5,
+            "bandwidth_efficiency": 0.5
+          }
+        ],
+        "network_bytes_per_second": 25000000000,
+        "arrival_requests_per_second": "3.5",
+        "kv_layout": "gqa",
+        "kv_model": "deepseek-v3"
+      },
+      "summary": {
+        "new_prefill_tokens_per_request": 2048,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 1207959552,
+        "pd_transfer_bytes_per_request": 1207959552,
+        "network_capacity_requests_per_second_exact": "48828125/2359296",
+        "assignments": 25,
+        "best_prefill_workers": {
+          "A100": 2,
+          "H20": 0
+        },
+        "best_decode_workers": {
+          "A100": 2,
+          "H20": 4
+        },
+        "best_pd_bound_requests_per_second_exact": "19982421875/3513276032",
+        "colocated_bound_requests_per_second_exact": "256487948263131103515625/52380045623862003966864",
+        "pd_to_colocated_bound_ratio_exact": "33493765423608260161561599/28835614756150865128165000",
+        "best_bottlenecks": [
+          "decode"
+        ],
+        "arrival_strictly_below_best_pd_bound": true,
+        "arrival_strictly_below_colocated_bound": true
+      },
+      "pool_assignments": [
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "0",
+          "decode_requests_per_second_exact": "11982421875/1756638016",
+          "bound_requests_per_second_exact": "0",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "0"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "244140625/122434432",
+          "decode_requests_per_second_exact": "9982421875/1756638016",
+          "bound_requests_per_second_exact": "244140625/122434432",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "2304000000000000/956519"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "244140625/61217216",
+          "decode_requests_per_second_exact": "7982421875/1756638016",
+          "bound_requests_per_second_exact": "244140625/61217216",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "4608000000000000/956519"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "732421875/122434432",
+          "decode_requests_per_second_exact": "5982421875/1756638016",
+          "bound_requests_per_second_exact": "5982421875/1756638016",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "112914432000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "244140625/30608608",
+          "decode_requests_per_second_exact": "3982421875/1756638016",
+          "bound_requests_per_second_exact": "3982421875/1756638016",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "75165696000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "9521484375/2265036992",
+          "decode_requests_per_second_exact": "43947265625/7026552064",
+          "bound_requests_per_second_exact": "9521484375/2265036992",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "179712000000000000/35391203"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "28076171875/4530073984",
+          "decode_requests_per_second_exact": "35947265625/7026552064",
+          "bound_requests_per_second_exact": "35947265625/7026552064",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "169620480000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "4638671875/566259248",
+          "decode_requests_per_second_exact": "27947265625/7026552064",
+          "bound_requests_per_second_exact": "27947265625/7026552064",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "131871744000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "46142578125/4530073984",
+          "decode_requests_per_second_exact": "2849609375/1003793152",
+          "bound_requests_per_second_exact": "2849609375/1003793152",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "13446144000000000/3921067"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "27587890625/2265036992",
+          "decode_requests_per_second_exact": "11947265625/7026552064",
+          "bound_requests_per_second_exact": "11947265625/7026552064",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "56374272000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "9521484375/1132518496",
+          "decode_requests_per_second_exact": "19982421875/3513276032",
+          "bound_requests_per_second_exact": "19982421875/3513276032",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "188577792000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "47119140625/4530073984",
+          "decode_requests_per_second_exact": "2283203125/501896576",
+          "bound_requests_per_second_exact": "2283203125/501896576",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "21547008000000000/3921067"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "28076171875/2265036992",
+          "decode_requests_per_second_exact": "11982421875/3513276032",
+          "bound_requests_per_second_exact": "11982421875/3513276032",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "113080320000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "65185546875/4530073984",
+          "decode_requests_per_second_exact": "7982421875/3513276032",
+          "bound_requests_per_second_exact": "7982421875/3513276032",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "75331584000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "4638671875/283129624",
+          "decode_requests_per_second_exact": "3982421875/3513276032",
+          "bound_requests_per_second_exact": "3982421875/3513276032",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "37582848000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "28564453125/2265036992",
+          "decode_requests_per_second_exact": "35982421875/7026552064",
+          "bound_requests_per_second_exact": "35982421875/7026552064",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "169786368000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "66162109375/4530073984",
+          "decode_requests_per_second_exact": "27982421875/7026552064",
+          "bound_requests_per_second_exact": "27982421875/7026552064",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "132037632000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "18798828125/1132518496",
+          "decode_requests_per_second_exact": "19982421875/7026552064",
+          "bound_requests_per_second_exact": "19982421875/7026552064",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "94288896000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "84228515625/4530073984",
+          "decode_requests_per_second_exact": "11982421875/7026552064",
+          "bound_requests_per_second_exact": "11982421875/7026552064",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "56540160000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "46630859375/2265036992",
+          "decode_requests_per_second_exact": "3982421875/7026552064",
+          "bound_requests_per_second_exact": "3982421875/7026552064",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "18791424000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "9521484375/566259248",
+          "decode_requests_per_second_exact": "125000000/27447469",
+          "bound_requests_per_second_exact": "125000000/27447469",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "150994944000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "85205078125/4530073984",
+          "decode_requests_per_second_exact": "93750000/27447469",
+          "bound_requests_per_second_exact": "93750000/27447469",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "113246208000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "47119140625/2265036992",
+          "decode_requests_per_second_exact": "62500000/27447469",
+          "bound_requests_per_second_exact": "62500000/27447469",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "75497472000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "103271484375/4530073984",
+          "decode_requests_per_second_exact": "31250000/27447469",
+          "bound_requests_per_second_exact": "31250000/27447469",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "37748736000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "28076171875/1132518496",
+          "decode_requests_per_second_exact": "0",
+          "bound_requests_per_second_exact": "0",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "0"
+        }
+      ],
+      "pool_worker_rates": [
+        {
+          "name": "A100",
+          "count": 4,
+          "prefill_service_seconds_exact": "2265036992/9521484375",
+          "decode_service_seconds_exact": "7026552064/3982421875",
+          "colocated_requests_per_second_exact": "19414306640625/38872851738688"
+        },
+        {
+          "name": "H20",
+          "count": 4,
+          "prefill_service_seconds_exact": "122434432/244140625",
+          "decode_service_seconds_exact": "27447469/31250000",
+          "colocated_requests_per_second_exact": "3906250000/5389884537"
+        }
+      ],
+      "assumptions": [
+        "\u6bcf\u4e2aworker\u4ee3\u8868\u5df2\u80fd\u5bb9\u7eb3\u8be5\u5b8c\u6574\u6a21\u578b\u4e0e\u6240\u9700KV\u7684\u72ec\u7acb\u670d\u52a1\u526f\u672c\u3002device\u5f62\u5f0f\u7684worker\u6309hardware.json\u9501\u5b9a\u7684\u5b98\u65b9\u5cf0\u503c\u4e58\u4ee5\u58f0\u660e\u6548\u7387\uff0c\u7528\u6a21\u578bforward\u8d26\u63a8\u51fa\u4e24\u9636\u6bb5\u670d\u52a1\u65f6\u95f4\uff1b\u663e\u5f0ftoken/s\u5f62\u5f0f\u5219\u76f4\u63a5\u91c7\u7528\u7ed9\u5b9a\u7684\u6709\u6548\u80fd\u529b\u3002",
+        "\u8f93\u5165\u9636\u6bb5token/s\u5fc5\u987b\u5bf9\u5e94\u76f8\u540c\u6a21\u578b\u3001\u7cbe\u5ea6\u3001\u4e0a\u4e0b\u6587\u3001batch\u548c\u8d28\u91cf\u6761\u4ef6\u4e0b\u7684\u6709\u6548\u670d\u52a1\u80fd\u529b\u3002prefill\u6309\u65b0\u5904\u7406token\u6570\uff0cdecode\u6309\u8c03\u7528\u6b21\u6570\uff1bprefill\u6700\u540elogits\u4ea7\u751f\u9996\u8f93\u51fa\uff0c\u6240\u4ee5G\u8f93\u51fa\u9700\u8981G-1\u6b21decode\u3002",
+        "\u6bcf\u4e2aworker\u56fa\u5b9a\u5206\u914dP\u6216D\uff0c\u6c60\u5185\u5141\u8bb8\u7406\u60f3\u6d41\u91cf\u5206\u914d\uff1b\u72ec\u7acb\u8d44\u6e90\u5bb9\u91cf\u53d6min\uff0c\u5f02\u6784\u526f\u672c\u7684\u8bf7\u6c42/s\u5148\u76f8\u52a0\u3002\u5171\u7f6e\u6bcf\u526f\u672c\u5148\u52a0\u4e24\u4e2a\u9636\u6bb5\u7684\u8d44\u6e90\u79d2\u518d\u53d6\u5012\u6570\uff0c\u5047\u5b9a\u9636\u6bb5\u5171\u4eab\u8d44\u6e90\u4e14\u65e0\u989d\u5916\u6df7\u8dd1\u60e9\u7f5a\u3002",
+        "\u8fd9\u662f\u7ed9\u5b9a\u670d\u52a1\u80fd\u529b\u7684\u7a33\u6001\u4e0a\u754c\u3002\u6ca1\u6709\u8bf7\u6c42\u6392\u961f\u3001\u65f6\u53d8\u8d1f\u8f7d\u3001\u542f\u52a8\u540c\u6b65\u3001\u6d41\u6c34\u586b\u5145\u3001transfer\u7a97\u53e3\u9650\u5236\u3001SLO\u3001\u80fd\u8017\u6216\u8d39\u7528\uff0c\u4e0d\u80fd\u628a\u4f4e\u4e8e\u4e0a\u754c\u89c6\u4e3a\u7a33\u5b9a\u6027\u6216\u5c3e\u5ef6\u8fdf\u4fdd\u8bc1\u3002",
+        "P\u5df2\u547d\u4e2d\u524d\u7f00\u4ec5\u51cf\u5c11\u5176\u65b0token\u5de5\u4f5c\uff1b\u5047\u8bbeD\u51b7\u7f13\u5b58\uff0c\u4ecd\u4ea4\u63a5\u5b8c\u6574prompt\u72b6\u6001\u3002\u8de8\u957f\u5ea6\u590d\u7528\u76f8\u540ctoken/s\u53ea\u662f\u4e00\u9879\u6559\u5b66\u654f\u611f\u6027\u5047\u8bbe\uff0c\u5b9e\u9645\u9700\u91cd\u65b0\u6821\u51c6\u3002",
+        "KV\u4f7f\u7528state\u6a21\u5757\u7684\u9ed8\u8ba4BF16\u4e0e\u6a21\u578b\u72b6\u6001\u7ea6\u5b9a\uff0c\u4e0d\u542b\u683c\u5f0f\u8f6c\u6362\u3001\u5206\u7247\u590d\u5236\u3001\u8def\u7531\u5143\u6570\u636e\u6216\u53cc\u7aeftemporary\u3002\u7f51\u7edc\u7ed9\u5171\u4eab\u6709\u6548\u5355\u5411payload\u5e26\u5bbd\u4e0a\u754c\uff0c\u6536\u53d1\u4e0d\u91cd\u590d\u76f8\u52a0\u3002",
+        "\u4ec5\u4e00\u4e2a\u8f93\u51fa\u65f6\u4e0d\u9700\u8981D\u8c03\u7528\u6216KV\u4ea4\u63a5\uff0c\u6700\u4f18\u628a\u5168\u90e8worker\u7ed9P\uff1b\u591a\u8f93\u51fa\u65f6\u8981\u6c42\u4e24\u4e2a\u6c60\u90fd\u6709\u6b63\u80fd\u529b\u3002\u5230\u8fbe\u7387\u6070\u7b49\u5bb9\u91cf\u4e0d\u6807\u4e3a\u4e25\u683c\u4f4e\u4e8e\uff0c\u4f59\u91cf\u4e5f\u4e0d\u4ee3\u66ffSLO\u8bc1\u636e\u3002",
+        "\u679a\u4e3e\u5185\u6700\u5927\u503c\u53ea\u5bf9\u5f53\u524d\u6574\u6570\u5019\u9009\u4e0e\u5047\u8bbe\u6210\u7acb\uff1b\u540c\u503c\u9009\u8f93\u5165\u987a\u5e8f\u4e2d\u7684\u9996\u9879\uff0c\u4e0d\u662f\u552f\u4e00\u914d\u6bd4\u6216\u771f\u5b9e\u7cfb\u7edf\u6700\u4f18\u3002",
+        "kv_layout=mla \u65f6\uff0c\u4ea4\u63a5\u72b6\u6001\u6309\u9501\u5b9a DeepSeek-V3 config \u7684\u7d27\u51d1 MLA \u6bcf token \u5b57\u8282\uff08\u5c42\u6570\u00d7(d_c+d_r)\u00d72 B\uff09\u4e58\u76f8\u540c prompt \u957f\u5ea6\uff1b\u5176\u4f59\u9636\u6bb5\u901f\u7387\u4e0e\u6a21\u578b\u4e0d\u53d8\uff0c\u53ea\u6bd4\u8f83\u4ea4\u63a5\u5b57\u8282\u7684\u5f71\u54cd\u3002"
+      ],
+      "all_best_prefill_workers": [
+        {
+          "A100": 2,
+          "H20": 0
+        }
+      ]
+    },
+    "short_output": {
+      "schema_version": 1,
+      "calculation": "pd-pool",
+      "sources": [
+        {
+          "file": "configs/models/qwen3-8b/config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+          "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+          "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+        },
+        {
+          "file": "sources/qwen3-8b/model.safetensors.index.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+          "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+          "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+        },
+        {
+          "file": "sources/qwen3/modeling_qwen3.py",
+          "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+          "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+          "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+        },
+        {
+          "file": "sources/qwen3/modeling_qwen3_moe.py",
+          "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+          "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+          "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+        },
+        {
+          "file": "sources/hardware/nvidia-a100-page.md",
+          "url": "https://www.nvidia.com/en-us/data-center/a100/",
+          "revision": "snapshot-2026-09-08",
+          "sha256": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed"
+        },
+        {
+          "file": "../references/files/specs/nvidia-a100.pdf",
+          "url": "https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf",
+          "revision": "book-official-archive-2026-09-06",
+          "sha256": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815"
+        },
+        {
+          "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+          "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+          "revision": "snapshot-2026-09-08",
+          "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+        },
+        {
+          "file": "sources/hardware/nvidia-h20-vgpu-release7.md",
+          "url": "https://docs.nvidia.com/ai-enterprise/release-7/latest/infra-software/vgpu/reference/hopper.html",
+          "revision": "snapshot-2026-09-09",
+          "sha256": "c1bc1f43b221a4e7c3d2fb7fd3e1998bc3a74412ad634f7be40e3461fe9f5d86"
+        },
+        {
+          "file": "../references/files/specs/nvidia-h20-spec-sheet.pdf",
+          "url": "https://flopper.io/gpu/nvidia-h20-96gb/spec-sheet.pdf",
+          "revision": "sheet-2026-09-02",
+          "sha256": "10066ce28de21151385fc05110af461ccce6a2ea73a0b3322efe5a47e67ce1e5"
+        },
+        {
+          "file": "../references/outline-checks/2026-09-07/execution-feedback/megascale-infer.pdf",
+          "url": "https://arxiv.org/pdf/2504.02263v1",
+          "revision": "2504.02263v1",
+          "sha256": "3596ecc1eda339b0e33e3f3de5d4910b42f1aeb2e880c68b405a59678a66f403"
+        }
+      ],
+      "derived_stage_rates": [
+        {
+          "device": "a100-80gb-sxm",
+          "device_name": "A100 80GB SXM",
+          "model": "qwen3-8b",
+          "peak_tera_ops_per_second": 312,
+          "memory_bandwidth_bytes_per_second": 2039000000000.0,
+          "nominal_capacity_bytes": 80000000000,
+          "effective_flops_per_second_exact": "156000000000000",
+          "effective_bytes_per_second_exact": "1019500000000",
+          "prefill": {
+            "new_tokens": 8192,
+            "matrix_flops": 133594323353600,
+            "weight_bytes": 15203919872,
+            "compute_seconds_exact": "326158016/380859375",
+            "memory_seconds_exact": "59390312/3982421875",
+            "seconds_exact": "326158016/380859375",
+            "bound": "compute",
+            "tokens_per_second_exact": "48750000000/5096219"
+          },
+          "decode": {
+            "batch": 32,
+            "average_history_tokens": 8256,
+            "calls_per_request": 128,
+            "step_matrix_flops": 640203882496,
+            "step_weight_bytes": 15137073152,
+            "step_kv_bytes": 38961414144,
+            "step_compute_seconds_exact": "39074944/9521484375",
+            "step_memory_seconds_exact": "211322216/3982421875",
+            "step_seconds_exact": "211322216/3982421875",
+            "bound": "memory",
+            "calls_per_second_exact": "15929687500/26415277",
+            "seconds_per_request_exact": "845288864/3982421875"
+          },
+          "resident_bytes_at_full_batch": 55640156160,
+          "fits_nominal_capacity": true,
+          "colocated_seconds_per_request_exact": "829867523104/776572265625",
+          "sources": [
+            {
+              "file": "sources/hardware/nvidia-a100-page.md",
+              "url": "https://www.nvidia.com/en-us/data-center/a100/",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed"
+            },
+            {
+              "file": "../references/files/specs/nvidia-a100.pdf",
+              "url": "https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf",
+              "revision": "book-official-archive-2026-09-06",
+              "sha256": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815"
+            },
+            {
+              "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+              "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+            },
+            {
+              "file": "configs/models/qwen3-8b/config.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+            },
+            {
+              "file": "sources/qwen3-8b/model.safetensors.index.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3_moe.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+            }
+          ]
+        },
+        {
+          "device": "h20-sxm5-96gb",
+          "device_name": "H20 SXM5 96GB",
+          "model": "qwen3-8b",
+          "peak_tera_ops_per_second": 148,
+          "memory_bandwidth_bytes_per_second": 4096000000000.0,
+          "nominal_capacity_bytes": 96000000000,
+          "effective_flops_per_second_exact": "74000000000000",
+          "effective_bytes_per_second_exact": "2048000000000",
+          "prefill": {
+            "new_tokens": 8192,
+            "matrix_flops": 133594323353600,
+            "weight_bytes": 15203919872,
+            "compute_seconds_exact": "652316032/361328125",
+            "memory_seconds_exact": "7423789/1000000000",
+            "seconds_exact": "652316032/361328125",
+            "bound": "compute",
+            "tokens_per_second_exact": "23125000000/5096219"
+          },
+          "decode": {
+            "batch": 32,
+            "average_history_tokens": 8256,
+            "calls_per_request": 128,
+            "step_matrix_flops": 640203882496,
+            "step_weight_bytes": 15137073152,
+            "step_kv_bytes": 38961414144,
+            "step_compute_seconds_exact": "78149888/9033203125",
+            "step_memory_seconds_exact": "26415277/1000000000",
+            "step_seconds_exact": "26415277/1000000000",
+            "bound": "memory",
+            "calls_per_second_exact": "32000000000/26415277",
+            "seconds_per_request_exact": "26415277/250000000"
+          },
+          "resident_bytes_at_full_batch": 55640156160,
+          "fits_nominal_capacity": true,
+          "colocated_seconds_per_request_exact": "88383278341/46250000000",
+          "sources": [
+            {
+              "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+              "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+            },
+            {
+              "file": "sources/hardware/nvidia-h20-vgpu-release7.md",
+              "url": "https://docs.nvidia.com/ai-enterprise/release-7/latest/infra-software/vgpu/reference/hopper.html",
+              "revision": "snapshot-2026-09-09",
+              "sha256": "c1bc1f43b221a4e7c3d2fb7fd3e1998bc3a74412ad634f7be40e3461fe9f5d86"
+            },
+            {
+              "file": "../references/files/specs/nvidia-h20-spec-sheet.pdf",
+              "url": "https://flopper.io/gpu/nvidia-h20-96gb/spec-sheet.pdf",
+              "revision": "sheet-2026-09-02",
+              "sha256": "10066ce28de21151385fc05110af461ccce6a2ea73a0b3322efe5a47e67ce1e5"
+            },
+            {
+              "file": "../references/outline-checks/2026-09-07/execution-feedback/megascale-infer.pdf",
+              "url": "https://arxiv.org/pdf/2504.02263v1",
+              "revision": "2504.02263v1",
+              "sha256": "3596ecc1eda339b0e33e3f3de5d4910b42f1aeb2e880c68b405a59678a66f403"
+            },
+            {
+              "file": "configs/models/qwen3-8b/config.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+            },
+            {
+              "file": "sources/qwen3-8b/model.safetensors.index.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3_moe.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+            }
+          ]
+        }
+      ],
+      "scenario": {
+        "model": "qwen3-8b",
+        "prompt_tokens": 8192,
+        "output_tokens": 129,
+        "cached_prefix_tokens": 0,
+        "workers": [
+          {
+            "name": "A100",
+            "count": 4,
+            "device": "a100-80gb-sxm",
+            "decode_batch": 32,
+            "compute_efficiency": 0.5,
+            "bandwidth_efficiency": 0.5
+          },
+          {
+            "name": "H20",
+            "count": 4,
+            "device": "h20-sxm5-96gb",
+            "decode_batch": 32,
+            "compute_efficiency": 0.5,
+            "bandwidth_efficiency": 0.5
+          }
+        ],
+        "network_bytes_per_second": 25000000000,
+        "arrival_requests_per_second": "3.5",
+        "kv_layout": "gqa",
+        "kv_model": "deepseek-v3"
+      },
+      "summary": {
+        "new_prefill_tokens_per_request": 8192,
+        "decode_calls_per_request": 128,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 1207959552,
+        "pd_transfer_bytes_per_request": 1207959552,
+        "network_capacity_requests_per_second_exact": "48828125/2359296",
+        "assignments": 25,
+        "best_prefill_workers": {
+          "A100": 4,
+          "H20": 3
+        },
+        "best_decode_workers": {
+          "A100": 0,
+          "H20": 1
+        },
+        "best_pd_bound_requests_per_second_exact": "4130859375/652316032",
+        "colocated_bound_requests_per_second_exact": "107017375648195361328125/18336603070164270072616",
+        "pd_to_colocated_bound_ratio_exact": "969547887334935780089571/893557117924918093598320",
+        "best_bottlenecks": [
+          "prefill"
+        ],
+        "arrival_strictly_below_best_pd_bound": true,
+        "arrival_strictly_below_colocated_bound": true
+      },
+      "pool_assignments": [
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "0",
+          "decode_requests_per_second_exact": "11982421875/211322216",
+          "bound_requests_per_second_exact": "0",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "0"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "361328125/652316032",
+          "decode_requests_per_second_exact": "9982421875/211322216",
+          "bound_requests_per_second_exact": "361328125/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "3409920000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "361328125/326158016",
+          "decode_requests_per_second_exact": "7982421875/211322216",
+          "bound_requests_per_second_exact": "361328125/326158016",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "6819840000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "1083984375/652316032",
+          "decode_requests_per_second_exact": "5982421875/211322216",
+          "bound_requests_per_second_exact": "1083984375/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "10229760000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "361328125/163079008",
+          "decode_requests_per_second_exact": "3982421875/211322216",
+          "bound_requests_per_second_exact": "361328125/163079008",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "13639680000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "380859375/326158016",
+          "decode_requests_per_second_exact": "43947265625/845288864",
+          "bound_requests_per_second_exact": "380859375/326158016",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "7188480000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "1123046875/652316032",
+          "decode_requests_per_second_exact": "35947265625/845288864",
+          "bound_requests_per_second_exact": "1123046875/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "10598400000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "185546875/81539504",
+          "decode_requests_per_second_exact": "27947265625/845288864",
+          "bound_requests_per_second_exact": "185546875/81539504",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "14008320000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "1845703125/652316032",
+          "decode_requests_per_second_exact": "2849609375/120755552",
+          "bound_requests_per_second_exact": "1845703125/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "17418240000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "1103515625/326158016",
+          "decode_requests_per_second_exact": "11947265625/845288864",
+          "bound_requests_per_second_exact": "1103515625/326158016",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "20828160000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "380859375/163079008",
+          "decode_requests_per_second_exact": "19982421875/422644432",
+          "bound_requests_per_second_exact": "380859375/163079008",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "14376960000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "1884765625/652316032",
+          "decode_requests_per_second_exact": "2283203125/60377776",
+          "bound_requests_per_second_exact": "1884765625/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "17786880000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "1123046875/326158016",
+          "decode_requests_per_second_exact": "11982421875/422644432",
+          "bound_requests_per_second_exact": "1123046875/326158016",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "21196800000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "2607421875/652316032",
+          "decode_requests_per_second_exact": "7982421875/422644432",
+          "bound_requests_per_second_exact": "2607421875/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "24606720000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "185546875/40769752",
+          "decode_requests_per_second_exact": "3982421875/422644432",
+          "bound_requests_per_second_exact": "185546875/40769752",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "28016640000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "1142578125/326158016",
+          "decode_requests_per_second_exact": "35982421875/845288864",
+          "bound_requests_per_second_exact": "1142578125/326158016",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "21565440000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "2646484375/652316032",
+          "decode_requests_per_second_exact": "27982421875/845288864",
+          "bound_requests_per_second_exact": "2646484375/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "24975360000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "751953125/163079008",
+          "decode_requests_per_second_exact": "19982421875/845288864",
+          "bound_requests_per_second_exact": "751953125/163079008",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "28385280000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "3369140625/652316032",
+          "decode_requests_per_second_exact": "11982421875/845288864",
+          "bound_requests_per_second_exact": "3369140625/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "31795200000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "1865234375/326158016",
+          "decode_requests_per_second_exact": "3982421875/845288864",
+          "bound_requests_per_second_exact": "3982421875/845288864",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "150331392000000000/26415277"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "380859375/81539504",
+          "decode_requests_per_second_exact": "1000000000/26415277",
+          "bound_requests_per_second_exact": "380859375/81539504",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "28753920000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "3408203125/652316032",
+          "decode_requests_per_second_exact": "750000000/26415277",
+          "bound_requests_per_second_exact": "3408203125/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "32163840000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "1884765625/326158016",
+          "decode_requests_per_second_exact": "500000000/26415277",
+          "bound_requests_per_second_exact": "1884765625/326158016",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "35573760000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "4130859375/652316032",
+          "decode_requests_per_second_exact": "250000000/26415277",
+          "bound_requests_per_second_exact": "4130859375/652316032",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "38983680000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "1123046875/163079008",
+          "decode_requests_per_second_exact": "0",
+          "bound_requests_per_second_exact": "0",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "0"
+        }
+      ],
+      "pool_worker_rates": [
+        {
+          "name": "A100",
+          "count": 4,
+          "prefill_service_seconds_exact": "326158016/380859375",
+          "decode_service_seconds_exact": "845288864/3982421875",
+          "colocated_requests_per_second_exact": "776572265625/829867523104"
+        },
+        {
+          "name": "H20",
+          "count": 4,
+          "prefill_service_seconds_exact": "652316032/361328125",
+          "decode_service_seconds_exact": "26415277/250000000",
+          "colocated_requests_per_second_exact": "46250000000/88383278341"
+        }
+      ],
+      "assumptions": [
+        "\u6bcf\u4e2aworker\u4ee3\u8868\u5df2\u80fd\u5bb9\u7eb3\u8be5\u5b8c\u6574\u6a21\u578b\u4e0e\u6240\u9700KV\u7684\u72ec\u7acb\u670d\u52a1\u526f\u672c\u3002device\u5f62\u5f0f\u7684worker\u6309hardware.json\u9501\u5b9a\u7684\u5b98\u65b9\u5cf0\u503c\u4e58\u4ee5\u58f0\u660e\u6548\u7387\uff0c\u7528\u6a21\u578bforward\u8d26\u63a8\u51fa\u4e24\u9636\u6bb5\u670d\u52a1\u65f6\u95f4\uff1b\u663e\u5f0ftoken/s\u5f62\u5f0f\u5219\u76f4\u63a5\u91c7\u7528\u7ed9\u5b9a\u7684\u6709\u6548\u80fd\u529b\u3002",
+        "\u8f93\u5165\u9636\u6bb5token/s\u5fc5\u987b\u5bf9\u5e94\u76f8\u540c\u6a21\u578b\u3001\u7cbe\u5ea6\u3001\u4e0a\u4e0b\u6587\u3001batch\u548c\u8d28\u91cf\u6761\u4ef6\u4e0b\u7684\u6709\u6548\u670d\u52a1\u80fd\u529b\u3002prefill\u6309\u65b0\u5904\u7406token\u6570\uff0cdecode\u6309\u8c03\u7528\u6b21\u6570\uff1bprefill\u6700\u540elogits\u4ea7\u751f\u9996\u8f93\u51fa\uff0c\u6240\u4ee5G\u8f93\u51fa\u9700\u8981G-1\u6b21decode\u3002",
+        "\u6bcf\u4e2aworker\u56fa\u5b9a\u5206\u914dP\u6216D\uff0c\u6c60\u5185\u5141\u8bb8\u7406\u60f3\u6d41\u91cf\u5206\u914d\uff1b\u72ec\u7acb\u8d44\u6e90\u5bb9\u91cf\u53d6min\uff0c\u5f02\u6784\u526f\u672c\u7684\u8bf7\u6c42/s\u5148\u76f8\u52a0\u3002\u5171\u7f6e\u6bcf\u526f\u672c\u5148\u52a0\u4e24\u4e2a\u9636\u6bb5\u7684\u8d44\u6e90\u79d2\u518d\u53d6\u5012\u6570\uff0c\u5047\u5b9a\u9636\u6bb5\u5171\u4eab\u8d44\u6e90\u4e14\u65e0\u989d\u5916\u6df7\u8dd1\u60e9\u7f5a\u3002",
+        "\u8fd9\u662f\u7ed9\u5b9a\u670d\u52a1\u80fd\u529b\u7684\u7a33\u6001\u4e0a\u754c\u3002\u6ca1\u6709\u8bf7\u6c42\u6392\u961f\u3001\u65f6\u53d8\u8d1f\u8f7d\u3001\u542f\u52a8\u540c\u6b65\u3001\u6d41\u6c34\u586b\u5145\u3001transfer\u7a97\u53e3\u9650\u5236\u3001SLO\u3001\u80fd\u8017\u6216\u8d39\u7528\uff0c\u4e0d\u80fd\u628a\u4f4e\u4e8e\u4e0a\u754c\u89c6\u4e3a\u7a33\u5b9a\u6027\u6216\u5c3e\u5ef6\u8fdf\u4fdd\u8bc1\u3002",
+        "P\u5df2\u547d\u4e2d\u524d\u7f00\u4ec5\u51cf\u5c11\u5176\u65b0token\u5de5\u4f5c\uff1b\u5047\u8bbeD\u51b7\u7f13\u5b58\uff0c\u4ecd\u4ea4\u63a5\u5b8c\u6574prompt\u72b6\u6001\u3002\u8de8\u957f\u5ea6\u590d\u7528\u76f8\u540ctoken/s\u53ea\u662f\u4e00\u9879\u6559\u5b66\u654f\u611f\u6027\u5047\u8bbe\uff0c\u5b9e\u9645\u9700\u91cd\u65b0\u6821\u51c6\u3002",
+        "KV\u4f7f\u7528state\u6a21\u5757\u7684\u9ed8\u8ba4BF16\u4e0e\u6a21\u578b\u72b6\u6001\u7ea6\u5b9a\uff0c\u4e0d\u542b\u683c\u5f0f\u8f6c\u6362\u3001\u5206\u7247\u590d\u5236\u3001\u8def\u7531\u5143\u6570\u636e\u6216\u53cc\u7aeftemporary\u3002\u7f51\u7edc\u7ed9\u5171\u4eab\u6709\u6548\u5355\u5411payload\u5e26\u5bbd\u4e0a\u754c\uff0c\u6536\u53d1\u4e0d\u91cd\u590d\u76f8\u52a0\u3002",
+        "\u4ec5\u4e00\u4e2a\u8f93\u51fa\u65f6\u4e0d\u9700\u8981D\u8c03\u7528\u6216KV\u4ea4\u63a5\uff0c\u6700\u4f18\u628a\u5168\u90e8worker\u7ed9P\uff1b\u591a\u8f93\u51fa\u65f6\u8981\u6c42\u4e24\u4e2a\u6c60\u90fd\u6709\u6b63\u80fd\u529b\u3002\u5230\u8fbe\u7387\u6070\u7b49\u5bb9\u91cf\u4e0d\u6807\u4e3a\u4e25\u683c\u4f4e\u4e8e\uff0c\u4f59\u91cf\u4e5f\u4e0d\u4ee3\u66ffSLO\u8bc1\u636e\u3002",
+        "\u679a\u4e3e\u5185\u6700\u5927\u503c\u53ea\u5bf9\u5f53\u524d\u6574\u6570\u5019\u9009\u4e0e\u5047\u8bbe\u6210\u7acb\uff1b\u540c\u503c\u9009\u8f93\u5165\u987a\u5e8f\u4e2d\u7684\u9996\u9879\uff0c\u4e0d\u662f\u552f\u4e00\u914d\u6bd4\u6216\u771f\u5b9e\u7cfb\u7edf\u6700\u4f18\u3002",
+        "kv_layout=mla \u65f6\uff0c\u4ea4\u63a5\u72b6\u6001\u6309\u9501\u5b9a DeepSeek-V3 config \u7684\u7d27\u51d1 MLA \u6bcf token \u5b57\u8282\uff08\u5c42\u6570\u00d7(d_c+d_r)\u00d72 B\uff09\u4e58\u76f8\u540c prompt \u957f\u5ea6\uff1b\u5176\u4f59\u9636\u6bb5\u901f\u7387\u4e0e\u6a21\u578b\u4e0d\u53d8\uff0c\u53ea\u6bd4\u8f83\u4ea4\u63a5\u5b57\u8282\u7684\u5f71\u54cd\u3002"
+      ],
+      "all_best_prefill_workers": [
+        {
+          "A100": 4,
+          "H20": 3
+        }
+      ]
+    },
+    "efficiency40": {
+      "schema_version": 1,
+      "calculation": "pd-pool",
+      "sources": [
+        {
+          "file": "configs/models/qwen3-8b/config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+          "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+          "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+        },
+        {
+          "file": "sources/qwen3-8b/model.safetensors.index.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+          "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+          "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+        },
+        {
+          "file": "sources/qwen3/modeling_qwen3.py",
+          "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+          "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+          "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+        },
+        {
+          "file": "sources/qwen3/modeling_qwen3_moe.py",
+          "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+          "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+          "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+        },
+        {
+          "file": "sources/hardware/nvidia-a100-page.md",
+          "url": "https://www.nvidia.com/en-us/data-center/a100/",
+          "revision": "snapshot-2026-09-08",
+          "sha256": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed"
+        },
+        {
+          "file": "../references/files/specs/nvidia-a100.pdf",
+          "url": "https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf",
+          "revision": "book-official-archive-2026-09-06",
+          "sha256": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815"
+        },
+        {
+          "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+          "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+          "revision": "snapshot-2026-09-08",
+          "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+        },
+        {
+          "file": "sources/hardware/nvidia-h20-vgpu-release7.md",
+          "url": "https://docs.nvidia.com/ai-enterprise/release-7/latest/infra-software/vgpu/reference/hopper.html",
+          "revision": "snapshot-2026-09-09",
+          "sha256": "c1bc1f43b221a4e7c3d2fb7fd3e1998bc3a74412ad634f7be40e3461fe9f5d86"
+        },
+        {
+          "file": "../references/files/specs/nvidia-h20-spec-sheet.pdf",
+          "url": "https://flopper.io/gpu/nvidia-h20-96gb/spec-sheet.pdf",
+          "revision": "sheet-2026-09-02",
+          "sha256": "10066ce28de21151385fc05110af461ccce6a2ea73a0b3322efe5a47e67ce1e5"
+        },
+        {
+          "file": "../references/outline-checks/2026-09-07/execution-feedback/megascale-infer.pdf",
+          "url": "https://arxiv.org/pdf/2504.02263v1",
+          "revision": "2504.02263v1",
+          "sha256": "3596ecc1eda339b0e33e3f3de5d4910b42f1aeb2e880c68b405a59678a66f403"
+        }
+      ],
+      "derived_stage_rates": [
+        {
+          "device": "a100-80gb-sxm",
+          "device_name": "A100 80GB SXM",
+          "model": "qwen3-8b",
+          "peak_tera_ops_per_second": 312,
+          "memory_bandwidth_bytes_per_second": 2039000000000.0,
+          "nominal_capacity_bytes": 80000000000,
+          "effective_flops_per_second_exact": "124800000000000",
+          "effective_bytes_per_second_exact": "815600000000",
+          "prefill": {
+            "new_tokens": 8192,
+            "matrix_flops": 133594323353600,
+            "weight_bytes": 15203919872,
+            "compute_seconds_exact": "81539504/76171875",
+            "memory_seconds_exact": "14847578/796484375",
+            "seconds_exact": "81539504/76171875",
+            "bound": "compute",
+            "tokens_per_second_exact": "39000000000/5096219"
+          },
+          "decode": {
+            "batch": 32,
+            "average_history_tokens": 8704,
+            "calls_per_request": 1024,
+            "step_matrix_flops": 648659599360,
+            "step_weight_bytes": 15137073152,
+            "step_kv_bytes": 41075343360,
+            "step_compute_seconds_exact": "1979552/380859375",
+            "step_memory_seconds_exact": "54894938/796484375",
+            "step_seconds_exact": "54894938/796484375",
+            "bound": "memory",
+            "calls_per_second_exact": "12743750000/27447469",
+            "seconds_per_request_exact": "1756638016/796484375"
+          },
+          "resident_bytes_at_full_batch": 59868014592,
+          "fits_nominal_capacity": true,
+          "colocated_seconds_per_request_exact": "508803461776/155314453125",
+          "sources": [
+            {
+              "file": "sources/hardware/nvidia-a100-page.md",
+              "url": "https://www.nvidia.com/en-us/data-center/a100/",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed"
+            },
+            {
+              "file": "../references/files/specs/nvidia-a100.pdf",
+              "url": "https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf",
+              "revision": "book-official-archive-2026-09-06",
+              "sha256": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815"
+            },
+            {
+              "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+              "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+            },
+            {
+              "file": "configs/models/qwen3-8b/config.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+            },
+            {
+              "file": "sources/qwen3-8b/model.safetensors.index.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3_moe.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+            }
+          ]
+        },
+        {
+          "device": "h20-sxm5-96gb",
+          "device_name": "H20 SXM5 96GB",
+          "model": "qwen3-8b",
+          "peak_tera_ops_per_second": 148,
+          "memory_bandwidth_bytes_per_second": 4096000000000.0,
+          "nominal_capacity_bytes": 96000000000,
+          "effective_flops_per_second_exact": "59200000000000",
+          "effective_bytes_per_second_exact": "1638400000000",
+          "prefill": {
+            "new_tokens": 8192,
+            "matrix_flops": 133594323353600,
+            "weight_bytes": 15203919872,
+            "compute_seconds_exact": "163079008/72265625",
+            "memory_seconds_exact": "7423789/800000000",
+            "seconds_exact": "163079008/72265625",
+            "bound": "compute",
+            "tokens_per_second_exact": "18500000000/5096219"
+          },
+          "decode": {
+            "batch": 32,
+            "average_history_tokens": 8704,
+            "calls_per_request": 1024,
+            "step_matrix_flops": 648659599360,
+            "step_weight_bytes": 15137073152,
+            "step_kv_bytes": 41075343360,
+            "step_compute_seconds_exact": "3959104/361328125",
+            "step_memory_seconds_exact": "27447469/800000000",
+            "step_seconds_exact": "27447469/800000000",
+            "bound": "memory",
+            "calls_per_second_exact": "25600000000/27447469",
+            "seconds_per_request_exact": "27447469/25000000"
+          },
+          "resident_bytes_at_full_batch": 59868014592,
+          "fits_nominal_capacity": true,
+          "colocated_seconds_per_request_exact": "15514838277/4625000000",
+          "sources": [
+            {
+              "file": "sources/hardware/nvidia-ptx-isa-9-3.md",
+              "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html",
+              "revision": "snapshot-2026-09-08",
+              "sha256": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7"
+            },
+            {
+              "file": "sources/hardware/nvidia-h20-vgpu-release7.md",
+              "url": "https://docs.nvidia.com/ai-enterprise/release-7/latest/infra-software/vgpu/reference/hopper.html",
+              "revision": "snapshot-2026-09-09",
+              "sha256": "c1bc1f43b221a4e7c3d2fb7fd3e1998bc3a74412ad634f7be40e3461fe9f5d86"
+            },
+            {
+              "file": "../references/files/specs/nvidia-h20-spec-sheet.pdf",
+              "url": "https://flopper.io/gpu/nvidia-h20-96gb/spec-sheet.pdf",
+              "revision": "sheet-2026-09-02",
+              "sha256": "10066ce28de21151385fc05110af461ccce6a2ea73a0b3322efe5a47e67ce1e5"
+            },
+            {
+              "file": "../references/outline-checks/2026-09-07/execution-feedback/megascale-infer.pdf",
+              "url": "https://arxiv.org/pdf/2504.02263v1",
+              "revision": "2504.02263v1",
+              "sha256": "3596ecc1eda339b0e33e3f3de5d4910b42f1aeb2e880c68b405a59678a66f403"
+            },
+            {
+              "file": "configs/models/qwen3-8b/config.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/config.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+            },
+            {
+              "file": "sources/qwen3-8b/model.safetensors.index.json",
+              "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/model.safetensors.index.json",
+              "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+              "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3/modeling_qwen3.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+            },
+            {
+              "file": "sources/qwen3/modeling_qwen3_moe.py",
+              "url": "https://raw.githubusercontent.com/huggingface/transformers/0720e206c6ba28887e4d60ef60a6a089f6c1cc76/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+              "revision": "0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+              "sha256": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8"
+            }
+          ]
+        }
+      ],
+      "scenario": {
+        "model": "qwen3-8b",
+        "prompt_tokens": 8192,
+        "output_tokens": 1025,
+        "cached_prefix_tokens": 0,
+        "workers": [
+          {
+            "name": "A100",
+            "count": 4,
+            "device": "a100-80gb-sxm",
+            "decode_batch": 32,
+            "compute_efficiency": 0.4,
+            "bandwidth_efficiency": 0.4
+          },
+          {
+            "name": "H20",
+            "count": 4,
+            "device": "h20-sxm5-96gb",
+            "decode_batch": 32,
+            "compute_efficiency": 0.4,
+            "bandwidth_efficiency": 0.4
+          }
+        ],
+        "network_bytes_per_second": 25000000000,
+        "arrival_requests_per_second": "3.5",
+        "kv_layout": "gqa",
+        "kv_model": "deepseek-v3"
+      },
+      "summary": {
+        "new_prefill_tokens_per_request": 8192,
+        "decode_calls_per_request": 1024,
+        "kv_layout": "gqa",
+        "kv_bytes_per_token": 147456,
+        "full_prompt_state_bytes": 1207959552,
+        "pd_transfer_bytes_per_request": 1207959552,
+        "network_capacity_requests_per_second_exact": "48828125/2359296",
+        "assignments": 25,
+        "best_prefill_workers": {
+          "A100": 4,
+          "H20": 0
+        },
+        "best_decode_workers": {
+          "A100": 0,
+          "H20": 4
+        },
+        "best_pd_bound_requests_per_second_exact": "100000000/27447469",
+        "colocated_bound_requests_per_second_exact": "4762894633029072265625/1973500856058097799988",
+        "pd_to_colocated_bound_ratio_exact": "505216219150873036796928/334667271143249503000325",
+        "best_bottlenecks": [
+          "decode"
+        ],
+        "arrival_strictly_below_best_pd_bound": true,
+        "arrival_strictly_below_colocated_bound": false
+      },
+      "pool_assignments": [
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "0",
+          "decode_requests_per_second_exact": "2396484375/439159504",
+          "bound_requests_per_second_exact": "0",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "0"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "72265625/163079008",
+          "decode_requests_per_second_exact": "1996484375/439159504",
+          "bound_requests_per_second_exact": "72265625/163079008",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "2727936000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "72265625/81539504",
+          "decode_requests_per_second_exact": "1596484375/439159504",
+          "bound_requests_per_second_exact": "72265625/81539504",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "5455872000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "216796875/163079008",
+          "decode_requests_per_second_exact": "1196484375/439159504",
+          "bound_requests_per_second_exact": "216796875/163079008",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "8183808000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 0,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 4,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "72265625/40769752",
+          "decode_requests_per_second_exact": "796484375/439159504",
+          "bound_requests_per_second_exact": "72265625/40769752",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "10911744000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "76171875/81539504",
+          "decode_requests_per_second_exact": "8789453125/1756638016",
+          "bound_requests_per_second_exact": "76171875/81539504",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "5750784000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "224609375/163079008",
+          "decode_requests_per_second_exact": "7189453125/1756638016",
+          "bound_requests_per_second_exact": "224609375/163079008",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "8478720000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "37109375/20384876",
+          "decode_requests_per_second_exact": "5589453125/1756638016",
+          "bound_requests_per_second_exact": "37109375/20384876",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "11206656000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "369140625/163079008",
+          "decode_requests_per_second_exact": "569921875/250948288",
+          "bound_requests_per_second_exact": "369140625/163079008",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "13934592000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 1,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 3,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "220703125/81539504",
+          "decode_requests_per_second_exact": "2389453125/1756638016",
+          "bound_requests_per_second_exact": "2389453125/1756638016",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "45099417600000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "76171875/40769752",
+          "decode_requests_per_second_exact": "3996484375/878319008",
+          "bound_requests_per_second_exact": "76171875/40769752",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "11501568000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "376953125/163079008",
+          "decode_requests_per_second_exact": "456640625/125474144",
+          "bound_requests_per_second_exact": "376953125/163079008",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "14229504000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "224609375/81539504",
+          "decode_requests_per_second_exact": "2396484375/878319008",
+          "bound_requests_per_second_exact": "2396484375/878319008",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "90464256000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "521484375/163079008",
+          "decode_requests_per_second_exact": "1596484375/878319008",
+          "bound_requests_per_second_exact": "1596484375/878319008",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "60265267200000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 2,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 2,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "37109375/10192438",
+          "decode_requests_per_second_exact": "796484375/878319008",
+          "bound_requests_per_second_exact": "796484375/878319008",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "30066278400000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "228515625/81539504",
+          "decode_requests_per_second_exact": "7196484375/1756638016",
+          "bound_requests_per_second_exact": "228515625/81539504",
+          "bottlenecks": [
+            "prefill"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "17252352000000000/5096219"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "529296875/163079008",
+          "decode_requests_per_second_exact": "5596484375/1756638016",
+          "bound_requests_per_second_exact": "5596484375/1756638016",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "105630105600000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "150390625/40769752",
+          "decode_requests_per_second_exact": "3996484375/1756638016",
+          "bound_requests_per_second_exact": "3996484375/1756638016",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "75431116800000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "673828125/163079008",
+          "decode_requests_per_second_exact": "2396484375/1756638016",
+          "bound_requests_per_second_exact": "2396484375/1756638016",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "45232128000000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 3,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 1,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "373046875/81539504",
+          "decode_requests_per_second_exact": "796484375/1756638016",
+          "bound_requests_per_second_exact": "796484375/1756638016",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "15033139200000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 0
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 4
+          },
+          "prefill_requests_per_second_exact": "76171875/20384876",
+          "decode_requests_per_second_exact": "100000000/27447469",
+          "bound_requests_per_second_exact": "100000000/27447469",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": true,
+          "network_demand_at_bound_exact_bytes_per_second": "120795955200000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 1
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 3
+          },
+          "prefill_requests_per_second_exact": "681640625/163079008",
+          "decode_requests_per_second_exact": "75000000/27447469",
+          "bound_requests_per_second_exact": "75000000/27447469",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "90596966400000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 2
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 2
+          },
+          "prefill_requests_per_second_exact": "376953125/81539504",
+          "decode_requests_per_second_exact": "50000000/27447469",
+          "bound_requests_per_second_exact": "50000000/27447469",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "60397977600000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 3
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 1
+          },
+          "prefill_requests_per_second_exact": "826171875/163079008",
+          "decode_requests_per_second_exact": "25000000/27447469",
+          "bound_requests_per_second_exact": "25000000/27447469",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "30198988800000000/27447469"
+        },
+        {
+          "prefill_workers": {
+            "A100": 4,
+            "H20": 4
+          },
+          "decode_workers": {
+            "A100": 0,
+            "H20": 0
+          },
+          "prefill_requests_per_second_exact": "224609375/40769752",
+          "decode_requests_per_second_exact": "0",
+          "bound_requests_per_second_exact": "0",
+          "bottlenecks": [
+            "decode"
+          ],
+          "strictly_below_all_capacity_bounds": false,
+          "network_demand_at_bound_exact_bytes_per_second": "0"
+        }
+      ],
+      "pool_worker_rates": [
+        {
+          "name": "A100",
+          "count": 4,
+          "prefill_service_seconds_exact": "81539504/76171875",
+          "decode_service_seconds_exact": "1756638016/796484375",
+          "colocated_requests_per_second_exact": "155314453125/508803461776"
+        },
+        {
+          "name": "H20",
+          "count": 4,
+          "prefill_service_seconds_exact": "163079008/72265625",
+          "decode_service_seconds_exact": "27447469/25000000",
+          "colocated_requests_per_second_exact": "4625000000/15514838277"
+        }
+      ],
+      "assumptions": [
+        "\u6bcf\u4e2aworker\u4ee3\u8868\u5df2\u80fd\u5bb9\u7eb3\u8be5\u5b8c\u6574\u6a21\u578b\u4e0e\u6240\u9700KV\u7684\u72ec\u7acb\u670d\u52a1\u526f\u672c\u3002device\u5f62\u5f0f\u7684worker\u6309hardware.json\u9501\u5b9a\u7684\u5b98\u65b9\u5cf0\u503c\u4e58\u4ee5\u58f0\u660e\u6548\u7387\uff0c\u7528\u6a21\u578bforward\u8d26\u63a8\u51fa\u4e24\u9636\u6bb5\u670d\u52a1\u65f6\u95f4\uff1b\u663e\u5f0ftoken/s\u5f62\u5f0f\u5219\u76f4\u63a5\u91c7\u7528\u7ed9\u5b9a\u7684\u6709\u6548\u80fd\u529b\u3002",
+        "\u8f93\u5165\u9636\u6bb5token/s\u5fc5\u987b\u5bf9\u5e94\u76f8\u540c\u6a21\u578b\u3001\u7cbe\u5ea6\u3001\u4e0a\u4e0b\u6587\u3001batch\u548c\u8d28\u91cf\u6761\u4ef6\u4e0b\u7684\u6709\u6548\u670d\u52a1\u80fd\u529b\u3002prefill\u6309\u65b0\u5904\u7406token\u6570\uff0cdecode\u6309\u8c03\u7528\u6b21\u6570\uff1bprefill\u6700\u540elogits\u4ea7\u751f\u9996\u8f93\u51fa\uff0c\u6240\u4ee5G\u8f93\u51fa\u9700\u8981G-1\u6b21decode\u3002",
+        "\u6bcf\u4e2aworker\u56fa\u5b9a\u5206\u914dP\u6216D\uff0c\u6c60\u5185\u5141\u8bb8\u7406\u60f3\u6d41\u91cf\u5206\u914d\uff1b\u72ec\u7acb\u8d44\u6e90\u5bb9\u91cf\u53d6min\uff0c\u5f02\u6784\u526f\u672c\u7684\u8bf7\u6c42/s\u5148\u76f8\u52a0\u3002\u5171\u7f6e\u6bcf\u526f\u672c\u5148\u52a0\u4e24\u4e2a\u9636\u6bb5\u7684\u8d44\u6e90\u79d2\u518d\u53d6\u5012\u6570\uff0c\u5047\u5b9a\u9636\u6bb5\u5171\u4eab\u8d44\u6e90\u4e14\u65e0\u989d\u5916\u6df7\u8dd1\u60e9\u7f5a\u3002",
+        "\u8fd9\u662f\u7ed9\u5b9a\u670d\u52a1\u80fd\u529b\u7684\u7a33\u6001\u4e0a\u754c\u3002\u6ca1\u6709\u8bf7\u6c42\u6392\u961f\u3001\u65f6\u53d8\u8d1f\u8f7d\u3001\u542f\u52a8\u540c\u6b65\u3001\u6d41\u6c34\u586b\u5145\u3001transfer\u7a97\u53e3\u9650\u5236\u3001SLO\u3001\u80fd\u8017\u6216\u8d39\u7528\uff0c\u4e0d\u80fd\u628a\u4f4e\u4e8e\u4e0a\u754c\u89c6\u4e3a\u7a33\u5b9a\u6027\u6216\u5c3e\u5ef6\u8fdf\u4fdd\u8bc1\u3002",
+        "P\u5df2\u547d\u4e2d\u524d\u7f00\u4ec5\u51cf\u5c11\u5176\u65b0token\u5de5\u4f5c\uff1b\u5047\u8bbeD\u51b7\u7f13\u5b58\uff0c\u4ecd\u4ea4\u63a5\u5b8c\u6574prompt\u72b6\u6001\u3002\u8de8\u957f\u5ea6\u590d\u7528\u76f8\u540ctoken/s\u53ea\u662f\u4e00\u9879\u6559\u5b66\u654f\u611f\u6027\u5047\u8bbe\uff0c\u5b9e\u9645\u9700\u91cd\u65b0\u6821\u51c6\u3002",
+        "KV\u4f7f\u7528state\u6a21\u5757\u7684\u9ed8\u8ba4BF16\u4e0e\u6a21\u578b\u72b6\u6001\u7ea6\u5b9a\uff0c\u4e0d\u542b\u683c\u5f0f\u8f6c\u6362\u3001\u5206\u7247\u590d\u5236\u3001\u8def\u7531\u5143\u6570\u636e\u6216\u53cc\u7aeftemporary\u3002\u7f51\u7edc\u7ed9\u5171\u4eab\u6709\u6548\u5355\u5411payload\u5e26\u5bbd\u4e0a\u754c\uff0c\u6536\u53d1\u4e0d\u91cd\u590d\u76f8\u52a0\u3002",
+        "\u4ec5\u4e00\u4e2a\u8f93\u51fa\u65f6\u4e0d\u9700\u8981D\u8c03\u7528\u6216KV\u4ea4\u63a5\uff0c\u6700\u4f18\u628a\u5168\u90e8worker\u7ed9P\uff1b\u591a\u8f93\u51fa\u65f6\u8981\u6c42\u4e24\u4e2a\u6c60\u90fd\u6709\u6b63\u80fd\u529b\u3002\u5230\u8fbe\u7387\u6070\u7b49\u5bb9\u91cf\u4e0d\u6807\u4e3a\u4e25\u683c\u4f4e\u4e8e\uff0c\u4f59\u91cf\u4e5f\u4e0d\u4ee3\u66ffSLO\u8bc1\u636e\u3002",
+        "\u679a\u4e3e\u5185\u6700\u5927\u503c\u53ea\u5bf9\u5f53\u524d\u6574\u6570\u5019\u9009\u4e0e\u5047\u8bbe\u6210\u7acb\uff1b\u540c\u503c\u9009\u8f93\u5165\u987a\u5e8f\u4e2d\u7684\u9996\u9879\uff0c\u4e0d\u662f\u552f\u4e00\u914d\u6bd4\u6216\u771f\u5b9e\u7cfb\u7edf\u6700\u4f18\u3002",
+        "kv_layout=mla \u65f6\uff0c\u4ea4\u63a5\u72b6\u6001\u6309\u9501\u5b9a DeepSeek-V3 config \u7684\u7d27\u51d1 MLA \u6bcf token \u5b57\u8282\uff08\u5c42\u6570\u00d7(d_c+d_r)\u00d72 B\uff09\u4e58\u76f8\u540c prompt \u957f\u5ea6\uff1b\u5176\u4f59\u9636\u6bb5\u901f\u7387\u4e0e\u6a21\u578b\u4e0d\u53d8\uff0c\u53ea\u6bd4\u8f83\u4ea4\u63a5\u5b57\u8282\u7684\u5f71\u54cd\u3002"
+      ],
+      "all_best_prefill_workers": [
+        {
+          "A100": 4,
+          "H20": 0
+        }
+      ]
+    }
+  },
+  "limited_link_queue": {
+    "arrival_requests_per_s": 1,
+    "capacity_requests_per_s": 1,
+    "initial_extra_requests": 10,
+    "samples": [
+      {
+        "seconds": 0,
+        "backlog_requests": 10
+      },
+      {
+        "seconds": 1,
+        "backlog_requests": 10
+      },
+      {
+        "seconds": 10,
+        "backlog_requests": 10
+      },
+      {
+        "seconds": 60,
+        "backlog_requests": 10
+      },
+      {
+        "seconds": 600,
+        "backlog_requests": 10
+      }
+    ],
+    "drain_time": "infinite under constant fluid arrival"
+  },
+  "source_sha256": {
+    "manuscripts/09-\u5206\u5e03\u5f0f\u63a8\u7406.md": "c0a232ddb6c038c17560f1e524d3e50129afd638493be711172cd589dd8f3088",
+    "calculations/src/infra_calc/topics/pd_pool.py": "0d6623629eb1146728978cb972e9bbe03ac62ae23ae3cb075acd10894c572fbc",
+    "calculations/src/infra_calc/topics/stage_rates.py": "9c845f74ed884b8dce5647412ad38b57618efffb64af2e51ce7c7fddb6fbe7e8",
+    "calculations/configs/models/qwen3-8b/config.json": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30",
+    "calculations/sources/qwen3-8b/model.safetensors.index.json": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc",
+    "calculations/sources/qwen3/modeling_qwen3.py": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2",
+    "calculations/sources/qwen3/modeling_qwen3_moe.py": "3af43d01f9f902c8009b6dd7d7b8b563561b53dd0aa54175f585ae90d049fdb8",
+    "calculations/sources/hardware/nvidia-a100-page.md": "826e119ab5590b37d6a031e9212684c9d3090a813433a248ea4ca96aa14430ed",
+    "calculations/../references/files/specs/nvidia-a100.pdf": "3a800ad7668ec37037fa5870a8e3bb681b75f19668b3d11492ab9b0da0d58815",
+    "calculations/sources/hardware/nvidia-ptx-isa-9-3.md": "0d921e5e90e12dcd5af70a68404ced5c47beeed5aaf54c8ec0caeddcfefff6a7",
+    "calculations/sources/hardware/nvidia-h20-vgpu-release7.md": "c1bc1f43b221a4e7c3d2fb7fd3e1998bc3a74412ad634f7be40e3461fe9f5d86",
+    "calculations/../references/files/specs/nvidia-h20-spec-sheet.pdf": "10066ce28de21151385fc05110af461ccce6a2ea73a0b3322efe5a47e67ce1e5",
+    "calculations/../references/outline-checks/2026-09-07/execution-feedback/megascale-infer.pdf": "3596ecc1eda339b0e33e3f3de5d4910b42f1aeb2e880c68b405a59678a66f403"
+  }
+}

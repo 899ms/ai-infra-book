@@ -1,0 +1,3 @@
+# Cross-Mac KV recovery attempt 005
+
+Fresh Qwen3-8B BF16 SGLang producer and consumer on RTX PRO; 1024 input tokens, 16 generated tokens, three requests per engine. The HTTP page store runs on the Mac and is reached through SSH reverse forwarding (no multiplexing or compression). Require the first consumer request to report 1008 storage-cache tokens, all six output token sequences equal, and every fetched page hash verified against the published Mac file. Preserve first-write-wins semantics and save conflicting duplicate payloads. This functionality test does not close the full Chat/Agent routing matrix. Same-host Docker control is retained separately.

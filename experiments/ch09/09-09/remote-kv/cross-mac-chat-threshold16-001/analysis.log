@@ -1,0 +1,89 @@
+{
+  "status": "multi_turn_remote_replay_verified",
+  "phases": {
+    "chat-producer": {
+      "requests": 4,
+      "request_hit_fraction": 0.75,
+      "token_hit_fraction": 0.6374501992031872,
+      "wall_s": 2.797242840984836,
+      "request_p95_s": 1.494259644066915,
+      "levels": {
+        "device": 480,
+        "host": 0,
+        "storage": 0
+      },
+      "requests_with_remote_get": 0,
+      "per_request_get_sum_median_s": null,
+      "per_request_get_sum_p95_s": null,
+      "retrieval_quantile_scope": "Sum of successful GET RPC times within each request; excludes exists checks, scheduling and model work. Descriptive nearest-rank sample."
+    },
+    "chat-consumer": {
+      "requests": 4,
+      "request_hit_fraction": 1.0,
+      "token_hit_fraction": 0.9561752988047809,
+      "wall_s": 18.468864849070087,
+      "request_p95_s": 9.840255204122514,
+      "levels": {
+        "device": 480,
+        "host": 0,
+        "storage": 240
+      },
+      "requests_with_remote_get": 4,
+      "per_request_get_sum_median_s": 1.9308111888822168,
+      "per_request_get_sum_p95_s": 5.728505466133356,
+      "retrieval_quantile_scope": "Sum of successful GET RPC times within each request; excludes exists checks, scheduling and model work. Descriptive nearest-rank sample."
+    }
+  },
+  "paired_outputs": [
+    {
+      "kind": "chat",
+      "turn": 0,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        37788
+      ],
+      "consumer_output_ids": [
+        37788
+      ]
+    },
+    {
+      "kind": "chat",
+      "turn": 1,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        82280
+      ],
+      "consumer_output_ids": [
+        82280
+      ]
+    },
+    {
+      "kind": "chat",
+      "turn": 2,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        18
+      ],
+      "consumer_output_ids": [
+        18
+      ]
+    },
+    {
+      "kind": "chat",
+      "turn": 3,
+      "output_ids_equal": true,
+      "producer_output_ids": [
+        785
+      ],
+      "consumer_output_ids": [
+        785
+      ]
+    }
+  ],
+  "all_paired_outputs_equal": true,
+  "published_pages": 15,
+  "get_operations": 15,
+  "conflicting_duplicate_writes": 0,
+  "conflicting_keys_read": [],
+  "scope": "One recorded Chat trace at threshold16 with forced one-token responses. Publication barriers instrument replay and are not original think times. Quantiles are nearest-rank descriptive samples; no full task-quality or stable p95 claim. No three-policy remote routing comparison in this run."
+}

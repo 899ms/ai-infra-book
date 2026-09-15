@@ -1,0 +1,101 @@
+{
+  "kind": "native",
+  "block": 256,
+  "warps": 4,
+  "rows": [
+    {
+      "t": 1,
+      "max_abs_error": 0.0,
+      "different_elements": 0,
+      "prepare_s": 0.0002044260036200285,
+      "samples_us": [
+        3.6448001861572266,
+        2.4191999807953835,
+        2.316799946129322,
+        2.236800082027912,
+        2.284800074994564,
+        2.361599914729595,
+        2.3360000923275948,
+        2.3072000592947006,
+        2.3744000121951103,
+        2.3584000766277313,
+        2.2655999287962914
+      ],
+      "profiler_feedback": {
+        "trace": "0-native-profile-1.json",
+        "kernels": [
+          {
+            "name": "void vllm::act_and_mul_kernel<c10::BFloat16, __nv_bfloat162, &(c10::BFloat16 vllm::silu_kernel<c10::BFloat16>(c10::BFloat16 const&)), &(__nv_bfloat162 vllm::packed_silu_kernel<__nv_bfloat162>(__nv_bfloat162 const&)), true, true, false, false>(c10::BFloat16*, c10::BFloat16 const*, int, float)",
+            "duration_us": 2.145,
+            "grid": [
+              1,
+              1,
+              1
+            ],
+            "block": [
+              1024,
+              1,
+              1
+            ],
+            "stream": 7
+          }
+        ],
+        "scope": "instrumented CUDA kernel activity; not hardware counters or timing score"
+      }
+    },
+    {
+      "t": 7239,
+      "max_abs_error": 0.0,
+      "different_elements": 0,
+      "prepare_s": 0.0004210390616208315,
+      "samples_us": [
+        351.16798877716064,
+        350.8064031600952,
+        349.7983932495117,
+        350.36799907684326,
+        351.03039741516113,
+        350.96960067749023,
+        352.0064115524292,
+        350.8928060531616,
+        350.45759677886963,
+        351.70559883117676,
+        351.7632007598877
+      ],
+      "profiler_feedback": {
+        "trace": "0-native-profile-7239.json",
+        "kernels": [
+          {
+            "name": "void vllm::act_and_mul_kernel<c10::BFloat16, __nv_bfloat162, &(c10::BFloat16 vllm::silu_kernel<c10::BFloat16>(c10::BFloat16 const&)), &(__nv_bfloat162 vllm::packed_silu_kernel<__nv_bfloat162>(__nv_bfloat162 const&)), true, true, false, true>(c10::BFloat16*, c10::BFloat16 const*, int, float)",
+            "duration_us": 348.159,
+            "grid": [
+              7239,
+              1,
+              1
+            ],
+            "block": [
+              768,
+              1,
+              1
+            ],
+            "stream": 7
+          }
+        ],
+        "scope": "instrumented CUDA kernel activity; not hardware counters or timing score"
+      }
+    }
+  ],
+  "status": "passed",
+  "protocol_sha256": "893989ea9e1ce8950315e0f2c7f45848fa165d7f75301c458defa02171988c62",
+  "torch": "2.11.0+cu130",
+  "triton": "3.6.0",
+  "gpu_before": "pid, process_name, used_gpu_memory [MiB]\n",
+  "gpu_event_window_s": 1.189214599609375,
+  "wall_s": 1.3810301120392978,
+  "gpu_after": "pid, process_name, used_gpu_memory [MiB]\n1552160, /home/ubuntu/vllm023-venv/bin/python, 2976 MiB\n",
+  "source_hashes": {
+    "evaluate_agent_profile.py": "d3cceaa6890a66f60ac9560a1d44973a264a412a246e5b4446847795a9567ad4",
+    "agent_guard.py": "be551f9eb4812ef1371ca96092cf308bd2940c4715023218eb70b1d64f74874e",
+    "protocol.json": "893989ea9e1ce8950315e0f2c7f45848fa165d7f75301c458defa02171988c62"
+  },
+  "candidate_sha256": null
+}

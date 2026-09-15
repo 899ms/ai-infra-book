@@ -1,0 +1,42 @@
+{
+  "command": [
+    "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/bin/python",
+    "-m",
+    "sglang.launch_server",
+    "--model-path",
+    "/home/ubuntu/.cache/huggingface/hub/models--Qwen--Qwen3-8B/snapshots/b968826d9c46dd6066d109eabc6255188de91218",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "31491",
+    "--dtype",
+    "bfloat16",
+    "--context-length",
+    "4096",
+    "--mem-fraction-static",
+    "0.90",
+    "--max-total-tokens",
+    "4096",
+    "--max-running-requests",
+    "8",
+    "--chunked-prefill-size",
+    "1024",
+    "--disable-cuda-graph",
+    "--disable-piecewise-cuda-graph",
+    "--attention-backend",
+    "triton",
+    "--sampling-backend",
+    "pytorch",
+    "--random-seed",
+    "909"
+  ],
+  "trials": 3,
+  "max_new_tokens": 16,
+  "temperature": 0,
+  "ignore_eos": true,
+  "scope": "One worker; no router or remote KV; chronological cache lifecycle, shared GPU.",
+  "source_sha256": {
+    "run.py": "d9e816ec68434ff1a519420379f38039dc5f16f5d93ed027751b9c822176d17c",
+    "agent-prompts.json": "6819e3779cc050416e0c8dd29f10b8f6c6a38b01670141139e20619011f3f4d5"
+  }
+}

@@ -1,0 +1,102 @@
+[
+  {
+    "command": [
+      "docker",
+      "image",
+      "inspect",
+      "python:3.11-slim",
+      "--format",
+      "{{.Id}}"
+    ],
+    "exit_code": 0,
+    "stdout": "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e\n",
+    "stderr": "",
+    "time": 1789398930.6746092
+  },
+  {
+    "command": [
+      "docker",
+      "create",
+      "--name",
+      "book909-remote-immutable-001",
+      "--label",
+      "book.experiment=909-remote-immutable-001",
+      "--user",
+      "1000:1000",
+      "--network",
+      "host",
+      "--cpus",
+      "1",
+      "--memory",
+      "512m",
+      "--memory-swap",
+      "512m",
+      "--read-only",
+      "--tmpfs",
+      "/tmp",
+      "--mount",
+      "type=bind,source=/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/docker-immutable,target=/experiment",
+      "sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e",
+      "python",
+      "-u",
+      "/experiment/store.py",
+      "--root",
+      "/experiment/docker-store",
+      "--port",
+      "18799"
+    ],
+    "exit_code": 0,
+    "stdout": "761f5ed8028a047a05e87c1a3acd1fd04b619074e116fe4c0d6bab295055819b\n",
+    "stderr": "",
+    "time": 1789398931.9796395
+  },
+  {
+    "command": [
+      "docker",
+      "start",
+      "761f5ed8028a047a05e87c1a3acd1fd04b619074e116fe4c0d6bab295055819b"
+    ],
+    "exit_code": 0,
+    "stdout": "761f5ed8028a047a05e87c1a3acd1fd04b619074e116fe4c0d6bab295055819b\n",
+    "stderr": "",
+    "time": 1789398932.1134272
+  },
+  {
+    "launch_exit_code": 0,
+    "time": 1789398999.485125
+  },
+  {
+    "command": [
+      "docker",
+      "logs",
+      "761f5ed8028a047a05e87c1a3acd1fd04b619074e116fe4c0d6bab295055819b"
+    ],
+    "exit_code": 0,
+    "stdout": "ready 18799\n",
+    "stderr": "",
+    "time": 1789398999.6010804
+  },
+  {
+    "command": [
+      "docker",
+      "inspect",
+      "761f5ed8028a047a05e87c1a3acd1fd04b619074e116fe4c0d6bab295055819b"
+    ],
+    "exit_code": 0,
+    "stdout": "[\n    {\n        \"Id\": \"761f5ed8028a047a05e87c1a3acd1fd04b619074e116fe4c0d6bab295055819b\",\n        \"Created\": \"2026-09-14T15:15:30.687243225Z\",\n        \"Path\": \"python\",\n        \"Args\": [\n            \"-u\",\n            \"/experiment/store.py\",\n            \"--root\",\n            \"/experiment/docker-store\",\n            \"--port\",\n            \"18799\"\n        ],\n        \"State\": {\n            \"Status\": \"running\",\n            \"Running\": true,\n            \"Paused\": false,\n            \"Restarting\": false,\n            \"OOMKilled\": false,\n            \"Dead\": false,\n            \"Pid\": 375201,\n            \"ExitCode\": 0,\n            \"Error\": \"\",\n            \"StartedAt\": \"2026-09-14T15:15:32.023282203Z\",\n            \"FinishedAt\": \"0001-01-01T00:00:00Z\"\n        },\n        \"Image\": \"sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e\",\n        \"ResolvConfPath\": \"/var/lib/docker/containers/761f5ed8028a047a05e87c1a3acd1fd04b619074e116fe4c0d6bab295055819b/resolv.conf\",\n        \"HostnamePath\": \"/var/lib/docker/containers/761f5ed8028a047a05e87c1a3acd1fd04b619074e116fe4c0d6bab295055819b/hostname\",\n        \"HostsPath\": \"/var/lib/docker/containers/761f5ed8028a047a05e87c1a3acd1fd04b619074e116fe4c0d6bab295055819b/hosts\",\n        \"LogPath\": \"/var/lib/docker/containers/761f5ed8028a047a05e87c1a3acd1fd04b619074e116fe4c0d6bab295055819b/761f5ed8028a047a05e87c1a3acd1fd04b619074e116fe4c0d6bab295055819b-json.log\",\n        \"Name\": \"/book909-remote-immutable-001\",\n        \"RestartCount\": 0,\n        \"Driver\": \"overlay2\",\n        \"Platform\": \"linux\",\n        \"MountLabel\": \"\",\n        \"ProcessLabel\": \"\",\n        \"AppArmorProfile\": \"docker-default\",\n        \"ExecIDs\": null,\n        \"HostConfig\": {\n            \"Binds\": null,\n            \"ContainerIDFile\": \"\",\n            \"LogConfig\": {\n                \"Type\": \"json-file\",\n                \"Config\": {}\n            },\n            \"NetworkMode\": \"host\",\n            \"PortBindings\": {},\n            \"RestartPolicy\": {\n                \"Name\": \"no\",\n                \"MaximumRetryCount\": 0\n            },\n            \"AutoRemove\": false,\n            \"VolumeDriver\": \"\",\n            \"VolumesFrom\": null,\n            \"ConsoleSize\": [\n                0,\n                0\n            ],\n            \"CapAdd\": null,\n            \"CapDrop\": null,\n            \"CgroupnsMode\": \"private\",\n            \"Dns\": [],\n            \"DnsOptions\": [],\n            \"DnsSearch\": [],\n            \"ExtraHosts\": null,\n            \"GroupAdd\": null,\n            \"IpcMode\": \"private\",\n            \"Cgroup\": \"\",\n            \"Links\": null,\n            \"OomScoreAdj\": 0,\n            \"PidMode\": \"\",\n            \"Privileged\": false,\n            \"PublishAllPorts\": false,\n            \"ReadonlyRootfs\": true,\n            \"SecurityOpt\": null,\n            \"Tmpfs\": {\n                \"/tmp\": \"\"\n            },\n            \"UTSMode\": \"\",\n            \"UsernsMode\": \"\",\n            \"ShmSize\": 67108864,\n            \"Runtime\": \"runc\",\n            \"Isolation\": \"\",\n            \"CpuShares\": 0,\n            \"Memory\": 536870912,\n            \"NanoCpus\": 1000000000,\n            \"CgroupParent\": \"\",\n            \"BlkioWeight\": 0,\n            \"BlkioWeightDevice\": [],\n            \"BlkioDeviceReadBps\": [],\n            \"BlkioDeviceWriteBps\": [],\n            \"BlkioDeviceReadIOps\": [],\n            \"BlkioDeviceWriteIOps\": [],\n            \"CpuPeriod\": 0,\n            \"CpuQuota\": 0,\n            \"CpuRealtimePeriod\": 0,\n            \"CpuRealtimeRuntime\": 0,\n            \"CpusetCpus\": \"\",\n            \"CpusetMems\": \"\",\n            \"Devices\": [],\n            \"DeviceCgroupRules\": null,\n            \"DeviceRequests\": null,\n            \"MemoryReservation\": 0,\n            \"MemorySwap\": 536870912,\n            \"MemorySwappiness\": null,\n            \"OomKillDisable\": null,\n            \"PidsLimit\": null,\n            \"Ulimits\": [],\n            \"CpuCount\": 0,\n            \"CpuPercent\": 0,\n            \"IOMaximumIOps\": 0,\n            \"IOMaximumBandwidth\": 0,\n            \"Mounts\": [\n                {\n                    \"Type\": \"bind\",\n                    \"Source\": \"/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/docker-immutable\",\n                    \"Target\": \"/experiment\"\n                }\n            ],\n            \"MaskedPaths\": [\n                \"/proc/asound\",\n                \"/proc/acpi\",\n                \"/proc/interrupts\",\n                \"/proc/kcore\",\n                \"/proc/keys\",\n                \"/proc/latency_stats\",\n                \"/proc/timer_list\",\n                \"/proc/timer_stats\",\n                \"/proc/sched_debug\",\n                \"/proc/scsi\",\n                \"/sys/firmware\",\n                \"/sys/devices/virtual/powercap\",\n                \"/sys/devices/system/cpu/cpu0/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu1/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu2/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu3/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu4/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu5/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu6/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu7/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu8/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu9/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu10/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu11/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu12/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu13/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu14/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu15/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu16/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu17/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu18/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu19/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu20/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu21/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu22/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu23/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu24/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu25/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu26/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu27/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu28/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu29/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu30/thermal_throttle\",\n                \"/sys/devices/system/cpu/cpu31/thermal_throttle\"\n            ],\n            \"ReadonlyPaths\": [\n                \"/proc/bus\",\n                \"/proc/fs\",\n                \"/proc/irq\",\n                \"/proc/sys\",\n                \"/proc/sysrq-trigger\"\n            ]\n        },\n        \"GraphDriver\": {\n            \"Data\": {\n                \"ID\": \"761f5ed8028a047a05e87c1a3acd1fd04b619074e116fe4c0d6bab295055819b\",\n                \"LowerDir\": \"/var/lib/docker/overlay2/a636dfd49461470104330e9f92fa687a57bb9ed045312acedcbbbfa5a0839360-init/diff:/var/lib/docker/overlay2/36686a8aa08207ca399ee178095715b4a87203a8b6345d6b5756fa473f2e74ba/diff:/var/lib/docker/overlay2/fd90dcb520213c35636f5e1f4ecdf0845c7ccb220ac06b1b504e8e2eb99f5d8d/diff:/var/lib/docker/overlay2/1104d09a2e87efb0bf7a8825185f645d95af3f947e7850c5e6ca91ddba74b4cf/diff:/var/lib/docker/overlay2/6280dbc443a0daa3df00145f33328b13ff23227e08e2c707c40aed6732f36794/diff\",\n                \"MergedDir\": \"/var/lib/docker/overlay2/a636dfd49461470104330e9f92fa687a57bb9ed045312acedcbbbfa5a0839360/merged\",\n                \"UpperDir\": \"/var/lib/docker/overlay2/a636dfd49461470104330e9f92fa687a57bb9ed045312acedcbbbfa5a0839360/diff\",\n                \"WorkDir\": \"/var/lib/docker/overlay2/a636dfd49461470104330e9f92fa687a57bb9ed045312acedcbbbfa5a0839360/work\"\n            },\n            \"Name\": \"overlay2\"\n        },\n        \"Mounts\": [\n            {\n                \"Type\": \"bind\",\n                \"Source\": \"/home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/docker-immutable\",\n                \"Destination\": \"/experiment\",\n                \"Mode\": \"\",\n                \"RW\": true,\n                \"Propagation\": \"rprivate\"\n            }\n        ],\n        \"Config\": {\n            \"Hostname\": \"ubuntu\",\n            \"Domainname\": \"\",\n            \"User\": \"1000:1000\",\n            \"AttachStdin\": false,\n            \"AttachStdout\": true,\n            \"AttachStderr\": true,\n            \"Tty\": false,\n            \"OpenStdin\": false,\n            \"StdinOnce\": false,\n            \"Env\": [\n                \"PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",\n                \"LANG=C.UTF-8\",\n                \"GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D\",\n                \"PYTHON_VERSION=3.11.16\",\n                \"PYTHON_SHA256=91bcdebfdde239a003ae93738a7fce0f9230fee5c4bc2b86f6e6e8c6f98aabe8\"\n            ],\n            \"Cmd\": [\n                \"python\",\n                \"-u\",\n                \"/experiment/store.py\",\n                \"--root\",\n                \"/experiment/docker-store\",\n                \"--port\",\n                \"18799\"\n            ],\n            \"Image\": \"sha256:002792ac193538382f4aa5b2f696e5669c20e3c972e60d75e6df90d64d4e696e\",\n            \"Volumes\": null,\n            \"WorkingDir\": \"\",\n            \"Entrypoint\": null,\n            \"OnBuild\": null,\n            \"Labels\": {\n                \"book.experiment\": \"909-remote-immutable-001\"\n            }\n        },\n        \"NetworkSettings\": {\n            \"Bridge\": \"\",\n            \"SandboxID\": \"ff2464ac95fe05d8c85275e93437530a6c0ec428e3cc6ddefe8c103849b36516\",\n            \"SandboxKey\": \"/var/run/docker/netns/default\",\n            \"Ports\": {},\n            \"HairpinMode\": false,\n            \"LinkLocalIPv6Address\": \"\",\n            \"LinkLocalIPv6PrefixLen\": 0,\n            \"SecondaryIPAddresses\": null,\n            \"SecondaryIPv6Addresses\": null,\n            \"EndpointID\": \"\",\n            \"Gateway\": \"\",\n            \"GlobalIPv6Address\": \"\",\n            \"GlobalIPv6PrefixLen\": 0,\n            \"IPAddress\": \"\",\n            \"IPPrefixLen\": 0,\n            \"IPv6Gateway\": \"\",\n            \"MacAddress\": \"\",\n            \"Networks\": {\n                \"host\": {\n                    \"IPAMConfig\": null,\n                    \"Links\": null,\n                    \"Aliases\": null,\n                    \"MacAddress\": \"\",\n                    \"DriverOpts\": null,\n                    \"GwPriority\": 0,\n                    \"NetworkID\": \"fef322236e12a2b4f8589244ee80881d92aa7c6cfe34c6322ff566b26a44eacf\",\n                    \"EndpointID\": \"67d7b143f2c6fcecbffcbe85a85d993c16cfd8fa50e44a34a01548bd8b02dacf\",\n                    \"Gateway\": \"\",\n                    \"IPAddress\": \"\",\n                    \"IPPrefixLen\": 0,\n                    \"IPv6Gateway\": \"\",\n                    \"GlobalIPv6Address\": \"\",\n                    \"GlobalIPv6PrefixLen\": 0,\n                    \"DNSNames\": null\n                }\n            }\n        }\n    }\n]\n",
+    "stderr": "",
+    "time": 1789398999.6152644
+  },
+  {
+    "command": [
+      "docker",
+      "rm",
+      "-f",
+      "761f5ed8028a047a05e87c1a3acd1fd04b619074e116fe4c0d6bab295055819b"
+    ],
+    "exit_code": 0,
+    "stdout": "761f5ed8028a047a05e87c1a3acd1fd04b619074e116fe4c0d6bab295055819b\n",
+    "stderr": "",
+    "time": 1789398999.7648566
+  }
+]

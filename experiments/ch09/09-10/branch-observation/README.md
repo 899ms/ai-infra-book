@@ -1,4 +1,4 @@
-# 9-10 HiCache 分支观测（待主 agent 统一复核）
+# 9-10 HiCache 分支观测（已独立复核）
 
 四组18请求完成，定位到本批两轮 8 请求波的真实执行路径：首完成请求均为 `native-4`，它在 prefetch 占用4096、限额3289时被限额分支跳过，没有登记 ongoing；scheduler 对该请求的 progress 检查走“无 ongoing → True”，pop loaded 为0，实际 prefill 入选时 prefix/host/storage 长度均0，最终 API cached_tokens=0。判断来自同请求ID的实际事件链，不是从文件get成功反推。
 
@@ -45,3 +45,5 @@ rsvg-convert -o branch-flow.png branch-flow.svg
 这是本批实际PID示例；新授权使用新的明确PID及释放证明，不能伪造或仅依赖旧状态。runner使用端口18190（18191保留未用）、4线程环境、单worker、600秒worker/120秒波上限，按/proc PPID与starttime记录所有权，仅可能清理自己核实的PID，等待显存释放。`launch.py` 保存本批controller真实退出。默认fixture来自9-8/storage-v3，或用`--cache`提供hash一致的65文件；远端四份独立fixture副本保留，本地不复制重复storage目录，所有原始事件/输出/准备验证均已传回，77份原始结果文件逐字节对齐远端hash，本地大小约71MiB。
 
 本交付只完成此有界分支观测，供主agent统一复核回填。没有修改两个封存实验、正文或全局进度；没有运行calculations、联系其他session、派生agent或git提交；不宣称全9-10完成。
+
+2026-09-15主复核：分析器从原件重放通过；REQUEST-EVIDENCE.md的四个progress显示值经原始return字段修正为true。旧错误文档保留，write_request_evidence.py绑定PID/seq生成，数据和判定未变。此项不关闭整体9-10。

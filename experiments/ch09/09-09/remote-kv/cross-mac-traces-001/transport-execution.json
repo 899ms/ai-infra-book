@@ -1,0 +1,27 @@
+{
+  "command": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ExitOnForwardFailure=yes",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ControlPath=none",
+    "-o",
+    "Compression=no",
+    "-o",
+    "ServerAliveInterval=15",
+    "-o",
+    "ServerAliveCountMax=4",
+    "-R",
+    "127.0.0.1:18797:127.0.0.1:18796",
+    "rtx-pro",
+    "cd /home/ubuntu/ai-infra-book-experiments/ch09/09-09/remote-kv/cross-mac-traces-001 && python3 -u launch.py"
+  ],
+  "start_unix": 1789414814.593299,
+  "ssh_exit": 0,
+  "end_unix": 1789415301.7190442,
+  "store_exit": -15
+}

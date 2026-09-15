@@ -1,0 +1,493 @@
+{
+  "exercise": "9-7",
+  "tiers_by_suffix": {
+    "128": {
+      "schema_version": 1,
+      "calculation": "kv-tiers",
+      "scenario": {
+        "model": "qwen3-8b",
+        "prefix_tokens": 8192,
+        "suffix_tokens": 128,
+        "device": "a100-80gb-sxm",
+        "compute_efficiency": "1/2",
+        "hbm_bytes": 80000000000,
+        "host_dram_bytes": 2199023255552,
+        "gpus_per_server": 8,
+        "ssd_bytes": 3840000000000,
+        "ssd_read_bytes_per_second": 7100000000,
+        "ssd_write_bytes_per_second": 4200000000,
+        "ssd_dwpd": 1,
+        "pcie_bytes_per_second": 25000000000,
+        "nic_bytes_per_second": 25000000000,
+        "reuse_windows_s": [
+          300
+        ],
+        "mooncake_block_tokens": 512,
+        "mooncake_lru": [
+          [
+            1000,
+            "0.30"
+          ],
+          [
+            10000,
+            "0.40"
+          ],
+          [
+            30000,
+            "0.48"
+          ],
+          [
+            50000,
+            "0.50"
+          ],
+          [
+            100000,
+            "0.51"
+          ]
+        ]
+      },
+      "sources": [
+        {
+          "file": "references/files/specs/nvidia-dgx-a100-datasheet.pdf",
+          "url": "https://images.nvidia.com/aem-dam/Solutions/Data-Center/nvidia-dgx-a100-datasheet.pdf",
+          "sha256": "183a3a104c36807f6bc9b1a6c705fcaa5825a25c3978043e89eeb22149edbdfd"
+        },
+        {
+          "file": "references/files/specs/solidigm-d7-p5520-brief.pdf",
+          "url": "https://www.solidigm.com/content/dam/solidigm/en/site/products/data-center/product-briefs/d7-p5520-p5620-product-brief/documents/d7-p5520-p5620-product-brief.pdf",
+          "sha256": "71e7b908c4a7d2bee23fd5abc6afbc4ccfb8f258823aa530343e04f7539b0b85"
+        },
+        {
+          "file": "references/files/papers/cachedattention.pdf",
+          "url": "https://www.usenix.org/system/files/atc24-gao-bin-cost.pdf",
+          "sha256": "5c5bd05811c38652883a3483e4d5a0bd936bc190571621830648acea90755d1a"
+        },
+        {
+          "file": "references/files/papers/kvcache-in-the-wild.pdf",
+          "url": "https://arxiv.org/pdf/2506.02634",
+          "sha256": "f54f033a1f62293ac662b44e2e51c68306157756cf20a2f951342d6cdeccee54"
+        },
+        {
+          "file": "references/files/papers/mooncake.pdf",
+          "url": "https://arxiv.org/pdf/2407.00079",
+          "sha256": "af8db47ba2ccbbd7ca3f46de6176292010192afb0ffe5c51da2db56e1006f27a"
+        }
+      ],
+      "summary": {
+        "kv_bytes_per_token": 147456,
+        "prefix_bytes": 1207959552,
+        "layers": 36,
+        "per_layer_bytes_exact": "33554432",
+        "weight_bytes": 16381470720,
+        "prefill_prefix_s_exact": "326158016/380859375",
+        "warm_suffix_s_exact": "146649536/9521484375",
+        "kv_production_bytes_per_second_exact": "7188480000000000/5096219",
+        "hbm_kv_bytes": 63618529280,
+        "dram_per_gpu_bytes": "274877906944",
+        "prefetch_window_prefixes": 227,
+        "ssd_endurance_bytes_per_second_exact": "400000000/9",
+        "ssd_write_over_endurance_exact": "161740800/5096219",
+        "ssd_admissible_fraction_exact": "5096219/161740800",
+        "ssd_write_bandwidth_fraction_exact": "11980800/35673533",
+        "dram_write_bandwidth_fraction_exact": "1437696/25481095"
+      },
+      "tiers": [
+        {
+          "tier": "HBM",
+          "capacity_bytes": "63618529280",
+          "read_bytes_per_second": null,
+          "write_bytes_per_second": null,
+          "read_path": "already on GPU",
+          "retention_s_exact": "31661519303593/702000000000",
+          "read_s_exact": "0",
+          "write_s_exact": "0"
+        },
+        {
+          "tier": "host DRAM",
+          "capacity_bytes": "274877906944",
+          "read_bytes_per_second": 25000000000,
+          "write_bytes_per_second": 25000000000,
+          "read_path": "PCIe 4.0 x16",
+          "retention_s_exact": "667971616768/3427734375",
+          "read_s_exact": "2359296/48828125",
+          "write_s_exact": "2359296/48828125",
+          "break_even_reuses": 1,
+          "load_per_layer_s_exact": "65536/48828125",
+          "compute_per_layer_s_exact": "36662384/85693359375",
+          "serial_s_exact": "606712256/9521484375",
+          "layer_pipelined_s_exact": "4177226864/85693359375",
+          "preload_layers_for_full_overlap": 25,
+          "preload_bytes": "838860800",
+          "cachedattention_buffer_bytes_exact": "160467550208/195",
+          "min_suffix_tokens_to_hide_read": 400
+        },
+        {
+          "tier": "local NVMe",
+          "capacity_bytes": "3840000000000",
+          "read_bytes_per_second": 7100000000,
+          "write_bytes_per_second": 4200000000,
+          "read_path": "NVMe drive limits the path",
+          "retention_s_exact": "5096219/1872",
+          "read_s_exact": "4718592/27734375",
+          "write_s_exact": "786432/2734375",
+          "break_even_reuses": 1,
+          "load_per_layer_s_exact": "131072/27734375",
+          "compute_per_layer_s_exact": "36662384/85693359375",
+          "serial_s_exact": "125427797056/676025390625",
+          "layer_pipelined_s_exact": "1037744149264/6084228515625",
+          "preload_layers_for_full_overlap": 33,
+          "preload_bytes": "1107296256",
+          "cachedattention_buffer_bytes_exact": "26778512113664/24375",
+          "min_suffix_tokens_to_hide_read": 1388
+        },
+        {
+          "tier": "remote pool",
+          "capacity_bytes": null,
+          "read_bytes_per_second": 25000000000,
+          "write_bytes_per_second": 25000000000,
+          "read_path": "NIC to host, then PCIe (serial whole object)",
+          "retention_s_exact": null,
+          "read_s_exact": "4718592/48828125",
+          "write_s_exact": "4718592/48828125",
+          "break_even_reuses": 1,
+          "load_per_layer_s_exact": "131072/48828125",
+          "compute_per_layer_s_exact": "36662384/85693359375",
+          "serial_s_exact": "1066774976/9521484375",
+          "layer_pipelined_s_exact": "8317791344/85693359375",
+          "preload_layers_for_full_overlap": 31,
+          "preload_bytes": "1040187392",
+          "cachedattention_buffer_bytes_exact": "198009831424/195",
+          "min_suffix_tokens_to_hide_read": 796
+        }
+      ],
+      "reuse_windows": [
+        {
+          "window_s": 300,
+          "required_bytes_exact": "2156544000000000000/5096219"
+        }
+      ],
+      "mooncake_lru_capacity": [
+        {
+          "blocks": 1000,
+          "tokens": 512000,
+          "qwen_bytes": 75497472000,
+          "lru_hit_rate": "0.30"
+        },
+        {
+          "blocks": 10000,
+          "tokens": 5120000,
+          "qwen_bytes": 754974720000,
+          "lru_hit_rate": "0.40"
+        },
+        {
+          "blocks": 30000,
+          "tokens": 15360000,
+          "qwen_bytes": 2264924160000,
+          "lru_hit_rate": "0.48"
+        },
+        {
+          "blocks": 50000,
+          "tokens": 25600000,
+          "qwen_bytes": 3774873600000,
+          "lru_hit_rate": "0.50"
+        },
+        {
+          "blocks": 100000,
+          "tokens": 51200000,
+          "qwen_bytes": 7549747200000,
+          "lru_hit_rate": "0.51"
+        }
+      ],
+      "assumptions": [
+        "\u6bcf\u5361\u4e00\u4efd\uff1aDGX A100 \u7684 2 TB DIMM \u6309 8 \u5f20 GPU \u5747\u5206\uff08\u6309\u4e8c\u8fdb\u5236 TiB \u8ba1\uff09\uff0c\u6bcf\u5361\u4e00\u5757 3.84 TB U.2 NVMe \u4e0e\u4e00\u5f20 200 Gb/s \u7f51\u5361\u3002HBM \u5bb9\u91cf\u6309\u5382\u5546 80 GB \u5341\u8fdb\u5236\u8ba1\u5e76\u6263\u9664 BF16 \u6743\u91cd\uff0c\u672a\u6263\u6fc0\u6d3b\u4e0e\u5de5\u4f5c\u533a\uff0c\u662f KV \u53ef\u7528\u7a7a\u95f4\u7684\u4e0a\u9650\u3002",
+        "NVMe \u8bfb\u5199\u5e26\u5bbd\u4e0e\u8010\u4e45\u5ea6\u53d6 Solidigm D7-P5520 3.84 TB \u4ea7\u54c1\u7b80\u4ecb\u7684\u6700\u5927\u503c\uff1b\u8def\u5f84\u65f6\u95f4\u53ea\u53d7\u76d8\u672c\u8eab\u9650\u5236\uff0c\u4e0d\u8ba1\u6587\u4ef6\u7cfb\u7edf\u4e0e PCIe \u4e89\u7528\u3002",
+        "KV \u4ea7\u751f\u7387 = \u4e00\u5f20 GPU \u8fde\u7eed\u6267\u884c\u65e0\u547d\u4e2d 8192-token prefill \u65f6\u6bcf\u79d2\u4ea7\u751f\u7684 KV \u5b57\u8282\uff1b\u4fdd\u7559\u65f6\u95f4 = \u5bb9\u91cf / \u4ea7\u751f\u7387\uff0c\u5bf9\u5e94\u53ea\u6309\u65f6\u95f4\u5148\u540e\u6dd8\u6c70\u3001\u5168\u90e8\u5199\u5165\u8be5\u5c42\u7684\u60c5\u5f62\u3002",
+        "\u8fdc\u7aef\u6c60\u6574\u4efd\u5148\u7ecf\u7f51\u5361\u5230\u4e3b\u673a\u518d\u7ecf PCIe \u5230 GPU\uff0c\u4e24\u6bb5\u4e32\u884c\uff1b\u9010\u5c42\u9884\u52a0\u8f7d\u6309\u603b\u8bfb\u53d6\u65f6\u95f4\u5747\u5206\u5230\u5404\u5c42\u3002",
+        "\u9010\u5c42\u8ba1\u7b97\u65f6\u95f4\u6309\u547d\u4e2d\u540e suffix \u7684\u77e9\u9635 FLOPs \u5747\u5206\u5230\u5404\u5c42\uff1b\u9884\u52a0\u8f7d\u5c42\u6570 k \u6307\u8ba1\u7b97\u5f00\u59cb\u524d\u5df2\u5728 HBM \u7684\u5c42\u6570\u3002",
+        "Mooncake \u8868 1 \u7684\u5757\u6570\u6309\u6bcf\u5757 512 token \u6362\u7b97\u4e3a Qwen3-8B \u7684 KV \u5b57\u8282\uff1b\u547d\u4e2d\u7387\u5c5e\u4e8e\u8be5\u4e00\u5c0f\u65f6\u91c7\u6837 trace\uff0c\u5bb9\u91cf\u968f\u771f\u5b9e\u6d41\u91cf\u540c\u6bd4\u4f8b\u653e\u5927\u3002"
+      ]
+    },
+    "512": {
+      "schema_version": 1,
+      "calculation": "kv-tiers",
+      "scenario": {
+        "model": "qwen3-8b",
+        "prefix_tokens": 8192,
+        "suffix_tokens": 512,
+        "device": "a100-80gb-sxm",
+        "compute_efficiency": "1/2",
+        "hbm_bytes": 80000000000,
+        "host_dram_bytes": 2199023255552,
+        "gpus_per_server": 8,
+        "ssd_bytes": 3840000000000,
+        "ssd_read_bytes_per_second": 7100000000,
+        "ssd_write_bytes_per_second": 4200000000,
+        "ssd_dwpd": 1,
+        "pcie_bytes_per_second": 25000000000,
+        "nic_bytes_per_second": 25000000000,
+        "reuse_windows_s": [
+          300
+        ],
+        "mooncake_block_tokens": 512,
+        "mooncake_lru": [
+          [
+            1000,
+            "0.30"
+          ],
+          [
+            10000,
+            "0.40"
+          ],
+          [
+            30000,
+            "0.48"
+          ],
+          [
+            50000,
+            "0.50"
+          ],
+          [
+            100000,
+            "0.51"
+          ]
+        ]
+      },
+      "sources": [
+        {
+          "file": "references/files/specs/nvidia-dgx-a100-datasheet.pdf",
+          "url": "https://images.nvidia.com/aem-dam/Solutions/Data-Center/nvidia-dgx-a100-datasheet.pdf",
+          "sha256": "183a3a104c36807f6bc9b1a6c705fcaa5825a25c3978043e89eeb22149edbdfd"
+        },
+        {
+          "file": "references/files/specs/solidigm-d7-p5520-brief.pdf",
+          "url": "https://www.solidigm.com/content/dam/solidigm/en/site/products/data-center/product-briefs/d7-p5520-p5620-product-brief/documents/d7-p5520-p5620-product-brief.pdf",
+          "sha256": "71e7b908c4a7d2bee23fd5abc6afbc4ccfb8f258823aa530343e04f7539b0b85"
+        },
+        {
+          "file": "references/files/papers/cachedattention.pdf",
+          "url": "https://www.usenix.org/system/files/atc24-gao-bin-cost.pdf",
+          "sha256": "5c5bd05811c38652883a3483e4d5a0bd936bc190571621830648acea90755d1a"
+        },
+        {
+          "file": "references/files/papers/kvcache-in-the-wild.pdf",
+          "url": "https://arxiv.org/pdf/2506.02634",
+          "sha256": "f54f033a1f62293ac662b44e2e51c68306157756cf20a2f951342d6cdeccee54"
+        },
+        {
+          "file": "references/files/papers/mooncake.pdf",
+          "url": "https://arxiv.org/pdf/2407.00079",
+          "sha256": "af8db47ba2ccbbd7ca3f46de6176292010192afb0ffe5c51da2db56e1006f27a"
+        }
+      ],
+      "summary": {
+        "kv_bytes_per_token": 147456,
+        "prefix_bytes": 1207959552,
+        "layers": 36,
+        "per_layer_bytes_exact": "33554432",
+        "weight_bytes": 16381470720,
+        "prefill_prefix_s_exact": "326158016/380859375",
+        "warm_suffix_s_exact": "589909184/9521484375",
+        "kv_production_bytes_per_second_exact": "7188480000000000/5096219",
+        "hbm_kv_bytes": 63618529280,
+        "dram_per_gpu_bytes": "274877906944",
+        "prefetch_window_prefixes": 227,
+        "ssd_endurance_bytes_per_second_exact": "400000000/9",
+        "ssd_write_over_endurance_exact": "161740800/5096219",
+        "ssd_admissible_fraction_exact": "5096219/161740800",
+        "ssd_write_bandwidth_fraction_exact": "11980800/35673533",
+        "dram_write_bandwidth_fraction_exact": "1437696/25481095"
+      },
+      "tiers": [
+        {
+          "tier": "HBM",
+          "capacity_bytes": "63618529280",
+          "read_bytes_per_second": null,
+          "write_bytes_per_second": null,
+          "read_path": "already on GPU",
+          "retention_s_exact": "31661519303593/702000000000",
+          "read_s_exact": "0",
+          "write_s_exact": "0"
+        },
+        {
+          "tier": "host DRAM",
+          "capacity_bytes": "274877906944",
+          "read_bytes_per_second": 25000000000,
+          "write_bytes_per_second": 25000000000,
+          "read_path": "PCIe 4.0 x16",
+          "retention_s_exact": "667971616768/3427734375",
+          "read_s_exact": "2359296/48828125",
+          "write_s_exact": "2359296/48828125",
+          "break_even_reuses": 1,
+          "load_per_layer_s_exact": "65536/48828125",
+          "compute_per_layer_s_exact": "147477296/85693359375",
+          "serial_s_exact": "1049971904/9521484375",
+          "layer_pipelined_s_exact": "602688704/9521484375",
+          "preload_layers_for_full_overlap": 1,
+          "preload_bytes": "33554432",
+          "cachedattention_buffer_bytes_exact": "0",
+          "min_suffix_tokens_to_hide_read": 400
+        },
+        {
+          "tier": "local NVMe",
+          "capacity_bytes": "3840000000000",
+          "read_bytes_per_second": 7100000000,
+          "write_bytes_per_second": 4200000000,
+          "read_path": "NVMe drive limits the path",
+          "retention_s_exact": "5096219/1872",
+          "read_s_exact": "4718592/27734375",
+          "write_s_exact": "786432/2734375",
+          "break_even_reuses": 1,
+          "load_per_layer_s_exact": "131072/27734375",
+          "compute_per_layer_s_exact": "147477296/85693359375",
+          "serial_s_exact": "156899232064/676025390625",
+          "layer_pipelined_s_exact": "1045612008016/6084228515625",
+          "preload_layers_for_full_overlap": 24,
+          "preload_bytes": "805306368",
+          "cachedattention_buffer_bytes_exact": "18721824751616/24375",
+          "min_suffix_tokens_to_hide_read": 1388
+        },
+        {
+          "tier": "remote pool",
+          "capacity_bytes": null,
+          "read_bytes_per_second": 25000000000,
+          "write_bytes_per_second": 25000000000,
+          "read_path": "NIC to host, then PCIe (serial whole object)",
+          "retention_s_exact": null,
+          "read_s_exact": "4718592/48828125",
+          "write_s_exact": "4718592/48828125",
+          "break_even_reuses": 1,
+          "load_per_layer_s_exact": "131072/48828125",
+          "compute_per_layer_s_exact": "147477296/85693359375",
+          "serial_s_exact": "1510034624/9521484375",
+          "layer_pipelined_s_exact": "8428606256/85693359375",
+          "preload_layers_for_full_overlap": 14,
+          "preload_bytes": "469762048",
+          "cachedattention_buffer_bytes_exact": "84535361536/195",
+          "min_suffix_tokens_to_hide_read": 796
+        }
+      ],
+      "reuse_windows": [
+        {
+          "window_s": 300,
+          "required_bytes_exact": "2156544000000000000/5096219"
+        }
+      ],
+      "mooncake_lru_capacity": [
+        {
+          "blocks": 1000,
+          "tokens": 512000,
+          "qwen_bytes": 75497472000,
+          "lru_hit_rate": "0.30"
+        },
+        {
+          "blocks": 10000,
+          "tokens": 5120000,
+          "qwen_bytes": 754974720000,
+          "lru_hit_rate": "0.40"
+        },
+        {
+          "blocks": 30000,
+          "tokens": 15360000,
+          "qwen_bytes": 2264924160000,
+          "lru_hit_rate": "0.48"
+        },
+        {
+          "blocks": 50000,
+          "tokens": 25600000,
+          "qwen_bytes": 3774873600000,
+          "lru_hit_rate": "0.50"
+        },
+        {
+          "blocks": 100000,
+          "tokens": 51200000,
+          "qwen_bytes": 7549747200000,
+          "lru_hit_rate": "0.51"
+        }
+      ],
+      "assumptions": [
+        "\u6bcf\u5361\u4e00\u4efd\uff1aDGX A100 \u7684 2 TB DIMM \u6309 8 \u5f20 GPU \u5747\u5206\uff08\u6309\u4e8c\u8fdb\u5236 TiB \u8ba1\uff09\uff0c\u6bcf\u5361\u4e00\u5757 3.84 TB U.2 NVMe \u4e0e\u4e00\u5f20 200 Gb/s \u7f51\u5361\u3002HBM \u5bb9\u91cf\u6309\u5382\u5546 80 GB \u5341\u8fdb\u5236\u8ba1\u5e76\u6263\u9664 BF16 \u6743\u91cd\uff0c\u672a\u6263\u6fc0\u6d3b\u4e0e\u5de5\u4f5c\u533a\uff0c\u662f KV \u53ef\u7528\u7a7a\u95f4\u7684\u4e0a\u9650\u3002",
+        "NVMe \u8bfb\u5199\u5e26\u5bbd\u4e0e\u8010\u4e45\u5ea6\u53d6 Solidigm D7-P5520 3.84 TB \u4ea7\u54c1\u7b80\u4ecb\u7684\u6700\u5927\u503c\uff1b\u8def\u5f84\u65f6\u95f4\u53ea\u53d7\u76d8\u672c\u8eab\u9650\u5236\uff0c\u4e0d\u8ba1\u6587\u4ef6\u7cfb\u7edf\u4e0e PCIe \u4e89\u7528\u3002",
+        "KV \u4ea7\u751f\u7387 = \u4e00\u5f20 GPU \u8fde\u7eed\u6267\u884c\u65e0\u547d\u4e2d 8192-token prefill \u65f6\u6bcf\u79d2\u4ea7\u751f\u7684 KV \u5b57\u8282\uff1b\u4fdd\u7559\u65f6\u95f4 = \u5bb9\u91cf / \u4ea7\u751f\u7387\uff0c\u5bf9\u5e94\u53ea\u6309\u65f6\u95f4\u5148\u540e\u6dd8\u6c70\u3001\u5168\u90e8\u5199\u5165\u8be5\u5c42\u7684\u60c5\u5f62\u3002",
+        "\u8fdc\u7aef\u6c60\u6574\u4efd\u5148\u7ecf\u7f51\u5361\u5230\u4e3b\u673a\u518d\u7ecf PCIe \u5230 GPU\uff0c\u4e24\u6bb5\u4e32\u884c\uff1b\u9010\u5c42\u9884\u52a0\u8f7d\u6309\u603b\u8bfb\u53d6\u65f6\u95f4\u5747\u5206\u5230\u5404\u5c42\u3002",
+        "\u9010\u5c42\u8ba1\u7b97\u65f6\u95f4\u6309\u547d\u4e2d\u540e suffix \u7684\u77e9\u9635 FLOPs \u5747\u5206\u5230\u5404\u5c42\uff1b\u9884\u52a0\u8f7d\u5c42\u6570 k \u6307\u8ba1\u7b97\u5f00\u59cb\u524d\u5df2\u5728 HBM \u7684\u5c42\u6570\u3002",
+        "Mooncake \u8868 1 \u7684\u5757\u6570\u6309\u6bcf\u5757 512 token \u6362\u7b97\u4e3a Qwen3-8B \u7684 KV \u5b57\u8282\uff1b\u547d\u4e2d\u7387\u5c5e\u4e8e\u8be5\u4e00\u5c0f\u65f6\u91c7\u6837 trace\uff0c\u5bb9\u91cf\u968f\u771f\u5b9e\u6d41\u91cf\u540c\u6bd4\u4f8b\u653e\u5927\u3002"
+      ]
+    }
+  },
+  "comparison100": {
+    "recompute_once_s": 0.8563738676512821,
+    "network_fetch_once_s": 0.04831838208,
+    "network_fetch100_s": 4.831838208,
+    "serial_network_then_host_once_s": 0.09663676416,
+    "serial_network_then_host100_s": 9.663676416,
+    "network_bytes100": 120795955200
+  },
+  "retention300": {
+    "required_bytes": 423165487982.365,
+    "required_GiB": 394.1035717561515,
+    "host_bytes": 274877906944,
+    "HBM_upper_bytes": 63618529280,
+    "shortfall_beyond_exclusive_HBM_and_host_bytes": 84669051758.36496
+  },
+  "endurance": {
+    "bytes_per_s": 44444444.44444445,
+    "new_KV_fraction": 0.031508555664371635,
+    "half_generation_fraction": 0.06301711132874327
+  },
+  "shared_pool_improved": [
+    {
+      "case_id": "r0-n8192-a1-main",
+      "before": 5632,
+      "after": 7936,
+      "additional_tokens": 2304
+    },
+    {
+      "case_id": "r1-n2048-a1-main",
+      "before": 0,
+      "after": 1792,
+      "additional_tokens": 1792
+    },
+    {
+      "case_id": "r1-n8192-a0-main",
+      "before": 1792,
+      "after": 7936,
+      "additional_tokens": 6144
+    },
+    {
+      "case_id": "r1-n8192-a1-main",
+      "before": 0,
+      "after": 7936,
+      "additional_tokens": 7936
+    },
+    {
+      "case_id": "r2-n2048-a1-main",
+      "before": 0,
+      "after": 1792,
+      "additional_tokens": 1792
+    },
+    {
+      "case_id": "r2-n8192-a0-main",
+      "before": 2304,
+      "after": 7936,
+      "additional_tokens": 5632
+    },
+    {
+      "case_id": "r2-n8192-a1-main",
+      "before": 0,
+      "after": 7936,
+      "additional_tokens": 7936
+    }
+  ],
+  "scope": "Fixed book storage rates and ideal per-layer computation; write amplification/lookup/queue excluded unless separately noted. Shared-pool evidence is same-GPU independent engines, not remote NIC.",
+  "source_sha256": {
+    "manuscripts/09-\u5206\u5e03\u5f0f\u63a8\u7406.md": "c0a232ddb6c038c17560f1e524d3e50129afd638493be711172cd589dd8f3088",
+    "calculations/src/infra_calc/topics/kv_tiers.py": "9b50d73587dfa1f3c7adbf2e5eb3316c2191fe39485a2c0e2a96f0e53c511a79",
+    "experiments/ch09/09-07/shared-kv/capacity-comparison.json": "a9a6b227d9e55ec0e378a33384cf92986d53ad81fb2cefeb38730ac1bc327bff",
+    "experiments/ch09/09-07/shared-kv/review_pair.py": "d55774663cbff295847ff495fe51caf2b804d768705373423791d2836a6adcfe",
+    "references/files/specs/nvidia-dgx-a100-datasheet.pdf": "183a3a104c36807f6bc9b1a6c705fcaa5825a25c3978043e89eeb22149edbdfd",
+    "references/files/specs/solidigm-d7-p5520-brief.pdf": "71e7b908c4a7d2bee23fd5abc6afbc4ccfb8f258823aa530343e04f7539b0b85",
+    "references/files/papers/cachedattention.pdf": "5c5bd05811c38652883a3483e4d5a0bd936bc190571621830648acea90755d1a",
+    "references/files/papers/kvcache-in-the-wild.pdf": "f54f033a1f62293ac662b44e2e51c68306157756cf20a2f951342d6cdeccee54",
+    "references/files/papers/mooncake.pdf": "af8db47ba2ccbbd7ca3f46de6176292010192afb0ffe5c51da2db56e1006f27a"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "runs": [
+    {
+      "run": "agent-search-v1",
+      "reported_status": "selected",
+      "charged_s": 23.245686220316216,
+      "elapsed_s": 35.417244042037055,
+      "inference_s": 18.93562494101934,
+      "evaluator_gpu_event_s": 4.310061279296875,
+      "note": "Original v1 accepted the unchanged starting kernel; later AST audit treats it as no new optimization."
+    },
+    {
+      "run": "agent-search-v2",
+      "reported_status": "no_valid_candidate",
+      "charged_s": 20.862395957810804,
+      "elapsed_s": 20.936447456944734,
+      "inference_s": 20.862395957810804,
+      "evaluator_gpu_event_s": 0,
+      "note": null
+    },
+    {
+      "run": "exclusive-profile-001/agent",
+      "reported_status": "no_valid_candidate",
+      "charged_s": 55.72865502466448,
+      "elapsed_s": 55.96476602484472,
+      "inference_s": 55.72865502466448,
+      "evaluator_gpu_event_s": 0,
+      "note": null
+    },
+    {
+      "run": "exclusive-followups-001/agent",
+      "reported_status": "selected",
+      "charged_s": 47.33803550807014,
+      "elapsed_s": 68.12010230007581,
+      "inference_s": 40.609441025648266,
+      "evaluator_gpu_event_s": 6.728594482421875,
+      "note": null
+    }
+  ],
+  "total_charged_s": 147.17477271086165,
+  "total_search_elapsed_s": 180.43855982390232,
+  "scope": "Four separate attempts, each with its own ceiling. Startup, human preparation and infrastructure setup not included in these loop totals; not a single 60s search or energy billing."
+}

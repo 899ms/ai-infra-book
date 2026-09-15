@@ -1,0 +1,70 @@
+{
+  "source": "/home/ubuntu/ai-infra-book-experiments/tools/sglang0513-venv/lib/python3.10/site-packages/sglang/srt/mem_cache/memory_pool_host.py",
+  "sha256": "828a67de019d75455a9df801f674ce5446c124090ece3b686f9d63a89f55ce0a",
+  "lines": [
+    {
+      "line": 249,
+      "text": "        self.dtype = device_pool.store_dtype"
+    },
+    {
+      "line": 250,
+      "text": "        self.size_per_token = self.get_size_per_token()"
+    },
+    {
+      "line": 251,
+      "text": "        if host_size > 0:"
+    },
+    {
+      "line": 252,
+      "text": "            self.size = int(host_size * 1e9 // self.size_per_token)"
+    },
+    {
+      "line": 253,
+      "text": "        else:"
+    },
+    {
+      "line": 254,
+      "text": "            self.size = int(device_pool.size * host_to_device_ratio)"
+    },
+    {
+      "line": 255,
+      "text": "        # Align up the host memory pool size to the page size"
+    },
+    {
+      "line": 256,
+      "text": "        self.page_num = self.size // self.page_size + 1"
+    },
+    {
+      "line": 257,
+      "text": "        self.size = self.page_num * self.page_size"
+    },
+    {
+      "line": 258,
+      "text": "        self.start_layer = device_pool.start_layer"
+    },
+    {
+      "line": 259,
+      "text": "        self.end_layer = device_pool.end_layer"
+    },
+    {
+      "line": 260,
+      "text": ""
+    },
+    {
+      "line": 261,
+      "text": "        assert ("
+    },
+    {
+      "line": 262,
+      "text": "            self.size > device_pool.size"
+    },
+    {
+      "line": 263,
+      "text": "        ), \"The host memory should be larger than the device memory with the current protocol\""
+    },
+    {
+      "line": 264,
+      "text": ""
+    }
+  ]
+}

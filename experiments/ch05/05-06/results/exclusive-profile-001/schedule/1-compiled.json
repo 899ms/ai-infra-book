@@ -1,0 +1,101 @@
+{
+  "kind": "compiled",
+  "block": 256,
+  "warps": 4,
+  "rows": [
+    {
+      "t": 1,
+      "max_abs_error": 0.00390625,
+      "different_elements": 3242,
+      "prepare_s": 1.1445975650567561,
+      "samples_us": [
+        3.8975998759269714,
+        2.1247999742627144,
+        2.582399919629097,
+        1.9360000267624855,
+        1.929599978029728,
+        1.945599913597107,
+        1.9039999693632126,
+        1.8559999763965607,
+        1.8559999763965607,
+        1.881599985063076,
+        1.881599985063076
+      ],
+      "profiler_feedback": {
+        "trace": "1-compiled-profile-1.json",
+        "kernels": [
+          {
+            "name": "triton_poi_fused__to_copy_mul_silu_slice_0",
+            "duration_us": 0.927,
+            "grid": [
+              48,
+              1,
+              1
+            ],
+            "block": [
+              128,
+              1,
+              1
+            ],
+            "stream": 7
+          }
+        ],
+        "scope": "instrumented CUDA kernel activity; not hardware counters or timing score"
+      }
+    },
+    {
+      "t": 7239,
+      "max_abs_error": 0.03125,
+      "different_elements": 23463111,
+      "prepare_s": 0.2353322149720043,
+      "samples_us": [
+        351.69920921325684,
+        353.6384105682373,
+        354.7168016433716,
+        352.8032064437866,
+        353.3535957336426,
+        353.5072088241577,
+        353.3440113067627,
+        353.33120822906494,
+        354.51838970184326,
+        353.46879959106445,
+        353.6223888397217
+      ],
+      "profiler_feedback": {
+        "trace": "1-compiled-profile-7239.json",
+        "kernels": [
+          {
+            "name": "triton_poi_fused__to_copy_mul_silu_slice_0",
+            "duration_us": 345.756,
+            "grid": [
+              86868,
+              1,
+              1
+            ],
+            "block": [
+              128,
+              1,
+              1
+            ],
+            "stream": 7
+          }
+        ],
+        "scope": "instrumented CUDA kernel activity; not hardware counters or timing score"
+      }
+    }
+  ],
+  "status": "passed",
+  "protocol_sha256": "893989ea9e1ce8950315e0f2c7f45848fa165d7f75301c458defa02171988c62",
+  "torch": "2.11.0+cu130",
+  "triton": "3.6.0",
+  "gpu_before": "pid, process_name, used_gpu_memory [MiB]\n",
+  "gpu_event_window_s": 2.742634033203125,
+  "wall_s": 2.9048725811298937,
+  "gpu_after": "pid, process_name, used_gpu_memory [MiB]\n1552885, /home/ubuntu/vllm023-venv/bin/python, 2976 MiB\n",
+  "source_hashes": {
+    "evaluate_agent_profile.py": "d3cceaa6890a66f60ac9560a1d44973a264a412a246e5b4446847795a9567ad4",
+    "agent_guard.py": "be551f9eb4812ef1371ca96092cf308bd2940c4715023218eb70b1d64f74874e",
+    "protocol.json": "893989ea9e1ce8950315e0f2c7f45848fa165d7f75301c458defa02171988c62"
+  },
+  "candidate_sha256": null
+}

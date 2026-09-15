@@ -1,0 +1,22 @@
+# Remaining experiment inputs
+
+Current historical inventory:104 delivered,6 delivered with documented gaps. These six are not claimed complete. The author permits multi-GPU tests to be held. A fresh RTX check reports one RTX PRO6000 Blackwell96GB and no compute processes; the available GPU is not occupied by an unfinished experiment. Docker replaced E2B successfully, so no E2B key is needed.
+
+| Historical experiment | What remains | Next sufficient input / execution condition |
+|---|---|---|
+|9-6 expert placement/replication | Cross-device placement, dispatch/combine and supported overlap comparisons | At least2 compatible CUDA GPUs with working expert-parallel collective backend; recommended matching48GiB+ cards,128GiB host RAM. Existing single-GPU routing, GEMM/assignment evidence is retained. Same model/precision/backend must be fixed before comparing policies. |
+|9-10 heterogeneous deployment | PD/AF combinations and the four-card dynamic-parallel variant | A100+H20 pair for PD functionality;4×A100+4×H20 for the stated eight-card mix;4 supported homogeneous GPUs for the dynamic variant. Existing branch-trace evidence resolves its later batch's cached0 mechanism. Full deployment capacity conditions are in RESOURCE-REQUIREMENTS.md. |
+|10-5 four-stage1F1B | Physical official-pipeline run, imbalance and microbatch comparison |4 physical CUDA GPUs with NCCL P2P; tiny interface check at least2GiB/card and8GiB host available. Qwen8B training preparation suggests4×48GiB and128GiB host, subject to actual memory checks. Single-card no-pipeline baseline is complete; failed Gloo precheck is not a pipeline result. |
+|10-9 R3 trace consistency | Full token/expert/logprob identity, packing/cache alignment and missing-route checks | Original full tensors plus sample/token/weight identities, or the supported full recipe's64-GPU environment. Existing800 training history rows are valid aggregate records but lack these tensors. GPU count alone does not establish recipe equivalence; exact model/software/cluster identity is required. |
+|10-10 deadline calibration | Target-specific allocation/data/checkpoint/failure/cost linkage | Identified target task/configuration and matched records for the calibration claims. SmolLM3 records and conditional Dense calculations remain labeled and cannot be promoted to measured Qwen/V4 performance. Hardware depends on the chosen recipe. |
+|11-8 subscription/API/reseller | Same monthly task set, channel identities and acceptance/usage linkage | Month or declared evaluation period; task IDs and acceptance criteria; subscription plan, API model and reseller identity; public price snapshots and available per-channel attempts/results/usage. No purchase or API key is required for record analysis. Unknown quotas/fees remain unknown. Actual cost requires sufficient billing semantics/records; no fabricated token entitlement. |
+
+The billing ledger was independently rechecked:231 assertions,21 terminal turns,17 thread IDs. It still contains neither model/plan identities nor a matched monthly task/acceptance record. Successful log termination is not task-quality acceptance. A nominal price cannot establish which product produced those records or whether resumed usage intervals overlap.
+
+For11-8, a minimal record should identify task_id, acceptance_rule, channel, plan/model, attempt_id, period, outcome, usage_source and price_source. A failed/limited attempt is retained with its reason; absent outcome or quota information is unknown, not zero. Restored/cumulative usage needs an explicit disjoint interval or documented provider accounting rule before summation becomes a bill.
+
+12-4 and12-7 are no longer blocked by microphone access: their original permitted calculation/first-playable record scope is complete. Acoustic onset is still unmeasured and has not been silently relabeled. Older resource notes requiring acoustics were superseded by their requirement reviews.
+
+The overall goal remains unproven and active. This handoff does not replace missing measurements with smaller-model, single-GPU or aggregate-log substitutes. Additional completion decisions require direct requirement-to-evidence review, not just artifact presence or a green inventory script.
+
+10-4 subsequently completed its permitted conditional route; see its completion review. For10-10, V4 MoE-only state floor is4.450TB, but missing full backward/placement semantics prevent claiming a sufficient fleet.

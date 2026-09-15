@@ -1,0 +1,159 @@
+{
+  "goal": "Finish audit gaps on Mac and exclusive single GPU; hold multi-GPU scopes with resource requirements",
+  "gpu_authorization": "Explicit author permission to stop all GPU sessions",
+  "items": [
+    {
+      "id": "2-9",
+      "directory": "experiments/ch02/02-09",
+      "requirements": "> **实验 2-9 ★★〔延伸〕：请求条件下的模型选择**\n>\n> 固定同一请求输入，完整比较 Qwen3-8B 与 DeepSeek-V4-Flash 的 prefill、decode 每步及整段工作、常驻权重／状态、读取与更新。指出哪一项需求更高，并列出使模型选择成立的质量条件；V4-Pro 与 Kimi K3 作为迁移练习。设备供给与链路代价在第 4、6、7 章加入，此处不据模型需求表给出硬件性能排名。\n>\n> 条件：进阶·方案研究。",
+      "remaining": null,
+      "disposition": "completed",
+      "status": "completed_four_case_run_independently_verified",
+      "note": "V4 4/4 exact JSON and natural stop; known Qwen 3/4; no general quality/numerical clearance claim."
+    },
+    {
+      "id": "5-6",
+      "directory": "experiments/ch05/05-06",
+      "requirements": "> **实验 5-6 ★★〔延伸〕：自动 profile 与算子优化**\n>\n> 用固定 KernelAgent 或一个小型工具调用 Agent，优化从 Qwen3-8B 的 vLLM／SGLang trace 提取的 RMSNorm／SwiGLU 热点。比较默认编译、等预算的 schedule 搜索和带 profiler 反馈的 Agent；限定候选数及 GPU 时间，由 Agent 修改内核，读者负责给出问题和判断结果。每次先对固定参考实现校验，再在独占计时窗口预热与重复测量；对原路径存在并发的热点，补测同一并发片段的资源争用。保留未参与搜索的形状、边界输入和退化案例，固定独立验证入口、参考实现与设备资源；优化后的候选不能自行降低校验条件。报告优化花费、稳态收益与摊销次数，最后回到实验 5-9 检查请求是否变快。\n>\n> 条件：进阶·单 GPU＋模型 API／本地模型；无设备时分析配套完整迭代记录。\n>\n> 同时报告形状平均分数与按实际频数汇总的时间；验证失败项计入回退，分派和准备花费计入部署预算。固定模型算子定义，不能直接移用 B200 比赛的 MoE／DSA／GDN 容差。",
+      "remaining": null,
+      "disposition": "completed",
+      "status": "completed_with_negative_request_speedup",
+      "note": "New profiler-driven Agent kernel passed heldout; 99 matched triplet requests show no repeatable positive benefit. Keep native; no supported finite amortization point."
+    },
+    {
+      "id": "9-6",
+      "directory": "experiments/ch09/09-06",
+      "requirements": "> **实验 9-6 ★〔延伸〕：热门专家的放置与复制**\n>\n> 固定一套 vLLM 或 SGLang 的受支持 Qwen3 MoE 配置，保持 grouped GEMM 后端与重叠设置不变，先只比较专家放置／复制策略。记录每专家 token 数、最忙设备、dispatch／GEMM／combine 时间、额外权重与请求尾延迟，检验热点是否真正缓解。后端切换与 DBO／TBO 各作独立延伸对照，使用同一基线并说明配置差异；V4／K3 仅采用已核实后端记录。\n>\n> 条件：基础·轨迹分析。",
+      "remaining": "vLLM 0.23 下 TP1/DP1 的 EPLB 与默认 all-to-all DBO 被拒绝；逐阶段 dispatch／GEMM／combine 计时、放置复制策略对比与后端重叠仍待。",
+      "disposition": "resource_dependent_scope",
+      "status": "pending",
+      "note": "Multi-GPU portions may be held by explicit author instruction; single-GPU checks remain eligible."
+    },
+    {
+      "id": "9-8",
+      "directory": "experiments/ch09/09-08",
+      "requirements": "> **实验 9-8 ★★〔延伸〕：持久化与多级 KV 的取舍**\n>\n> 使用同一组 Agent 轨迹，扫描 HBM、DRAM、SSD 与远端容量；比较全量保存、周期检查点和重算。依据 V4 的压缩与窗口状态计算每次写入／取回及必要重算，加入重启恢复和缓存失效，报告命中率、p95 取回时间、写入量与任务完成时间。\n>\n> 条件：进阶·请求重放／存储记录。\n\n> **部分实测**：Qwen3-8B 正常重启后从文件复用1008/1024 token；缺页可回退重算，但输出一致不代表KV逐位一致。截断页使wait_complete请求在60秒窗口内未完成；同故障下timeout与best_effort通过重算完成本次请求，坏文件仍未修复。尚不推广为长期可用性或速度优势，容量及其他故障比较仍待。[重启](../experiments/ch09/09-08/README.md)、[缺页与数值边界](../experiments/ch09/09-08/missing-pages/README.md)、[故障策略对照](../experiments/ch09/09-08/prefetch-policy/README.md)。\n\n> **图 9-7：多级 KV 缓存的命中与恢复路径（配图计划）**\n>\n> 自绘 SVG；不同状态在 HBM、DRAM、SSD 和远端池间流转，配实验 9-8 的容量、写入与恢复曲线。",
+      "remaining": "Agent 轨迹、HBM/DRAM/SSD/远端的层级容量扫描、保存策略与 V4 状态、失效与远端比较仍待。",
+      "disposition": "local_execution_pending",
+      "status": "pending",
+      "note": null
+    },
+    {
+      "id": "9-9",
+      "directory": "experiments/ch09/09-09",
+      "requirements": "> **实验 9-9 ★★〔延伸〕：缓存亲和性与完成时间**\n>\n> 该去有缓存的机器，还是空闲机器？ 从 Chat 和 Agent 的多轮记录提取缓存 token 数、复用间隔、队列和远程取回耗时；比较队列优先、缓存优先和预测完成时间路由。命中率同时按请求与 token 加权统计，报告命中层级和 p95 取回时间。\n>\n> 条件：进阶·计算／真实系统记录，可选多实例部署。\n\n> **部分实测**：两实例的Agent与受控Chat重放均显示缓存亲和提高命中，但不保证目标延迟、整机完成或回答质量更好；Chat还保留了跨轮算术错误。短背景等缓存更快，长背景转空闲实例缩短目标延迟却延后两任务完成；显式清缓存后同实例路由也会零命中。自然淘汰、重启与远端仍待。[Agent](../experiments/ch09/09-09/README.md)、[Chat](../experiments/ch09/09-09/chat-replay/README.md)、[排队](../experiments/ch09/09-09/queue-pressure/README.md)、[预测](../experiments/ch09/09-09/completion-prediction/README.md)、[三规则对照](../experiments/ch09/09-09/policy-comparison/README.md)、[清缓存](../experiments/ch09/09-09/cache-invalidation/README.md)。",
+      "remaining": "单worker及双worker自然容量淘汰、重启和native router健康失败/恢复已实测；远端KV取回仍待。",
+      "disposition": "local_execution_pending",
+      "status": "docker_loopback_recovery_verified_cross_machine_and_trace_matrix_pending",
+      "note": "Immutable Docker TCP control: 6 identical outputs, fresh consumer1008storage tokens,64gets,0.403383s cumulative get,exit0 andGPUclear. One conflicting65thproducerpage retained and analyzed; not among64fetchedpages. Strict Docker and four cross-Mac failures retained. Full trace/routing remote matrix remains pending."
+    },
+    {
+      "id": "9-10",
+      "directory": "experiments/ch09/09-10/startup",
+      "requirements": "> **实验 9-10 ★★〔核心〕：异构推理的完整部署**\n>\n> 你会怎样部署这个模型服务？ 综合 A100＋H20 的 PD 分离、KTransformers 的 AF 分离与共享 KV 池三项案例，按 Chat、Agentic、Real-time 请求选择硬件、切分和路由。加入 reasoning 长输出、计划迁移与实例失效，先列可恢复状态和交接条件，再算服务目标与成本；说明哪些组合值得进一步实测。\n>\n> 动态并行变体沿用第 6 章四卡输入，固定插件与引擎版本，先验证模型路径和参考输出，再扫描切换阈值；记录每步 token 数、补齐、模式和显存峰值，用 TTFT、ITL 与 SLO 内产出检查推算。\n>\n> 条件：进阶·综合设计；可选多设备。",
+      "remaining": "PD／AF 组合、动态并行切换阈值、图模式与故障范围仍待；首完成 cached 为 0 的原因未定位。",
+      "disposition": "resource_dependent_scope",
+      "status": "pending",
+      "note": "Multi-GPU portions may be held by explicit author instruction; single-GPU checks remain eligible."
+    },
+    {
+      "id": "10-4",
+      "directory": "experiments/ch10/10-04",
+      "requirements": "> **实验 10-4 ★〔延伸〕：替换硬件后的训练瓶颈**\n>\n> 对 Qwen3-8B 与 Qwen3-235B 的候选切分，先比较同形态 A100／A800，只改变经过核对的互联条件；再用 H20 的具体训练步或注明假设的有效性能重算期限。说明何时算力、容量、互联各自支配结果，并找出会改变选择的性能临界值。\n>\n> 条件：基础·计算／公开记录。",
+      "remaining": "公开来源中没有 Qwen3-8B／235B 在 A100／A800／H20 上同精度、同 batch、同并行布局的稳态原始训练记录；不用推理吞吐或峰值填补。",
+      "disposition": "resource_dependent_scope",
+      "status": "pending",
+      "note": "Multi-GPU portions may be held by explicit author instruction; single-GPU checks remain eligible."
+    },
+    {
+      "id": "10-5",
+      "directory": "experiments/ch10/10-05",
+      "requirements": "> **实验 10-5 ★〔延伸〕：微批与流水线气泡**\n>\n> 多加微批能填掉多少气泡？ 取 Qwen3-8B 的 36 层，先按每阶段 9 层画四级流水与 1F1B，再按实际前反向时间修正不均衡；算激活、总 batch 与完成时间，Python 用于扫描微批数。\n>\n> 条件：基础·计算。\n\n> **图 10-5：流水调度怎样改变等待与激活寿命（配图计划）**\n>\n> 实验 10-5 的时序生成 SVG，附明确微批和阶段条件；MoE 变体加上梯度就绪、节点内通信与跨节点链路的占用。",
+      "remaining": "四阶段 1F1B 与微批扫描未启动（单卡 Gloo CUDA 预检失败）；已交付官方无流水 GPU 基线。",
+      "disposition": "resource_dependent_scope",
+      "status": "pending",
+      "note": "Multi-GPU portions may be held by explicit author instruction; single-GPU checks remain eligible."
+    },
+    {
+      "id": "10-9",
+      "directory": "experiments/ch10/10-09",
+      "requirements": "> **实验 10-9 ★★〔延伸〕：Routing Replay 与训练一致性**\n>\n> 沿固定 NeMo RL 的 Qwen3-30B-A3B R3 配方或其配套 trace，关闭／开启 replay 比较专家集合不一致率、同权重 logprob 差异、记录容量与阶段时间，再比较相同任务下的训练曲线。加入多轮缓存命中、样本 packing 和缺失路由检查，验证 token 对齐；小批检查只证明被覆盖路径，不冒充完整收敛结论。\n>\n> 条件：进阶·官方受支持配置／配套记录；完整训练作为可选扩展。",
+      "remaining": "逐 token 专家集合、缺失路由与 packing 的原始 trace 验证仍待；非本机训练。",
+      "disposition": "resource_dependent_scope",
+      "status": "pending",
+      "note": "Multi-GPU portions may be held by explicit author instruction; single-GPU checks remain eligible."
+    },
+    {
+      "id": "10-10",
+      "directory": "experiments/ch10/10-10",
+      "requirements": "> **实验 10-10 ★★〔核心〕：模型规模与训练完成期限**\n>\n> 综合前题，分别为具体 Qwen／V4 任务及 1T／5T／10T Dense 教学情景计算 A100、H100、B200 的完成时间。扫描卡数、数据量、MFU 与 90／180 天期限，检查逐卡状态、并行规模、供数和恢复，再比较满足质量目标的总成本；用公开训练记录校准计算口径。\n>\n> 条件：进阶·方案推算／公开训练记录。",
+      "remaining": "目标任务的实际分配、供数、保存与故障时间线仍缺；3B 记录不外推到 Qwen／V4 或万亿 Dense。",
+      "disposition": "resource_dependent_scope",
+      "status": "pending",
+      "note": "Multi-GPU portions may be held by explicit author instruction; single-GPU checks remain eligible."
+    },
+    {
+      "id": "11-2",
+      "directory": "experiments/ch11/11-02",
+      "requirements": "> **实验 11-2 ★〔核心〕：E2B 环境的创建与恢复**\n>\n> 先算容量和启动预算，再使用可用 E2B 环境或配套记录，比较模板创建、暂停后恢复、快照派生与干净重建。检查文件、进程、连接恢复和首个工具完成时间，判断 Agent 与 RL 验证各适合哪种。\n>\n> 条件：基础·估算／记录分析；有账号时可选实测，不要求付费部署。",
+      "remaining": "Docker内存checkpoint捕获成功，但两个派生实例restore未成功；需可通过状态探针的Docker/CRIU恢复组合，不再以E2B凭据为阻断。",
+      "disposition": "docker_substitution_executed_with_restore_failure",
+      "status": "36_cases_verified_memory_restore_unresolved",
+      "note": null
+    },
+    {
+      "id": "11-5",
+      "directory": "experiments/ch11/11-04",
+      "requirements": "> **实验 11-5 ★〔延伸〕：可抢占 rollout 的有效产出**\n>\n> 给定 Qwen3 权重大小、网络吞吐、生成记录与抢占时刻，比较固定资源、额外 rollout、保留部分响应后三种安排。区分已经生成、管理器收到、实际恢复与完成训练的 token，计算同一批有效样本的时间与费用；改变资源存活时间，求出增加资源不再划算的条件。\n>\n> 条件：基础·计算／短脚本；论文实例配置和教学价格分别标注。",
+      "remaining": "额外资源扩张、费用与训练联动未实测。",
+      "disposition": "local_execution_pending",
+      "status": "pending",
+      "note": null
+    },
+    {
+      "id": "11-6",
+      "directory": "experiments/ch11/11-05",
+      "requirements": "> **实验 11-6 ★★〔延伸〕：验证资源与训练等待**\n>\n> 给定两批代码的生成时刻、编译与执行时间，手算最早完成点，再比较固定配额、先到先服务与按批次目标分配。加入长尾与超时样本，分别记录排队、执行、反馈返回和资源释放，核算资源节省是否抵得上训练组的额外等待。\n>\n> 条件：进阶·时间线计算／记录回放。",
+      "remaining": "非 DistRS／verl 的真实模型候选。",
+      "disposition": "local_execution_pending",
+      "status": "pending",
+      "note": null
+    },
+    {
+      "id": "11-7",
+      "directory": "experiments/ch11/11-08",
+      "requirements": "> **实验 11-7 ★★〔延伸〕：思考预算、缓存与模型选择**\n>\n> 使用含实际用量字段的配套任务记录，改变 reasoning 预算、缓存命中和后端排队，比较固定路由、最低 token 单价与质量约束下的完成成本。提交成功任务费用、首段可用结果时间、总完成时间和失败率；加入“100 对 1,000 个思考 token”与“缓存命中但有队列”两组手算，解释选择何时变化。\n>\n> 条件：进阶·先估算再离线回放；扩写时提供记录和版本，不用虚构结果代替测量。",
+      "remaining": "费用为 null；缓存命中与后端排队的组合仍待。",
+      "disposition": "local_execution_pending",
+      "status": "pending",
+      "note": null
+    },
+    {
+      "id": "11-8",
+      "directory": "experiments/ch11/11-07",
+      "requirements": "> **实验 11-8 ★〔延伸〕：订阅、API 与中转费用**\n>\n> 用相同月度任务集与公开方案快照，分别算订阅的实际完成成本、API 账单和中转服务成本。列出受额度或并发影响而未完成的任务，求不同使用量下的费用交点；没有可换算的产品用量时保留未知量，不补造 token 配额。\n>\n> 条件：基础·计费表与任务记录分析；不要求购买服务。",
+      "remaining": "恢复区间、模型方案、额度与三渠道配对未知，费用交点保持为空。",
+      "disposition": "external_evidence_required",
+      "status": "pending",
+      "note": null
+    },
+    {
+      "id": "12-4",
+      "directory": "experiments/ch12/12-04",
+      "requirements": "> **实验 12-4 ★〔延伸〕：连接复用与多流传输**\n>\n> 对同一图片精修、ASR／TTS 和 Computer Use 轨迹固定有效带宽、RTT、丢包与服务位置，比较默认客户端、调优后的 TCP 路径和 HTTP/3；逐项改变连接复用、窗口、分块与恢复。记录完整成片、识别结果、首次播放和截图轮时，分析每项优化的实际贡献。\n>\n> 条件：基础·计算／网络记录。",
+      "remaining": "图片成片、ASR/TTS、Computer Use 结果及固定广域网络条件仍未完成。",
+      "disposition": "local_execution_pending",
+      "status": "pending",
+      "note": null
+    },
+    {
+      "id": "12-7",
+      "directory": "experiments/ch12/12-07",
+      "requirements": "> **实验 12-7 ★★〔核心〕：Queqiao 的单因素比较**\n>\n> 一次语音实验的优势来自哪里？ 复做 Queqiao 的基线与单因素变化；记录首次可播放时间、停顿和取消；可使用配套原始记录。\n>\n> 条件：进阶·两端设备／数据分析。\n\n> **实测（12-7）：** 两端固定语音完整收到，显式接口绑定后仍会出现源不足，驱动不报错不等于播放连续。取消也可能早于首个设备回调，不能据零回调判失败。见[原始记录与图](../experiments/ch12/12-07/README.md)。\n\n> **图 12-6：语音系统逐项改进后的时间变化（配图计划）**\n>\n> 用 实验 12-7 原始记录脚本生成 SVG，保留默认与调优基线。",
+      "remaining": "声学测量与模型取消仍缺。",
+      "disposition": "local_execution_pending",
+      "status": "pending",
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,1190 @@
+E...........EEE..................E..............................EEE............E..........................................................EEE.....................................E...............................E..EEEEEE....EE........EE.....EE..................E...............E.EEEEE.EEEEEEEEEE.E...............................................................................EE......EE................................E.........................................................................................E.........................................................../Users/boj/book/ai-infra-book/manuscripts/ch06/continuity_model.py:30: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/boj/book/ai-infra-book/experiments/ch07/07-03/rows.csv' mode='r' encoding='UTF-8'>
+  rows = [r for r in csv.DictReader((ROOT / 'experiments/ch07/07-03/rows.csv').open())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+......E...........................................................s.................................................................................................................................................s..........................................................E...........................................E.......................................................................ssssssssE....................................................................s..s...s.....s.s.........ss.s...........s..........ss.s................................E........................................
+======================================================================
+ERROR: test_evidence_and_precision_separation (test_a800_int8.A800Int8Tests.test_evidence_and_precision_separation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_a800_int8.py", line 11, in test_evidence_and_precision_separation
+    device = select_device('a800-40gb-active')
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_batch_crossover_and_kv_can_prevent_it (test_accounting.DecodeBudgetAccounting.test_batch_crossover_and_kv_can_prevent_it)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_accounting.py", line 809, in test_batch_crossover_and_kv_can_prevent_it
+    base = decode_budget.calculate()['summary']
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/decode_budget.py", line 25, in calculate
+    device = hardware.select_device('h100-sxm')
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_storage_does_not_select_a_different_compute_precision (test_accounting.DecodeBudgetAccounting.test_storage_does_not_select_a_different_compute_precision)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_accounting.py", line 801, in test_storage_does_not_select_a_different_compute_precision
+    low = decode_budget.calculate(weight_bits=4)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/decode_budget.py", line 25, in calculate
+    device = hardware.select_device('h100-sxm')
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_textbook_memory_bound_and_counterfactual_resources (test_accounting.DecodeBudgetAccounting.test_textbook_memory_bound_and_counterfactual_resources)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_accounting.py", line 793, in test_textbook_memory_bound_and_counterfactual_resources
+    base = decode_budget.calculate()['summary']
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/decode_budget.py", line 25, in calculate
+    device = hardware.select_device('h100-sxm')
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: setUpClass (test_accounting.HardwareAccounting)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_accounting.py", line 539, in setUpClass
+    cls.devices = {row["id"]: row for row in hardware.catalog()["devices"]}
+                                             ~~~~~~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_partial_evidence_is_visible_and_aggregate_needs_sharding (test_accounting.ProjectionAccounting.test_partial_evidence_is_visible_and_aggregate_needs_sharding)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_accounting.py", line 630, in test_partial_evidence_is_visible_and_aggregate_needs_sharding
+    apple = projection.calculate("qwen3-8b", "m2-max-38gpu-96gb")["summary"]
+            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/projection.py", line 26, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_qwen32_projection_uses_query_width_and_beta_zero (test_accounting.ProjectionAccounting.test_qwen32_projection_uses_query_width_and_beta_zero)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_accounting.py", line 615, in test_qwen32_projection_uses_query_width_and_beta_zero
+    result = projection.calculate("qwen3-32b", "h100-sxm", 1, 8192)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/projection.py", line 26, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_weight_reuse_changes_compute_and_memory_balance (test_accounting.ProjectionAccounting.test_weight_reuse_changes_compute_and_memory_balance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_accounting.py", line 622, in test_weight_reuse_changes_compute_and_memory_balance
+    one = projection.calculate("qwen3-8b", "rtx4090", 1)["summary"]
+          ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/projection.py", line 26, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_sources_have_verified_bytes (test_accounting.Reproducibility.test_sources_have_verified_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_accounting.py", line 1105, in test_sources_have_verified_bytes
+    self.assertGreaterEqual(verify_sources()["verified"], 40)
+                            ~~~~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 51, in verify_sources
+    read_source(row["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_actual_batch_work_and_saved_traffic (test_batch_reuse.BatchReuseTests.test_actual_batch_work_and_saved_traffic)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_batch_reuse.py", line 14, in test_actual_batch_work_and_saved_traffic
+    r=calculate()
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/batch_reuse.py", line 31, in calculate
+    profile=hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_capacity_and_kv_crossover_neighbors (test_batch_reuse.BatchReuseTests.test_capacity_and_kv_crossover_neighbors)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_batch_reuse.py", line 27, in test_capacity_and_kv_crossover_neighbors
+    s=calculate(device=device,history=history)['summary'];cap=s['declared_capacity_max_batch']
+      ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/batch_reuse.py", line 31, in calculate
+    profile=hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_compute_crossover_without_history (test_batch_reuse.BatchReuseTests.test_compute_crossover_without_history)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_batch_reuse.py", line 37, in test_compute_crossover_without_history
+    s=calculate(history=0)['summary'];cross=s['compute_memory_crossover_batch']
+      ~~~~~~~~~^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/batch_reuse.py", line 31, in calculate
+    profile=hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_clos_cut (unittest.loader._FailedTest.test_clos_cut)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_clos_cut
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 433, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 374, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_clos_cut.py", line 3, in <module>
+    from _gap_common import scenario_rows
+  File "/Users/boj/book/ai-infra-book/calculations/tests/_gap_common.py", line 7, in <module>
+    BOOK = json.loads((ROOT / 'scenarios/book.json').read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+
+======================================================================
+ERROR: setUpClass (test_coverage.ReportTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_coverage.py", line 86, in setUpClass
+    cls.report = coverage.build()
+                 ~~~~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/coverage.py", line 155, in build
+    inventory = json.loads((PROJECT / "inventory/sources.json").read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+======================================================================
+ERROR: test_writing_the_report_is_deterministic (test_coverage.WriteTests.test_writing_the_report_is_deterministic)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_coverage.py", line 161, in test_writing_the_report_is_deterministic
+    first = coverage.write()
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/coverage.py", line 234, in write
+    report = build()
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/coverage.py", line 155, in build
+    inventory = json.loads((PROJECT / "inventory/sources.json").read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+======================================================================
+ERROR: test_critical_batch (unittest.loader._FailedTest.test_critical_batch)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_critical_batch
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 433, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 374, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_critical_batch.py", line 3, in <module>
+    from _gap_common import scenario_rows
+  File "/Users/boj/book/ai-infra-book/calculations/tests/_gap_common.py", line 7, in <module>
+    BOOK = json.loads((ROOT / 'scenarios/book.json').read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+
+======================================================================
+ERROR: test_checks_are_reported_separately_and_never_averaged (test_delivery.AuditTests.test_checks_are_reported_separately_and_never_averaged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_delivery.py", line 95, in test_checks_are_reported_separately_and_never_averaged
+    result = delivery.calculate(include_rendered_book=False)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/delivery.py", line 143, in calculate
+    checks = {"results_regenerable": scenario_artifacts(),
+                                     ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/delivery.py", line 38, in scenario_artifacts
+    scenarios = json.loads((PROJECT / "scenarios/book.json").read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+======================================================================
+ERROR: test_delivered_requires_every_check (test_delivery.AuditTests.test_delivered_requires_every_check)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_delivery.py", line 109, in test_delivered_requires_every_check
+    result = delivery.calculate(include_rendered_book=False)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/delivery.py", line 143, in calculate
+    checks = {"results_regenerable": scenario_artifacts(),
+                                     ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/delivery.py", line 38, in scenario_artifacts
+    scenarios = json.loads((PROJECT / "scenarios/book.json").read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+======================================================================
+ERROR: test_markdown_names_each_failing_check (test_delivery.AuditTests.test_markdown_names_each_failing_check)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_delivery.py", line 120, in test_markdown_names_each_failing_check
+    result = delivery.calculate(include_rendered_book=False)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/delivery.py", line 143, in calculate
+    checks = {"results_regenerable": scenario_artifacts(),
+                                     ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/delivery.py", line 38, in scenario_artifacts
+    scenarios = json.loads((PROJECT / "scenarios/book.json").read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+======================================================================
+ERROR: test_result_is_json_serialisable (test_delivery.AuditTests.test_result_is_json_serialisable)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_delivery.py", line 115, in test_result_is_json_serialisable
+    text = json.dumps(delivery.calculate(include_rendered_book=False),
+                      ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/delivery.py", line 143, in calculate
+    checks = {"results_regenerable": scenario_artifacts(),
+                                     ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/delivery.py", line 38, in scenario_artifacts
+    scenarios = json.loads((PROJECT / "scenarios/book.json").read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+======================================================================
+ERROR: setUpClass (test_delivery.ScenarioArtifactTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_delivery.py", line 18, in setUpClass
+    cls.row = delivery.scenario_artifacts()
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/delivery.py", line 38, in scenario_artifacts
+    scenarios = json.loads((PROJECT / "scenarios/book.json").read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+======================================================================
+ERROR: setUpClass (test_delivery.SourceAuditTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_delivery.py", line 77, in setUpClass
+    cls.row = delivery.source_audit()
+              ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/delivery.py", line 103, in source_audit
+    fresh = coverage.build()
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/coverage.py", line 155, in build
+    inventory = json.loads((PROJECT / "inventory/sources.json").read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+======================================================================
+ERROR: test_exact_parameter_and_card_boundaries (test_dense_training_scale.DenseScaleTests.test_exact_parameter_and_card_boundaries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_dense_training_scale.py", line 22, in test_exact_parameter_and_card_boundaries
+    r=calculate(data_rule=rule,unavailable_days=10)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/dense_training_scale.py", line 32, in calculate
+    catalog={d['id']:d for d in hardware.catalog()['devices']};rows=[];bounds=[];source_ids=set()
+                                ~~~~~~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_official_dense_rates_and_size_scaling (test_dense_training_scale.DenseScaleTests.test_official_dense_rates_and_size_scaling)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_dense_training_scale.py", line 11, in test_official_dense_rates_and_size_scaling
+    fixed=calculate(efficiencies=['1/2']);quad=calculate(efficiencies=['1/2'],data_rule='proportional')
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/dense_training_scale.py", line 32, in calculate
+    catalog={d['id']:d for d in hardware.catalog()['devices']};rows=[];bounds=[];source_ids=set()
+                                ~~~~~~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_an_expensive_input_is_scanned_but_not_searched (test_design_record.GraphDecisionTests.test_an_expensive_input_is_scanned_but_not_searched)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_design_record.py", line 172, in test_an_expensive_input_is_scanned_but_not_searched
+    entry = m.calculate(decisions=("execution_dag_screening",))["decisions"][0]
+            ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/design_record.py", line 297, in calculate
+    scan = endpoint_scan(decision)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/design_record.py", line 137, in endpoint_scan
+    base = evaluate(decision, {})
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/design_record.py", line 132, in evaluate
+    return decision["outcome"](**call)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/design_record.py", line 59, in screening_outcome
+    result = execution_dag.calculate(**overrides)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_the_graph_decision_reports_a_held_out_prediction (test_design_record.GraphDecisionTests.test_the_graph_decision_reports_a_held_out_prediction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_design_record.py", line 162, in test_the_graph_decision_reports_a_held_out_prediction
+    result = m.calculate(decisions=("execution_dag_screening",))
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/design_record.py", line 297, in calculate
+    scan = endpoint_scan(decision)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/design_record.py", line 137, in endpoint_scan
+    base = evaluate(decision, {})
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/design_record.py", line 132, in evaluate
+    return decision["outcome"](**call)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/design_record.py", line 59, in screening_outcome
+    result = execution_dag.calculate(**overrides)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_energy_ledger (unittest.loader._FailedTest.test_energy_ledger)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_energy_ledger
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 433, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 374, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_energy_ledger.py", line 4, in <module>
+    from _gap_common import ROOT, scenario_rows
+  File "/Users/boj/book/ai-infra-book/calculations/tests/_gap_common.py", line 7, in <module>
+    BOOK = json.loads((ROOT / 'scenarios/book.json').read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+
+======================================================================
+ERROR: test_caching_a_prefix_lowers_the_bound (test_execution_dag.CandidateTests.test_caching_a_prefix_lowers_the_bound)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 111, in test_caching_a_prefix_lowers_the_bound
+    result = m.calculate()
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_disaggregation_moves_the_whole_session_state (test_execution_dag.CandidateTests.test_disaggregation_moves_the_whole_session_state)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 101, in test_disaggregation_moves_the_whole_session_state
+    result = m.calculate()
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_every_rewrite_states_what_it_adds (test_execution_dag.CandidateTests.test_every_rewrite_states_what_it_adds)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 89, in test_every_rewrite_states_what_it_adds
+    result = m.calculate()
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_batching_scales_only_the_state (test_execution_dag.CapacityTests.test_batching_scales_only_the_state)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 79, in test_batching_scales_only_the_state
+    result = m.calculate(batch=1)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_narrowing_the_state_only_moves_the_state_term (test_execution_dag.CapacityTests.test_narrowing_the_state_only_moves_the_state_term)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 70, in test_narrowing_the_state_only_moves_the_state_term
+    result = m.calculate(state_bits=8)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_the_split_matches_the_official_geometry_and_parameter_count (test_execution_dag.CapacityTests.test_the_split_matches_the_official_geometry_and_parameter_count)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 58, in test_the_split_matches_the_official_geometry_and_parameter_count
+    bounds = stage_resource_bounds.calculate(model="qwen3-8b", tokens=128, history=4096)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_the_bound_is_the_sum_of_the_serial_node_bounds (test_execution_dag.GraphTests.test_the_bound_is_the_sum_of_the_serial_node_bounds)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 35, in test_the_bound_is_the_sum_of_the_serial_node_bounds
+    result = m.calculate()
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_the_chain_visits_every_stage_once (test_execution_dag.GraphTests.test_the_chain_visits_every_stage_once)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 26, in test_the_chain_visits_every_stage_once
+    result = m.calculate()
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_unpublished_rates_stay_listed_and_are_never_filled_in (test_execution_dag.GraphTests.test_unpublished_rates_stay_listed_and_are_never_filled_in)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 41, in test_unpublished_rates_stay_listed_and_are_never_filled_in
+    result = m.calculate()
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_markdown_reports_the_gaps_and_the_front (test_execution_dag.OutputTests.test_markdown_reports_the_gaps_and_the_front)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 193, in test_markdown_reports_the_gaps_and_the_front
+    text = m.markdown(m.calculate())
+                      ~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_result_is_json_serialisable (test_execution_dag.OutputTests.test_result_is_json_serialisable)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 189, in test_result_is_json_serialisable
+    text = json.dumps(m.calculate(), ensure_ascii=False, allow_nan=False)
+                      ~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_a_dominated_candidate_names_what_beats_it (test_execution_dag.ScreeningTests.test_a_dominated_candidate_names_what_beats_it)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 135, in test_a_dominated_candidate_names_what_beats_it
+    result = m.calculate()
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_an_area_cap_only_applies_when_a_footprint_is_declared (test_execution_dag.ScreeningTests.test_an_area_cap_only_applies_when_a_footprint_is_declared)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 127, in test_an_area_cap_only_applies_when_a_footprint_is_declared
+    without = m.calculate(area_cap_mm2=100)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_caps_exclude_before_objectives_are_compared (test_execution_dag.ScreeningTests.test_caps_exclude_before_objectives_are_compared)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 120, in test_caps_exclude_before_objectives_are_compared
+    result = m.calculate(power_cap_watts=700)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_cost_is_device_time_at_the_declared_price (test_execution_dag.ScreeningTests.test_cost_is_device_time_at_the_declared_price)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 173, in test_cost_is_device_time_at_the_declared_price
+    result = m.calculate(price_per_device_hour="3.0")
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_domination_is_never_claimed_between_front_members (test_execution_dag.ScreeningTests.test_domination_is_never_claimed_between_front_members)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 143, in test_domination_is_never_claimed_between_front_members
+    result = m.calculate()
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_single_objective_winners_agree_with_the_scored_rows (test_execution_dag.ScreeningTests.test_single_objective_winners_agree_with_the_scored_rows)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_execution_dag.py", line 162, in test_single_objective_winners_agree_with_the_scored_rows
+    result = m.calculate()
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 292, in calculate
+    rows = [candidate(action, model, device, tokens, history, batch, state_bits, decode_device)
+            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/execution_dag.py", line 148, in candidate
+    bounds = stage_resource_bounds.calculate(**call)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/stage_resource_bounds.py", line 331, in calculate
+    selected = hardware.select_device(device)
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_capacity_available_without_compute_substitution (test_h20_evidence.H20EvidenceTests.test_capacity_available_without_compute_substitution)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_h20_evidence.py", line 31, in test_capacity_available_without_compute_substitution
+    r=calculate(devices=['h20-sxm5-96gb','h20-sxm5-141gb'])
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/topics/training_deadline.py", line 38, in calculate
+    catalog={d['id']:d for d in hardware.catalog()['devices']}
+                                ~~~~~~~~~~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_named_capacity_not_vgpu_framebuffer (test_h20_evidence.H20EvidenceTests.test_named_capacity_not_vgpu_framebuffer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_h20_evidence.py", line 16, in test_named_capacity_not_vgpu_framebuffer
+    device=hardware.select_device(f'h20-sxm5-{size}gb')
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 91, in select_device
+    found = [row for row in catalog()["devices"] if row["id"] == identifier]
+                            ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: setUpClass (test_hardware_expansion.HardwareExpansion)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_hardware_expansion.py", line 13, in setUpClass
+    cls.data = catalog()
+               ~~~~~~~^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/hardware.py", line 22, in catalog
+    read_source(sources[identifier]["file"])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/src/infra_calc/sources.py", line 24, in read_source
+    raise ValueError(f"Source length mismatch: {relative_path}")
+ValueError: Source length mismatch: research/hardware-ascend-followup-sources/800t-a2-whitepaper-16.pdf
+
+======================================================================
+ERROR: test_hash_collision (unittest.loader._FailedTest.test_hash_collision)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_hash_collision
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 433, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 374, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_hash_collision.py", line 4, in <module>
+    from _gap_common import scenario_rows
+  File "/Users/boj/book/ai-infra-book/calculations/tests/_gap_common.py", line 7, in <module>
+    BOOK = json.loads((ROOT / 'scenarios/book.json').read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+
+======================================================================
+ERROR: test_incast_feedback (unittest.loader._FailedTest.test_incast_feedback)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_incast_feedback
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 433, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 374, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_incast_feedback.py", line 3, in <module>
+    from _gap_common import scenario_rows
+  File "/Users/boj/book/ai-infra-book/calculations/tests/_gap_common.py", line 7, in <module>
+    BOOK = json.loads((ROOT / 'scenarios/book.json').read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+
+======================================================================
+ERROR: test_moe_capacity (unittest.loader._FailedTest.test_moe_capacity)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_moe_capacity
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 433, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 374, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_moe_capacity.py", line 3, in <module>
+    from _gap_common import scenario_rows
+  File "/Users/boj/book/ai-infra-book/calculations/tests/_gap_common.py", line 7, in <module>
+    BOOK = json.loads((ROOT / 'scenarios/book.json').read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+
+======================================================================
+ERROR: test_pd_kv_layout (unittest.loader._FailedTest.test_pd_kv_layout)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_pd_kv_layout
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 433, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 374, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_pd_kv_layout.py", line 3, in <module>
+    from _gap_common import BOOK
+  File "/Users/boj/book/ai-infra-book/calculations/tests/_gap_common.py", line 7, in <module>
+    BOOK = json.loads((ROOT / 'scenarios/book.json').read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+
+======================================================================
+ERROR: test_sm_occupancy (unittest.loader._FailedTest.test_sm_occupancy)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_sm_occupancy
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 433, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 374, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_sm_occupancy.py", line 2, in <module>
+    from _gap_common import scenario_rows
+  File "/Users/boj/book/ai-infra-book/calculations/tests/_gap_common.py", line 7, in <module>
+    BOOK = json.loads((ROOT / 'scenarios/book.json').read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+
+======================================================================
+ERROR: test_straggler_max (unittest.loader._FailedTest.test_straggler_max)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_straggler_max
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 433, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 374, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_straggler_max.py", line 2, in <module>
+    from _gap_common import scenario_rows
+  File "/Users/boj/book/ai-infra-book/calculations/tests/_gap_common.py", line 7, in <module>
+    BOOK = json.loads((ROOT / 'scenarios/book.json').read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+
+======================================================================
+ERROR: test_training_pipeline_extended (unittest.loader._FailedTest.test_training_pipeline_extended)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_training_pipeline_extended
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 433, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 374, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_training_pipeline_extended.py", line 2, in <module>
+    from _gap_common import BOOK
+  File "/Users/boj/book/ai-infra-book/calculations/tests/_gap_common.py", line 7, in <module>
+    BOOK = json.loads((ROOT / 'scenarios/book.json').read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+
+======================================================================
+ERROR: test_wan_loss_model (unittest.loader._FailedTest.test_wan_loss_model)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_wan_loss_model
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 433, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 374, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/boj/book/ai-infra-book/calculations/tests/test_wan_loss_model.py", line 4, in <module>
+    from _gap_common import scenario_rows
+  File "/Users/boj/book/ai-infra-book/calculations/tests/_gap_common.py", line 7, in <module>
+    BOOK = json.loads((ROOT / 'scenarios/book.json').read_text())
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+
+----------------------------------------------------------------------
+Ran 1154 tests in 337.358s
+
+FAILED (errors=55, skipped=22)

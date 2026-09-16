@@ -59,7 +59,7 @@ def _read(path):
     file = PROJECT / path
     if not file.is_file():
         file = BOOK / path
-    return json.loads(file.read_text())
+    return json.loads(file.read_text(encoding="utf-8"))
 
 
 def _f(value):
@@ -161,7 +161,8 @@ def calculate(decode_result="results/qwen3-8b-decode-b1-s8192.json",
     cloud_fixed = cloud["prepare"] + rounds * (terminal + cloud["model"] + cloud["rtt"])
     upload_bits = rounds * screenshot_bytes * 8
     near_total = near["prepare"] + rounds * near["round"]
-    deadline_uplink = Fraction(upload_bits) / (deadline - cloud_fixed)
+    deadline_slack = deadline - cloud_fixed
+    deadline_uplink = Fraction(upload_bits) / deadline_slack if deadline_slack > 0 else None
     faster_slack = near_total - cloud_fixed
     faster_uplink = Fraction(upload_bits) / faster_slack if faster_slack > 0 else None
     # The same thresholds with both GPU model times scaled by the measured batch-1 ratio.
@@ -175,7 +176,11 @@ def calculate(decode_result="results/qwen3-8b-decode-b1-s8192.json",
     thresholds = dict(
         cloud_fixed_seconds=_f(cloud_fixed), upload_megabits=upload_bits / 10**6,
         near_total_seconds=_f(near_total),
-        cloud_deadline_uplink_bits_per_second=_f(deadline_uplink),
+        cloud_deadline_uplink_bits_per_second=_f(deadline_uplink) if deadline_uplink is not None else None,
+        cloud_never_meets_deadline_reason=(
+            None if deadline_uplink is not None
+            else "cloud time without upload already meets or exceeds the deadline"
+        ),
         cloud_faster_than_near_uplink_bits_per_second=_f(faster_uplink) if faster_uplink else None,
         cloud_never_faster_reason=None if faster_uplink else "cloud time without upload already exceeds the nearby total",
         measured_ratio=_f(measured_ratio), measured_ratio_source=dict(file=efficiency_record, context=measured["context"],
@@ -218,7 +223,10 @@ def calculate(decode_result="results/qwen3-8b-decode-b1-s8192.json",
         totals_twenty_rounds_seconds=[r["total_seconds"] for r in base["rows"]],
         energy_twenty_rounds_joules=[r["energy_joules"] for r in base["rows"]],
         lowest_energy_feasible_twenty_rounds=base["lowest_energy_feasible"],
-        cloud_deadline_uplink_mbit_per_second=thresholds["cloud_deadline_uplink_bits_per_second"] / 10**6,
+        cloud_deadline_uplink_mbit_per_second=(
+            thresholds["cloud_deadline_uplink_bits_per_second"] / 10**6
+            if thresholds["cloud_deadline_uplink_bits_per_second"] is not None else None
+        ),
         cloud_faster_than_near_uplink_mbit_per_second=(thresholds["cloud_faster_than_near_uplink_bits_per_second"] or 0) / 10**6 or None,
         measured_cloud_faster_uplink_mbit_per_second=(thresholds["measured_cloud_faster_uplink_bits_per_second"] or 0) / 10**6 or None,
         local_encode_seconds=encoders[0]["encode_seconds"], remote_encode_seconds=encoders[1]["encode_seconds"],

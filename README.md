@@ -4,6 +4,9 @@
 [![PDF](https://img.shields.io/badge/PDF-下载最新版-red)](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/bojieli/ai-infra-book?style=social)](https://github.com/bojieli/ai-infra-book)
+[![English](https://img.shields.io/badge/翻译-English-informational.svg)](book-en/)
+
+**中文** ← 当前 · [English](book-en/)
 
 > [!TIP]
 > ### 📥 [下载最新版全书 PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf)
@@ -21,6 +24,8 @@
 **[下载 PDF（推荐）](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf) · [在线阅读](https://bojieli.github.io/ai-infra-book/) · [章节正文](manuscripts/README.md) · [配套实验](experiments/README.md)**
 
 目前书稿仍是初稿，正在持续修订。
+
+中文正文源码位于 [`manuscripts/`](manuscripts/README.md)；英文版为社区翻译（by [@tg1482](https://github.com/tg1482)，可能滞后于中文原版），位于 [`book-en/`](book-en/)，包含前言与十二章正文、重绘为英文标注的配图和独立的 PDF 构建脚本。
 
 ## 内容目录
 
@@ -110,6 +115,7 @@ bash book/build_pdf.sh
 | [references/](references/README.md) | 引用资料、来源清单与版本快照 |
 | [research/](research/README.md) | 支撑正文的专题调研，以及各章修订记录 |
 | [book/](book/README.md) | PDF 模板、构建与校验工具 |
+| [book-en/](book-en/README.md) | 英文版（社区翻译）：前言与十二章正文、英文配图、翻译工具与 PDF 构建脚本 |
 | [website/](website/README.md)、[scripts/](scripts/README.md) | 网站资源、构建与检查脚本 |
 | [archive/](archive/README.md) | 历史大纲、审阅和写作协调记录 |
 
@@ -122,7 +128,7 @@ bash book/build_pdf.sh
 - **补充遗漏的重要内容**：某个该讲的机制、架构或权衡没有写进来。
 - **修复配套代码的 bug**：`experiments/` 的实验代码与 `calculations/` 的计算 CLI，欢迎修正错误、补充测试或改进可用性。
 - **改进网页版**：[在线阅读版](https://bojieli.github.io/ai-infra-book/)的排版、导航、搜索和移动端体验都还有提升空间。
-- **翻译**：欢迎将本书翻译为英文或其他语言，翻译前请先开 Issue 说明计划，便于协调进度、避免重复劳动。
+- **翻译**：英文版已由社区贡献，欢迎翻译为更多语言，可参考英文版（`book-en/`）的组织方式；也欢迎跟进英文版，使其与中文原版同步。翻译前请先开 Issue 说明计划，便于协调进度、避免重复劳动。
 
 正文的唯一来源是 `manuscripts/` 下的 Markdown，网页版和 PDF 都由它构建生成，改正文请直接改这里。
 
@@ -131,6 +137,23 @@ bash book/build_pdf.sh
 作者：[李博杰](https://01.me/)（[@bojieli](https://github.com/bojieli)）。
 
 感谢这些年一起做研究和工程的合作者，也感谢相关论文、开源项目与技术文档的作者，以及参与勘误和实验复现的读者。详细致谢见[前言](manuscripts/00-前言.md)，引用来源见正文脚注和[参考资料库](references/README.md)。本书 PDF 沿用《深入理解 AI Agent》的 ElegantBook / XeLaTeX 模板。
+
+英文版由 [@tg1482](https://github.com/tg1482) 翻译并贡献（[#4](https://github.com/bojieli/ai-infra-book/pull/4)）。
+
+## 贡献者
+
+感谢所有为本书贡献内容、代码、翻译和修正的贡献者！点击头像即可访问他们的 GitHub 主页，也欢迎你加入。
+
+<!-- CONTRIBUTORS: GitHub contributors for bojieli/ai-infra-book, plus translators credited above. -->
+<p>
+  <a href="https://github.com/bojieli"><img src="https://avatars.githubusercontent.com/u/1421793?v=4&amp;s=128" width="64" height="64" alt="@bojieli" title="@bojieli" /></a>
+  <a href="https://github.com/tg1482"><img src="https://avatars.githubusercontent.com/u/31661606?v=4&amp;s=128" width="64" height="64" alt="@tg1482" title="@tg1482" /></a>
+  <a href="https://github.com/determine123"><img src="https://avatars.githubusercontent.com/u/182319045?v=4&amp;s=128" width="64" height="64" alt="@determine123" title="@determine123" /></a>
+  <a href="https://github.com/sleeep-early"><img src="https://avatars.githubusercontent.com/u/186607517?v=4&amp;s=128" width="64" height="64" alt="@sleeep-early" title="@sleeep-early" /></a>
+</p>
+<!-- /CONTRIBUTORS -->
+
+[查看 GitHub 上的全部贡献记录 →](https://github.com/bojieli/ai-infra-book/graphs/contributors)
 
 ## 许可
 

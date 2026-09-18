@@ -1,0 +1,16 @@
+% English edition preamble. The series typography, colors and boxes come from
+% the shared Chinese preamble in ../book/, which is loaded unchanged below.
+%
+% With classoption lang=en, ElegantBook does not load ctex/xeCJK, so the CJK
+% font commands used by the shared preamble and the series template must be
+% inert here. This edition typesets no Chinese prose: the few Han characters
+% left are inside link targets, which hyperref never draws. Two figures that
+% still carry Chinese labels are embedded PDFs with their own fonts.
+\NewDocumentCommand{\setCJKmainfont}{o m}{}
+\NewDocumentCommand{\setCJKsansfont}{o m}{}
+\NewDocumentCommand{\setCJKmonofont}{o m}{}
+\NewDocumentCommand{\setCJKfamilyfont}{m o m}{}
+\NewDocumentCommand{\CJKfamily}{m}{}
+\input{../book/preamble.tex}
+% The imported callout title is Chinese; give it an English one.
+\tcbset{questionbox/.append style={title={\sffamily\bfseries Deep Dive}}}

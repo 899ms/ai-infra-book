@@ -44,7 +44,7 @@ The first term is a fixed 32 MiB of weights; the second term grows with the numb
 
 Figure 4-1 amortizes the weight reads across the input rows: a single row alone bears 32 MiB, while 256 rows amortize it down to 128 KiB per row.
 
-![Figure 4-1　Both calls use the same 32 MiB of weights. The top shows a single row of input; the bottom illustrates 256 rows with partial strips; the weight-read amortized per row drops from 32 MiB to 128 KiB.](images/figure-4-1-reuse.pdf)
+![Figure 4-1 Both calls use the same 32 MiB of weights. The top shows a single row of input; the bottom illustrates 256 rows with partial strips; the weight-read amortized per row drops from 32 MiB to 128 KiB.](images/figure-4-1-reuse.pdf)
 
 When the row count grows to 256 times its original value, the number of operations also grows 256-fold, but the access volume increases by only about one-eighth. Weight reuse causes the computational complexity to grow faster than the access volume, so the arithmetic intensity rises accordingly.[^projection]
 
@@ -64,7 +64,7 @@ The host is typically the CPU side that runs the framework, prepares inputs, and
 
 Figure 4-2 shows how the parts inside an accelerator collaborate to perform a matrix multiplication. Off-chip memory holds the larger inputs and weights; the shared cache is storage that multiple groups of compute units access together and that automatically retains recently used data; the local buffer is storage allocated to the current compute group for staging inputs; the matrix unit repeatedly updates partial sums; the accumulator storage retains the partial sums until the current block's computation finishes. The vector and general-purpose compute units handle result transformation, address computation, and control flow.
 
-![Figure 4-2　Relationship among the host, GPU memory, and on-chip components. Solid lines show data passing through cache, local buffer, matrix unit, and accumulator storage; dashed lines show the host submitting work. The diagram is grouped by hardware function.](images/figure-4-2-components.pdf)
+![Figure 4-2 Relationship among the host, GPU memory, and on-chip components. Solid lines show data passing through cache, local buffer, matrix unit, and accumulator storage; dashed lines show the host submitting work. The diagram is grouped by hardware function.](images/figure-4-2-components.pdf)
 
 To compute one output block, multiple blocks of input and weights must be read in sequentially along the K dimension. After each multiply-add, the partial sum stays in accumulator storage, and the next block continues updating it. If every update were written back off-chip, the intermediate result would have to be repeatedly written out and read back in; keeping the partial sum on-chip leaves only a single final write-back. The more times data is reused, the more valuable it is to keep on-chip.
 
@@ -76,7 +76,7 @@ How much resource is allocated to each of these components is not decided once a
 
 This feedback loop already has publicly documented examples. The DeepSeek V3 report, addressing execution bottlenecks on H800, proposed hardware requirements including communication offloading, consistent operations across interconnects, low-precision accumulation, and quantization support; among these, communication offloading arose because some SMs were occupied by communication.[^feedback]
 
-![Figure 4-3　Cross-generation co-design of models and hardware. Solid lines run downward through time: existing accelerators influence model choices, software running in production exposes long-term bottlenecks, hardware design responds to these needs, and new accelerators make more model schemes possible.](images/figure-4-codesign-loop.pdf)
+![Figure 4-3 Cross-generation co-design of models and hardware. Solid lines run downward through time: existing accelerators influence model choices, software running in production exposes long-term bottlenecks, hardware design responds to these needs, and new accelerators make more model schemes possible.](images/figure-4-codesign-loop.pdf)
 
 ### 4.1.3 Constraints of Chip Area, Power, and Packaging
 
@@ -122,7 +122,7 @@ $$
 
 25% higher than before, consistent with the 24% reported in the paper. Heat must be dissipated over the chip's area, so a drop in total power does not necessarily reduce the thermal-dissipation burden. The bottom half of Figure 4-4 lays out the numbers from both examples side by side.
 
-![Figure 4-4　Top: the same driving gate sends a signal through a horizontal wire hundreds of micrometers long, charging distributed capacitance along the way; after folding, this becomes a vertical connection a few micrometers long. Bottom: lowering the voltage from 0.85 V to 0.55 V drops dynamic power to 0.42; power drops to 0.75 while the projected area drops to 0.60, so power density actually rises to 1.25.](images/figure-4-energy-wire.pdf)
+![Figure 4-4 Top: the same driving gate sends a signal through a horizontal wire hundreds of micrometers long, charging distributed capacitance along the way; after folding, this becomes a vertical connection a few micrometers long. Bottom: lowering the voltage from 0.85 V to 0.55 V drops dynamic power to 0.42; power drops to 0.75 while the projected area drops to 0.60, so power density actually rises to 1.25.](images/figure-4-energy-wire.pdf)
 
 Reversal condition (the critical condition that flips the conclusion): power density fails to rise only if the area ratio is no smaller than the power ratio; in this example the area ratio 0.60 is smaller than the power ratio 0.75, so power density rises.
 
@@ -149,7 +149,7 @@ $$
 
 for a total of 0.534 J, of which weight reads account for 90%: nearly all the energy in a single-request decode step is spent on data movement. The HBM row is drawn from the 28 nm HBM2 energy model, while the compute row is drawn from the multiply-add energy of a 45 nm logic process — the two rows use different process nodes, so this tally gives only an order-of-magnitude comparison between the two categories of energy, movement and computation. The time for this step, meanwhile, is bandwidth-limited: reading these 16.345 GB at 3.35 TB/s takes 4.9 ms, so spreading 0.534 J over this period gives only about 110 W. The bottom half of Figure 4-5 assumes the same 16.345 GB comes entirely from a single level: only 0.020 J for KB-scale SRAM, 0.204 J for MB-scale SRAM, 0.170 J for the NVLink-C2C link, 0.519 J for HBM, and 2.62 J for LPDDR.
 
-![Figure 4-5　Top: energy per byte for various storage levels and links, log scale. Bottom: the energy breakdown for one decode step of a single Qwen3-8B request with 8K context (weights 0.481 J, KV 0.038 J, compute 0.015 J), and the energy if the same 16.345 GB all came from a single level.](images/figure-4-energy-ladder.pdf)
+![Figure 4-5 Top: energy per byte for various storage levels and links, log scale. Bottom: the energy breakdown for one decode step of a single Qwen3-8B request with 8K context (weights 0.481 J, KV 0.038 J, compute 0.015 J), and the energy if the same 16.345 GB all came from a single level.](images/figure-4-energy-ladder.pdf)
 
 Bandwidth only determines how fast one step runs, not how much energy it costs: doubling HBM bandwidth halves the time for this step, but 0.534 J stays unchanged. There are only two ways to lower energy: fetch the bytes from a closer level, or make the same bytes serve more tokens. At batch size $B$, weights read once serve $B$ tokens, so the energy per token is $0.481/B+0.038+0.015$ J; at $B=32$ this is about 0.068 J, one-eighth that of a single request. So data reuse is first and foremost an energy problem, and only secondarily a bandwidth problem. The turning point derived by time in Section 4.8.1 is determined by the ratio of bandwidth to compute throughput; the turning point here is determined by the ratio of energy-per-byte to energy-per-FLOP, and the two are not the same.
 
@@ -173,7 +173,7 @@ Take HBM3E as an example: Micron's eight-layer stack holds 24 GB, and its twelve
 
 The growth across these generations in the table can each be broken down into stack count, capacity per stack, and pin rate. H100's 5 stacks form a 5,120-bit interface; 5,120 bits times 5.24 Gbit/s divided by 8 gives about 3,350 GB/s. From H100 to H200, capacity grows 76%, coming from each stack going from 16 GB to 24 GB and stack count going from 5 to 6; bandwidth grows 43%, coming from the extra stack plus the pin rate rising from 5.24 Gbit/s to 6.25 Gbit/s. From H200 to B200, two more stacks are added: both H100 and H200 have only a single die, attaching 5 and 6 stacks respectively; B200's 8 stacks line the outer edges of its two reticle-limit dies (Figure 4-6). The stack count is derived from the Blackwell technical brief's configuration of 192 GB and 7.7 TB/s, assuming 24 GB per stack; the rest of this book uses the HGX B200 platform's spec of 180 GB and 8 TB/s per GPU.
 
-![Figure 4-6　Top-down packaging schematic: two reticle-limit dies sit in the center, eight HBM stacks line both edges, and the interposer carries the wiring both between the dies and HBM and between the two dies. Bandwidth per stack is determined by the 1,024 pins and the pin rate; capacity per stack is determined by layer count and per-layer capacity.](images/figure-4-energy-package.pdf)
+![Figure 4-6 Top-down packaging schematic: two reticle-limit dies sit in the center, eight HBM stacks line both edges, and the interposer carries the wiring both between the dies and HBM and between the two dies. Bandwidth per stack is determined by the 1,024 pins and the pin rate; capacity per stack is determined by layer count and per-layer capacity.](images/figure-4-energy-package.pdf)
 
 Reversal condition: when the number of stacks required (target capacity divided by capacity per stack) exceeds the number of stacks a single die can attach, one must either increase the layer count per stack or add another die; switching to twelve-layer 36 GB stacks, six stacks alone would reach 216 GB, with no need to add more stacks.
 
@@ -187,7 +187,7 @@ A budget of 0.60 pJ/FLOP can only be met through matrix instructions and process
 
 Let the actual energy per FLOP be $e$. When $e\le b$, peak frequency can be sustained; when $e>b$, the power controller lowers the frequency, and how much depends on $P\propto fV^2$: if voltage stays fixed, power falls linearly with frequency, and the sustained frequency is $b/e$ of peak; if voltage drops together with frequency, $P\propto f^3$, and the sustained frequency is $(b/e)^{1/3}$ of peak. Figure 4-7 plots these two curves: when $e$ is 1.5 times the budget, the first curve drops to 0.67 while the second only drops to 0.87. Sustained compute throughput falls in proportion to frequency, so time estimates based on peak compute throughput come out shorter than the actual time. Peak compute throughput is a hardware's physical limit, but it isn't achievable under all conditions: once the power ceiling is hit, the limit itself shifts downward together with the sustained frequency, and at that point utilization should be measured against the sustained compute throughput as the denominator.
 
-![Figure 4-7　Ratio of sustained frequency to peak frequency as a function of the ratio of energy per FLOP $e$ to budget $b$: $b/e$ when voltage is fixed, $(b/e)^{1/3}$ when voltage drops with frequency. Peak frequency is sustainable when $e/b$ does not exceed 1; at $e/b = 1.5$ the two curves give 0.67 and 0.87 respectively.](images/figure-4-energy-power-cap.pdf)
+![Figure 4-7 Ratio of sustained frequency to peak frequency as a function of the ratio of energy per FLOP $e$ to budget $b$: $b/e$ when voltage is fixed, $(b/e)^{1/3}$ when voltage drops with frequency. Peak frequency is sustainable when $e/b$ does not exceed 1; at $e/b = 1.5$ the two curves give 0.67 and 0.87 respectively.](images/figure-4-energy-power-cap.pdf)
 
 Reversal condition: peak frequency can be sustained when the energy per FLOP is below $(\mathrm{TDP}-P_{\mathrm{mem}})/F_{\mathrm{peak}}$, where $P_{\mathrm{mem}}$ is memory power and $F_{\mathrm{peak}}$ is peak compute throughput; in this example the threshold is 0.60 pJ/FLOP. With each process generation, energy per FLOP falls; TDP also rises generation after generation; together these two determine when this condition is satisfied.
 
@@ -201,7 +201,7 @@ Large matrices must be broken into many small blocks for computation, and matrix
 
 When computing an $m\times n$ output block, the same input row participates in the computation of $n$ output elements, and the same weight column participates in the computation of $m$ output elements. A matrix unit lets multiple multiply-accumulate units share these operands: data passes between adjacent compute units, and partial sums stay local and get updated in place. A single instruction describes an entire block of work, so the control cost is also amortized across a large amount of computation. Chapter 5 will further explain how software organizes block sizes and traversal order so that these small steps keep obtaining the data they need.
 
-![Figure 4-8　Illustration of a 3×3 multiply-accumulate array. Inputs pass along rows, weights pass along columns, and each multiply-accumulate unit retains its own partial sum. This small array illustrates operand reuse.](images/figure-4-matrix-array.pdf)
+![Figure 4-8 Illustration of a 3×3 multiply-accumulate array. Inputs pass along rows, weights pass along columns, and each multiply-accumulate unit retains its own partial sum. This small array illustrates operand reuse.](images/figure-4-matrix-array.pdf)
 
 Take a $16\times16\times16$ matrix operation as an example: the two input blocks each have 256 elements, and completing the operation performs $2\times16^3=8192$ floating-point operations. Each input element participates in 16 multiplications within the block. Compared with fetching the full set of operands separately for each output, this approach reduces redundant data movement and instruction overhead.
 
@@ -217,9 +217,9 @@ Expert models make the row-count problem more pronounced. Suppose 64 tokens each
 
 Continue using the implementation that pads to 16 along the row direction. The first dispatch pattern executes $256\times16=4096$ rows, of which 512 are effective; the second executes $8\times64=512$ rows, all effective. The two dispatch patterns have the same amount of effective computation, but after padding, the first pattern's execution volume is eight times that of the second. Which experts a batch of tokens selects determines not only which weights must be read but also how many rows each expert processes, thereby affecting matrix unit utilization.
 
-![Figure 4-9　A 16-row compute block for one expert. When an expert has only two rows, the remaining fourteen rows are zero-padded; when an expert has 64 rows, four complete blocks can be formed, and the figure shows one of them.](images/figure-4-3-expert-rows.pdf)
+![Figure 4-9 A 16-row compute block for one expert. When an expert has only two rows, the remaining fourteen rows are zero-padded; when an expert has 64 rows, four complete blocks can be formed, and the figure shows one of them.](images/figure-4-3-expert-rows.pdf)
 
-![Figure 4-10　Execution volume across all experts for the same 512 effective input rows. Spreading across 256 experts results in 4096 rows executed in total, while concentrating on eight experts executes only 512 rows.](images/figure-4-expert-padding-total.pdf)
+![Figure 4-10 Execution volume across all experts for the same 512 effective input rows. Spreading across 256 experts results in 4096 rows executed in total, while concentrating on eight experts executes only 512 rows.](images/figure-4-expert-padding-total.pdf)
 
 The light gray portions in Figures 4-9 and 4-10 represent computation from zero-padding; adding more multiply-accumulate units also speeds up this wasted computation. Reducing the light gray portion requires changing the number of input rows per expert or choosing a smaller compute block.
 
@@ -269,7 +269,7 @@ $$
 \tau\ge\max(T_{\mathrm{matrix}},T_{\mathrm{smem}},T_{\mathrm{exp}}).
 $$
 
-![Figure 4-11　Service cycles for the same attention block under four resource configurations. Comparing the matrix, shared-memory, and exponentiation items separately, boosting one capability alone may make another resource the new longer item. "×2" indicates the corresponding resource's throughput capability is doubled; the horizontal axis shows the number of clock cycles needed to complete the same compute block.](images/figure-4-4-attention.pdf)
+![Figure 4-11 Service cycles for the same attention block under four resource configurations. Comparing the matrix, shared-memory, and exponentiation items separately, boosting one capability alone may make another resource the new longer item. "×2" indicates the corresponding resource's throughput capability is doubled; the horizontal axis shows the number of clock cycles needed to complete the same compute block.](images/figure-4-4-attention.pdf)
 
 > **Example 4-1: Why Is Attention Pipeline Throughput Limited by Exponentiation and Shared Memory?**
 >
@@ -301,7 +301,7 @@ For the $4096\times4096$ weight from Section 4.1.1, storing each value in 4 bits
 
 Next, execution. A compressed value $q$ together with a scale $a$ represents an approximate value $\hat w=aq$. One can either expand it to BF16 first and then perform matrix multiplication, or let a low-precision matrix instruction process $q$ directly and adjust the result by the scale afterward. Figure 4-12 shows these two implementations side by side: the former spends time expanding the weights up front and keeps a high-precision copy, while the latter folds the scaling and combination into the execution process itself.
 
-![Figure 4-12　Two computation paths for the same compressed weights. Expanding first produces a 32 MiB BF16 copy; the low-precision path completes scaling and combination during the computation process. The compressed weights and scales together total 8.5 MiB.](images/figure-4-5-precision.pdf)
+![Figure 4-12 Two computation paths for the same compressed weights. Expanding first produces a 32 MiB BF16 copy; the low-precision path completes scaling and combination during the computation process. The compressed weights and scales together total 8.5 MiB.](images/figure-4-5-precision.pdf)
 
 FP4, FP8, and the eight-bit integer format INT8 have already entered kernels in real models: one routed-expert implementation in DeepSeek V4-Flash first converts FP4 weights to FP8 and then performs a GEMM. The weights are stored and read in FP4, reducing the number of transferred bytes; after conversion, the matrix unit computes in FP8 format. If the expanded weights are used multiple times, the cost of a single conversion can be amortized across multiple invocations; if the expansion is redone for every invocation, the conversion time becomes a fixed part of each task. How much time low precision saves depends on the difference between the read time saved and the conversion time added.[^precision]
 
@@ -351,7 +351,7 @@ $$
 
 Taking the RTX 4090's 24 GB of GPU memory as the available capacity and reserving 2 GiB for workspace: after subtracting the weights, about 5.47 GB remains for KV. At $S=8192$, each request needs 1.125 GiB, or about 1.21 GB; four requests' KV together need about 4.83 GB, which fits; a fifth request brings the total to about 6.04 GB, exceeding the remaining capacity. Doubling the context doubles each request's KV, dropping the maximum request count to two.[^capacity]
 
-![Figure 4-13　Weights, workspace, and KV within the RTX 4090's 24 GB of GPU memory. 8K with four requests and 16K with two requests fit; 8K with five requests exceeds the capacity limit marked by the dashed line.](images/figure-4-6-capacity.pdf)
+![Figure 4-13 Weights, workspace, and KV within the RTX 4090's 24 GB of GPU memory. 8K with four requests and 16K with two requests fit; 8K with five requests exceeds the capacity limit marked by the dashed line.](images/figure-4-6-capacity.pdf)
 
 In Figure 4-13, the widths of the weights and workspace stay fixed, and the change occurs in the KV region on the right. A long context widens each KV block, while increased concurrency increases the number of blocks; the two compete for the same remaining space.
 
@@ -391,7 +391,7 @@ Model residency and step-by-step execution place different demands on memory. Pe
 
 The weights of all experts are held in memory, while which weights need to be read at each step is determined by the routing result. When eight requests' expert selections are dispersed, per-step access of weights, scales, and KV totals about 75.967 GB; when the same experts are selected concentratedly, this drops to about 24.737 GB. On an H200, simply transferring these bytes takes about 15.8 ms and 5.2 ms respectively; switching to an 8 TB/s HGX B200 brings these down to about 9.5 ms and 3.1 ms respectively. Expert reuse cuts traffic to about one-third, while the accelerator upgrade cuts the time needed to transfer one byte to about six-tenths of the original—two changes acting on different terms of the formula $T=V/R$.
 
-![Figure 4-14　In-flight read requests occupy request-record space from issue until they return. Only when multiple independent requests overlap can the interface stay busy during the wait for a single access; the figure depicts only four representative requests.](images/figure-4-memory-inflight.pdf)
+![Figure 4-14 In-flight read requests occupy request-record space from issue until they return. Only when multiple independent requests overlap can the interface stay busy during the wait for a single access; the figure depicts only four representative requests.](images/figure-4-memory-inflight.pdf)
 
 The $V/R$ calculation above assumes the interface can sustain a given bandwidth continuously. Maintaining that speed requires continuing to issue other requests while one access is waiting to return. Call the basic unit of a single transfer over the memory interface a memory transaction. Suppose the interface can have at most $N_o$ transactions in flight at once, each transaction returns $s$ bytes, and average completion latency is $L$. A transaction occupies a slot from issue until it returns; at most about $N_o/L$ transactions can complete per second, so
 
@@ -417,7 +417,7 @@ This is Little's law: the average number of in-flight requests equals the reques
 >
 > **How many in-flight transactions are needed to fully use higher bandwidth or to cope with longer latency?** Raising the in-flight transaction count to at least 7,000 is needed to sustain 1,792 GB/s; if latency increases to 800 ns, this requirement rises further to 11,200.[^window-rtx]
 
-![Figure 4-15　At 128 bytes per transaction and 500 ns return latency, increasing the number of in-flight requests raises the bandwidth ceiling until it hits the RTX 4090's or RTX 5090's own memory interface rate limit.](images/figure-4-7-memory.pdf)
+![Figure 4-15 At 128 bytes per transaction and 500 ns return latency, increasing the number of in-flight requests raises the bandwidth ceiling until it hits the RTX 4090's or RTX 5090's own memory interface rate limit.](images/figure-4-7-memory.pdf)
 
 The two curves in Figure 4-15 coincide at low concurrency because the constraint comes from the number of in-flight bytes. Past each curve's respective knee, interface bandwidth becomes the new bottleneck. In real systems, increasing concurrent accesses also lengthens queues, and latency varies with load; Mess uses latency probes together with adjustable background traffic to observe both quantities at once, producing a bandwidth-latency curve.[^mess] This curve places "issuing independent requests simultaneously reduces idle time while waiting" and "too many requests increase queueing time" on the same chart.
 
@@ -443,7 +443,7 @@ When a matrix is stored contiguously by row, $s_c=b$, and the row stride is dete
 
 For example, take 128 rows of 128 contiguous elements each from a BF16 matrix with row width 4,096. The effective data is $128\times128\times2=32$ KiB, but each row occupies only 256 bytes, while adjacent row starts differ by 8,192 bytes. The span from the start of the first row to the end of the last row covers $127\times8192+256=1\,040\,640$ bytes. Reading row by row transfers only each row's effective interval; if adjacent threads access adjacent elements, their requests can also be merged into fewer transactions.
 
-![Figure 4-16　The first 256 bytes of each row form the actually read interval, while adjacent rows start 8192 bytes apart. The 128 rows together read 32 KiB, with the gray region between rows skipped due to the stride.](images/figure-4-8-layout.pdf)
+![Figure 4-16 The first 256 bytes of each row form the actually read interval, while adjacent rows start 8192 bytes apart. The 128 rows together read 32 KiB, with the gray region between rows skipped due to the stride.](images/figure-4-8-layout.pdf)
 
 Each row's blue region is only 256 bytes, yet the next row's blue region doesn't begin until 8,192 bytes later. Reading the whole address span would also carry away the gray gaps, whereas reading row by row obtains only the blue portions. This illustrates the role of the row stride: it tells the movement unit where the next segment of effective data begins.
 
@@ -473,15 +473,15 @@ Let's derive this concretely using attention's QK computation. Both inputs are $
 
 So each input block's transfer takes 64 ticks, becomes ready 192 ticks after being issued, and then takes 128 ticks to compute.
 
-![Figure 4-17　The full lifecycle of one input slot from issue to release. Transfer takes 64 ticks, an additional 128-tick wait follows, the data becomes ready at 192 ticks, computation takes another 128 ticks, and the slot is released at 320 ticks. One tick is one clock cycle of a B200 SM.](images/figure-4-slot-lifetime.pdf)
+![Figure 4-17 The full lifecycle of one input slot from issue to release. Transfer takes 64 ticks, an additional 128-tick wait follows, the data becomes ready at 192 ticks, computation takes another 128 ticks, and the slot is released at 320 ticks. One tick is one clock cycle of a B200 SM.](images/figure-4-slot-lifetime.pdf)
 
 With only one input slot, that slot goes through loading, waiting, and computing, taking $64+128+128=320$ ticks before it can be reused, so all four blocks finish at 1280 ticks.
 
 Figures 4-18 through 4-20 successively depict execution with one, two, and three slots, keeping the same time scale. Scanning along the green compute intervals to find idle gaps, then looking upward to see when the next input becomes ready, reveals where the waiting originates.
 
-![Figure 4-18　Timing of four blocks with one input slot. Blue bars are transfers, orange lines mark readiness, green bars are computation, and light gray marks slot occupancy; the next block can only be issued once the previous one finishes, with completion at 1280 ticks. One tick is one clock cycle of a B200 SM.](images/figure-4-9-pipeline.pdf)
+![Figure 4-18 Timing of four blocks with one input slot. Blue bars are transfers, orange lines mark readiness, green bars are computation, and light gray marks slot occupancy; the next block can only be issued once the previous one finishes, with completion at 1280 ticks. One tick is one clock cycle of a B200 SM.](images/figure-4-9-pipeline.pdf)
 
-![Figure 4-19　Two input slots on the same time scale. The first two blocks can be issued early, but the third block isn't ready until 512 ticks, while the second block already finished at 448 ticks, leaving 64 ticks idle. On the horizontal axis, one tick is one clock cycle of a B200 SM; each row corresponds to a data block, gray marks input slot occupancy, blue marks transfer, green marks computation, and the vertical tick marks data readiness.](images/figure-4-pipeline-two.pdf)
+![Figure 4-19 Two input slots on the same time scale. The first two blocks can be issued early, but the third block isn't ready until 512 ticks, while the second block already finished at 448 ticks, leaving 64 ticks idle. On the horizontal axis, one tick is one clock cycle of a B200 SM; each row corresponds to a data block, gray marks input slot occupancy, blue marks transfer, green marks computation, and the vertical tick marks data readiness.](images/figure-4-pipeline-two.pdf)
 
 Two slots allow the read requests for the first two blocks to be issued at times 0 and 64. The first block begins computing at 192 and finishes at 320; the freed slot is used for the third block, which becomes ready at 512. The second block already finished computing at 448, leaving a 64-tick idle gap in between. Continuing in the same order, the fourth block finishes at 768. The second slot lets some loading overlap with computation, but the matrix unit still idles between the computation of two blocks.
 
@@ -491,7 +491,7 @@ $$
 T_{\min}=192+4\times128=704\ \mathrm{tick}.
 $$
 
-![Figure 4-20　Three input slots allow the first three blocks to be issued early; once the first slot is released, it takes on the fourth block. The matrix unit computes continuously from 192 to 704 ticks; a fourth slot would not shorten the completion time further. On the horizontal axis, one tick is one clock cycle of a B200 SM; each row corresponds to a data block, gray marks input slot occupancy, blue marks transfer, green marks computation, and the vertical tick marks data readiness.](images/figure-4-pipeline-three.pdf)
+![Figure 4-20 Three input slots allow the first three blocks to be issued early; once the first slot is released, it takes on the fourth block. The matrix unit computes continuously from 192 to 704 ticks; a fourth slot would not shorten the completion time further. On the horizontal axis, one tick is one clock cycle of a B200 SM; each row corresponds to a data block, gray marks input slot occupancy, blue marks transfer, green marks computation, and the vertical tick marks data readiness.](images/figure-4-pipeline-three.pdf)
 
 Three slots are already enough to achieve this time. The read requests for the first three blocks are issued at times 0, 64, and 128 respectively, and become ready at 192, 256, and 320 respectively; computation proceeds sequentially starting at 192. The first block releases its slot at 320, immediately issuing the read request for the fourth block, which becomes ready at 512—earlier than the scheduled start time of 576 for its computation. The matrix unit therefore computes continuously from 192 to 704 ticks, with no idle gap in between.[^pipeline-extra]
 
@@ -836,7 +836,7 @@ Continuing with Section 4.1's projection of reading input and weights once and w
 | $M=1$ | ~0.20 μs | ~33.3 μs | ~33.3 μs | Memory |
 | $M=256$ | ~52 μs | ~37.4 μs | ~52 μs | Matrix |
 
-![Figure 4-35　How compute and memory-access time for the same Q projection vary with input row count. Compute scales with row count, while off-chip access includes both fixed weights and growing input/output; from row 179 onward the compute term is longer.](images/figure-4-13-roofline.pdf)
+![Figure 4-35 How compute and memory-access time for the same Q projection vary with input row count. Compute scales with row count, while off-chip access includes both fixed weights and growing input/output; from row 179 onward the compute term is longer.](images/figure-4-13-roofline.pdf)
 
 You can also find the input row count at which the transition occurs. Let $d=4096$; Section 4.1's intensity can be written as $I(M)=Md/(d+2M)$. Setting this equal to $I^*=P/R$ gives
 
@@ -867,7 +867,7 @@ The per-token linear operations across all layers are $2\times36W_{\mathrm{layer
 
 Now look at prefill: when processing 4,096 new input tokens, the linear operations grow with token count. The number of visible-position pairs under causal attention is $4096\times4097/2$; each pair does one QK inner product and one PV accumulation across 32 heads, totaling $4\times4096$ operations per pair. Multiplying by 36 layers, the effective QK/PV operations are $2\times36\times4096\times4096\times4097$. The output head is computed only for the last position, and the matrix work for the entire prefill is about 61.85 TFLOPs. Substituting these two stages into the hardware parameter table gives Figure 4-36.
 
-![Figure 4-36　Two stage budgets for the same Qwen3-8B. Single-request decode more directly reflects read bandwidth; 4K prefill's matrix budget more directly reflects the matrix rate at matched precision. The two plots' horizontal axes each label the computed time.](images/figure-4-evolution-convergence.pdf)
+![Figure 4-36 Two stage budgets for the same Qwen3-8B. Single-request decode more directly reflects read bandwidth; 4K prefill's matrix budget more directly reflects the matrix rate at matched precision. The two plots' horizontal axes each label the computed time.](images/figure-4-evolution-convergence.pdf)
 
 These results support several direct conclusions. Moving from the 3090 to the 4090, single-request decode's read lower bound shortens by only about 7.1%, while 4K prefill's matrix time shortens by about 57.0%. Moving from A100 to H100, read time shortens by about 39.1% and matrix time by about 68.5%; moving further to H200, read time continues to drop while matrix time stays essentially unchanged. The RTX 5090 and RTX PRO 6000 have the same read time, but the latter has higher matrix throughput and capacity. For document Q&A with longer inputs, the 4090's and H100's matrix gains shorten prefill first; for sustained single-request generation, the 5090's and H200's bandwidth gains directly shorten each step's read time.
 
@@ -895,16 +895,16 @@ To break down the extra time into concrete steps requires timing, traffic, and k
 
 The companion experiment runs the same $K=N=4096$ projection on the M2 Max and the RTX PRO 6000 Blackwell Workstation, with input, weights, and output all in BF16. To compare different weight-access patterns, 16 copies of identical-content, different-address 32 MiB weights are prepared on each platform. The reuse group always uses the same address; the rotation group cycles through different addresses in turn. Each round performs 16 calls, recording the whole round's time including host submission and synchronization, then dividing by 16 to get that round's average time per call. A total of 11 rounds are run, and the median of these 11 averages is taken.[^measurement]
 
-| Tokens processed this pass $M$ | M2 Max: reuse／rotation | RTX PRO 6000: reuse／rotation |
+| Tokens processed this pass $M$ | M2 Max: reuse/rotation | RTX PRO 6000: reuse/rotation |
 | --- | ---: | ---: |
-| $M=1$ | ~166／183 μs | ~42.9／51.9 μs |
-| $M=256$ | both ~1.835 ms | ~32.6／33.5 μs |
+| $M=1$ | ~166/183 μs | ~42.9/51.9 μs |
+| $M=256$ | both ~1.835 ms | ~32.6/33.5 μs |
 
 Look first at the RTX single row: rotation is about 21% slower than reuse. One natural explanation is: repeatedly using the same weights keeps them in cache, reducing DRAM reads. This explanation is directly testable: if fewer weight reads is the source of the difference, then when weights are reused, the number of bytes read from off-chip should be smaller. The experiment additionally uses NVIDIA's GPU kernel profiling tool, Nsight Compute, to access weights in the specified manner first, then record a single measured call, aggregating access counts across all kernels.
 
-![Figure 4-37　Total projection time on the RTX PRO 6000. Each condition is tested over eleven rounds of sixteen calls each, taking the median of each round's average time; timing includes submission and synchronization. "Reuse" means multiple calls read the same weight address; "rotation" means the weight address changes between calls.](images/figure-4-14-performance.pdf)
+![Figure 4-37 Total projection time on the RTX PRO 6000. Each condition is tested over eleven rounds of sixteen calls each, taking the median of each round's average time; timing includes submission and synchronization. "Reuse" means multiple calls read the same weight address; "rotation" means the weight address changes between calls.](images/figure-4-14-performance.pdf)
 
-![Figure 4-38　DRAM read counts collected separately under the same four conditions. Single row reads are both about 32 MiB; for 256 rows, reuse reads 256 bytes and rotation reads about 32.1 MiB. Access counts and regular timing are measured separately. "Reuse" and "rotation" respectively denote keeping and changing the weight address.](images/figure-4-performance-traffic.pdf)
+![Figure 4-38 DRAM read counts collected separately under the same four conditions. Single row reads are both about 32 MiB; for 256 rows, reuse reads 256 bytes and rotation reads about 32.1 MiB. Access counts and regular timing are measured separately. "Reuse" and "rotation" respectively denote keeping and changing the weight address.](images/figure-4-performance-traffic.pdf)
 
 Under both weight-access patterns, the single-row DRAM reads are about 32 MiB, matching the size of a full copy of the weights exactly. Both conditions read the same volume of off-chip weights, so the single-row time difference needs further localization across submission, execution, and waiting. The 256-row case is different: reusing the same weights reads only 256 bytes, while rotating through different weight copies reads about 32.1 MiB, yet the regular timing is about 33 μs in both cases. Caching changes off-chip traffic, but total call time still includes other computation, transfer, and waiting.
 
@@ -1018,7 +1018,7 @@ This example saves about 7.88 million per year, below the 20 million fixed inves
 
 [^handoff]: [Matrix-vector handoff notes](https://github.com/bojieli/ai-infra-book/blob/main/calculations/research/matrix-vector-handoff/README.md), [32-row two-slot direct path](https://github.com/bojieli/ai-infra-book/blob/main/calculations/results/matrix-vector-direct-rows32-slots2.md).
 
-[^package]: [Blackwell technical brief](https://github.com/bojieli/ai-infra-book/blob/main/references/files/specs/nvidia-blackwell-brief.pdf), 10 TB/s NV-HBI; [CloudMatrix384 v2](https://github.com/bojieli/ai-infra-book/blob/main/references/files/papers/cloudmatrix384-v2.pdf), §3.3.1 (910C, 64 GB per die, 1.6 TB/s, 270 GB/s per direction between dies), the start of §4.2 (one expert per die during decode) and §4.2.2; die-locality computations for the two products appear in the `die_locality` entry of the [teaching derivation script](https://github.com/bojieli/ai-infra-book/blob/main/ch04/derive.py); [Vera Rubin platform](https://github.com/bojieli/ai-infra-book/blob/main/references/files/specs/nvidia-rubin-system.md), [UB and Ascend cross-check](https://github.com/bojieli/ai-infra-book/blob/main/references/UB-ASCEND-NOTES.md).
+[^package]: [Blackwell technical brief](https://github.com/bojieli/ai-infra-book/blob/main/references/files/specs/nvidia-blackwell-brief.pdf), 10 TB/s NV-HBI; [CloudMatrix384 v2](https://github.com/bojieli/ai-infra-book/blob/main/references/files/papers/cloudmatrix384-v2.pdf), §3.3.1 (910C, 64 GB per die, 1.6 TB/s, 270 GB/s per direction between dies), the start of §4.2 (one expert per die during decode) and §4.2.2; die-locality computations for the two products appear in the `die_locality` entry of the [teaching derivation script](https://github.com/bojieli/ai-infra-book/blob/main/manuscripts/ch04/derive.py); [Vera Rubin platform](https://github.com/bojieli/ai-infra-book/blob/main/references/files/specs/nvidia-rubin-system.md), [UB and Ascend cross-check](https://github.com/bojieli/ai-infra-book/blob/main/references/UB-ASCEND-NOTES.md).
 
 [^tpu8]: [Inside the Eighth-Generation TPU: An Architecture Deep Dive](https://github.com/bojieli/ai-infra-book/blob/main/references/files/specs/google-tpu8.md).
 
@@ -1032,19 +1032,19 @@ This example saves about 7.88 million per year, below the 20 million fixed inves
 
 [^measurement]: [Experiment 4-6, full notes and raw records](https://github.com/bojieli/ai-infra-book/blob/main/experiments/ch04/04-06/README.md), [projected timing summary](https://github.com/bojieli/ai-infra-book/blob/main/experiments/ch04/04-06/results/projection-summary.json), [actual DRAM/L2 counts](https://github.com/bojieli/ai-infra-book/blob/main/experiments/ch04/04-06/results/projection-traffic.json).
 
-[^paired]: [Paired projected cost and average-power conditions](https://github.com/bojieli/ai-infra-book/blob/main/calculations/results/paired-projection-unknown.md); the RTX PRO 6000's 600 W is taken from the [hardware input table](https://github.com/bojieli/ai-infra-book/blob/main/calculations/configs/hardware.json), and the per-call energy at parity with the Mac's power is computed by the `energy` entry of the [teaching derivation script](https://github.com/bojieli/ai-infra-book/blob/main/ch04/derive.py); see the [derivation data](https://github.com/bojieli/ai-infra-book/blob/main/ch04/teaching-data.json).
+[^paired]: [Paired projected cost and average-power conditions](https://github.com/bojieli/ai-infra-book/blob/main/calculations/results/paired-projection-unknown.md); the RTX PRO 6000's 600 W is taken from the [hardware input table](https://github.com/bojieli/ai-infra-book/blob/main/calculations/configs/hardware.json), and the per-call energy at parity with the Mac's power is computed by the `energy` entry of the [teaching derivation script](https://github.com/bojieli/ai-infra-book/blob/main/manuscripts/ch04/derive.py); see the [derivation data](https://github.com/bojieli/ai-infra-book/blob/main/manuscripts/ch04/teaching-data.json).
 
 [^host]: For terminology on the host, DMA, and unified addressing, see the [CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-programming-guide/).
 
-[^rtx-spec]: [RTX Blackwell architecture whitepaper](https://github.com/bojieli/ai-infra-book/blob/main/calculations/sources/hardware/nvidia-rtx-blackwell-whitepaper.pdf), Appendix A, Table 3: the RTX 4090 has 24 GB GDDR6X, 1,008 GB/s, PCIe Gen 4, and a 450 W TGP; the RTX 5090 has 32 GB GDDR7, 1,792 GB/s, PCIe Gen 5, and a 575 W TGP; [A100 80GB datasheet](https://github.com/bojieli/ai-infra-book/blob/main/references/files/specs/nvidia-a100-80-spec.pdf), PCIe 4.0 at 64 GB/s (bidirectional aggregate). H2D and GPU-memory read times appear in the `host_link` entry of the [teaching derivation script](https://github.com/bojieli/ai-infra-book/blob/main/ch04/derive.py).
+[^rtx-spec]: [RTX Blackwell architecture whitepaper](https://github.com/bojieli/ai-infra-book/blob/main/calculations/sources/hardware/nvidia-rtx-blackwell-whitepaper.pdf), Appendix A, Table 3: the RTX 4090 has 24 GB GDDR6X, 1,008 GB/s, PCIe Gen 4, and a 450 W TGP; the RTX 5090 has 32 GB GDDR7, 1,792 GB/s, PCIe Gen 5, and a 575 W TGP; [A100 80GB datasheet](https://github.com/bojieli/ai-infra-book/blob/main/references/files/specs/nvidia-a100-80-spec.pdf), PCIe 4.0 at 64 GB/s (bidirectional aggregate). H2D and GPU-memory read times appear in the `host_link` entry of the [teaching derivation script](https://github.com/bojieli/ai-infra-book/blob/main/manuscripts/ch04/derive.py).
 
 [^window-rtx]: [RTX 4090, 128 in-flight transactions](https://github.com/bojieli/ai-infra-book/blob/main/calculations/results/window-qwen3-8b-rtx4090-n128.md), [RTX 4090, 4,096](https://github.com/bojieli/ai-infra-book/blob/main/calculations/results/window-qwen3-8b-rtx4090-n4096.md), [RTX 5090, 4,096](https://github.com/bojieli/ai-infra-book/blob/main/calculations/results/window-qwen3-8b-rtx5090-n4096.md), [RTX 5090, 800 ns latency](https://github.com/bojieli/ai-infra-book/blob/main/calculations/results/window-qwen3-8b-rtx5090-l800.md); for H100 latency, see Mess's Table I and Figure 3(h).
 
 [^allreduce-small]: [Experiment 7-3, public run-record verification](https://github.com/bojieli/ai-infra-book/blob/main/experiments/ch07/07-03/README.md), [raw log from two HGX H100 nodes](https://github.com/bojieli/ai-infra-book/blob/main/experiments/ch07/07-03/raw/hgx2.txt): 16 ranks, NCCL 2.26.2, 16-byte AllReduce out-of-place 24.96 μs, in-place 24.93 μs.
 
-[^decode-measured]: [Experiment 8-1 batch sweep](https://github.com/bojieli/ai-infra-book/blob/main/experiments/ch08/08-01/README.md) and its [row-by-row efficiency summary](https://github.com/bojieli/ai-infra-book/blob/main/experiments/ch08/08-01/efficiency.json): RTX PRO 6000 Blackwell Workstation, Qwen3-8B BF16, vLLM 0.23.0, eager mode; each row takes the median of the pure decode iteration per round, then the median across three rounds. The ratio to the read lower bound is computed by the `measured_decode` entry of the [teaching derivation script](https://github.com/bojieli/ai-infra-book/blob/main/ch04/derive.py).
+[^decode-measured]: [Experiment 8-1 batch sweep](https://github.com/bojieli/ai-infra-book/blob/main/experiments/ch08/08-01/README.md) and its [row-by-row efficiency summary](https://github.com/bojieli/ai-infra-book/blob/main/experiments/ch08/08-01/efficiency.json): RTX PRO 6000 Blackwell Workstation, Qwen3-8B BF16, vLLM 0.23.0, eager mode; each row takes the median of the pure decode iteration per round, then the median across three rounds. The ratio to the read lower bound is computed by the `measured_decode` entry of the [teaching derivation script](https://github.com/bojieli/ai-infra-book/blob/main/manuscripts/ch04/derive.py).
 
-[^pipeline-extra]: The three-slot pipeline, the compute-doubling variant, and the design turning point are generated by the [teaching derivation script](https://github.com/bojieli/ai-infra-book/blob/main/ch04/derive.py); the full timeline appears in the [derivation data](https://github.com/bojieli/ai-infra-book/blob/main/ch04/teaching-data.json).
+[^pipeline-extra]: The three-slot pipeline, the compute-doubling variant, and the design turning point are generated by the [teaching derivation script](https://github.com/bojieli/ai-infra-book/blob/main/manuscripts/ch04/derive.py); the full timeline appears in the [derivation data](https://github.com/bojieli/ai-infra-book/blob/main/manuscripts/ch04/teaching-data.json).
 
 [^feedback]: [DeepSeek V3 technical report](https://github.com/bojieli/ai-infra-book/blob/main/references/text/deepseek-v3.txt), §3.5, Suggestions on Hardware Design.
 

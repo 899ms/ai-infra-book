@@ -49,13 +49,27 @@ jobs:
     # Match local Apple fonts (Songti SC, Menlo, Arial Unicode MS and Heiti SC).
     runs-on: macos-15
     timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - edition: zh
+            lfs: manuscripts/**/*.pdf,manuscripts/**/*.png,manuscripts/figure_style/fonts/**
+            script: book/build_pdf.sh
+            output: build/pdf
+            artifact: book-pdf-download
+          - edition: en
+            lfs: book-en/images/**
+            script: book-en/build_pdf.sh
+            output: build/pdf-en
+            artifact: book-pdf-en-download
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Fetch PDF figures and fonts
-        run: git lfs pull --include="manuscripts/**/*.pdf,manuscripts/**/*.png,manuscripts/figure_style/fonts/**" --exclude=""
+        run: git lfs pull --include="${{ matrix.lfs }}" --exclude=""
       - name: Install Pandoc, XeLaTeX and fonts
         run: |
           brew install texlive poppler ghostscript
@@ -71,31 +85,31 @@ jobs:
           pip install -r book/requirements-ci.txt
       - name: Check local Mac font parity
         run: python book/check_build_fonts.py
-      - name: Build full book PDF
+      - name: Build full book PDF (${{ matrix.edition }})
         env:
           BOOK_SOURCE_REF: ${{ github.sha }}
-        run: bash book/build_pdf.sh --output-dir ../build/pdf --source-ref "$BOOK_SOURCE_REF"
+        run: bash ${{ matrix.script }} --output-dir "$GITHUB_WORKSPACE/${{ matrix.output }}" --source-ref "$BOOK_SOURCE_REF"
       - name: Validate PDF and render representative pages
-        run: python book/check_ci_pdf.py build/pdf
+        run: python book/check_ci_pdf.py ${{ matrix.output }} --edition ${{ matrix.edition }}
       - name: Upload PDF release files
         uses: actions/upload-artifact@v7
         with:
-          name: book-pdf-download
+          name: ${{ matrix.artifact }}
           if-no-files-found: error
           path: |
-            build/pdf/AI-Infra-Book.pdf
-            build/pdf/AI-Infra-Book-build.json
-            build/pdf/AI-Infra-Book-Cover.pdf
-            build/pdf/AI-Infra-Book-Cover.png
-            build/pdf/pdf-validation.json
+            ${{ matrix.output }}/AI-Infra-Book*.pdf
+            ${{ matrix.output }}/AI-Infra-Book*-build.json
+            ${{ matrix.output }}/AI-Infra-Book*-Cover.png
+            ${{ matrix.output }}/pdf-validation.json
       - name: Save logs and visual checks
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: pdf-build-diagnostics
+          name: pdf-build-diagnostics-${{ matrix.edition }}
           path: |
             book/build/AI-Infra-Book/*.log
-            build/pdf/preview-*.png
+            book-en/build/AI-Infra-Book-EN/*.log
+            ${{ matrix.output }}/preview-*.png
           if-no-files-found: ignore
 
   release:
@@ -107,7 +121,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@v8
         with:
-          name: book-pdf-download
+          pattern: book-pdf*download
+          merge-multiple: true
           path: dist
       - name: Compose release name
         id: relname
@@ -130,8 +145,10 @@ jobs:
           Path('release-notes.md').write_text(
               f'{built}（北京时间）自动从 main 提交 '
               f'[{sha[:12]}](https://github.com/{repo}/commit/{sha}) 构建。\n\n'
-              '下载 `AI-Infra-Book.pdf` 阅读完整十二章全书。\n\n'
+              '下载 `AI-Infra-Book.pdf` 阅读完整十二章全书；`AI-Infra-Book-EN.pdf` 为社区翻译的英文版'
+              '（English edition, translated by [@tg1482](https://github.com/tg1482)）。\n\n'
               f'最新版固定链接：https://github.com/{repo}/releases/latest/download/AI-Infra-Book.pdf\n\n'
+              f'英文版固定链接：https://github.com/{repo}/releases/latest/download/AI-Infra-Book-EN.pdf\n\n'
               '在线阅读：https://bojieli.github.io/ai-infra-book/\n')
           PY
       - name: Publish release for this commit
@@ -155,7 +172,7 @@ jobs:
           if ! gh release view "$tag" >/dev/null 2>&1; then
             retry sh -c 'gh release view "$1" >/dev/null 2>&1 || gh release create "$1" --target "$2" --title "全书 $3" --notes-file release-notes.md --draft' _ "$tag" "$SOURCE_SHA" "$TITLE"
           fi
-          retry gh release upload "$tag" dist/AI-Infra-Book.pdf --clobber
+          retry gh release upload "$tag" dist/AI-Infra-Book.pdf dist/AI-Infra-Book-EN.pdf --clobber
           # Remove legacy build extras if this commit's release is being rerun.
           for asset in AI-Infra-Book-build.json AI-Infra-Book-Cover.pdf AI-Infra-Book-Cover.png ai-infra-book-site.tar.gz pdf-validation.json SHA256SUMS; do
             if gh release view "$tag" --json assets --jq '.assets[].name' | grep -Fxq "$asset"; then

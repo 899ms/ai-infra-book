@@ -14,12 +14,16 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+from urllib.parse import quote, unquote
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 EN = HERE / "tools" / "manuscripts-en"
 ZH = ROOT / "manuscripts"
 IMAGES = HERE / "images"
+
+FULLWIDTH = str.maketrans({"\u3000": " ", "／": "/", "〔": "[", "〕": "]", "＋": "+",
+                           "（": " (", "）": ") ", "：": ": ", "，": ", ", "；": "; "})
 
 # Two figures cannot be regenerated in English; see README.md.
 KNOWN_CHINESE = {"figure-6-context-dependency.pdf", "figure-7-ub-round-trip.pdf"}
@@ -37,6 +41,10 @@ def out_name(number: int) -> str:
 
 def convert(source: Path, number: int) -> str:
     text = source.read_text(encoding="utf-8")
+
+    # Full-width punctuation carried over from the Chinese source has no glyph
+    # in the Latin text fonts; the English edition uses the ASCII forms.
+    text = text.translate(FULLWIDTH)
 
     # Headings carry no manual numbering; the document class numbers them.
     text = re.sub(r"^#\s+Chapter\s*\d+[:.\s]\s*", "# ", text, count=1, flags=re.M)
@@ -74,8 +82,15 @@ def convert(source: Path, number: int) -> str:
         target = m[2]
         if re.match(r"[a-z]+:|#", target):
             return m[0]
-        rel = target.lstrip("./")
-        return f"[{m[1]}](https://github.com/bojieli/ai-infra-book/blob/main/{rel})"
+        path, _, fragment = target.partition("#")
+        # Targets are relative to manuscripts/, where the Chinese source lives;
+        # a bare "02-模型架构.md" therefore means manuscripts/02-模型架构.md.
+        resolved = (ZH / unquote(path)).resolve()
+        if not resolved.is_relative_to(ROOT):
+            return m[0]
+        rel = quote(resolved.relative_to(ROOT).as_posix(), safe="/")
+        suffix = f"#{fragment}" if fragment else ""
+        return f"[{m[1]}](https://github.com/bojieli/ai-infra-book/blob/main/{rel}{suffix})"
     text = re.sub(r"(?<!!)\[([^\]]*)\]\(([^)]+)\)", link, text)
 
     return text

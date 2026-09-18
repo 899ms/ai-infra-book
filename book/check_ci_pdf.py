@@ -6,22 +6,33 @@ import json
 import fitz
 
 
+EDITIONS = {
+    'zh': dict(name='AI-Infra-Book', expected_text=('AI Infra', '端边云'),
+               required_fonts=('Songti-SC-Regular', 'Menlo-Regular', 'SourceHanSansCN-Regular',
+                               'SourceHanSansCN-Bold', 'LMRoman10-Regular', 'LatinModernMath-Regular')),
+    'en': dict(name='AI-Infra-Book-EN', expected_text=('AI Infra', 'Edge-Cloud Coordination'),
+               required_fonts=('Menlo-Regular', 'LMRoman10-Regular', 'LatinModernMath-Regular')),
+}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('directory', type=Path)
+    parser.add_argument('--edition', choices=EDITIONS, default='zh')
     args = parser.parse_args()
     directory = args.directory
-    report = json.loads((directory / 'AI-Infra-Book-build.json').read_text())
+    edition = EDITIONS[args.edition]
+    report = json.loads((directory / f"{edition['name']}-build.json").read_text())
     if report['chapters'] != list(range(1, 13)):
         raise SystemExit('Expected all 12 chapters')
-    doc = fitz.open(directory / 'AI-Infra-Book.pdf')
+    doc = fitz.open(directory / f"{edition['name']}.pdf")
     if len(doc) < 12:
         raise SystemExit('PDF is unexpectedly short')
     chapter_entries = [r for r in doc.get_toc() if r[0] == 1]
     if len(chapter_entries) < 12:
         raise SystemExit('PDF is missing chapter bookmarks')
     text = ''.join(page.get_text() for page in doc)
-    if 'AI Infra' not in text or '端边云' not in text or '\ufffd' in text:
+    if any(needle not in text for needle in edition['expected_text']) or '\ufffd' in text:
         raise SystemExit('PDF text/title/last chapter check failed')
     fatal = [w for w in report['warnings'] if 'Missing character:' in w or 'undefined references' in w]
     if fatal:
@@ -34,9 +45,7 @@ def main():
         for line in block.get('lines', [])
         for span in line['spans']
     })
-    required = ('Songti-SC-Regular', 'Menlo-Regular', 'SourceHanSansCN-Regular',
-                'SourceHanSansCN-Bold', 'LMRoman10-Regular', 'LatinModernMath-Regular')
-    missing = [font for font in required if not any(font in actual for actual in fonts)]
+    missing = [font for font in edition['required_fonts'] if not any(font in actual for actual in fonts)]
     # Figure PDFs may intentionally contain DejaVu Sans mathematical glyphs.
     fallbacks = [font for font in fonts if 'NotoSansCJK' in font or 'DejaVuSansMono' in font]
     if missing or fallbacks:

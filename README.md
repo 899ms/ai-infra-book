@@ -25,7 +25,7 @@
 
 目前书稿仍是初稿，正在持续修订。
 
-中文正文源码位于 [`manuscripts/`](manuscripts/README.md)；英文版为社区翻译（by [@tg1482](https://github.com/tg1482)，可能滞后于中文原版），位于 [`book-en/`](book-en/)，包含前言与十二章正文、重绘为英文标注的配图和独立的 PDF 构建脚本。
+中文正文源码位于 [`manuscripts/`](manuscripts/README.md)；英文版为社区翻译（by [@tg1482](https://github.com/tg1482)，可能滞后于中文原版），位于 [`book-en/`](book-en/)，包含前言与十二章正文、重绘为英文标注的配图和独立的 PDF 构建脚本。英文版 PDF 与中文版一同自动构建并发布：[AI-Infra-Book-EN.pdf](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-EN.pdf)。
 
 ## 内容目录
 
@@ -99,10 +99,11 @@ python scripts/build_site.py --serve
 **全书 PDF**（另需 Pandoc、XeLaTeX 和字体）：
 
 ```bash
-bash book/build_pdf.sh
+bash book/build_pdf.sh        # 中文版 → book/AI-Infra-Book.pdf
+bash book-en/build_pdf.sh     # 英文版 → book-en/AI-Infra-Book-EN.pdf
 ```
 
-依赖、字体及单章编译方法见 [PDF 编译说明](book/README.md)。GitHub Actions 会检查 Pull Request 的网站与 PDF 构建；推送到 `main` 后自动生成 Release 并部署 Pages。
+依赖、字体及单章编译方法见 [PDF 编译说明](book/README.md)。GitHub Actions 会检查 Pull Request 的网站与中英文 PDF 构建；推送到 `main` 后自动生成 Release（含两个 PDF）并部署 Pages。
 
 ## 仓库结构
 

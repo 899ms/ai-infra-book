@@ -12,19 +12,33 @@ through 12.
 | Path | Contents |
 | --- | --- |
 | `introduction.md`, `chapter01.md` … `chapter12.md` | translated chapters |
-| `images/` | figures re-rendered with English labels |
-| `preamble.tex` | English preamble; loads no CJK typesetting stack |
-| `build_pdf.sh` | Pandoc + XeLaTeX build |
+| `images/` | figures re-rendered with English labels (Git LFS) |
+| `preamble.tex` | loads the shared series preamble from `../book/` with the CJK font commands made inert |
+| `cover.tex` | the series cover drawing with English title, author and edition stamp |
+| `build_pdf.py`, `build_pdf.sh` | Pandoc + XeLaTeX build, mirroring `book/build_pdf.py` |
 | `assemble.py` | rebuilds the chapters and copies figures from `tools/` |
 | `tools/` | translation tooling, glossary, and the translated figure scripts |
 
 ## Building
 
 ```bash
-cd book-en && bash build_pdf.sh
+git lfs pull --include="book-en/images/**" --exclude=""
+bash book-en/build_pdf.sh                       # writes book-en/AI-Infra-Book-EN.pdf
+bash book-en/build_pdf.sh --output-dir ../build/pdf-en --source-ref "$(git rev-parse HEAD)"
 ```
 
-Requires `pandoc`, `xelatex`, and the ElegantBook class from `book/`.
+Requires `pandoc`, `xelatex`, and the ElegantBook class from `book/`; the
+fonts are the same as for the Chinese edition (see `book/README.md`). Besides
+the PDF, the build writes `AI-Infra-Book-EN-build.json` (sources, figure count,
+layout and font warnings) and a cover PNG. `--source-ref` pins the repository
+links inside the PDF to one commit.
+
+GitHub Actions builds this edition next to the Chinese one on every push and
+pull request (`.github/workflows/book-site.yml`, job `pdf (en)`), validates it
+with `book/check_ci_pdf.py --edition en` (all twelve chapters, no missing
+glyphs, expected fonts), and publishes it in each Release as
+`AI-Infra-Book-EN.pdf`. Latest build:
+<https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-EN.pdf>.
 
 ## How the translation is checked
 
@@ -39,6 +53,10 @@ so they are translated as string constants only. Each translated script is
 re-parsed and compared with the original with all string values blanked, which
 shows that no coordinate, number or control flow changed. The translated
 scripts are kept in `tools/figure-scripts/`.
+
+Full-width punctuation carried over from the Chinese source (ideographic
+spaces after figure numbers, `／`, `〔〕`) has no glyph in the Latin text fonts
+and would fail the CI font check, so `assemble.py` maps it to ASCII.
 
 Some strings in those scripts are not labels and must stay Chinese: file paths,
 filename stems, regular expressions that match the Chinese manuscript, and

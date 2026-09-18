@@ -2,7 +2,7 @@
 
 沿用 AI Agent Book 的 ElegantBook 系列模板，生成真正由 XeLaTeX 排版的 PDF。正文读取 `manuscripts/01-*.md` 至 `12-*.md`，不维护另一套章节副本。
 
-最新版全书 PDF：<https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf>（由 GitHub Actions 从 `main` 自动构建并发布到 Releases）。
+最新版全书 PDF：<https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf>（由 GitHub Actions 从 `main` 自动构建并发布到 Releases）。英文版 PDF 由 [`book-en/`](../book-en/README.md) 用同一模板构建，同一 Release 中发布为 `AI-Infra-Book-EN.pdf`。
 
 编译生成的 PDF、封面和 `*-build.json` 构建记录不纳入版本控制（见 `book/.gitignore`）。
 

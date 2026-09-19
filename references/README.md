@@ -2,9 +2,9 @@
 
 对应草案 22 的十二章顺序：方法与需求、硬件与协作、推理训练、任务环境与端边云。收录原始论文、作者报告、芯片与系统规格、协议及官方软件文档，按具体论证选用。原件快照保留历史版本；本索引章号采用当前目录。
 
-当前清单 279 项：已保存正文 272 项，其中 PDF 168 份。其余项目的获取状态见文末。
+当前清单 284 项：已保存正文 277 项，其中 PDF 169 份。其余项目的获取状态见文末。
 
-[来源清单](sources.tsv) · [下载与校验记录](manifest.json) · [证据缺口](GAPS.md)
+[浏览本地索引](index.html) · [来源清单](sources.tsv) · [下载与校验记录](manifest.json) · [证据缺口](GAPS.md)
 
 [LLM 推理论文选读与写作落点](INFERENCE-PAPER-GUIDE.md)按问题整理 49 项核心与专题资料，标注查阅小节、可支撑的论点及引用边界；另有 [章节映射](inference-reading-map.tsv)和[本轮新增论文 BibTeX](inference-additions.bib)。
 
@@ -94,6 +94,11 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [Qwen3 Technical Report](https://arxiv.org/abs/2505.09388v1) | [原件](files/papers/qwen3.pdf) · [文本](text/qwen3.txt) | Alibaba 公司技术报告；稠密／MoE 配置与 thinking budget，不代填 Qwen3.5 参数 |
 | [DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning](https://arxiv.org/abs/2501.12948v2) | [原件](files/papers/deepseek-r1.pdf) · [文本](text/deepseek-r1.txt) | 公司技术报告；RL 推理模型、长输出与采样负载；不视为 serving 性能报告 |
 | [Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters](https://arxiv.org/abs/2408.03314v1) | [原件](files/papers/test-time-compute.pdf) · [文本](text/test-time-compute.txt) | DeepMind／Berkeley；按难度分配推理预算；计算量、质量与墙钟时间分开 |
+| [TypeSafe AI 首页：Jev 价格与并排演示](https://typesafe.ai/) | [原件](files/documents/typesafe-home.html) · [文本](text/typesafe-home.txt) | 2026-09-15 发布；每十亿输入 token 42 美元、输出免费；演示 0.114 s 对 8.566 s、0.000081 对 0.013880 美元 |
+| [Introducing System One Models & Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev) | [原件](files/documents/typesafe-jev-blog.html) · [文本](text/typesafe-jev-blog.txt) | 并行采样、RLCD、工作流评测口径与作者自述的偏差；Terra 默认推理 |
+| [TypeSafe AI Docs: Introduction](https://docs.typesafe.ai/introduction) | [原件](files/documents/typesafe-docs-intro.html) · [文本](text/typesafe-docs-intro.txt) | state／questions 接口；Choice、Score、Noul；问题在同一状态上并行求值 |
+| [DeepSeek API 模型 & 价格](https://api-docs.deepseek.com/zh-cn/quick_start/pricing) | [原件](files/documents/deepseek-pricing-zh.html) · [文本](text/deepseek-pricing-zh.txt) | V4.1 Flash 官方人民币价格：缓存命中／未命中输入与输出，空闲与高峰时段 |
+| [Beyond Binary Rewards: Training LMs to Reason About Their Uncertainty](https://arxiv.org/abs/2507.16806) | [原件](files/papers/rlcr.pdf) · [文本](text/rlcr.txt) | RLCR：正确性奖励加 Brier 校准奖励 |
 
 ## 第 4 章 加速器架构
 
@@ -407,7 +412,7 @@ PDF 原件位于 `files/`，可搜索文本位于 `text/`；官方网页同时�
 | [Overview of and Motivation for the Forthcoming Ultra Ethernet Consortium Specification](https://ultraethernet.org/) | [原件](files/standards/uec-overview.pdf) · [文本](text/uec-overview.txt) | 2023 年白皮书；设计动机 |
 | [IEEE 802.1Qbb Priority-based Flow Control](https://1.ieee802.org/dcb/802-1qbb/) | [原件](files/standards/ieee-802-1qbb-entry.md) · [文本](text/ieee-802-1qbb-entry.txt)（landing_only） | 标准入口页；PFC 正文需 IEEE 访问，DCQCN 论文另有描述 |
 
-## 第 8 章 单实例推理
+## 第 8 章 推理优化
 
 | 资料 | 本地文件 | 用途 |
 | --- | --- | --- |

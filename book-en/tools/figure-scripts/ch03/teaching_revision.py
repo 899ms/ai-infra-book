@@ -1,4 +1,6 @@
 """Work arrives, waits, and releases state: book-size diagrams for chapter 3."""
+import json
+from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
@@ -61,6 +63,24 @@ def draw(here,data):
             for start,dur,y,label,col in stages:
                 a.barh(y,dur,left=start,height=.5,color=COL[col],edgecolor=COL['line']);a.text(start+dur/2,y,str(dur)+' s',ha='center',va='center',fontsize=12)
             a.set(yticks=[0,1,2],yticklabels=["model","tool A","tool B"],xlim=(0,22),ylim=(-.6,2.6),xlabel="task time (s)");a.invert_yaxis();save(f,name)
+
+        dr=json.loads((Path(here).parents[1]/'calculations/results/decision-request-book.json').read_text())
+        dd=dr['decision_path_dense'];dl=dr['llm_path_dense'][0];q=dr['scenario']['questions']
+        pre=dd['latency_seconds']*1000;step=dl['step_seconds_batch_1']*1000;steps=dl['decode_steps'];total=dl['latency_seconds']*1000
+        f,axs=plt.subplots(2,1,figsize=(420/72,4.2),sharex=True);f.subplots_adjust(left=.20,right=.96,bottom=.13,top=.92,hspace=.55)
+        for a in axs:a.spines[['top','right']].set_visible(False)
+        a=axs[0];a.set_title(f"decision path: one pass, after {pre:.1f} ms all {q} answers",loc='left',fontsize=12)
+        a.barh(0,pre,height=.5,color=COL['blue'],edgecolor=COL['line']);a.text(pre+14,0,f"prefill {dr['scenario']['input_tokens']} tokens, compute-bound",va='center',fontsize=11)
+        a.scatter([pre+4]*q,np.linspace(.78,1.22,q),s=14,color=COL['green'],edgecolor=COL['line'],linewidth=.6,zorder=3)
+        a.text(pre+14,1,f"output distributions at {q} positions read at once",va='center',fontsize=11)
+        a.set(yticks=[0,1],yticklabels=["prefill","read out"],ylim=(-.6,1.6));a.invert_yaxis()
+        a=axs[1];a.set_title(f"LLM path: same prefill, then {dl['output_tokens']} tokens one by one",loc='left',fontsize=12)
+        a.barh(0,pre,height=.5,color=COL['blue'],edgecolor=COL['line'])
+        a.barh([1]*steps,[step*.72]*steps,left=[pre+i*step for i in range(steps)],height=.5,color=COL['orange'],edgecolor=COL['line'],linewidth=.4)
+        a.text(pre+steps*step/2,.42,f"{steps} decode steps of {step:.1f} ms, bandwidth-bound",ha='center',va='center',fontsize=11)
+        a.set(yticks=[0,1],yticklabels=["prefill","decode"],ylim=(-.6,1.6),xlim=(0,total*1.04),xlabel="time since request start (ms)");a.invert_yaxis()
+        a.set_xticks([0,round(pre),200,400,round(total)])
+        save(f,'decision-request')
 
         f,a=canvas(4.0);text(a,.04,.94,"image encoded as vision tokens, then fed to language model",14)
         for y,label,c in [(.69,"640 × 640 pixel image",'gray'),(.43,"16 × 16 px per patch → 40 × 40 patches",'blue'),(.17,"merge adjacent 2 × 2 patches → 20 × 20 tokens",'green')]:

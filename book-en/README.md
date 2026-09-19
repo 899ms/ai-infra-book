@@ -37,7 +37,8 @@ GitHub Actions builds this edition next to the Chinese one on every push and
 pull request (`.github/workflows/book-site.yml`, job `pdf (en)`), validates it
 with `book/check_ci_pdf.py --edition en` (all twelve chapters, no missing
 glyphs, expected fonts), and publishes it in each Release as
-`AI-Infra-Book-EN.pdf`. Latest build:
+`AI-Infra-Book-EN.pdf`, together with a reflowable `AI-Infra-Book-EN.epub` for phones and e-readers
+(built by `python3 book/build_epub.py --edition en`, see `book/README.md`). Latest build:
 <https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-EN.pdf>.
 
 ## How the translation is checked

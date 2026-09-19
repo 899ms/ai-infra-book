@@ -11,7 +11,7 @@
 > [!TIP]
 > ### 📥 [下载最新版全书 PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf)
 >
-> **推荐下载 PDF 阅读。** 书中有大量公式、表格、脚注和交叉引用，GitHub 直接显示 Markdown 时，LaTeX 公式和部分排版常常渲染不全或错位。PDF 由 XeLaTeX 排版，每次更新 `main` 后自动构建并发布到 [Releases](https://github.com/bojieli/ai-infra-book/releases)，上面的链接始终指向最新版。下方目录链接到各章 Markdown 源文件，便于查找原文和提交勘误；通读全书，仍建议下载 PDF。
+> **推荐下载 PDF 阅读。** 书中有大量公式、表格、脚注和交叉引用，GitHub 直接显示 Markdown 时，LaTeX 公式和部分排版常常渲染不全或错位。PDF 由 XeLaTeX 排版，每次更新 `main` 后自动构建并发布到 [Releases](https://github.com/bojieli/ai-infra-book/releases)，上面的链接始终指向最新版。下方目录链接到各章 Markdown 源文件，便于查找原文和提交勘误；通读全书，仍建议下载 PDF；在手机或电子书阅读器上，可改用同一 Release 中可调字号、自动重排的 [EPUB](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.epub)。
 
 《深入理解 AI Infra》是 GitHub 上获得 **45k+ Star** 的[《深入理解 AI Agent：设计原理与工程实践》](https://github.com/bojieli/ai-agent-book)的姊妹篇。
 
@@ -101,9 +101,11 @@ python scripts/build_site.py --serve
 ```bash
 bash book/build_pdf.sh        # 中文版 → book/AI-Infra-Book.pdf
 bash book-en/build_pdf.sh     # 英文版 → book-en/AI-Infra-Book-EN.pdf
+python3 book/build_epub.py                 # 中文 EPUB → book/AI-Infra-Book.epub（只需 Pandoc 与 Poppler）
+python3 book/build_epub.py --edition en    # 英文 EPUB → book-en/AI-Infra-Book-EN.epub
 ```
 
-依赖、字体及单章编译方法见 [PDF 编译说明](book/README.md)。GitHub Actions 会检查 Pull Request 的网站与中英文 PDF 构建；推送到 `main` 后自动生成 Release（含两个 PDF）并部署 Pages。
+依赖、字体及单章编译方法见 [PDF 编译说明](book/README.md)。GitHub Actions 会检查 Pull Request 的网站与中英文 PDF 构建；推送到 `main` 后自动生成 Release（含中英文 PDF 与 EPUB）并部署 Pages。
 
 ## 仓库结构
 

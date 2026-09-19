@@ -920,6 +920,14 @@ Dense batch权重复用与KV交叉点：BF16/FP32 dense峰值。
 | [prefix-value-no-capacity](prefix-value-no-capacity.md) | [] | [] | 0 | 0 |
 | [prefix-value-reuse](prefix-value-reuse.md) | ['1024'] | ['1024'] | 150994944 | 0 |
 
+决策请求（共享一次前向、不生成 token）与 LLM 路径的 GPU 秒、牌价与升级份额：
+
+| 结果 | 输入 token | 决策路径 GPU 秒 | 决策路径 $/M 输入 | V4.1 Flash CED $/M 输入 | Jev 定价/稠密下界 | LLM 路径 GPU 秒 | LLM 路径延迟 s |
+| --- | ---: | ---: | ---: | ---: | ---: | --- | --- |
+| [decision-request-book](decision-request-book.md) | 1929 | 0.070509 | 0.0203 | 0.0254 | 2.07 | [0.090281, 0.240958] | [0.651, 4.787] |
+| [decision-request-long-state](decision-request-long-state.md) | 8192 | 0.337586 | 0.0229 | 0.0247 | 1.83 | [0.392093, 0.789777] | [0.953, 5.335] |
+| [decision-request-a100](decision-request-a100.md) | 1929 | 0.178876 | 0.0515 | 0.0645 | 0.82 | [0.211361, 0.458917] | [1.132, 7.927] |
+
 KV保留／换出／重算：恢复等待和容量释放窗口。
 
 | 场景 | KV bytes | 重算矩阵 FLOPs | 换出取回等待 ns | 重算等待 ns |

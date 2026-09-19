@@ -1,0 +1,87 @@
+{
+  "files": [
+    {
+      "file": "../references/text/typesafe-home.txt",
+      "url": "https://typesafe.ai/",
+      "revision": "TypeSafe AI homepage; retrieved 2026-09-19",
+      "sha256": "0513b3ebc8a894e0abbf088a646d553a0bc7452e9f2a8e553e108c21820560ef",
+      "bytes": 5635
+    },
+    {
+      "file": "../references/text/typesafe-jev-blog.txt",
+      "url": "https://typesafe.ai/blog/introducing-system-one-models-and-jev",
+      "revision": "TypeSafe AI blog, 2026-09-15 launch post; retrieved 2026-09-19",
+      "sha256": "3dda21f847dec47a7a460dcf5ca93467100faa231f0c4077d0f36ab3f3db29bd",
+      "bytes": 13671
+    },
+    {
+      "file": "../references/text/typesafe-docs-intro.txt",
+      "url": "https://docs.typesafe.ai/introduction",
+      "revision": "TypeSafe AI docs introduction; retrieved 2026-09-19",
+      "sha256": "23bd3916b4442f78bac994e02ac5b2c5a18ef8b5a1052cd2c0fbf667d5893c0c",
+      "bytes": 4019
+    },
+    {
+      "file": "../references/text/deepseek-pricing-zh.txt",
+      "url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing",
+      "revision": "DeepSeek API 模型 & 价格 (zh-cn); retrieved 2026-09-19",
+      "sha256": "28a61738485078664de60e2f58e635f0632e4d25a795cbb886ee799d01d7a55b",
+      "bytes": 2911
+    },
+    {
+      "file": "../references/files/documents/deepseek-serving-report.md",
+      "url": "https://raw.githubusercontent.com/deepseek-ai/open-infra-index/56d86855fcf6e08fdfd45ce6280bd24322c93351/202502OpenSourceWeek/day_6_one_more_thing_deepseekV3R1_inference_system_overview.md",
+      "revision": "DeepSeek open-infra-index commit 56d8685, 2025-03-01 Day 6 report; retrieved 2026-09-06",
+      "sha256": "3b145f129d4a00947eadf64f4157770ab557996a243db28185f54ff8b58b0205",
+      "bytes": 7453
+    },
+    {
+      "file": "../references/text/deepseek-serving-report.txt",
+      "url": "https://raw.githubusercontent.com/deepseek-ai/open-infra-index/56d86855fcf6e08fdfd45ce6280bd24322c93351/202502OpenSourceWeek/day_6_one_more_thing_deepseekV3R1_inference_system_overview.md",
+      "revision": "DeepSeek open-infra-index commit 56d8685, 2025-03-01 Day 6 report; retrieved 2026-09-06",
+      "sha256": "3b145f129d4a00947eadf64f4157770ab557996a243db28185f54ff8b58b0205",
+      "bytes": 7453
+    }
+  ],
+  "declared": {
+    "jev": {
+      "usd_per_million_input_tokens": "0.042",
+      "usd_per_million_output_tokens": "0",
+      "source": "typesafe-home",
+      "locator": "Jev.Cost: $42 Per Billion input tokens; blog: Output tokens FREE"
+    },
+    "demo": {
+      "jev_usd": "0.000081",
+      "jev_seconds": "0.114",
+      "llm_usd": "0.013880",
+      "llm_seconds": "8.566",
+      "llm_model": "GPT-5.6 Terra, default reasoning",
+      "source": "typesafe-home",
+      "locator": "Side-by-side demo: Cost $0.000081 / Completed in 0.114s vs Cost $0.013880 / Completed in 8.566s; blog: We used GPT-5.6 Terra with default reasoning"
+    },
+    "deepseek_v41_flash_cny_per_million": {
+      "off_peak": {
+        "input_cache_hit": "0.02",
+        "input_cache_miss": "1",
+        "output": "4"
+      },
+      "peak": {
+        "input_cache_hit": "0.04",
+        "input_cache_miss": "2",
+        "output": "8"
+      },
+      "source": "deepseek-pricing-zh",
+      "locator": "价格(3) 百万tokens输入（缓存命中）空闲 0.02 元／高峰 0.04 元；（缓存未命中）空闲 1 元／高峰 2 元；百万tokens输出空闲 4 元／高峰 8 元"
+    },
+    "gpu_leasing": {
+      "usd_per_gpu_hour": "2",
+      "device": "H800",
+      "source": "deepseek-serving-report",
+      "locator": "Assuming the leasing cost of one H800 GPU is $2 per hour"
+    },
+    "api_shape": {
+      "source": "typesafe-docs-intro",
+      "locator": "Every question is evaluated in parallel and in isolation against the same state in one go. Adding questions barely changes the response time."
+    }
+  }
+}

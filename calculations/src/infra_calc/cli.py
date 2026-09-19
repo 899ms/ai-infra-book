@@ -11,6 +11,7 @@ from .schema import Scenario
 from .sources import fetch_sources, records, verify_sources, model_config
 from .topics import state, projection, experts, hyper_connections, v4_attention, v4_forward, k3_mla, k3_kda, attn_res, kda_chunk, k3_forward, cache_sequence, resource_basics, memory_concurrency, decode_budget, ring_collective, tree_collective, all_to_all, numa_staging, moe_dedup, capacity_scan, dense_placement, dense_communication, pipeline_schedule, training_matrix, rl_cycle, rl_supply, request_trace, agent_trace, audio_timing, gemm_tiles, row_reduction, reduction_order, bank_mapping, loop_access, fusion_lifetime, quantized_gemm, fusion_numerics, online_softmax, attention_tiles, host_transfer, stream_buffer, graph_execution, optimization_deployment, shape_specialization, runtime_trace, persistent_tasks, request_dag, microbatch_overlap, topology_allocation, collective_paths, periodic_queue, feedback_queue, packet_reorder, collective_tail, connection_states, operation_ordering, completion_reclaim, rpc_trace, remote_state, kv_pages, kv_trace, kv_restore, prefix_value, apc_trace, speculative_round, speculative_sampling, speculative_budget, dflash_work, chunk_history, batch_reuse, iteration_batching, service_replay, gguf_inventory, gguf_layout, kv_codec, weight_offload, kv_quality, pd_af_handoff, pd_pool, expert_locality, grouped_experts, replica_payback, cache_route, router_trace, router_pressure, cache_restart, cache_missing, cache_fault, cache_residency, training_state, gradient_cast, checkpoint_reshard, checkpoint_async, checkpoint_interval, checkpoint_baseline, checkpoint_fault, checkpoint_resume, training_deadline, dense_training_scale, routing_metadata, teacher_cache, weight_handoff, routing_cost, v4_fp8_linear, multimodal_cache, v3_forward, environment_resources, omni_audio, image_generation, video_generation, vision_encoding, retry_paths, vl_request, omni_audio_encoder, nic_budget, omni_vision_encoding, tpu_demand, sequence_dependencies, omni_understanding, environment_lifecycle, ub_scope, training_history, scaling_law, reconfiguration, kv_tiers
 from .topics import ub_fabric
+from .topics import decision_request
 from .topics import qwen235_placement
 from .topics import dense_quantized_placement
 from .topics import request_model_comparison
@@ -632,6 +633,10 @@ def parser() -> argparse.ArgumentParser:
     prefix.add_argument('--inputs',type=Path)
     prefix.add_argument('--format',choices=('json','md'),default='json')
     prefix.add_argument('--output',type=Path)
+    decision = sub.add_parser('decision-request',help='One shared forward over state and typed questions, priced against Jev and DeepSeek list prices')
+    decision.add_argument('--inputs',type=Path)
+    decision.add_argument('--format',choices=('json','md'),default='json')
+    decision.add_argument('--output',type=Path)
     restore = sub.add_parser('kv-restore',help='KV keep/offload/recompute with an explicit next-use window')
     restore.add_argument('--inputs',type=Path)
     restore.add_argument('--format',choices=('json','md'),default='json')
@@ -1498,6 +1503,8 @@ def main(argv: list[str] | None = None) -> None:
             result = apc_trace.calculate(run=args.run)
         elif args.command == 'prefix-value':
             result = _calculate_from_json_inputs(prefix_value.calculate, args.inputs)
+        elif args.command == 'decision-request':
+            result = _calculate_from_json_inputs(decision_request.calculate, args.inputs)
         elif args.command == 'kv-restore':
             result = _calculate_from_json_inputs(kv_restore.calculate, args.inputs)
         elif args.command == 'kv-trace':

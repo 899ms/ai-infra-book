@@ -32,6 +32,17 @@ bash book/build_pdf.sh --chapter 2
 
 `cover.tex` 是本书的新封面：保留原系列的白底、深蓝色带、标题和作者排布，中心图案改成“芯片—互联—计算集群”。标题固定在距页顶 5.2 cm 处，副标题为 7.05 cm，版本日期距页底 3.95 cm，留白不再受正文段落高度影响。图案完全由 TikZ 绘制，文字与线条均为矢量，可直接修改颜色、标题和几何形状，无需外部图片服务。书名、副标题和作者沿用本仓库 README。
 
+## EPUB
+
+PDF 按固定版面排版，在小屏幕上难以阅读。`book/build_epub.py` 用同一份 Markdown 生成可重排的 EPUB 3，字体和字号交给阅读器设置：
+
+```bash
+python3 book/build_epub.py                 # 中文版 → book/AI-Infra-Book.epub
+python3 book/build_epub.py --edition en    # 英文版 → book-en/AI-Infra-Book-EN.epub
+```
+
+依赖为 Pandoc 3.x 和 Poppler（`pdftoppm`），不需要 XeLaTeX。公式转为 MathML，随字号缩放；配图由 PDF 版使用的同一批矢量 PDF 渲染为 1400 像素宽的 PNG（缓存在 `book/build/epub-figures/`），不依赖阅读器是否有中文字体；章节之间的链接变为书内跳转，指向计算记录和实验的链接变为 GitHub 链接（`--source-ref` 固定到某次提交）。若已运行 PDF 构建，封面取自导出的 `AI-Infra-Book-Cover.png`。样式见 `epub.css`。CI 在 PDF 之后构建两个 EPUB，用 `epubcheck` 校验，并随 Release 发布。
+
 ## 校验
 
 运行 `python3 book/verify_pdf.py` 检查全书和第二章的书名、章节、200K 图表数据、字体嵌入、页面文字边界与 LaTeX 关键警告。结果保存到 [pdf-validation.json](pdf-validation.json)。已检查封面、正文、长上下文图及连续横向矩阵表的实际渲染。

@@ -72,7 +72,7 @@ jobs:
         run: git lfs pull --include="${{ matrix.lfs }}" --exclude=""
       - name: Install Pandoc, XeLaTeX and fonts
         run: |
-          brew install texlive poppler ghostscript
+          brew install texlive poppler ghostscript epubcheck
           curl --fail --location --retry 3 --output "$RUNNER_TEMP/pandoc.pkg" "https://github.com/jgm/pandoc/releases/download/3.7.0.2/pandoc-3.7.0.2-$(uname -m)-macOS.pkg"
           sudo installer -pkg "$RUNNER_TEMP/pandoc.pkg" -target /
           # The pinned installer puts Pandoc in /usr/local/bin.
@@ -91,6 +91,12 @@ jobs:
         run: bash ${{ matrix.script }} --output-dir "$GITHUB_WORKSPACE/${{ matrix.output }}" --source-ref "$BOOK_SOURCE_REF"
       - name: Validate PDF and render representative pages
         run: python book/check_ci_pdf.py ${{ matrix.output }} --edition ${{ matrix.edition }}
+      - name: Build and validate EPUB (${{ matrix.edition }})
+        env:
+          BOOK_SOURCE_REF: ${{ github.sha }}
+        run: |
+          python book/build_epub.py --edition ${{ matrix.edition }} --output-dir "$GITHUB_WORKSPACE/${{ matrix.output }}" --source-ref "$BOOK_SOURCE_REF"
+          epubcheck ${{ matrix.output }}/AI-Infra-Book*.epub
       - name: Upload PDF release files
         uses: actions/upload-artifact@v7
         with:
@@ -98,6 +104,7 @@ jobs:
           if-no-files-found: error
           path: |
             ${{ matrix.output }}/AI-Infra-Book*.pdf
+            ${{ matrix.output }}/AI-Infra-Book*.epub
             ${{ matrix.output }}/AI-Infra-Book*-build.json
             ${{ matrix.output }}/AI-Infra-Book*-Cover.png
             ${{ matrix.output }}/pdf-validation.json
@@ -146,9 +153,11 @@ jobs:
               f'{built}（北京时间）自动从 main 提交 '
               f'[{sha[:12]}](https://github.com/{repo}/commit/{sha}) 构建。\n\n'
               '下载 `AI-Infra-Book.pdf` 阅读完整十二章全书；`AI-Infra-Book-EN.pdf` 为社区翻译的英文版'
-              '（English edition, translated by [@tg1482](https://github.com/tg1482)）。\n\n'
+              '（English edition, translated by [@tg1482](https://github.com/tg1482)）。'
+              '在手机和电子书阅读器上阅读，可下载可调字号的 `AI-Infra-Book.epub` 与 `AI-Infra-Book-EN.epub`。\n\n'
               f'最新版固定链接：https://github.com/{repo}/releases/latest/download/AI-Infra-Book.pdf\n\n'
               f'英文版固定链接：https://github.com/{repo}/releases/latest/download/AI-Infra-Book-EN.pdf\n\n'
+              f'EPUB 固定链接：https://github.com/{repo}/releases/latest/download/AI-Infra-Book.epub\n\n'
               '在线阅读：https://bojieli.github.io/ai-infra-book/\n')
           PY
       - name: Publish release for this commit
@@ -172,7 +181,7 @@ jobs:
           if ! gh release view "$tag" >/dev/null 2>&1; then
             retry sh -c 'gh release view "$1" >/dev/null 2>&1 || gh release create "$1" --target "$2" --title "全书 $3" --notes-file release-notes.md --draft' _ "$tag" "$SOURCE_SHA" "$TITLE"
           fi
-          retry gh release upload "$tag" dist/AI-Infra-Book.pdf dist/AI-Infra-Book-EN.pdf --clobber
+          retry gh release upload "$tag" dist/AI-Infra-Book.pdf dist/AI-Infra-Book-EN.pdf dist/AI-Infra-Book.epub dist/AI-Infra-Book-EN.epub --clobber
           # Remove legacy build extras if this commit's release is being rerun.
           for asset in AI-Infra-Book-build.json AI-Infra-Book-Cover.pdf AI-Infra-Book-Cover.png ai-infra-book-site.tar.gz pdf-validation.json SHA256SUMS; do
             if gh release view "$tag" --json assets --jq '.assets[].name' | grep -Fxq "$asset"; then

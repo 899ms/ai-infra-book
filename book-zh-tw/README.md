@@ -24,6 +24,9 @@ bash book-zh-tw/build_pdf.sh
 需要 Python 3.9+、Pandoc 3.x、XeLaTeX 與 Poppler。建置結果會寫入
 `book-zh-tw/AI-Infra-Book-ZH-TW.pdf`；中間檔案放在 `book-zh-tw/build/`，不納入版本控制。
 
+推送到 GitHub 後，`Build and publish book` workflow 會另外建置繁中版本；在該次 run
+的 artifacts 下載 `book-pdf-zh-tw-download` 即可取得 PDF 與版面驗證結果。
+
 ## 更新翻譯
 
 繁中字稿由目前的 `manuscripts/` 產生。要重建稿件，先安裝可選的轉換工具：

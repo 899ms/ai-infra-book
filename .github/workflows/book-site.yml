@@ -119,6 +119,58 @@ jobs:
             ${{ matrix.output }}/preview-*.png
           if-no-files-found: ignore
 
+  pdf-zh-tw:
+    # The Traditional Chinese edition is an independent deliverable and does
+    # not participate in the existing release/EPUB matrix above.
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Fetch Traditional Chinese PDF figures and fonts
+        run: git lfs pull --include="book-zh-tw/images/**,manuscripts/figure_style/fonts/**" --exclude=""
+      - name: Install Pandoc, XeLaTeX and fonts
+        run: |
+          brew install texlive poppler ghostscript
+          curl --fail --location --retry 3 --output "$RUNNER_TEMP/pandoc.pkg" "https://github.com/jgm/pandoc/releases/download/3.7.0.2/pandoc-3.7.0.2-$(uname -m)-macOS.pkg"
+          sudo installer -pkg "$RUNNER_TEMP/pandoc.pkg" -target /
+          export PATH="/usr/local/bin:$PATH"
+          echo "/usr/local/bin" >> "$GITHUB_PATH"
+          pandoc --version
+          for package in lmodern.sty biblatex.sty pzdr.tfm ctex.sty newtxmath.sty esint.sty adforn.sty fvextra.sty placeins.sty xurl.sty tcolorbox.sty; do
+            kpsewhich "$package"
+          done
+          pip install -r book/requirements-ci.txt
+      - name: Check local Mac font parity
+        run: python book/check_build_fonts.py
+      - name: Build Traditional Chinese PDF
+        env:
+          BOOK_SOURCE_REF: ${{ github.sha }}
+        run: bash book-zh-tw/build_pdf.sh --output-dir "$GITHUB_WORKSPACE/build/pdf-zh-tw" --source-ref "$BOOK_SOURCE_REF"
+      - name: Validate Traditional Chinese PDF and render representative pages
+        run: python book/check_ci_pdf.py build/pdf-zh-tw --edition zh-tw
+      - name: Upload Traditional Chinese PDF
+        uses: actions/upload-artifact@v7
+        with:
+          name: book-pdf-zh-tw-download
+          if-no-files-found: error
+          path: |
+            build/pdf-zh-tw/AI-Infra-Book-ZH-TW.pdf
+            build/pdf-zh-tw/AI-Infra-Book-ZH-TW-build.json
+            build/pdf-zh-tw/AI-Infra-Book-ZH-TW-Cover.png
+            build/pdf-zh-tw/pdf-validation.json
+      - name: Save Traditional Chinese PDF diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pdf-build-diagnostics-zh-tw
+          path: |
+            book-zh-tw/build/AI-Infra-Book-ZH-TW/*.log
+            build/pdf-zh-tw/preview-*.png
+          if-no-files-found: ignore
+
   release:
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: [website, pdf]

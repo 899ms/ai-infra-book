@@ -190,7 +190,11 @@ import sys
 sys.path.insert(0,str(HERE.parent))
 from teaching_revision import draw as draw_teaching
 teaching_outputs,teaching_checks=draw_teaching(HERE,data)
-outputs=list(dict.fromkeys(outputs+teaching_outputs))
+mimo_outputs,mimo_check=runpy.run_path(str(HERE/'mimo-interruptions.py'))['draw']()
+teaching_checks.append(mimo_check)
+(HERE/'teaching-layout-validation.json').write_text(json.dumps(teaching_checks,ensure_ascii=False,indent=2)+'\n')
+data['mimo_interruptions']=read('references/files/documents/mimo-v26-rl-run-log/recalculated.json')
+outputs=list(dict.fromkeys(outputs+teaching_outputs+mimo_outputs))
 (HERE/'figure-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
 (HERE/'figure-layout-check.json').write_text(json.dumps({'text_extent_warnings':layout},ensure_ascii=False,indent=2)+'\n')
 # Render formulas on the build machine; bundle all image/font bytes into HTML.

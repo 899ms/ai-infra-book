@@ -175,58 +175,63 @@
     "number": 35
   },
   {
+    "file": "figure-10-mimo-interruptions.svg",
+    "caption": "两次运行分别从启动时刻计时。蓝色为完成步骤的区间，红色为上一个事件至重启的区间，三角标记重启；斜线为 Flash 回滚后作废的两步。浪费时间按红色与斜线区间合计估算，括号内为其占总运行时间的比例；下方按公开费率换算费用。节省金额假设训练工作不变，减少的中断时间等量缩短运行。",
+    "number": 36
+  },
+  {
     "file": "figure-10-14-rl-flow.svg",
     "caption": "三阶段分别最多处理 12、6、8 条等长轨迹/s。验证后保留 75%，所以只有 4.5 条/s 进入学习。返回箭头表示学习产生的新权重影响后续生成；其同步耗时在后面的阶段切换与异步算例中展开。",
-    "number": 36
+    "number": 37
   },
   {
     "file": "figure-10-15-rl.svg",
     "caption": "先加载生成权重并分配 KV 池，再释放训练状态，峰值约为 83.3 GiB，超过 H100 SXM 的 74.5 GiB。横轴按操作顺序排列。",
-    "number": 37
+    "number": 38
   },
   {
     "file": "figure-10-rl-staged.svg",
     "caption": "先加载生成权重，再释放训练状态，最后分配 KV 池。峰值降为约 59.3 GiB；两图共用 74.5 GiB 容量线和同一纵轴。",
-    "number": 38
+    "number": 39
   },
   {
     "file": "figure-10-weight-update.svg",
     "caption": "固定版本服务与策略训练的权重生命周期。上方 ROM 重复提供同一版本；下方训练产生新版本并发布给生成端。KV 写入与权重更新使用不同的数据通路。",
-    "number": 39
+    "number": 40
   },
   {
     "file": "figure-10-policy-versions.svg",
     "caption": "μ 产生训练样本，πold 标识本轮优化的起点，πθ 随本轮更新变化。虚线表示版本演进顺序。三个概率必须针对同一前缀与同一 token 计算。",
-    "number": 40
+    "number": 41
   },
   {
     "file": "figure-10-16-async-cycle.svg",
     "caption": "同步循环依次生成本批样本、学习本批样本、同步权重，分别用时 40、16、4 s，共 60 s。",
-    "number": 41
+    "number": 42
   },
   {
     "file": "figure-10-async-overlap.svg",
     "caption": "稳态中生成下一批与学习上一批在独立资源上重叠；两者完成后同步权重，周期为 44 s。橙色同步阶段阻塞两侧。",
-    "number": 42
+    "number": 43
   },
   {
     "file": "figure-10-17-replay.svg",
     "caption": "离散专家 ID 连接生成端与训练端，当前权重继续参与数值计算。示意记录为样本 A、token 17、层 3 的 top-2 选择；虚线表示 ID 重放，实线表示当前计算数据流。",
-    "number": 43
+    "number": 44
   },
   {
     "file": "figure-10-18-deadline.svg",
     "caption": "每条横条依次累计基础训练时间、保存与故障恢复的附加时间，以及预留的 5 天计划性停顿。基础训练时间已经包括通信和输入等待；橙色小段为 checkpoint 模型得到的额外耗时。两套方案使用相同任务和全局 batch，虚线标出 30 天期限。",
-    "number": 44
+    "number": 45
   },
   {
     "file": "figure-10-19-hardware.svg",
     "caption": "资源能力变化的收益由原有等待时间占比决定。曲线按 $T'/T=1-f+f/r$ 计算，固定单卡计算与依赖，通信时间与有效能力成反比。",
-    "number": 45
+    "number": 46
   },
   {
     "file": "figure-10-20-scale.svg",
     "caption": "固定 90 天执行期限，稠密模型规模增大要求更多的卡。数据量为 20T token，算法工作为 $6ND$，实线的 MFU 为 40%，虚线为 50%，使用 BF16 稠密矩阵峰值。各线为向上取整前的连续计算边界；横线标出 16,384 张卡。",
-    "number": 46
+    "number": 47
   }
 ]

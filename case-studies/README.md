@@ -95,6 +95,7 @@
 | 案例 | 引用章节 |
 | --- | :--: |
 | [检查点布局、后台保存与推理加载](checkpoint-layout-and-loading.md) | 10 |
+| [MiMo-V2.6 两次 RL 运行的中断与恢复](mimo-v26-rl-interruptions.md) | 10 |
 | [RL 中的状态、版本与可复现性](rl-state-and-reproducibility.md) | 10 |
 | [训练卸载中的转换、传输与更新位置](training-offload-and-casting.md) | 10 |
 

@@ -65,9 +65,11 @@ python3 manuscripts/ch10/verify.py
 
 本轮[图示与段落衔接修订](revisions/visual-explanation/README.md)新增十一幅机制图，并按阅读顺序统一编号。旧版图号对应关系见 [figure-number-map.json](figure-number-map.json)。新图由 [mechanism-figures.py](mechanism-figures.py) 生成，统一通过 build.py 构建。
 
-## 当前阅读版配图（2026-09-10）
+## 当前阅读版配图
 
-正文现引用 46 幅图，以下清单按当前阅读顺序列出；上文旧图号用于追溯构建记录。
+正文现引用 47 幅图，以下清单按当前阅读顺序列出；上文旧图号用于追溯构建记录。
+
+新增的 MiMo 中断与成本图参考作者提供的运行看板截图，使用最终完整日志重新计算。单独重画可运行 `.venv-site/bin/python manuscripts/ch10/mimo-interruptions.py`；数据由 `references/files/documents/mimo-v26-rl-run-log/recalculate.py` 生成。
 
 | 图号 | 内容 | SVG | PNG | PDF |
 | --- | --- | --- | --- | --- |
@@ -106,14 +108,15 @@ python3 manuscripts/ch10/verify.py
 | 10-33 | 两份 112 GB 快照以 7 GB/s 写入，各先花 0.5 s 复制到缓冲（橙色），随后上传（蓝色）。50 s 故障时第一份已提交，第二份尚未提交；斜线为无故障时剩余上传，空心点为原定提交时刻。 | [SVG](figure-10-12-recovery.svg) | [PNG](figure-10-12-recovery.png) | [PDF](figure-10-12-recovery.pdf) |
 | 10-34 | 相同快照以 20 GB/s 写入，于 26.1、46.1 s 提交。50 s 故障时可以恢复到 40 s 的训练状态，只需重做 10 s。 | [SVG](figure-10-recovery-fast.svg) | [PNG](figure-10-recovery-fast.png) | [PDF](figure-10-recovery-fast.pdf) |
 | 10-35 | 蓝线为保存耗时占比，橙线为故障重做耗时占比，绿线为两者加上恢复耗时后的合计。使用 1024 卡作业平均 7.9 小时中断一次、保存约 16.4 s 和恢复 120 s 的一阶模型。最低点出现在两项随间隔变化的代价相互平衡处。 | [SVG](figure-10-13-save-interval.svg) | [PNG](figure-10-13-save-interval.png) | [PDF](figure-10-13-save-interval.pdf) |
-| 10-36 | 三阶段分别最多处理 12、6、8 条等长轨迹/s。验证后保留 75%，所以只有 4.5 条/s 进入学习。返回箭头表示学习产生的新权重影响后续生成；其同步耗时在后面的阶段切换与异步算例中展开。 | [SVG](figure-10-14-rl-flow.svg) | [PNG](figure-10-14-rl-flow.png) | [PDF](figure-10-14-rl-flow.pdf) |
-| 10-37 | 先加载生成权重并分配 KV 池，再释放训练状态，峰值约为 83.3 GiB，超过 H100 SXM 的 74.5 GiB。横轴按操作顺序排列。 | [SVG](figure-10-15-rl.svg) | [PNG](figure-10-15-rl.png) | [PDF](figure-10-15-rl.pdf) |
-| 10-38 | 先加载生成权重，再释放训练状态，最后分配 KV 池。峰值降为约 59.3 GiB；两图共用 74.5 GiB 容量线和同一纵轴。 | [SVG](figure-10-rl-staged.svg) | [PNG](figure-10-rl-staged.png) | [PDF](figure-10-rl-staged.pdf) |
-| 10-39 | 固定版本服务与策略训练的权重生命周期。上方 ROM 重复提供同一版本；下方训练产生新版本并发布给生成端。KV 写入与权重更新使用不同的数据通路。 | [SVG](figure-10-weight-update.svg) | [PNG](figure-10-weight-update.png) | [PDF](figure-10-weight-update.pdf) |
-| 10-40 | μ 产生训练样本，πold 标识本轮优化的起点，πθ 随本轮更新变化。虚线表示版本演进顺序。三个概率必须针对同一前缀与同一 token 计算。 | [SVG](figure-10-policy-versions.svg) | [PNG](figure-10-policy-versions.png) | [PDF](figure-10-policy-versions.pdf) |
-| 10-41 | 同步循环依次生成本批样本、学习本批样本、同步权重，分别用时 40、16、4 s，共 60 s。 | [SVG](figure-10-16-async-cycle.svg) | [PNG](figure-10-16-async-cycle.png) | [PDF](figure-10-16-async-cycle.pdf) |
-| 10-42 | 稳态中生成下一批与学习上一批在独立资源上重叠；两者完成后同步权重，周期为 44 s。橙色同步阶段阻塞两侧。 | [SVG](figure-10-async-overlap.svg) | [PNG](figure-10-async-overlap.png) | [PDF](figure-10-async-overlap.pdf) |
-| 10-43 | 离散专家 ID 连接生成端与训练端，当前权重继续参与数值计算。示意记录为样本 A、token 17、层 3 的 top-2 选择；虚线表示 ID 重放，实线表示当前计算数据流。 | [SVG](figure-10-17-replay.svg) | [PNG](figure-10-17-replay.png) | [PDF](figure-10-17-replay.pdf) |
-| 10-44 | 每条横条依次累计基础训练时间、保存与故障恢复的附加时间，以及预留的 5 天计划性停顿。基础训练时间已经包括通信和输入等待；橙色小段为 checkpoint 模型得到的额外耗时。两套方案使用相同任务和全局 batch，虚线标出 30 天期限。 | [SVG](figure-10-18-deadline.svg) | [PNG](figure-10-18-deadline.png) | [PDF](figure-10-18-deadline.pdf) |
-| 10-45 | 资源能力变化的收益由原有等待时间占比决定。曲线按 $T'/T=1-f+f/r$ 计算，固定单卡计算与依赖，通信时间与有效能力成反比。 | [SVG](figure-10-19-hardware.svg) | [PNG](figure-10-19-hardware.png) | [PDF](figure-10-19-hardware.pdf) |
-| 10-46 | 固定 90 天执行期限，稠密模型规模增大要求更多的卡。数据量为 20T token，算法工作为 $6ND$，实线的 MFU 为 40%，虚线为 50%，使用 BF16 稠密矩阵峰值。各线为向上取整前的连续计算边界；横线标出 16,384 张卡。 | [SVG](figure-10-20-scale.svg) | [PNG](figure-10-20-scale.png) | [PDF](figure-10-20-scale.pdf) |
+| 10-36 | 两次运行分别从启动时刻计时。蓝色为完成步骤的区间，红色为上一个事件至重启的区间，三角标记重启；斜线为 Flash 回滚后作废的两步。浪费时间按红色与斜线区间合计估算，括号内为其占总运行时间的比例；下方按公开费率换算费用。节省金额假设训练工作不变，减少的中断时间等量缩短运行。 | [SVG](figure-10-mimo-interruptions.svg) | [PNG](figure-10-mimo-interruptions.png) | [PDF](figure-10-mimo-interruptions.pdf) |
+| 10-37 | 三阶段分别最多处理 12、6、8 条等长轨迹/s。验证后保留 75%，所以只有 4.5 条/s 进入学习。返回箭头表示学习产生的新权重影响后续生成；其同步耗时在后面的阶段切换与异步算例中展开。 | [SVG](figure-10-14-rl-flow.svg) | [PNG](figure-10-14-rl-flow.png) | [PDF](figure-10-14-rl-flow.pdf) |
+| 10-38 | 先加载生成权重并分配 KV 池，再释放训练状态，峰值约为 83.3 GiB，超过 H100 SXM 的 74.5 GiB。横轴按操作顺序排列。 | [SVG](figure-10-15-rl.svg) | [PNG](figure-10-15-rl.png) | [PDF](figure-10-15-rl.pdf) |
+| 10-39 | 先加载生成权重，再释放训练状态，最后分配 KV 池。峰值降为约 59.3 GiB；两图共用 74.5 GiB 容量线和同一纵轴。 | [SVG](figure-10-rl-staged.svg) | [PNG](figure-10-rl-staged.png) | [PDF](figure-10-rl-staged.pdf) |
+| 10-40 | 固定版本服务与策略训练的权重生命周期。上方 ROM 重复提供同一版本；下方训练产生新版本并发布给生成端。KV 写入与权重更新使用不同的数据通路。 | [SVG](figure-10-weight-update.svg) | [PNG](figure-10-weight-update.png) | [PDF](figure-10-weight-update.pdf) |
+| 10-41 | μ 产生训练样本，πold 标识本轮优化的起点，πθ 随本轮更新变化。虚线表示版本演进顺序。三个概率必须针对同一前缀与同一 token 计算。 | [SVG](figure-10-policy-versions.svg) | [PNG](figure-10-policy-versions.png) | [PDF](figure-10-policy-versions.pdf) |
+| 10-42 | 同步循环依次生成本批样本、学习本批样本、同步权重，分别用时 40、16、4 s，共 60 s。 | [SVG](figure-10-16-async-cycle.svg) | [PNG](figure-10-16-async-cycle.png) | [PDF](figure-10-16-async-cycle.pdf) |
+| 10-43 | 稳态中生成下一批与学习上一批在独立资源上重叠；两者完成后同步权重，周期为 44 s。橙色同步阶段阻塞两侧。 | [SVG](figure-10-async-overlap.svg) | [PNG](figure-10-async-overlap.png) | [PDF](figure-10-async-overlap.pdf) |
+| 10-44 | 离散专家 ID 连接生成端与训练端，当前权重继续参与数值计算。示意记录为样本 A、token 17、层 3 的 top-2 选择；虚线表示 ID 重放，实线表示当前计算数据流。 | [SVG](figure-10-17-replay.svg) | [PNG](figure-10-17-replay.png) | [PDF](figure-10-17-replay.pdf) |
+| 10-45 | 每条横条依次累计基础训练时间、保存与故障恢复的附加时间，以及预留的 5 天计划性停顿。基础训练时间已经包括通信和输入等待；橙色小段为 checkpoint 模型得到的额外耗时。两套方案使用相同任务和全局 batch，虚线标出 30 天期限。 | [SVG](figure-10-18-deadline.svg) | [PNG](figure-10-18-deadline.png) | [PDF](figure-10-18-deadline.pdf) |
+| 10-46 | 资源能力变化的收益由原有等待时间占比决定。曲线按 $T'/T=1-f+f/r$ 计算，固定单卡计算与依赖，通信时间与有效能力成反比。 | [SVG](figure-10-19-hardware.svg) | [PNG](figure-10-19-hardware.png) | [PDF](figure-10-19-hardware.pdf) |
+| 10-47 | 固定 90 天执行期限，稠密模型规模增大要求更多的卡。数据量为 20T token，算法工作为 $6ND$，实线的 MFU 为 40%，虚线为 50%，使用 BF16 稠密矩阵峰值。各线为向上取整前的连续计算边界；横线标出 16,384 张卡。 | [SVG](figure-10-20-scale.svg) | [PNG](figure-10-20-scale.png) | [PDF](figure-10-20-scale.pdf) |

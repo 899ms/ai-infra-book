@@ -76,3 +76,16 @@ reaches past the plot area grows the canvas instead of being clipped.
   text from a data file rather than from a string literal.
 - One label in the chapter 5 execution timeline is abbreviated: its cell is
   sized from a measured duration and cannot fit an English word.
+
+## MiMo interruption-cost figure
+
+The MiMo case in Chapter 10 uses the author's revised Chinese text and the same
+archived event data in both editions. To regenerate its English SVG, PNG, and PDF:
+
+```bash
+.venv-site/bin/python book-en/tools/figure-scripts/ch10/mimo-interruptions.py
+```
+
+The wrapper calls the shared bilingual drawing code in
+`manuscripts/ch10/mimo-interruptions.py`. It preserves the event intervals,
+wasted-time percentages, and cost estimates while translating the labels.

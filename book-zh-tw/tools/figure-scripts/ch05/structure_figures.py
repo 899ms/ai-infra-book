@@ -1,0 +1,180 @@
+"""Chapter-five mechanism figures added in the structure revision (book figure style)."""
+from pathlib import Path
+import json
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle, Patch
+import numpy as np
+from figure_style import COL, STYLE, Exporter, canvas, plot, box, text, arrow
+from figure_style.typography import configure_font
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def cut(ax, p, q):
+    ax.plot([p[0], q[0]], [p[1], q[1]], ls=(0, (5, 3)), lw=1.6, color=COL['ink'])
+
+
+def draw(here, data=None):
+    here = Path(here); out = Exporter(here); data = {} if data is None else data
+    with plt.rc_context(STYLE):
+        # 5.1.2 Copy paths between host memory and device memory.
+        f, a = canvas(3.6)
+        for x, title in [(.02, "主機記憶體（CPU）"), (.56, "視訊記憶體（GPU）")]:
+            a.add_patch(Rectangle((x, .06), .42, .82, facecolor=COL['white'], edgecolor=COL['line'], lw=.9, ls=(0, (1, 2))))
+            text(a, x + .21, .93, title, 12, ha='center')
+        box(a, .06, .66, .34, .16, "普通記憶體\n頁面可被換出", 'gray', 11)
+        box(a, .06, .42, .34, .16, "鎖頁緩衝\n駐留，可直接搬移", 'blue', 11)
+        box(a, .06, .14, .34, .16, "結果緩衝", 'green', 11)
+        box(a, .60, .66, .34, .16, "權重\n載入一次，長期駐留", 'gray', 11)
+        box(a, .60, .42, .34, .16, "輸入緩衝", 'blue', 11)
+        box(a, .60, .14, .34, .16, "輸出", 'green', 11)
+        arrow(a, (.23, .66), (.23, .58)); text(a, .26, .625, "主機內複製", 11)
+        arrow(a, (.40, .50), (.60, .50)); text(a, .50, .55, 'H2D', 11, ha='center')
+        arrow(a, (.60, .22), (.40, .22)); text(a, .50, .27, 'D2H', 11, ha='center')
+        box(a, .68, .335, .18, .07, 'kernel', 'white', 11)
+        arrow(a, (.77, .42), (.77, .405)); arrow(a, (.77, .335), (.77, .30))
+        out.save(f, 'figure-5-copy-paths')
+
+        # 5.1.3 Two streams ordered by events; a slot is reused only after its reader finishes.
+        f, a = canvas(3.4)
+        text(a, .0, .70, "複製流", 12); text(a, .0, .32, "計算流", 12)
+        box(a, .14, .62, .20, .16, "H2D 批 0\n寫入槽 A", 'blue', 11)
+        box(a, .38, .62, .20, .16, "H2D 批 1\n寫入槽 B", 'green', 11)
+        box(a, .76, .62, .20, .16, "H2D 批 2\n寫入槽 A", 'blue', 11)
+        box(a, .38, .24, .30, .16, "計算 批 0\n讀取槽 A", 'blue', 11)
+        box(a, .72, .24, .24, .16, "計算 批 1\n讀取槽 B", 'green', 11)
+        arrow(a, (.34, .62), (.40, .40), 'control'); text(a, .10, .49, "事件：批 0 已傳完", 11)
+        arrow(a, (.68, .40), (.76, .62), 'control'); text(a, .44, .53, "事件：批 0 已用完", 11)
+        a.plot([.14, .96], [.10, .10], color=COL['line'], lw=.8); text(a, .96, .05, "時間", 11, ha='right')
+        out.save(f, 'figure-5-stream-event')
+
+        # 5.5.1 Host preparation and accelerator compute: serial, pipelined, faster accelerator.
+        f, a = canvas(4.6)
+        scale = .80 / 160; x0 = .16
+        panels = [(.70, "序列：每段準備 20 μs、計算 20 μs，四段共 160 μs", 40, 20, 20, 0),
+                  (.38, "流水：準備下一段與計算當前段同時進行，共 100 μs", 20, 20, 20, 20),
+                  (.06, "加速器提速到 5 μs：主機仍每 20 μs 才準備好一段，共 85 μs", 20, 20, 5, 20)]
+        for y, title, period, host, acc, lag in panels:
+            text(a, .0, y + .27, title, 11)
+            text(a, .0, y + .175, "主機準備", 11); text(a, .0, y + .045, "加速器計算", 11)
+            for i in range(4):
+                hx = x0 + scale * period * i
+                box(a, hx, y + .13, scale * host - .004, .09, str(i), 'orange', 11)
+                ax_ = x0 + scale * (period * i + (host if lag == 0 else lag))
+                box(a, ax_, y, scale * acc - .004, .09, str(i), 'blue', 11)
+        a.plot([x0, .96], [.015, .015], color=COL['line'], lw=.8)
+        for t in (0, 40, 80, 120, 160):
+            text(a, x0 + scale * t, -.01, f'{t}', 11, ha='center')
+        out.save(f, 'figure-5-host-pipeline')
+
+        # 5.5.2 Ordinary submission versus graph replay: launches change, kernels do not.
+        f, a = canvas(3.2)
+        for x, title, host_label in [(.03, "普通提交", "主機：六次 kernel launch"), (.53, "圖重放", "主機：一次 graph launch")]:
+            text(a, x, .93, title, 12); text(a, x, .80, host_label, 11); text(a, x, .08, "加速器：六個 kernel", 11)
+            for i in range(6):
+                bx = x + .072 * i
+                box(a, bx, .18, .06, .14, str(i + 1), 'blue', 11)
+                if x < .5:
+                    box(a, bx, .56, .06, .14, str(i + 1), 'orange', 11); arrow(a, (bx + .03, .56), (bx + .03, .32))
+        box(a, .53, .56, .16, .14, "圖", 'orange', 11)
+        a.plot([.56, .95], [.38, .38], color=COL['line'], lw=1)
+        for i in range(6): a.plot([.56 + .072 * i, .56 + .072 * i], [.38, .34], color=COL['line'], lw=1)
+        arrow(a, (.61, .56), (.61, .38))
+        out.save(f, 'figure-5-launch-vs-graph')
+
+        # 5.5.3 Real row counts padded into two buckets.
+        f, a = plot(3.0, left=.30, bottom=.25); f.subplots_adjust(top=.80)
+        rows = [256, 1536, 2048]; buckets = [512, 2048, 2048]; labels = ["256 行，8 次", "1536 行，1 次", "2048 行，1 次"]
+        a.barh(range(3), rows, color=COL['blue'], edgecolor=COL['line'], height=.55, label="實際行數")
+        a.barh(range(3), [b - r for b, r in zip(buckets, rows)], left=rows, color=COL['gray'], edgecolor=COL['line'], height=.55, label="補齊到桶")
+        for i, b in enumerate(buckets): a.text(b + 40, i, f'桶 {b}', va='center', fontsize=11)
+        a.set(yticks=range(3), yticklabels=labels, xlim=(0, 2500), xlabel="每次呼叫執行的行數"); a.invert_yaxis()
+        a.legend(frameon=False, ncol=2, loc='lower center', bbox_to_anchor=(.5, 1.0))
+        out.save(f, 'figure-5-shape-buckets')
+
+        # 5.2.4 Three ways to split one matrix multiply (moved here from chapter six).
+        f, a = canvas(4.8)
+        for row, (title, left, right, result, c) in enumerate([
+                ("切 M：輸出行", "輸入行分片", "權重複制", "不同輸出行", 'blue'),
+                ("切 N：輸出列", "輸入複製", "權重列分片", "不同輸出列", 'green'),
+                ("切 K：歸約維", "輸入列分片", "權重行分片", "同一輸出的部分和", 'orange')]):
+            y = .71 - row * .30
+            text(a, .04, y + .19, title, 13)
+            box(a, .04, y, .26, .13, left, c, 11); box(a, .36, y, .26, .13, right, c, 11); box(a, .70, y, .27, .13, result, c, 11)
+            text(a, .33, y + .065, '×', 13, ha='center'); arrow(a, (.62, y + .065), (.70, y + .065))
+        text(a, .50, .04, "輸出分片按需收集；歸約分片必須求和", 12, ha='center')
+        out.save(f, 'figure-5-split-axes')
+        # 5.1.5 Two resident blocks against the SM's three resource limits (calculations/results/sm-occupancy-book-tile.json).
+        limits = dict(threads=2048, registers=65536, shared_bytes=233472, blocks=32)
+        block = dict(threads=256, registers_per_thread=128, shared_bytes=98304, reserved_shared_bytes=1024)
+        by = dict(threads=limits['threads'] // block['threads'],
+                  registers=limits['registers'] // (block['threads'] * block['registers_per_thread']),
+                  shared_memory=limits['shared_bytes'] // (block['shared_bytes'] + block['reserved_shared_bytes']),
+                  blocks=limits['blocks'])
+        resident = min(by.values())
+        f, a = canvas(3.6)
+        text(a, .0, .95, "兩個駐留執行緒塊（藍：塊 0，綠：塊 1）", 12)
+        x0, w = .30, .62
+        rows = [("暫存器 64K 個", block['threads'] * block['registers_per_thread'] / limits['registers'], "兩塊填滿，第三塊放不下", True),
+                ("共享記憶體 228 KB", (block['shared_bytes'] + block['reserved_shared_bytes']) / limits['shared_bytes'], "剩 34 KiB，第三塊放不下", True),
+                ("執行緒槽 2048 個", block['threads'] / limits['threads'], "用了 512 個，還能放 6 塊", False)]
+        for i, (label, frac, note, binding) in enumerate(rows):
+            y = .73 - i * .27
+            text(a, .0, y + .06, label, 12)
+            a.add_patch(Rectangle((x0, y), w, .12, facecolor=COL['white'], edgecolor=COL['ink' if binding else 'line'], lw=1.8 if binding else .9))
+            for j in range(resident):
+                a.add_patch(Rectangle((x0 + j * w * frac, y), w * frac, .12, facecolor=COL['blue' if j == 0 else 'green'], edgecolor=COL['line'], lw=.9))
+                text(a, x0 + (j + .5) * w * frac, y + .06, str(j), 11, ha='center')
+            text(a, x0, y - .065, ("限制駐留：" if binding else '') + note, 11)
+        text(a, .0, .03, f'駐留 {resident} 塊 = {resident * block["threads"] // 32} 個 warp，佔用率 {resident * block["threads"] // 32}/64 = {resident * block["threads"] // 32 * 100 // 64}%', 12)
+        out.save(f, 'figure-5-sm-residency')
+        data['sm_residency'] = dict(kind='resource_residency', source='calculations/results/sm-occupancy-book-tile.json', limits=limits, block=block,
+                                    blocks_by_limit=by, resident_blocks=resident, resident_warps=resident * block['threads'] // 32,
+                                    occupancy=resident * block['threads'] / 32 / 64, binding_limits=[k for k, v in by.items() if v == resident],
+                                    shared_left_bytes=limits['shared_bytes'] - resident * (block['shared_bytes'] + block['reserved_shared_bytes']))
+
+        # 5.1.5 Producer warp copies, consumer warps compute; barriers hand over two slots (same timing as figure 5-16).
+        # One K tile (A and W, 32 KiB; 2,097,152 FLOPs) on one H100 SM: 3.35 TB/s and 989.4 TFLOP/s split over 132 SMs.
+        copy_us = 32768 * 132 / 3.35e12 * 1e6; compute_us = 2097152 * 132 / 989.4e12 * 1e6; tiles = 4
+        copies, computes = [], []
+        for t in range(tiles):
+            earliest = copies[-1]['start'] + copy_us if copies else 0
+            freed = computes[t - 2]['start'] + compute_us if t >= 2 else 0
+            copies.append(dict(tile=t, slot=t % 2, start=max(earliest, freed), duration=copy_us))
+            ready = copies[t]['start'] + copy_us
+            previous = computes[-1]['start'] + compute_us if computes else 0
+            computes.append(dict(tile=t, slot=t % 2, start=max(ready, previous), duration=compute_us))
+        f, a = plot(3.4, left=.25, bottom=.19); f.subplots_adjust(top=.80)
+        for e in copies + computes:
+            y = 1 if e in copies else 0
+            a.broken_barh([(e['start'], e['duration'])], (y - .19, .38), facecolors=COL['blue' if e['slot'] == 0 else 'green'], edgecolors=COL['line'], lw=.8)
+            a.text(e['start'] + e['duration'] / 2, y, str(e['tile']), ha='center', va='center', fontsize=11)
+        full = [(c['start'] + c['duration'], k['start']) for c, k in zip(copies, computes)]
+        empty = [(computes[t - 2]['start'] + compute_us, copies[t]['start']) for t in range(2, tiles)]
+        for done, begin in full:
+            a.annotate('', xy=(begin, .19), xytext=(done, .81), arrowprops=dict(arrowstyle='-|>', lw=1, color=COL['line'], shrinkA=0, shrinkB=0))
+        for done, begin in empty:
+            a.annotate('', xy=(begin, .81), xytext=(done, .19), arrowprops=dict(arrowstyle='-|>', lw=1, color=COL['line'], linestyle='--', shrinkA=0, shrinkB=0))
+        a.text(full[0][0] + .05, .5, "滿", fontsize=11, va='center'); a.text(empty[0][1] + .05, .62, "空", fontsize=11, va='center')
+        a.text((computes[0]['start'] + compute_us + computes[1]['start']) / 2, -.42, "等資料", fontsize=11, ha='center', va='center')
+        a.set(yticks=[0, 1], yticklabels=["消費者 warp\n計算", "生產者 warp\n複製"], xlim=(0, 5.8), ylim=(-.6, 1.6),
+              xticks=[0] + [round(c['start'] + copy_us, 2) for c in copies], xlabel="時間（μs）")
+        a.set_xticklabels(['0'] + [f"{c['start'] + copy_us:.2f}" for c in copies])
+        f.legend(handles=[Patch(fc=COL[c], ec=COL['line'], label=l) for c, l in [('blue', "槽 A：塊 0、2"), ('green', "槽 B：塊 1、3")]],
+                 loc='upper center', ncol=2, frameon=False)
+        out.save(f, 'figure-5-warp-pipeline')
+        data['warp_pipeline'] = dict(kind='teaching_timeline', copy_us=copy_us, compute_us=compute_us, copies=copies, computes=computes,
+                                     full_barrier_us=[d for d, _ in full], empty_barrier_us=[d for d, _ in empty],
+                                     completion_us=computes[-1]['start'] + compute_us)
+    (here / 'structure-layout-validation.json').write_text(json.dumps(out.checks, ensure_ascii=False, indent=2) + '\n')
+    return out.outputs
+
+
+if __name__ == '__main__':
+    _, family = configure_font()
+    plt.rcParams.update({'font.family': [family, 'DejaVu Sans'], 'axes.unicode_minus': False, 'svg.hashsalt': 'ch05-structure'})
+    draw(ROOT / 'manuscripts/ch05')

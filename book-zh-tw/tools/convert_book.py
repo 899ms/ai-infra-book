@@ -1,0 +1,203 @@
+#!/usr/bin/env python3
+"""Create and verify the Traditional Chinese manuscript copy.
+
+The source is already Chinese, so this pass is deliberately conservative: it
+converts characters and Taiwan terminology while protecting syntax that carries
+meaning for the build or for repository navigation. It does not paraphrase,
+delete, or add prose.
+
+    python3 convert_book.py translate
+    python3 convert_book.py verify
+"""
+
+from __future__ import annotations
+
+import argparse
+import re
+import sys
+from pathlib import Path
+
+try:
+    from opencc import OpenCC
+except ImportError as exc:  # pragma: no cover - exercised by the CLI guard
+    raise SystemExit(
+        'Missing OpenCC. Install with: python3 -m pip install '
+        '-r book-zh-tw/tools/requirements.txt'
+    ) from exc
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+SOURCE = ROOT / 'manuscripts'
+TARGET = HERE / 'manuscripts-zh-tw'
+CONVERTER = OpenCC('s2twp')
+
+# OpenCC handles character and phrase conversion. These are Taiwan-localized
+# technical terms that s2twp intentionally leaves unchanged or handles by a
+# different regional convention.
+TAIWAN_REPLACEMENTS = tuple(sorted({
+    '擴充套件': '擴充',
+    '片記憶體儲': '片上儲存',
+    '全域性': '全域',
+    '許可權': '權限',
+    '器件': '元件',
+    '引數': '參數',
+    '例項': '實例',
+    '程序': '程式',
+    '響應': '回應',
+    '訪問': '存取',
+    '配置': '設定',
+    '示例': '範例',
+    '平臺': '平台',
+    '用戶端': '使用者端',
+    '服務器': '伺服器',
+    '移動端': '行動裝置',
+    '數據庫': '資料庫',
+    '軟件': '軟體',
+    '硬件': '硬體',
+    '視頻': '影片',
+    '屏幕': '螢幕',
+    '質量': '品質',
+    '信息': '資訊',
+    '網絡': '網路',
+    '數據': '資料',
+    '用戶': '使用者',
+    '智能': '智慧',
+    '默認': '預設',
+    '支持': '支援',
+    '兼容': '相容',
+    '卸載': '解除安裝',
+    '反饋': '回饋',
+    '實現': '實作',
+    '通過': '透過',
+    '水平': '水準',
+    '托盤': '託盤',
+    '“': '「',
+    '”': '」',
+    '‘': '『',
+    '’': '』',
+}.items(), key=lambda pair: len(pair[0]), reverse=True))
+
+PROTECTED_TOKEN = '\u0000ZH_TW_PROTECTED_{}\u0000'
+
+
+def protect_syntax(text: str) -> tuple[str, list[str]]:
+    """Replace build-sensitive syntax with opaque placeholders."""
+    values: list[str] = []
+
+    def hold(match: re.Match[str] | str) -> str:
+        value = match.group(0) if isinstance(match, re.Match) else match
+        token = PROTECTED_TOKEN.format(len(values))
+        values.append(value)
+        return token
+
+    # Do the broadest regions first so nested Markdown is not processed again.
+    patterns = (
+        re.compile(r'^```[^\n]*\n.*?^```\s*$', re.M | re.S),
+        re.compile(r'`[^`\n]*`'),
+        re.compile(r'(?<=\]\()([^()\n]+)(?=\))'),
+        re.compile(r'https?://[^\s)>\]]+'),
+        re.compile(r'<[^>\n]+>'),
+    )
+    for pattern in patterns:
+        text = pattern.sub(hold, text)
+    return text, values
+
+
+def restore_syntax(text: str, values: list[str]) -> str:
+    for index, value in enumerate(values):
+        text = text.replace(PROTECTED_TOKEN.format(index), value)
+    return text
+
+
+def convert_text(text: str) -> str:
+    protected, values = protect_syntax(text)
+    converted = CONVERTER.convert(protected)
+    for old, new in TAIWAN_REPLACEMENTS:
+        converted = converted.replace(old, new)
+    return restore_syntax(converted, values)
+
+
+INLINE_MATH = re.compile(r'(?<!\$)\$[^$\n]+\$(?!\$)')
+IMAGE = re.compile(r'!\[[^\n]*\]\(([^)]+)\)')
+LINK = re.compile(r'(?<!!)\[[^\]]*\]\(([^)]+)\)')
+
+
+def fingerprint(text: str) -> dict:
+    return {
+        'display_math': text.count('$$') // 2,
+        'inline_math': len(INLINE_MATH.findall(text)),
+        'fences': text.count('```') // 2,
+        'table_rows': sum(1 for line in text.splitlines()
+                          if line.strip().startswith('|')),
+        'headings': re.findall(r'^(#+)\s', text, re.M),
+        'image_targets': IMAGE.findall(text),
+        'link_targets': LINK.findall(text),
+        'numbers': re.findall(r'(?<![A-Za-z])\d+(?:[.,]\d+)*(?:%|[A-Za-zµμ]+)?', text),
+    }
+
+
+def source_files(only: str | None = None) -> list[Path]:
+    files = sorted(SOURCE.glob('[0-9][0-9]-*.md'))
+    return [path for path in files if only is None or only in path.name]
+
+
+def translate(args: argparse.Namespace) -> None:
+    files = source_files(args.only)
+    TARGET.mkdir(parents=True, exist_ok=True)
+    total_chars = changed_chars = 0
+    for source in files:
+        target = TARGET / source.name
+        original = source.read_text(encoding='utf-8')
+        converted = convert_text(original)
+        target.write_text(converted, encoding='utf-8')
+        total_chars += len(original)
+        changed_chars += sum(a != b for a, b in zip(original, converted))
+        print(f'{source.name:32s} {len(original):8,d} chars  '
+              f'{sum(a != b for a, b in zip(original, converted)):8,d} changed')
+    print(f'\n{len(files)} file(s), {total_chars:,} source characters, '
+          f'{changed_chars:,} changed positions')
+
+
+def verify(args: argparse.Namespace) -> int:
+    failures = 0
+    for source in source_files(args.only):
+        target = TARGET / source.name
+        if not target.exists():
+            print(f'MISSING {target}')
+            failures += 1
+            continue
+        original = source.read_text(encoding='utf-8')
+        actual = target.read_text(encoding='utf-8')
+        expected = convert_text(original)
+        problems = []
+        if actual != expected:
+            problems.append('not equal to deterministic conversion')
+        if fingerprint(original) != fingerprint(actual):
+            problems.append('Markdown/math/link structure changed')
+        if problems:
+            failures += 1
+            print(f'FAIL   {source.name}: {"; ".join(problems)}')
+        else:
+            print(f'OK     {source.name}')
+    if failures:
+        print(f'\n{failures} manuscript(s) failed verification')
+        return 1
+    print(f'\nPASS: {len(source_files(args.only))} manuscript(s), '
+          'protected syntax and quantitative tokens unchanged')
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    sub = parser.add_subparsers(dest='command', required=True)
+    for name, fn in [('translate', translate), ('verify', verify)]:
+        command = sub.add_parser(name)
+        command.add_argument('--only', help='Only process files containing this text')
+        command.set_defaults(fn=fn)
+    args = parser.parse_args()
+    result = args.fn(args)
+    return result if isinstance(result, int) else 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

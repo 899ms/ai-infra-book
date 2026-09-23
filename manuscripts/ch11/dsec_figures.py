@@ -35,7 +35,7 @@ def draw(out,english=False):
             box(a,.03,.14,.94,.22,'','gray')
             text(a,.50,.29,L('宿主机 page cache','Host page cache'),12,ha='center')
             box(a,.35,.16,.30,.09,L('镜像页（唯一一份）' if shared else '镜像页','single copy' if shared else 'image pages'),'orange',11)
-            text(a,.50,.06,L('DAX 直接映射，不复制','DAX maps pages, no copy') if shared else L('经虚拟块设备复制到每台虚拟机','copied into every VM via virtual block device'),11,ha='center')
+            text(a,.50,.06,L('DAX 直接映射，不再复制','DAX maps pages, no copy') if shared else L('经虚拟块设备复制到每台虚拟机','copied into every VM via virtual block device'),11,ha='center')
             save(f,name)
         # Pause during a long GPU preemption; the axis is schematic.
         f,a=plot(3.2,left=.22)

@@ -67,14 +67,14 @@ save(f,'figure-6-1-placement');data['6-1']={'kind':'declared_placement','model':
 f,a=canvas(8)
 box(a,.015,.42,.17,.21,"完整輸入 X",'m × h',size=14)
 for y,r,col in [(.69,0,'light'),(.30,1,'pale')]:
- box(a,.255,y,.265,.22,f'卡 {r}：上投影與啟用',f'Wg,{r} / Wu,{r}：h × (f/2)\nZ{r}：m × (f/2)',col=col,size=12)
+ box(a,.255,y,.265,.22,f'卡 {r}：上投影與活化',f'Wg,{r} / Wu,{r}：h × (f/2)\nZ{r}：m × (f/2)',col=col,size=12)
  box(a,.60,y,.16,.22,f'下投影 Wd,{r}','(f/2) × h',col=col,size=12)
  box(a,.835,y,.14,.22,f'部分和 Y{r}','m × h',col='sand',size=13)
  arrow(a,(.19,.53),(.25,y+.11));arrow(a,(.525,y+.11),(.595,y+.11));arrow(a,(.765,y+.11),(.83,y+.11))
 box(a,.60,.04,.375,.13,"完整輸出 Y = Y0 + Y1","AllReduce：求和後每卡取得 m × h",col='light',size=13)
 arrow(a,(.98,.80),(.98,.105),'orange',rad=-.07)
 arrow(a,(.905,.295),(.905,.175),'orange')
-a.text(.03,.965,"上投影按列分片 → 啟用留在本地 → 下投影按行分片 → 輸出求和",fontsize=13,va='top')
+a.text(.03,.965,"上投影按列分片 → 活化值留在本地 → 下投影按行分片 → 輸出求和",fontsize=13,va='top')
 save(f,'figure-6-2-tp');data['6-2']={'kind':'tp_partial_outputs_with_pipeline_text_data','ffn_dims':[4096,12288,4096],'tp4_weight_bytes':3*5120*6400*2,'pipeline_stages':4,'microbatches':4,'slots':7,'utilization':4/7}
 # Independent PP diagram: one microbatch per color, one millisecond per cell.
 f,ax=plt.subplots(figsize=(11,4.6));f.subplots_adjust(left=.11,right=.98,bottom=.18,top=.9)
@@ -95,7 +95,7 @@ box(a,.40,.12,.25,.21,"卡 3：專家 6","計算 y6",size=14)
 box(a,.75,.29,.23,.29,"卡 0：加權合併",'a1 y1 + a6 y6',col='sand',size=14)
 arrow(a,(.285,.53),(.395,.74));arrow(a,(.285,.36),(.395,.225))
 arrow(a,(.655,.74),(.745,.53));arrow(a,(.655,.225),(.745,.36),'orange')
-a.text(.305,.20,'dispatch',fontsize=11,ha='right');a.text(.70,.18,"返回 y6",fontsize=11)
+a.text(.305,.20,'dispatch',fontsize=11,ha='right');a.text(.70,.18,"回傳 y6",fontsize=11)
 a.text(.05,.84,"儲存輸入的裝置",fontsize=12);a.text(.76,.84,"合併結果的裝置",fontsize=12)
 save(f,'figure-6-4-dispatch')
 # Ring: follow one block, then show completed block ownership.

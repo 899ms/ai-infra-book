@@ -117,7 +117,7 @@ a.text(0,-.43,"邊：新增 token 數；葉：總輸入 token 數",fontsize=10)
 a=f.add_axes([.56,.18,.40,.69]);common=[0]+[lcp([seq[i-1],seq[i]]) for i in range(1,len(seq))];lens=[len(s) for s in seq];a.bar(range(1,13),common,color=C['teal'],label="與上一輪共同字首");a.bar(range(1,13),np.array(lens)-common,bottom=common,color=C['orange'],label="其餘輸入");a.set(xticks=[1,3,6,9,12],xlabel="輪次",ylabel="輸入 token 數");a.set_title("12 輪 token 匹配〔輸入分析〕",fontsize=12,loc='left');a.legend(fontsize=9,frameon=False)
 data['prefix']={'tree':nodes,'edges':edges,'input_lengths':lens,'adjacent_lcp':common,'kind':'derived_token_identity_not_measured_hits'};save(f,'figure-8-6-prefix')
 # 4. One relation: buffering changes the number of complete histories that fit.
-f,a=canvas(6.5);a.text(.02,.94,"同樣解除安裝 2592 MiB，緩衝佔用改變可接納的上下文數",fontsize=15,weight='bold')
+f,a=canvas(6.5);a.text(.02,.94,"同樣卸載 2592 MiB，緩衝佔用改變可接納的上下文數",fontsize=15,weight='bold')
 scale=.74/2592
 for y,buff,count in [(.66,288,2),(.29,576,1)]:
  x=.20;a.text(.02,y+.065,f'{buff//288} 組緩衝',va='center',fontsize=12)

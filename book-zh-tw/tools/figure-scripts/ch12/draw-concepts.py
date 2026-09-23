@@ -12,7 +12,7 @@ for i in range(3):
 end=12+.05+.1+.16+.05
 a.axvline(12,color=C['line'],ls=':');a.text(12.9,3,'12.8 s',va='center');a.annotate("最後一塊決定結束時刻\n約 12.4 s",(end,0),(9,.65),arrowprops={'arrowstyle':'->','color':C['muted']},fontsize=11)
 a.text(6,1.2,"前兩塊的處理與回傳發生在後續上傳期間",ha='center',fontsize=11)
-a.set(xlim=(0,14.5),ylim=(-.5,3.6),yticks=[3,2,1,0],yticklabels=["整圖序列","分塊上傳","分塊處理","分塊回傳"],xlabel="從開始上傳起的時間 / s");a.set_xticks([0,4,8,12,14]);a.legend(frameon=False,ncol=4,loc='lower left',bbox_to_anchor=(0,1));a.grid(axis='x',alpha=.15)
+a.set(xlim=(0,14.5),ylim=(-.5,3.6),yticks=[3,2,1,0],yticklabels=["整圖先上傳後處理","分塊上傳","分塊處理","分塊回傳"],xlabel="從開始上傳起的時間 / s");a.set_xticks([0,4,8,12,14]);a.legend(frameon=False,ncol=4,loc='lower left',bbox_to_anchor=(0,1));a.grid(axis='x',alpha=.15)
 save(f,'figure-12-8-overlap');data['12-8']={'kind':'teaching_timeline','serial_s':12.8,'chunk_upload_s':4,'chunk_compute_s':.1,'chunk_return_s':[.08,.16,.16],'one_way_s':.05,'chunked_s':end,'relationship':"依賴改變重疊時間"}
 # Buffer conservation.
 f,a=plot_canvas();t=np.linspace(0,.245,120);rate=(256000-130000)/1000

@@ -23,12 +23,12 @@ def draw(here,data):
         for x,y,w,l,c in [(.04,.66,.32,"任務控制器",'orange'),(.64,.66,.32,"模型服務",'blue'),(.04,.19,.32,"環境平台",'gray'),(.64,.19,.32,"工具環境",'green')]:box(a,x,y,w,.22,l,c)
         for p,q in [((.36,.82),(.64,.82)),((.64,.71),(.36,.71)),((.2,.66),(.2,.41)),((.36,.35),(.64,.35)),((.64,.24),(.36,.24))]:arrow(a,p,q)
         text(a,.5,.94,"模型請求／完整工具參數",11,ha='center');text(a,.5,.09,"工具執行／儲存結果／交回控制器",11,ha='center');save(f,'2-boundary')
-        for i,l in enumerate(["程式","容器",'microVM']):
+        for i,l in enumerate(["行程","容器",'microVM']):
             f,a=canvas(4.0);text(a,.04,.94,l+"的隔離邊界",14);box(a,.04,.11,.92,.17,"宿主作業系統核心",'gray')
             for j in range(2):
                 x=.04+j*.48;box(a,x,.39,.44,.40,'','blue' if i<2 else 'green');text(a,x+.22,.67,"任務 "+str(j),12,ha='center');text(a,x+.22,.50,["私有地址空間","私有檢視與配額","獨立虛擬機器核心"][i],11,ha='center');arrow(a,(x+.22,.39),(x+.22,.28))
             save(f,'isolation-'+str(i))
-        f,a=canvas(4.2);box(a,.04,.62,.35,.24,"共享模板\n檔案與依賴",'blue');box(a,.61,.62,.35,.24,"環境私有內容\n修改頁與管理資料",'orange');box(a,.24,.13,.52,.24,"活躍環境記憶體\n程式、工作頁與緩衝區",'green')
+        f,a=canvas(4.2);box(a,.04,.62,.35,.24,"共享模板\n檔案與依賴",'blue');box(a,.61,.62,.35,.24,"環境私有內容\n修改頁與管理資料",'orange');box(a,.24,.13,.52,.24,"活躍環境記憶體\n行程、工作頁與緩衝區",'green')
         arrow(a,(.215,.62),(.40,.37));arrow(a,(.785,.62),(.60,.37));text(a,.5,.48,"載入執行所需內容",11,ha='center');save(f,'template-runtime')
         f,a=plot(4.0,left=.25);v=data['pages']['local_mib'];a.barh(range(4),v,color=COL['blue'],edgecolor=COL['line'])
         for i,x in enumerate(v):a.text(x+30,i,str(x),fontsize=11,va='center')
@@ -71,7 +71,7 @@ def draw(here,data):
         for batch,name in [(False,'5-stages'),(True,'stages-batch')]:
             f,a=plot(3.1,left=.20)
             for i in range(3):a.barh(0,10,left=i*10+(20 if batch else 0),height=.5,color=COL[['blue','green','orange'][i]],edgecolor=COL['line']);a.plot(i*10,1,'o',color='#454545')
-            a.set(yticks=[1,0],yticklabels=["樣本到達","驗證程式"],xlim=(-1,51),xlabel="時間（s）");save(f,name)
+            a.set(yticks=[1,0],yticklabels=["樣本到達","驗證行程"],xlim=(-1,51),xlabel="時間（s）");save(f,name)
         f,a=plot(4.0,left=.20);a.barh(range(10),[1]*9+[100],height=.6,color=[COL['blue']]*9+[COL['orange']],edgecolor=COL['line']);a.axvline(10,ls='--',color='#666');a.set(yticks=[0,8,9],yticklabels=["樣本 1","樣本 9","樣本 10"],xlim=(0,105),xlabel="驗證時間（s）");a.invert_yaxis();save(f,'remaining-time')
         f,a=plot(3.9,left=.18)
         for i,row in enumerate(data['thinking']['cost_parts']):

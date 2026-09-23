@@ -10,7 +10,7 @@ def draw(here,data):
         layers=[("應用與任務","要完成什麼，何時完成",'orange'),
                 ("模型與負載","需要哪些計算和資料",'blue'),
                 ("訓練與推理系統","安排請求、batch 和加速器",'green'),
-                ("運算元與編譯執行時","把運算變成可執行程式",'purple'),
+                ("運算子與編譯執行時","把運算變成可執行程式",'purple'),
                 ("處理器與儲存","計算並儲存資料",'blue'),
                 ("互聯與資料中心","連線裝置，提供電力與散熱",'gray')]
         for i,(title,body,c) in enumerate(layers):
@@ -25,7 +25,7 @@ def draw(here,data):
         arrow(a,(.30,.85),(.36,.85));arrow(a,(.64,.85),(.70,.85))
         box(a,.02,.06,.96,.52,'','gray');text(a,.05,.53,"被選中的推理實例",14)
         box(a,.06,.17,.24,.22,"實例排程器\n組成 batch",'green')
-        box(a,.38,.17,.24,.22,"CPU\n提交程式",'blue')
+        box(a,.38,.17,.24,.22,"CPU\n提交行程",'blue')
         box(a,.70,.17,.24,.22,"GPU\n執行運算",'orange')
         arrow(a,(.30,.28),(.38,.28));arrow(a,(.62,.28),(.70,.28))
         arrow(a,(.84,.76),(.84,.61));text(a,.49,.65,"請求進入實例",11,ha='center')
@@ -47,7 +47,7 @@ def draw(here,data):
         box(a,.20,.56,.60,.12,"資料中心網路",'green')
         arrow(a,(.24,.77),(.38,.68));arrow(a,(.76,.77),(.62,.68))
         box(a,.02,.025,.96,.44,'','gray');text(a,.05,.425,"放大一個超節點",14)
-        box(a,.08,.27,.36,.11,"CPU 與主存",'blue');box(a,.61,.27,.31,.11,"網路卡",'green')
+        box(a,.08,.27,.36,.11,"CPU 與主記憶體",'blue');box(a,.61,.27,.31,.11,"網路卡",'green')
         arrow(a,(.5,.56),(.76,.39));arrow(a,(.44,.325),(.61,.325))
         for x in [.08,.61]:box(a,x,.07,.31,.13,"GPU 與視訊記憶體",'orange')
         arrow(a,(.235,.27),(.235,.20));arrow(a,(.765,.27),(.765,.20))
@@ -55,7 +55,7 @@ def draw(here,data):
         out.save(f,'figure-1-3-datacenter')
 
         f,a=plot(3.4,left=.29)
-        names=["主存存取","機房內往返","磁碟尋道"]; vals=[100,500000,10000000]
+        names=["主記憶體存取","機房內往返","磁碟尋道"]; vals=[100,500000,10000000]
         a.barh(names,vals,color=[COL['blue'],COL['green'],COL['orange']],edgecolor=COL['line'],height=.5)
         a.set_xscale('log');a.set_xlim(10,1e8);a.set_xlabel("時間（ns，對數刻度）");a.invert_yaxis()
         for i,(v,label) in enumerate(zip(vals,['0.1 μs','0.5 ms','10 ms'])):a.text(v*1.35,i,label,va='center',fontsize=12)
@@ -121,7 +121,7 @@ def draw(here,data):
 
         for slug,title,items in [
             ('tpu',"增加專用計算與資料搬移資源",[("輸入緩衝",'blue'),("矩陣計算陣列",'orange'),("輸出緩衝",'green')]),
-            ('smartnic',"把包處理放到資料經過的位置",[("網路資料",'blue'),("可程式設計網路卡\n完成包處理",'orange'),("主機 CPU\n執行應用",'green')]),
+            ('smartnic',"把封包處理放在資料經過的位置",[("網路資料",'blue'),("可程式設計網路卡\n完成封包處理",'orange'),("主機 CPU\n執行應用",'green')]),
             ('ub',"讓多臺裝置直接交換所需資料",[("裝置 0\n計算與儲存",'blue'),("統一互聯\n傳遞資料",'green'),("裝置 1\n計算與儲存",'orange')])]:
             f,a=canvas(2.5);text(a,.04,.89,title,14)
             for i,(label,c) in enumerate(items):

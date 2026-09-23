@@ -11,7 +11,7 @@ def draw(here,data):
         f,a=canvas(5.0)
         for x,y,w,l,c in [(.04,.70,.25,"輸入樣本",'blue'),(.38,.70,.25,"前向計算",'blue'),(.72,.70,.24,"損失",'orange'),(.38,.39,.25,"反向計算",'green'),(.04,.08,.25,"參數梯度",'green'),(.38,.08,.25,"Adam 更新",'purple'),(.72,.08,.24,"新權重",'blue')]:box(a,x,y,w,.17,l,c)
         for p,q in [((.29,.785),(.38,.785)),((.63,.785),(.72,.785)),((.84,.70),(.63,.475)),((.38,.475),(.165,.25)),((.29,.165),(.38,.165)),((.63,.165),(.72,.165))]:arrow(a,p,q)
-        text(a,.04,.95,"一次迭代：由預測誤差得到下一份權重",13);text(a,.50,.63,"保留啟用供反向使用",11,ha='center');text(a,.75,.39,"更新時讀取\n主權重與兩份矩狀態",11);save(f,'update-cycle')
+        text(a,.04,.95,"一次迭代：由預測誤差得到下一份權重",13);text(a,.50,.63,"保留活化值供反向使用",11,ha='center');text(a,.75,.39,"更新時讀取\n主權重與兩份矩狀態",11);save(f,'update-cycle')
         f,a=plot(4.7,left=.20,bottom=.16);vals=np.array(data['10-1']['allocations_bytes'])/1e9;left=np.zeros(2)
         for j,(l,c) in enumerate([("BF16 權重",'blue'),("BF16 梯度",'green'),("FP32 主權重",'orange'),("一階矩",'purple'),("二階矩",'gray')]):a.barh([1,0],vals[:,j],left=left,height=.45,color=COL[c],edgecolor=COL['line'],label=l);left+=vals[:,j]
         a.set(yticks=[1,0],yticklabels=["推理權重","訓練狀態"],xlabel="容量（GB）",xlim=(0,145),ylim=(-.5,2.8));a.legend(frameon=False,ncol=2,loc='upper left');save(f,'1-state')
@@ -62,7 +62,7 @@ def draw(here,data):
         a.axvspan(93,95,color=COL['gray']);a.annotate("等輸入：2 ms",(94,0),xytext=(82,.7),fontsize=12,arrowprops={'arrowstyle':'->'});a.set(xlim=(65,110),ylim=(-.6,1.2),yticks=[0],yticklabels=["階段 3"],xlabel="時間（ms）",xticks=[65,75,85,95,105]);save(f,'pipeline-gap')
         f,a=plot(3.7)
         for i,(l,d) in enumerate(data['10-7'].items()):a.bar(np.arange(4)+(i-.5)*.34,np.array(d['summary']['reserved_activation_scope_peak_bytes'])/1e9,.32,color=COL[['blue','orange'][i]],edgecolor=COL['line'],label=l)
-        a.set(xticks=range(4),xticklabels=[f'階段 {i}' for i in range(4)],ylabel="啟用與收發緩衝峰值（GB）",ylim=(0,3.4));a.legend(frameon=False);save(f,'pipeline-memory')
+        a.set(xticks=range(4),xticklabels=[f'階段 {i}' for i in range(4)],ylabel="活化值與收發緩衝峰值（GB）",ylim=(0,3.4));a.legend(frameon=False);save(f,'pipeline-memory')
         for busy,name in [(False,'8-overlap'),(True,'overlap-busy')]:
             f,a=plot(3.2,left=.20);a.barh(1,5,color=COL['blue'],height=.5,edgecolor=COL['line'])
             if busy:a.barh(0,4,color=COL['gray'],height=.5,edgecolor=COL['line'])

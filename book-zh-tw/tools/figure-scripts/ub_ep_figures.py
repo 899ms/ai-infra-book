@@ -334,7 +334,7 @@ def draw(ch, here):
                 if start<1.4:a.barh(row,1.4-start,left=start,height=.42,color=COL['gray'],edgecolor=COL['line'])
                 a.text(start,row-.34,f'{start:.1f} ms',ha='center',fontsize=11)
             from matplotlib.patches import Patch
-            handles=[Patch(facecolor=COL[c],edgecolor=COL['line'],label=label) for c,label in [('blue',"分派"),('green',"計算"),('orange',"返回"),('gray',"等待")]]
+            handles=[Patch(facecolor=COL[c],edgecolor=COL['line'],label=label) for c,label in [('blue',"分派"),('green',"計算"),('orange',"回傳"),('gray',"等待")]]
             a.axvline(1.4,color=COL['line'],ls='--');a.set(yticks=[0,1],yticklabels=["快專家","慢專家"],xlabel="從該層分派開始計時（ms）",xlim=(0,1.52),ylim=(1.6,-.65))
             a.legend(handles=handles,frameon=False,ncol=4,loc='upper center',bbox_to_anchor=(.48,1.28),columnspacing=.65,handlelength=1)
             out.save(f,'figure-9-ep-tail')

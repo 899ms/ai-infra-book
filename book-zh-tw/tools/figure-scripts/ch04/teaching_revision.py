@@ -56,9 +56,9 @@ def draw(here,data,teaching):
             for n,c,label in [(d['weight_bytes'],'blue',"權重"),(d['workspace_bytes'],'orange',"工作區"),(row['requests']*row['context_multiplier']*d['kv_bytes_per_request'],'green','KV')]:
                 a.barh(y,n/1e9,left=left,height=.5,color=COL[c],edgecolor=COL['line'],label=label if y==0 else None);left+=n/1e9
         a.axvline(24,ls='--',color='#555555');a.set(yticks=range(3),yticklabels=["8K token × 4 請求","8K token × 5 請求","16K token × 2 請求"],xlim=(0,27),xlabel="RTX 4090 視訊記憶體佔用（GB）");a.invert_yaxis();a.legend(ncol=3,loc='upper center',bbox_to_anchor=(.5,-.22),frameon=False);save(f,'6-capacity')
-        f,a=canvas(3.3);text(a,.04,.92,"同時等待返回的存取佔用請求槽",14)
+        f,a=canvas(3.3);text(a,.04,.92,"同時等待回傳的存取佔用請求槽",14)
         for i in range(4):box(a,.05+i*.235,.49,.20,.18,f'請求 {i+1}','blue',11)
-        text(a,.5,.31,"每請求 128 bytes，發出後 500 ns 返回",12,ha='center')
+        text(a,.5,.31,"每請求 128 bytes，發出後 500 ns 回傳",12,ha='center')
         text(a,.5,.12,"持續頻寬還取決於能同時處理多少請求",12,ha='center');save(f,'memory-inflight')
         d=data['4-7'];f,a=plot(3.7)
         for b,ys,c in zip(['RTX 4090：1008 GB/s','RTX 5090：1792 GB/s'],d['bandwidth_upper_bytes_per_second'],['#267398','#388768']):a.plot(d['requests'],np.array(ys)/1e12,label=b,color=c)
@@ -68,7 +68,7 @@ def draw(here,data,teaching):
         a.set(yticks=range(4),yticklabels=["第 0 行","第 1 行","第 2 行","第 127 行"],xlim=(0,8500),xlabel="相對每行起點的位元組偏移",xticks=[0,4096,8192]);a.invert_yaxis();a.annotate("實際讀取 256 bytes",(128,0),xytext=(2000,.65),arrowprops={'arrowstyle':'->'},fontsize=12);save(f,'8-layout')
         f,a=plot(3.1,left=.16);a.barh(0,320,left=0,color=COL['gray'],height=.62,label="槽位佔用");a.barh(0,64,left=0,color=COL['blue'],height=.4);a.barh(0,128,left=192,color=COL['green'],height=.4);a.axvline(192,color='#a56c28',lw=1)
         a.set(xlim=(0,350),ylim=(-.7,.7),yticks=[],xticks=[0,64,192,320],xlabel="時間（tick）")
-        for x,label in [(32,"傳輸"),(128,"等待返回"),(256,"計算")]:a.text(x,.4,label,fontsize=11,ha='center')
+        for x,label in [(32,"傳輸"),(128,"等待回傳"),(256,"計算")]:a.text(x,.4,label,fontsize=11,ha='center')
         a.text(175,-.4,"320 tick 後用完，輸入槽才能再次寫入",fontsize=11,ha='center');save(f,'slot-lifetime')
         for slots,name in [(1,'9-pipeline'),(2,'pipeline-two'),(3,'pipeline-three')]:
             r=teaching['baseline'][slots-1];f,a=plot(3.5,left=.17)

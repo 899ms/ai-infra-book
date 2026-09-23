@@ -34,7 +34,7 @@ def draw(here,data):
         box(a,.12,.12,.76,.10,"歸約結束 → BF16 舍入 → SiLU",'orange',11)
         arrow(a,(.5,.62),(.5,.55));arrow(a,(.5,.29),(.5,.22));save(f,'9-polyhedral')
         f,a=canvas(3.8)
-        for y,title,expr,c in [(.57,"先相加，再啟用",'1 + (−1) = 0 → SiLU(0) = 0','green'),(.12,"先分別啟用，再相加",'SiLU(1) + SiLU(−1) ≈ 0.4621','orange')]:
+        for y,title,expr,c in [(.57,"先相加，再活化",'1 + (−1) = 0 → SiLU(0) = 0','green'),(.12,"先分別活化，再相加",'SiLU(1) + SiLU(−1) ≈ 0.4621','orange')]:
             text(a,.04,y+.25,title,14);box(a,.04,y,.92,.17,expr,c)
         save(f,'activation-order')
         f,a=canvas(3.8);text(a,.04,.94,"先讀完整行，才能確定整行量化 scale",14)
@@ -76,7 +76,7 @@ def draw(here,data):
             for b in bars:
                 a.barh(0,b['projection_end']-b['projection_start'],left=b['projection_start'],height=.45,color=COL['blue'],edgecolor=COL['line'])
                 a.barh(1,b['activation_end']-b['activation_start'],left=b['activation_start'],height=.45,color=COL['green'],edgecolor=COL['line'])
-            a.set(yticks=[0,1],yticklabels=["投影","啟用"],xlim=(0,135),xticks=range(0,131,20),ylim=(-.6,1.6),xlabel="時間（μs）");a.invert_yaxis();a.axvline(bars[0]['activation_start'],ls='--',color='#a56c28');save(f,name)
+            a.set(yticks=[0,1],yticklabels=["投影","活化"],xlim=(0,135),xticks=range(0,131,20),ylim=(-.6,1.6),xlabel="時間（μs）");a.invert_yaxis();a.axvline(bars[0]['activation_start'],ls='--',color='#a56c28');save(f,name)
         f,a=canvas(4.9)
         for i,A in enumerate([60,15]):
             y=.58-i*.45;text(a,.04,y+.32,f'A 為 {A} μs：請求 {10+max(A,40)+10} μs',14)

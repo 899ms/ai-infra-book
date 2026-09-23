@@ -42,7 +42,7 @@ serial_items=[(0,0,D,"分派"),(1,D,Cc,"計算"),(2,D+Cc,Rr,"合併")]
 pipe_items=[(0,0,d,'1'),(0,d,d,'2'),(1,d,c,'1'),(1,c2,c,'2'),(2,d+c,r,'1'),(2,r2,r,'2')]
 pipeline=r2+r;assert abs(pipeline-ep['two_microbatch_pipeline_s']*1e3)<1e-9
 f,axes=plt.subplots(2,1,figsize=(11,6.6),sharex=True);f.subplots_adjust(left=.15,right=.97,bottom=.12,top=.91,hspace=.65)
-for ax,(title,items) in zip(axes,[(f'序列：{D+Cc+Rr:.3f} ms',serial_items),(f'兩個微批流水：{pipeline:.3f} ms',pipe_items)]):
+for ax,(title,items) in zip(axes,[(f'依序執行：{D+Cc+Rr:.3f} ms',serial_items),(f'兩個微批流水：{pipeline:.3f} ms',pipe_items)]):
  for row,start,dur,txt in items:
   ax.barh(row,dur,left=start,height=.65,color=C[['blue','teal','orange'][row]],edgecolor='white')
   ax.text(start+dur/2,row,txt,ha='center',va='center',color='white',fontsize=11)
@@ -72,7 +72,7 @@ for ax,(title,q,key,c) in zip(axes,routes):
  ax.set(yticks=[0,1],yticklabels=['GPU',"取回"],ylim=(1.6,-.6),xlim=(0,1000),xticks=[0,200,400,600,800,1000])
  ax.set_title(title,loc='left',fontsize=12);ax.grid(axis='x',alpha=.12)
 axes[-1].set_xlabel("從請求到達開始的時間 / ms")
-f.text(.14,.025,"灰：排隊／查詢    橙：遠端讀取    藍：主存 → GPU    綠：計算",fontsize=11)
+f.text(.14,.025,"灰：排隊／查詢    橙：遠端讀取    藍：主記憶體 → GPU    綠：計算",fontsize=11)
 save(f,'figure-9-13-route')
 rows={k:{row['path']:num(row['finish_ns_exact'])/1e6 for row in calc(f'cache-route-a100-{k}')['cache_route_paths']} for k in cr}
 assert all(abs(x-y)<1e-9 for x,y in zip(finish,[rows['50gbe']['A valid HBM'],rows['50gbe']['B recompute'],rows['50gbe']['B remote through host'],rows['200gbe']['B remote through host']]))
@@ -94,11 +94,11 @@ data['new-migration']={'source':'pd-pool-book','initial_GB':V0,'growth_GBs':g,'c
 
 # Token log and KV checkpoint have different ends.
 f,a=canvas(6)
-for y,title in [(.72,"已返回並記錄的序列"),(.43,"故障前儲存的 KV"),(.14,"重建後繼續生成")]:
+for y,title in [(.72,"已回傳並記錄的序列"),(.43,"故障前儲存的 KV"),(.14,"重建後繼續生成")]:
  a.text(.025,y+.15,title,fontsize=12,weight='bold')
  box(a,.04,y,.39,.10,"輸入：8192 個 token",col='pale',fs=11)
  if y!=.43:
-  box(a,.45,y,.32,.10,"已返回輸出 1—1024",col='green',fs=11)
+  box(a,.45,y,.32,.10,"已回傳輸出 1—1024",col='green',fs=11)
   box(a,.80,y,.16,.10,"輸出 1025",col='sand',fs=11)
  else:
   a.text(.47,y+.05,"缺少生成部分的 KV",va='center',fontsize=12,color=C['orange'])

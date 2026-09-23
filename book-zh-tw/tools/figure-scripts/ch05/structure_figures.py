@@ -55,7 +55,7 @@ def draw(here, data=None):
         # 5.5.1 Host preparation and accelerator compute: serial, pipelined, faster accelerator.
         f, a = canvas(4.6)
         scale = .80 / 160; x0 = .16
-        panels = [(.70, "序列：每段準備 20 μs、計算 20 μs，四段共 160 μs", 40, 20, 20, 0),
+        panels = [(.70, "依序執行：每段準備 20 μs、計算 20 μs，四段共 160 μs", 40, 20, 20, 0),
                   (.38, "流水：準備下一段與計算當前段同時進行，共 100 μs", 20, 20, 20, 20),
                   (.06, "加速器提速到 5 μs：主機仍每 20 μs 才準備好一段，共 85 μs", 20, 20, 5, 20)]
         for y, title, period, host, acc, lag in panels:

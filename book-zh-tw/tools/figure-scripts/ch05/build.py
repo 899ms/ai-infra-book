@@ -56,7 +56,7 @@ data['5-5']={'kind':'fixed_scale_teaching','required_MiB':[60,60,60],'T_write_re
 # Show loop nesting and storage lifetimes, rather than a list of transformation names.
 f,a=canvas(8.5)
 a.text(.04,.965,"先儲存完整矩陣",fontsize=17,weight='bold')
-a.text(.54,.965,"逐塊計算並啟用",fontsize=17,weight='bold')
+a.text(.54,.965,"逐塊計算並活化",fontsize=17,weight='bold')
 box(a,.035,.56,.405,.34,'',color='pale')
 a.text(.06,.865,'for i, j:\n    acc = 0\n    for k:\n        acc += A[i,k] × W[k,j]\n    C[i,j] = BF16(acc)',va='top',fontsize=13,linespacing=1.6)
 box(a,.035,.36,.405,.12,"完整 C：24 MiB","寫出一次，再讀入一次",'sand',14)
@@ -200,7 +200,7 @@ for a,fine in zip(axs,[False,True]):
   for start,end,y in [(p0,p1,.64),(c0,c1,.13)]:
    a.broken_barh([(start,end-start)],(y,.28),facecolors=C['blue' if i%2==0 else 'teal'])
    if end-start>4:a.text((start+end)/2,y+.14,str(i),ha='center',va='center',color='white',fontsize=10)
- end=max(b[3] for b in bars);a.axvline(bars[0][2],ls='--',color=C['orange']);a.set_xticks(range(0,131,20));a.set(xlim=(0,135),ylim=(0,1.03),xlabel="時間 / μs");a.set_yticks([.27,.78],["啟用","投影"]);a.set_title(("逐塊開始啟用" if fine else "全部投影完成後開始啟用")+f'：約 {end:.0f} μs',loc='left',fontsize=14)
+ end=max(b[3] for b in bars);a.axvline(bars[0][2],ls='--',color=C['orange']);a.set_xticks(range(0,131,20));a.set(xlim=(0,135),ylim=(0,1.03),xlabel="時間 / μs");a.set_yticks([.27,.78],["活化","投影"]);a.set_title(("逐塊開始活化" if fine else "全部投影完成後開始活化")+f'：約 {end:.0f} μs',loc='left',fontsize=14)
 save(f,'figure-5-15-persistent');data['persistent']={'kind':'teaching_timeline','device':'rtx-pro6000-blackwell-ws','source':'calculations/results/persistent-tiles-rtxpro6000.json','tiles':8,'projection_us':PROJ_US,'activation_us':ACT_US,'task_overhead_us':TASK_US,'launch_us':LAUNCH_US,'completion_us':[persist['summary']['barrier_finish_ns']/1000,persist['summary']['persistent_finish_ns']/1000],'timelines':timelines}
 
 # Preserve existing numerical data identifiers; figure-index.json records current reading order.
@@ -255,13 +255,13 @@ css='''body{margin:0;background:#fafaf8;color:#243640;font:18px/1.95 Georgia,"So
 css+=' main{max-width:760px}'
 css+='''figure{margin:28px auto}figcaption{font:15px/1.8 Arial,"PingFang SC",sans-serif;color:#50616a;margin-top:12px}.teaching-figure{max-width:720px}.teaching-figure img{margin:0;width:100%;height:auto}.diagram-hint{display:none}.diagram-scroll{overflow-x:auto} @media(max-width:650px){.teaching-figure img{width:560px;min-width:560px;max-width:none}.diagram-hint{display:block;font:13px/1.6 Arial,"PingFang SC",sans-serif;color:#50616a;margin:6px 0}} @media print{.teaching-figure{width:148.167mm;max-width:100%;break-inside:avoid}.teaching-figure img{width:100%;min-width:0}.diagram-scroll{overflow:visible}.diagram-hint{display:none}figcaption{font-size:9pt}body{line-height:1.75}h1{font-size:20pt;margin:0 0 18pt}h2{font-size:16pt;margin:20pt 0 10pt;padding-top:10pt}h3{font-size:13pt;margin:16pt 0 8pt}p{margin:.75em 0;orphans:3;widows:3}figure{margin:14pt auto}.katex-display,pre{break-inside:avoid}.katex-display{padding:5pt 0}table{font-size:10pt}th,td{padding:6pt}.footnote{font-size:9pt;margin-top:20pt}}'''
 nav=''.join('<a href="#'+ident+'">'+title+'</a>' for ident,title in re.findall(r'<h2 id="([^"]+)">(5\.\d+ [^<]+)</h2>',body))
-page="<!doctype html><html lang=\"zh-CN\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>第 5 章 運算元與執行時</title><style>"+css+math_css+'</style><main><nav>'+nav+'</nav>'+body+'</main></html>'
+page="<!doctype html><html lang=\"zh-CN\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>第 5 章 運算子與執行時</title><style>"+css+math_css+'</style><main><nav>'+nav+'</nav>'+body+'</main></html>'
 import sys
 sys.path.insert(0,str(HERE.parent))
 from teaching_reading import readable_diagrams
 from preview_output import preview_path
 page=readable_diagrams(page)
-html_path=preview_path(HERE.parent/"05-運算元與執行時.html");html_path.write_text(page)
+html_path=preview_path(HERE.parent/"05-運算子與執行時.html");html_path.write_text(page)
 section_start=re.search(r'<h2 id="[^"]+">5\.2 ',body).start()
 section_end=re.search(r'<h2 id="[^"]+">5\.4 ',body).start()
 # Keep cited evidence available in the standalone reading sample.
@@ -274,7 +274,7 @@ for i,(ident,content) in enumerate(re.findall(r'<li id="(fn:[^"]+)">([\s\S]*?)</
   content=re.sub(r'<a class="footnote-backref" href="#([^"]+)"[^>]*>[\s\S]*?</a>',lambda m:m[0] if m[1] in section_ids else '',content)
   footnote_items.append('<li id="'+ident+'" value="'+str(i)+'">'+content+'</li>')
 footnotes='<div class="footnote"><hr><ol>'+''.join(footnote_items)+'</ol></div>'
-excerpt=preview_path(HERE.parent/"05-運算元與執行時-5.2-5.3.html")
+excerpt=preview_path(HERE.parent/"05-運算子與執行時-5.2-5.3.html")
 excerpt.write_text('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第五章 5.2–5.3 图文试改</title><style>'+css+math_css+'</style><main><h1>第五章 5.2–5.3 图文试改</h1>'+body[section_start:section_end]+footnotes+'</main></html>')
 (HERE/'math-validation.json').write_text(json.dumps({'renderer':'KaTeX 0.16.11','expressions':len(maths),'display_expressions':sum(x['display'] for x in maths),'errors':[]},indent=2)+'\n')
 from book_assets import sync_figure_index

@@ -52,7 +52,7 @@ def draw(here,data):
             box(a,.03,y,.28,.21,title,c);box(a,.41,y,.55,.21,f'{cost} 成本 ÷ {success} 次成功\n= {cost/success:g} 成本／成功',c)
             arrow(a,(.31,y+.105),(.41,y+.105))
         text(a,.5,.93,"兩種策略各嘗試 100 次",14,ha='center');save(f,'success-cost')
-        rounds=data['3-3']['rounds'];bars('3-agent',["第 1 輪：截斷","第 2 輪：寫檔案","第 3 輪：測試","第 4 輪：結束"],[r['measured_model_seconds'] for r in rounds],"每輪模型牆鍾時間（s）")
+        rounds=data['3-3']['rounds'];bars('3-agent',["第 1 輪：截斷","第 2 輪：寫檔案","第 3 輪：測試","第 4 輪：結束"],[r['measured_model_seconds'] for r in rounds],"每輪模型牆鐘時間（s）")
         f,a=canvas(3.4);text(a,.04,.94,"公共字首保留一份，分支各自追加",14)
         box(a,.06,.39,.35,.21,"公共字首",'blue')
         for y,label in [(.68,"分支 A 尾部"),(.16,"分支 B 尾部")]:box(a,.62,y,.31,.15,label,'orange');arrow(a,(.41,.495),(.62,y+.075))
@@ -82,8 +82,8 @@ def draw(here,data):
         a.set_xticks([0,round(pre),200,400,round(total)])
         save(f,'decision-request')
 
-        f,a=canvas(4.0);text(a,.04,.94,"影象編碼為視覺 token，再輸入語言模型",14)
-        for y,label,c in [(.69,"640 × 640 畫素影象",'gray'),(.43,"16 × 16 畫素一塊 → 40 × 40 個塊",'blue'),(.17,"相鄰 2 × 2 塊合併 → 20 × 20 個 token",'green')]:
+        f,a=canvas(4.0);text(a,.04,.94,"影像編碼為視覺 token，再輸入語言模型",14)
+        for y,label,c in [(.69,"640 × 640 畫素影像",'gray'),(.43,"16 × 16 畫素一塊 → 40 × 40 個塊",'blue'),(.17,"相鄰 2 × 2 塊合併 → 20 × 20 個 token",'green')]:
             box(a,.07,y,.86,.15,label,c)
             if y>.2:arrow(a,(.5,y),(.5,y-.10))
         save(f,'vision-shapes')
@@ -110,9 +110,9 @@ def draw(here,data):
         arrow(a,(.72,.48),(.62,.48));arrow(a,(.38,.48),(.28,.48));text(a,.5,.39,"反向：後一層梯度 → 前一層梯度",12,ha='center')
         box(a,.23,.10,.54,.14,"當前層另算權重梯度，用於更新",'purple',11);arrow(a,(.5,.45),(.5,.24));save(f,'5-training')
         f,a=plot(3.2,left=.20)
-        for y,start,duration,label,c in [(0,0,1,"前向",'blue'),(0,3,1,"反向",'orange'),(1,1,3,"啟用的生命週期",'green')]:
+        for y,start,duration,label,c in [(0,0,1,"前向",'blue'),(0,3,1,"反向",'orange'),(1,1,3,"活化值的生命週期",'green')]:
             a.barh(y,duration,left=start,height=.5,color=COL[c],edgecolor=COL['line']);a.text(start+duration/2,y,label,fontsize=12,ha='center',va='center')
-        a.set(yticks=[0,1],yticklabels=["該層計算","該層啟用"],xlim=(-.1,4.3),ylim=(-.7,1.7),xticks=[0,1,3,4],xticklabels=["開始","前向完成","反向開始","反向完成"],xlabel="事件次序（間距僅作示意）");a.invert_yaxis();save(f,'activation-lifetime')
+        a.set(yticks=[0,1],yticklabels=["該層計算","該層活化值"],xlim=(-.1,4.3),ylim=(-.7,1.7),xticks=[0,1,3,4],xticklabels=["開始","前向完成","反向開始","反向完成"],xlabel="事件次序（間距僅作示意）");a.invert_yaxis();save(f,'activation-lifetime')
         t=data['3-5'];bars('training-flops',["前向","反向","前向加反向","按總參數估算：6ND"],[t['summary'][k]/1e12 for k in ['forward_matrix_flops','backward_matrix_flops','training_matrix_flops','six_nd_flops']],"矩陣運算量（TFLOPs）")
         bars('training-states',["BF16 權重","FP32 梯度","FP32 主權重","Adam 一階矩","Adam 二階矩"],[v/1e9 for v in t['parameter_state_bytes'].values()],"參數相關狀態（GB）",4.0)
 
@@ -121,7 +121,7 @@ def draw(here,data):
             y=.73-i*.20;box(a,.16,y,.79,.13,label,c)
             if i<3:arrow(a,(.55,y),(.55,y-.07))
         a.plot([.16,.04,.04,.16],[.195,.195,.795,.795],color=COL['line'],lw=1);arrow(a,(.04,.795),(.16,.795))
-        text(a,.05,.045,"左側返回路徑：新權重交給下一批生成",11);save(f,'6-rl')
+        text(a,.05,.045,"左側回傳路徑：新權重交給下一批生成",11);save(f,'6-rl')
         d=data['3-6'];f,a=plot(3.8,left=.21);names=['rollout_prefill','rollout_decode','reference_scoring','policy_update'];labs=["生成輸入","後續生成","參考評分","策略更新"];x=np.arange(4)
         for dx,key,col,label in [(-.18,'base_stages','blue',"生成 32，保留 16"),(.18,'low_acceptance_stages','orange',"生成 64，保留 16")]:
             vals=[next(z['matrix_flops']/1e12 for z in d[key] if z['name']==name) for name in names];a.bar(x+dx,vals,width=.34,color=COL[col],edgecolor=COL['line'],label=label)

@@ -75,7 +75,7 @@ def draw(save, canvas, box, arrow, C, data):
     for x,token in zip(xs,['a','b','c','d']):box(a,x,.70,.11,.15,token,size=16)
     for x,token,col in zip(xs,['a','b','x',"丟棄"],['teal','teal','orange','gray']):
         box(a,x,.41,.11,.15,token,col=col,size=15)
-        arrow(a,(x+.055,.69),(x+.055,.58),col='orange' if token=='x' else 'gray' if token=='丢弃' else 'teal')
+        arrow(a,(x+.055,.69),(x+.055,.58),col='orange' if token=='x' else 'gray' if token=='丟棄' else 'teal')
     for x,token,col in zip(xs,['a','b','x'],['teal','teal','orange']):
         box(a,x,.10,.11,.15,token,col=col,size=16)
         arrow(a,(x+.055,.40),(x+.055,.27),col=col)

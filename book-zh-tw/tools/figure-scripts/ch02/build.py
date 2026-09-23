@@ -81,14 +81,14 @@ box(a,.30,.75,.18,.075,'RMSNorm',size=12);arrow(a,(.24,.785),(.29,.785))
 box(a,.555,.72,.37,.13,"Q、K、V 投影",r'$Q:m\times4096;\ K,V:m\times1024$',color='light');arrow(a,(.485,.785),(.545,.785))
 box(a,.555,.535,.37,.12,'QK Norm → RoPE → Attention',r'$QK^{\mathsf{T}}$ → Mask / Softmax → $AV$',color='light');arrow(a,(.74,.71),(.74,.665))
 box(a,.30,.545,.18,.10,"輸出投影 $W_o$",'$4096\\times 4096$');arrow(a,(.55,.59),(.49,.59))
-box(a,.055,.545,.18,.10,"殘差相加","返回 $m\\times 4096$");arrow(a,(.295,.59),(.24,.59));arrow(a,(.145,.745),(.145,.652),'orange')
+box(a,.055,.545,.18,.10,"殘差相加","回傳 $m\\times 4096$");arrow(a,(.295,.59),(.24,.59));arrow(a,(.145,.745),(.145,.652),'orange')
 box(a,.055,.365,.18,.095,'RMSNorm');arrow(a,(.145,.535),(.145,.468))
 box(a,.30,.365,.27,.095,"gate / up 兩路升維","各 $m\\times 4096$ × $4096\\times 12288$",color='sand');arrow(a,(.24,.415),(.29,.415))
 box(a,.65,.365,.275,.095,r'$\operatorname{SiLU}(g)\odot u$','$m\\times 12288$',color='sand');arrow(a,(.58,.415),(.64,.415))
 box(a,.65,.19,.275,.095,"down 降維",'$m\\times 12288$ × $12288\\times 4096$',color='sand');arrow(a,(.787,.355),(.787,.292))
 box(a,.30,.19,.27,.095,"殘差相加 → 層輸出",'$m\\times 4096$');arrow(a,(.64,.24),(.58,.24));arrow(a,(.055,.59),(.025,.59),'orange');arrow(a,(.025,.59),(.025,.24),'orange');arrow(a,(.025,.24),(.29,.24),'orange')
 a.text(.06,.11,"每層：QKV＋Wo 為 83,886,080m FLOPs；FFN 為 301,989,888m FLOPs。",fontsize=12)
-a.text(.06,.065,"序列互動另計 16,384 × B[PS＋P(P＋1)/2] FLOPs；歸一化、啟用、殘差與特殊函式另列。",fontsize=10.5,color=C['muted'])
+a.text(.06,.065,"序列互動另計 16,384 × B[PS＋P(P＋1)/2] FLOPs；歸一化、活化運算、殘差與特殊函式另列。",fontsize=10.5,color=C['muted'])
 save(f,'figure-2-2-layer');data['figure_2_2']={'dimensions':q['dimensions'],'summary':q['summary']}
 # Figure 3: compare within model, not a shared ranking.
 f,axs=plt.subplots(1,2,figsize=(14,7.7));f.subplots_adjust(left=.10,right=.97,bottom=.22,top=.75,wspace=.40)
@@ -131,7 +131,7 @@ a=axs[2];a.bar(range(3),pre,color=[C['blue'],C['teal'],C['orange']],width=.55);a
 for i,z in enumerate(pre):a.text(i,z*1.15,f'{z:.3f}',ha='center',fontsize=10)
 f.text(.055,.18,"A：K3 含卷積槽；V4 含壓縮緩衝。B：Qwen 為舊 KV 讀取，V4 為主注意力＋索引資料量，",fontsize=11)
 f.text(.055,.135,"K3 為全域上下文讀取＋遞推矩陣理想讀寫；未覆蓋全部狀態操作、寫入及物理 HBM。",fontsize=11)
-f.text(.055,.09,"C：同為 8192 個新輸入、最後位置輸出頭；採用各自已封存數學／參考路徑，未統一所有運算元實作。",fontsize=11)
+f.text(.055,.09,"C：同為 8192 個新輸入、最後位置輸出頭；採用各自已封存數學／參考路徑，未統一所有運算子實作。",fontsize=11)
 f.text(.055,.045,"三面板分別表示容量、已計存取與計算量；不構成實測速度或同任務品質排名。",fontsize=11,color=C['muted'])
 save(f,'figure-2-7-state-growth');data['figure_2_7']={'lengths':lengths.tolist(),'resident_bytes':dict(zip(['qwen','v4','k3'],[qr.tolist(),vr.tolist(),kr.tolist()])),'accounted_access_bytes':dict(zip(['qwen','v4','k3'],[qaccess.tolist(),vaccess.tolist(),kaccess.tolist()])),'prefill_matrix_tflops':pre,'scope':'Structural length extrapolation; partial state access; pinned compact K3 prefill, no measured runtime or quality.'}
 # Figure 6: residual connection flow.
@@ -167,7 +167,7 @@ f,a=canvas("圖 2-8  請求輸入與計算狀態對映","統一資源請求：S=
 for i,(title,body) in enumerate([('Prefill',"輸入 128 → 輸出 $y_1$\n保留 128 位置"),('Decode 1',"輸入 $y_1$ → 輸出 $y_2$\n保留 129 位置"),('Decode 2',"輸入 $y_2$ → 輸出 $y_3$\n保留 130 位置"),('Decode 3',"輸入 $y_3$ → 輸出 $y_4$\n保留 131 位置")]):
  x=.055+i*.235;box(a,x,.66,.195,.15,title,body,color='light' if i==0 else 'pale',size=13)
  if i<3:arrow(a,(x+.203,.735),(x+.225,.735))
-a.text(.055,.60,"$y_4$ 已返回但尚未再次進入模型；最終狀態不是 132 個 token。",fontsize=12,color=C['orange'])
+a.text(.055,.60,"$y_4$ 已回傳但尚未再次進入模型；最終狀態不是 132 個 token。",fontsize=12,color=C['orange'])
 vals=[z['summary']['matrix_flops']/1e12 for z in r['comparisons']]
 ax=f.add_axes([.095,.22,.44,.29]);ax.barh(range(4),vals,color=[C['blue'],C['teal'],C['teal'],C['orange']]);ax.set_yticks(range(4),['Qwen3-8B','V4-Flash','V4-Pro','K3 expanded']);ax.invert_yaxis();ax.set_xlim(0,34);ax.set_xlabel("完整請求矩陣 TFLOPs")
 for i,z in enumerate(vals):ax.text(z+.5,i,f'{z:.3f}',va='center',fontsize=10)

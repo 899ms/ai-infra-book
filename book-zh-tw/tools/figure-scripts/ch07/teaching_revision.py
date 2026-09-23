@@ -28,7 +28,7 @@ def draw(here,data):
                 else:arrow(a,(x+.0475,.455),(x+.0475,nic_y+.06))
         box(a,.02,.455,.96,.09,"交換網路：每條 rail 一臺交換機，每張網路卡每方向 50 GB/s",'gray',11)
         save(f,'1-boundaries')
-        d=data['7-2'];f,a=plot(3.6);n=np.array(d['device_multipliers']);c=np.array(d['compute_ms']);t=d['cut_ms'];a.plot(n,c+t,label="序列",color='#267398');a.plot(n,np.maximum(c,t),label="完全重疊",color='#388768');a.plot(n,c,ls=':',label="計算",color='#a56c28');a.set(xlabel="加速器數量／基準數量",ylabel="每步時間（ms）",xticks=n,ylim=(0,32));a.legend(frameon=False);save(f,'2-cut')
+        d=data['7-2'];f,a=plot(3.6);n=np.array(d['device_multipliers']);c=np.array(d['compute_ms']);t=d['cut_ms'];a.plot(n,c+t,label="依序執行",color='#267398');a.plot(n,np.maximum(c,t),label="完全重疊",color='#388768');a.plot(n,c,ls=':',label="計算",color='#a56c28');a.set(xlabel="加速器數量／基準數量",ylabel="每步時間（ms）",xticks=n,ylim=(0,32));a.legend(frameon=False);save(f,'2-cut')
         for idx,order in enumerate(data['7-3']['ring_orders']):
             f,a=canvas(4.4);text(a,.04,.93,"連續環：十六條邊只有兩條跨伺服器" if idx==0 else "交錯環：十六條邊都跨伺服器",14)
             xs=[.03+i*.118 for i in range(8)];pos={}
@@ -104,7 +104,7 @@ def draw(here,data):
                 lane=1 if t['id']=='independent_transfer' else 0;color={'write_data':'blue','recover_and_make_visible':'orange','publish_notification':'green','independent_transfer':'purple'}[t['id']];a.barh(lane,t['duration_ns']/1000,left=t['start_ns']/1000,height=.45,color=COL[color],edgecolor=COL['line'])
             a.set(yticks=[0,1],yticklabels=["寫入與釋出","獨立傳輸"],xlim=(0,115),xlabel="時間（μs）");a.invert_yaxis();save(f,'12-ordering' if i==0 else 'ordering-independent')
         f,a=canvas(5.0)
-        for row,(time,label,c) in enumerate([(1,"提前讀取：得到舊值",'orange'),(2,"生產者寫入新值",'blue'),(3,"就緒標誌可見",'green'),(4,"消費者讀到就緒標誌",'green'),(5,"返回先前讀到的舊值",'orange'),(6,"若在 4 μs 重讀，此時得到新值",'blue')]):
+        for row,(time,label,c) in enumerate([(1,"提前讀取：得到舊值",'orange'),(2,"生產者寫入新值",'blue'),(3,"就緒標誌可見",'green'),(4,"消費者讀到就緒標誌",'green'),(5,"回傳先前讀到的舊值",'orange'),(6,"若在 4 μs 重讀，此時得到新值",'blue')]):
             y=.78-row*.14;text(a,.03,y+.04,f'{time} μs',11);box(a,.19,y,.76,.10,label,c,11)
         save(f,'13-stale')
         for i,(name,ops) in enumerate(data['7-14']['operations'].items()):
@@ -136,7 +136,7 @@ def draw(here,data):
         f,a=canvas(3.6);box(a,.04,.40,.34,.25,"請求 0 持有 A\n等待 B",'blue');box(a,.62,.40,.34,.25,"請求 1 持有 B\n等待 A",'orange');arrow(a,(.38,.58),(.62,.58));arrow(a,(.62,.46),(.38,.46));text(a,.5,.16,"雙方都需要對方先釋放",13,ha='center');save(f,'18-deadlock')
         f,a=canvas(3.7)
         for x,label,col in [(.03,"請求資源",'blue'),(.37,"執行資源",'orange'),(.71,"獨立回應\n資源",'green')]:box(a,x,.42,.26,.24,label,col,12)
-        arrow(a,(.29,.54),(.37,.54));arrow(a,(.63,.54),(.71,.54));text(a,.5,.18,"回應有預留通路，可返回並釋放原請求",12,ha='center');save(f,'response-reserve')
+        arrow(a,(.29,.54),(.37,.54));arrow(a,(.63,.54),(.71,.54));text(a,.5,.18,"回應有預留通路，可回傳並釋放原請求",12,ha='center');save(f,'response-reserve')
         for i,(ready,ex) in enumerate([([0,0,0,2],.4),([0,0,0,2],.2),([0]*4,.4)]):
             f,a=plot(3.5,left=.18)
             for lane,t in enumerate(ready):

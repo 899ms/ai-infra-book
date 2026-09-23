@@ -26,7 +26,7 @@ def draw_encoder_paths(out):
                 text(a, .215, .45, "視覺計算在遠端完成\n特徵留在伺服器內", 11, ha='center')
             box(a, x, .684, .34, .076, "解碼與預處理\n縮放至 640 × 640", 'blue', 11)
             arrow(a, (cx, .80), (cx, .76))
-            box(a, x, .562, .34, .080, "視覺編碼與影象塊合併\n形成 400 個視覺 token", 'green', 11)
+            box(a, x, .562, .34, .080, "視覺編碼與影像塊合併\n形成 400 個視覺 token", 'green', 11)
             arrow(a, (cx, .684), (cx, .642))
             box(a, x, .430, .34, .090, "最終投影 + 3 組 DeepStack\n完整 BF16 特徵  8.192 MB", 'green', 11)
             arrow(a, (cx, .562), (cx, .520))
@@ -74,7 +74,7 @@ def draw_loss_repair(out,data):
           ("逐輪重傳 p99（6 輪）",1.239,'orange'),
           ("逐輪重傳期望",0.756,'orange'),
           ("FEC 308 符號，99.9% 免重傳",0.2407,'blue'),
-          ("序列預算：RTT＋模型＋傳送",0.2385,'green')]
+          ("依序時間預算：RTT＋模型＋傳送",0.2385,'green')]
     with plt.rc_context(STYLE):
         f,a=plot(3.6,left=.42)
         for y,(label,t,c) in enumerate(rows):
@@ -96,7 +96,7 @@ def draw(here,data):
         box(a,.64,.22,.32,.20,"生成 5 MB 成片",'green',11);box(a,.04,.22,.32,.20,"終端收齊：任務完成",'orange',11);arrow(a,(.8,.67),(.8,.42));arrow(a,(.64,.32),(.36,.32));text(a,.5,.09,"下行：100 Mbit/s，傳送 0.4 s",12,ha='center');text(a,.27,.52,"雙向傳播合計 0.1 s",11,ha='center');save(f,'image-path')
         d=data['12-1'];f,a=plot(4.0);b=np.array(d['uplink_Mbps'])
         for y,l,c in [(240/b+.8,"原方案",'#267398'),(240/b+.53,"處理快十倍",'#388768'),(120/b+.95,"輸入減半",'#a56c28')]:a.plot(b,y,label=l,color=c)
-        a.set(xscale='log',xlabel="上行速率（Mbit/s）",ylabel="完整成片返回時間（s）");a.legend(frameon=False);save(f,'1-raw')
+        a.set(xscale='log',xlabel="上行速率（Mbit/s）",ylabel="完整成片回傳時間（s）");a.legend(frameon=False);save(f,'1-raw')
         for chunked,name in [(False,'2-overlap'),(True,'overlap-chunks')]:
             f,a=plot(4.0,left=.20)
             if chunked:

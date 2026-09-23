@@ -63,6 +63,11 @@ jobs:
             script: book-en/build_pdf.sh
             output: build/pdf-en
             artifact: book-pdf-en-download
+          - edition: zh-tw
+            lfs: book-zh-tw/images/**,manuscripts/figure_style/fonts/**
+            script: book-zh-tw/build_pdf.sh
+            output: build/pdf-zh-tw
+            artifact: book-pdf-zh-tw-download
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -92,6 +97,7 @@ jobs:
       - name: Validate PDF and render representative pages
         run: python book/check_ci_pdf.py ${{ matrix.output }} --edition ${{ matrix.edition }}
       - name: Build and validate EPUB (${{ matrix.edition }})
+        if: matrix.edition != 'zh-tw'
         env:
           BOOK_SOURCE_REF: ${{ github.sha }}
         run: |
@@ -116,6 +122,7 @@ jobs:
           path: |
             book/build/AI-Infra-Book/*.log
             book-en/build/AI-Infra-Book-EN/*.log
+            book-zh-tw/build/AI-Infra-Book-ZH-TW/*.log
             ${{ matrix.output }}/preview-*.png
           if-no-files-found: ignore
 
@@ -153,10 +160,13 @@ jobs:
               f'{built}（北京时间）自动从 main 提交 '
               f'[{sha[:12]}](https://github.com/{repo}/commit/{sha}) 构建。\n\n'
               '下载 `AI-Infra-Book.pdf` 阅读完整十二章全书；`AI-Infra-Book-EN.pdf` 为社区翻译的英文版'
-              '（English edition, translated by [@tg1482](https://github.com/tg1482)）。'
+              '（English edition, translated by [@tg1482](https://github.com/tg1482)）；'
+              '`AI-Infra-Book-ZH-TW.pdf` 为社区贡献的繁體中文版'
+              '（由 [@edward821220](https://github.com/edward821220) 翻译整理）。'
               '在手机和电子书阅读器上阅读，可下载可调字号的 `AI-Infra-Book.epub` 与 `AI-Infra-Book-EN.epub`。\n\n'
               f'最新版固定链接：https://github.com/{repo}/releases/latest/download/AI-Infra-Book.pdf\n\n'
               f'英文版固定链接：https://github.com/{repo}/releases/latest/download/AI-Infra-Book-EN.pdf\n\n'
+              f'繁體中文版固定链接：https://github.com/{repo}/releases/latest/download/AI-Infra-Book-ZH-TW.pdf\n\n'
               f'EPUB 固定链接：https://github.com/{repo}/releases/latest/download/AI-Infra-Book.epub\n\n'
               '在线阅读：https://bojieli.github.io/ai-infra-book/\n')
           PY
@@ -181,7 +191,7 @@ jobs:
           if ! gh release view "$tag" >/dev/null 2>&1; then
             retry sh -c 'gh release view "$1" >/dev/null 2>&1 || gh release create "$1" --target "$2" --title "全书 $3" --notes-file release-notes.md --draft' _ "$tag" "$SOURCE_SHA" "$TITLE"
           fi
-          retry gh release upload "$tag" dist/AI-Infra-Book.pdf dist/AI-Infra-Book-EN.pdf dist/AI-Infra-Book.epub dist/AI-Infra-Book-EN.epub --clobber
+          retry gh release upload "$tag" dist/AI-Infra-Book.pdf dist/AI-Infra-Book-EN.pdf dist/AI-Infra-Book-ZH-TW.pdf dist/AI-Infra-Book.epub dist/AI-Infra-Book-EN.epub --clobber
           # Remove legacy build extras if this commit's release is being rerun.
           for asset in AI-Infra-Book-build.json AI-Infra-Book-Cover.pdf AI-Infra-Book-Cover.png ai-infra-book-site.tar.gz pdf-validation.json SHA256SUMS; do
             if gh release view "$tag" --json assets --jq '.assets[].name' | grep -Fxq "$asset"; then

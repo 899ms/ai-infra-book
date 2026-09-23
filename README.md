@@ -6,11 +6,12 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/bojieli/ai-infra-book?style=social)](https://github.com/bojieli/ai-infra-book)
 [![English](https://img.shields.io/badge/翻译-English-informational.svg)](book-en/)
+[![繁體中文版](https://img.shields.io/badge/翻译-繁體中文-informational.svg)](book-zh-tw/)
 
-**中文** ← 当前 · [English](book-en/)
+**简体中文** ← 当前 · [English](book-en/) · [繁體中文](book-zh-tw/)
 
 > [!TIP]
-> ### 📥 [下载最新版全书 PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf) · [EPUB](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.epub)
+> ### 📥 [下载最新版全书 PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf) · [EPUB](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.epub) · [繁體中文版 PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-ZH-TW.pdf)
 >
 > **推荐下载 PDF 阅读。** 书中有大量公式、表格、脚注和交叉引用，GitHub 直接显示 Markdown 时，LaTeX 公式和部分排版常常渲染不全或错位。PDF 由 XeLaTeX 排版，每次更新 `main` 后自动构建并发布到 [Releases](https://github.com/bojieli/ai-infra-book/releases)，上面的链接始终指向最新版。下方目录链接到各章 Markdown 源文件，便于查找原文和提交勘误；通读全书，仍建议下载 PDF。在手机或电子书阅读器上阅读，可下载 EPUB，字号可调，版面随屏幕自动重排。
 
@@ -22,11 +23,13 @@
 
 贯穿全书的方法是**从约束推导设计**：先明确任务与质量要求，列出计算、存储、通信和依赖关系，对照硬件的容量、带宽和算力做数量级估算。这类估算人容易出错，AI 也一样：只算权重读取而忘了 KV 缓存，按峰值算力推算速度而不查带宽能否供给，把工作平分给多张卡却遗漏卡间通信，漏掉任何一项，结论都可能偏离几倍甚至几个数量级。估算还有另一层用意：读博时导师张霖涛博士反复叮嘱，优化一定要做到物理所允许的极限。本书贯彻这一习惯，先按第一性原理算出硬件允许的上限，再看实测离上限还有多远；差距不是模型漏了项，就是系统有可以去掉的开销。从 FPGA 加速 Bing 搜索排序、昇腾 AKG 算子生成到 UB 万卡互联，我反复遇到的是同一条线索：**数据搬移**。本书因此反复追问五个问题：**搬什么、搬多少、搬几次、经过哪里、谁必须等它。** 更多写作背景见[前言](manuscripts/00-前言.md)。
 
-**[下载 PDF（推荐）](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf) · [下载 EPUB](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.epub) · [在线阅读](https://bojieli.github.io/ai-infra-book/) · [章节正文](manuscripts/README.md) · [配套实验](experiments/README.md)**
+**[下载 PDF（推荐）](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf) · [下载 EPUB](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.epub) · [繁體中文版 PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-ZH-TW.pdf) · [在线阅读](https://bojieli.github.io/ai-infra-book/) · [章节正文](manuscripts/README.md) · [配套实验](experiments/README.md)**
 
 目前书稿仍是初稿，正在持续修订。
 
 中文正文源码位于 [`manuscripts/`](manuscripts/README.md)；英文版为社区翻译（by [@tg1482](https://github.com/tg1482)，可能滞后于中文原版），位于 [`book-en/`](book-en/)，包含前言与十二章正文、重绘为英文标注的配图和独立的 PDF 构建脚本。英文版 PDF 与中文版一同自动构建并发布：[AI-Infra-Book-EN.pdf](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-EN.pdf)。
+
+繁體中文版由社区贡献者 [@edward821220](https://github.com/edward821220) 翻译并整理，位于 [`book-zh-tw/`](book-zh-tw/)，包含前言与十二章正文、繁體配图和独立的 PDF 构建脚本；两项已知配图例外见[繁體版说明](book-zh-tw/README.md)。繁體中文版 PDF 与中英文版一同自动构建并发布：[AI-Infra-Book-ZH-TW.pdf](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-ZH-TW.pdf)。
 
 ## 内容目录
 
@@ -102,11 +105,13 @@ python scripts/build_site.py --serve
 ```bash
 bash book/build_pdf.sh        # 中文版 → book/AI-Infra-Book.pdf
 bash book-en/build_pdf.sh     # 英文版 → book-en/AI-Infra-Book-EN.pdf
+git lfs pull --include="book-zh-tw/images/**" --exclude=""
+bash book-zh-tw/build_pdf.sh  # 繁體中文版 → book-zh-tw/AI-Infra-Book-ZH-TW.pdf
 python3 book/build_epub.py                 # 中文 EPUB → book/AI-Infra-Book.epub（只需 Pandoc 与 Poppler）
 python3 book/build_epub.py --edition en    # 英文 EPUB → book-en/AI-Infra-Book-EN.epub
 ```
 
-依赖、字体及单章编译方法见 [PDF 编译说明](book/README.md)。GitHub Actions 会检查 Pull Request 的网站与中英文 PDF 构建；推送到 `main` 后自动生成 Release（含中英文 PDF 与 EPUB）并部署 Pages。
+依赖、字体及单章编译方法见 [PDF 编译说明](book/README.md)。GitHub Actions 会检查 Pull Request 的网站与中、英文及繁體中文 PDF 构建；推送到 `main` 后自动生成 Release（含中、英文及繁體中文 PDF，以及中英文 EPUB）并部署 Pages。
 
 ## 仓库结构
 
@@ -120,6 +125,7 @@ python3 book/build_epub.py --edition en    # 英文 EPUB → book-en/AI-Infra-Bo
 | [research/](research/README.md) | 支撑正文的专题调研，以及各章修订记录 |
 | [book/](book/README.md) | PDF 模板、构建与校验工具 |
 | [book-en/](book-en/README.md) | 英文版（社区翻译）：前言与十二章正文、英文配图、翻译工具与 PDF 构建脚本 |
+| [book-zh-tw/](book-zh-tw/README.md) | 繁體中文版（社区贡献）：前言与十二章正文、繁體配图、翻译工具与 PDF 构建脚本 |
 | [website/](website/README.md)、[scripts/](scripts/README.md) | 网站资源、构建与检查脚本 |
 | [archive/](archive/README.md) | 历史大纲、审阅和写作协调记录 |
 
@@ -132,7 +138,7 @@ python3 book/build_epub.py --edition en    # 英文 EPUB → book-en/AI-Infra-Bo
 - **补充遗漏的重要内容**：某个该讲的机制、架构或权衡没有写进来。
 - **修复配套代码的 bug**：`experiments/` 的实验代码与 `calculations/` 的计算 CLI，欢迎修正错误、补充测试或改进可用性。
 - **改进网页版**：[在线阅读版](https://bojieli.github.io/ai-infra-book/)的排版、导航、搜索和移动端体验都还有提升空间。
-- **翻译**：英文版已由社区贡献，欢迎翻译为更多语言，可参考英文版（`book-en/`）的组织方式；也欢迎跟进英文版，使其与中文原版同步。翻译前请先开 Issue 说明计划，便于协调进度、避免重复劳动。
+- **翻译**：英文版与繁體中文版已由社区贡献，欢迎翻译为更多语言，可参考 `book-en/` 和 `book-zh-tw/` 的组织方式；也欢迎跟进英文版，使其与中文原版同步。翻译前请先开 Issue 说明计划，便于协调进度、避免重复劳动。
 
 正文的唯一来源是 `manuscripts/` 下的 Markdown，网页版和 PDF 都由它构建生成，改正文请直接改这里。
 
@@ -144,6 +150,8 @@ python3 book/build_epub.py --edition en    # 英文 EPUB → book-en/AI-Infra-Bo
 
 英文版由 [@tg1482](https://github.com/tg1482) 翻译并贡献（[#4](https://github.com/bojieli/ai-infra-book/pull/4)）。
 
+繁體中文版由 [@edward821220](https://github.com/edward821220) 翻译并贡献（[#10](https://github.com/bojieli/ai-infra-book/pull/10)）。
+
 ## 贡献者
 
 感谢所有为本书贡献内容、代码、翻译和修正的贡献者！点击头像即可访问他们的 GitHub 主页，也欢迎你加入。
@@ -152,6 +160,7 @@ python3 book/build_epub.py --edition en    # 英文 EPUB → book-en/AI-Infra-Bo
 <p>
   <a href="https://github.com/bojieli"><img src="https://avatars.githubusercontent.com/u/1421793?v=4&amp;s=128" width="64" height="64" alt="@bojieli" title="@bojieli" /></a>
   <a href="https://github.com/tg1482"><img src="https://avatars.githubusercontent.com/u/31661606?v=4&amp;s=128" width="64" height="64" alt="@tg1482" title="@tg1482" /></a>
+  <a href="https://github.com/edward821220"><img src="https://github.com/edward821220.png?s=128" width="64" height="64" alt="@edward821220" title="@edward821220" /></a>
   <a href="https://github.com/determine123"><img src="https://avatars.githubusercontent.com/u/182319045?v=4&amp;s=128" width="64" height="64" alt="@determine123" title="@determine123" /></a>
   <a href="https://github.com/sleeep-early"><img src="https://avatars.githubusercontent.com/u/186607517?v=4&amp;s=128" width="64" height="64" alt="@sleeep-early" title="@sleeep-early" /></a>
 </p>

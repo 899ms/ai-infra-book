@@ -14,6 +14,7 @@ Markdown the PDF builds use through Pandoc's EPUB writer instead of LaTeX:
 Usage (from the repository root):
     python3 book/build_epub.py                 # Chinese edition
     python3 book/build_epub.py --edition en    # English edition
+    python3 book/build_epub.py --edition zh-tw # Traditional Chinese edition
 """
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -30,6 +31,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 MANUSCRIPTS = ROOT / 'manuscripts'
 BOOK_EN = ROOT / 'book-en'
+BOOK_ZH_TW = ROOT / 'book-zh-tw'
 REPO = 'https://github.com/bojieli/ai-infra-book'
 LFS_POINTER = b'version https://git-lfs.github.com/spec/v1'
 FIGURE_WIDTH = 1400  # pixels; sharp on a 300 ppi reader, small enough for phones
@@ -41,14 +43,20 @@ EDITIONS = {
     'en': dict(name='AI-Infra-Book-EN', lang='en-US', author='Bojie Li',
                title='Understanding AI Infra', subtitle='Quantitative Analysis and System Design',
                toc_title='Contents', footnotes_title='Notes'),
+    'zh-tw': dict(name='AI-Infra-Book-ZH-TW', lang='zh-Hant', author='李博杰',
+                  title='深入理解 AI Infra', subtitle='量化分析與系統設計',
+                  toc_title='目錄', footnotes_title='註釋'),
 }
+# Translations keep their chapters in their own directory.
+HOMES = {'zh': HERE, 'en': BOOK_EN, 'zh-tw': BOOK_ZH_TW}
 
 
 def sources(edition):
     """(number, path) for the preface (0) and chapters 1-12."""
     if edition == 'zh':
         return [(n, next(MANUSCRIPTS.glob(f'{n:02}-*.md'))) for n in range(13)]
-    return [(0, BOOK_EN / 'introduction.md')] + [(n, BOOK_EN / f'chapter{n:02}.md') for n in range(1, 13)]
+    home = HOMES[edition]
+    return [(0, home / 'introduction.md')] + [(n, home / f'chapter{n:02}.md') for n in range(1, 13)]
 
 
 def prepared_name(edition, number):
@@ -81,7 +89,7 @@ def prepare(number, source, edition, source_ref, figures):
     # section headings carry manual numbers (2.1, 2.1.1) and EPUB does not number.
     if number == 0:
         text = re.sub(r'^# (.+?)\s*$', r'# \1 {#preface}', text, count=1, flags=re.M)
-    elif edition == 'zh':
+    elif edition in ('zh', 'zh-tw'):
         text = re.sub(r'^# (第\s*\d+\s*章.*?)\s*$', rf'# \1 {{#chapter-{number}}}', text, count=1, flags=re.M)
     else:
         text = re.sub(r'^# (.+?)\s*$', rf'# Chapter {number}  \1 {{#chapter-{number}}}', text, count=1, flags=re.M)
@@ -110,7 +118,7 @@ def prepare(number, source, edition, source_ref, figures):
         label, target = match[1], match[2]
         if target.startswith('#'):
             return match[0]
-        # The English edition already carries absolute links into the repository.
+        # The translations already carry absolute links into the repository.
         target = re.sub(r'^https://github\.com/bojieli/ai-infra-book/blob/main/', '/', target)
         if re.match(r'[a-z]+:', target):
             return match[0]
@@ -137,13 +145,13 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--edition', choices=EDITIONS, default='zh')
     parser.add_argument('--output-dir', type=Path, default=None,
-                        help='Output directory (default: book/ or book-en/)')
+                        help='Output directory (default: book/, book-en/ or book-zh-tw/)')
     parser.add_argument('--cover', type=Path, default=None,
                         help='Cover PNG (default: the one the PDF build exported, if present)')
     parser.add_argument('--source-ref', help='Git commit for GitHub links in released EPUBs')
     args = parser.parse_args()
     meta = EDITIONS[args.edition]
-    home = HERE if args.edition == 'zh' else BOOK_EN
+    home = HOMES[args.edition]
     output_dir = (args.output_dir or home).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     work = HERE / 'build' / f'{meta["name"]}-epub'

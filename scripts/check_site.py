@@ -34,13 +34,21 @@ for path, page in pages.items():
             errors.append(f'{path.relative_to(ROOT)}: missing {link}')
         elif u.fragment and target in pages and unquote(u.fragment) not in pages[target].ids:
             errors.append(f'{path.relative_to(ROOT)}: missing anchor {link}')
-chapters = [p for p in (ROOT / 'manuscripts').glob('[0-9][0-9]-*.html') if 1 <= int(p.name[:2]) <= 12]
-if not (ROOT / 'manuscripts/00-前言.html').exists():
-    errors.append('Missing preface')
-if len(chapters) != 12:
-    errors.append(f'Expected 12 chapters, got {len(chapters)}')
-if not (ROOT / 'search/search_index.json').exists():
-    errors.append('Missing search index')
+# Each edition: preface, twelve chapters and its own search index (see scripts/build_site.py).
+EDITIONS = {
+    '简体中文': (ROOT, 'manuscripts/00-前言.html', lambda n: f'manuscripts/{n:02}-*.html'),
+    'English': (ROOT / 'en', 'introduction.html', lambda n: f'chapter{n:02}.html'),
+    '繁體中文': (ROOT / 'zh-tw', 'introduction.html', lambda n: f'chapter{n:02}.html'),
+}
+for name, (site, preface, chapter) in EDITIONS.items():
+    if not (site / preface).exists():
+        errors.append(f'{name}: missing preface')
+    missing = [n for n in range(1, 13) if not any(site.glob(chapter(n)))]
+    if missing:
+        errors.append(f'{name}: missing chapters {missing}')
+    if not (site / 'search/search_index.json').exists():
+        errors.append(f'{name}: missing search index')
 if errors:
     raise SystemExit('\n'.join(errors))
-print(f'PASS: {len(pages)} pages, 12 chapters, search index, internal links and images')
+print(f'PASS: {len(pages)} pages; {len(EDITIONS)} editions with preface, 12 chapters and search index; '
+      'internal links and images')

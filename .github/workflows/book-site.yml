@@ -25,11 +25,14 @@ jobs:
           cache: pip
           cache-dependency-path: website/requirements.txt
       - name: Fetch book figures
-        run: git lfs pull --include="manuscripts/**/*.svg,manuscripts/**/*.png,manuscripts/**/*.jpg,manuscripts/**/*.jpeg" --exclude=""
+        run: git lfs pull --include="manuscripts/**/*.svg,manuscripts/**/*.png,manuscripts/**/*.jpg,manuscripts/**/*.jpeg,book-en/images/**,book-zh-tw/images/**" --exclude=""
       - name: Enforce Markdown source policy
         run: python scripts/check_no_html.py
       - name: Install website dependencies
-        run: pip install -r website/requirements.txt
+        run: |
+          # pdftoppm rasterizes the translations' PDF figures for the English and 繁體中文 sites.
+          sudo apt-get update && sudo apt-get install -y poppler-utils
+          pip install -r website/requirements.txt
       - name: Build and check website
         run: |
           python scripts/build_site.py
@@ -97,7 +100,6 @@ jobs:
       - name: Validate PDF and render representative pages
         run: python book/check_ci_pdf.py ${{ matrix.output }} --edition ${{ matrix.edition }}
       - name: Build and validate EPUB (${{ matrix.edition }})
-        if: matrix.edition != 'zh-tw'
         env:
           BOOK_SOURCE_REF: ${{ github.sha }}
         run: |
@@ -156,19 +158,24 @@ jobs:
           sha = os.environ['SOURCE_SHA']
           repo = os.environ['REPOSITORY']
           built = os.environ['BUILT_AT']
+          latest = f'https://github.com/{repo}/releases/latest/download'
+          site = 'https://bojieli.github.io/ai-infra-book'
+          rows = [
+              ('简体中文', 'AI-Infra-Book', f'{site}/'),
+              ('English', 'AI-Infra-Book-EN', f'{site}/en/'),
+              ('繁體中文', 'AI-Infra-Book-ZH-TW', f'{site}/zh-tw/'),
+          ]
+          table = '\n'.join(
+              f'| {lang} | [{name}.pdf]({latest}/{name}.pdf) | [{name}.epub]({latest}/{name}.epub) | [在线阅读]({url}) |'
+              for lang, name, url in rows)
           Path('release-notes.md').write_text(
               f'{built}（北京时间）自动从 main 提交 '
               f'[{sha[:12]}](https://github.com/{repo}/commit/{sha}) 构建。\n\n'
-              '下载 `AI-Infra-Book.pdf` 阅读完整十二章全书；`AI-Infra-Book-EN.pdf` 为社区翻译的英文版'
-              '（English edition, translated by [@tg1482](https://github.com/tg1482)）；'
-              '`AI-Infra-Book-ZH-TW.pdf` 为社区贡献的繁體中文版'
-              '（由 [@edward821220](https://github.com/edward821220) 翻译整理）。'
-              '在手机和电子书阅读器上阅读，可下载可调字号的 `AI-Infra-Book.epub` 与 `AI-Infra-Book-EN.epub`。\n\n'
-              f'最新版固定链接：https://github.com/{repo}/releases/latest/download/AI-Infra-Book.pdf\n\n'
-              f'英文版固定链接：https://github.com/{repo}/releases/latest/download/AI-Infra-Book-EN.pdf\n\n'
-              f'繁體中文版固定链接：https://github.com/{repo}/releases/latest/download/AI-Infra-Book-ZH-TW.pdf\n\n'
-              f'EPUB 固定链接：https://github.com/{repo}/releases/latest/download/AI-Infra-Book.epub\n\n'
-              '在线阅读：https://bojieli.github.io/ai-infra-book/\n')
+              '| 语言 | PDF | EPUB | 网页 |\n| --- | --- | --- | --- |\n'
+              f'{table}\n\n'
+              '表中链接始终指向最新版。PDF 排版完整，适合电脑与平板；EPUB 字号可调，适合手机与电子书阅读器。'
+              '英文版由 [@tg1482](https://github.com/tg1482) 翻译，'
+              '繁體中文版由 [@edward821220](https://github.com/edward821220) 翻译整理。\n')
           PY
       - name: Publish release for this commit
         env:
@@ -191,7 +198,9 @@ jobs:
           if ! gh release view "$tag" >/dev/null 2>&1; then
             retry sh -c 'gh release view "$1" >/dev/null 2>&1 || gh release create "$1" --target "$2" --title "全书 $3" --notes-file release-notes.md --draft' _ "$tag" "$SOURCE_SHA" "$TITLE"
           fi
-          retry gh release upload "$tag" dist/AI-Infra-Book.pdf dist/AI-Infra-Book-EN.pdf dist/AI-Infra-Book-ZH-TW.pdf dist/AI-Infra-Book.epub dist/AI-Infra-Book-EN.epub --clobber
+          retry gh release upload "$tag" \
+            dist/AI-Infra-Book.pdf dist/AI-Infra-Book-EN.pdf dist/AI-Infra-Book-ZH-TW.pdf \
+            dist/AI-Infra-Book.epub dist/AI-Infra-Book-EN.epub dist/AI-Infra-Book-ZH-TW.epub --clobber
           # Remove legacy build extras if this commit's release is being rerun.
           for asset in AI-Infra-Book-build.json AI-Infra-Book-Cover.pdf AI-Infra-Book-Cover.png ai-infra-book-site.tar.gz pdf-validation.json SHA256SUMS; do
             if gh release view "$tag" --json assets --jq '.assets[].name' | grep -Fxq "$asset"; then

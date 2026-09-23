@@ -2,7 +2,7 @@
 
 **数据搬移塑造了 AI Infra 的架构。** 从一次模型执行开始，理解芯片、网络、推理与训练系统如何改变数据的复用、放置和等待。
 
-[下载全书 PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf) · [前言](../manuscripts/00-前言.md) · [GitHub 仓库](https://github.com/bojieli/ai-infra-book)
+[下载全书 PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf) · [EPUB](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.epub) · [前言](../manuscripts/00-前言.md) · [GitHub 仓库](https://github.com/bojieli/ai-infra-book)
 
 ## 这本书写什么
 

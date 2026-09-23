@@ -1,19 +1,17 @@
 # 深入理解 AI Infra：量化分析与系统设计
 
 [![Build](https://github.com/bojieli/ai-infra-book/actions/workflows/book-site.yml/badge.svg)](https://github.com/bojieli/ai-infra-book/actions/workflows/book-site.yml)
-[![PDF](https://img.shields.io/badge/PDF-下载最新版-red)](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf)
-[![EPUB](https://img.shields.io/badge/EPUB-下载最新版-orange)](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.epub)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/bojieli/ai-infra-book?style=social)](https://github.com/bojieli/ai-infra-book)
-[![English](https://img.shields.io/badge/翻译-English-informational.svg)](book-en/)
-[![繁體中文版](https://img.shields.io/badge/翻译-繁體中文-informational.svg)](book-zh-tw/)
 
-**简体中文** ← 当前 · [English](book-en/) · [繁體中文](book-zh-tw/)
+**简体中文** · [English](book-en/) · [繁體中文](book-zh-tw/)
 
 > [!TIP]
-> ### 📥 [下载最新版全书 PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf) · [EPUB](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.epub) · [繁體中文版 PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-ZH-TW.pdf)
+> **下载与阅读** · [格式与版本说明](#版本与格式说明)
 >
-> **推荐下载 PDF 阅读。** 书中有大量公式、表格、脚注和交叉引用，GitHub 直接显示 Markdown 时，LaTeX 公式和部分排版常常渲染不全或错位。PDF 由 XeLaTeX 排版，每次更新 `main` 后自动构建并发布到 [Releases](https://github.com/bojieli/ai-infra-book/releases)，上面的链接始终指向最新版。下方目录链接到各章 Markdown 源文件，便于查找原文和提交勘误；通读全书，仍建议下载 PDF。在手机或电子书阅读器上阅读，可下载 EPUB，字号可调，版面随屏幕自动重排。
+> - **简体中文**：[PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf) · [EPUB](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.epub) · [在线阅读](https://bojieli.github.io/ai-infra-book/)
+> - **English**: [PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-EN.pdf) · [EPUB](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-EN.epub) · [Read online](https://bojieli.github.io/ai-infra-book/en/)
+> - **繁體中文**：[PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-ZH-TW.pdf) · [EPUB](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-ZH-TW.epub) · [線上閱讀](https://bojieli.github.io/ai-infra-book/zh-tw/)
 
 《深入理解 AI Infra》是 GitHub 上获得 **45k+ Star** 的[《深入理解 AI Agent：设计原理与工程实践》](https://github.com/bojieli/ai-agent-book)的姊妹篇。
 
@@ -23,13 +21,7 @@
 
 贯穿全书的方法是**从约束推导设计**：先明确任务与质量要求，列出计算、存储、通信和依赖关系，对照硬件的容量、带宽和算力做数量级估算。这类估算人容易出错，AI 也一样：只算权重读取而忘了 KV 缓存，按峰值算力推算速度而不查带宽能否供给，把工作平分给多张卡却遗漏卡间通信，漏掉任何一项，结论都可能偏离几倍甚至几个数量级。估算还有另一层用意：读博时导师张霖涛博士反复叮嘱，优化一定要做到物理所允许的极限。本书贯彻这一习惯，先按第一性原理算出硬件允许的上限，再看实测离上限还有多远；差距不是模型漏了项，就是系统有可以去掉的开销。从 FPGA 加速 Bing 搜索排序、昇腾 AKG 算子生成到 UB 万卡互联，我反复遇到的是同一条线索：**数据搬移**。本书因此反复追问五个问题：**搬什么、搬多少、搬几次、经过哪里、谁必须等它。** 更多写作背景见[前言](manuscripts/00-前言.md)。
 
-**[下载 PDF（推荐）](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.pdf) · [下载 EPUB](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book.epub) · [繁體中文版 PDF](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-ZH-TW.pdf) · [在线阅读](https://bojieli.github.io/ai-infra-book/) · [章节正文](manuscripts/README.md) · [配套实验](experiments/README.md)**
-
 目前书稿仍是初稿，正在持续修订。
-
-中文正文源码位于 [`manuscripts/`](manuscripts/README.md)；英文版为社区翻译（by [@tg1482](https://github.com/tg1482)，可能滞后于中文原版），位于 [`book-en/`](book-en/)，包含前言与十二章正文、重绘为英文标注的配图和独立的 PDF 构建脚本。英文版 PDF 与中文版一同自动构建并发布：[AI-Infra-Book-EN.pdf](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-EN.pdf)。
-
-繁體中文版由社区贡献者 [@edward821220](https://github.com/edward821220) 翻译并整理，位于 [`book-zh-tw/`](book-zh-tw/)，包含前言与十二章正文、繁體配图和独立的 PDF 构建脚本；两项已知配图例外见[繁體版说明](book-zh-tw/README.md)。繁體中文版 PDF 与中英文版一同自动构建并发布：[AI-Infra-Book-ZH-TW.pdf](https://github.com/bojieli/ai-infra-book/releases/latest/download/AI-Infra-Book-ZH-TW.pdf)。
 
 ## 内容目录
 
@@ -98,20 +90,18 @@ python scripts/check_site.py
 python scripts/build_site.py --serve
 ```
 
-预览地址为 <http://127.0.0.1:8000>。生成文件位于 `build/`，详细说明见[网站构建与发布](website/README.md)。
+预览地址为 <http://127.0.0.1:8000>，简体中文位于根目录，英文与繁體中文分别位于 `en/` 和 `zh-tw/`。生成文件位于 `build/`，详细说明见[网站构建与发布](website/README.md)。
 
-**全书 PDF**（另需 Pandoc、XeLaTeX 和字体）：
+**全书 PDF 与 EPUB**（另需 Pandoc、XeLaTeX 和字体）：
 
 ```bash
-bash book/build_pdf.sh        # 中文版 → book/AI-Infra-Book.pdf
-bash book-en/build_pdf.sh     # 英文版 → book-en/AI-Infra-Book-EN.pdf
-git lfs pull --include="book-zh-tw/images/**" --exclude=""
-bash book-zh-tw/build_pdf.sh  # 繁體中文版 → book-zh-tw/AI-Infra-Book-ZH-TW.pdf
-python3 book/build_epub.py                 # 中文 EPUB → book/AI-Infra-Book.epub（只需 Pandoc 与 Poppler）
-python3 book/build_epub.py --edition en    # 英文 EPUB → book-en/AI-Infra-Book-EN.epub
+bash book/build_pdf.sh                        # 简体中文 → book/AI-Infra-Book.pdf
+bash book-en/build_pdf.sh                     # English → book-en/AI-Infra-Book-EN.pdf
+bash book-zh-tw/build_pdf.sh                  # 繁體中文 → book-zh-tw/AI-Infra-Book-ZH-TW.pdf
+python3 book/build_epub.py --edition zh       # EPUB 只需 Pandoc 与 Poppler；--edition 可选 zh、en、zh-tw
 ```
 
-依赖、字体及单章编译方法见 [PDF 编译说明](book/README.md)。GitHub Actions 会检查 Pull Request 的网站与中、英文及繁體中文 PDF 构建；推送到 `main` 后自动生成 Release（含中、英文及繁體中文 PDF，以及中英文 EPUB）并部署 Pages。
+译本配图存于 Git LFS，构建前先下载：`git lfs pull --include="book-en/images/**,book-zh-tw/images/**" --exclude=""`。依赖、字体及单章编译方法见 [PDF 编译说明](book/README.md)。GitHub Actions 会检查 Pull Request 的网站与三种语言的 PDF、EPUB 构建；推送到 `main` 后自动发布 Release（三种语言各含 PDF 与 EPUB）并部署三种语言的在线阅读网站。
 
 ## 仓库结构
 
@@ -173,3 +163,11 @@ python3 book/build_epub.py --edition en    # 英文 EPUB → book-en/AI-Infra-Bo
 本书原创正文、配图及配套代码采用 [Apache License 2.0](LICENSE) 许可。Copyright © 2026 Bojie Li（李博杰）。
 
 仓库中的第三方代码、字体、模板与参考资料保留各自的版权和许可声明，不因收录于本仓库而改用 Apache-2.0；具体来源和使用条件见相应目录。
+
+## 版本与格式说明
+
+- **PDF**：由 XeLaTeX 排版，公式、表格、脚注和交叉引用完整，推荐通读时使用。GitHub 直接显示 Markdown 时，LaTeX 公式和部分排版常常渲染不全或错位；上方目录链接到各章 Markdown 源文件，便于查找原文和提交勘误。
+- **EPUB**：字号可调，版面随屏幕自动重排，适合手机和电子书阅读器。
+- **在线阅读**：[阅读网站](https://bojieli.github.io/ai-infra-book/)提供章节导航、全文搜索和深色模式，右上角可切换语言。
+- **自动发布**：每次更新 `main` 后自动构建全部格式并发布到 [Releases](https://github.com/bojieli/ai-infra-book/releases)，上方链接始终指向最新版。
+- **翻译版本**：简体中文为原版，正文位于 [`manuscripts/`](manuscripts/README.md)。英文版为社区翻译（by [@tg1482](https://github.com/tg1482)），位于 [`book-en/`](book-en/)，包含前言与十二章正文、重绘为英文标注的配图和独立的构建脚本。繁體中文版由社区贡献者 [@edward821220](https://github.com/edward821220) 翻译并整理，位于 [`book-zh-tw/`](book-zh-tw/)，包含前言与十二章正文、繁體配图和独立的构建脚本；两项已知配图例外见[繁體版说明](book-zh-tw/README.md)。两种译本都可能滞后于原版，数字、公式和引用以原版为准。

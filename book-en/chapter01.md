@@ -330,7 +330,7 @@ A common approach in systems optimization is to compare against the previous imp
 
 ## 1.4 How Requirements Drive Architecture Design
 
-The estimates above treated hardware as a given condition; in reality, hardware itself is designed to meet specific requirements. Architecture design starts from the problem that needs solving. The scale of the business, the capability of the devices, and the demands on software differ across eras, and these differences determine what a designer must change first. This section examines, in turn, the speech inference requirements Google faced in 2013, Microsoft's requirements for scaling the Azure cloud network in 2015–2016, and Huawei's requirements for organizing multi-device computation and storage over the course of large-model development.
+The estimates above treated hardware as a given condition; in reality, hardware itself is designed to meet specific requirements. Two kinds of change drive architecture: changes in demand, such as growing business scale or new workloads, and changes in hardware, such as one class of component improving faster than others. Both ultimately appear as shifts in ratios — between computation and data read, between bandwidth and processing capability, between demand growth and single-chip capability. Once such a ratio shifts, a division of labor that used to make sense may no longer pay off. This section first examines three cases: the speech inference requirements Google faced in 2013, Microsoft's requirements for scaling the Azure cloud network in 2015–2016, and Huawei's requirements for organizing multi-device computation and storage over the course of large-model development; it then shows how such changes propagate through AI systems.
 
 ### 1.4.1 TPU
 
@@ -342,7 +342,7 @@ A dedicated processor can allocate more compute units to matrix operations that 
 
 ![Figure 1-15  A dedicated processor organizes its compute array and input/output buffers around recurring matrix operations. A buffer is a storage area that temporarily holds data awaiting computation or already computed; the three boxes and their arrows show the direction of data movement.](images/figure-1-design-tpu.pdf)
 
-Chapter 4 introduces the TPU's matrix array, buffers, and data paths. The relationship this example illustrates is: once an application's usage reaches a certain scale, a dedicated processor can become more cost-effective than a general-purpose one.
+Chapter 4 introduces the TPU's matrix array, buffers, and data paths. Once the daily compute demand $QF_1$ approaches the idle compute in the data centers, a dedicated processor can become more cost-effective than a general-purpose one.
 
 ### 1.4.2 SmartNIC
 
@@ -356,7 +356,7 @@ $$
 n_{\mathrm{core}}=\frac{\lambda_{\mathrm{packet}}}{\mu_{\mathrm{core}}}\approx3\text{—}6.
 $$
 
-Here $\lambda_{\mathrm{packet}}$ is the packet arrival rate and $\mu_{\mathrm{core}}$ is the per-core processing rate. These cores repeatedly perform the same packet-processing pipeline; moving that work to the network card frees up CPU time for applications.[^nic]
+Here $\lambda_{\mathrm{packet}}$ is the packet arrival rate and $\mu_{\mathrm{core}}$ is the per-core processing rate. Higher link bandwidth raises $\lambda_{\mathrm{packet}}$, while $\mu_{\mathrm{core}}$ does not keep pace, so the number of cores required grows with their ratio. These cores repeatedly perform the same packet-processing pipeline; moving that work to the network card frees up CPU time for applications.[^nic]
 
 Azure's approach was to let host software manage complex policy while handing packet-processing rules suited to repeated execution over to the FPGA. As data passes through the network card, this processing is completed there, freeing the CPU to spend more time on customer applications. The key to the design was balancing software update capability against hardware processing speed.
 
@@ -370,17 +370,34 @@ The SmartNIC changed the division of labor within a single server. If the proble
 
 For example, two cards' combined GPU memory might be enough to hold the weights, but the accelerator executing the computation must be able to access the data it needs. If one computation step depends on another card's result, it must wait for the handoff; if multiple cards jointly complete one operation, the corresponding collaboration must also be organized. Adding accelerators brings resources, but also adds the work of connecting those resources.
 
-Huawei's **UB (Unified Bus)**, developed for heterogeneous compute devices such as Ascend, expands the problem to multi-device collaboration. According to project participants' recollections, the related research began before OpenAI released the autoregressive language model GPT-3 in 2020; once GPT-3 demonstrated the capabilities of large models, the industry more broadly recognized the need for multi-device collaboration, and investment in the project expanded accordingly.
+Huawei's **UB (Unified Bus)**, developed for heterogeneous compute devices such as Ascend, expands the problem to multi-device collaboration. The author worked on this project from 2020 to 2023; the research had started in 2019, before OpenAI released the autoregressive language model GPT-3 in 2020; once GPT-3 demonstrated the capabilities of large models, the industry more broadly recognized the need for multi-device collaboration, and investment in the project expanded accordingly. The compute needed to train models grew far faster than the capability of a single accelerator; as that ratio kept widening, more and more accelerators had to work together.
 
 The core requirement of this period was to let ever-growing models make use of multiple accelerator cards, and to let compute devices access memory and data on other devices more conveniently. Once data crosses a host boundary, software must switch to a message-passing interface, rearrange buffers, and pass through the network card driver and protocol stack — and each additional layer of abstraction adds more time. UB lets a device access another device's memory directly, removing these layers of abstraction so that the time cost of a remote access approaches the lower bound set by wire latency, while upper layers can also organize resources more flexibly. A unified access mechanism lets devices directly use resources across a wider range, while the topology determines the distance and bandwidth of these accesses. Model partitioning and interconnect design are thus tightly linked. Section 6.5.5 discusses UB's organization from the perspective of supernode scale, and Sections 7.3 and 7.4 trace the path of a single remote access to derive its latency, request rate, and connection state, and compute how much time each removed layer of abstraction originally occupied.
 
 ![Figure 1-17  The unified interconnect connects the compute and storage resources of different devices. Model partitioning determines what needs to be exchanged; the interconnect is responsible for delivering data to the device that will use it next.](images/figure-1-design-ub.pdf)
 
-From speech inference, to cloud networking, to multi-device execution for large models, these designs each focused on improving compute efficiency, reducing host CPU consumption, and improving cross-device access, respectively. Changing requirements shifted which bottleneck needed to be solved first, and also reshaped the division of labor among hardware, software, and interconnect.
-
-Mapping this back onto the six-layer diagram from the opening: the three cases each start from a different problem, yet all end up reshaping the organization of computation and data movement. Application demand drives the design of dedicated hardware, processing location shifts the division of work between host and network card, and larger models require reorganizing device collaboration. The chapters that follow will develop the book's main thread along these relationships: **data movement shapes the architecture of AI Infrastructure.**
-
 Take this chapter's two-card model deployment as an example: splitting the weights evenly satisfies the per-card capacity constraint, but each stage must still wait for input data and results from earlier stages. Adding accelerators changes $M_{\mathrm{cap}}$ and the available compute, but also introduces new communication volume and dependencies. So the first step is to check whether each accelerator can hold the data it needs, the second step is to compute each accelerator's compute and read/write volume, and the third step is to compute the total time based on execution dependencies. No matter how large the model or how many accelerators, this analytical order still holds.
+
+### 1.4.4 How Changes Propagate
+
+Once deployed, the designs in these three cases create new constraints of their own. After FPGAs entered Azure servers, the cloud platform had to take on updating FPGA logic and handling its failures[^azure]; after UB joined large numbers of accelerators into one system, each synchronization had more devices to wait for and more components that could fail. In AI systems this propagation continues, and the table below lists its main links in the order of this book's chapters.
+
+| Change | Assumption that no longer holds | Chapter |
+| --- | --- | --- |
+| Neural network execution time concentrates in matrix operations | A general-purpose processor can handle the main computation at reasonable area and power | Chapters 4, 5 |
+| Model weights exceed a single card's memory | One model fits on one card | Chapter 6 |
+| Training and inference run synchronously across servers | Network traffic consists of independent flows that can be statistically multiplexed | Chapter 7 |
+| Each read of the weights in decode performs little computation | Peak compute determines execution speed | Chapter 8 |
+| Contexts grow and KV approaches or exceeds the weights in size | Context state is small and can be recomputed at any time | Chapter 9 |
+| Training reaches thousands of cards | Failures are occasional events | Chapter 10 |
+| Agent and RL workloads create tool environments in batches | Programs in containers are independent and set their own pace | Chapter 11 |
+| Edge devices can run models | Centralizing computation in the cloud always shortens completion time | Chapter 12 |
+
+Compared with general-purpose operating systems and cloud platforms, AI systems have one advantage: their workloads are few and known in advance. A general-purpose platform must run programs it knows nothing about beforehand, so it can rely only on uniform abstractions, strict isolation, and statistical multiplexing. AI systems are designed around a few models and well-defined execution processes; they can know in advance the computation and data dependencies described in Section 1.1.1 and use them to break through existing abstraction boundaries. For example, the RL sandbox platform in Chapter 11 pauses the relevant sandboxes on its own initiative, using preemption information from the training framework.
+
+Many individual techniques in AI systems are not new inventions: the paged KV management in Chapter 8 borrows paging from operating systems, sandbox placement in Chapter 11 uses the power-of-k-choices randomized algorithm proposed in 2001, and memory reclamation in virtual machines uses the balloon mechanism proposed in 2002.[^old-ideas] Once ratios shift, methods that were previously unprofitable or unnecessary become worthwhile again; whether a technique fits must still be recalculated from the current ratios.
+
+From speech inference, to cloud networking, to multi-device execution for large models, changes in demand and hardware determined which bottleneck had to be solved first, and redivided work among hardware, software, and interconnect. Against the six-layer diagram from the opening, every one of these designs reorganized computation and data movement. Three threads run through the chapters that follow: shifting ratios explain why a new design is needed, data movement shows what the new design changes, and the physical limits of Section 1.3.4 measure how far the design has gone. From these the book's main thread unfolds: **data movement shapes the architecture of AI Infrastructure.**
 
 ## Common Pitfalls
 
@@ -389,6 +406,8 @@ Take this chapter's two-card model deployment as an example: splitting the weigh
 **Pitfall: if GPU memory can hold the weights, it can support the target concurrency.** Weights are only part of the resident data. Context state, workspace, and runtime reservations all occupy GPU memory together, and on multiple accelerators each card must be checked individually.
 
 **Pitfall: 30% faster than the old implementation means the optimization succeeded.** Without knowing the limit the hardware allows, there is no way to tell whether that 30% is close to the ceiling or still an order of magnitude away. One should first compute the limit, then follow the order in Section 1.3.4 to determine whether the gap comes from a model gap or from system overhead.
+
+**Pitfall: a system that matured in the previous generation of workloads can be used directly for new ones.** Every system design presumes the ratios of its time. General-purpose container platforms assume requests come from independent tenants and that programs set their own pace; sandboxes in RL training are created in batches and paced by the GPU side, so copying the old design leaves expensive accelerators idle (Chapter 11). Before reusing a design, check whether the ratios it depends on still hold.
 
 **Pitfall: higher throughput means shorter wait time for each user.** Within-batch reuse reduces the read overhead amortized per output, but each request must still go through queueing and full-batch execution. Throughput and response time should be reported together.
 
@@ -437,6 +456,8 @@ These numbers explain the difference between the two stages: prefill processes a
 [^real70]: Parameter counts and BF16 byte counts come from the [DeepSeek-R1-Distill-Llama-70B public weight index](https://github.com/bojieli/ai-infra-book/blob/main/calculations/sources/deepseek-r1-distill-llama-70b/model.safetensors.index.json) and the [fixed-version configuration](https://github.com/bojieli/ai-infra-book/blob/main/calculations/configs/models/deepseek-r1-distill-llama-70b/config.json). The total weight volume under grouped quantization uses the model-wide summary in the [itemized computation record](https://github.com/bojieli/ai-infra-book/blob/main/calculations/results/dense-quant-deepseek-r1-distill-llama-70b-tp1-pp8-80gb-8192.json), with 128 parameters per group and 2 bytes per scale. The nominal 24 GB specification for the RTX 4090 is from the [official page archive](https://github.com/bojieli/ai-infra-book/blob/main/calculations/sources/hardware/nvidia-rtx4090-page.txt). This section uses the nominal specification GB as the unified capacity budget.
 
 [^azure]: Firestone et al., Microsoft, [Azure Accelerated Networking: SmartNICs in the Public Cloud](https://www.usenix.org/conference/nsdi18/presentation/firestone), NSDI 2018; [original paper text](https://github.com/bojieli/ai-infra-book/blob/main/references/editorial-context/2026-09-10/azure-smartnic-nsdi2018.txt). The abstract gives a deployment date of late 2015 and customer availability in 2016; Section 3 describes the design goals of reducing CPU consumption, preserving programmability, and supporting higher bandwidth.
+
+[^old-ideas]: For power-of-k-choices, see M. Mitzenmacher, The Power of Two Choices in Randomized Load Balancing, IEEE TPDS, 2001; for the balloon mechanism, see C. A. Waldspurger, Memory Resource Management in VMware ESX Server, OSDI 2002. Both are cited by the [DSec paper](https://github.com/bojieli/ai-infra-book/blob/main/references/text/dsec-sandbox.txt); the corresponding mechanisms appear in Sections 11.2.2 and 11.3.2.
 
 [^gpu-numbers]: Figures taken from the [fixed GPU specifications and itemized sources](https://github.com/bojieli/ai-infra-book/blob/main/calculations/configs/hardware.json), corresponding to `rtx4090`, `a100-80gb-sxm`, and `h100-sxm`; precision, accumulation method, and dense conditions are each verified separately. GB and TB in this table are decimal units throughout.
 

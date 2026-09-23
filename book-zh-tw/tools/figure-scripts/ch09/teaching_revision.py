@@ -8,7 +8,7 @@ def draw(here,data):
     out=Exporter(here)
     def save(f,n):out.save(f,'figure-9-'+n)
     with plt.rc_context(STYLE):
-        for i,title in enumerate(["多卡共同執行一個完整模型","完整副本分別接收請求","PD：按輸入處理與生成階段分工","AF：按每層的運算元分工"]):
+        for i,title in enumerate(["多卡共同執行一個完整模型","完整副本分別接收請求","PD：按輸入處理與生成階段分工","AF：按每層的運算子分工"]):
             f,a=canvas(3.7);text(a,.04,.94,title,14)
             if i==0:
                 box(a,.04,.22,.92,.48,'','gray');text(a,.5,.61,"一個排程器，一組模型權重與狀態",12,ha='center')
@@ -17,7 +17,7 @@ def draw(here,data):
                 for x in [.04,.56]:box(a,x,.25,.40,.26,"完整模型副本",'blue');text(a,x+.2,.72,"獨立請求",12,ha='center');arrow(a,(x+.2,.65),(x+.2,.51))
             else:
                 for x,label,c in [(.04,"P：處理輸入" if i==2 else "注意力",'blue'),(.61,"D：逐步生成" if i==2 else "FFN／專家",'green')]:box(a,x,.28,.35,.27,label,c)
-                arrow(a,(.39,.46),(.61,.46));text(a,.5,.68,"傳輸上下文 KV" if i==2 else "逐層傳遞啟用",12,ha='center')
+                arrow(a,(.39,.46),(.61,.46));text(a,.5,.68,"傳輸上下文 KV" if i==2 else "逐層傳遞活化值",12,ha='center')
                 if i==3:arrow(a,(.61,.35),(.39,.35))
             save(f,'1-organization' if i==0 else f'organization-{i}')
         f,a=canvas(4.3)
@@ -59,12 +59,12 @@ def draw(here,data):
             text(a,.5,y-.045,f'請求率上限 {data["new-allocation"]["rates"][row]:.2f}/s',11,ha='center')
         save(f,'4-allocation')
         for local,name in [(False,'5-local'),(True,'local-cpu')]:
-            f,a=canvas(4.4);box(a,.04,.67,.35,.18,"CPU 主存：專家權重",'blue',11);box(a,.61,.67,.35,.18,"GPU：輸入啟用",'green',11)
+            f,a=canvas(4.4);box(a,.04,.67,.35,.18,"CPU 主記憶體：專家權重",'blue',11);box(a,.61,.67,.35,.18,"GPU：輸入活化值",'green',11)
             if local:
                 arrow(a,(.61,.76),(.39,.76));box(a,.04,.31,.35,.18,"CPU 專家計算",'blue');arrow(a,(.215,.67),(.215,.49));arrow(a,(.39,.40),(.61,.40));box(a,.61,.31,.35,.18,"GPU 匯合結果",'orange',11)
             else:
                 arrow(a,(.39,.76),(.61,.76));box(a,.61,.31,.35,.18,"GPU 專家計算",'green');arrow(a,(.785,.67),(.785,.49))
-            text(a,.5,.13,"啟用往返：每行共 16 KiB" if local else "搬移一份專家權重：36 MiB",12,ha='center');save(f,name)
+            text(a,.5,.13,"活化值往返：每行共 16 KiB" if local else "搬移一份專家權重：36 MiB",12,ha='center');save(f,name)
         d=data['9-6'];f,a=plot(3.9)
         for key,label,c,ls in [('cpu_avx512_ms','CPU，AVX-512','#267398','-'),('cpu_amx_ms','CPU，AMX','#267398','--'),('weight_copy_gpu_ms',"搬權重到 GPU",'#a56c28','-')]:a.plot(d['tokens_per_expert'],d[key],label=label,color=c,ls=ls)
         a.set_xscale('log',base=2);a.set(xlabel="每個專家收到的 token 數（對數刻度）",ylabel="八個專家的路徑時間（ms）",xlim=(1,1024),ylim=(0,30),xticks=[1,4,16,64,256,1024],xticklabels=['1','4','16','64','256','1024']);a.minorticks_off();a.legend(frameon=False);save(f,'6-reuse')
@@ -74,7 +74,7 @@ def draw(here,data):
         for key,c in [('gqa25','#267398'),('mla25','#388768')]:
             x=d['equal_time_startup_us'][key];y=589824/25e9*1e3+72*x/1e3
             a.scatter([x],[y],color=c,zorder=3);a.annotate(f'{x:.0f} μs',(x,y),xytext=(x+25,y-9),fontsize=11)
-        a.set(xlabel="每次啟動開銷（μs）",ylabel="序列交接時間（ms）",xlim=(0,800),ylim=(0,80),yticks=[0,20,40,60,80]);a.legend(frameon=False,loc='upper left');save(f,'mla-handoff')
+        a.set(xlabel="每次啟動開銷（μs）",ylabel="依序交接時間（ms）",xlim=(0,800),ylim=(0,80),yticks=[0,20,40,60,80]);a.legend(frameon=False,loc='upper left');save(f,'mla-handoff')
         for i,tasks in enumerate(data['new-balance']['assignments_per_card']):
             f,a=plot(4,left=.17);times=np.array(tasks)*2*18874368/(data['new-balance']['effective_TFLOPs']*1e12)*1e6;a.barh(range(8),times,color=COL['blue'],edgecolor=COL['line']);a.axvline(max(times),ls='--',color='#a56c28');a.set(yticks=range(8),yticklabels=[f'卡 {j}' for j in range(8)],xlim=(0,42),xlabel="H100 上的專家矩陣計算（μs）");a.invert_yaxis();save(f,'9-balance' if i==0 else 'balance-hotspot')
         d=data['9-10'];f,a=plot(3.6)

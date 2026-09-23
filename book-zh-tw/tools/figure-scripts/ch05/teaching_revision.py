@@ -164,7 +164,7 @@ def draw(here, data):
         f,a=canvas(4.1)
         text(a,.41,.94,"槽 A",14,ha='center');text(a,.80,.94,"槽 B",14,ha='center')
         for y,(t0,t1),left,right in zip([.70,.43,.16],spans,["寫入塊 0","讀取塊 0","寫入塊 2"],["空閒","寫入塊 1","讀取塊 1"]):
-            text(a,.0,y+.07,f'{t0:.2f}–{t1:.2f} μs'.replace('0.00','0'),12);box(a,.23,y,.34,.14,left,'blue');box(a,.63,y,.34,.14,right,'green' if right!='空闲' else 'gray')
+            text(a,.0,y+.07,f'{t0:.2f}–{t1:.2f} μs'.replace('0.00','0'),12);box(a,.23,y,.34,.14,left,'blue');box(a,.63,y,.34,.14,right,'green' if right!='空閒' else 'gray')
         arrow(a,(.40,.42),(.40,.365));text(a,.40,.34,f'{end(ev["compute",0]):.2f} μs 塊 0 用完',11,ha='center')
         text(a,.5,.05,f'槽 A 早已空出，塊 2 等搬移器在 {ev["copy",2]["start"]:.2f} μs 空閒才寫入',11,ha='center')
         save(f,'figure-5-buffer-slots')
@@ -173,7 +173,7 @@ def draw(here, data):
         f,axs=plt.subplots(2,1,figsize=(420/72,4.6));f.subplots_adjust(left=.15,right=.95,top=.82,bottom=.13,hspace=.85)
         d=data['5-6']
         for a,mode,end in zip(axs,['serial','double_buffer'],d['completion_us']):
-            title_=("序列" if mode=='serial' else "雙緩衝")+f'：{end:.2f} μs'
+            title_=("依序執行" if mode=='serial' else "雙緩衝")+f'：{end:.2f} μs'
             for e in d[mode]:
                 y=.65 if e['kind']=='copy' else .13
                 a.broken_barh([(e['start'],e['duration'])],(y,.28),facecolors=COL['blue' if e['slot']==0 else 'green'],edgecolors=COL['line'],lw=.8)

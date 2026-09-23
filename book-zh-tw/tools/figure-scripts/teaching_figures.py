@@ -123,7 +123,7 @@ def draw(ch,save,root):
   arrow(a,(.49,.28),(.49,.22));box(a,.08,.06,.82,.15,"語言模型儲存 400 個位置的 KV\n400 × 144 KiB = 56.25 MiB",ORANGE)
   save(f,'figure-3-vision-shapes');meta['vision_shapes']={'pixels':[640,640],'patch_pixels':[16,16],'patch_grid':[40,40],'merge':[2,2],'positions':400,'feature_groups':4,'feature_width':2560,'ec_bytes':8192000,'kv_bytes':400*147456}
   f,axs=plt.subplots(1,2,figsize=(14,8));f.subplots_adjust(left=.1,right=.97,top=.85,bottom=.2,wspace=.3)
-  variants=[("A  工具序列，總時間 21 秒",[(0,2,3,BLUE),(2,6,2,TEAL),(8,10,1,ORANGE),(18,3,3,BLUE)],16),("B  工具並行，總時間 15 秒",[(0,2,3,BLUE),(2,6,2,TEAL),(2,10,1,ORANGE),(12,3,3,BLUE)],10)]
+  variants=[("A  工具依序執行，總時間 21 秒",[(0,2,3,BLUE),(2,6,2,TEAL),(8,10,1,ORANGE),(18,3,3,BLUE)],16),("B  工具並行，總時間 15 秒",[(0,2,3,BLUE),(2,6,2,TEAL),(2,10,1,ORANGE),(12,3,3,BLUE)],10)]
   for a,(title,blocks,wait) in zip(axs,variants):
    for start,duration,y,col in blocks:
     a.broken_barh([(start,duration)],(y-.25,.5),facecolors=col);a.text(start+duration/2,y,str(duration)+' s',ha='center',va='center',color='white',fontsize=12)

@@ -74,7 +74,7 @@ arrow(a,(.43,.69),(.405,.59))
 a.text(.055,.515,"後續只需\n$G-1=3$ 次呼叫",fontsize=13,linespacing=1.8)
 for i,(slots,label) in enumerate([(8192,"Prefill 後"),(8193,"Decode 1 後"),(8194,"Decode 2 後"),(8195,"Decode 3 後")]):
  x=.07+i*.23;box(a,x,.22,.19,.12,label,f'{slots} 個位置',color='light')
-a.text(.055,.125,"基線：8192 位置 = 1.125 GiB；三次 decode 共追加 432 KiB。$y_4$ 返回後尚未再次入模。",fontsize=12)
+a.text(.055,.125,"基線：8192 位置 = 1.125 GiB；三次 decode 共追加 432 KiB。$y_4$ 回傳後尚未再次入模。",fontsize=12)
 footer(a,"字首命中減少重算，但新輸入與後續生成仍可讀取已有上下文；V4 的狀態使用第二章各自的結構賬。")
 save(f,'figure-3-1-stages');data['3-1']={'kind':'teaching_structure','S':6144,'P':2048,'G':4,'kv_bytes_per_position':147456,'slots_after_calls':[8192,8193,8194,8195]}
 # 3-2: workload composition, observed metrics and explicit fluid queue.
@@ -91,19 +91,19 @@ decode_card=[z for z in calc('batch-reuse-rtxpro6000-mix')['batch_reuse_rows'] i
 a=axs[3];seconds=np.array([0,60,120,120+peak_backlog/service]);backlog=np.array([0,0,peak_backlog,0]);a.plot(seconds,backlog,color=C['orange'],lw=2.5,marker='o');a.axvline(120,color=C['muted'],ls='--',lw=1);a.set_title("D  固定服務率下的積壓〔教學〕",loc='left',fontsize=13);a.set_xlabel("從請求到達起點計時 / s");a.set_ylabel("待處理 decode 步");a.set_ylim(0,140000);a.annotate(f'{peak_backlog:,.0f} 步',xy=(120,peak_backlog),xytext=(40,127000),arrowprops={'arrowstyle':'->'},fontsize=11);a.grid(alpha=.15)
 save(f,'figure-3-2-workload-budget');data['3-2']={'kind':'separate_teaching_and_measurement','A_fraction':A.tolist(),'prefill_positions_per_second':pref.tolist(),'decode_positions_per_second':dec.tolist(),'arrival_reports':arrival,'fluid_queue':{'device':'rtx-pro6000-blackwell-ws','cards':decode_cards,'batch_per_card':64,'mean_context_tokens':2742,'service_steps_per_second':service,'seconds':seconds.tolist(),'backlog_steps':backlog.tolist()}}
 # 3-3: measured round durations, engine hits, and explicitly hypothetical retention.
-ag=calc('agent-thinking-on');rounds=ag['agent_rounds'];f,a=canvas("圖 3-3  Agent 軌跡與 KV 生命週期","開啟 thinking 的四輪人工程式碼任務；模型／工具為牆鍾觀測，快取大小為條件式邏輯預算。",10)
+ag=calc('agent-thinking-on');rounds=ag['agent_rounds'];f,a=canvas("圖 3-3  Agent 軌跡與 KV 生命週期","開啟 thinking 的四輪人工程式碼任務；模型／工具為牆鐘觀測，快取大小為條件式邏輯預算。",10)
 ax=f.add_axes([.12,.55,.79,.27]);y=np.arange(4);mods=[z['measured_model_seconds'] for z in rounds];tools=[z['measured_tool_seconds'] for z in rounds]
-ax.barh(y,mods,color=C['blue'],label="模型牆鍾");ax.barh(y,tools,left=mods,color=C['orange'],label="工具牆鍾（本例很短）");ax.set_yticks(y,["第 1 輪：截斷","第 2 輪：寫檔案","第 3 輪：測試","第 4 輪：結束"]);ax.invert_yaxis();ax.set_xlim(0,44);ax.set_xlabel("秒（逐輪，非連續起點）");ax.legend(loc='lower right',fontsize=10,frameon=False)
+ax.barh(y,mods,color=C['blue'],label="模型牆鐘");ax.barh(y,tools,left=mods,color=C['orange'],label="工具牆鐘（本例很短）");ax.set_yticks(y,["第 1 輪：截斷","第 2 輪：寫檔案","第 3 輪：測試","第 4 輪：結束"]);ax.invert_yaxis();ax.set_xlim(0,44);ax.set_xlabel("秒（逐輪，非連續起點）");ax.legend(loc='lower right',fontsize=10,frameon=False)
 for i,z in enumerate(rounds):ax.text(mods[i]+.5,i,f"{mods[i]:.3f} s",va='center',fontsize=10)
 a.text(.06,.46,"輸入 / 命中 / 輸出",fontsize=12,weight='bold')
 for i,z in enumerate(rounds):
  x=.065+i*.232;box(a,x,.315,.205,.105,f"{z['prompt_tokens']} / {z['cached_tokens']} / {z['output_tokens']}",f"工具段假設保留 {z['retained_logical_kv_bytes']/2**20:.2f} MiB",size=11)
 box(a,.06,.12,.24,.105,"分支共享〔教學示意〕","一份字首 + 各自尾部",color='light');box(a,.43,.19,.19,.075,"公共字首",color='light');box(a,.76,.245,.18,.055,"分支 A 尾部",color='sand',size=11);box(a,.76,.14,.18,.055,"分支 B 尾部",color='sand',size=11);arrow(a,(.63,.23),(.75,.27));arrow(a,(.63,.22),(.75,.17))
-footer(a,"實測軌跡是序列的；未記錄真實 KV 塊的保留／回收。只加速首輪兩倍：76.510 → 58.323 s，假定其餘行為與品質不變。")
+footer(a,"實測軌跡依序執行；未記錄真實 KV 塊的保留／回收。只加速首輪兩倍：76.510 → 58.323 s，假定其餘行為與品質不變。")
 save(f,'figure-3-3-agent');data['3-3']={'kind':'measured_wall_and_conditional_state','rounds':rounds,'summary':ag['summary'],'counterfactual':calc('agent-thinking-on-double-first')['summary']}
 # 3-4: stage identity, teaching timing, observed reception.
 aud=calc('audio-timing-base');large=calc('audio-timing-large-buffer');intr=calc('audio-timing-interrupt');real=read('experiments/ch03/03-05/historical-arrivals/summary.json')
-f,a=canvas("圖 3-4  實時互動的端到端時序","相同任務中，資料到達、開始播放、裝置靜音和後端停止計算是不同事件。",11)
+f,a=canvas("圖 3-4  即時互動的端到端時序","相同任務中，資料到達、開始播放、裝置靜音和後端停止計算是不同事件。",11)
 for i,(title,body) in enumerate([("視覺編碼 E","640² → 400 位置\nEC 7.8125 MiB"),("語言 P → D","視覺位置 KV\n56.25 MiB"),("語音生成與接收","聲學碼 → PCM\n到達後進入緩衝"),("裝置播放","首播 / 連續供給\n打斷 / 靜音")]):
  x=.055+i*.235;box(a,x,.71,.195,.12,title,body,size=12)
  if i<3:arrow(a,(x+.20,.77),(x+.225,.77))
@@ -119,7 +119,7 @@ footer(a,"每塊 20 ms、24 kHz、單聲道、2 bytes/sample：960 bytes；模�
 save(f,'figure-3-4-realtime');data['3-4']={'kind':'separate_mechanism_teaching_and_historical_reception','audio_chunks':ch,'base_summary':aud['summary'],'large_buffer':large['summary'],'interrupt':intr['summary'],'historical_reception':real,'visual':{'positions':400,'ec_bytes':8192000,'kv_bytes':58982400}}
 # 3-5: computational paths, matrices, parameter states.
 t=calc('training-qwen3-8b-t8192');f,a=canvas("圖 3-5  推理與各訓練階段的計算和狀態","Qwen3-8B · B=1、T=8192；訓練計算所有詞表頭行，無重計算；各面板使用獨立單位。",9)
-for i,(title,body) in enumerate([("前向","儲存反向所需啟用"),("反向","輸入梯度 + 權重梯度"),("參數更新","權重 / 最佳化器狀態")]):
+for i,(title,body) in enumerate([("前向","儲存反向所需的活化值"),("反向","輸入梯度 + 權重梯度"),("參數更新","權重 / 最佳化器狀態")]):
  x=.07+i*.31;box(a,x,.69,.245,.12,title,body,color=['pale','light','sand'][i]);
  if i<2:arrow(a,(x+.25,.75),(x+.30,.75))
 a.text(.07,.625,"推理使用前向；預訓練、中期訓練與 SFT 使用同一基本更新路徑，各階段採用不同的資料、標籤和序列長度。",fontsize=11)
@@ -127,7 +127,7 @@ ax=f.add_axes([.10,.23,.37,.29]);vals=[t['summary'][k]/1e12 for k in ['forward_m
 for i,v in enumerate(vals):ax.text(v+7,i,f'{v:.3f}',va='center',fontsize=10)
 ax=f.add_axes([.64,.23,.29,.29]);states=t['parameter_state_bytes'];labels=["BF16 權重","FP32 梯度",'FP32 master',"Adam 一階","Adam 二階"];sv=[v/1e9 for v in states.values()];ax.barh(range(5),sv,color=[C['blue'],C['teal'],C['orange'],C['muted'],C['muted']]);ax.set_yticks(range(5),labels);ax.invert_yaxis();ax.set_xlim(0,42);ax.set_xlabel("十進位制 GB");ax.set_title("B  未分片的參數相關狀態",loc='left',fontsize=13)
 for i,v in enumerate(sv):ax.text(v+.8,i,f'{v:.3f}',va='center',fontsize=10)
-a.text(.06,.12,"狀態合計 147.433 GB；啟用和工作區另計。矩陣表未計非矩陣反向、最佳化器算術、重計算與通訊。",fontsize=11)
+a.text(.06,.12,"狀態合計 147.433 GB；活化值和工作區另計。矩陣表未計非矩陣反向、最佳化器算術、重計算與通訊。",fontsize=11)
 footer(a,"「三倍前向」來自本例每個矩陣的兩個梯度；不能用全部參數量或可訓練參數佔比推斷任意訓練路徑。")
 save(f,'figure-3-5-training');data['3-5']={'kind':'analytical_subaccounts','scenario':t['scenario'],'summary':t['summary'],'parameter_state_bytes':states,'training_matrix_rows':t['training_matrix_rows']}
 # 3-6: RL/OPD dataflow and same accepted target.
@@ -163,10 +163,10 @@ hist=calc('training-history-published');hr={z['input']['id']:z for z in hist['tr
 f,a=canvas("圖 3-8  Llama 與 Qwen 的模型—資料選擇","上下文投入按報告中的模型規模估算；Qwen token 為 family 披露，產品點不是受控 Scaling Law 實驗。",9)
 ax=f.add_axes([.16,.26,.30,.51]);ratios=[hr[k]['input']['training_tokens']/hr[k]['input']['parameter_proxy'] for k in ids];ax.barh(range(5),ratios,color=[C['blue']]*3+[C['teal']]*2);ax.set_yticks(range(5),names);ax.invert_yaxis();ax.set_xlim(0,5400);ax.set_xlabel("訓練 token / 參數");ax.set_title("A  相近規模 dense 模型",loc='left',fontsize=13)
 for i,v in enumerate(ratios):ax.text(v+90,i,f'{v:,.0f}',va='center',fontsize=10)
-ax=f.add_axes([.63,.26,.31,.51]);mids=['deepseek-v3-pretraining','deepseek-v4-flash','deepseek-v4-pro'];ctx=[hr[k]['parameter_context'] for k in mids];y=np.arange(3);tot=[z['total_reported']/1e9 for z in ctx];act=[z['active_reported']/1e9 for z in ctx];ax.barh(y-.17,tot,height=.30,color=C['blue'],label="總參數：估算容量");ax.barh(y+.17,act,height=.30,color=C['orange'],label="啟用參數：估算計算量");ax.set_yticks(y,['V3 · 2024\n14.8T','V4-Flash · 2026\n32T','V4-Pro · 2026\n33T']);ax.invert_yaxis();ax.set_xlim(0,1900);ax.set_xlabel("十億參數 B");ax.set_title("B  MoE 總參數與啟用參數",loc='left',fontsize=13);ax.legend(frameon=False,fontsize=10,loc='upper center',bbox_to_anchor=(.5,-.17))
+ax=f.add_axes([.63,.26,.31,.51]);mids=['deepseek-v3-pretraining','deepseek-v4-flash','deepseek-v4-pro'];ctx=[hr[k]['parameter_context'] for k in mids];y=np.arange(3);tot=[z['total_reported']/1e9 for z in ctx];act=[z['active_reported']/1e9 for z in ctx];ax.barh(y-.17,tot,height=.30,color=C['blue'],label="總參數：估算容量");ax.barh(y+.17,act,height=.30,color=C['orange'],label="每 token 選用參數：估算計算量");ax.set_yticks(y,['V3 · 2024\n14.8T','V4-Flash · 2026\n32T','V4-Pro · 2026\n33T']);ax.invert_yaxis();ax.set_xlim(0,1900);ax.set_xlabel("十億參數 B");ax.set_title("B  MoE 總參數與選用參數",loc='left',fontsize=13);ax.legend(frameon=False,fontsize=10,loc='upper center',bbox_to_anchor=(.5,-.17))
 for i,(v,w) in enumerate(zip(tot,act)):ax.text(v+25,i-.17,f'{v:g}',va='center',fontsize=10);ax.text(w+25,i+.17,f'{w:g}',va='center',fontsize=10)
 a.text(.06,.135,"D/N 從約 149 到約 4500，說明相近參數規模可投入更多訓練；能力差異還涉及資料、訓練方法和評測。",fontsize=11)
-footer(a,"6ND 按給定參數量估算；MoE 啟用量不能替代全部矩陣、狀態更新與最佳化器工作，跨模型不據本圖排名品質。")
+footer(a,"6ND 按給定參數量估算；MoE 每 token 選用參數量不能替代全部矩陣、狀態更新與最佳化器工作，跨模型不據本圖排名品質。")
 save(f,'figure-3-8-history');data['3-8']={'kind':'reported_history_and_analytical_ratios','dense_rows':[hr[k] for k in ids],'ratios':ratios,'moe_rows':[hr[k] for k in mids]}
 # 3-9: hardware-separated GPU-hour panels, missing values distinct from zero.
 f,a=canvas("圖 3-9  公開 GPU 小時與訓練階段","不同裝置分面，橫軸範圍不同；GPU 小時不能直接跨硬體解釋為算力或效率。",9)

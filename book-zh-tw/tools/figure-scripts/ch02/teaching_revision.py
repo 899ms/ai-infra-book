@@ -63,7 +63,7 @@ def draw(here,data):
         arrow(a,(.5,.80),(.24,.69));arrow(a,(.5,.80),(.76,.69))
         text(a,.24,.46,"12288 維",11,ha='center');text(a,.76,.46,"12288 維",11,ha='center')
         box(a,.30,.26,.40,.13,"對應元素相乘",'green');arrow(a,(.24,.43),(.4,.40));arrow(a,(.76,.43),(.6,.40))
-        box(a,.20,.04,.60,.13,"down 投影：返回 4096 維",'purple');arrow(a,(.5,.26),(.5,.17));save(f,'ffn-gates')
+        box(a,.20,.04,.60,.13,"down 投影：回傳 4096 維",'purple');arrow(a,(.5,.26),(.5,.17));save(f,'ffn-gates')
 
         f,a=canvas(4.2);text(a,.04,.94,"每一步追加一 個 token，重讀已有上下文",14)
         for i,n in enumerate([4,5,6,7]):
@@ -149,7 +149,7 @@ def draw(here,data):
         save(f,'expert-reuse')
 
         f,a=canvas(4.3)
-        for i,(title,streams) in enumerate([("普通殘差：保留一條旁路",1),("mHC：保留四路，再混合返回",4)]):
+        for i,(title,streams) in enumerate([("普通殘差：保留一條旁路",1),("mHC：保留四路，再混合回傳",4)]):
             y=.56-i*.43;text(a,.04,y+.32,title,14)
             for j in range(streams):box(a,.04+j*.10,y+.11,.075,.09,str(j+1),'blue',11)
             box(a,.55,y+.09,.39,.14,"子層輸入 4096 維",'orange',11)
@@ -187,7 +187,7 @@ def draw(here,data):
         a.set(yticks=range(3),yticklabels=['Qwen BF16\nRTX 4090','70B 8-bit\nH100 SXM','70B 4-bit\nH100 SXM'],xlim=(0,85),xlabel="容量（GB）");a.invert_yaxis();a.legend(loc='upper center',bbox_to_anchor=(.5,-.22),ncol=3,frameon=False);save(f,'9-capacity')
         d=data['figure_2_9']['history_capacity'];bars('history-capacity',["8K 上下文","32K 上下文"],d['maximum_requests'],"容量允許的獨立請求數")
 
-        f,a=canvas(4.8);text(a,.04,.94,"輸入 128 個 token，返回 4 個 token",14)
+        f,a=canvas(4.8);text(a,.04,.94,"輸入 128 個 token，回傳 4 個 token",14)
         for i in range(4):
             y=.72-i*.21
             box(a,.03,y,.24,.14,"輸入 128 個" if i==0 else f'輸入 y{i}','blue',11)

@@ -107,8 +107,8 @@ def arrow(ax,a,b,color='teal',both=False,rad=0):
 # 1-1: editable vector teaching diagram.
 fig,ax=canvas(9.7)
 layers=[("應用與任務","對話、程式碼、語音；目標與服務要求"),("模型與負載","模型結構、輸入輸出；計算與資料需求"),
- ("訓練與推理系統","請求排程、狀態管理、多裝置執行"),("運算元與編譯執行時","運算元庫、編譯器、裝置執行安排"),
- ("處理器與儲存","CPU、GPU、NPU；主存、視訊記憶體與片上儲存"),("互聯與資料中心","裝置連線、超節點、網路與資源位置")]
+ ("訓練與推理系統","請求排程、狀態管理、多裝置執行"),("運算子與編譯執行時","運算子庫、編譯器、裝置執行安排"),
+ ("處理器與儲存","CPU、GPU、NPU；主記憶體、視訊記憶體與片上儲存"),("互聯與資料中心","裝置連線、超節點、網路與資源位置")]
 for i,(title,body) in enumerate(layers):
  w=.40+i*.04;x=.375-w/2;y=.79-i*.085
  box(ax,x,y,w,.066,title,body,size=13)
@@ -132,7 +132,7 @@ box(ax,.42,.51,.27,.082,"排隊與實例排程","安排 batch、分配狀態空�
 arrow(ax,(.355,.55),(.41,.55))
 ax.plot([.82,.82,.66,.66,.215,.215],[.73,.70,.70,.61,.61,.60],color=C['teal'],lw=1.5)
 arrow(ax,(.215,.62),(.215,.595))
-box(ax,.08,.365,.27,.092,"CPU 執行時","提交運算元與裝置工作",size=12)
+box(ax,.08,.365,.27,.092,"CPU 執行時","提交運算子與裝置工作",size=12)
 box(ax,.42,.365,.27,.092,"GPU 執行組","prefill → decode 逐步生成",size=12)
 arrow(ax,(.555,.50),(.555,.478));ax.plot([.555,.215],[.478,.478],color=C['teal'],lw=1.5);arrow(ax,(.215,.478),(.215,.465))
 arrow(ax,(.355,.41),(.41,.41))
@@ -143,7 +143,7 @@ ax.annotate('',xy=(.70,.39),xytext=(.70,.445),arrowprops=dict(arrowstyle='->',co
 box(ax,.78,.49,.17,.11,"其他模型副本","服務別的請求",size=12)
 box(ax,.78,.29,.17,.11,"模型儲存","啟動／切換時載入",size=12)
 ax.annotate('',xy=(.70,.299),xytext=(.775,.335),arrowprops=dict(arrowstyle='->',ls='--',color=C['orange'],lw=1.5))
-box(ax,.08,.095,.27,.085,"流式返回應用","顯示文字／決定是否呼叫工具",size=12)
+box(ax,.08,.095,.27,.085,"將輸出串流回傳至應用程式","顯示文字／決定是否呼叫工具",size=12)
 box(ax,.42,.095,.27,.085,"輸出處理","token → 文字、結束判斷",size=12)
 ax.plot([.70,.745,.745,.555],[.37,.37,.21,.21],color=C['teal'],lw=1.5)
 arrow(ax,(.555,.21),(.555,.19));arrow(ax,(.415,.138),(.355,.138))
@@ -168,7 +168,7 @@ box(ax,.045,.095,.91,.39,'',color='light')
 for x,label in [(.075,"伺服器／計算託盤 1"),(.545,"伺服器／計算託盤 2 …")]:
  box(ax,x,.205,.38,.25,'',color='pale')
  ax.text(x+.19,.429,label,ha='center',fontsize=12,weight='bold')
- box(ax,x+.018,.345,.095,.049,"主存",size=11)
+ box(ax,x+.018,.345,.095,.049,"主記憶體",size=11)
  box(ax,x+.157,.345,.095,.049,'CPU',size=11)
  box(ax,x+.293,.345,.07,.049,'NIC',size=11)
  arrow(ax,(x+.117,.37),(x+.151,.37),both=True)
@@ -191,7 +191,7 @@ save(fig,'figure-1-3-datacenter')
 fig=plt.figure(figsize=(13,8.8))
 fig.text(.055,.905,"A  Jeff Dean，2009：同一時間軸上的不同操作（對數刻度）",fontsize=13,weight='bold')
 ax=fig.add_axes([.23,.47,.68,.36]);values=[.5,7,100,500000,10000000]
-labels=["L1 快取存取","L2 快取存取","主存存取","同資料中心往返","磁碟尋道"];display=['0.5 ns','7 ns','100 ns','0.5 ms','10 ms']
+labels=["L1 快取存取","L2 快取存取","主記憶體存取","同資料中心往返","磁碟尋道"];display=['0.5 ns','7 ns','100 ns','0.5 ms','10 ms']
 for i,(v,label) in enumerate(zip(values,display)):
  ax.plot([.1,v],[i,i],color=C['line'],linewidth=3);ax.scatter(v,i,color=C['blue'],s=75,zorder=3)
  ax.annotate(label,(v,i),xytext=(9,0),textcoords='offset points',va='center',fontsize=11)

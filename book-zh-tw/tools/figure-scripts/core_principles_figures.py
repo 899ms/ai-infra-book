@@ -19,7 +19,7 @@ def draw(chapter, out):
                     y=.73-i*.18;box(a,x,y,.43,.12,label,c)
                     if i<3:arrow(a,(x+.215,y),(x+.215,y-.06))
             arrow(a,(.54,.79),(.46,.61),kind='control')
-            text(a,.5,.065,"工具程式仍由作業系統執行",12,ha='center')
+            text(a,.5,.065,"工具行程仍由作業系統執行",12,ha='center')
             out.save(f,'figure-1-programmability')
         if chapter == 2:
             f,a=plot(3.8,left=.08,bottom=.22)
@@ -68,7 +68,7 @@ def draw(chapter, out):
                     width=length*.073
                     box(a,x,y,width,.13,lab,col);x+=width
                 if label=='追加':text(a,x-.0365,y-.065,"1K 新增",11,ha='center')
-                if label=='总结历史':text(a,.61,y+.065,"另計總結工作",11)
+                if label=='總結歷史':text(a,.61,y+.065,"另計總結工作",11)
             text(a,.5,.96,"相同歷史，三種更新方式",14,ha='center')
             out.save(f,'figure-8-context-edits')
         if chapter == 10:
@@ -91,7 +91,7 @@ def draw(chapter, out):
             f,a=plot(3.5,left=.24,bottom=.21)
             for y,v in [(2,8),(1,.8),(0,0)]:
                 a.barh(y,v,height=.55,color=COL['blue'],edgecolor=COL['line'],label="模型" if y==2 else None)
-                a.barh(y,2,left=v,height=.55,color=COL['orange'],edgecolor=COL['line'],label="其他序列階段" if y==2 else None)
+                a.barh(y,2,left=v,height=.55,color=COL['orange'],edgecolor=COL['line'],label="其他依序執行階段" if y==2 else None)
                 a.text(v+2+.12,y,f'{v+2:g} 秒',va='center',fontsize=12)
             a.set(yticks=[2,1,0],yticklabels=["原任務","模型快 10 倍","理想下界"],xlim=(0,12),ylim=(-.7,3),xlabel="完整任務時間（秒）");f.subplots_adjust(top=.84);a.legend(frameon=False,ncol=2,loc='upper center',bbox_to_anchor=(.45,1.17),columnspacing=1.5,handlelength=1.4)
             out.save(f,'figure-12-task-counterfactual')

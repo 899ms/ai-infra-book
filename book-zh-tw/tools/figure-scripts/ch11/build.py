@@ -49,16 +49,16 @@ for k in range(3):
 a.broken_barh([(0,30)],(.5,.5),facecolors=C['teal']);a.text(15,.75,'2 GiB × 30 s = 60 GiB·s',color='white',ha='center',va='center',fontsize=14)
 a.set(yticks=[.75,1.85,2.95],yticklabels=["環境記憶體","工具 CPU","模型服務"],xlim=(0,30),ylim=(0,3.6),xticks=[0,9,10,19,20,29,30],xlabel="時間 / s")
 a.spines['left'].set_visible(False);a.tick_params(axis='y',length=0);a.grid(axis='x',alpha=.16)
-a.text(.0,1.04,"三輪序列任務：完成 30 s；累計 CPU 時間 3 CPU·秒",transform=a.transAxes,fontsize=15,weight='bold')
+a.text(.0,1.04,"三輪依序執行：完成 30 s；累計 CPU 時間 3 CPU·秒",transform=a.transAxes,fontsize=15,weight='bold')
 save(f,'figure-11-1-timeline');data['11-1']={'kind':'teaching','rounds':3,'model_seconds_per_round':9,'tool_core_seconds_per_round':1,'resident_gib':2,'resident_gib_seconds':60}
 # Model and tool paths: one relationship, implementation comparison stays in prose.
 f,a=canvas(5.3)
 box(a,.04,.58,.23,.23,"Agent 控制器","任務、歷史與測試結果")
-box(a,.60,.58,.29,.23,"模型服務","返回工具參數")
+box(a,.60,.58,.29,.23,"模型服務","回傳工具參數")
 arrow(a,(.27,.73),(.60,.73));arrow(a,(.60,.64),(.27,.64));a.text(.435,.79,"模型請求",ha='center',fontsize=12)
 box(a,.04,.13,.23,.23,"環境平台","准入與節點分配");arrow(a,(.155,.58),(.155,.36));a.text(.20,.46,"工具呼叫請求",fontsize=12)
 a.add_patch(Rectangle((.55,.06),.39,.39,fill=False,ls='--',lw=1.4,edgecolor=C['teal']))
-a.text(.745,.40,"執行節點",ha='center',fontsize=13,weight='bold');box(a,.60,.13,.29,.21,"工具環境","檔案、程式、工具",'green')
+a.text(.745,.40,"執行節點",ha='center',fontsize=13,weight='bold');box(a,.60,.13,.29,.21,"工具環境","檔案、行程、工具",'green')
 arrow(a,(.27,.28),(.60,.28));arrow(a,(.60,.18),(.27,.18));a.text(.435,.10,"工具結果",ha='center',fontsize=12)
 save(f,'figure-11-2-boundary');data['11-2']={'kind':'mechanism','focus':'model versus tool execution paths','source':'case-studies/platform-routing.md'}
 
@@ -117,8 +117,8 @@ a.plot(h*100,cb,color=C['blue'],label="B Sonnet 5：命中率變化",lw=2.3);a.a
 a.axvline(cross*100,color=C['muted'],ls='--',lw=1);a.axvline(target*100,color=C['teal'],ls='--',lw=1)
 a.axvspan(target*100,100,color=C['green'],alpha=.9,zorder=0)
 a.annotate(f'成本相同：約 {cross*100:.1f}%',(cross*100,ca),(37,.031),arrowprops={'arrowstyle':'->','color':C['muted']},fontsize=12)
-a.annotate(f'B 達到按時透過率要求：約 {target*100:.1f}%',(target*100,.007),(12,.006),arrowprops={'arrowstyle':'->','color':C['teal']},fontsize=12)
-a.set(xlabel="B 請求命中率 / %",ylabel="美元 / 透過測試的任務",xlim=(0,100),ylim=(0,.046));a.legend(frameon=False,fontsize=11,loc='upper right');a.grid(alpha=.15)
+a.annotate(f'B 達到按時通過率要求：約 {target*100:.1f}%',(target*100,.007),(12,.006),arrowprops={'arrowstyle':'->','color':C['teal']},fontsize=12)
+a.set(xlabel="B 請求命中率 / %",ylabel="美元 / 通過測試的任務",xlim=(0,100),ylim=(0,.046));a.legend(frameon=False,fontsize=11,loc='upper right');a.grid(alpha=.15)
 save(f,'figure-11-7-routing');data['11-7']={'kind':'teaching_from_locked_calculation','source':'calculations/results/routing-cost-book.json','focus':'cost comparison constrained by deadline','h':h.tolist(),'cost_A':ca,'cost_B':cb.tolist(),'cost_crossover':cross,'joint_target_hit':target}
 
 # Recovery improves completion fraction at an additional cost.
@@ -126,7 +126,7 @@ rs=retry['summary'];initial=.01/.8;qc=float(Fraction(rs['cost_per_quality_succes
 f,a=plt.subplots(figsize=(10,5.3));f.subplots_adjust(left=.12,right=.96,bottom=.26,top=.86)
 xx=np.array([0,1.4,2.4]);vals=[initial,qc,dc];a.bar(xx,vals,color=[C['blue'],C['teal'],C['orange']],width=.55)
 for i,v in enumerate(vals):a.text(xx[i],v+.0003,f'{v:.4f}',ha='center',fontsize=13)
-a.set(xticks=xx,xticklabels=["僅首次嘗試\n成功率 80%","有限恢復\n透過測試約 99.7%","有限恢復\n按時透過測試約 95.0%"],ylim=(0,.018),ylabel="全部支出 / 符合條件的任務數");a.grid(axis='y',alpha=.15)
+a.set(xticks=xx,xticklabels=["僅首次嘗試\n成功率 80%","有限恢復\n通過測試約 99.7%","有限恢復\n按時通過測試約 95.0%"],ylim=(0,.018),ylabel="全部支出 / 符合條件的任務數");a.grid(axis='y',alpha=.15)
 a.text(1.9,.0173,"同一有限恢復策略，分別統計成功與按時成功",ha='center',fontsize=11)
 parts=[.8*.01+.072*.016+.0784*.04,.04704*.046,.00096*.046+.0016*.04]
 save(f,'figure-11-8-retry');data['11-8']={'kind':'teaching_from_locked_calculation','source':'calculations/results/retry-paths-book.json','focus':'recovery cost versus completion criterion','policy_costs':[initial,qc,dc],'contributions':dict(zip(["按時成功路徑","超時成功路徑","失敗路徑"],parts)),'summary':rs}

@@ -22,7 +22,7 @@ def draw(here):
     with plt.rc_context(STYLE):
         # Overview: activation dimensions on the left, model structure on the right.
         f, a = canvas(4.6)
-        text(a, .04, .96, "啟用：樣本 B、序列位置 S、特徵 H", 12)
+        text(a, .04, .96, "活化：樣本 B、序列位置 S、特徵 H", 12)
         for k in (2, 1, 0):
             x0 = .06 + .025 * k; y0 = .36 + .025 * k
             a.add_patch(Rectangle((x0, y0), .28, .34, facecolor=COL['white'] if k else COL['blue'], edgecolor=COL['line'], lw=.9))
@@ -112,7 +112,7 @@ def draw(here):
         f, a = canvas(2.9)
         box(a, .02, .44, .10, .18, "輸入", 'gray', 11); arrow(a, (.12, .53), (.15, .53))
         box(a, .15, .34, .28, .36, "卡 0\n層 0–31 的權重", 'blue', 11); arrow(a, (.43, .53), (.46, .53))
-        box(a, .46, .44, .10, .18, "啟用", 'orange', 11); arrow(a, (.56, .53), (.59, .53))
+        box(a, .46, .44, .10, .18, "活化", 'orange', 11); arrow(a, (.56, .53), (.59, .53))
         box(a, .59, .34, .28, .36, "卡 1\n層 32–63 的權重", 'green', 11); arrow(a, (.87, .53), (.90, .53))
         box(a, .90, .44, .08, .18, "輸出", 'gray', 11)
         arrow(a, (.59, .27), (.43, .27)); text(a, .51, .16, "訓練：梯度沿相同邊界反向傳遞", 11, ha='center')
@@ -172,7 +172,7 @@ def draw(here):
             for i in range(4):
                 box(a, x + .015 + .0925 * i, .33, .08, .13, f'E{4 * r + i}', 'white', 11)
             arrow(a, (x + .19, .30), (x + .19, .24))
-        box(a, .10, .14, .80, .10, "All-to-All 返回：結果回到 token 所在卡，按路由權重合並", 'orange', 11)
+        box(a, .10, .14, .80, .10, "All-to-All 回傳：結果回到 token 所在卡，按路由權重合並", 'orange', 11)
         out.save(f, 'figure-6-ep')
     (here / 'parallel-layout-validation.json').write_text(json.dumps(out.checks, ensure_ascii=False, indent=2) + '\n')
     return out.outputs

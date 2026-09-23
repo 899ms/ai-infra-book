@@ -86,13 +86,13 @@ axs[0].set_ylabel("記憶體需求與佔用 / GB")
 save(f,'pool-placement');data['pool_placement']={'capacity_GB':80,'before_assigned_GB':[80,60,40,40],'unassigned_GB':20,'after_assigned_GB':[80,80,40,40]}
 # Time and space: the empty interval is latency, overlapping arrows are in-flight work.
 f,a=canvas(6.5)
-a.text(.11,.94,"發出讀取請求",ha='center',fontsize=13);a.text(.68,.94,"收到返回資料",ha='center',fontsize=13)
+a.text(.11,.94,"發出讀取請求",ha='center',fontsize=13);a.text(.68,.94,"收到回傳資料",ha='center',fontsize=13)
 for i in range(4):
  y=.76-i*.155
  box(a,.025,y,.16,.09,f'請求 {i}',size=11)
  arrow(a,(.19,y+.045),(.61,y+.045),'blue')
  box(a,.62,y,.14,.09,"q 位元組",col='light',size=11)
- a.text(.38,y+.068,"等待遠端返回",ha='center',fontsize=10,color=C['muted'])
+ a.text(.38,y+.068,"等待遠端回傳",ha='center',fontsize=10,color=C['muted'])
 a.annotate('',xy=(.18,.16),xytext=(.77,.16),arrowprops={'arrowstyle':'<->','color':C['ink']});a.text(.475,.09,"往返時間 L",ha='center',fontsize=12)
 box(a,.81,.36,.17,.28,"在途視窗","u 個請求\n共 uq 位元組",col='sand',size=12)
 a.text(.48,.015,"視窗頻寬上限 = uq / L",ha='center',fontsize=13)

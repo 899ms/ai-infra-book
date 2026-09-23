@@ -65,7 +65,6 @@ TAIWAN_REPLACEMENTS = tuple(sorted({
     '默認': '預設',
     '支持': '支援',
     '兼容': '相容',
-    '卸載': '解除安裝',
     '反饋': '回饋',
     '實現': '實作',
     '通過': '透過',
@@ -78,6 +77,69 @@ TAIWAN_REPLACEMENTS = tuple(sorted({
 }.items(), key=lambda pair: len(pair[0]), reverse=True))
 
 PROTECTED_TOKEN = '\u0000ZH_TW_PROTECTED_{}\u0000'
+# Keep this book's computing terms when OpenCC chooses a different sense.
+TECHNICAL_TERMS = tuple(sorted({
+    '实现原子性、一致性、隔离性和持久性': '實現原子性、一致性、隔離性與持久性',
+    '实现的行为': '實現的行為',
+    '實現原子性、一致性、隔離性與持久性': '實現原子性、一致性、隔離性與持久性',
+    '實現的行為': '實現的行為',
+    '未通过测试': '未通過測試',
+    '未通過測試': '未通過測試',
+    '通过测试': '通過測試',
+    '通過測試': '通過測試',
+    '通过验证': '通過驗證',
+    '通過驗證': '通過驗證',
+    '通过检查': '通過檢查',
+    '通過檢查': '通過檢查',
+    '通过验收': '通過驗收',
+    '通過驗收': '通過驗收',
+    '通过评分': '通過評分',
+    '通過評分': '通過評分',
+    '通过筛选': '通過篩選',
+    '通過篩選': '通過篩選',
+    '通过数值': '通過數值',
+    '通过下界': '通過下界',
+    '通过 FP64': '通過 FP64',
+    '通过率': '通過率',
+    '通過率': '通過率',
+    '通过比例': '通過比例',
+    '通過比例': '通過比例',
+    '水平点线': '水平點線',
+    '水平點線': '水平點線',
+    '接近水平': '接近水平',
+    '水平线': '水平線',
+    '水平線': '水平線',
+    '每个 token 实际激活的参数': '每個 token 實際選用的參數',
+    '一个 token 激活多少参数': '一個 token 選用多少參數',
+    '激活 FLOPs': '選用路徑的 FLOPs',
+    '被激活路径': '被選用路徑',
+    '稀疏激活': '稀疏路由',
+    '行激活': '行啟用',
+    '工具程序仍由操作系统执行': '工具行程仍由作業系統執行',
+    '中间向量称为激活': '中間向量稱為活化值',
+    '激活的生命周期': '活化值的生命週期',
+    '激活函数': '活化函數',
+    '激活张量': '活化張量',
+    '激活梯度': '活化梯度',
+    '激活值': '活化值',
+    '激活参数相同': '每個 token 選用的參數數量相同',
+    '激活参数量': '每 token 選用參數量',
+    '每 token 激活约': '每 token 選用約',
+    'MoE 激活量': 'MoE 每 token 選用參數量',
+    '激活参数': '每 token 選用參數',
+    '激活规模': '每 token 選用參數規模',
+    '激活': '活化',
+    '程序代码': '程式碼',
+    '提交程序': '提交行程',
+    '进程': '行程',
+    '進程': '行程',
+    '算子': '運算子',
+    '运算子': '運算子',
+    '運算子': '運算子',
+    '演算子': '演算子',
+    '卸载': '卸載',
+    '卸載': '卸載',
+}.items(), key=lambda pair: len(pair[0]), reverse=True))
 
 
 def protect_syntax(text: str) -> tuple[str, list[str]]:
@@ -111,6 +173,11 @@ def restore_syntax(text: str, values: list[str]) -> str:
 
 def convert_text(text: str) -> str:
     protected, values = protect_syntax(text)
+    for old, new in TECHNICAL_TERMS:
+        if old in protected:
+            token = PROTECTED_TOKEN.format(len(values))
+            protected = protected.replace(old, token)
+            values.append(new)
     converted = CONVERTER.convert(protected)
     for old, new in TAIWAN_REPLACEMENTS:
         converted = converted.replace(old, new)

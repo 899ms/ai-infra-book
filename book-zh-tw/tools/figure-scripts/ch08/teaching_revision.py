@@ -11,7 +11,7 @@ def draw(here,data):
         f,a=canvas(4.7);text(a,.04,.94,"請求保持身份，batch 每輪重新組成",14)
         for row,labels in enumerate([["請求 A","請求 B"],["請求 A","請求 C"]]):
             y=.60-row*.36;text(a,.04,y+.17,f'迭代 {row}',12)
-            for i,label in enumerate(labels):box(a,.25+i*.37,y,.30,.20,label,'blue' if label=='请求 A' else 'green',12)
+            for i,label in enumerate(labels):box(a,.25+i*.37,y,.30,.20,label,'blue' if label=='請求 A' else 'green',12)
         text(a,.5,.08,"B 已結束 → 空出的執行位置交給 C",12,ha='center');save(f,'request-iterations')
         f,a=plot(3.0,left=.12);start=0;life=data['lifecycle']
         for dur,l,c in [(life['queue_s'],"排隊",'gray'),(life['prefill_s'],'prefill','blue'),(life['output_intervals']*life['interval_s'],'decode','green')]:a.barh(0,dur,left=start,height=.35,color=COL[c],edgecolor=COL['line'],label=l);start+=dur
@@ -54,7 +54,7 @@ def draw(here,data):
         save(f,'reference-release')
         f,a=canvas(4.2)
         for x,l,c in [(.03,"收到取消\n停止後續迭代",'orange'),(.37,"等待已提交\n加速器操作完成",'blue'),(.71,"釋放私有塊\n更新共享引用",'green')]:box(a,x,.41,.26,.27,l,c,11)
-        arrow(a,(.29,.54),(.37,.54));arrow(a,(.63,.54),(.71,.54));text(a,.5,.18,"取消呼叫返回 1.6 ms；塊釋放約 31 ms",11,ha='center');save(f,'cancel-lifetime')
+        arrow(a,(.29,.54),(.37,.54));arrow(a,(.63,.54),(.71,.54));text(a,.5,.18,"取消呼叫回傳 1.6 ms；塊釋放約 31 ms",11,ha='center');save(f,'cancel-lifetime')
         # Exact common-prefix lengths; tree topology is drawn by logical depth.
         d=data['prefix'];f,a=canvas(4.5);positions={0:(.12,.50),1:(.38,.83),2:(.38,.40),3:(.63,.63),4:(.63,.24),5:(.86,.39),6:(.86,.10)}
         for u,v,n in d['edges']:
@@ -81,7 +81,7 @@ def draw(here,data):
         a.set(yticks=range(3),yticklabels=['BF16','q8_0','q4_0'],xlim=(0,68),xlabel="儲存同一組 32 個值（bytes）");a.invert_yaxis();save(f,'8-kv-format')
         f,a=plot(3.6,left=.23)
         for i,buff in enumerate([288,576]):a.barh(i,buff,height=.48,color=COL['orange'],edgecolor=COL['line']);a.barh(i,2592-buff,left=buff,height=.48,color=COL['green'],edgecolor=COL['line'])
-        a.set(yticks=[0,1],yticklabels=["一組預取緩衝","兩組預取緩衝"],xlim=(0,2800),xlabel="解除安裝騰出的空間（MiB）");a.invert_yaxis();save(f,'9-offload')
+        a.set(yticks=[0,1],yticklabels=["一組預取緩衝","兩組預取緩衝"],xlim=(0,2800),xlabel="卸載騰出的空間（MiB）");a.invert_yaxis();save(f,'9-offload')
         f,a=plot(3.5);v=data['offload']['copy_ms'];a.bar([0,1],v,color=[COL['blue'],COL['green']],edgecolor=COL['line']);a.set(xticks=[0,1],xticklabels=['PCIe Gen5 x16\n64 GB/s','NVLink-C2C\n450 GB/s'],ylabel="每輪複製下界（ms）",ylim=(0,50));save(f,'offload-copy')
         for i,m in enumerate(data['kv']['correct_by_task']):
             f,a=plot(4.7,left=.25);a.imshow(m,cmap=ListedColormap([COL['orange'],COL['green']]),vmin=0,vmax=1,aspect='auto')
@@ -91,7 +91,7 @@ def draw(here,data):
         f,a=canvas(4.6)
         for row,(title,tokens) in enumerate([("草稿",['a','b','c','d']),("驗證",['a','b','x',"丟棄"]),("保留",['a','b','x'])]):
             y=.71-row*.28;text(a,.03,y+.065,title,12)
-            for j,t in enumerate(tokens):box(a,.21+j*.19,y,.16,.14,t,'green' if j<2 else ('orange' if row==0 or t=='丢弃' else 'blue'),12)
+            for j,t in enumerate(tokens):box(a,.21+j*.19,y,.16,.14,t,'green' if j<2 else ('orange' if row==0 or t=='丟棄' else 'blue'),12)
         save(f,'11-verification')
         for draft,n in [('A','sample-A'),('B','sample-B')]:
             p=.25 if draft=='A' else .75;f,a=canvas(4.0);box(a,.32,.71,.36,.17,f'草稿恆為 {draft}','gray')

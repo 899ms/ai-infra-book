@@ -96,7 +96,7 @@ axs[0].text(5.8,2,"圓點：到達\n橫線：等待前方缺口\n豎線：按序
 axs[1].set_xlabel("時間 / μs");save(f,'figure-7-17-packets');data['7-17']={'kind':'saved packet events','cases':pack}
 # 20: Preserve a common time scale and show the dependency of update on both rows.
 f,ax=plt.subplots(figsize=(12,9));f.subplots_adjust(left=.22,right=.94,top=.91,bottom=.10);p=teaching['primary'];st=teaching['step']
-cases=[("連續環，序列",20,p['flat_s']*1000),("分層歸約，序列",20,p['hier_s']*1000),("分層，只有 128 項在途",20,st['hier_window_limited_comm_s']*1000),("連續環，17 ms 就緒",17,p['flat_s']*1000),("分層，17 ms 就緒",17,p['hier_s']*1000),("分層，只剩一張網路卡",17,st['hier_one_nic_comm_s']*1000)];steps=[]
+cases=[("連續環，依序執行",20,p['flat_s']*1000),("分層歸約，依序執行",20,p['hier_s']*1000),("分層，只有 128 項在途",20,st['hier_window_limited_comm_s']*1000),("連續環，17 ms 就緒",17,p['flat_s']*1000),("分層，17 ms 就緒",17,p['hier_s']*1000),("分層，只剩一張網路卡",17,st['hier_one_nic_comm_s']*1000)];steps=[]
 for i,(label,ready,comm) in enumerate(cases):
  y=10-i*1.8;update=max(20,ready+comm);end=update+2
  ax.broken_barh([(0,20)],(y,.40),facecolors='#dbe2e6');ax.broken_barh([(ready,comm)],(y-.48,.34),facecolors=C['blue']);ax.broken_barh([(update,2)],(y,.40),facecolors=C['teal']);ax.scatter([ready],[y-.31],c=C['ink'],s=20,zorder=4)

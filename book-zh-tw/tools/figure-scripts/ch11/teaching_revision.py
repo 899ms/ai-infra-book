@@ -118,6 +118,8 @@ def draw(here,data):
         text(a,.71,.17,"第 2 輪缺失，不能跳到第 3 輪",11,ha='center')
         save(f,'recovery-coverage')
         data['recovery-coverage']={'kind':'teaching','unit':'react_round','trusted_base':0,'local_saved':[1,2,3],'cloud_saved':[1,3],'cloud_gap':[2],'cloud_covered_through':1,'upload_policy':'per-round incremental async; failed upload does not block later uploads'}
+    from dsec_figures import draw as draw_dsec
+    draw_dsec(out)
     from core_principles_figures import draw as draw_principles
     draw_principles(11, out)
     out.finish();return out.outputs,out.checks

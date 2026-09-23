@@ -108,6 +108,7 @@
 | [可抢占 rollout 的权重准备与有效产出](preemptible-rollout-and-weight-readiness.md) | 11 |
 | [RL 验证的剩余时间与资源配置](reward-deadlines-and-feedback.md) | 11 |
 | [模型路由：从 token 单价算到任务成本](routing-cost-and-completion.md) | 11 |
+| [DSec：Agent RL 沙箱平台的资源与状态](dsec-sandbox-platform.md) | 11 |
 
 ## 第 12 章 · 端边云协同
 
